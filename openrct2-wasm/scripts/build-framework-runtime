@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly expected_source="4a7ee146caab8888eb31e56a33c0559db89b17bd"
+readonly build_image="ghcr.io/openrct2/openrct2-build@sha256:0e1daa8e3f5a1c6951179aeab5c5de471ea705cb5f756bfb6e0ae5162b7e67be"
+repo_root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
+runtime_assets="${OPENRCT2_RUNTIME_ASSETS:-/usr/share/openrct2}"
+
+if ! git -C "$repo_root" merge-base --is-ancestor "$expected_source" HEAD; then
+    printf 'OpenRCT2 source commit %s is not an ancestor of HEAD.\n' "$expected_source" >&2
+    exit 1
+fi
+
+for sentinel in g2.dat fonts.dat palettes.dat tracks.dat; do
+    if [[ ! -s "$runtime_assets/$sentinel" ]]; then
+        printf 'OpenRCT2 runtime assets are missing %s.\n' "$runtime_assets/$sentinel" >&2
+        exit 1
+    fi
+done
+
+docker run --rm \
+    --env "HOST_UID=$(id -u)" \
+    --env "HOST_GID=$(id -g)" \
+    --volume "$repo_root:/src" \
+    --volume "$runtime_assets:/runtime-assets:ro" \
+    --workdir /src \
+    "$build_image" \
+    bash -lc '
+        set -eo pipefail
+        git config --global --add safe.directory /src
+        . scripts/setenv -q
+        set -u
+        mkdir -p build-framework
+        cd build-framework
+        emcmake cmake ../ -G Ninja \
+            -DDISABLE_NETWORK=ON \
+            -DDISABLE_OPENGL=ON \
+            -DDISABLE_HTTP=ON \
+            -DDISABLE_TTF=ON \
+            -DDISABLE_FLAC=ON \
+            -DDISABLE_DISCORD_RPC=ON \
+            -DCMAKE_SYSTEM_NAME=Emscripten \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DICU_INCLUDE_DIR=/ext/icu/icu4c/source/common \
+            -DICU_DATA_LIBRARIES=/ext/icu/icu4c/source/lib/libicuuc.so \
+            -DICU_DT_LIBRARY_RELEASE=/ext/icu/icu4c/source/stubdata/libicudata.so \
+            -DLIBZIP_LIBRARIES=/ext/libzip/build/lib/libzip.a \
+            -DZSTD_LIBRARIES=/ext/zstd/build/build/lib/libzstd.a \
+            -DEMSCRIPTEN_FLAGS="-s USE_SDL=2 -s USE_ZLIB=1 -s USE_BZIP2=1 -s USE_LIBPNG=1 -pthread -O3" \
+            -DEMSCRIPTEN_EXPORTED_FUNCTIONS="_GetVersion,_main,_OpenRCT2Wasm_RuntimeState,_OpenRCT2Wasm_DrawCount,_OpenRCT2Wasm_FramebufferVariation,_OpenRCT2Wasm_CursorX,_OpenRCT2Wasm_CursorY,_OpenRCT2Wasm_ContextWidth,_OpenRCT2Wasm_ContextHeight,_OpenRCT2Wasm_WindowScale,_OpenRCT2Wasm_Resize,_OpenRCT2Wasm_PointerMove,_OpenRCT2Wasm_PointerButton,_OpenRCT2Wasm_PointerWheel,_OpenRCT2Wasm_Key,_OpenRCT2Wasm_TextInput" \
+            -DEMSCRIPTEN_LDFLAGS="-Wno-pthreads-mem-growth -s SAFE_HEAP=0 -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4GB -s INITIAL_MEMORY=512MB -s STACK_SIZE=8388608 -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s PTHREAD_POOL_SIZE=8 -s OFFSCREENCANVAS_SUPPORT=1 -s EXPORT_EXCEPTION_HANDLING_HELPERS=1 -pthread -s EXPORTED_RUNTIME_METHODS=ccall,FS,callMain,setCanvasSize,UTF8ToString,stringToNewUTF8,getExceptionMessage -lidbfs.js -lworkerfs.js --preload-file /runtime-assets@/OpenRCT2 -s MODULARIZE=1 -s '"'"'EXPORT_NAME="OPENRCT2_WEB"'"'"'"
+        cmake --build . --target openrct2 --parallel "$(nproc)"
+        chown -R "$HOST_UID:$HOST_GID" /src/build-framework
+    '

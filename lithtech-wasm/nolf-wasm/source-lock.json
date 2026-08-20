@@ -1,0 +1,26 @@
+{
+  "name": "nolf-source-1.003",
+  "title": "No One Lives Forever Source Code v1.003",
+  "origin": "Monolith Productions official release, 15 May 2001",
+  "path": "vendor/nolf-source",
+  "readme": "vendor/nolf-source/readme.txt",
+  "contains": [
+    "NOLF/ClientRes",
+    "NOLF/ClientShellDLL",
+    "NOLF/ObjectDLL",
+    "NOLF/Shared",
+    "LT2/sdk headers and Win32 import libs"
+  ],
+  "doesNotContain": [
+    "lithtech.exe / LithTech 2.1 engine runtime source"
+  ],
+  "authorizedReference": {
+    "name": "lithtech-jupiter-ex-build-69",
+    "origin": "https://github.com/jsj2008/lithtech",
+    "commit": "0eab182",
+    "path": "vendor/lithtech",
+    "ownerAuthorized": true,
+    "role": "RezMgr/StdLith implementations and engine-format reference for NOLF 1. Not LithTech 2.1; world DAT version is 85 vs NOLF 1's 66.",
+    "doNotMixWith": "nolf2-wasm"
+  }
+}

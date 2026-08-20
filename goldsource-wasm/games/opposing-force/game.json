@@ -1,0 +1,21 @@
+{
+  "variant": "opposing-force",
+  "gamedir": "gearbox",
+  "title": "Half-Life: Opposing Force",
+  "engine": "goldsource",
+  "engineRuntime": "Xash3D-FWGS + HLSDK Portable compatibility",
+  "multiplayer": "optional",
+  "description": "Opposing Force single-player in the browser.",
+  "image": "ghcr.io/theodorecharles/opposing-force-wasm",
+  "ports": { "host": 8019, "container": 8088 },
+  "icon": "assets/icon.svg",
+  "background": "assets/background.svg",
+  "theme": { "accent": "#526d3f", "accentStrong": "#9fc482", "border": "#3e5133", "pwa": "#577445" },
+  "dataDir": "goldsource",
+  "dataFiles": [
+    { "name": "valve-owner.pk3", "path": "goldsource/valve-owner.pk3", "mountName": "valve/owner-valve.pk3", "size": 271240725, "sha256": "70aed2d728525b3ef34bc50090e0a00c63f8c4c14c6a3e7fbee7c03b235f83d0" },
+    { "name": "valve-liblist.gam", "path": "goldsource/valve-liblist.gam", "mountName": "valve/liblist.gam", "size": 333, "sha256": "0d4034ebaabcc54ad9f00bb89e9677d5f34c3d3beda9185a69d5ac719e0e2ffb" },
+    { "name": "gearbox-owner.pk3", "path": "goldsource/gearbox-owner.pk3", "mountName": "gearbox/owner-gearbox.pk3", "size": 135441670, "sha256": "d931d68aa7ad69ff3d85a44a5ec205bf8df62fc6bdaed85ff30a5d60d327d573" },
+    { "name": "gearbox-liblist.gam", "path": "goldsource/gearbox-liblist.gam", "mountName": "gearbox/liblist.gam", "size": 284, "sha256": "7892ddc19df7f581233f43016f510f88fdd6bf844b9f88e1462eb5dc96941232" }
+  ]
+}

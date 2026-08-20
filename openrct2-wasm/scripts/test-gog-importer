@@ -1,0 +1,84 @@
+#!/usr/bin/env node
+'use strict';
+
+const assert = require('node:assert/strict');
+const fsp = require('node:fs/promises');
+const os = require('node:os');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+
+async function descriptor(filename) {
+  const target = path.resolve(filename);
+  const details = await fsp.stat(target);
+  return Object.freeze({ name: path.basename(target), size: details.size, path: target });
+}
+
+async function installerSet(executable) {
+  const exe = await descriptor(executable);
+  const companion = executable.replace(/\.exe$/i, '-1.bin');
+  return Object.freeze([exe, await descriptor(companion)]);
+}
+
+async function inventory(root) {
+  const files = [];
+  async function visit(directory, relative) {
+    for (const item of await fsp.readdir(directory, { withFileTypes: true })) {
+      const target = path.join(directory, item.name);
+      const name = relative ? `${relative}/${item.name}` : item.name;
+      if (item.isDirectory()) await visit(target, name);
+      else if (item.isFile()) {
+        const details = await fsp.stat(target);
+        files.push(Object.freeze({
+          name,
+          size: details.size,
+          async read(offset, length) {
+            const handle = await fsp.open(target, 'r');
+            try {
+              const bytes = Buffer.alloc(length);
+              const result = await handle.read(bytes, 0, length, offset);
+              return bytes.subarray(0, result.bytesRead);
+            } finally { await handle.close(); }
+          }
+        }));
+      }
+    }
+  }
+  await visit(root, '');
+  return files.sort((left, right) => left.name.localeCompare(right.name, 'en'));
+}
+
+(async () => {
+  const rct2Executable = process.argv[2];
+  const rct1Executable = process.argv[3] || '';
+  if (!rct2Executable) throw new Error('Usage: test-gog-importer <rct2-setup.exe> [rct1-setup.exe]');
+  const files = [...await installerSet(rct2Executable)];
+  if (rct1Executable) files.push(...await installerSet(rct1Executable));
+  const outputDirectory = await fsp.mkdtemp(path.join(os.tmpdir(), 'openrct2-gog-importer.'));
+  try {
+    const transformer = await import(pathToFileURL(path.resolve(__dirname, '../web/media-transformer.mjs')).href);
+    const transformed = await transformer.transformOpenRctInstallers({ files, outputDirectory, policy: {} });
+    assert.equal(transformed.transformed, true);
+    assert.ok(transformed.metadata.rct2Files > 2000, 'the RCT2 installer produced an incomplete tree');
+    if (rct1Executable) {
+      assert.ok(transformed.metadata.rct1Files > 400, 'the RCT1 installer produced an incomplete tree');
+    } else {
+      assert.equal(transformed.metadata.rct1Files, 0);
+    }
+    const extracted = await inventory(outputDirectory);
+    assert.ok(extracted.length > 1000, 'the RCT2 installer did not produce a complete tree');
+    assert.equal(extracted.some(file => file.name.startsWith('.extract-')), false);
+    const validator = await import(pathToFileURL(path.resolve(__dirname, '../web/data-validator.mjs')).href);
+    const validation = await validator.validateRct2Installation({ files: extracted });
+    assert.equal(validation.accepted, true, validation.error);
+    assert.equal(validation.metadata.rct1, Boolean(rct1Executable));
+    const totalSize = extracted.reduce((sum, file) => sum + file.size, 0);
+    process.stdout.write(
+      `Validated ${transformed.metadata.rct2Files} RCT2 + ${transformed.metadata.rct1Files} RCT1 files ` +
+      `(${extracted.length} total, ${totalSize} bytes).\n`);
+  } finally {
+    await fsp.rm(outputDirectory, { recursive: true, force: true });
+  }
+})().catch(error => {
+  console.error(error && error.stack || error);
+  process.exitCode = 1;
+});

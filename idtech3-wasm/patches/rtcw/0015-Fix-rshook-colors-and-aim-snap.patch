@@ -1,0 +1,235 @@
+From 1f94da9e8bf36b82d5b0f6b2bc7f9264f584dee3 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 15:18:32 -0400
+Subject: [PATCH] Fix rshook colors and aim snap
+
+Use an entity-colored glow instead of identity white. Aim after the
+refdef is built, pick the enemy under the crosshair through walls, and
+subtract delta_angles so fire does not snap away.
+---
+ MP/code/cgame/cg_players.c |  14 ++--
+ MP/code/cgame/cg_view.c    | 139 ++++++++++++++++++++-----------------
+ MP/code/client/cl_input.c  |   2 +-
+ 3 files changed, 83 insertions(+), 72 deletions(-)
+
+diff --git a/MP/code/cgame/cg_players.c b/MP/code/cgame/cg_players.c
+index 1d031a5..ebc1914 100644
+--- a/MP/code/cgame/cg_players.c
++++ b/MP/code/cgame/cg_players.c
+@@ -2439,12 +2439,12 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, int powerups, int team, enti
+ 		} else if ( localTeam == TEAM_RED || localTeam == TEAM_BLUE
+ 					|| otherTeam == TEAM_RED || otherTeam == TEAM_BLUE ) {
+ 			if ( !glowShader ) {
+-				glowShader = trap_R_RegisterShader( "white" );
++				glowShader = trap_R_RegisterShader( "rshookglow" );
+ 			}
+ 			VectorCopy( cg_entities[es->number].lerpOrigin, tracePoint );
+ 			tracePoint[2] += ( es->eFlags & EF_CROUCHING ) ? 28.0f : 40.0f;
+ 			CG_Trace( &trace, cg.refdef.vieworg, NULL, NULL, tracePoint,
+-					  cg.snap->ps.clientNum, CONTENTS_SOLID );
++					  cg.snap->ps.clientNum, MASK_SOLID );
+ 			visible = ( trace.fraction > 0.98f );
+ 			glow = *ent;
+ 			glow.customSkin = 0;
+@@ -2452,16 +2452,16 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, int powerups, int team, enti
+ 			glow.renderfx |= RF_NOSHADOW;
+ 			if ( visible ) {
+ 				glow.renderfx &= ~RF_DEPTHHACK;
+-				glow.shaderRGBA[0] = 48;
+-				glow.shaderRGBA[1] = 128;
++				glow.shaderRGBA[0] = 40;
++				glow.shaderRGBA[1] = 120;
+ 				glow.shaderRGBA[2] = 255;
+ 			} else {
+ 				glow.renderfx |= RF_DEPTHHACK;
+ 				glow.shaderRGBA[0] = 255;
+-				glow.shaderRGBA[1] = 48;
+-				glow.shaderRGBA[2] = 48;
++				glow.shaderRGBA[1] = 32;
++				glow.shaderRGBA[2] = 32;
+ 			}
+-			glow.shaderRGBA[3] = 230;
++			glow.shaderRGBA[3] = 220;
+ 			trap_R_AddRefEntityToScene( &glow );
+ 		}
+ 	}
+diff --git a/MP/code/cgame/cg_view.c b/MP/code/cgame/cg_view.c
+index ecccb9b..2c07c99 100644
+--- a/MP/code/cgame/cg_view.c
++++ b/MP/code/cgame/cg_view.c
+@@ -1543,6 +1543,80 @@ void CG_DrawNotebook( void ) {
+ 
+ extern void CG_SetupDlightstyles( void );
+ 
++static void CG_RsHookAim( void ) {
++	int i;
++	int best;
++	float bestDot;
++	vec3_t fwd, to, ang, aimPoint;
++	int localTeam;
++	int enemyTeam;
++	playerState_t *ps;
++	char buf[32];
++
++	trap_Cvar_Set( "rtcw_target", "-1" );
++	if ( !cg_rshook.integer || !cg.snap || cg.snap->ps.stats[STAT_HEALTH] <= 0
++		 || cg.snap->ps.pm_type != PM_NORMAL ) {
++		return;
++	}
++
++	ps = &cg.predictedPlayerState;
++	localTeam = ps->persistant[PERS_TEAM];
++	if ( localTeam != TEAM_RED && localTeam != TEAM_BLUE ) {
++		localTeam = cgs.clientinfo[cg.clientNum].team;
++	}
++	enemyTeam = ( localTeam == TEAM_RED ) ? TEAM_BLUE : ( ( localTeam == TEAM_BLUE ) ? TEAM_RED : -1 );
++	if ( enemyTeam < 0 ) {
++		return;
++	}
++
++	AngleVectors( cg.refdefViewAngles, fwd, NULL, NULL );
++	best = -1;
++	bestDot = 0.35f;
++	for ( i = 0; i < MAX_CLIENTS; i++ ) {
++		centity_t *cent = &cg_entities[i];
++		float d, len;
++		int team;
++
++		if ( i == cg.snap->ps.clientNum || !cgs.clientinfo[i].infoValid ) {
++			continue;
++		}
++		if ( !cent->currentValid || ( cent->currentState.eFlags & EF_DEAD ) ) {
++			continue;
++		}
++		team = cgs.clientinfo[i].team;
++		if ( team != enemyTeam ) {
++			continue;
++		}
++		VectorCopy( cent->lerpOrigin, aimPoint );
++		aimPoint[2] += ( cent->currentState.eFlags & EF_CROUCHING ) ? 28.0f : 40.0f;
++		VectorSubtract( aimPoint, cg.refdef.vieworg, to );
++		len = VectorNormalize( to );
++		if ( len < 8.0f || len > 4000.0f ) {
++			continue;
++		}
++		d = DotProduct( fwd, to );
++		if ( d <= bestDot ) {
++			continue;
++		}
++		bestDot = d;
++		best = i;
++		vectoangles( to, ang );
++	}
++
++	if ( best < 0 ) {
++		return;
++	}
++
++	/* cl.viewangles are pre-delta. World look-at minus delta_angles. */
++	Com_sprintf( buf, sizeof( buf ), "%f",
++				 AngleNormalize180( ang[YAW] - SHORT2ANGLE( ps->delta_angles[YAW] ) ) );
++	trap_Cvar_Set( "rtcw_addyaw", buf );
++	Com_sprintf( buf, sizeof( buf ), "%f",
++				 AngleNormalize180( ang[PITCH] - SHORT2ANGLE( ps->delta_angles[PITCH] ) ) );
++	trap_Cvar_Set( "rtcw_addpitch", buf );
++	trap_Cvar_Set( "rtcw_target", va( "%d", best ) );
++}
++
+ 
+ //#define DEBUGTIME_ENABLED
+ #ifdef DEBUGTIME_ENABLED
+@@ -1573,70 +1647,6 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 	// update cvars
+ 	CG_UpdateCvars();
+ 
+-	trap_Cvar_Set( "rtcw_target", "-1" );
+-	if ( cg_rshook.integer && cg.snap && cg.snap->ps.stats[STAT_HEALTH] > 0
+-		 && ( cg.snap->ps.pm_type == PM_NORMAL ) ) {
+-		int i;
+-		int best = -1;
+-		float bestScore = 9999999.0f;
+-		vec3_t fwd, to, ang, aimPoint, shooterOrigin;
+-		int localTeam = cg.snap->ps.persistant[PERS_TEAM];
+-		int enemyTeam;
+-
+-		if ( localTeam != TEAM_RED && localTeam != TEAM_BLUE ) {
+-			localTeam = cgs.clientinfo[cg.clientNum].team;
+-		}
+-		enemyTeam = ( localTeam == TEAM_RED ) ? TEAM_BLUE : ( ( localTeam == TEAM_BLUE ) ? TEAM_RED : -1 );
+-		AngleVectors( cg.refdefViewAngles, fwd, NULL, NULL );
+-		VectorCopy( cg.refdef.vieworg, shooterOrigin );
+-		for ( i = 0; i < MAX_CLIENTS; i++ ) {
+-			centity_t *cent = &cg_entities[i];
+-			trace_t trace;
+-			float d, len, score;
+-			int team;
+-
+-			if ( i == cg.clientNum || !cgs.clientinfo[i].infoValid ) {
+-				continue;
+-			}
+-			if ( !cent->currentValid || ( cent->currentState.eFlags & EF_DEAD ) ) {
+-				continue;
+-			}
+-			team = cgs.clientinfo[i].team;
+-			if ( enemyTeam < 0 || team != enemyTeam || team == localTeam ) {
+-				continue;
+-			}
+-			VectorCopy( cent->lerpOrigin, aimPoint );
+-			aimPoint[2] += ( cent->currentState.eFlags & EF_CROUCHING ) ? 28.0f : 40.0f;
+-			CG_Trace( &trace, shooterOrigin, NULL, NULL, aimPoint, cg.clientNum, CONTENTS_SOLID );
+-			if ( trace.fraction < 0.98f ) {
+-				continue;
+-			}
+-			VectorSubtract( aimPoint, shooterOrigin, to );
+-			len = VectorNormalize( to );
+-			if ( len < 8.0f || len > 4000.0f ) {
+-				continue;
+-			}
+-			d = DotProduct( fwd, to );
+-			if ( d < 0.15f ) {
+-				continue;
+-			}
+-			score = len * ( 1.15f - d );
+-			if ( score < bestScore ) {
+-				bestScore = score;
+-				best = i;
+-				vectoangles( to, ang );
+-			}
+-		}
+-		if ( best >= 0 ) {
+-			char buf[32];
+-			trap_Cvar_Set( "rtcw_target", va( "%d", best ) );
+-			Com_sprintf( buf, sizeof( buf ), "%f", ang[YAW] );
+-			trap_Cvar_Set( "rtcw_addyaw", buf );
+-			Com_sprintf( buf, sizeof( buf ), "%f", AngleNormalize180( ang[PITCH] ) );
+-			trap_Cvar_Set( "rtcw_addpitch", buf );
+-		}
+-	}
+-
+ #ifdef DEBUGTIME_ENABLED
+ 	CG_Printf( "\n" );
+ #endif
+@@ -1716,6 +1726,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 
+ 	// build cg.refdef
+ 	inwater = CG_CalcViewValues();
++	CG_RsHookAim();
+ 
+ 	DEBUGTIME
+ 
+diff --git a/MP/code/client/cl_input.c b/MP/code/client/cl_input.c
+index e12e9f4..6db17bc 100644
+--- a/MP/code/client/cl_input.c
++++ b/MP/code/client/cl_input.c
+@@ -665,7 +665,7 @@ void CL_FinishMove( usercmd_t *cmd ) {
+ 		float y = AngleNormalize180( Cvar_VariableValue( "rtcw_addyaw" ) );
+ 		float p = AngleNormalize180( Cvar_VariableValue( "rtcw_addpitch" ) );
+ 
+-		if ( p >= -70.f && p <= 70.f ) {
++		if ( p >= -89.f && p <= 89.f ) {
+ 			cl.viewangles[YAW] = y;
+ 			cl.viewangles[PITCH] = p;
+ 			cmd->angles[YAW] = ANGLE2SHORT( y );
+-- 
+2.53.0
+

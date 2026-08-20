@@ -1,0 +1,187 @@
+From 6b2f9ac87d93617d68adcc875cbb38f17be60c39 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 15:27:07 -0400
+Subject: [PATCH] Draw map albedo before lightmaps on WebGL
+
+Lightmap-first sequential passes left depot walls untextured while
+models still sampled. Always paint the color texture first, then
+multiply the lightmap.
+---
+ MP/code/renderer/tr_shade.c  | 116 ++++++++++++++++++++++++++---------
+ MP/code/renderer/tr_shader.c |   2 +
+ 2 files changed, 90 insertions(+), 28 deletions(-)
+
+diff --git a/MP/code/renderer/tr_shade.c b/MP/code/renderer/tr_shade.c
+index 5b695f5..93ef39e 100644
+--- a/MP/code/renderer/tr_shade.c
++++ b/MP/code/renderer/tr_shade.c
+@@ -395,6 +395,46 @@ void RB_BeginSurface( shader_t *shader, int fogNum ) {
+ 	// done.
+ }
+ 
++#ifdef __EMSCRIPTEN__
++static qboolean RB_IsModulateBits( unsigned bits ) {
++	bits &= ( GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS );
++	return bits == ( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO )
++		|| bits == ( GLS_SRCBLEND_ZERO | GLS_DSTBLEND_SRC_COLOR );
++}
++
++/*
++ * Color texture first (map albedo). Lightmap second as a multiply.
++ * Lightmap-first is what made depot walls lose their textures.
++ */
++static void RB_DrawAlbedoThenLightmap( shaderCommands_t *input,
++									   textureBundle_t *diff, float ( *diffTc )[2],
++									   textureBundle_t *lm, float ( *lmTc )[2],
++									   qboolean add ) {
++	GL_SelectTexture( 0 );
++	GL_State( GLS_DEFAULT );
++	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
++	qglTexCoordPointer( 2, GL_FLOAT, 0, diffTc );
++	R_BindAnimatedImage( diff );
++	R_DrawElements( input->numIndexes, input->indexes );
++
++	if ( r_lightmap->integer || !lm || !lm->image[0] ) {
++		return;
++	}
++
++	qglTexCoordPointer( 2, GL_FLOAT, 0, lmTc );
++	R_BindAnimatedImage( lm );
++	if ( add ) {
++		GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
++	} else {
++		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO );
++	}
++	qglEnable( GL_POLYGON_OFFSET_FILL );
++	qglPolygonOffset( -8.0f, -8.0f );
++	R_DrawElements( input->numIndexes, input->indexes );
++	qglDisable( GL_POLYGON_OFFSET_FILL );
++}
++#endif
++
+ /*
+ ===================
+ DrawMultitextured
+@@ -407,10 +447,6 @@ t1 = most downstream according to spec
+ */
+ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 	shaderStage_t   *pStage;
+-#ifdef __EMSCRIPTEN__
+-	int v;
+-	int add;
+-#endif
+ 
+ 	pStage = tess.xstages[stage];
+ 
+@@ -429,8 +465,6 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 	GL_State( pStage->stateBits );
+ 
+ #ifdef __EMSCRIPTEN__
+-	/* Lightmap first (that pass is what actually showed lighting),
+-	 * then albedo * dest. Albedo-first left the world fullbright. */
+ 	{
+ 		textureBundle_t *diff, *lm;
+ 		float ( *diffTc )[2], ( *lmTc )[2];
+@@ -446,28 +480,8 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 			diffTc = input->svars.texcoords[0];
+ 			lmTc = input->svars.texcoords[1];
+ 		}
+-
+-		GL_State( GLS_DEFAULT );
+-		GL_SelectTexture( 0 );
+-		qglTexCoordPointer( 2, GL_FLOAT, 0, lmTc );
+-		R_BindAnimatedImage( lm );
+-		R_DrawElements( input->numIndexes, input->indexes );
+-
+-		if ( !r_lightmap->integer && diff && diff->image[0] ) {
+-			add = ( tess.shader->multitextureEnv == GL_ADD );
+-			for ( v = 0; v < input->numVertexes; v++ ) {
+-				input->svars.texcoords[0][v][0] = diffTc[v][0];
+-				input->svars.texcoords[0][v][1] = diffTc[v][1];
+-			}
+-			qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
+-			R_BindAnimatedImage( diff );
+-			if ( add ) {
+-				GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
+-			} else {
+-				GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO );
+-			}
+-			R_DrawElements( input->numIndexes, input->indexes );
+-		}
++		RB_DrawAlbedoThenLightmap( input, diff, diffTc, lm, lmTc,
++								   ( tess.shader->multitextureEnv == GL_ADD ) );
+ 		return;
+ 	}
+ #endif
+@@ -1201,6 +1215,52 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input ) {
+ 			break;
+ 		}
+ 
++#ifdef __EMSCRIPTEN__
++		if ( !pStage->bundle[1].image[0] && ( stage + 1 ) < MAX_SHADER_STAGES ) {
++			shaderStage_t *next = tess.xstages[stage + 1];
++			if ( next && next->bundle[0].image[0] && !next->bundle[1].image[0]
++				 && ( ( pStage->bundle[0].isLightmap && !next->bundle[0].isLightmap
++						&& RB_IsModulateBits( next->stateBits ) )
++					  || ( !pStage->bundle[0].isLightmap && next->bundle[0].isLightmap
++						   && RB_IsModulateBits( next->stateBits ) ) ) ) {
++				textureBundle_t *lm, *diff;
++				float ( *lmTc )[2];
++				float ( *diffTc )[2];
++
++				if ( pStage->bundle[0].isLightmap ) {
++					ComputeColors( pStage );
++					ComputeTexCoords( pStage );
++					Com_Memcpy( input->svars.texcoords[1], input->svars.texcoords[0],
++								input->numVertexes * sizeof( input->svars.texcoords[0][0] ) );
++					lm = &pStage->bundle[0];
++					lmTc = input->svars.texcoords[1];
++					ComputeColors( next );
++					ComputeTexCoords( next );
++					diff = &next->bundle[0];
++					diffTc = input->svars.texcoords[0];
++				} else {
++					ComputeColors( pStage );
++					ComputeTexCoords( pStage );
++					Com_Memcpy( input->svars.texcoords[1], input->svars.texcoords[0],
++								input->numVertexes * sizeof( input->svars.texcoords[0][0] ) );
++					diff = &pStage->bundle[0];
++					diffTc = input->svars.texcoords[1];
++					ComputeColors( next );
++					ComputeTexCoords( next );
++					lm = &next->bundle[0];
++					lmTc = input->svars.texcoords[0];
++				}
++				if ( !setArraysOnce ) {
++					qglEnableClientState( GL_COLOR_ARRAY );
++					qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, input->svars.colors );
++				}
++				RB_DrawAlbedoThenLightmap( input, diff, diffTc, lm, lmTc, qfalse );
++				stage++;
++				continue;
++			}
++		}
++#endif
++
+ 		ComputeColors( pStage );
+ 		ComputeTexCoords( pStage );
+ 
+diff --git a/MP/code/renderer/tr_shader.c b/MP/code/renderer/tr_shader.c
+index 9b565c8..268d5f1 100644
+--- a/MP/code/renderer/tr_shader.c
++++ b/MP/code/renderer/tr_shader.c
+@@ -1873,9 +1873,11 @@ static qboolean CollapseMultitexture( void ) {
+ 	int i;
+ 	textureBundle_t tmpBundle;
+ 
++#ifndef __EMSCRIPTEN__
+ 	if ( !qglActiveTextureARB ) {
+ 		return qfalse;
+ 	}
++#endif
+ 
+ 	// make sure both stages are active
+ 	if ( !stages[0].active || !stages[1].active ) {
+-- 
+2.53.0
+

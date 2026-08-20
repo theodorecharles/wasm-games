@@ -1,0 +1,43 @@
+{
+  "comment": "Original GoldSource engine/game sources. The project forks every upstream under github.com/theodorecharles so the exact source is controlled and pinned. Build scripts clone the forks (or consume npm packages built from them); wasm-games itself never commits the upstream source.",
+  "sources": [
+    {
+      "name": "webxash3d-fwgs",
+      "upstream": "https://github.com/yohimik/webxash3d-fwgs",
+      "fork": "https://github.com/theodorecharles/webxash3d-fwgs",
+      "usedVia": "npm packages xash3d-fwgs@1.2.2, hlsdk-portable@0.1.2, cs16-client@0.1.2",
+      "purpose": "Emscripten build of Xash3D-FWGS + HL/CS clients; produces the prebuilt WASM packages the adapter loads.",
+      "notes": "Engine WASM + game client/server DLLs come from these npm packages today. Migrating to build-from-fork is follow-up."
+    },
+    {
+      "name": "xash3d-fwgs",
+      "upstream": "https://github.com/FWGS/xash3d-fwgs",
+      "fork": "https://github.com/theodorecharles/xash3d-fwgs",
+      "usedVia": "scripts/build-xash-framework.sh (source checkout, patched)",
+      "purpose": "Upstream GoldSource-compatible engine. Patched by patches/xash-no-quit.patch + patches/xash-framework-contract.patch.",
+      "patches": ["patches/xash-no-quit.patch", "patches/xash-framework-contract.patch"]
+    },
+    {
+      "name": "hlsdk-portable",
+      "upstream": "https://github.com/FWGS/hlsdk-portable",
+      "fork": "https://github.com/theodorecharles/hlsdk-portable",
+      "usedVia": "npm package hlsdk-portable@0.1.2 (from webxash3d-fwgs)",
+      "purpose": "Portable Half-Life SDK — the HL/Blue Shift/Opposing Force game logic (client + server DLLs)."
+    },
+    {
+      "name": "cs16-client",
+      "upstream": "https://github.com/yohimik/cs16-client",
+      "fork": "https://github.com/theodorecharles/cs16-client",
+      "usedVia": "scripts/build-cs-menu.sh (git clone) + npm package cs16-client@0.1.2",
+      "purpose": "Counter-Strike 1.6 client. Its 3rdparty/mainui_cpp submodule builds the CS menu."
+    },
+    {
+      "name": "mainui_cpp",
+      "upstream": "https://github.com/Velaron/mainui_cpp",
+      "fork": "https://github.com/theodorecharles/mainui_cpp",
+      "usedVia": "cs16-client submodule (3rdparty/mainui_cpp), overridden to the fork in build-cs-menu.sh",
+      "purpose": "Counter-Strike main-menu library. Patched by games/counter-strike/patches/cs16/main-menu.patch (Join Game button, no quit/previews).",
+      "patches": ["games/counter-strike/patches/cs16/main-menu.patch"]
+    }
+  ]
+}

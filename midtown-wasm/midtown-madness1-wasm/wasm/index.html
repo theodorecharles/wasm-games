@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open1560 WASM archive probe</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #090d12; color: #eaf2ff; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at top, #243d57, #090d12 58%); }
+    main { width: min(760px, calc(100% - 32px)); padding: 40px; box-sizing: border-box; border: 1px solid #38516b; border-radius: 20px; background: #101821e8; box-shadow: 0 28px 80px #0009; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -.04em; }
+    p { color: #aebfd2; }
+    #drop { display: block; margin: 28px 0 18px; padding: 42px 24px; text-align: center; border: 2px dashed #5d7894; border-radius: 14px; cursor: pointer; transition: .15s ease; }
+    #drop:hover, #drop[data-dragging] { border-color: #6ee7ff; background: #183044; transform: translateY(-1px); }
+    input { max-width: 100%; }
+    button { padding: 10px 16px; border: 1px solid #5d7894; border-radius: 9px; background: #182839; color: #eaf2ff; cursor: pointer; }
+    button:hover { border-color: #6ee7ff; }
+    #status { min-height: 1.5em; color: #aebfd2; }
+    #status[data-state=valid] { color: #82f0b2; }
+    #status[data-state=invalid] { color: #ff9b9b; }
+    pre { max-height: 320px; overflow: auto; padding: 18px; border-radius: 10px; background: #070b10; color: #bfe2ff; }
+    .boundary { font-size: .9rem; }
+    code { color: #d4edff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Open1560 archive probe</h1>
+    <p>This is the first executable-free WebAssembly slice, not a playable game build. It validates the native AngelRes structure used by Open1560.</p>
+    <label id="drop">
+      <strong>Choose or drop an <code>.ar</code> archive</strong><br>
+      <input id="archive" type="file" accept=".ar,application/octet-stream">
+    </label>
+    <button id="self-test" type="button">Run built-in WASM self-test</button>
+    <p id="status">Ready. No file selected.</p>
+    <pre id="output" aria-live="polite"></pre>
+    <p class="boundary">Files stay in this browser tab. Nothing is uploaded, persisted, or bundled with this probe.</p>
+  </main>
+  <script type="module" src="./probe-ui.mjs"></script>
+</body>
+</html>

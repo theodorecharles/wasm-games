@@ -1,0 +1,215 @@
+From d5cac26a2ed27e2b059945ddd21bd019ebe27053 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 14:05:00 -0400
+Subject: [PATCH] Pump SOCKFS packets each browser frame like WolfET
+
+Emscripten skipped NET_Sleep, so challengeResponse sat unread in
+SOCKFS. Drain sockets every rAF tick and drop dummy SVF_BOT fill.
+---
+ MP/code/game/g_bot.c     |   4 --
+ MP/code/game/g_omnibot.c | 125 +--------------------------------------
+ MP/code/qcommon/common.c |   7 ++-
+ MP/code/qcommon/net_ip.c |  11 ++++
+ 4 files changed, 19 insertions(+), 128 deletions(-)
+
+diff --git a/MP/code/game/g_bot.c b/MP/code/game/g_bot.c
+index aa5dc4c..8f9235e 100644
+--- a/MP/code/game/g_bot.c
++++ b/MP/code/game/g_bot.c
+@@ -481,10 +481,6 @@ qboolean G_BotConnect( int clientNum, qboolean restart ) {
+ 	Q_strncpyz( settings.characterfile, Info_ValueForKey( userinfo, "characterfile" ), sizeof( settings.characterfile ) );
+ 	settings.skill = atoi( Info_ValueForKey( userinfo, "skill" ) );
+ 
+-	if ( G_OmniBot_Active() ) {
+-		return qtrue;
+-	}
+-
+ 	if ( !BotAISetupClient( clientNum, &settings ) ) {
+ 		trap_DropClient( clientNum, "BotAISetupClient failed" );
+ 		return qfalse;
+diff --git a/MP/code/game/g_omnibot.c b/MP/code/game/g_omnibot.c
+index 5da677e..ef00786 100644
+--- a/MP/code/game/g_omnibot.c
++++ b/MP/code/game/g_omnibot.c
+@@ -10,136 +10,15 @@ Server-side only: stock WolfMP protocol, no client fs_game, no botlib addbot.
+ static vmCvar_t g_omnibotEnable;
+ static vmCvar_t g_omnibotPath;
+ 
+-static int OmniBotClass( const char *name ) {
+-	if ( !Q_stricmp( name, "medic" ) ) {
+-		return PC_MEDIC;
+-	}
+-	if ( !Q_stricmp( name, "engineer" ) ) {
+-		return PC_ENGINEER;
+-	}
+-	if ( !Q_stricmp( name, "lieutenant" ) || !Q_stricmp( name, "lt" ) || !Q_stricmp( name, "fieldops" ) ) {
+-		return PC_LT;
+-	}
+-	return PC_SOLDIER;
+-}
+-
+-static const char *OmniBotTeamArg( const char *name ) {
+-	if ( !Q_stricmp( name, "allies" ) || !Q_stricmp( name, "blue" ) || !Q_stricmp( name, "b" ) ) {
+-		return "blue";
+-	}
+-	return "red";
+-}
+-
+ void G_OmniBot_Init( void ) {
+ 	trap_Cvar_Register( &g_omnibotEnable, "omnibot_enable", "1", CVAR_ARCHIVE | CVAR_LATCH );
+ 	trap_Cvar_Register( &g_omnibotPath, "omnibot_path", "/opt/omni-bot", CVAR_ARCHIVE );
+-	if ( g_omnibotEnable.integer ) {
+-		G_Printf( "OmniBot dedicated fill enabled path=%s\n", g_omnibotPath.string );
+-	}
+ }
+ 
+ qboolean G_OmniBot_Active( void ) {
+-	return g_omnibotEnable.integer ? qtrue : qfalse;
+-}
+-
+-static void G_OmniBot_Add( const char *teamName, const char *className ) {
+-	int clientNum;
+-	int playerClass;
+-	char userinfo[MAX_INFO_STRING];
+-	char botName[MAX_NETNAME];
+-	gentity_t *ent;
+-	const char *teamArg;
+-
+-	if ( !G_OmniBot_Active() ) {
+-		G_Printf( "OmniBot is disabled\n" );
+-		return;
+-	}
+-
+-	teamArg = OmniBotTeamArg( teamName );
+-	playerClass = OmniBotClass( className );
+-	Com_sprintf( botName, sizeof( botName ), "^o[BOT]^7%s%s",
+-				 !Q_stricmp( teamArg, "blue" ) ? "Allies" : "Axis",
+-				 playerClass == PC_MEDIC ? "Medic" :
+-				 playerClass == PC_ENGINEER ? "Engineer" :
+-				 playerClass == PC_LT ? "Lieutenant" : "Soldier" );
+-
+-	clientNum = trap_BotAllocateClient();
+-	if ( clientNum == -1 ) {
+-		G_Printf( "OmniBot: no free client slots\n" );
+-		return;
+-	}
+-
+-	userinfo[0] = '\0';
+-	Info_SetValueForKey( userinfo, "name", botName );
+-	Info_SetValueForKey( userinfo, "rate", "25000" );
+-	Info_SetValueForKey( userinfo, "snaps", "20" );
+-	Info_SetValueForKey( userinfo, "model", "multi" );
+-	Info_SetValueForKey( userinfo, "skill", "3" );
+-	Info_SetValueForKey( userinfo, "team", teamArg );
+-	trap_SetUserinfo( clientNum, userinfo );
+-
+-	if ( ClientConnect( clientNum, qtrue, qtrue ) ) {
+-		trap_DropClient( clientNum, "OmniBot connect rejected" );
+-		return;
+-	}
+-
+-	ent = &g_entities[clientNum];
+-	if ( !ent->client ) {
+-		return;
+-	}
+-	ent->r.svFlags |= SVF_BOT;
+-	ent->client->sess.latchPlayerType = playerClass;
+-	ent->client->sess.playerType = playerClass;
+-	SetTeam( ent, teamArg );
+-	ClientBegin( clientNum );
+-	G_Printf( "OmniBot added %s %s as %s\n", teamArg, className, botName );
+-}
+-
+-static void G_OmniBot_Kick( const char *name ) {
+-	int i;
+-	char compare[MAX_NETNAME];
+-
+-	if ( !name || !name[0] ) {
+-		return;
+-	}
+-	for ( i = 0; i < level.maxclients; i++ ) {
+-		if ( !g_entities[i].inuse || !g_entities[i].client ) {
+-			continue;
+-		}
+-		if ( !( g_entities[i].r.svFlags & SVF_BOT ) ) {
+-			continue;
+-		}
+-		Q_strncpyz( compare, g_entities[i].client->pers.netname, sizeof( compare ) );
+-		if ( Q_stricmp( compare, name ) && !strstr( compare, name ) ) {
+-			continue;
+-		}
+-		trap_DropClient( i, "OmniBot kicked" );
+-		G_Printf( "OmniBot kicked %s\n", compare );
+-		return;
+-	}
++	return qfalse;
+ }
+ 
+ qboolean G_OmniBot_ConsoleCommand( void ) {
+-	char cmd[MAX_TOKEN_CHARS];
+-	char arg1[MAX_TOKEN_CHARS];
+-	char arg2[MAX_TOKEN_CHARS];
+-
+-	trap_Argv( 0, cmd, sizeof( cmd ) );
+-	if ( Q_stricmp( cmd, "bot" ) ) {
+-		return qfalse;
+-	}
+-	trap_Argv( 1, arg1, sizeof( arg1 ) );
+-	trap_Argv( 2, arg2, sizeof( arg2 ) );
+-	if ( !Q_stricmp( arg1, "addbot" ) ) {
+-		char arg3[MAX_TOKEN_CHARS];
+-		trap_Argv( 3, arg3, sizeof( arg3 ) );
+-		G_OmniBot_Add( arg2, arg3[0] ? arg3 : "soldier" );
+-		return qtrue;
+-	}
+-	if ( !Q_stricmp( arg1, "kickbot" ) ) {
+-		G_OmniBot_Kick( arg2 );
+-		return qtrue;
+-	}
+-	G_Printf( "OmniBot usage: bot addbot <axis|allies> <soldier|medic|engineer|lieutenant>\n" );
+-	return qtrue;
++	return qfalse;
+ }
+diff --git a/MP/code/qcommon/common.c b/MP/code/qcommon/common.c
+index 7464211..1081b2c 100644
+--- a/MP/code/qcommon/common.c
++++ b/MP/code/qcommon/common.c
+@@ -3214,7 +3214,12 @@ void Com_Frame( void ) {
+ 	else
+ 		minMsec = 1;
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef __EMSCRIPTEN__
++	/* WolfET: rAF is the frame limiter. The native busy-wait would
++	 * stall one browser turn; NET_Sleep(0) still has to run so SOCKFS
++	 * delivers challengeResponse / snapshots from /ws. */
++	NET_Sleep(0);
++#else
+ 	do
+ 	{
+ 		if(com_sv_running->integer)
+diff --git a/MP/code/qcommon/net_ip.c b/MP/code/qcommon/net_ip.c
+index 2c4f6df..fa33f2f 100644
+--- a/MP/code/qcommon/net_ip.c
++++ b/MP/code/qcommon/net_ip.c
+@@ -1665,6 +1665,17 @@ void NET_Sleep(int msec)
+ 
+ 	FD_ZERO(&fdr);
+ 
++#ifdef __EMSCRIPTEN__
++	/* SOCKFS select() often reports 0 even when /ws datagrams are queued.
++	 * Always mark the game sockets readable and drain them. */
++	if(ip_socket != INVALID_SOCKET)
++		FD_SET(ip_socket, &fdr);
++	if(ip6_socket != INVALID_SOCKET)
++		FD_SET(ip6_socket, &fdr);
++	NET_Event(&fdr);
++	return;
++#endif
++
+ 	if(ip_socket != INVALID_SOCKET)
+ 	{
+ 		FD_SET(ip_socket, &fdr);
+-- 
+2.53.0
+

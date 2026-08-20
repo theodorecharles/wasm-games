@@ -1,0 +1,417 @@
+From 33a54681b5f15fa8a171650ec82486f753c12041 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 08:05:00 -0400
+Subject: [PATCH] Fix RTCW browser viewport and legacy GL state
+
+---
+ MP/Makefile               |  1 +
+ MP/code/cgame/cg_main.c   | 28 +++++++++++++++++++++++
+ MP/code/cgame/cg_public.h |  2 ++
+ MP/code/sys/sys_main.c    | 14 ++++++++++++
+ MP/code/ui/ui_main.c      | 47 +++++++++++++++++++++++++++++++++++++++
+ MP/code/ui/ui_public.h    |  4 +++-
+ SP/Makefile               |  1 +
+ SP/code/cgame/cg_main.c   | 28 +++++++++++++++++++++++
+ SP/code/cgame/cg_public.h |  2 ++
+ SP/code/sys/sys_main.c    | 14 ++++++++++++
+ SP/code/ui/ui_main.c      | 47 +++++++++++++++++++++++++++++++++++++++
+ SP/code/ui/ui_public.h    |  4 +++-
+ 12 files changed, 190 insertions(+), 2 deletions(-)
+
+diff --git a/MP/Makefile b/MP/Makefile
+index 8085ad8..8aa5afa 100644
+--- a/MP/Makefile
++++ b/MP/Makefile
+@@ -1064,6 +1064,7 @@ ifeq ($(PLATFORM),emscripten)
+   CLIENT_LDFLAGS += \
+     -sUSE_SDL=2 \
+     -sLEGACY_GL_EMULATION=1 \
++    -sGL_UNSAFE_OPTS=0 \
+     -sMIN_WEBGL_VERSION=2 \
+     -sMAX_WEBGL_VERSION=2 \
+     -sALLOW_MEMORY_GROWTH=1 \
+diff --git a/MP/code/cgame/cg_main.c b/MP/code/cgame/cg_main.c
+index 5728e16..3b38781 100644
+--- a/MP/code/cgame/cg_main.c
++++ b/MP/code/cgame/cg_main.c
+@@ -44,6 +44,7 @@ int autoReloadModificationCount = -1;
+ 
+ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
+ void CG_Shutdown( void );
++void CG_BrowserResize( void );
+ 
+ 
+ /*
+@@ -86,6 +87,9 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
+ 		return CG_GetTag( arg0, (char *)arg1, (orientation_t *)arg2 );
+ 	case CG_CHECKCENTERVIEW:
+ 		return CG_CheckCenterView();
++	case CG_BROWSER_RESIZE:
++		CG_BrowserResize();
++		return 0;
+ 	default:
+ 		CG_Error( "vmMain: unknown command %li", (long)command );
+ 		break;
+@@ -96,6 +100,30 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
+ 
+ cg_t cg;
+ cgs_t cgs;
++
++void CG_BrowserResize( void ) {
++	trap_GetGlconfig( &cgs.glconfig );
++	cgs.screenXScaleStretch = cgs.glconfig.vidWidth * ( 1.0 / 640.0 );
++	cgs.screenYScaleStretch = cgs.glconfig.vidHeight * ( 1.0 / 480.0 );
++	cgs.screenXBias = 0;
++	cgs.screenYBias = 0;
++	if ( cg_fixedAspect.integer ) {
++		cgs.screenXScale = cgs.screenXScaleStretch;
++		cgs.screenYScale = cgs.screenYScaleStretch;
++		if ( cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640 ) {
++			cgs.screenXBias = 0.5 * ( cgs.glconfig.vidWidth -
++				( cgs.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
++			cgs.screenXScale = cgs.screenYScale;
++		} else {
++			cgs.screenYBias = 0.5 * ( cgs.glconfig.vidHeight -
++				( cgs.glconfig.vidWidth * ( 480.0 / 640.0 ) ) );
++			cgs.screenYScale = cgs.screenXScale;
++		}
++	} else {
++		cgs.screenXScale = cgs.screenXScaleStretch;
++		cgs.screenYScale = cgs.screenYScaleStretch;
++	}
++}
+ centity_t cg_entities[MAX_GENTITIES];
+ weaponInfo_t cg_weapons[MAX_WEAPONS];
+ itemInfo_t cg_items[MAX_ITEMS];
+diff --git a/MP/code/cgame/cg_public.h b/MP/code/cgame/cg_public.h
+index df9869b..4084067 100644
+--- a/MP/code/cgame/cg_public.h
++++ b/MP/code/cgame/cg_public.h
+@@ -279,6 +279,8 @@ typedef enum {
+ 	CG_CHECKCENTERVIEW,
+ //	qboolean CG_CheckCenterView();
+ 
++	CG_BROWSER_RESIZE,
++
+ } cgameExport_t;
+ 
+ //----------------------------------------------
+diff --git a/MP/code/sys/sys_main.c b/MP/code/sys/sys_main.c
+index 867d119..20ee596 100644
+--- a/MP/code/sys/sys_main.c
++++ b/MP/code/sys/sys_main.c
+@@ -189,6 +189,14 @@ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerLook( float x, float y )
+ 	}
+ }
+ 
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserPointerPosition( float x, float y )
++{
++	if ( rtcwBrowserStarted && uivm && ( Key_GetCatcher() & KEYCATCH_UI ) ) {
++		VM_Call( uivm, UI_BROWSER_POINTER_POSITION,
++			(int)Com_Clamp( 0, 640, x ), (int)Com_Clamp( 0, 480, y ) );
++	}
++}
++
+ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserOpenMenu( void )
+ {
+ 	if ( !rtcwBrowserStarted || RTCW_BrowserRuntimeState() != 1 ) {
+@@ -280,6 +288,12 @@ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserResize( int width, int height )
+ 	Cvar_SetValue( "r_mode", -1 );
+ 	Cvar_SetValue( "r_customwidth", width );
+ 	Cvar_SetValue( "r_customheight", height );
++	if ( uivm ) {
++		VM_Call( uivm, UI_BROWSER_RESIZE );
++	}
++	if ( cgvm ) {
++		VM_Call( cgvm, CG_BROWSER_RESIZE );
++	}
+ }
+ 
+ EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRenderWidth( void )
+diff --git a/MP/code/ui/ui_main.c b/MP/code/ui/ui_main.c
+index c82a7af..d8d9259 100644
+--- a/MP/code/ui/ui_main.c
++++ b/MP/code/ui/ui_main.c
+@@ -269,6 +269,8 @@ void _UI_KeyEvent( int key, qboolean down );
+ void _UI_MouseEvent( int dx, int dy );
+ void _UI_Refresh( int realtime );
+ qboolean _UI_IsFullscreen( void );
++void UI_BrowserResize( void );
++void UI_BrowserPointerPosition( int x, int y );
+ 
+ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11  ) {
+ 	switch ( command ) {
+@@ -291,6 +293,14 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
+ 		_UI_MouseEvent( arg0, arg1 );
+ 		return 0;
+ 
++	case UI_BROWSER_RESIZE:
++		UI_BrowserResize();
++		return 0;
++
++	case UI_BROWSER_POINTER_POSITION:
++		UI_BrowserPointerPosition( arg0, arg1 );
++		return 0;
++
+ 	case UI_REFRESH:
+ 		_UI_Refresh( arg0 );
+ 		return 0;
+@@ -7166,6 +7176,43 @@ void _UI_MouseEvent( int dx, int dy ) {
+ 
+ }
+ 
++void UI_BrowserPointerPosition( int x, int y ) {
++	uiInfo.uiDC.cursorx = Com_Clamp( 0, SCREEN_WIDTH, x );
++	uiInfo.uiDC.cursory = Com_Clamp( 0, SCREEN_HEIGHT, y );
++	if ( Menu_Count() > 0 ) {
++		Display_MouseMove( NULL, uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory );
++	}
++}
++
++void UI_BrowserResize( void ) {
++	trap_GetGlconfig( &uiInfo.uiDC.glconfig );
++	uiInfo.uiDC.xscaleStretch = uiInfo.uiDC.glconfig.vidWidth * ( 1.0 / 640.0 );
++	uiInfo.uiDC.yscaleStretch = uiInfo.uiDC.glconfig.vidHeight * ( 1.0 / 480.0 );
++	uiInfo.uiDC.xBias = 0;
++	uiInfo.uiDC.yBias = 0;
++	uiInfo.uiDC.bias = 0;
++	if ( ui_fixedAspect.integer ) {
++		uiInfo.uiDC.xscale = uiInfo.uiDC.xscaleStretch;
++		uiInfo.uiDC.yscale = uiInfo.uiDC.yscaleStretch;
++		if ( uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640 ) {
++			uiInfo.uiDC.xBias = 0.5 * ( uiInfo.uiDC.glconfig.vidWidth -
++				( uiInfo.uiDC.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
++			uiInfo.uiDC.xscale = uiInfo.uiDC.yscale;
++		} else {
++			uiInfo.uiDC.yBias = 0.5 * ( uiInfo.uiDC.glconfig.vidHeight -
++				( uiInfo.uiDC.glconfig.vidWidth * ( 480.0 / 640.0 ) ) );
++			uiInfo.uiDC.yscale = uiInfo.uiDC.xscale;
++		}
++	} else {
++		uiInfo.uiDC.xscale = uiInfo.uiDC.xscaleStretch;
++		uiInfo.uiDC.yscale = uiInfo.uiDC.yscaleStretch;
++		if ( uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640 ) {
++			uiInfo.uiDC.bias = 0.5 * ( uiInfo.uiDC.glconfig.vidWidth -
++				( uiInfo.uiDC.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
++		}
++	}
++}
++
+ void UI_LoadNonIngame( void ) {
+ 	const char *menuSet = UI_Cvar_VariableString( "ui_menuFiles" );
+ 
+diff --git a/MP/code/ui/ui_public.h b/MP/code/ui/ui_public.h
+index 8bad6ad..5c5cfe4 100644
+--- a/MP/code/ui/ui_public.h
++++ b/MP/code/ui/ui_public.h
+@@ -224,7 +224,9 @@ typedef enum {
+ // if !overlay, the background will be drawn, otherwise it will be
+ // overlayed over whatever the cgame has drawn.
+ // a GetClientState syscall will be made to get the current strings
+-	UI_CHECKEXECKEY     // NERVE - SMF
++	UI_CHECKEXECKEY,     // NERVE - SMF
++	UI_BROWSER_RESIZE,
++	UI_BROWSER_POINTER_POSITION
+ } uiExport_t;
+ 
+ #endif
+diff --git a/SP/Makefile b/SP/Makefile
+index b83ca3a..df72184 100644
+--- a/SP/Makefile
++++ b/SP/Makefile
+@@ -1053,6 +1053,7 @@ ifeq ($(PLATFORM),emscripten)
+   CLIENT_LDFLAGS += \
+     -sUSE_SDL=2 \
+     -sLEGACY_GL_EMULATION=1 \
++    -sGL_UNSAFE_OPTS=0 \
+     -sMIN_WEBGL_VERSION=2 \
+     -sMAX_WEBGL_VERSION=2 \
+     -sALLOW_MEMORY_GROWTH=1 \
+diff --git a/SP/code/cgame/cg_main.c b/SP/code/cgame/cg_main.c
+index 13362af..31dd8c5 100644
+--- a/SP/code/cgame/cg_main.c
++++ b/SP/code/cgame/cg_main.c
+@@ -43,6 +43,7 @@ int forceModelModificationCount = -1;
+ 
+ void CG_Init( int serverMessageNum, int serverCommandSequence );
+ void CG_Shutdown( void );
++void CG_BrowserResize( void );
+ 
+ 
+ /*
+@@ -83,6 +84,9 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
+ 		cgDC.cursory = cgs.cursorY;
+ 		CG_MouseEvent( arg0, arg1 );
+ 		return 0;
++	case CG_BROWSER_RESIZE:
++		CG_BrowserResize();
++		return 0;
+ 	default:
+ 		CG_Error( "vmMain: unknown command %li", (long)command );
+ 		break;
+@@ -93,6 +97,30 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
+ 
+ cg_t cg;
+ cgs_t cgs;
++
++void CG_BrowserResize( void ) {
++	trap_GetGlconfig( &cgs.glconfig );
++	cgs.screenXScaleStretch = cgs.glconfig.vidWidth * ( 1.0 / 640.0 );
++	cgs.screenYScaleStretch = cgs.glconfig.vidHeight * ( 1.0 / 480.0 );
++	cgs.screenXBias = 0;
++	cgs.screenYBias = 0;
++	if ( cg_fixedAspect.integer ) {
++		cgs.screenXScale = cgs.screenXScaleStretch;
++		cgs.screenYScale = cgs.screenYScaleStretch;
++		if ( cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640 ) {
++			cgs.screenXBias = 0.5 * ( cgs.glconfig.vidWidth -
++				( cgs.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
++			cgs.screenXScale = cgs.screenYScale;
++		} else {
++			cgs.screenYBias = 0.5 * ( cgs.glconfig.vidHeight -
++				( cgs.glconfig.vidWidth * ( 480.0 / 640.0 ) ) );
++			cgs.screenYScale = cgs.screenXScale;
++		}
++	} else {
++		cgs.screenXScale = cgs.screenXScaleStretch;
++		cgs.screenYScale = cgs.screenYScaleStretch;
++	}
++}
+ centity_t cg_entities[MAX_GENTITIES];
+ weaponInfo_t cg_weapons[MAX_WEAPONS];
+ itemInfo_t cg_items[MAX_ITEMS];
+diff --git a/SP/code/cgame/cg_public.h b/SP/code/cgame/cg_public.h
+index 02e18c0..9a85b86 100644
+--- a/SP/code/cgame/cg_public.h
++++ b/SP/code/cgame/cg_public.h
+@@ -275,6 +275,8 @@ typedef enum {
+ 	CG_GET_TAG,
+ //	qboolean CG_GetTag( int clientNum, char *tagname, orientation_t *or );
+ 
++	CG_BROWSER_RESIZE,
++
+ 	MAX_CGAME_EXPORT
+ 
+ } cgameExport_t;
+diff --git a/SP/code/sys/sys_main.c b/SP/code/sys/sys_main.c
+index 3976caf..e901a6f 100644
+--- a/SP/code/sys/sys_main.c
++++ b/SP/code/sys/sys_main.c
+@@ -189,6 +189,14 @@ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerLook( float x, float y )
+ 	}
+ }
+ 
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserPointerPosition( float x, float y )
++{
++	if ( rtcwBrowserStarted && uivm && ( Key_GetCatcher() & KEYCATCH_UI ) ) {
++		VM_Call( uivm, UI_BROWSER_POINTER_POSITION,
++			(int)Com_Clamp( 0, 640, x ), (int)Com_Clamp( 0, 480, y ) );
++	}
++}
++
+ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserOpenMenu( void )
+ {
+ 	if ( !rtcwBrowserStarted || RTCW_BrowserRuntimeState() != 1 ) {
+@@ -280,6 +288,12 @@ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserResize( int width, int height )
+ 	Cvar_SetValue( "r_mode", -1 );
+ 	Cvar_SetValue( "r_customwidth", width );
+ 	Cvar_SetValue( "r_customheight", height );
++	if ( uivm ) {
++		VM_Call( uivm, UI_BROWSER_RESIZE );
++	}
++	if ( cgvm ) {
++		VM_Call( cgvm, CG_BROWSER_RESIZE );
++	}
+ }
+ 
+ EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRenderWidth( void )
+diff --git a/SP/code/ui/ui_main.c b/SP/code/ui/ui_main.c
+index 7a17ee4..d5fb550 100644
+--- a/SP/code/ui/ui_main.c
++++ b/SP/code/ui/ui_main.c
+@@ -169,6 +169,8 @@ void _UI_KeyEvent( int key, qboolean down );
+ void _UI_MouseEvent( int dx, int dy );
+ void _UI_Refresh( int realtime );
+ qboolean _UI_IsFullscreen( void );
++void UI_BrowserResize( void );
++void UI_BrowserPointerPosition( int x, int y );
+ 
+ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11  ) {
+ 	switch ( command ) {
+@@ -191,6 +193,14 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
+ 		_UI_MouseEvent( arg0, arg1 );
+ 		return 0;
+ 
++	case UI_BROWSER_RESIZE:
++		UI_BrowserResize();
++		return 0;
++
++	case UI_BROWSER_POINTER_POSITION:
++		UI_BrowserPointerPosition( arg0, arg1 );
++		return 0;
++
+ 	case UI_REFRESH:
+ 		_UI_Refresh( arg0 );
+ 		return 0;
+@@ -6986,6 +6996,43 @@ void _UI_MouseEvent( int dx, int dy ) {
+ 
+ }
+ 
++void UI_BrowserPointerPosition( int x, int y ) {
++	uiInfo.uiDC.cursorx = Com_Clamp( 0, SCREEN_WIDTH, x );
++	uiInfo.uiDC.cursory = Com_Clamp( 0, SCREEN_HEIGHT, y );
++	if ( Menu_Count() > 0 ) {
++		Display_MouseMove( NULL, uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory );
++	}
++}
++
++void UI_BrowserResize( void ) {
++	trap_GetGlconfig( &uiInfo.uiDC.glconfig );
++	uiInfo.uiDC.xscaleStretch = uiInfo.uiDC.glconfig.vidWidth * ( 1.0 / 640.0 );
++	uiInfo.uiDC.yscaleStretch = uiInfo.uiDC.glconfig.vidHeight * ( 1.0 / 480.0 );
++	uiInfo.uiDC.xBias = 0;
++	uiInfo.uiDC.yBias = 0;
++	uiInfo.uiDC.bias = 0;
++	if ( ui_fixedAspect.integer ) {
++		uiInfo.uiDC.xscale = uiInfo.uiDC.xscaleStretch;
++		uiInfo.uiDC.yscale = uiInfo.uiDC.yscaleStretch;
++		if ( uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640 ) {
++			uiInfo.uiDC.xBias = 0.5 * ( uiInfo.uiDC.glconfig.vidWidth -
++				( uiInfo.uiDC.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
++			uiInfo.uiDC.xscale = uiInfo.uiDC.yscale;
++		} else {
++			uiInfo.uiDC.yBias = 0.5 * ( uiInfo.uiDC.glconfig.vidHeight -
++				( uiInfo.uiDC.glconfig.vidWidth * ( 480.0 / 640.0 ) ) );
++			uiInfo.uiDC.yscale = uiInfo.uiDC.xscale;
++		}
++	} else {
++		uiInfo.uiDC.xscale = uiInfo.uiDC.xscaleStretch;
++		uiInfo.uiDC.yscale = uiInfo.uiDC.yscaleStretch;
++		if ( uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640 ) {
++			uiInfo.uiDC.bias = 0.5 * ( uiInfo.uiDC.glconfig.vidWidth -
++				( uiInfo.uiDC.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
++		}
++	}
++}
++
+ void UI_LoadNonIngame( void ) {
+ 	const char *menuSet = UI_Cvar_VariableString( "ui_menuFiles" );
+ 	if ( menuSet == NULL || menuSet[0] == '\0' ) {
+diff --git a/SP/code/ui/ui_public.h b/SP/code/ui/ui_public.h
+index bf59c72..79a180a 100644
+--- a/SP/code/ui/ui_public.h
++++ b/SP/code/ui/ui_public.h
+@@ -223,7 +223,9 @@ typedef enum {
+ 
+ 	UI_DRAW_CONNECT_SCREEN,
+ //	void	UI_DrawConnectScreen( qboolean overlay );
+-	UI_HASUNIQUECDKEY
++	UI_HASUNIQUECDKEY,
++	UI_BROWSER_RESIZE,
++	UI_BROWSER_POINTER_POSITION
+ // if !overlay, the background will be drawn, otherwise it will be
+ // overlayed over whatever the cgame has drawn.
+ // a GetClientState syscall will be made to get the current strings
+-- 
+2.53.0
+

@@ -1,0 +1,1472 @@
+diff --git a/prboom2/cmake/DsdaDependencies.cmake b/prboom2/cmake/DsdaDependencies.cmake
+index 75b4afa..dc272be 100644
+--- a/prboom2/cmake/DsdaDependencies.cmake
++++ b/prboom2/cmake/DsdaDependencies.cmake
+@@ -7,6 +7,20 @@ endif()
+ add_library(dsda_dependencies INTERFACE IMPORTED)
+ add_library(dsda::dependencies ALIAS dsda_dependencies)
+ 
++if(EMSCRIPTEN)
++  target_compile_options(dsda_dependencies INTERFACE
++    "SHELL:-sUSE_SDL=2"
++    "SHELL:-sUSE_SDL_MIXER=2"
++    "SHELL:-sUSE_ZLIB=1"
++  )
++  target_link_options(dsda_dependencies INTERFACE
++    "SHELL:-sUSE_SDL=2"
++    "SHELL:-sUSE_SDL_MIXER=2"
++    "SHELL:-sUSE_ZLIB=1"
++  )
++  return()
++endif()
++
+ # Make sure OpenGL.framework is found, XQuartz may show up first and only supports GL 1.4
+ if(APPLE)
+   set(find_framework_backup ${CMAKE_FIND_FRAMEWORK})
+diff --git a/prboom2/src/CMakeLists.txt b/prboom2/src/CMakeLists.txt
+index ec4af57..5a215d6 100644
+--- a/prboom2/src/CMakeLists.txt
++++ b/prboom2/src/CMakeLists.txt
+@@ -495,6 +495,29 @@ set(DSDA_SOURCES
+ )
+ 
+ function(AddGameExecutable TARGET SOURCES)
++    if(EMSCRIPTEN)
++        if(NOT IS_DIRECTORY "${DSDA_WASM_TESS2_SOURCE}/Source" OR
++           NOT EXISTS "${DSDA_WASM_TESS2_SOURCE}/Include/tesselator.h")
++            message(FATAL_ERROR "DSDA_WASM_TESS2_SOURCE must name the pinned libtess2 checkout")
++        endif()
++        list(REMOVE_ITEM SOURCES
++            dsda/zipfile.c
++            SDL/i_sndfile.c
++        )
++        list(APPEND SOURCES
++            wasm/zipfile.c
++            wasm/i_sndfile.c
++            wasm/gl_compat.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/bucketalloc.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/dict.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/geom.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/mesh.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/priorityq.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/sweep.c
++            ${DSDA_WASM_TESS2_SOURCE}/Source/tess.c
++        )
++    endif()
++
+     set(SOURCES
+         ${SOURCES}
+         gl_clipper.c
+@@ -553,6 +576,30 @@ function(AddGameExecutable TARGET SOURCES)
+         dsda::dependencies
+     )
+ 
++    if(EMSCRIPTEN)
++        target_compile_definitions(${TARGET} PRIVATE DSDA_WASM=1)
++        target_include_directories(${TARGET} PRIVATE ${DSDA_WASM_TESS2_SOURCE}/Include)
++        target_link_options(${TARGET} PRIVATE
++            "SHELL:-sMODULARIZE=1"
++            "SHELL:-sEXPORT_NAME=createDsdaDoom"
++            "SHELL:-sALLOW_MEMORY_GROWTH=1"
++            "SHELL:-sMAXIMUM_MEMORY=2147483648"
++            "SHELL:-sMIN_WEBGL_VERSION=2"
++            "SHELL:-sMAX_WEBGL_VERSION=2"
++            "SHELL:-sLEGACY_GL_EMULATION=1"
++            "SHELL:-sFORCE_FILESYSTEM=1"
++            "SHELL:-lidbfs.js"
++            "SHELL:-sEXPORTED_RUNTIME_METHODS=['FS','callMain']"
++            "SHELL:-sENVIRONMENT=web"
++            "SHELL:-sASSERTIONS=1"
++            "SHELL:-sSTACK_SIZE=524288"
++        )
++        set_target_properties(${TARGET} PROPERTIES
++            OUTPUT_NAME "dsda-doom"
++            SUFFIX ".js"
++        )
++    endif()
++
+     set_target_properties(${TARGET} PROPERTIES
+         RUNTIME_OUTPUT_DIRECTORY ${DSDA_OUTPUT_PATH}
+         C_STANDARD 99
+diff --git a/prboom2/src/SDL/i_sound.c b/prboom2/src/SDL/i_sound.c
+index 8d9c5df6..dd4d93d6 100644
+--- a/prboom2/src/SDL/i_sound.c
++++ b/prboom2/src/SDL/i_sound.c
+@@ -74,6 +74,10 @@
+ #include "dsda/ambient.h"
+ #include "dsda/settings.h"
+
++#ifdef __EMSCRIPTEN__
++#include <emscripten/emscripten.h>
++#endif
++
+ static dboolean registered_non_rw = false;
+
+ // The number of internal mixing channels,
+@@ -122,6 +126,21 @@ int   steptable[256];
+ // NSM
+ static int dumping_sound = 0;
+
++#ifdef __EMSCRIPTEN__
++static unsigned int browser_audio_callback_count;
++static int browser_audio_device_count;
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserAudioCallbackCount(void)
++{
++  return browser_audio_callback_count;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserAudioDeviceCount(void)
++{
++  return browser_audio_device_count;
++}
++#endif
++
+
+ // lock for updating any params related to sfx
+ SDL_mutex *sfxmutex;
+@@ -718,6 +737,11 @@ static void I_UpdateSound(void *unused, Uint8 *stream, int len)
+   // Mixing channel index.
+   int       chan;
+
++#ifdef __EMSCRIPTEN__
++  if (unused != (void *) 0xdeadbeef)
++    browser_audio_callback_count++;
++#endif
++
+   if (snd_midiplayer == NULL) // This is but a temporary fix. Please do remove after a more definitive one!
+     memset(stream, 0, len);
+
+@@ -858,6 +882,10 @@ void I_ShutdownSound(void)
+
+     sound_was_initialized = false;
+
++#ifdef __EMSCRIPTEN__
++    browser_audio_device_count = 0;
++#endif
++
+     if (sfxmutex)
+     {
+       SDL_DestroyMutex (sfxmutex);
+@@ -906,6 +934,10 @@ void I_InitSound(void)
+
+   sound_was_initialized = true;
+
++#ifdef __EMSCRIPTEN__
++  browser_audio_device_count = 1;
++#endif
++
+   Mix_SetPostMix(I_UpdateSound, NULL);
+
+   lprintf(LO_DEBUG, " configured audio device with %d samples/slice\n", audio_buffers);
+diff --git a/prboom2/src/SDL/i_system.c b/prboom2/src/SDL/i_system.c
+index b1a7c25..284d6f6 100644
+--- a/prboom2/src/SDL/i_system.c
++++ b/prboom2/src/SDL/i_system.c
+@@ -89,7 +89,11 @@
+ 
+ void I_uSleep(unsigned long usecs)
+ {
++#ifdef __EMSCRIPTEN__
++    (void)usecs;
++#else
+     SDL_Delay(usecs/1000);
++#endif
+ }
+ 
+ static dboolean InDisplay = false;
+diff --git a/prboom2/src/SDL/i_video.c b/prboom2/src/SDL/i_video.c
+index 8d965bef..7e48f96f 100644
+--- a/prboom2/src/SDL/i_video.c
++++ b/prboom2/src/SDL/i_video.c
+@@ -31,5 +31,9 @@
+ #include <SDL_render.h>
+ #include <SDL_video.h>
++#ifdef __EMSCRIPTEN__
++#include <emscripten/emscripten.h>
++#include <emscripten/html5.h>
++#endif
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -1164,7 +1164,15 @@ void I_InitGraphics(void)
+ 
+ void I_UpdateVideoMode(void)
+ {
++#ifdef __EMSCRIPTEN__
++  // The launcher supplies the physical WebGL backbuffer dimensions itself.
++  // SDL's browser HiDPI flag would multiply those dimensions again while
++  // SDL_GL_GetDrawableSize still reports the logical size, shrinking the GL
++  // viewport into the lower-left portion of the canvas.
++  int init_flags = 0;
++#else
+   int init_flags = SDL_WINDOW_ALLOW_HIGHDPI;
++#endif
+   int screen_multiply;
+   int render_vsync;
+   int integer_scaling;
+@@ -1276,6 +1284,15 @@ void I_UpdateVideoMode(void)
+   {
+     int flags = SDL_RENDERER_TARGETTEXTURE;
+ 
++#ifdef __EMSCRIPTEN__
++    SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "linear", SDL_HINT_OVERRIDE);
++    // SDL's accelerated renderer presents the native software scene through
++    // the browser GPU without depending on DSDA's desktop fixed-function GL
++    // renderer. Keep a software-presenter fallback for implementations that
++    // cannot provide the accelerated SDL backend.
++    flags |= SDL_RENDERER_ACCELERATED;
++#endif
++
+     if (render_vsync)
+       flags |= SDL_RENDERER_PRESENTVSYNC;
+ 
+@@ -1289,1 +1310,23 @@ void I_UpdateVideoMode(void)
++#ifdef __EMSCRIPTEN__
++    if (!sdl_renderer)
++    {
++      lprintf(LO_WARN, "Accelerated SDL presentation unavailable: %s\n", SDL_GetError());
++      flags &= ~SDL_RENDERER_ACCELERATED;
++      sdl_renderer = SDL_CreateRenderer(sdl_window, -1, flags);
++    }
++#endif
++
++    if (!sdl_renderer)
++      I_Error("Couldn't create SDL renderer [%s]", SDL_GetError());
++
++#ifdef __EMSCRIPTEN__
++    {
++      SDL_RendererInfo renderer_info;
++      if (SDL_GetRendererInfo(sdl_renderer, &renderer_info) == 0)
++        lprintf(LO_INFO, "[dsda-wasm] SDL presentation renderer: %s (0x%x)\n",
++                renderer_info.name ? renderer_info.name : "unknown",
++                renderer_info.flags);
++    }
++#endif
++
+     SDL_SetWindowMinimumSize(sdl_window, SCREENWIDTH, ACTUALHEIGHT);
+@@ -1335,7 +1347,9 @@ void I_UpdateVideoMode(void)
+ 
+   if (V_IsOpenGLMode())
+   {
++#ifndef __EMSCRIPTEN__
+     SDL_GL_SetSwapInterval((render_vsync ? 1 : 0));
++#endif
+   }
+ 
+   if (V_IsSoftwareMode())
+@@ -1435,16 +1453,85 @@ void I_UpdateVideoMode(void)
+
+ static void ActivateMouse(void)
+ {
++#ifdef __EMSCRIPTEN__
++  EmscriptenPointerlockChangeEvent status = {0};
++  if (emscripten_get_pointerlock_status(&status) != EMSCRIPTEN_RESULT_SUCCESS || !status.isActive)
++    return;
++#endif
+   SDL_SetRelativeMouseMode(SDL_TRUE);
+   SDL_GetRelativeMouseState(NULL, NULL);
+ }
+
+ static void DeactivateMouse(void)
+ {
+   SDL_ShowCursor(SDL_ENABLE);
+   SDL_SetRelativeMouseMode(SDL_FALSE);
+ }
++
++#ifdef __EMSCRIPTEN__
++EMSCRIPTEN_KEEPALIVE void I_BrowserSetInputCaptured(int captured)
++{
++  if (captured)
++    ActivateMouse();
++  else
++    DeactivateMouse();
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerKey(int keycode, int pressed)
++{
++  SDL_Event event;
++
++  SDL_zero(event);
++  event.type = pressed ? SDL_KEYDOWN : SDL_KEYUP;
++  event.key.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++  event.key.repeat = 0;
++  event.key.keysym.sym = (SDL_Keycode)keycode;
++  event.key.keysym.scancode = SDL_GetScancodeFromKey((SDL_Keycode)keycode);
++  event.key.keysym.mod = KMOD_NONE;
++  SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerMouse(int dx, int dy)
++{
++  SDL_Event event;
++
++  if (!dx && !dy)
++    return;
++
++  SDL_zero(event);
++  event.type = SDL_MOUSEMOTION;
++  event.motion.xrel = dx;
++  event.motion.yrel = dy;
++  SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerButton(int button, int pressed)
++{
++  SDL_Event event;
++
++  SDL_zero(event);
++  event.type = pressed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
++  event.button.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++  event.button.button = (Uint8)button;
++  event.button.clicks = 1;
++  SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerWheel(int y)
++{
++  SDL_Event event;
++
++  if (!y)
++    return;
++
++  SDL_zero(event);
++  event.type = SDL_MOUSEWHEEL;
++  event.wheel.y = y;
++  event.wheel.direction = SDL_MOUSEWHEEL_NORMAL;
++  SDL_PushEvent(&event);
++}
++#endif
+
+ // Interpolates mouse input to mitigate stuttering
+ static void CorrectMouseStutter(int *x, int *y)
+ {
+@@ -1583,8 +1651,10 @@ void UpdateGrab(void)
+     if (!currently_grabbed)
+       ActivateMouse();
+ 
++#ifndef __EMSCRIPTEN__
+     if (!demoplayback || walkcamera.type)
+       SDL_WarpMouseInWindow(sdl_window, window_rect.w / 2, window_rect.h / 2);
++#endif
+   }
+   else if (currently_grabbed)
+     DeactivateMouse();
+diff --git a/prboom2/src/d_client.c b/prboom2/src/d_client.c
+index d8c6ff9f..733131d5 100644
+--- a/prboom2/src/d_client.c
++++ b/prboom2/src/d_client.c
+@@ -114,13 +114,24 @@ int ms_to_next_tick;
+ void TryRunTics (void)
+ {
+   int runtics;
++#ifndef __EMSCRIPTEN__
+   int entertime = dsda_GetTick();
++#endif
+
+   // Wait for tics to run
+   while (1) {
+     FakeNetUpdate();
+     runtics = maketic - gametic;
+     if (!runtics) {
++#ifdef __EMSCRIPTEN__
++      // The desktop loop waits here until the next 35 Hz game tic and renders
++      // interpolation frames inside that wait. In a browser this monopolizes
++      // the event loop, so only the final frame becomes visible. Return to the
++      // outer browser frame, which performs one interpolated D_Display call.
++      // The first game tic still has to complete before anything can render.
++      if (gametic > 0)
++        return;
++#else
+       if (!movement_smooth) {
+           I_uSleep(ms_to_next_tick*1000);
+       }
+@@ -138,6 +149,7 @@ void TryRunTics (void)
+           isExtraDDisplay = false;
+         }
+       }
++#endif
+     } else break;
+   }
+
+diff --git a/prboom2/src/d_main.c b/prboom2/src/d_main.c
+index 818b17da..84cbab84 100644
+--- a/prboom2/src/d_main.c
++++ b/prboom2/src/d_main.c
+@@ -109,6 +109,81 @@
+ #include "dsda/utility.h"
+ #include "dsda/wad_stats.h"
+ #include "dsda/zipfile.h"
++
++#ifdef __EMSCRIPTEN__
++#include <emscripten/emscripten.h>
++static unsigned long browser_frame_count;
++
++EMSCRIPTEN_KEEPALIVE unsigned long I_BrowserFrameCount(void)
++{
++  return browser_frame_count;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerX(void)
++{
++  return players[consoleplayer].mo ? players[consoleplayer].mo->x / FRACUNIT : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerY(void)
++{
++  return players[consoleplayer].mo ? players[consoleplayer].mo->y / FRACUNIT : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserPlayerAngle(void)
++{
++  return players[consoleplayer].mo ? players[consoleplayer].mo->angle : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserViewPitch(void)
++{
++  return viewpitch;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserScreenWidth(void)
++{
++  return SCREENWIDTH;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserScreenHeight(void)
++{
++  return SCREENHEIGHT;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserTargetFPS(void)
++{
++  return dsda_IntConfig(dsda_config_fps_limit);
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserRuntimeState(void)
++{
++  if (dsda_Paused())
++    return 2;
++  if (menuactive != mnact_inactive)
++    return 0;
++  if (gamestate == GS_INTERMISSION)
++    return 3;
++  return gamestate == GS_LEVEL && !demoplayback ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserOpenMenu(void)
++{
++  if (gamestate == GS_LEVEL && menuactive == mnact_inactive)
++    M_StartControlPanel();
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserResizeViewport(int width, int height)
++{
++  char resolution[32];
++
++  if (width < 320 || height < 200 || width > 8192 || height > 8192 ||
++      (width == SCREENWIDTH && height == SCREENHEIGHT))
++    return;
++
++  snprintf(resolution, sizeof(resolution), "%dx%d", width, height);
++  dsda_UpdateStringConfig(dsda_config_custom_resolution, resolution, false);
++  dsda_UpdateStringConfig(dsda_config_screen_resolution, resolution, false);
++}
++#endif
+ #include "dsda/gl/render_scale.h"
+ 
+ #include "heretic/mn_menu.h"
+@@ -569,13 +644,11 @@ void D_Display (fixed_t frac)
+ //  calls I_GetTime, I_StartFrame, and I_StartTic
+ //
+ 
+-static void D_DoomLoop(void)
++static void D_DoomFrame(void)
+ {
+-  if (dsda_IntConfig(dsda_config_startup_delay_ms) > 0)
+-    I_uSleep(dsda_IntConfig(dsda_config_startup_delay_ms) * 1000);
+-
+-  for (;;)
+-  {
++#ifdef __EMSCRIPTEN__
++    browser_frame_count++;
++#endif
+     if (I_Interrupted())
+       I_SafeExit(0);
+ 
+@@ -633,7 +706,20 @@ static void D_DoomLoop(void)
+         D_Display(-1);
+       }
+     }
+-  }
++}
++
++static void D_DoomLoop(void)
++{
++#ifndef __EMSCRIPTEN__
++  if (dsda_IntConfig(dsda_config_startup_delay_ms) > 0)
++    I_uSleep(dsda_IntConfig(dsda_config_startup_delay_ms) * 1000);
++
++  for (;;)
++    D_DoomFrame();
++#else
++  lprintf(LO_INFO, "[dsda-wasm] cooperative browser main loop registered\n");
++  emscripten_set_main_loop(D_DoomFrame, 0, 1);
++#endif
+ }
+ 
+ //
+@@ -1749,11 +1835,13 @@ static void EvaluateDoomVerStr(void)
+   }
+
+   /* cphipps - the main display. This shows the copyright and game type */
++#ifndef __EMSCRIPTEN__
+   lprintf(LO_INFO,
+           "%s is released under the GNU General Public license v2.0.\n"
+           "You are welcome to redistribute it under certain conditions.\n"
+           "It comes with ABSOLUTELY NO WARRANTY. See the file COPYING for details.\n\n",
+           PROJECT_NAME);
++#endif
+
+   lprintf(LO_INFO, "Playing: %s\n", doomverstr);
+ }
+diff --git a/prboom2/src/gl_fbo.c b/prboom2/src/gl_fbo.c
+index d1282c6..df73a87 100644
+--- a/prboom2/src/gl_fbo.c
++++ b/prboom2/src/gl_fbo.c
+@@ -84,7 +84,14 @@ static dboolean gld_CreateScreenSizeFBO(void)
+   GLEXT_glGenRenderbuffersEXT(1, &glDepthBufferFBOTexID);
+   GLEXT_glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, glDepthBufferFBOTexID);
+ 
++#ifdef __EMSCRIPTEN__
++  // WebGL 2 requires sized renderbuffer formats. Desktop GL accepts the
++  // unsized GL_DEPTH_COMPONENT used by the original renderer, but WebGL
++  // leaves that attachment incomplete.
++  internalFormat = (attach_stencil ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT24);
++#else
+   internalFormat = (attach_stencil ? GL_DEPTH_STENCIL_EXT : GL_DEPTH_COMPONENT);
++#endif
+   GLEXT_glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalFormat, SCREENWIDTH, SCREENHEIGHT);
+ 
+   // attach a renderbuffer to depth attachment point
+@@ -98,9 +105,15 @@ static dboolean gld_CreateScreenSizeFBO(void)
+ 
+   glGenTextures(1, &glSceneImageTextureFBOTexID);
+   glBindTexture(GL_TEXTURE_2D, glSceneImageTextureFBOTexID);
++#ifdef __EMSCRIPTEN__
++  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, SCREENWIDTH, SCREENHEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
++  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
++  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
++#else
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREENWIDTH, SCREENHEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
++#endif
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+ 
+diff --git a/prboom2/src/gl_light.c b/prboom2/src/gl_light.c
+index ab76a0e..bd168d3 100644
+--- a/prboom2/src/gl_light.c
++++ b/prboom2/src/gl_light.c
+@@ -94,9 +94,20 @@ void gld_StaticLightAlpha(float light, float alpha)
+ {
+   player_t *player = &players[displayplayer];
+ 
++#ifdef __EMSCRIPTEN__
++  if (player->fixedcolormap)
++    light = 1.0f;
++  else
++    /* RGBA8 textures are authored for display gamma.  A direct linear
++       multiply makes DSDA's normal sector levels much darker in WebGL than
++       either the software colormap or desktop shader. */
++    light = sqrtf(BETWEEN(0.0f, 1.0f, light));
++  glColor4f(light, light, light, alpha);
++#else
+   glColor4f(1.0f, 1.0f, 1.0f, alpha);
+ 
+   glsl_SetLightLevel((player->fixedcolormap ? 1.0f : light));
++#endif
+ }
+ 
+ // [XA] return amount of light to add from the player's gun flash.
+diff --git a/prboom2/src/gl_main.c b/prboom2/src/gl_main.c
+index 75dd7fd..0f620bc 100644
+--- a/prboom2/src/gl_main.c
++++ b/prboom2/src/gl_main.c
+@@ -201,13 +201,15 @@ void gld_Init(int width, int height)
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // proff_dis
++#ifndef __EMSCRIPTEN__
+   glShadeModel(GL_FLAT);
++#endif
+   gld_EnableTexture2D(GL_TEXTURE0_ARB, true);
+   glDepthFunc(GL_LEQUAL);
+   glEnable(GL_ALPHA_TEST);
+   glAlphaFunc(GL_GREATER, 0.0f);
+   glDisable(GL_CULL_FACE);
+-  glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
++  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+ 
+   glTexGenfv(GL_Q,GL_EYE_PLANE,params);
+   glTexGenf(GL_S,GL_TEXTURE_GEN_MODE,GL_EYE_LINEAR);
+@@ -466,9 +468,15 @@ void gld_DrawTriangleStrip(GLWall *wall, gl_strip_coords_t *c)
+ 
+ void gld_BeginUIDraw(void)
+ {
++#ifndef __EMSCRIPTEN__
+   gld_InitColormapTextures(true);
++#endif
+   glsl_PushMainShader();
++#ifdef __EMSCRIPTEN__
++  gl_ui_lightmode_indexed = false;
++#else
+   gl_ui_lightmode_indexed = true;
++#endif
+ }
+ 
+ void gld_EndUIDraw(void)
+@@ -479,9 +487,15 @@ void gld_EndUIDraw(void)
+ 
+ void gld_BeginAutomapDraw(void)
+ {
++#ifndef __EMSCRIPTEN__
+   gld_InitColormapTextures(true);
++#endif
+   glsl_PushNullShader();
++#ifdef __EMSCRIPTEN__
++  gl_automap_lightmode_indexed = false;
++#else
+   gl_automap_lightmode_indexed = true;
++#endif
+ }
+ 
+ void gld_EndAutomapDraw(void)
+@@ -492,9 +506,15 @@ void gld_EndAutomapDraw(void)
+ 
+ void gld_BeginMenuDraw(void)
+ {
++#ifndef __EMSCRIPTEN__
+   gld_InitColormapTextures(true);
++#endif
+   glsl_PushNullShader();
++#ifdef __EMSCRIPTEN__
++  gl_menu_lightmode_indexed = false;
++#else
+   gl_menu_lightmode_indexed = true;
++#endif
+ }
+ 
+ void gld_EndMenuDraw(void)
+@@ -904,7 +924,18 @@ void gld_SetPalette(int palette)
+ 
+   // [XA] store the current palette so
+   // the indexed lightmode can use it.
++#ifdef __EMSCRIPTEN__
++  /*
++   * Browser textures use DSDA's expanded RGBA path because the legacy-GL
++   * compatibility shader owns its attributes.  Selecting a palette-specific
++   * indexed sky while the rest of the world stays RGBA makes pickup flashes
++   * tint only the sky.  Keep the complete true-colour scene on PLAYPAL 0; a
++   * later WebGL-native post-process can restore whole-screen palette flashes.
++   */
++  gld_SetIndexedPalette(0);
++#else
+   gld_SetIndexedPalette(palette);
++#endif
+ }
+ 
+ unsigned char *gld_ReadScreen(void)
+@@ -1186,6 +1217,25 @@ static void gld_DrawWall(GLWall *wall)
+   {
+     gld_StaticLightAlpha(wall->light, wall->alpha);
+ 
++#ifdef __EMSCRIPTEN__
++    /*
++     * Emscripten's legacy fixed-function bridge corrupts triangle fans that
++     * contain the optional T-junction edge vertices below.  Doom walls are
++     * rectangular, so submit the four corners as an ordinary strip in the
++     * browser.  This preserves the wall plane and texture coordinates; the
++     * desktop path keeps DSDA's crack-prevention splits unchanged.
++     */
++    glBegin(GL_TRIANGLE_STRIP);
++
++    glTexCoord2f(wall->ul, wall->vb);
++    glVertex3f(wall->glseg->x1, wall->ybottom, wall->glseg->z1);
++    glTexCoord2f(wall->ul, wall->vt);
++    glVertex3f(wall->glseg->x1, wall->ytop, wall->glseg->z1);
++    glTexCoord2f(wall->ur, wall->vb);
++    glVertex3f(wall->glseg->x2, wall->ybottom, wall->glseg->z2);
++    glTexCoord2f(wall->ur, wall->vt);
++    glVertex3f(wall->glseg->x2, wall->ytop, wall->glseg->z2);
++#else
+     glBegin(GL_TRIANGLE_FAN);
+ 
+     // lower left corner
+@@ -1211,6 +1261,7 @@ static void gld_DrawWall(GLWall *wall)
+     // lower right corner
+     glTexCoord2f(wall->ur,wall->vb);
+     glVertex3f(wall->glseg->x2,wall->ybottom,wall->glseg->z2);
++#endif
+ 
+     glEnd();
+   }
+@@ -2603,6 +2654,21 @@ void gld_DrawScene(player_t *player)
+     gld_DrawFlat(gld_drawinfo.items[GLDIT_CEILING][i].item.flat);
+   }
+ 
++#ifdef __EMSCRIPTEN__
++  /*
++   * Floors and ceilings above use a packed VBO.  Native fixed-function GL
++   * safely keeps that buffer and its client arrays live while subsequent
++   * walls/sprites use glBegin/glEnd.  Emscripten's compatibility bridge does
++   * not: its immediate-mode staging inherits the stale VBO array state and
++   * reads unrelated flat vertices, producing long skewed wall triangles.
++   */
++  if (gl_ext_arb_vertex_buffer_object)
++    GLEXT_glBindBufferARB(GL_ARRAY_BUFFER, 0);
++  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
++  glDisableClientState(GL_VERTEX_ARRAY);
++  glDisableClientState(GL_COLOR_ARRAY);
++#endif
++
+   // disable backside removing
+   glDisable(GL_CULL_FACE);
+ 
+diff --git a/prboom2/src/gl_opengl.c b/prboom2/src/gl_opengl.c
+index dd64aad..9c8362a 100644
+--- a/prboom2/src/gl_opengl.c
++++ b/prboom2/src/gl_opengl.c
+@@ -31,6 +31,10 @@
+  *---------------------------------------------------------------------
+  */
+ 
++#ifdef __EMSCRIPTEN__
++#define GL_GLEXT_PROTOTYPES 1
++#endif
++
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -128,6 +132,20 @@ PFNGLGETUNIFORMFVARBPROC         GLEXT_glGetUniformfvARB = NULL;
+ int gl_major_version;
+ int gl_minor_version;
+ 
++#ifdef __EMSCRIPTEN__
++static void gld_WasmMultiTexCoord2f(GLenum target, GLfloat s, GLfloat t)
++{
++  (void)target;
++  glTexCoord2f(s, t);
++}
++
++static void gld_WasmMultiTexCoord2fv(GLenum target, const GLfloat *value)
++{
++  (void)target;
++  glTexCoord2fv(value);
++}
++#endif
++
+ void gld_InitOpenGLVersion(void)
+ {
+   sscanf((const char*) glGetString(GL_VERSION), "%d.%d", &gl_major_version, &gl_minor_version);
+@@ -136,6 +154,7 @@ void gld_InitOpenGLVersion(void)
+ void gld_InitOpenGL(void)
+ {
+   GLenum texture;
++  GLint texture_units = 32;
+   const char *extensions = (const char*)glGetString(GL_EXTENSIONS);
+   dboolean gl_arb_multitexture = false;
+   dboolean gl_arb_texture_non_power_of_two = false;
+@@ -148,6 +167,11 @@ void gld_InitOpenGL(void)
+ 
+   // Any textures sizes are allowed
+   gl_arb_texture_non_power_of_two = isExtensionSupported("GL_ARB_texture_non_power_of_two") != NULL;
++#ifdef __EMSCRIPTEN__
++  // WebGL 2 guarantees non-power-of-two textures, although its compatibility
++  // extension string does not advertise the desktop ARB token DSDA expects.
++  gl_arb_texture_non_power_of_two = true;
++#endif
+   if (!gl_arb_texture_non_power_of_two)
+     I_Error("gld_InitOpenGL: OpenGL driver does not support GL_ARB_texture_non_power_of_two");
+ 
+@@ -156,6 +180,13 @@ void gld_InitOpenGL(void)
+   //
+ 
+   gl_arb_multitexture = isExtensionSupported("GL_ARB_multitexture") != NULL;
++#ifdef __EMSCRIPTEN__
++  gl_arb_multitexture = true;
++  GLEXT_glActiveTextureARB        = (PFNGLACTIVETEXTUREARBPROC)glActiveTexture;
++  GLEXT_glClientActiveTextureARB  = (PFNGLCLIENTACTIVETEXTUREARBPROC)glClientActiveTexture;
++  GLEXT_glMultiTexCoord2fARB      = gld_WasmMultiTexCoord2f;
++  GLEXT_glMultiTexCoord2fvARB     = gld_WasmMultiTexCoord2fv;
++#else
+   if (gl_arb_multitexture)
+   {
+     GLEXT_glActiveTextureARB        = SDL_GL_GetProcAddress("glActiveTextureARB");
+@@ -167,6 +198,7 @@ void gld_InitOpenGL(void)
+         !GLEXT_glMultiTexCoord2fARB || !GLEXT_glMultiTexCoord2fvARB)
+       gl_arb_multitexture = false;
+   }
++#endif
+   if (!gl_arb_multitexture)
+     I_Error("gld_InitOpenGL: OpenGL driver does not support GL_ARB_multitexture");
+ 
+@@ -213,6 +245,15 @@ void gld_InitOpenGL(void)
+   if (gl_ext_framebuffer_object)
+     lprintf(LO_DEBUG, "using GL_EXT_framebuffer_object\n");
+ 
++#ifdef __EMSCRIPTEN__
++  // DSDA's desktop fixed-function render-to-texture pass depends on state
++  // that Emscripten's legacy-GL emulation cannot preserve correctly across a
++  // WebGL framebuffer bind. Render directly to the browser backbuffer; WebGL
++  // 2 still provides the real GL scene renderer and the default framebuffer
++  // supplies multisampling. This also avoids a white fullscreen FBO blit.
++  gl_ext_framebuffer_object = false;
++#endif
++
+   gl_ext_packed_depth_stencil = isExtensionSupported("GL_EXT_packed_depth_stencil") != NULL;
+   if (gl_ext_packed_depth_stencil)
+     lprintf(LO_DEBUG, "using GL_EXT_packed_depth_stencil\n");
+@@ -285,6 +326,22 @@ void gld_InitOpenGL(void)
+                           isExtensionSupported ("GL_ARB_vertex_shader") &&
+                           isExtensionSupported ("GL_ARB_fragment_shader") &&
+                           isExtensionSupported ("GL_ARB_shading_language_100");
++#ifdef __EMSCRIPTEN__
++  gl_arb_shader_objects = true;
++  GLEXT_glCreateShaderObjectARB  = (PFNGLCREATESHADEROBJECTARBPROC)glCreateShader;
++  GLEXT_glShaderSourceARB        = (PFNGLSHADERSOURCEARBPROC)glShaderSource;
++  GLEXT_glCompileShaderARB       = (PFNGLCOMPILESHADERARBPROC)glCompileShader;
++  GLEXT_glCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)glCreateProgram;
++  GLEXT_glAttachObjectARB        = (PFNGLATTACHOBJECTARBPROC)glAttachShader;
++  GLEXT_glLinkProgramARB         = (PFNGLLINKPROGRAMARBPROC)glLinkProgram;
++  GLEXT_glUseProgramObjectARB    = (PFNGLUSEPROGRAMOBJECTARBPROC)glUseProgram;
++  GLEXT_glUniform1fARB           = (PFNGLUNIFORM1FARBPROC)glUniform1f;
++  GLEXT_glUniform2fARB           = (PFNGLUNIFORM2FARBPROC)glUniform2f;
++  GLEXT_glUniform1iARB           = (PFNGLUNIFORM1IARBPROC)glUniform1i;
++  GLEXT_glGetObjectParameterivARB = glGetObjectParameterivARB;
++  GLEXT_glGetInfoLogARB          = glGetInfoLogARB;
++  GLEXT_glGetUniformLocationARB  = (PFNGLGETUNIFORMLOCATIONARBPROC)glGetUniformLocation;
++#else
+   if (gl_arb_shader_objects)
+   {
+ 		GLEXT_glDeleteObjectARB        = SDL_GL_GetProcAddress("glDeleteObjectARB");
+@@ -325,6 +382,18 @@ void gld_InitOpenGL(void)
+         !GLEXT_glGetUniformfvARB)
+       gl_arb_shader_objects = false;
+   }
++#endif
++
++#ifdef __EMSCRIPTEN__
++  if (!GLEXT_glCreateShaderObjectARB || !GLEXT_glShaderSourceARB ||
++      !GLEXT_glCompileShaderARB || !GLEXT_glCreateProgramObjectARB ||
++      !GLEXT_glAttachObjectARB || !GLEXT_glLinkProgramARB ||
++      !GLEXT_glUseProgramObjectARB || !GLEXT_glUniform1fARB ||
++      !GLEXT_glUniform2fARB || !GLEXT_glUniform1iARB ||
++      !GLEXT_glGetObjectParameterivARB || !GLEXT_glGetInfoLogARB ||
++      !GLEXT_glGetUniformLocationARB)
++    gl_arb_shader_objects = false;
++#endif
+ 
+   if (!gl_arb_shader_objects)
+   {
+@@ -343,7 +412,15 @@ void gld_InitOpenGL(void)
+   gld_EnableMultisample(true);
+   gld_EnableMultisample(false);
+ 
+-  for (texture = GL_TEXTURE0_ARB; texture <= GL_TEXTURE31_ARB; texture++)
++#ifdef __EMSCRIPTEN__
++  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units);
++  // Emscripten's fixed-function compatibility renderer intentionally exposes
++  // at most 28 units even when WebGL reports 32 physical units.
++  if (texture_units > 28) texture_units = 28;
++#endif
++  for (texture = GL_TEXTURE0_ARB;
++       texture < (GLenum)(GL_TEXTURE0_ARB + texture_units);
++       texture++)
+   {
+     gld_EnableTexture2D(texture, true);
+     gld_EnableTexture2D(texture, false);
+@@ -476,6 +553,18 @@ void gld_EnableMultisample(int enable)
+ 
+ void SetTextureMode(tex_mode_e type)
+ {
++#ifdef __EMSCRIPTEN__
++  const GLenum texture_source = GL_TEXTURE;
++  // The WebGL build uses pre-expanded RGBA textures, so the standard
++  // fixed-function modulation path already supplies RGB and alpha. Avoid
++  // desktop texture combiners that Emscripten has to synthesize and cannot
++  // reliably combine with its immediate-mode vertex shader.
++  (void)type;
++  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
++  return;
++#else
++  const GLenum texture_source = GL_TEXTURE0;
++#endif
+   if (type == TM_MASK)
+   {
+     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+@@ -485,7 +574,7 @@ void SetTextureMode(tex_mode_e type)
+ 
+     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
+     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
+-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_TEXTURE0);
++    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, texture_source);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
+   }
+@@ -493,7 +582,7 @@ void SetTextureMode(tex_mode_e type)
+   {
+     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
++    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, texture_source);
+     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PRIMARY_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+@@ -506,14 +595,14 @@ void SetTextureMode(tex_mode_e type)
+   {
+     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
++    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, texture_source);
+     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PRIMARY_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_ONE_MINUS_SRC_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+ 
+     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
+     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
+-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_TEXTURE0);
++    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, texture_source);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
+   }
+@@ -521,7 +610,7 @@ void SetTextureMode(tex_mode_e type)
+   {
+     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
++    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, texture_source);
+     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PRIMARY_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_ONE_MINUS_SRC_COLOR);
+     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+diff --git a/prboom2/src/gl_shader.c b/prboom2/src/gl_shader.c
+index bdf84c2..3ef4d00 100644
+--- a/prboom2/src/gl_shader.c
++++ b/prboom2/src/gl_shader.c
+@@ -212,12 +212,20 @@ static void glsl_ShaderSrcProcess(shader_source_t* src, const GLchar* text,
+ 
+   while (dsda_GetStringViewLine(&v, &line))
+   {
+-    // Output any version and extension directives before defines
+-    if (dsda_StringViewStartsWith(&line, vdir))
+-    {
+-      glsl_ShaderSrcAppend(src, line.string, line.size);
+-      continue;
+-    }
++    // Output any version and extension directives before defines
++    if (dsda_StringViewStartsWith(&line, vdir))
++    {
++#ifdef __EMSCRIPTEN__
++      // Emscripten's legacy-GL compatibility layer supplies the WebGL GLSL
++      // version and prelude before translating this desktop GLSL source. A
++      // second #version from the WAD lump lands after that prelude and WebGL
++      // correctly rejects it for not being the first directive.
++      continue;
++#else
++      glsl_ShaderSrcAppend(src, line.string, line.size);
++      continue;
++#endif
++    }
+ 
+     if (dsda_StringViewStartsWith(&line, edir))
+     {
+@@ -623,24 +631,36 @@ void glsl_PopNullShader(void)
+   glsl_ShaderPop(NULL);
+ }
+ 
+-void glsl_PushMainShader(void)
+-{
+-  int mode = dsda_IntConfig(dsda_config_gl_fade_mode);
++void glsl_PushMainShader(void)
++{
++#ifdef __EMSCRIPTEN__
++  glsl_ShaderPush(NULL);
++#else
++  int mode = dsda_IntConfig(dsda_config_gl_fade_mode);
+ 
+   glsl_ShaderPush(sh_main,
+-                  MAIN_UNIF_FADE_MODE, mode,
+-                  UNIF_VAL_END);
+-}
+-
+-void glsl_PopMainShader(void)
+-{
+-  glsl_ShaderPop(sh_main);
+-}
+-
+-void glsl_SetLightLevel(float lightlevel)
+-{
+-  glsl_ShaderUniform(sh_main, MAIN_UNIF_LIGHTLEVEL, lightlevel);
+-}
++                  MAIN_UNIF_FADE_MODE, mode,
++                  UNIF_VAL_END);
++#endif
++}
++
++void glsl_PopMainShader(void)
++{
++#ifdef __EMSCRIPTEN__
++  glsl_ShaderPop(NULL);
++#else
++  glsl_ShaderPop(sh_main);
++#endif
++}
++
++void glsl_SetLightLevel(float lightlevel)
++{
++#ifdef __EMSCRIPTEN__
++  (void)lightlevel;
++#else
++  glsl_ShaderUniform(sh_main, MAIN_UNIF_LIGHTLEVEL, lightlevel);
++#endif
++}
+ 
+ void glsl_PushFuzzShader(int tic, int sprite, float ratio)
+ {
+diff --git a/prboom2/src/gl_sky.c b/prboom2/src/gl_sky.c
+index 833cc8c..e1ddfde 100644
+--- a/prboom2/src/gl_sky.c
++++ b/prboom2/src/gl_sky.c
+@@ -452,6 +452,15 @@ void gld_GetSkyCapColors(void)
+   PalEntry_t *ceiling_rgb = &SkyBox.CeilingSkyColor[0];
+   PalEntry_t *floor_rgb = &SkyBox.FloorSkyColor[0];
+ 
++#ifdef __EMSCRIPTEN__
++  // GLES/WebGL intentionally has no glGetTexImage or texture-level query.
++  // The cap tint is cosmetic; avoid a synchronous GPU readback and use black
++  // caps while the dome itself renders with explicit VBO texture coordinates.
++  memset(SkyBox.CeilingSkyColor, 0, sizeof(SkyBox.CeilingSkyColor));
++  memset(SkyBox.FloorSkyColor, 0, sizeof(SkyBox.FloorSkyColor));
++  return;
++#endif
++
+   // saving current colormap
+   fixedcolormap_saved = fixedcolormap;
+   frame_fixedcolormap_saved = frame_fixedcolormap;
+diff --git a/prboom2/src/gl_texture.c b/prboom2/src/gl_texture.c
+index 15a12a6..2be2af8 100644
+--- a/prboom2/src/gl_texture.c
++++ b/prboom2/src/gl_texture.c
+@@ -779,6 +779,13 @@ GLTexture *gld_RegisterTexture(int texture_num, dboolean mipmap, dboolean force,
+ {
+   GLTexture *gltexture;
+ 
++#ifdef __EMSCRIPTEN__
++  // Emscripten's legacy-GL translator owns the vertex attributes used by its
++  // generated WebGL program. DSDA's indexed palette shader cannot consume
++  // those private attributes, so use DSDA's native RGBA texture path here.
++  indexed = false;
++#endif
++
+   //e6y: textures with zero index should be loaded sometimes
+   if (texture_num == NO_TEXTURE && !force)
+     return NULL;
+@@ -835,8 +842,13 @@ void gld_SetTexFilters(GLTexture *gltexture)
+ {
+   float aniso_filter = 0.0f;
+ 
++#ifdef __EMSCRIPTEN__
++  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
++  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
++#else
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
++#endif
+   if (aniso_filter > 0.0f)
+     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso_filter);
+ }
+@@ -890,15 +902,20 @@ void gld_SetTexClamp(GLTexture *gltexture, unsigned int flags)
+ 
+ int gld_BuildTexture(GLTexture *gltexture, void *data, dboolean readonly, int width, int height)
+ {
+-  int tex_width, tex_height, tex_format;
++  int tex_width, tex_height, tex_format, internal_format;
+ 
+   tex_format = gltexture->flags & GLTEXTURE_INDEXED ? GL_RG : GL_RGBA;
++#ifdef __EMSCRIPTEN__
++  internal_format = gltexture->flags & GLTEXTURE_INDEXED ? GL_RG8 : GL_RGBA8;
++#else
++  internal_format = tex_format;
++#endif
+   tex_width  = gld_GetTexDimension(width);
+   tex_height = gld_GetTexDimension(height);
+ 
+   glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+ 
+-  glTexImage2D( GL_TEXTURE_2D, 0, tex_format,
++  glTexImage2D( GL_TEXTURE_2D, 0, internal_format,
+     tex_width, tex_height,
+     0, tex_format, GL_UNSIGNED_BYTE, data);
+ 
+@@ -988,6 +1005,10 @@ GLTexture *gld_RegisterPatch(int lump, int cm, dboolean is_sprite, dboolean inde
+   const rpatch_t *patch;
+   GLTexture *gltexture;
+ 
++#ifdef __EMSCRIPTEN__
++  indexed = false;
++#endif
++
+   gltexture=gld_AddNewGLPatchTexture(lump, indexed);
+   if (!gltexture)
+     return NULL;
+@@ -1087,6 +1108,10 @@ GLTexture *gld_RegisterRaw(int lump, int width, int height, dboolean mipmap, dbo
+ {
+   GLTexture *gltexture;
+ 
++#ifdef __EMSCRIPTEN__
++  indexed = false;
++#endif
++
+   gltexture=gld_AddNewGLPatchTexture(lump, indexed);
+   if (!gltexture)
+     return NULL;
+@@ -1358,7 +1383,11 @@ void gld_InitFuzzTexture(void)
+ 
+     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+ 
++#ifdef __EMSCRIPTEN__
++    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F,
++#else
+     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,
++#endif
+                  sizeof(fuzz) / sizeof(*fuzz), 1, 0, GL_RED,
+                  GL_FLOAT, fuzz);
+ 
+diff --git a/prboom2/src/m_cheat.c b/prboom2/src/m_cheat.c
+index 9375030..f0423d6 100644
+--- a/prboom2/src/m_cheat.c
++++ b/prboom2/src/m_cheat.c
+@@ -1000,6 +1000,19 @@ static void cht_InitCheats(void)
+ // Called in st_stuff module, which handles the input.
+ // Returns a 1 if the cheat was successful, 0 if failed.
+ //
++static void M_InvokeCheat(void (*func)(), int arg, char *text)
++{
++  // Native desktop ABIs happened to tolerate calling every handler through
++  // an unprototyped function pointer with one argument. WebAssembly tables
++  // enforce exact signatures, so zero-argument cheats such as IDDQD trapped.
++  if (text)
++    ((void (*)(char *))func)(text);
++  else if (func == (void (*)())cheat_pw || func == (void (*)())cheat_tntkeyxx)
++    ((void (*)(int))func)(arg);
++  else
++    func();
++}
++
+ static int M_FindCheats(int key)
+ {
+   int rc = 0;
+@@ -1051,13 +1064,14 @@ static int M_FindCheats(int key)
+ 
+           // process the arg buffer
+           memcpy(argbuf, cht->parameter_buf, -cht->arg);
++          argbuf[-cht->arg] = '\0';
+ 
+-          cht->func(argbuf);
++          M_InvokeCheat(cht->func, cht->arg, argbuf);
+         }
+         else
+         {
+           // call cheat handler
+-          cht->func(cht->arg);
++          M_InvokeCheat(cht->func, cht->arg, NULL);
+ 
+           if (cht->repeatable)
+           {
+@@ -1120,7 +1134,7 @@ dboolean M_CheatResponder(event_t *ev)
+     if (dsda_InputActivated(cheat_i->input))
+     {
+       if (M_CheatAllowed(cheat_i->when))
+-        cheat_i->func(cheat_i->arg);
++        M_InvokeCheat(cheat_i->func, cheat_i->arg, NULL);
+ 
+       return true;
+     }
+@@ -1145,9 +1159,13 @@ dboolean M_CheatEntered(const char* element, const char* value)
+     if (!strcmp(cheat_i->cheat, element) && M_CheatAllowed(cheat_i->when & ~not_menu))
+     {
+       if (cheat_i->arg >= 0)
+-        cheat_i->func(cheat_i->arg);
++        M_InvokeCheat(cheat_i->func, cheat_i->arg, NULL);
+       else
+-        cheat_i->func(value);
++      {
++        char parameter[CHEAT_ARGS_MAX + 1];
++        snprintf(parameter, sizeof(parameter), "%s", value);
++        M_InvokeCheat(cheat_i->func, cheat_i->arg, parameter);
++      }
+       return true;
+     }
+   }
+diff --git a/prboom2/src/m_misc.c b/prboom2/src/m_misc.c
+index 3f5231b..43920c5 100644
+--- a/prboom2/src/m_misc.c
++++ b/prboom2/src/m_misc.c
+@@ -386,8 +386,8 @@ cfg_def_t cfg_defs[] =
+ cfg_input_def_t input_defs[] = {
+   INPUT_SETTING("input_forward", dsda_input_forward, 'w', 2, -1),
+   INPUT_SETTING("input_backward", dsda_input_backward, 's', -1, -1),
+-  INPUT_SETTING("input_turnleft", dsda_input_turnleft, 'e', -1, -1),
+-  INPUT_SETTING("input_turnright", dsda_input_turnright, 'q', -1, -1),
++  INPUT_SETTING("input_turnleft", dsda_input_turnleft, 'q', -1, -1),
++  INPUT_SETTING("input_turnright", dsda_input_turnright, 'e', -1, -1),
+   INPUT_SETTING("input_speed", dsda_input_speed, 0, -1, -1),
+   INPUT_SETTING("input_strafeleft", dsda_input_strafeleft, 'a', -1, -1),
+   INPUT_SETTING("input_straferight", dsda_input_straferight, 'd', -1, -1),
+diff --git a/prboom2/src/wasm/gl_compat.c b/prboom2/src/wasm/gl_compat.c
+new file mode 100644
+index 0000000..fc31a97
+--- /dev/null
++++ b/prboom2/src/wasm/gl_compat.c
+@@ -0,0 +1,197 @@
++#include <float.h>
++#include <stdlib.h>
++#include <string.h>
++
++#define GL_GLEXT_PROTOTYPES 1
++#include <GL/gl.h>
++#include <GL/glext.h>
++#include <GL/glu.h>
++#include <tesselator.h>
++
++typedef void (*begin_callback_t)(GLenum);
++typedef void (*end_callback_t)(void);
++typedef void (*error_callback_t)(GLenum);
++typedef void (*vertex_callback_t)(void *);
++
++typedef struct
++{
++  TESStesselator *tess;
++  TESSreal *contour;
++  void **contour_data;
++  int contour_count;
++  int contour_capacity;
++  int contour_data_capacity;
++  void **input_data;
++  int input_count;
++  int input_capacity;
++  begin_callback_t begin;
++  end_callback_t end;
++  error_callback_t error;
++  vertex_callback_t vertex;
++} wasm_tess_t;
++
++static int grow(void **buffer, int *capacity, int required, size_t item_size)
++{
++  int next = *capacity ? *capacity : 32;
++  void *resized;
++  while (next < required) next *= 2;
++  if (next == *capacity) return 1;
++  resized = realloc(*buffer, (size_t)next * item_size);
++  if (!resized) return 0;
++  *buffer = resized;
++  *capacity = next;
++  return 1;
++}
++
++void glTexGenf(GLenum coord, GLenum pname, GLfloat param)
++{
++  (void)coord;
++  (void)pname;
++  (void)param;
++}
++
++void glTexGenfv(GLenum coord, GLenum pname, const GLfloat *params)
++{
++  (void)coord;
++  (void)pname;
++  (void)params;
++}
++
++void glGetTexImage(GLenum target, GLint level, GLenum format, GLenum type,
++                   void *pixels)
++{
++  GLint texture = 0;
++  GLint previous = 0;
++  GLint width = 0;
++  GLint height = 0;
++  GLuint framebuffer = 0;
++  if (target != GL_TEXTURE_2D || format != GL_RGBA || type != GL_UNSIGNED_BYTE)
++    return;
++  glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture);
++  glGetTexLevelParameteriv(target, level, GL_TEXTURE_WIDTH, &width);
++  glGetTexLevelParameteriv(target, level, GL_TEXTURE_HEIGHT, &height);
++  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous);
++  glGenFramebuffers(1, &framebuffer);
++  glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
++  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target,
++                         (GLuint)texture, level);
++  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
++    glReadPixels(0, 0, width, height, format, type, pixels);
++  glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)previous);
++  glDeleteFramebuffers(1, &framebuffer);
++}
++
++GLUtesselator *gluNewTess(void)
++{
++  wasm_tess_t *wrapper = calloc(1, sizeof(*wrapper));
++  if (!wrapper) return NULL;
++  wrapper->tess = tessNewTess(NULL);
++  if (!wrapper->tess)
++  {
++    free(wrapper);
++    return NULL;
++  }
++  return (GLUtesselator *)wrapper;
++}
++
++void gluDeleteTess(GLUtesselator *tess)
++{
++  wasm_tess_t *wrapper = (wasm_tess_t *)tess;
++  if (!wrapper) return;
++  if (wrapper->tess) tessDeleteTess(wrapper->tess);
++  free(wrapper->contour);
++  free(wrapper->contour_data);
++  free(wrapper->input_data);
++  free(wrapper);
++}
++
++void gluTessCallback(GLUtesselator *tess, GLenum which, _GLUfuncptr callback)
++{
++  wasm_tess_t *wrapper = (wasm_tess_t *)tess;
++  switch (which)
++  {
++    case GLU_TESS_BEGIN: wrapper->begin = (begin_callback_t)callback; break;
++    case GLU_TESS_END: wrapper->end = (end_callback_t)callback; break;
++    case GLU_TESS_ERROR: wrapper->error = (error_callback_t)callback; break;
++    case GLU_TESS_VERTEX: wrapper->vertex = (vertex_callback_t)callback; break;
++    default: break;
++  }
++}
++
++void gluTessBeginPolygon(GLUtesselator *tess, GLvoid *data)
++{
++  wasm_tess_t *wrapper = (wasm_tess_t *)tess;
++  (void)data;
++  wrapper->input_count = 0;
++  wrapper->contour_count = 0;
++}
++
++void gluTessBeginContour(GLUtesselator *tess)
++{
++  ((wasm_tess_t *)tess)->contour_count = 0;
++}
++
++void gluTessVertex(GLUtesselator *tess, GLdouble *location, GLvoid *data)
++{
++  wasm_tess_t *wrapper = (wasm_tess_t *)tess;
++  int next = wrapper->contour_count + 1;
++  if (!grow((void **)&wrapper->contour, &wrapper->contour_capacity, next * 3,
++            sizeof(*wrapper->contour)) ||
++      !grow((void **)&wrapper->contour_data, &wrapper->contour_data_capacity, next,
++            sizeof(*wrapper->contour_data)))
++  {
++    if (wrapper->error) wrapper->error(GLU_OUT_OF_MEMORY);
++    return;
++  }
++  wrapper->contour[wrapper->contour_count * 3 + 0] = (TESSreal)location[0];
++  wrapper->contour[wrapper->contour_count * 3 + 1] = (TESSreal)location[1];
++  wrapper->contour[wrapper->contour_count * 3 + 2] = (TESSreal)location[2];
++  wrapper->contour_data[wrapper->contour_count++] = data;
++}
++
++void gluTessEndContour(GLUtesselator *tess)
++{
++  wasm_tess_t *wrapper = (wasm_tess_t *)tess;
++  int required = wrapper->input_count + wrapper->contour_count;
++  if (!wrapper->contour_count) return;
++  tessAddContour(wrapper->tess, 3, wrapper->contour,
++                 3 * (int)sizeof(*wrapper->contour), wrapper->contour_count);
++  if (!grow((void **)&wrapper->input_data, &wrapper->input_capacity, required,
++            sizeof(*wrapper->input_data)))
++  {
++    if (wrapper->error) wrapper->error(GLU_OUT_OF_MEMORY);
++    return;
++  }
++  memcpy(wrapper->input_data + wrapper->input_count, wrapper->contour_data,
++         (size_t)wrapper->contour_count * sizeof(*wrapper->input_data));
++  wrapper->input_count = required;
++  wrapper->contour_count = 0;
++}
++
++void gluTessEndPolygon(GLUtesselator *tess)
++{
++  wasm_tess_t *wrapper = (wasm_tess_t *)tess;
++  const TESSindex *elements;
++  const TESSindex *source_indices;
++  int element_count;
++  int i;
++  if (!tessTesselate(wrapper->tess, TESS_WINDING_ODD, TESS_POLYGONS, 3, 3, NULL))
++  {
++    if (wrapper->error) wrapper->error(GLU_TESS_ERROR8);
++    return;
++  }
++  elements = tessGetElements(wrapper->tess);
++  source_indices = tessGetVertexIndices(wrapper->tess);
++  element_count = tessGetElementCount(wrapper->tess);
++  if (wrapper->begin) wrapper->begin(GL_TRIANGLES);
++  for (i = 0; i < element_count * 3; ++i)
++  {
++    TESSindex output_index = elements[i];
++    TESSindex source_index;
++    if (output_index == TESS_UNDEF) continue;
++    source_index = source_indices[output_index];
++    if (source_index != TESS_UNDEF && source_index < wrapper->input_count && wrapper->vertex)
++      wrapper->vertex(wrapper->input_data[source_index]);
++  }
++  if (wrapper->end) wrapper->end();
++}
+diff --git a/prboom2/src/wasm/i_sndfile.c b/prboom2/src/wasm/i_sndfile.c
+new file mode 100644
+index 0000000..7d257e1
+--- /dev/null
++++ b/prboom2/src/wasm/i_sndfile.c
+@@ -0,0 +1,15 @@
++#include "SDL.h"
++
++#include "SDL/i_sndfile.h"
++
++/* Base-game DMX sounds are decoded by i_sound.c. Optional encoded sounds in
++ * user mods need a browser decoder in a later milestone. */
++void *Load_SNDFile(const void *data, SDL_AudioSpec *sample, void **sampledata,
++                   Uint32 *samplelen)
++{
++  (void)data;
++  (void)sample;
++  (void)sampledata;
++  (void)samplelen;
++  return NULL;
++}
+diff --git a/prboom2/src/wasm/zipfile.c b/prboom2/src/wasm/zipfile.c
+new file mode 100644
+index 0000000..849816f
+--- /dev/null
++++ b/prboom2/src/wasm/zipfile.c
+@@ -0,0 +1,17 @@
++#include "dsda/zipfile.h"
++
++/* Browser owner data is mounted as plain WAD files. ZIP mod expansion is
++ * intentionally unavailable until it can be bounded and performed off-thread. */
++const char *dsda_UnzipFile(const char *zipped_file_name)
++{
++  return zipped_file_name;
++}
++
++const char *dsda_ReadUnzippedFile(const char *zipped_file_name)
++{
++  return zipped_file_name;
++}
++
++void dsda_CleanZipTempDirs(void)
++{
++}

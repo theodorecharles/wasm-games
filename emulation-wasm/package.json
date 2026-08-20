@@ -1,0 +1,19 @@
+{
+  "name": "emulation-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native console emulator cores hosted by wasm-game-framework",
+  "type": "module",
+  "scripts": {
+    "fetch:sources": "./scripts/fetch-sources.sh",
+    "audit:sources": "node scripts/verify-source-lock.mjs",
+    "build:core": "./scripts/build-native-core.sh",
+    "build": "./scripts/build-web.sh",
+    "images": "./scripts/build-images.sh",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

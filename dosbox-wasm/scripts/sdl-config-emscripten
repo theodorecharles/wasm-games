@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+  --version) printf '%s\n' '1.2.15' ;;
+  --cflags) printf '%s\n' '-sUSE_SDL=1' ;;
+  --libs) printf '%s\n' '-sUSE_SDL=1' ;;
+  *) printf 'Usage: %s --version|--cflags|--libs\n' "$0" >&2; exit 1 ;;
+esac
+

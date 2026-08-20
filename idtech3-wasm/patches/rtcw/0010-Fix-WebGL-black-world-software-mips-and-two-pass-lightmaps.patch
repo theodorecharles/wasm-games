@@ -1,0 +1,109 @@
+From c10025d9912769fd8f05bd72cbbef8e50606c63c Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 14:20:00 -0400
+Subject: [PATCH] Fix WebGL black world: software mips and two-pass lightmaps
+
+GL_GENERATE_MIPMAP is invalid in WebGL so mipmapped textures
+sampled black. LEGACY_GL_EMULATION also drops TMU1 texenv.
+Upload mip chains in software and draw lightmaps like WolfET.
+---
+ MP/code/renderer/tr_image.c | 26 ++++++++++++++++++++++++++
+ MP/code/renderer/tr_shade.c | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+
+diff --git a/MP/code/renderer/tr_image.c b/MP/code/renderer/tr_image.c
+index 2efa664..189b2eb 100644
+--- a/MP/code/renderer/tr_image.c
++++ b/MP/code/renderer/tr_image.c
+@@ -969,7 +969,12 @@ static void Upload32(   unsigned *data,
+ 		}
+ 		R_LightScaleTexture (scaledBuffer, scaled_width, scaled_height, !mipmap );
+ 
++#ifdef __EMSCRIPTEN__
++		/* WebGL2 has no GL_GENERATE_MIPMAP (0x8191). An incomplete mip
++		 * chain with GL_LINEAR_MIPMAP_* samples as black. */
++#else
+ 		qglTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, (mipmap)?GL_TRUE:GL_FALSE );
++#endif
+ 
+ 		// and now, convert if needed and upload
+ 		// GLES doesn't do convertion itself, so we have to handle that
+@@ -1005,6 +1010,27 @@ static void Upload32(   unsigned *data,
+ 			qglTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
+ 		}
+ 
++#ifdef __EMSCRIPTEN__
++		if ( mipmap ) {
++			int miplevel = 0;
++			int mipWidth = scaled_width;
++			int mipHeight = scaled_height;
++			while ( mipWidth > 1 || mipHeight > 1 ) {
++				R_MipMap( (byte *)scaledBuffer, mipWidth, mipHeight );
++				mipWidth >>= 1;
++				mipHeight >>= 1;
++				if ( mipWidth < 1 ) {
++					mipWidth = 1;
++				}
++				if ( mipHeight < 1 ) {
++					mipHeight = 1;
++				}
++				miplevel++;
++				qglTexImage2D( GL_TEXTURE_2D, miplevel, GL_RGBA, mipWidth, mipHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
++			}
++		}
++#endif
++
+ 	*pUploadWidth = scaled_width;
+ 	*pUploadHeight = scaled_height;
+ 	*format = internalFormat;
+diff --git a/MP/code/renderer/tr_shade.c b/MP/code/renderer/tr_shade.c
+index 7173ba7..339372d 100644
+--- a/MP/code/renderer/tr_shade.c
++++ b/MP/code/renderer/tr_shade.c
+@@ -407,6 +407,10 @@ t1 = most downstream according to spec
+ */
+ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 	shaderStage_t   *pStage;
++#ifdef __EMSCRIPTEN__
++	int v;
++	int add;
++#endif
+ 
+ 	pStage = tess.xstages[stage];
+ 
+@@ -424,6 +428,32 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 
+ 	GL_State( pStage->stateBits );
+ 
++#ifdef __EMSCRIPTEN__
++	/* WolfET: LEGACY_GL_EMULATION does not implement TMU1 texenv. Draw
++	 * base then modulate/add the lightmap as a second pass. */
++	GL_SelectTexture( 0 );
++	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
++	R_BindAnimatedImage( &pStage->bundle[0] );
++	R_DrawElements( input->numIndexes, input->indexes );
++
++	add = ( tess.shader->multitextureEnv == GL_ADD );
++	for ( v = 0; v < input->numVertexes; v++ ) {
++		input->svars.texcoords[0][v][0] = input->svars.texcoords[1][v][0];
++		input->svars.texcoords[0][v][1] = input->svars.texcoords[1][v][1];
++	}
++	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
++	R_BindAnimatedImage( &pStage->bundle[1] );
++	if ( r_lightmap->integer ) {
++		GL_State( GLS_DEPTHFUNC_EQUAL );
++	} else if ( add ) {
++		GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL );
++	} else {
++		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO | GLS_DEPTHFUNC_EQUAL );
++	}
++	R_DrawElements( input->numIndexes, input->indexes );
++	return;
++#endif
++
+ 	// this is an ugly hack to work around a GeForce driver
+ 	// bug with multitexture and clip planes
+ #ifndef USE_OPENGLES
+-- 
+2.53.0
+

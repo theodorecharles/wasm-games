@@ -1,0 +1,12 @@
+this.Name = "Sniper";
+this.WeaponId = WEAPON.SNIPER;
+
+this.PrimaryFire.MaxEquipMoveMode = "still"; // Can't zoom scope while in motion
+
+this.PrimaryFire.SetDesirabilityRange( 500, 4000, 0.8 );
+
+// Use a 1-2 second delay between every 1 shot for stability.
+this.PrimaryFire.SetBurstRange( 0, 10000, 1, 1.0, 2.0 );
+
+this.PrimaryFire.LowAmmoThreshold = 1;
+this.PrimaryFire.LowAmmoPriority = 0.8;

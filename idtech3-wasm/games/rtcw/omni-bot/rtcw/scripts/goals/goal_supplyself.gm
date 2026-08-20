@@ -1,0 +1,56 @@
+// This script contains functionality to allow lieutenants to give themselves packs
+
+this.Name = "SupplySelf";
+this.Parent = "LowLevel";
+this.LimitToClass( CLASS.LIEUTENANT );
+this.LimitToNoTarget();
+
+this.DelayBetweenCalls = 15.0;
+
+this.GetPriority = function()
+{
+	for(;;)
+	{
+		this.Bot.GetMostDesiredAmmo(Util.DesireTable);
+
+		if (Util.DesireTable.Desire > 0.5 && this.Bot.IsWeaponCharged(WEAPON.AMMO_PACK))
+		{
+			this.Priority = 1;
+		}
+		sleep(this.DelayBetweenCalls);
+	}
+};
+
+this.Update = function()
+{
+	if ( !this.Bot.IsWeaponCharged(WEAPON.AMMO_PACK) )
+	{
+		sleep(this.DelayBetweenCalls);
+		this.Finished();
+	}
+
+	this.AddWeaponRequest(WEAPON.AMMO_PACK);
+	this.BlockForWeaponChange(WEAPON.AMMO_PACK);
+
+	if ( this.Bot.GetVelocity().IsZero() )
+	{
+		this.AddAimRequest( Priority.High, "position", GroundPoint(this.Bot.GetPosition()) );
+	}
+
+	this.PacksThrown = 0;
+	dowhile( this.PacksThrown < 2 && this.Bot.IsWeaponCharged(WEAPON.AMMO_PACK) )
+	{
+		this.Bot.HoldButton(BTN.ATTACK1, 0.5);
+		sleep(0.5);
+	}
+
+	this.Finished();
+};
+
+this.Events[EVENT.WEAPON_FIRE] = function(weaponId, projectileEntity)
+{
+	if(weaponId == WEAPON.AMMO_PACK && this.Bot )
+	{
+		this.PacksThrown += 1;
+	}
+};

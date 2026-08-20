@@ -1,0 +1,2012 @@
+From 01043c8d66fd456f601f048e5c9e4a2a8b162a7f Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Fri, 14 Aug 2026 10:37:38 -0400
+Subject: [PATCH] Add canonical RTCW browser source scaffold
+
+---
+ .dockerignore                   |  24 ++
+ .gitignore                      |  12 +
+ Dockerfile                      |  38 +++
+ MP/Makefile                     |  35 +++
+ MP/code/qcommon/common.c        |   9 +
+ MP/code/qcommon/q_platform.h    |  13 +
+ MP/code/sdl/sdl_glimp.c         |  68 ++++-
+ MP/code/sdl/sdl_input.c         |  23 ++
+ MP/code/server/sv_main.c        |  15 ++
+ MP/code/sys/sys_main.c          |  22 +-
+ RUNBOOK.md                      | 160 ++++++++++++
+ SP/Makefile                     |  35 +++
+ SP/code/cgame/cg_view.c         |   7 +-
+ SP/code/client/cl_cgame.c       |  10 +
+ SP/code/client/cl_main.c        |   6 +
+ SP/code/qcommon/common.c        |  10 +-
+ SP/code/qcommon/net_chan.c      |   1 -
+ SP/code/qcommon/q_platform.h    |  13 +
+ SP/code/renderer/tr_cmds.c      |  14 +-
+ SP/code/renderer/tr_scene.c     |  14 +
+ SP/code/sdl/sdl_glimp.c         |  68 ++++-
+ SP/code/sdl/sdl_input.c         |  23 ++
+ SP/code/server/sv_client.c      |   4 +-
+ SP/code/server/sv_init.c        |   1 -
+ SP/code/server/sv_main.c        |  16 +-
+ SP/code/sys/sys_main.c          |  22 +-
+ docker/nginx.conf               |  19 ++
+ scripts/build-docker.sh         |  26 ++
+ scripts/build-server.sh         |  12 +
+ scripts/build-web-mp.sh         |  47 ++++
+ scripts/build-web-sp.sh         |  48 ++++
+ scripts/build-web.sh            |   7 +
+ scripts/setup-data.sh           |  38 +++
+ scripts/test-web.sh             |  47 ++++
+ scripts/write-data-manifest.mjs |  23 ++
+ web/sp/asset-spec.js            |  27 ++
+ web/sp/launcher.js              | 435 ++++++++++++++++++++++++++++++++
+ 37 files changed, 1381 insertions(+), 11 deletions(-)
+ create mode 100644 .dockerignore
+ create mode 100644 Dockerfile
+ create mode 100644 RUNBOOK.md
+ create mode 100644 docker/nginx.conf
+ create mode 100755 scripts/build-docker.sh
+ create mode 100755 scripts/build-server.sh
+ create mode 100755 scripts/build-web-mp.sh
+ create mode 100755 scripts/build-web-sp.sh
+ create mode 100755 scripts/build-web.sh
+ create mode 100755 scripts/setup-data.sh
+ create mode 100755 scripts/test-web.sh
+ create mode 100644 scripts/write-data-manifest.mjs
+ create mode 100644 web/sp/asset-spec.js
+ create mode 100644 web/sp/launcher.js
+
+diff --git a/.dockerignore b/.dockerignore
+new file mode 100644
+index 0000000..de9c578
+--- /dev/null
++++ b/.dockerignore
+@@ -0,0 +1,24 @@
++.git
++.github
++.cache
++data
++runtime
++artifacts
++references
++*.pk3
++*.PK3
++*.pk4
++*.PK4
++SP/build/*
++!SP/build/release-linux-x86_64/
++!SP/build/release-linux-x86_64/iowolfsp.x86_64
++!SP/build/release-linux-x86_64/main/
++!SP/build/release-linux-x86_64/main/vm/
++!SP/build/release-linux-x86_64/main/vm/*.qvm
++MP/build/*
++!MP/build/release-linux-x86_64/
++!MP/build/release-linux-x86_64/iowolfded.x86_64
++!MP/build/release-linux-x86_64/iowolfmp.x86_64
++!MP/build/release-linux-x86_64/main/
++!MP/build/release-linux-x86_64/main/vm/
++!MP/build/release-linux-x86_64/main/vm/*.qvm
+diff --git a/.gitignore b/.gitignore
+index 39355ba..e898208 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -37,3 +37,15 @@ profile
+ # Microsoft Visual Studio
+ ####################
+ *.sdf
++
++# rtcw-wasm local/runtime data
++references/
++data/
++runtime/
++artifacts/runtime/
++SP/build-web-probe/
++web/sp/client/
++web/sp/Main
++web/sp/asset-manifest.json
++*.pk3
++*.PK3
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..20d22d4
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,38 @@
++# syntax=docker/dockerfile:1.7
++
++FROM nginx:1.27-alpine
++
++ARG VCS_REF=unknown
++LABEL org.opencontainers.image.title="RTCW WASM" \
++	  org.opencontainers.image.description="Assetless RTCW SP and MP WebAssembly clients" \
++      org.opencontainers.image.source="https://github.com/theodorecharles/rtcw-wasm" \
++      org.opencontainers.image.revision="$VCS_REF"
++
++COPY web/sp /usr/share/nginx/html
++COPY SP/build/release-linux-x86_64/iowolfsp.x86_64 /opt/rtcw/bin/iowolfsp.x86_64
++COPY SP/build/release-linux-x86_64/main/vm /opt/rtcw/sp-vm
++COPY MP/build/release-linux-x86_64/iowolfded.x86_64 /opt/rtcw/bin/iowolfded.x86_64
++COPY MP/build/release-linux-x86_64/iowolfmp.x86_64 /opt/rtcw/bin/iowolfmp.x86_64
++COPY MP/build/release-linux-x86_64/main/vm /opt/rtcw/mp-vm
++COPY SP/COPYING.txt /opt/rtcw/SP-COPYING.txt
++COPY MP/COPYING.txt /opt/rtcw/MP-COPYING.txt
++COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
++
++RUN mkdir -p /data/Main /data/custom_maps /opt/rtcw/bin \
++    && printf '%s\n' \
++        'Corresponding source for this image:' \
++        "https://github.com/theodorecharles/rtcw-wasm/tree/${VCS_REF}" \
++        'The image contains engine/runtime code only; supply proprietary RTCW data through /data.' \
++        > /opt/rtcw/SOURCE-OFFER.txt \
++    && chmod 0755 /opt/rtcw/bin/*
++
++ENV HTTP_PORT=8088 \
++    GAME_SLOTS=8 \
++    KEEP_ALIVE=false \
++    IDLE_TIMEOUT=15m \
++    GAME_MODE=vanilla
++
++VOLUME ["/data"]
++EXPOSE 8088/tcp 27960/udp
++HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
++  CMD wget -q -O - http://127.0.0.1:8088/health >/dev/null
+diff --git a/MP/Makefile b/MP/Makefile
+index 7618bb9..60a106e 100644
+--- a/MP/Makefile
++++ b/MP/Makefile
+@@ -1042,12 +1042,47 @@ else # ifeq sunos
+ #############################################################################
+ # SETUP AND BUILD -- GENERIC
+ #############################################################################
++ifeq ($(PLATFORM),emscripten)
++  BASE_CFLAGS = -Wall -fno-strict-aliasing -DARCH_STRING=\\\"wasm32\\\"
++  ifeq ($(USE_OPENGLES),1)
++    BASE_CFLAGS += -DUSE_OPENGLES
++  endif
++  CLIENT_CFLAGS += -sUSE_SDL=2
++  OPTIMIZEVM = -O2
++  OPTIMIZE = -O2
++
++  FULLBINEXT=.js
++  SHLIBEXT=wasm
++  SHLIBCFLAGS=
++  SHLIBLDFLAGS=
++  THREAD_LIBS=
++  LIBS=
++  CLIENT_LIBS=
++  RENDERER_LIBS=
++  SERVER_LIBS=
++
++  CLIENT_LDFLAGS += \
++    -sUSE_SDL=2 \
++    -sLEGACY_GL_EMULATION=1 \
++    -sMIN_WEBGL_VERSION=2 \
++    -sMAX_WEBGL_VERSION=2 \
++    -sALLOW_MEMORY_GROWTH=1 \
++    -sINITIAL_MEMORY=268435456 \
++    -sSTACK_SIZE=2097152 \
++    -sFORCE_FILESYSTEM=1 \
++    -sEXPORTED_RUNTIME_METHODS=['callMain','FS','IDBFS'] \
++    -lidbfs.js \
++    -sINVOKE_RUN=0 \
++    -sEXIT_RUNTIME=0 \
++    -sENVIRONMENT=web
++else
+   BASE_CFLAGS=
+   OPTIMIZE = -O3
+ 
+   SHLIBEXT=so
+   SHLIBCFLAGS=-fPIC
+   SHLIBLDFLAGS=-shared
++endif
+ 
+ endif #Linux
+ endif #darwin
+diff --git a/MP/code/qcommon/common.c b/MP/code/qcommon/common.c
+index f0b00b1..7464211 100644
+--- a/MP/code/qcommon/common.c
++++ b/MP/code/qcommon/common.c
+@@ -3214,6 +3214,7 @@ void Com_Frame( void ) {
+ 	else
+ 		minMsec = 1;
+ 
++#ifndef __EMSCRIPTEN__
+ 	do
+ 	{
+ 		if(com_sv_running->integer)
+@@ -3233,6 +3234,7 @@ void Com_Frame( void ) {
+ 		else
+ 			NET_Sleep(timeVal - 1);
+ 	} while(Com_TimeVal(minMsec));
++#endif
+ 
+ 	IN_Frame();
+ 	
+@@ -3261,6 +3263,13 @@ void Com_Frame( void ) {
+ 
+ 	SV_Frame( msec );
+ 
++#ifdef __EMSCRIPTEN__
++	// Native builds drain fragmented netchan messages while waiting for the
++	// next frame.  A browser main loop must never block, so service the same
++	// queue once per animation frame instead.
++	SV_SendQueuedPackets();
++#endif
++
+ 	// if "dedicated" has been modified, start up
+ 	// or shut down the client system.
+ 	// Do this after the server may have started,
+diff --git a/MP/code/qcommon/q_platform.h b/MP/code/qcommon/q_platform.h
+index ad197b0..e21d5c9 100644
+--- a/MP/code/qcommon/q_platform.h
++++ b/MP/code/qcommon/q_platform.h
+@@ -165,6 +165,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ 
+ #endif
+ 
++//=========================================================== EMSCRIPTEN ===
++
++#if defined(__EMSCRIPTEN__)
++
++#define OS_STRING "emscripten"
++#define ARCH_STRING "wasm32"
++#define ID_INLINE inline
++#define PATH_SEP '/'
++#define Q3_LITTLE_ENDIAN
++#define DLL_EXT ".wasm"
++
++#endif
++
+ //================================================================= LINUX ===
+ 
+ #if defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__)
+diff --git a/MP/code/sdl/sdl_glimp.c b/MP/code/sdl/sdl_glimp.c
+index 94d1d87..4379f3c 100644
+--- a/MP/code/sdl/sdl_glimp.c
++++ b/MP/code/sdl/sdl_glimp.c
+@@ -68,6 +68,24 @@ cvar_t *r_sdlDriver;
+ int qglMajorVersion, qglMinorVersion;
+ int qglesMajorVersion, qglesMinorVersion;
+ 
++#ifdef __EMSCRIPTEN__
++static void APIENTRY GLimp_Emscripten_MultiTexCoord4f( GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q ) {
++	(void)target; (void)s; (void)t; (void)r; (void)q;
++}
++static void APIENTRY GLimp_Emscripten_ArrayElement( GLint i ) {
++	(void)i;
++}
++static void APIENTRY GLimp_Emscripten_DrawBuffer( GLenum mode ) {
++	/* WebGL exposes a single default back buffer. */
++	(void)mode;
++}
++#ifdef USE_OPENGLES
++extern void APIENTRY glClipPlane( GLenum plane, const GLdouble *equation );
++extern void APIENTRY glFrustum( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val );
++extern void APIENTRY glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val );
++#endif
++#endif
++
+ void (APIENTRYP qglActiveTextureARB) (GLenum texture);
+ void (APIENTRYP qglClientActiveTextureARB) (GLenum texture);
+ void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
+@@ -307,7 +325,9 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 	const char *version;
+ 
+ #ifdef __SDL_NOGETPROCADDR__
+-#define GLE( ret, name, ... ) qgl##name = gl#name;
++#define GLE( ret, name, ... ) qgl##name = gl##name;
++#elif defined(__EMSCRIPTEN__)
++#define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name);
+ #else
+ #define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name); \
+ 	if ( qgl##name == NULL ) { \
+@@ -341,6 +361,23 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 		sscanf( version, "%d.%d", &qglMajorVersion, &qglMinorVersion );
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* LEGACY_GL_EMULATION exposes the desktop fixed-function entry points on
++	 * top of WebGL, while WebGL's version string still identifies GLES. Let
++	 * the native RTCW renderer bind that emulated OpenGL 2 surface. */
++#ifdef USE_OPENGLES
++	qglMajorVersion = 0;
++	qglMinorVersion = 0;
++	qglesMajorVersion = 1;
++	qglesMinorVersion = 1;
++#else
++	qglMajorVersion = 2;
++	qglMinorVersion = 0;
++	qglesMajorVersion = 0;
++	qglesMinorVersion = 0;
++#endif
++#endif
++
+ 	if ( fixedFunction ) {
+ 		if ( QGL_VERSION_ATLEAST( 1, 1 ) ) {
+ 			QGL_1_1_PROCS;
+@@ -396,6 +433,26 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 		QGL_3_0_PROCS;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* SDL's WebGL proc lookup omits some functions implemented by
++	 * LEGACY_GL_EMULATION. Bind those linked shims directly. */
++	qglTexEnvf = glTexEnvf;
++	qglFogf = glFogf;
++	qglFogfv = glFogfv;
++	qglMultiTexCoord4f = GLimp_Emscripten_MultiTexCoord4f;
++#ifndef USE_OPENGLES
++	qglClearDepth = glClearDepth;
++	qglDepthRange = glDepthRange;
++	qglFogi = glFogi;
++#else
++	qglClipPlane = glClipPlane;
++	qglFrustum = glFrustum;
++	qglOrtho = glOrtho;
++#endif
++	qglDrawBuffer = GLimp_Emscripten_DrawBuffer;
++	qglArrayElement = GLimp_Emscripten_ArrayElement;
++#endif
++
+ #undef GLE
+ 
+ 	return success;
+@@ -651,7 +708,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
+ #endif
+ 
+ #ifdef USE_OPENGLES
++#ifdef __EMSCRIPTEN__
++		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
++#else
+ 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1 );
++#endif
+ #endif
+ 
+ 		SDL_GL_SetAttribute( SDL_GL_RED_SIZE, perChannelColorBits );
+@@ -716,8 +777,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
+ 
+ #ifdef USE_OPENGLES
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
++#ifdef __EMSCRIPTEN__
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
++#else
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
++#endif
+ #endif
+ 
+ 		if (!fixedFunction)
+diff --git a/MP/code/sdl/sdl_input.c b/MP/code/sdl/sdl_input.c
+index 3bd4f23..47f99c2 100644
+--- a/MP/code/sdl/sdl_input.c
++++ b/MP/code/sdl/sdl_input.c
+@@ -30,6 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten/html5.h>
++#endif
++
+ #include "../client/client.h"
+ #include "../sys/sys_local.h"
+ 
+@@ -350,6 +354,25 @@ static void IN_ActivateMouse( qboolean isFullscreen )
+ 	if (!mouseAvailable || !SDL_WasInit( SDL_INIT_VIDEO ) )
+ 		return;
+ 
++#ifdef __EMSCRIPTEN__
++	{
++		EmscriptenPointerlockChangeEvent pointerLock;
++		qboolean locked = emscripten_get_pointerlock_status( &pointerLock ) == EMSCRIPTEN_RESULT_SUCCESS && pointerLock.isActive;
++
++		// Browser menus need ordinary absolute mouse input.  Requesting SDL
++		// relative mode here arms pointer lock on the next click and consumes
++		// that click before RTCW's UI sees it.  The launcher owns the explicit
++		// pointer-lock gesture; only enable relative mode after it succeeds.
++		SDL_SetRelativeMouseMode( locked ? SDL_TRUE : SDL_FALSE );
++		SDL_SetWindowGrab( SDL_window, locked ? SDL_TRUE : SDL_FALSE );
++		if ( !mouseActive ) {
++			IN_GobbleMotionEvents();
++		}
++		mouseActive = qtrue;
++		return;
++	}
++#endif
++
+ 	if( !mouseActive )
+ 	{
+ 		SDL_SetRelativeMouseMode( SDL_TRUE );
+diff --git a/MP/code/server/sv_main.c b/MP/code/server/sv_main.c
+index 6e70b23..f3024be 100644
+--- a/MP/code/server/sv_main.c
++++ b/MP/code/server/sv_main.c
+@@ -1306,6 +1306,14 @@ int SV_RateMsec(client_t *client)
+ {
+ 	int rate, rateMsec;
+ 	int messageSize;
++
++	// In-process clients and game bots have no physical link to throttle.
++	// Their rate may still be zero while the local connection is being
++	// established, which must not become a divide-by-zero here.
++	if ( client->netchan.remoteAddress.type == NA_LOOPBACK ||
++		 client->netchan.remoteAddress.type == NA_BOT ) {
++		return 0;
++	}
+ 	
+ 	messageSize = client->netchan.lastSentSize;
+ 	rate = client->rate;
+@@ -1326,6 +1334,13 @@ int SV_RateMsec(client_t *client)
+ 			rate = sv_minRate->integer;
+ 	}
+ 
++	// A just-created local client can be visible to the queue before its
++	// userinfo rate is populated.  Treat it as unthrottled instead of dividing
++	// by zero; normal remote clients are clamped by SV_UserinfoChanged.
++	if ( rate <= 0 ) {
++		rate = 99999;
++	}
++
+ 	if(client->netchan.remoteAddress.type == NA_IP6)
+ 		messageSize += UDPIP6_HEADER_SIZE;
+ 	else
+diff --git a/MP/code/sys/sys_main.c b/MP/code/sys/sys_main.c
+index 1858906..298b1a4 100644
+--- a/MP/code/sys/sys_main.c
++++ b/MP/code/sys/sys_main.c
+@@ -31,6 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include <ctype.h>
+ #include <errno.h>
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ #ifndef DEDICATED
+ #ifdef USE_LOCAL_HEADERS
+ #	include "SDL.h"
+@@ -132,7 +136,13 @@ Handle new console input
+ */
+ char *Sys_ConsoleInput(void)
+ {
++#ifdef __EMSCRIPTEN__
++	/* Browser builds use the in-game console. Reading Emscripten stdin opens
++	 * a blocking JavaScript prompt on every frame. */
++	return NULL;
++#else
+ 	return CON_Input( );
++#endif
+ }
+ 
+ /*
+@@ -681,6 +691,13 @@ void Sys_SigHandler( int signal )
+ 		Sys_Exit( 2 );
+ }
+ 
++#ifdef __EMSCRIPTEN__
++static void Sys_EmscriptenFrame( void )
++{
++	Com_Frame( );
++}
++#endif
++
+ /*
+ =================
+ main
+@@ -759,11 +776,14 @@ int main( int argc, char **argv )
+ 	signal( SIGTERM, Sys_SigHandler );
+ 	signal( SIGINT, Sys_SigHandler );
+ 
++#ifdef __EMSCRIPTEN__
++	emscripten_set_main_loop( Sys_EmscriptenFrame, 0, 0 );
++#else
+ 	while( 1 )
+ 	{
+ 		Com_Frame( );
+ 	}
++#endif
+ 
+ 	return 0;
+ }
+-
+diff --git a/RUNBOOK.md b/RUNBOOK.md
+new file mode 100644
+index 0000000..f603525
+--- /dev/null
++++ b/RUNBOOK.md
+@@ -0,0 +1,160 @@
++# RTCW WebAssembly runbook
++
++Read `/home/ted/Development/wasm/RUNBOOK.md` before changing this repository. This is a downstream-only browser port of the native ioRTCW SP and MP source trees. Do not copy an existing browser/WASM port, submit changes upstream, open upstream issues, or push to the `upstream` remote.
++
++## Verified checkpoint (2026-08-14)
++
++The real SP and MP engines now compile with Emscripten and run in Chromium through the shared loopback portal.
++
++- SP: authentic title/main menu renders; `spmap escape1` starts the native integrated server, loads the qagame/cgame/UI QVMs, initializes BotLib plus both AAS worlds, connects the loopback client, receives an active snapshot, and renders the authentic mission briefing.
++- MP: authentic animated multiplayer title/main menu renders from the real MP engine and UI QVM.
++- Both clients use a cooperative `requestAnimationFrame` main loop. The browser event loop is never blocked.
++- The native fixed-function renderer runs through Emscripten's GLES/WebGL 2 legacy-GL bridge.
++- SDL2 keyboard events, absolute menu mouse input, and explicit pointer-lock capture are wired. The launcher does not steal browser shortcuts before capture.
++- The launcher captures player name, SP/MP mode, Low/Medium/High/Ultra ceiling, and 30/60/120 FPS target before engine startup.
++- Config/save state is mounted at `/persist` with IDBFS. Retail PK3s are streamed into transient MEMFS at `/game/main`, marked read-only, and are not written to browser persistence.
++- Adaptive quality is deliberately shown as a disabled next milestone; the manual profiles and FPS cvars are active.
++- Optional browser audio codecs/OpenAL, external MP transport/dedicated-server lifecycle, cinematics, save/reload persistence testing, and a full renderer/input regression pass remain unfinished.
++
++The checked-in output path used by the portfolio portal is:
++
++```text
++/home/ted/Development/wasm/rtcw-wasm/web/sp
++```
++
++Generated client artifacts live below ignored paths:
++
++```text
++web/sp/client/sp/iowolfsp.{js,wasm}
++web/sp/client/sp/main/vm/{cgame.sp,qagame.sp,ui.sp}.qvm
++web/sp/client/mp/iowolfmp.{js,wasm}
++web/sp/client/mp/main/vm/{cgame.mp,qagame.mp,ui.mp}.qvm
++```
++
++## Native-only provenance and repository boundaries
++
++Source authority, in order:
++
++1. owner-installed Return to Castle Wolfenstein data and native game behavior;
++2. this repository's native ioRTCW SP and MP trees;
++3. the original id source documents already present in those trees;
++4. `wolfet-wasm` only as an architectural reference for generic id Tech 3 browser mechanics.
++
++No third-party RTCW WebAssembly/browser port was used. All browser changes are bounded with `__EMSCRIPTEN__` or the Emscripten Makefile target so native builds remain intact. Keep proprietary data outside Git, build outputs, Docker images, and public static roots.
++
++The `upstream` push URL is intentionally disabled. `origin` is the downstream repository. Do not contact upstream.
++
++## Owner data contract
++
++The staged owner data is outside this repository:
++
++```text
++/home/ted/Development/wasm/data/rtcw/Main
++```
++
++The portal mounts `/home/ted/Development/wasm/data/rtcw` read-only at `/owner-data` and exposes it only through the loopback-bound `/local-data/` route. The launcher refuses owner-data import unless the page hostname is `localhost`, `127.0.0.1`, or `::1`.
++
++Before import, every expected path is checked by HEAD for exact length. During streaming import, every file is checked for its expected length, ZIP/PK3 signature, and pinned SHA-256 from `web/sp/asset-spec.js`. A mismatch aborts startup. Generated QVMs are separately checked for VM2 magic before being mounted read-only.
++
++SP requires:
++
++```text
++Main/pak0.pk3
++Main/sp_pak1.pk3
++Main/sp_pak2.pk3
++Main/sp_pak3.pk3
++Main/sp_pak4.pk3
++```
++
++MP requires `Main/pak0.pk3`, `Main/mp_bin.pk3`, `Main/mp_pak0.pk3` through `Main/mp_pak5.pk3`, and `Main/mp_pakmaps0.pk3` through `Main/mp_pakmaps6.pk3`.
++
++Validate an owner install without copying anything:
++
++```bash
++cd /home/ted/Development/wasm/rtcw-wasm
++RTCW_MAIN_DIR=/home/ted/Development/wasm/data/rtcw/Main ./scripts/setup-data.sh
++```
++
++This writes only the ignored `runtime/asset-manifest.json`; it never links or copies retail files into `web/`.
++
++## Build
++
++The verified Emscripten checkout is `/home/ted/emsdk`. Build both clients and both sets of QVMs with:
++
++```bash
++cd /home/ted/Development/wasm/rtcw-wasm
++EMSDK_DIR=/home/ted/emsdk JOBS=8 ./scripts/build-web.sh
++```
++
++The wrapper runs `build-web-sp.sh`, `build-web-mp.sh`, and `test-web.sh`. Native host tools build the QVMs with GNU C17; Emscripten builds the engine clients with SDL2, WebGL 2, legacy fixed-function GL emulation, memory growth, IDBFS support, and exported `Module.callMain`/`FS`/`IDBFS`. Optional OpenAL, curl, Mumble, VoIP, Vorbis, Opus, FreeType, renderer dlopen, and native game shared objects are disabled for this milestone.
++
++Run static validation independently with:
++
++```bash
++./scripts/test-web.sh
++```
++
++It checks required artifacts, JavaScript syntax, WASM and QVM magic, strict asset/import contracts, and that no retail-bearing file exists under the served tree.
++
++## Run through the portfolio portal
++
++```bash
++cd /home/ted/Development/wasm/portal
++docker compose up -d rtcw
++```
++
++Open exactly:
++
++```text
++http://127.0.0.1:8085/
++```
++
++Do not use a non-loopback hostname: owner-data import is intentionally denied there.
++
++### Exact Chromium handoff: SP
++
++1. Open `http://127.0.0.1:8085/`.
++2. Select **Single Player**, enter a player name, choose a quality ceiling and FPS target, then select **Play**.
++3. Wait while the page validates and hashes approximately 636 MB of owner data. The authentic RTCW main menu should appear.
++4. To exercise the current deep smoke quickly, focus the canvas, press `~` to open the in-engine console, enter `spmap escape1`, and press Enter.
++5. Wait for the mission briefing. Move the in-engine pointer to the lower-right arrow and click it to begin the level.
++6. Select **Capture mouse** only after gameplay is visible; Escape releases pointer lock. Browser copy/find/hard-refresh shortcuts remain available while capture is off.
++
++Observed automated milestone: authentic menu, native `escape1` server/QVM/AAS initialization, active client snapshot, and mission briefing. The final briefing-arrow-to-live-3D transition still needs a manual pointer check; automation highlighted the authentic control but did not activate it reliably.
++
++### Exact Chromium handoff: MP
++
++1. Reload `http://127.0.0.1:8085/`.
++2. Select **Multiplayer** and **Play**.
++3. Wait while the page validates and hashes approximately 463 MB of owner data.
++4. Confirm the animated authentic RTCW multiplayer title/menu appears.
++
++The MP browser client is real, but WebSocket-to-UDP transport, native dedicated-server wake/idle lifecycle, server connection, and bots are not yet implemented. Do not claim network play yet.
++
++Stop the local lane after testing:
++
++```bash
++cd /home/ted/Development/wasm/portal
++docker compose stop rtcw
++```
++
++## Important implementation details
++
++- `Com_Frame` skips the native sleep loop under Emscripten. `emscripten_set_main_loop` schedules one frame per browser animation frame.
++- Native code used the sleep window to drain fragmented loopback netchan packets. The browser path explicitly calls `SV_SendQueuedPackets()` once per frame so large gamestate messages complete.
++- Local and bot clients bypass rate throttling. Nonpositive startup rates are clamped, preventing a WebAssembly divide-by-zero during connection setup.
++- `Sys_ConsoleInput` never invokes a browser prompt. The engine's own console remains the command surface.
++- The renderer binds linked legacy-GL shims for fixed-function calls that WebGL's proc lookup does not advertise. Unsupported single-buffer and immediate-mode helpers are narrowly replaced for this renderer.
++- Menu input remains absolute until the explicit **Capture mouse** gesture obtains pointer lock. Only then does SDL enter relative mode and grab the canvas.
++- The launcher sets one 4:3 canvas transform and lets the native UI/HUD render into it, avoiding independent HTML HUD geometry.
++
++## Next blockers, in order
++
++1. Manually verify/fix activation of the SP pregame arrow and prove rendered, controllable live 3D gameplay; then complete keyboard/mouse/pause/console/save/reload regression tests.
++2. Enable an SDL/Web Audio-compatible sound path and verify owner audio assets.
++3. Add native MP dedicated server plus same-origin WebSocket-to-UDP bridge, connection status, eight-player bot backfill, and wake/idle shutdown.
++4. Implement measured 30/60/120 FPS adaptive quality hysteresis; do not enable the launcher toggle before it is real.
++5. Verify cinematics and provide a browser codec fallback only if the native path cannot play them.
++6. Run focused visual tests for fog, sky, lightmaps, particles, models, HUD, loading screens, widescreen transforms, and menu cinematics.
++
++Upstream contacted: no. Upstream submissions: prohibited.
+diff --git a/SP/Makefile b/SP/Makefile
+index 74a126d..65842d8 100644
+--- a/SP/Makefile
++++ b/SP/Makefile
+@@ -1031,12 +1031,47 @@ else # ifeq sunos
+ #############################################################################
+ # SETUP AND BUILD -- GENERIC
+ #############################################################################
++ifeq ($(PLATFORM),emscripten)
++  BASE_CFLAGS = -Wall -fno-strict-aliasing -DARCH_STRING=\\\"wasm32\\\"
++  ifeq ($(USE_OPENGLES),1)
++    BASE_CFLAGS += -DUSE_OPENGLES
++  endif
++  CLIENT_CFLAGS += -sUSE_SDL=2
++  OPTIMIZEVM = -O2
++  OPTIMIZE = -O2
++
++  FULLBINEXT=.js
++  SHLIBEXT=wasm
++  SHLIBCFLAGS=
++  SHLIBLDFLAGS=
++  THREAD_LIBS=
++  LIBS=
++  CLIENT_LIBS=
++  RENDERER_LIBS=
++  SERVER_LIBS=
++
++  CLIENT_LDFLAGS += \
++    -sUSE_SDL=2 \
++    -sLEGACY_GL_EMULATION=1 \
++    -sMIN_WEBGL_VERSION=2 \
++    -sMAX_WEBGL_VERSION=2 \
++    -sALLOW_MEMORY_GROWTH=1 \
++    -sINITIAL_MEMORY=268435456 \
++    -sSTACK_SIZE=2097152 \
++    -sFORCE_FILESYSTEM=1 \
++    -sEXPORTED_RUNTIME_METHODS=['callMain','FS','IDBFS'] \
++    -lidbfs.js \
++    -sINVOKE_RUN=0 \
++    -sEXIT_RUNTIME=0 \
++    -sENVIRONMENT=web
++else
+   BASE_CFLAGS=
+   OPTIMIZE = -O3
+ 
+   SHLIBEXT=so
+   SHLIBCFLAGS=-fPIC
+   SHLIBLDFLAGS=-shared
++endif
+ 
+ endif #Linux
+ endif #darwin
+diff --git a/SP/code/cgame/cg_view.c b/SP/code/cgame/cg_view.c
+index 02448b9..415f261 100644
+--- a/SP/code/cgame/cg_view.c
++++ b/SP/code/cgame/cg_view.c
+@@ -1446,6 +1446,7 @@ Generates and draws a game scene and status information at the given time.
+ */
+ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback ) {
+ 	int inwater;
++	static qboolean reportedPlayableFrame = qfalse;
+ 
+ 	cg.cld = 0;         // NERVE - SMF - reset clientDamage
+ 
+@@ -1504,6 +1505,11 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 		return;
+ 	}
+ 
++	if ( !reportedPlayableFrame ) {
++		CG_Printf( "[RTCW WASM] cgame active snapshot; cg_norender=%d\n", cg_norender.integer );
++		reportedPlayableFrame = qtrue;
++	}
++
+ 	if ( cg.weaponSelect == WP_FG42SCOPE || cg.weaponSelect == WP_SNOOPERSCOPE || cg.weaponSelect == WP_SNIPERRIFLE ) {
+ 		float spd;
+ 		spd = VectorLength( cg.snap->ps.velocity );
+@@ -1646,4 +1652,3 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 
+ 	DEBUGTIME
+ }
+-
+diff --git a/SP/code/client/cl_cgame.c b/SP/code/client/cl_cgame.c
+index 36dcfa5..274921d 100644
+--- a/SP/code/client/cl_cgame.c
++++ b/SP/code/client/cl_cgame.c
+@@ -1125,9 +1125,19 @@ CL_FirstSnapshot
+ void CL_FirstSnapshot( void ) {
+ 	// ignore snapshots that don't have entities
+ 	if ( cl.snap.snapFlags & SNAPFLAG_NOT_ACTIVE ) {
++#ifdef __EMSCRIPTEN__
++		static qboolean reportedInactiveSnapshot = qfalse;
++		if ( !reportedInactiveSnapshot ) {
++			Com_Printf( "[RTCW WASM] waiting for active first snapshot (flags=%d)\n", cl.snap.snapFlags );
++			reportedInactiveSnapshot = qtrue;
++		}
++#endif
+ 		return;
+ 	}
+ 	clc.state = CA_ACTIVE;
++#ifdef __EMSCRIPTEN__
++	Com_Printf( "[RTCW WASM] first active snapshot received; gameplay live\n" );
++#endif
+ 
+ 	// set the timedelta so we are exactly on this first frame
+ 	cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
+diff --git a/SP/code/client/cl_main.c b/SP/code/client/cl_main.c
+index 94d4ff9..a5de411 100644
+--- a/SP/code/client/cl_main.c
++++ b/SP/code/client/cl_main.c
+@@ -1326,6 +1326,9 @@ void CL_MapLoading( void ) {
+ 		NET_StringToAdr( clc.servername, &clc.serverAddress, NA_UNSPEC);
+ 		// we don't need a challenge on the localhost
+ 
++		#ifdef __EMSCRIPTEN__
++		Com_Printf( "[RTCW WASM] local map client state=%d address-type=%d\n", clc.state, clc.serverAddress.type );
++		#endif
+ 		CL_CheckForResend();
+ 	}
+ 
+@@ -2343,6 +2346,9 @@ void CL_CheckForResend( void ) {
+ 
+ 	clc.connectTime = cls.realtime;	// for retransmit requests
+ 	clc.connectPacketCount++;
++	#ifdef __EMSCRIPTEN__
++	Com_Printf( "[RTCW WASM] client connection packet %d state=%d address-type=%d\n", clc.connectPacketCount, clc.state, clc.serverAddress.type );
++	#endif
+ 
+ 
+ 	switch ( clc.state ) {
+diff --git a/SP/code/qcommon/common.c b/SP/code/qcommon/common.c
+index a1e7dc0..0e5ceed 100644
+--- a/SP/code/qcommon/common.c
++++ b/SP/code/qcommon/common.c
+@@ -2761,6 +2761,7 @@ void Com_Frame( void ) {
+ 	else
+ 		minMsec = 1;
+ 
++#ifndef __EMSCRIPTEN__
+ 	do
+ 	{
+ 		if(com_sv_running->integer)
+@@ -2780,6 +2781,7 @@ void Com_Frame( void ) {
+ 		else
+ 			NET_Sleep(timeVal - 1);
+ 	} while(Com_TimeVal(minMsec));
++#endif
+ 
+ 	IN_Frame();
+ 	
+@@ -2808,6 +2810,13 @@ void Com_Frame( void ) {
+ 
+ 	SV_Frame( msec );
+ 
++#ifdef __EMSCRIPTEN__
++	// Native builds drain fragmented netchan messages while waiting for the
++	// next frame.  A browser main loop must never block, so service the same
++	// queue once per animation frame instead.
++	SV_SendQueuedPackets();
++#endif
++
+ 	// if "dedicated" has been modified, start up
+ 	// or shut down the client system.
+ 	// Do this after the server may have started,
+@@ -3246,4 +3255,3 @@ qboolean Com_IsVoipTarget(uint8_t *voipTargets, int voipTargetsSize, int clientN
+ 
+ 	return qfalse;
+ }
+-
+diff --git a/SP/code/qcommon/net_chan.c b/SP/code/qcommon/net_chan.c
+index 8d04440..2219cb9 100644
+--- a/SP/code/qcommon/net_chan.c
++++ b/SP/code/qcommon/net_chan.c
+@@ -690,4 +690,3 @@ int NET_StringToAdr( const char *s, netadr_t *a, netadrtype_t family )
+ 		return 2;
+ 	}
+ }
+-
+diff --git a/SP/code/qcommon/q_platform.h b/SP/code/qcommon/q_platform.h
+index ad197b0..e21d5c9 100644
+--- a/SP/code/qcommon/q_platform.h
++++ b/SP/code/qcommon/q_platform.h
+@@ -165,6 +165,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ 
+ #endif
+ 
++//=========================================================== EMSCRIPTEN ===
++
++#if defined(__EMSCRIPTEN__)
++
++#define OS_STRING "emscripten"
++#define ARCH_STRING "wasm32"
++#define ID_INLINE inline
++#define PATH_SEP '/'
++#define Q3_LITTLE_ENDIAN
++#define DLL_EXT ".wasm"
++
++#endif
++
+ //================================================================= LINUX ===
+ 
+ #if defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__)
+diff --git a/SP/code/renderer/tr_cmds.c b/SP/code/renderer/tr_cmds.c
+index deb3e6b..79f1ed5 100644
+--- a/SP/code/renderer/tr_cmds.c
++++ b/SP/code/renderer/tr_cmds.c
+@@ -590,6 +590,19 @@ void RE_EndFrame( int *frontEndMsec, int *backEndMsec ) {
+ 	}
+ 	cmd->commandId = RC_SWAP_BUFFERS;
+ 
++#ifdef __EMSCRIPTEN__
++	{
++		static qboolean reportedWorldFrame = qfalse;
++		if ( !reportedWorldFrame && tr.world && backEnd.pc.c_surfaces > 0 ) {
++			ri.Printf( PRINT_ALL,
++				"[RTCW WASM] renderer submitted world frame: surfaces=%d vertices=%d indexes=%d glError=0x%x\n",
++				backEnd.pc.c_surfaces, backEnd.pc.c_vertexes,
++				backEnd.pc.c_indexes, qglGetError() );
++			reportedWorldFrame = qtrue;
++		}
++	}
++#endif
++
+ 	R_IssueRenderCommands( qtrue );
+ 
+ 	R_InitNextFrame();
+@@ -631,4 +644,3 @@ void RE_TakeVideoFrame( int width, int height,
+ 	cmd->encodeBuffer = encodeBuffer;
+ 	cmd->motionJpeg = motionJpeg;
+ }
+-
+diff --git a/SP/code/renderer/tr_scene.c b/SP/code/renderer/tr_scene.c
+index 43af1d3..6355131 100644
+--- a/SP/code/renderer/tr_scene.c
++++ b/SP/code/renderer/tr_scene.c
+@@ -534,6 +534,20 @@ void RE_RenderScene( const refdef_t *fd ) {
+ 
+ 	R_RenderView( &parms );
+ 
++#ifdef __EMSCRIPTEN__
++	{
++		static qboolean reportedWorldSubmission = qfalse;
++		if ( !reportedWorldSubmission && tr.world && !( fd->rdflags & RDF_NOWORLDMODEL ) ) {
++			ri.Printf( PRINT_ALL,
++				"[RTCW WASM] queued first world scene: drawSurfs=%d entities=%d viewport=%dx%d fov=%.1fx%.1f\n",
++				tr.refdef.numDrawSurfs - r_firstSceneDrawSurf,
++				tr.refdef.num_entities, parms.viewportWidth,
++				parms.viewportHeight, parms.fovX, parms.fovY );
++			reportedWorldSubmission = qtrue;
++		}
++	}
++#endif
++
+ 	// the next scene rendered in this frame will tack on after this one
+ 	r_firstSceneDrawSurf = tr.refdef.numDrawSurfs;
+ 	r_firstSceneEntity = r_numentities;
+diff --git a/SP/code/sdl/sdl_glimp.c b/SP/code/sdl/sdl_glimp.c
+index 94d1d87..4379f3c 100644
+--- a/SP/code/sdl/sdl_glimp.c
++++ b/SP/code/sdl/sdl_glimp.c
+@@ -68,6 +68,24 @@ cvar_t *r_sdlDriver;
+ int qglMajorVersion, qglMinorVersion;
+ int qglesMajorVersion, qglesMinorVersion;
+ 
++#ifdef __EMSCRIPTEN__
++static void APIENTRY GLimp_Emscripten_MultiTexCoord4f( GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q ) {
++	(void)target; (void)s; (void)t; (void)r; (void)q;
++}
++static void APIENTRY GLimp_Emscripten_ArrayElement( GLint i ) {
++	(void)i;
++}
++static void APIENTRY GLimp_Emscripten_DrawBuffer( GLenum mode ) {
++	/* WebGL exposes a single default back buffer. */
++	(void)mode;
++}
++#ifdef USE_OPENGLES
++extern void APIENTRY glClipPlane( GLenum plane, const GLdouble *equation );
++extern void APIENTRY glFrustum( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val );
++extern void APIENTRY glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val );
++#endif
++#endif
++
+ void (APIENTRYP qglActiveTextureARB) (GLenum texture);
+ void (APIENTRYP qglClientActiveTextureARB) (GLenum texture);
+ void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
+@@ -307,7 +325,9 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 	const char *version;
+ 
+ #ifdef __SDL_NOGETPROCADDR__
+-#define GLE( ret, name, ... ) qgl##name = gl#name;
++#define GLE( ret, name, ... ) qgl##name = gl##name;
++#elif defined(__EMSCRIPTEN__)
++#define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name);
+ #else
+ #define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name); \
+ 	if ( qgl##name == NULL ) { \
+@@ -341,6 +361,23 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 		sscanf( version, "%d.%d", &qglMajorVersion, &qglMinorVersion );
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* LEGACY_GL_EMULATION exposes the desktop fixed-function entry points on
++	 * top of WebGL, while WebGL's version string still identifies GLES. Let
++	 * the native RTCW renderer bind that emulated OpenGL 2 surface. */
++#ifdef USE_OPENGLES
++	qglMajorVersion = 0;
++	qglMinorVersion = 0;
++	qglesMajorVersion = 1;
++	qglesMinorVersion = 1;
++#else
++	qglMajorVersion = 2;
++	qglMinorVersion = 0;
++	qglesMajorVersion = 0;
++	qglesMinorVersion = 0;
++#endif
++#endif
++
+ 	if ( fixedFunction ) {
+ 		if ( QGL_VERSION_ATLEAST( 1, 1 ) ) {
+ 			QGL_1_1_PROCS;
+@@ -396,6 +433,26 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 		QGL_3_0_PROCS;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* SDL's WebGL proc lookup omits some functions implemented by
++	 * LEGACY_GL_EMULATION. Bind those linked shims directly. */
++	qglTexEnvf = glTexEnvf;
++	qglFogf = glFogf;
++	qglFogfv = glFogfv;
++	qglMultiTexCoord4f = GLimp_Emscripten_MultiTexCoord4f;
++#ifndef USE_OPENGLES
++	qglClearDepth = glClearDepth;
++	qglDepthRange = glDepthRange;
++	qglFogi = glFogi;
++#else
++	qglClipPlane = glClipPlane;
++	qglFrustum = glFrustum;
++	qglOrtho = glOrtho;
++#endif
++	qglDrawBuffer = GLimp_Emscripten_DrawBuffer;
++	qglArrayElement = GLimp_Emscripten_ArrayElement;
++#endif
++
+ #undef GLE
+ 
+ 	return success;
+@@ -651,7 +708,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
+ #endif
+ 
+ #ifdef USE_OPENGLES
++#ifdef __EMSCRIPTEN__
++		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
++#else
+ 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1 );
++#endif
+ #endif
+ 
+ 		SDL_GL_SetAttribute( SDL_GL_RED_SIZE, perChannelColorBits );
+@@ -716,8 +777,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
+ 
+ #ifdef USE_OPENGLES
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
++#ifdef __EMSCRIPTEN__
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
++#else
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
++#endif
+ #endif
+ 
+ 		if (!fixedFunction)
+diff --git a/SP/code/sdl/sdl_input.c b/SP/code/sdl/sdl_input.c
+index 3bd4f23..47f99c2 100644
+--- a/SP/code/sdl/sdl_input.c
++++ b/SP/code/sdl/sdl_input.c
+@@ -30,6 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten/html5.h>
++#endif
++
+ #include "../client/client.h"
+ #include "../sys/sys_local.h"
+ 
+@@ -350,6 +354,25 @@ static void IN_ActivateMouse( qboolean isFullscreen )
+ 	if (!mouseAvailable || !SDL_WasInit( SDL_INIT_VIDEO ) )
+ 		return;
+ 
++#ifdef __EMSCRIPTEN__
++	{
++		EmscriptenPointerlockChangeEvent pointerLock;
++		qboolean locked = emscripten_get_pointerlock_status( &pointerLock ) == EMSCRIPTEN_RESULT_SUCCESS && pointerLock.isActive;
++
++		// Browser menus need ordinary absolute mouse input.  Requesting SDL
++		// relative mode here arms pointer lock on the next click and consumes
++		// that click before RTCW's UI sees it.  The launcher owns the explicit
++		// pointer-lock gesture; only enable relative mode after it succeeds.
++		SDL_SetRelativeMouseMode( locked ? SDL_TRUE : SDL_FALSE );
++		SDL_SetWindowGrab( SDL_window, locked ? SDL_TRUE : SDL_FALSE );
++		if ( !mouseActive ) {
++			IN_GobbleMotionEvents();
++		}
++		mouseActive = qtrue;
++		return;
++	}
++#endif
++
+ 	if( !mouseActive )
+ 	{
+ 		SDL_SetRelativeMouseMode( SDL_TRUE );
+diff --git a/SP/code/server/sv_client.c b/SP/code/server/sv_client.c
+index 746677c..48f4e29 100644
+--- a/SP/code/server/sv_client.c
++++ b/SP/code/server/sv_client.c
+@@ -788,6 +788,9 @@ void SV_ClientEnterWorld( client_t *client, usercmd_t *cmd ) {
+ 	sharedEntity_t *ent;
+ 
+ 	Com_DPrintf( "Going from CS_PRIMED to CS_ACTIVE for %s\n", client->name );
++#ifdef __EMSCRIPTEN__
++	Com_Printf( "[RTCW WASM] server activated local client %s\n", client->name );
++#endif
+ 	client->state = CS_ACTIVE;
+ 
+ 	// resend all configstrings using the cs commands since these are
+@@ -1965,4 +1968,3 @@ void SV_ExecuteClientMessage( client_t *cl, msg_t *msg ) {
+ //		Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
+ //	}
+ }
+-
+diff --git a/SP/code/server/sv_init.c b/SP/code/server/sv_init.c
+index 94b68d0..81ebed7 100644
+--- a/SP/code/server/sv_init.c
++++ b/SP/code/server/sv_init.c
+@@ -1149,4 +1149,3 @@ void SV_Shutdown( char *finalmsg ) {
+ 	if( sv_killserver->integer != 2 )
+ 		CL_Disconnect( qfalse );
+ }
+-
+diff --git a/SP/code/server/sv_main.c b/SP/code/server/sv_main.c
+index 441abb0..f7d5070 100644
+--- a/SP/code/server/sv_main.c
++++ b/SP/code/server/sv_main.c
+@@ -1210,6 +1210,14 @@ int SV_RateMsec(client_t *client)
+ {
+ 	int rate, rateMsec;
+ 	int messageSize;
++
++	// In-process clients and game bots have no physical link to throttle.
++	// Their rate may still be zero while the local connection is being
++	// established, which must not become a divide-by-zero here.
++	if ( client->netchan.remoteAddress.type == NA_LOOPBACK ||
++		 client->netchan.remoteAddress.type == NA_BOT ) {
++		return 0;
++	}
+ 	
+ 	messageSize = client->netchan.lastSentSize;
+ 	rate = client->rate;
+@@ -1230,6 +1238,13 @@ int SV_RateMsec(client_t *client)
+ 			rate = sv_minRate->integer;
+ 	}
+ 
++	// A just-created local client can be visible to the queue before its
++	// userinfo rate is populated.  Treat it as unthrottled instead of dividing
++	// by zero; normal remote clients are clamped by SV_UserinfoChanged.
++	if ( rate <= 0 ) {
++		rate = 99999;
++	}
++
+ 	if(client->netchan.remoteAddress.type == NA_IP6)
+ 		messageSize += UDPIP6_HEADER_SIZE;
+ 	else
+@@ -1323,4 +1338,3 @@ int SV_SendQueuedPackets()
+ 
+ 	return timeVal;
+ }
+-
+diff --git a/SP/code/sys/sys_main.c b/SP/code/sys/sys_main.c
+index 2c880f1..e94ccf7 100644
+--- a/SP/code/sys/sys_main.c
++++ b/SP/code/sys/sys_main.c
+@@ -31,6 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include <ctype.h>
+ #include <errno.h>
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ #ifndef DEDICATED
+ #ifdef USE_LOCAL_HEADERS
+ #	include "SDL.h"
+@@ -132,7 +136,13 @@ Handle new console input
+ */
+ char *Sys_ConsoleInput(void)
+ {
++#ifdef __EMSCRIPTEN__
++	/* Browser builds use the in-game console. Reading Emscripten stdin opens
++	 * a blocking JavaScript prompt on every frame. */
++	return NULL;
++#else
+ 	return CON_Input( );
++#endif
+ }
+ 
+ /*
+@@ -681,6 +691,13 @@ void Sys_SigHandler( int signal )
+ 		Sys_Exit( 2 );
+ }
+ 
++#ifdef __EMSCRIPTEN__
++static void Sys_EmscriptenFrame( void )
++{
++	Com_Frame( );
++}
++#endif
++
+ /*
+ =================
+ main
+@@ -759,11 +776,14 @@ int main( int argc, char **argv )
+ 	signal( SIGTERM, Sys_SigHandler );
+ 	signal( SIGINT, Sys_SigHandler );
+ 
++#ifdef __EMSCRIPTEN__
++	emscripten_set_main_loop( Sys_EmscriptenFrame, 0, 0 );
++#else
+ 	while( 1 )
+ 	{
+ 		Com_Frame( );
+ 	}
++#endif
+ 
+ 	return 0;
+ }
+-
+diff --git a/docker/nginx.conf b/docker/nginx.conf
+new file mode 100644
+index 0000000..1437cdd
+--- /dev/null
++++ b/docker/nginx.conf
+@@ -0,0 +1,19 @@
++server {
++    listen 8088;
++    server_name _;
++    root /usr/share/nginx/html;
++
++    location = /health {
++        default_type application/json;
++        add_header Cache-Control no-store;
++		return 200 '{"ok":true,"game":"rtcw-wasm","status":"browser-client","retail_data":"owner-local"}';
++    }
++
++    location = /data {
++        return 404;
++    }
++
++    location /data/ {
++        return 404;
++    }
++}
+diff --git a/scripts/build-docker.sh b/scripts/build-docker.sh
+new file mode 100755
+index 0000000..2301df9
+--- /dev/null
++++ b/scripts/build-docker.sh
+@@ -0,0 +1,26 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++image="${IMAGE_REPO:-theodorecharles/rtcw-wasm}:${IMAGE_TAG:-dev}"
++
++for artifact in \
++  web/sp/index.html \
++  web/sp/client/iowolfsp.js \
++  web/sp/client/iowolfsp.wasm \
++  web/sp/client/main/vm/cgame.sp.qvm \
++  web/sp/client/main/vm/qagame.sp.qvm \
++  web/sp/client/main/vm/ui.sp.qvm \
++  SP/build/release-linux-x86_64/iowolfsp.x86_64 \
++  MP/build/release-linux-x86_64/iowolfded.x86_64 \
++  MP/build/release-linux-x86_64/iowolfmp.x86_64; do
++  test -s "$repo_root/$artifact" || {
++    echo "Missing $artifact; run scripts/build-web-sp.sh and scripts/build-server.sh first." >&2
++    exit 1
++  }
++done
++
++docker build --platform linux/amd64 \
++  --build-arg "VCS_REF=$(git -C "$repo_root" rev-parse HEAD)" \
++  --tag "$image" "$repo_root"
++echo "Built $image"
+diff --git a/scripts/build-server.sh b/scripts/build-server.sh
+new file mode 100755
+index 0000000..14109d1
+--- /dev/null
++++ b/scripts/build-server.sh
+@@ -0,0 +1,12 @@
++#!/bin/sh
++set -eu
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++JOBS=${JOBS:-8}
++
++make -C "$ROOT/MP" -j"$JOBS" \
++	BUILD_CLIENT=0 BUILD_SERVER=1 BUILD_GAME_SO=1 BUILD_GAME_QVM=0 BUILD_BASEGAME=1 \
++	USE_OPENAL=0 USE_CURL=0 USE_MUMBLE=0 USE_VOIP=0 \
++	USE_CODEC_VORBIS=0 USE_CODEC_OPUS=0 USE_FREETYPE=0
++
++echo "RTCW dedicated server written under $ROOT/MP/build/release-linux-x86_64"
+diff --git a/scripts/build-web-mp.sh b/scripts/build-web-mp.sh
+new file mode 100755
+index 0000000..fab4065
+--- /dev/null
++++ b/scripts/build-web-mp.sh
+@@ -0,0 +1,47 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++JOBS=${JOBS:-8}
++NATIVE_BUILD=build
++WEB_BUILD=build/web
++NATIVE_OUT="$ROOT/MP/$NATIVE_BUILD/release-linux-x86_64"
++WEB_OUT="$ROOT/MP/$WEB_BUILD/release-emscripten-wasm32"
++CLIENT_OUT="$ROOT/web/sp/client/mp"
++
++if ! command -v emcc >/dev/null 2>&1 || ! command -v emmake >/dev/null 2>&1; then
++	EMSDK_ENV=${EMSDK_ENV:-}
++	if [ -z "$EMSDK_ENV" ] && [ -n "${EMSDK_DIR:-}" ]; then
++		EMSDK_ENV="$EMSDK_DIR/emsdk_env.sh"
++	fi
++	if [ -z "$EMSDK_ENV" ] || [ ! -f "$EMSDK_ENV" ]; then
++		echo "Activate Emscripten first, or set EMSDK_ENV/EMSDK_DIR to an emsdk checkout." >&2
++		exit 1
++	fi
++	# shellcheck disable=SC1090
++	. "$EMSDK_ENV" >/dev/null
++fi
++
++# Build MP cgame/qagame/UI QVMs with native tools before invoking Emscripten.
++make -C "$ROOT/MP" -j"$JOBS" \
++	BUILD_DIR="$NATIVE_BUILD" \
++	BUILD_CLIENT=0 BUILD_SERVER=0 BUILD_GAME_SO=0 \
++	BUILD_GAME_QVM=1 BUILD_BASEGAME=1 \
++	TOOLS_CC='gcc -std=gnu17'
++
++emmake make -C "$ROOT/MP" -j"$JOBS" \
++	PLATFORM=emscripten ARCH=wasm32 BUILD_DIR="$WEB_BUILD" \
++	BUILD_SERVER=0 BUILD_CLIENT=1 BUILD_GAME_SO=0 BUILD_GAME_QVM=0 \
++	BUILD_RENDERER_REND2=0 USE_RENDERER_DLOPEN=0 \
++	USE_OPENGLES=1 \
++	USE_OPENAL=0 USE_CURL=0 USE_MUMBLE=0 USE_VOIP=0 \
++	USE_CODEC_VORBIS=0 USE_CODEC_OPUS=0 USE_FREETYPE=0
++
++mkdir -p "$CLIENT_OUT/main/vm"
++install -m 0644 "$WEB_OUT/iowolfmp.js" "$CLIENT_OUT/iowolfmp.js"
++install -m 0644 "$WEB_OUT/iowolfmp.wasm" "$CLIENT_OUT/iowolfmp.wasm"
++install -m 0644 "$NATIVE_OUT/main/vm/cgame.mp.qvm" "$CLIENT_OUT/main/vm/cgame.mp.qvm"
++install -m 0644 "$NATIVE_OUT/main/vm/qagame.mp.qvm" "$CLIENT_OUT/main/vm/qagame.mp.qvm"
++install -m 0644 "$NATIVE_OUT/main/vm/ui.mp.qvm" "$CLIENT_OUT/main/vm/ui.mp.qvm"
++
++echo "RTCW MP browser artifacts written to $CLIENT_OUT"
+diff --git a/scripts/build-web-sp.sh b/scripts/build-web-sp.sh
+new file mode 100755
+index 0000000..7aed0e6
+--- /dev/null
++++ b/scripts/build-web-sp.sh
+@@ -0,0 +1,48 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++JOBS=${JOBS:-8}
++NATIVE_BUILD=build
++WEB_BUILD=build/web
++NATIVE_OUT="$ROOT/SP/$NATIVE_BUILD/release-linux-x86_64"
++WEB_OUT="$ROOT/SP/$WEB_BUILD/release-emscripten-wasm32"
++CLIENT_OUT="$ROOT/web/sp/client/sp"
++
++if ! command -v emcc >/dev/null 2>&1 || ! command -v emmake >/dev/null 2>&1; then
++	EMSDK_ENV=${EMSDK_ENV:-}
++	if [ -z "$EMSDK_ENV" ] && [ -n "${EMSDK_DIR:-}" ]; then
++		EMSDK_ENV="$EMSDK_DIR/emsdk_env.sh"
++	fi
++	if [ -z "$EMSDK_ENV" ] || [ ! -f "$EMSDK_ENV" ]; then
++		echo "Activate Emscripten first, or set EMSDK_ENV/EMSDK_DIR to an emsdk checkout." >&2
++		exit 1
++	fi
++	# shellcheck disable=SC1090
++	. "$EMSDK_ENV" >/dev/null
++fi
++
++# QVM tools must remain native executables. GNU C17 also avoids GCC 15's C23
++# constexpr keyword collision in ioRTCW's historical lcc sources.
++make -C "$ROOT/SP" -j"$JOBS" \
++	BUILD_DIR="$NATIVE_BUILD" \
++	BUILD_CLIENT=0 BUILD_SERVER=0 BUILD_GAME_SO=0 \
++	BUILD_GAME_QVM=1 BUILD_BASEGAME=1 \
++	TOOLS_CC='gcc -std=gnu17'
++
++emmake make -C "$ROOT/SP" -j"$JOBS" \
++	PLATFORM=emscripten ARCH=wasm32 BUILD_DIR="$WEB_BUILD" \
++	BUILD_SERVER=0 BUILD_CLIENT=1 BUILD_GAME_SO=0 BUILD_GAME_QVM=0 \
++	BUILD_RENDERER_REND2=0 USE_RENDERER_DLOPEN=0 \
++	USE_OPENGLES=1 \
++	USE_OPENAL=0 USE_CURL=0 USE_MUMBLE=0 USE_VOIP=0 \
++	USE_CODEC_VORBIS=0 USE_CODEC_OPUS=0 USE_FREETYPE=0
++
++mkdir -p "$CLIENT_OUT/main/vm"
++install -m 0644 "$WEB_OUT/iowolfsp.js" "$CLIENT_OUT/iowolfsp.js"
++install -m 0644 "$WEB_OUT/iowolfsp.wasm" "$CLIENT_OUT/iowolfsp.wasm"
++install -m 0644 "$NATIVE_OUT/main/vm/cgame.sp.qvm" "$CLIENT_OUT/main/vm/cgame.sp.qvm"
++install -m 0644 "$NATIVE_OUT/main/vm/qagame.sp.qvm" "$CLIENT_OUT/main/vm/qagame.sp.qvm"
++install -m 0644 "$NATIVE_OUT/main/vm/ui.sp.qvm" "$CLIENT_OUT/main/vm/ui.sp.qvm"
++
++echo "RTCW SP browser artifacts written to $CLIENT_OUT"
+diff --git a/scripts/build-web.sh b/scripts/build-web.sh
+new file mode 100755
+index 0000000..8843c47
+--- /dev/null
++++ b/scripts/build-web.sh
+@@ -0,0 +1,7 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++"$ROOT/scripts/build-web-sp.sh"
++"$ROOT/scripts/build-web-mp.sh"
++"$ROOT/scripts/test-web.sh"
+diff --git a/scripts/setup-data.sh b/scripts/setup-data.sh
+new file mode 100755
+index 0000000..e35f6b2
+--- /dev/null
++++ b/scripts/setup-data.sh
+@@ -0,0 +1,38 @@
++#!/bin/sh
++set -eu
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++SOURCE_MAIN=${1:-${RTCW_MAIN_DIR:-}}
++MANIFEST="$ROOT/runtime/asset-manifest.json"
++
++SP_FILES='pak0.pk3 sp_pak1.pk3 sp_pak2.pk3 sp_pak3.pk3 sp_pak4.pk3'
++MP_FILES='mp_bin.pk3 mp_pak0.pk3 mp_pak1.pk3 mp_pak2.pk3 mp_pak3.pk3 mp_pak4.pk3 mp_pak5.pk3 mp_pakmaps0.pk3 mp_pakmaps1.pk3 mp_pakmaps2.pk3 mp_pakmaps3.pk3 mp_pakmaps4.pk3 mp_pakmaps5.pk3 mp_pakmaps6.pk3'
++
++if [ -z "$SOURCE_MAIN" ]; then
++	echo "usage: RTCW_MAIN_DIR=/path/to/RTCW/Main $0" >&2
++	echo "   or: $0 /path/to/RTCW/Main" >&2
++	exit 2
++fi
++
++if [ ! -d "$SOURCE_MAIN" ]; then
++	echo "RTCW Main directory not found: $SOURCE_MAIN" >&2
++	echo "Set RTCW_MAIN_DIR to a legally installed RTCW Main directory." >&2
++	exit 1
++fi
++
++missing=0
++for file in $SP_FILES $MP_FILES; do
++	if [ ! -s "$SOURCE_MAIN/$file" ]; then
++		echo "Missing required retail data: Main/$file" >&2
++		missing=1
++	fi
++done
++if [ "$missing" -ne 0 ]; then
++	exit 1
++fi
++
++mkdir -p "$ROOT/runtime"
++node "$ROOT/scripts/write-data-manifest.mjs" "$SOURCE_MAIN" $SP_FILES $MP_FILES > "$MANIFEST"
++echo "Validated RTCW SP and MP retail data at $SOURCE_MAIN"
++echo "Wrote ignored local manifest: $MANIFEST"
++echo "No retail file or symlink was placed in the web tree."
+diff --git a/scripts/test-web.sh b/scripts/test-web.sh
+new file mode 100755
+index 0000000..6e6a408
+--- /dev/null
++++ b/scripts/test-web.sh
+@@ -0,0 +1,47 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++SITE="$ROOT/web/sp"
++
++required=(
++	index.html launcher.js asset-spec.js
++	client/sp/iowolfsp.js client/sp/iowolfsp.wasm
++	client/sp/main/vm/cgame.sp.qvm client/sp/main/vm/qagame.sp.qvm client/sp/main/vm/ui.sp.qvm
++	client/mp/iowolfmp.js client/mp/iowolfmp.wasm
++	client/mp/main/vm/cgame.mp.qvm client/mp/main/vm/qagame.mp.qvm client/mp/main/vm/ui.mp.qvm
++)
++for path in "${required[@]}"; do
++	[[ -s "$SITE/$path" ]] || { echo "Missing RTCW web artifact: $path" >&2; exit 1; }
++done
++
++if find "$SITE" -type f \( -iname '*.pk3' -o -iname '*.pak' -o -iname '*.data' \) -print -quit | grep -q .; then
++	echo "Retail-bearing file found under $SITE" >&2
++	exit 1
++fi
++
++node --check "$SITE/asset-spec.js"
++node --check "$SITE/launcher.js"
++node --check "$SITE/client/sp/iowolfsp.js"
++node --check "$SITE/client/mp/iowolfmp.js"
++
++for wasm in "$SITE/client/sp/iowolfsp.wasm" "$SITE/client/mp/iowolfmp.wasm"; do
++	[[ "$(od -An -tx1 -N4 "$wasm" | tr -d ' \n')" == '0061736d' ]] || {
++		echo "Invalid WebAssembly magic: $wasm" >&2
++		exit 1
++	}
++done
++
++for qvm in "$SITE"/client/{sp,mp}/main/vm/*.qvm; do
++	[[ "$(od -An -tx1 -N4 "$qvm" | tr -d ' \n')" == '45147212' ]] || {
++		echo "Invalid QVM magic: $qvm" >&2
++		exit 1
++	}
++done
++
++rg -q 'loopbackHosts' "$SITE/launcher.js"
++rg -q 'SHA-256 verification failed' "$SITE/launcher.js"
++rg -q 'module\.callMain' "$SITE/launcher.js"
++rg -q 'sp_pak4\.pk3' "$SITE/asset-spec.js"
++
++echo "RTCW SP+MP static browser artifact checks passed."
+diff --git a/scripts/write-data-manifest.mjs b/scripts/write-data-manifest.mjs
+new file mode 100644
+index 0000000..33a6076
+--- /dev/null
++++ b/scripts/write-data-manifest.mjs
+@@ -0,0 +1,23 @@
++import { createHash } from "node:crypto";
++import { createReadStream, statSync } from "node:fs";
++import { basename, join } from "node:path";
++
++const [source, ...files] = process.argv.slice(2);
++if (!source || files.length === 0) {
++  console.error("usage: node write-data-manifest.mjs MAIN_DIR FILE...");
++  process.exit(2);
++}
++
++const entries = [];
++for (const file of files) {
++  const absolute = join(source, file);
++  const hash = createHash("sha256");
++  for await (const chunk of createReadStream(absolute)) hash.update(chunk);
++  entries.push({
++    path: `Main/${basename(file)}`,
++    size: statSync(absolute).size,
++    sha256: hash.digest("hex"),
++  });
++}
++
++process.stdout.write(`${JSON.stringify({ version: 1, entries }, null, 2)}\n`);
+diff --git a/web/sp/asset-spec.js b/web/sp/asset-spec.js
+new file mode 100644
+index 0000000..df011e5
+--- /dev/null
++++ b/web/sp/asset-spec.js
+@@ -0,0 +1,27 @@
++window.RTCW_ASSET_SPEC = Object.freeze({
++  version: 1,
++  sp: Object.freeze([
++    { path: "Main/pak0.pk3", size: 315823656, sha256: "1dfcfc3187ba09fe32cd8a7921a09cd15dd789816186c89b11e5e0d954c55e6c" },
++    { path: "Main/sp_pak1.pk3", size: 293887431, sha256: "66785d612f88a19c3bb5fd24f84d89b240375a28550a79039dfb6afae865ec9a" },
++    { path: "Main/sp_pak2.pk3", size: 11026123, sha256: "eca64ea0fda6edd653865e2eb768f152d38abc8b89941aa954ed74fa36928796" },
++    { path: "Main/sp_pak3.pk3", size: 152544, sha256: "936437413956f88b9e5d548ccab9b51b8c8b9754f8f8e13ee7b910813a24d0f9" },
++    { path: "Main/sp_pak4.pk3", size: 15532040, sha256: "5532801005eaf2d74fe9098dc638abdb8284225c293cee3573ffa9b6c2edd8fc" }
++  ]),
++  mp: Object.freeze([
++    { path: "Main/pak0.pk3", size: 315823656, sha256: "1dfcfc3187ba09fe32cd8a7921a09cd15dd789816186c89b11e5e0d954c55e6c" },
++    { path: "Main/mp_bin.pk3", size: 760207, sha256: "bb6ee2302de55cd35a3145b790e43958fa92a98d3494b9fa96b457d030b0c05d" },
++    { path: "Main/mp_pak0.pk3", size: 63211149, sha256: "c0e090e7b4245313bea64b5fb20b24d69786e593716cfe6bf85ee9b4f3c794b3" },
++    { path: "Main/mp_pak1.pk3", size: 4449596, sha256: "248ff7c6a4c12f3fc08e0bb73a0602ffdb2e31c4a4c50929d76fa5f814cbf974" },
++    { path: "Main/mp_pak2.pk3", size: 1118, sha256: "0a9142be2539427189cc9b31d5af188298ce3e4c8f06d752e1809d22046b7b03" },
++    { path: "Main/mp_pak3.pk3", size: 159762, sha256: "ad7705f8c05154f6e009f29d1a7e3eb5bf9cb26cb9035d9c55640ec02cb14692" },
++    { path: "Main/mp_pak4.pk3", size: 7799, sha256: "61bf3e778d2777895ce7c0c7afe6df97f2521a3e5ed054c04346ea5ccdcac0aa" },
++    { path: "Main/mp_pak5.pk3", size: 167075, sha256: "8defe8227bd345c485bac98f8c1191c2360d0c784953e9c38a81d245eb1901b9" },
++    { path: "Main/mp_pakmaps0.pk3", size: 3485134, sha256: "2e9cfdc505587dc7e7059e3188b9a1b4ceba75decfa7578c3b2a73dbb0d94a93" },
++    { path: "Main/mp_pakmaps1.pk3", size: 3765933, sha256: "a907dc0caf8ab4284dc8ba8de04a11ec8472a50f861998994c834ff1a4781d9a" },
++    { path: "Main/mp_pakmaps2.pk3", size: 7408542, sha256: "d2cc0a7a762ad5f1ec3523ff79798cd7d732ffe8f29e6ac7df66f74319e85eb6" },
++    { path: "Main/mp_pakmaps3.pk3", size: 10780146, sha256: "524ecd9053d4c8f8e27d4bc4c04504fc1a1f3a29dd8299c8b38909db3c51e6ac" },
++    { path: "Main/mp_pakmaps4.pk3", size: 24171802, sha256: "1357a12e57634dac59cbe70a5984af85a43e7db5aff930d05c8ee42dfcefded8" },
++    { path: "Main/mp_pakmaps5.pk3", size: 20024689, sha256: "85cc0e8358a26601211625a9600ca47c126e4a38cca0bac60d7465ffb5ccadfe" },
++    { path: "Main/mp_pakmaps6.pk3", size: 10080181, sha256: "fcdb3754ca4e9f60b3086c8461b26160dd8de7f5e94c04100a2eb6f9519abca2" }
++  ])
++});
+diff --git a/web/sp/launcher.js b/web/sp/launcher.js
+new file mode 100644
+index 0000000..ef5b843
+--- /dev/null
++++ b/web/sp/launcher.js
+@@ -0,0 +1,435 @@
++(() => {
++  "use strict";
++
++  const launcher = document.querySelector("#launcher");
++  const runtime = document.querySelector("#runtime");
++  const canvas = document.querySelector("#canvas");
++  const playButton = document.querySelector("#play");
++  const captureButton = document.querySelector("#capture");
++  const consoleButton = document.querySelector("#show-console");
++  const consoleView = document.querySelector("#console");
++  const statusView = document.querySelector("#status");
++  const progressView = document.querySelector("#progress");
++  const modeSelect = document.querySelector("#mode");
++  const nameInput = document.querySelector("#player-name");
++  const qualitySelect = document.querySelector("#quality");
++  const fpsSelect = document.querySelector("#fps");
++  const dynamicToggle = document.querySelector("#dynamic-quality");
++
++  const engines = Object.freeze({
++    sp: Object.freeze({
++      label: "single-player",
++      script: "client/sp/iowolfsp.js",
++      wasm: "client/sp/iowolfsp.wasm",
++      qvms: Object.freeze(["cgame.sp.qvm", "qagame.sp.qvm", "ui.sp.qvm"])
++    }),
++    mp: Object.freeze({
++      label: "multiplayer",
++      script: "client/mp/iowolfmp.js",
++      wasm: "client/mp/iowolfmp.wasm",
++      qvms: Object.freeze(["cgame.mp.qvm", "qagame.mp.qvm", "ui.mp.qvm"])
++    })
++  });
++
++  const qualityCvars = Object.freeze({
++    low: Object.freeze({ r_picmip: "2", r_lodbias: "2", r_subdivisions: "20", r_dynamiclight: "0" }),
++    medium: Object.freeze({ r_picmip: "1", r_lodbias: "1", r_subdivisions: "12", r_dynamiclight: "1" }),
++    high: Object.freeze({ r_picmip: "0", r_lodbias: "0", r_subdivisions: "8", r_dynamiclight: "1" }),
++    ultra: Object.freeze({ r_picmip: "0", r_lodbias: "0", r_subdivisions: "4", r_dynamiclight: "1" })
++  });
++
++  const loopbackHosts = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
++  let launching = false;
++  let totalBytes = 0;
++  let completedBytes = 0;
++
++  class Sha256 {
++    constructor() {
++      this.state = new Uint32Array([
++        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
++        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
++      ]);
++      this.buffer = new Uint8Array(64);
++      this.words = new Uint32Array(64);
++      this.bufferLength = 0;
++      this.bytesHashed = 0;
++      this.finished = false;
++    }
++
++    static rotateRight(value, shift) {
++      return (value >>> shift) | (value << (32 - shift));
++    }
++
++    update(input) {
++      if (this.finished) throw new Error("SHA-256 digest is already finalized");
++      const data = input instanceof Uint8Array ? input : new Uint8Array(input);
++      this.bytesHashed += data.length;
++      let offset = 0;
++
++      if (this.bufferLength) {
++        const needed = 64 - this.bufferLength;
++        const take = Math.min(needed, data.length);
++        this.buffer.set(data.subarray(0, take), this.bufferLength);
++        this.bufferLength += take;
++        offset += take;
++        if (this.bufferLength === 64) {
++          this.transform(this.buffer, 0);
++          this.bufferLength = 0;
++        }
++      }
++
++      while (offset + 64 <= data.length) {
++        this.transform(data, offset);
++        offset += 64;
++      }
++
++      if (offset < data.length) {
++        this.buffer.set(data.subarray(offset), 0);
++        this.bufferLength = data.length - offset;
++      }
++      return this;
++    }
++
++    transform(data, offset) {
++      const words = this.words;
++      const k = Sha256.constants;
++      for (let index = 0; index < 16; index += 1) {
++        const start = offset + index * 4;
++        words[index] = ((data[start] << 24) | (data[start + 1] << 16) |
++          (data[start + 2] << 8) | data[start + 3]) >>> 0;
++      }
++      for (let index = 16; index < 64; index += 1) {
++        const x = words[index - 15];
++        const y = words[index - 2];
++        const sigma0 = Sha256.rotateRight(x, 7) ^ Sha256.rotateRight(x, 18) ^ (x >>> 3);
++        const sigma1 = Sha256.rotateRight(y, 17) ^ Sha256.rotateRight(y, 19) ^ (y >>> 10);
++        words[index] = (words[index - 16] + sigma0 + words[index - 7] + sigma1) >>> 0;
++      }
++
++      let [a, b, c, d, e, f, g, h] = this.state;
++      for (let index = 0; index < 64; index += 1) {
++        const upper1 = Sha256.rotateRight(e, 6) ^ Sha256.rotateRight(e, 11) ^ Sha256.rotateRight(e, 25);
++        const choice = (e & f) ^ (~e & g);
++        const temp1 = (h + upper1 + choice + k[index] + words[index]) >>> 0;
++        const upper0 = Sha256.rotateRight(a, 2) ^ Sha256.rotateRight(a, 13) ^ Sha256.rotateRight(a, 22);
++        const majority = (a & b) ^ (a & c) ^ (b & c);
++        const temp2 = (upper0 + majority) >>> 0;
++        h = g;
++        g = f;
++        f = e;
++        e = (d + temp1) >>> 0;
++        d = c;
++        c = b;
++        b = a;
++        a = (temp1 + temp2) >>> 0;
++      }
++
++      this.state[0] = (this.state[0] + a) >>> 0;
++      this.state[1] = (this.state[1] + b) >>> 0;
++      this.state[2] = (this.state[2] + c) >>> 0;
++      this.state[3] = (this.state[3] + d) >>> 0;
++      this.state[4] = (this.state[4] + e) >>> 0;
++      this.state[5] = (this.state[5] + f) >>> 0;
++      this.state[6] = (this.state[6] + g) >>> 0;
++      this.state[7] = (this.state[7] + h) >>> 0;
++    }
++
++    hex() {
++      if (!this.finished) {
++        const bytesHashed = this.bytesHashed;
++        this.buffer[this.bufferLength++] = 0x80;
++        if (this.bufferLength > 56) {
++          this.buffer.fill(0, this.bufferLength, 64);
++          this.transform(this.buffer, 0);
++          this.bufferLength = 0;
++        }
++        this.buffer.fill(0, this.bufferLength, 56);
++        const high = Math.floor(bytesHashed / 0x20000000);
++        const low = (bytesHashed * 8) >>> 0;
++        for (let index = 0; index < 4; index += 1) {
++          this.buffer[56 + index] = (high >>> (24 - index * 8)) & 0xff;
++          this.buffer[60 + index] = (low >>> (24 - index * 8)) & 0xff;
++        }
++        this.transform(this.buffer, 0);
++        this.finished = true;
++      }
++      return Array.from(this.state, word => word.toString(16).padStart(8, "0")).join("");
++    }
++  }
++
++  Sha256.constants = new Uint32Array([
++    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
++    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
++    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
++    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
++    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
++    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
++    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
++    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
++  ]);
++
++  function appendLog(message, isError = false) {
++    const line = String(message);
++    consoleView.textContent += `${line}\n`;
++    consoleView.scrollTop = consoleView.scrollHeight;
++    (isError ? console.error : console.log)("[RTCW WASM]", line);
++  }
++
++  function setStatus(message) {
++    statusView.textContent = message;
++  }
++
++  function updateProgress(fileName, fileBytes) {
++    const current = completedBytes + fileBytes;
++    progressView.value = totalBytes ? current / totalBytes : 0;
++    setStatus(`Preparing ${fileName}… ${Math.floor(progressView.value * 100)}%`);
++  }
++
++  function localDataUrl(path) {
++    return `/local-data/${path.split("/").map(encodeURIComponent).join("/")}`;
++  }
++
++  function validZipHeader(bytes) {
++    return bytes.length >= 4 && bytes[0] === 0x50 && bytes[1] === 0x4b &&
++      ((bytes[2] === 0x03 && bytes[3] === 0x04) ||
++       (bytes[2] === 0x05 && bytes[3] === 0x06) ||
++       (bytes[2] === 0x07 && bytes[3] === 0x08));
++  }
++
++  async function validateAvailability(entries, engine) {
++    if (!loopbackHosts.has(location.hostname)) {
++      throw new Error("Owner-mounted development import is restricted to loopback URLs");
++    }
++    const checks = [engine.script, engine.wasm, ...engine.qvms.map(name => `client/${modeSelect.value}/main/vm/${name}`)];
++    for (const path of checks) {
++      const response = await fetch(path, { method: "HEAD", cache: "no-store" });
++      if (!response.ok) throw new Error(`Build artifact is missing: ${path}`);
++    }
++    for (const entry of entries) {
++      const response = await fetch(localDataUrl(entry.path), { method: "HEAD", cache: "no-store" });
++      if (!response.ok) throw new Error(`Owner file is missing: ${entry.path}`);
++      const length = Number(response.headers.get("Content-Length"));
++      if (length !== entry.size) throw new Error(`${entry.path}: expected ${entry.size} bytes, received ${length}`);
++    }
++  }
++
++  function loadEngine(engine) {
++    return new Promise((resolve, reject) => {
++      const timeout = window.setTimeout(() => reject(new Error("Engine runtime initialization timed out")), 30000);
++      window.Module = {
++        canvas,
++        noInitialRun: true,
++        locateFile: path => new URL(path, new URL(engine.script, location.href)).href,
++        print: (...args) => appendLog(args.join(" ")),
++        printErr: (...args) => appendLog(args.join(" "), true),
++        setStatus,
++        onAbort: reason => reject(new Error(`Engine aborted: ${reason}`)),
++        onRuntimeInitialized: () => {
++          window.clearTimeout(timeout);
++          appendLog("Engine runtime initialized; native main remains deferred");
++          resolve(window.Module);
++        }
++      };
++      const script = document.createElement("script");
++      script.src = engine.script;
++      script.async = true;
++      script.onerror = () => reject(new Error(`Could not load ${engine.script}`));
++      document.body.append(script);
++    });
++  }
++
++  async function writeResponseToFs(module, response, destination, entry) {
++    const parent = destination.slice(0, destination.lastIndexOf("/"));
++    module.FS.mkdirTree(parent);
++    const stream = module.FS.open(destination, "w+");
++    const digest = new Sha256();
++    let written = 0;
++    let firstBytes = null;
++    try {
++      if (response.body && response.body.getReader) {
++        const reader = response.body.getReader();
++        while (true) {
++          const { done, value } = await reader.read();
++          if (done) break;
++          const chunk = value instanceof Uint8Array ? value : new Uint8Array(value);
++          if (!firstBytes) firstBytes = chunk.slice(0, 4);
++          digest.update(chunk);
++          module.FS.write(stream, chunk, 0, chunk.length, written);
++          written += chunk.length;
++          updateProgress(entry.path, written);
++          await new Promise(resolve => window.setTimeout(resolve, 0));
++        }
++      } else {
++        const bytes = new Uint8Array(await response.arrayBuffer());
++        firstBytes = bytes.slice(0, 4);
++        digest.update(bytes);
++        module.FS.write(stream, bytes, 0, bytes.length, 0);
++        written = bytes.length;
++        updateProgress(entry.path, written);
++      }
++    } finally {
++      module.FS.close(stream);
++    }
++
++    if (written !== entry.size) throw new Error(`${entry.path}: streamed ${written} bytes, expected ${entry.size}`);
++    if (!validZipHeader(firstBytes || new Uint8Array())) throw new Error(`${entry.path}: invalid ZIP/PK3 header`);
++    const actualHash = digest.hex();
++    if (actualHash !== entry.sha256) throw new Error(`${entry.path}: SHA-256 verification failed`);
++    module.FS.chmod(destination, 0o444);
++    completedBytes += written;
++    updateProgress(entry.path, 0);
++    appendLog(`Verified ${entry.path} (${written} bytes)`);
++  }
++
++  async function importOwnerData(module, entries) {
++    module.FS.mkdirTree("/game/main");
++    for (const entry of entries) {
++      const response = await fetch(localDataUrl(entry.path), { cache: "no-store" });
++      if (!response.ok) throw new Error(`Could not read ${entry.path}: HTTP ${response.status}`);
++      const length = Number(response.headers.get("Content-Length"));
++      if (length !== entry.size) throw new Error(`${entry.path}: size changed during import`);
++      const name = entry.path.slice(entry.path.lastIndexOf("/") + 1).toLowerCase();
++      await writeResponseToFs(module, response, `/game/main/${name}`, entry);
++    }
++  }
++
++  async function importQvms(module, engine, mode) {
++    module.FS.mkdirTree("/game/main/vm");
++    for (const name of engine.qvms) {
++      const path = `client/${mode}/main/vm/${name}`;
++      const response = await fetch(path, { cache: "no-store" });
++      if (!response.ok) throw new Error(`Could not load generated QVM: ${path}`);
++      const bytes = new Uint8Array(await response.arrayBuffer());
++      if (bytes.length < 4 || bytes[0] !== 0x45 || bytes[1] !== 0x14 || bytes[2] !== 0x72 || bytes[3] !== 0x12) {
++        throw new Error(`${name}: invalid QVM header`);
++      }
++      module.FS.writeFile(`/game/main/vm/${name}`, bytes);
++      module.FS.chmod(`/game/main/vm/${name}`, 0o444);
++      appendLog(`Mounted generated ${name} (${bytes.length} bytes)`);
++    }
++    module.FS.chmod("/game/main/vm", 0o555);
++    module.FS.chmod("/game/main", 0o555);
++    module.FS.chmod("/game", 0o555);
++  }
++
++  async function mountPersistence(module) {
++    module.FS.mkdirTree("/persist");
++    module.FS.mount(module.IDBFS, {}, "/persist");
++    await new Promise((resolve, reject) => module.FS.syncfs(true, error => error ? reject(error) : resolve()));
++    module.FS.mkdirTree("/persist/main");
++    window.addEventListener("pagehide", () => module.FS.syncfs(false, () => {}), { once: true });
++    appendLog("Restored browser-private configuration/save storage");
++  }
++
++  function engineArguments(mode) {
++    const width = Math.max(640, Math.round(canvas.getBoundingClientRect().width * devicePixelRatio));
++    const height = Math.max(480, Math.round(canvas.getBoundingClientRect().height * devicePixelRatio));
++    canvas.width = width;
++    canvas.height = height;
++    const args = [
++      "+set", "fs_basepath", "/game",
++      "+set", "fs_homepath", "/persist",
++      "+set", "fs_cdpath", "",
++      "+set", "fs_game", "",
++      "+set", "vm_cgame", "2",
++      "+set", "vm_game", "2",
++      "+set", "vm_ui", "2",
++      "+set", "r_fullscreen", "0",
++      "+set", "r_mode", "-1",
++      "+set", "r_customwidth", String(width),
++      "+set", "r_customheight", String(height),
++      "+set", "r_colorbits", "32",
++      "+set", "r_texturebits", "32",
++      "+set", "r_textureMode", "GL_LINEAR_MIPMAP_LINEAR",
++      "+set", "r_primitives", "2",
++	  "+set", "r_norefresh", "0",
++	  "+set", "r_skipBackEnd", "0",
++	  "+set", "cg_norender", "0",
++      "+set", "com_maxfps", fpsSelect.value,
++      "+set", "com_introplayed", "1",
++      "+set", "name", nameInput.value.trim() || "Agent"
++    ];
++    for (const [name, value] of Object.entries(qualityCvars[qualitySelect.value])) {
++      args.push("+set", name, value);
++    }
++    if (mode === "sp") args.push("+set", "model", "bj2");
++    if (mode === "mp") args.push("+set", "cl_motd", "0");
++    return args;
++  }
++
++  async function launch() {
++    if (launching) return;
++    launching = true;
++    playButton.disabled = true;
++    progressView.hidden = false;
++    consoleView.textContent = "";
++    completedBytes = 0;
++    try {
++      const mode = modeSelect.value;
++      const engine = engines[mode];
++      const entries = window.RTCW_ASSET_SPEC[mode];
++      totalBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
++      localStorage.setItem("rtcw.launch", JSON.stringify({
++        mode,
++        name: nameInput.value,
++        quality: qualitySelect.value,
++        fps: fpsSelect.value,
++        dynamic: false
++      }));
++
++      setStatus(`Checking ${engine.label} engine and owner data…`);
++      await validateAvailability(entries, engine);
++      appendLog(`Validated ${entries.length} ${engine.label} owner-file paths and sizes`);
++
++      launcher.hidden = true;
++      runtime.hidden = false;
++      setStatus("Loading engine code…");
++      const module = await loadEngine(engine);
++      await mountPersistence(module);
++      await importOwnerData(module, entries);
++      await importQvms(module, engine, mode);
++
++      setStatus(`Starting authentic RTCW ${engine.label} engine…`);
++      progressView.value = 1;
++      module.callMain(engineArguments(mode));
++      canvas.focus();
++      appendLog("Native main entered; cooperative browser frame loop scheduled");
++    } catch (error) {
++      const message = error instanceof Error ? error.message : String(error);
++      appendLog(message, true);
++      setStatus(`Startup failed: ${message}`);
++      launcher.hidden = false;
++      runtime.hidden = true;
++      playButton.disabled = false;
++      progressView.hidden = true;
++      launching = false;
++    }
++  }
++
++  try {
++    const saved = JSON.parse(localStorage.getItem("rtcw.launch"));
++    if (saved && engines[saved.mode]) modeSelect.value = saved.mode;
++    if (saved && typeof saved.name === "string") nameInput.value = saved.name;
++    if (saved && qualityCvars[saved.quality]) qualitySelect.value = saved.quality;
++    if (saved && ["30", "60", "120"].includes(String(saved.fps))) fpsSelect.value = String(saved.fps);
++    dynamicToggle.checked = false;
++  } catch (_) {
++    // Keep launcher defaults when stored preferences are absent or stale.
++  }
++
++  playButton.addEventListener("click", launch);
++  captureButton.addEventListener("click", () => {
++    canvas.focus();
++    if (!document.pointerLockElement) canvas.requestPointerLock();
++  });
++  consoleButton.addEventListener("click", () => {
++    launcher.hidden = false;
++    consoleView.scrollIntoView({ block: "end" });
++  });
++  canvas.addEventListener("contextmenu", event => event.preventDefault());
++  document.addEventListener("pointerlockchange", () => {
++    captureButton.textContent = document.pointerLockElement === canvas ? "Mouse captured" : "Capture mouse";
++  });
++  window.addEventListener("error", event => appendLog(event.message, true));
++  window.addEventListener("unhandledrejection", event => appendLog(event.reason, true));
++})();

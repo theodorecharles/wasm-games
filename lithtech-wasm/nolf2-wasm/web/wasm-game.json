@@ -1,0 +1,41 @@
+{
+  "id": "nolf2-wasm",
+  "title": "No One Lives Forever 2",
+  "kicker": "LithTech Jupiter",
+  "description": "No One Lives Forever 2: A Spy in H.A.R.M.'s Way, built from the official toolkit source.",
+  "provisioningText": "Provide the retail archives GAME.REZ, GAME2.REZ, SOUND.REZ, GAMEDLL.REZ, and Engine.REZ.",
+  "icon": "/icon.svg",
+  "background": "/icon.svg",
+  "adapter": "/game-adapter.js",
+  "displayMode": "4:3",
+  "menuCursor": "browser",
+  "nativeManaged": false,
+  "syncBackbuffer": true,
+  "pointerLock": true,
+  "fullscreen": true,
+  "identity": false,
+  "graphics": false,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/save/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "pwa": {
+    "name": "No One Lives Forever 2",
+    "shortName": "NOLF2",
+    "description": "No One Lives Forever 2 in the browser.",
+    "themeColor": "#c4a35a",
+    "backgroundColor": "#100c08",
+    "icons": [
+      {
+        "src": "/icon.svg",
+        "sizes": "any",
+        "type": "image/svg+xml"
+      }
+    ]
+  }
+}

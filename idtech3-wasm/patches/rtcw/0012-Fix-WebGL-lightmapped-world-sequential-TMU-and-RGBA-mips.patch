@@ -1,0 +1,202 @@
+From b1a3a096cb5fb5f25d4e3c430e48182a85e25e76 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 14:53:25 -0400
+Subject: [PATCH] Fix WebGL lightmapped world without crushing 2D gamma
+
+LEGACY_GL_EMULATION does not implement TMU1 texenv, so collapsed
+lightmaps sample black. Disable multitexture and keep sequential
+passes. Upload a complete RGBA8 mip chain instead of RGB565 level 0
+plus RGBA mips, which hid the world while sky/smoke/flags still showed.
+Revert the 0011 gamma/intensity lift that cooked menus.
+---
+ MP/code/renderer/tr_backend.c |  8 +++++
+ MP/code/renderer/tr_bsp.c     | 17 -----------
+ MP/code/renderer/tr_image.c   | 55 +++++++++++++++--------------------
+ MP/code/renderer/tr_init.c    |  8 -----
+ MP/code/sdl/sdl_glimp.c       | 13 +++++++++
+ 5 files changed, 45 insertions(+), 56 deletions(-)
+
+diff --git a/MP/code/renderer/tr_backend.c b/MP/code/renderer/tr_backend.c
+index 25ff1b9..99f46c0 100644
+--- a/MP/code/renderer/tr_backend.c
++++ b/MP/code/renderer/tr_backend.c
+@@ -77,6 +77,14 @@ void GL_SelectTexture( int unit ) {
+ 		return;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* Multitexture is disabled; ActiveTexture pointers are NULL. */
++	if ( !qglActiveTextureARB ) {
++		glState.currenttmu = 0;
++		return;
++	}
++#endif
++
+ 	if ( unit == 0 ) {
+ 		qglActiveTextureARB( GL_TEXTURE0_ARB );
+ 		GLimp_LogComment( "glActiveTextureARB( GL_TEXTURE0_ARB )\n" );
+diff --git a/MP/code/renderer/tr_bsp.c b/MP/code/renderer/tr_bsp.c
+index 3709750..03a07ff 100644
+--- a/MP/code/renderer/tr_bsp.c
++++ b/MP/code/renderer/tr_bsp.c
+@@ -125,23 +125,6 @@ static void R_ColorShiftLightingBytes( byte in[4], byte out[4] ) {
+ 		b = b * 255 / max;
+ 	}
+ 
+-#ifdef __EMSCRIPTEN__
+-	/* No hardware gamma or overbright. Two-pass modulate of stock
+-	 * lightmaps reads almost black in WebGL; lift them here. */
+-	r = ( r * 3 ) / 2;
+-	g = ( g * 3 ) / 2;
+-	b = ( b * 3 ) / 2;
+-	if ( r > 255 ) {
+-		r = 255;
+-	}
+-	if ( g > 255 ) {
+-		g = 255;
+-	}
+-	if ( b > 255 ) {
+-		b = 255;
+-	}
+-#endif
+-
+ 	out[0] = r;
+ 	out[1] = g;
+ 	out[2] = b;
+diff --git a/MP/code/renderer/tr_image.c b/MP/code/renderer/tr_image.c
+index 4f8a439..c9f9051 100644
+--- a/MP/code/renderer/tr_image.c
++++ b/MP/code/renderer/tr_image.c
+@@ -970,11 +970,32 @@ static void Upload32(   unsigned *data,
+ 		R_LightScaleTexture (scaledBuffer, scaled_width, scaled_height, !mipmap );
+ 
+ #ifdef __EMSCRIPTEN__
+-		/* WebGL2 has no GL_GENERATE_MIPMAP (0x8191). An incomplete mip
+-		 * chain with GL_LINEAR_MIPMAP_* samples as black. */
++		/* WebGL2 has no GL_GENERATE_MIPMAP (0x8191). Do not convert
++		 * level 0 to RGB565/luminance and then hang RGBA mips off it —
++		 * mixed formats sample black, which hid the lightmapped world
++		 * while sky/smoke/flags (often RGBA or nomip) still showed. */
++		internalFormat = GL_RGBA;
++		qglTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
++		if ( mipmap ) {
++			int miplevel = 0;
++			int mipWidth = scaled_width;
++			int mipHeight = scaled_height;
++			while ( mipWidth > 1 || mipHeight > 1 ) {
++				R_MipMap( (byte *)scaledBuffer, mipWidth, mipHeight );
++				mipWidth >>= 1;
++				mipHeight >>= 1;
++				if ( mipWidth < 1 ) {
++					mipWidth = 1;
++				}
++				if ( mipHeight < 1 ) {
++					mipHeight = 1;
++				}
++				miplevel++;
++				qglTexImage2D( GL_TEXTURE_2D, miplevel, GL_RGBA, mipWidth, mipHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
++			}
++		}
+ #else
+ 		qglTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, (mipmap)?GL_TRUE:GL_FALSE );
+-#endif
+ 
+ 		// and now, convert if needed and upload
+ 		// GLES doesn't do convertion itself, so we have to handle that
+@@ -1009,26 +1030,6 @@ static void Upload32(   unsigned *data,
+ 			internalFormat = GL_RGBA;
+ 			qglTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
+ 		}
+-
+-#ifdef __EMSCRIPTEN__
+-		if ( mipmap ) {
+-			int miplevel = 0;
+-			int mipWidth = scaled_width;
+-			int mipHeight = scaled_height;
+-			while ( mipWidth > 1 || mipHeight > 1 ) {
+-				R_MipMap( (byte *)scaledBuffer, mipWidth, mipHeight );
+-				mipWidth >>= 1;
+-				mipHeight >>= 1;
+-				if ( mipWidth < 1 ) {
+-					mipWidth = 1;
+-				}
+-				if ( mipHeight < 1 ) {
+-					mipHeight = 1;
+-				}
+-				miplevel++;
+-				qglTexImage2D( GL_TEXTURE_2D, miplevel, GL_RGBA, mipWidth, mipHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
+-			}
+-		}
+ #endif
+ 
+ 	*pUploadWidth = scaled_width;
+@@ -1619,14 +1620,6 @@ void R_SetColorMappings( void ) {
+ 	} else if ( r_gamma->value > 3.0f ) {
+ 		ri.Cvar_Set( "r_gamma", "3.0" );
+ 	}
+-#ifdef __EMSCRIPTEN__
+-	if ( r_gamma->value < 1.4f ) {
+-		ri.Cvar_Set( "r_gamma", "1.5" );
+-	}
+-	if ( r_intensity->value < 1.3f ) {
+-		ri.Cvar_Set( "r_intensity", "1.4" );
+-	}
+-#endif
+ 
+ 	g = r_gamma->value;
+ 
+diff --git a/MP/code/renderer/tr_init.c b/MP/code/renderer/tr_init.c
+index d3f9038..6df01be 100644
+--- a/MP/code/renderer/tr_init.c
++++ b/MP/code/renderer/tr_init.c
+@@ -1239,11 +1239,7 @@ void R_Register( void ) {
+ 	ri.Cvar_CheckRange( r_displayRefresh, 0, 200, qtrue );
+ 	r_fullbright = ri.Cvar_Get ("r_fullbright", "0", CVAR_LATCH ); // JPW NERVE removed per atvi request
+ 	r_mapOverBrightBits = ri.Cvar_Get( "r_mapOverBrightBits", "2", CVAR_LATCH );
+-#ifdef __EMSCRIPTEN__
+-	r_intensity = ri.Cvar_Get( "r_intensity", "1.4", CVAR_LATCH );
+-#else
+ 	r_intensity = ri.Cvar_Get( "r_intensity", "1", CVAR_LATCH );
+-#endif
+ 	r_singleShader = ri.Cvar_Get( "r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH );
+ 
+ 	//
+@@ -1271,11 +1267,7 @@ void R_Register( void ) {
+ 	r_swapInterval = ri.Cvar_Get( "r_swapInterval", "0",
+ 					CVAR_ARCHIVE | CVAR_LATCH );
+ 
+-#ifdef __EMSCRIPTEN__
+-	r_gamma = ri.Cvar_Get( "r_gamma", "1.5", CVAR_ARCHIVE );
+-#else
+ 	r_gamma = ri.Cvar_Get( "r_gamma", "1", CVAR_ARCHIVE ); // Varies by system and platform, so just default to 1
+-#endif
+ 	r_facePlaneCull = ri.Cvar_Get( "r_facePlaneCull", "1", CVAR_ARCHIVE );
+ 
+ 	r_railWidth = ri.Cvar_Get( "r_railWidth", "16", CVAR_ARCHIVE );
+diff --git a/MP/code/sdl/sdl_glimp.c b/MP/code/sdl/sdl_glimp.c
+index c327e93..7e73b16 100644
+--- a/MP/code/sdl/sdl_glimp.c
++++ b/MP/code/sdl/sdl_glimp.c
+@@ -1115,6 +1115,19 @@ static void GLimp_InitExtensions( qboolean fixedFunction )
+ 		}
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++	/* LEGACY_GL_EMULATION does not implement TMU1 texenv. One TMU keeps
++	 * lightmapped shaders as sequential passes instead of a broken
++	 * GL_MODULATE fast path (pitch-black world, cooked 2D if we then
++	 * compensate with gamma). */
++	qglMultiTexCoord2fARB = NULL;
++	qglActiveTextureARB = NULL;
++	qglClientActiveTextureARB = NULL;
++	glConfig.numTextureUnits = 1;
++	glConfig.textureEnvAddAvailable = qfalse;
++	ri.Printf( PRINT_ALL, "...disabling multitexture on WebGL (sequential lightmaps)\n" );
++#endif
++
+ 		// GL_EXT_compiled_vertex_array
+ 		if ( SDL_GL_ExtensionSupported( "GL_EXT_compiled_vertex_array" ) )
+ 		{
+-- 
+2.53.0
+

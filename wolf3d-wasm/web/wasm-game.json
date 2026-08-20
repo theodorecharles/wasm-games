@@ -1,0 +1,93 @@
+{
+  "id": "wolf4sdl-family",
+  "title": "Wolf4SDL WASM",
+  "kicker": "Native Wolf4SDL source",
+  "description": "Wolfenstein 3D and Spear of Destiny in the browser.",
+  "adapter": "/game-adapter.js",
+  "defaultVariant": "wolf3d",
+  "displayMode": "4:3",
+  "canvasWidth": 960,
+  "canvasHeight": 720,
+  "pixelated": true,
+  "syncBackbuffer": false,
+  "pointerLock": true,
+  "menuCursor": "none",
+  "identity": false,
+  "advanced": false,
+  "graphics": false,
+  "fullscreen": true,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/persistent/wolf4sdl/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "preferencesNamespace": "wolf4sdl-family",
+  "theme": {
+    "accent": "#8f1515",
+    "accent-strong": "#f0b34b",
+    "border": "#612020",
+    "panel": "rgb(15 9 8 / 96%)",
+    "field": "#170c0b"
+  },
+  "variants": {
+    "wolf3d": {
+      "title": "Wolfenstein 3D",
+      "kicker": "Wolf4SDL",
+      "engine": "Native Wolf4SDL source",
+      "description": "Escape Castle Wolfenstein with the original presentation and modern browser controls.",
+      "loadingTitle": "Starting Wolfenstein 3D…",
+      "icon": "/wolf3d.ico",
+      "iconPixelated": true,
+      "background": "/wolf3d-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "pwa": {
+        "id": "/apps/wolf4sdl/wolf3d",
+        "name": "Wolfenstein 3D",
+        "shortName": "Wolf3D",
+        "description": "Wolfenstein 3D powered by the native Wolf4SDL source.",
+        "themeColor": "#8f1515",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/wolf3d-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/wolf3d-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "provisioningText": "Select the eight required Wolfenstein 3D .WL6 files. Matching files are cached in this browser after validation."
+    },
+    "spear": {
+      "title": "Spear of Destiny",
+      "kicker": "Wolf4SDL",
+      "engine": "Native Wolf4SDL source",
+      "description": "Recover the Spear of Destiny with the original presentation and modern browser controls.",
+      "loadingTitle": "Starting Spear of Destiny…",
+      "icon": "/wolf3d.ico",
+      "iconPixelated": true,
+      "background": "/wolf3d-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "pwa": {
+        "id": "/apps/wolf4sdl/spear",
+        "name": "Spear of Destiny",
+        "shortName": "Spear",
+        "description": "Spear of Destiny powered by the native Wolf4SDL source.",
+        "themeColor": "#6f4715",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/wolf3d-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/wolf3d-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "theme": {
+        "accent": "#8a5c1e",
+        "accent-strong": "#f2cf69",
+        "border": "#68451c"
+      },
+      "provisioningText": "Select the eight required Spear of Destiny .SOD files. Matching files are cached in this browser after validation."
+    }
+  }
+}

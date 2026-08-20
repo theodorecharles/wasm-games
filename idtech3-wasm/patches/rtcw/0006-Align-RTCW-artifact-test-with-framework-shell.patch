@@ -1,0 +1,22 @@
+From b08466e9327d8b27fbfbfec9c962827de1816c8e Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 11:30:00 -0400
+Subject: [PATCH] Align RTCW artifact test with framework shell
+
+---
+ scripts/test-web.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/test-web.sh b/scripts/test-web.sh
+index 6e6a408..5854cd0 100755
+--- a/scripts/test-web.sh
++++ b/scripts/test-web.sh
+@@ -5,7 +5,7 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+ SITE="$ROOT/web/sp"
+ 
+ required=(
+-	index.html launcher.js asset-spec.js
++	launcher.js asset-spec.js
+ 	client/sp/iowolfsp.js client/sp/iowolfsp.wasm
+ 	client/sp/main/vm/cgame.sp.qvm client/sp/main/vm/qagame.sp.qvm client/sp/main/vm/ui.sp.qvm
+ 	client/mp/iowolfmp.js client/mp/iowolfmp.wasm

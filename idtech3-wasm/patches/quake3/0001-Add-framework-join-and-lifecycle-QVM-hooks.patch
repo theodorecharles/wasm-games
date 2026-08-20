@@ -1,0 +1,1057 @@
+From a1732e3ea8c6f0d681a4d3551e5d5eca9fd66cf7 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Fri, 14 Aug 2026 20:15:00 -0400
+Subject: [PATCH] Add framework join and lifecycle QVM hooks
+
+---
+ Makefile                    |   5 +-
+ code/cgame/cg_main.c        |   3 +-
+ code/cgame/cg_snapshot.c    |   2 +-
+ code/cgame/cg_view.c        |  14 ++-
+ code/game/g_client.c        |  13 ++-
+ code/q3_ui/ui_atoms.c       |  51 +++++++++
+ code/q3_ui/ui_cinematics.c  |  36 ------
+ code/q3_ui/ui_credits.c     |   9 +-
+ code/q3_ui/ui_ingame.c      | 156 ++------------------------
+ code/q3_ui/ui_menu.c        | 218 +++++++++++-------------------------
+ code/renderergl1/tr_image.c |   8 +-
+ code/renderergl2/tr_image.c |   9 +-
+ code/sdl/sdl_input.c        |  10 +-
+ 13 files changed, 181 insertions(+), 353 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 036dbba4..c76fb8f9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1381,7 +1381,10 @@ ifndef TOOLS_CC
+   TOOLS_CC = gcc
+ endif
+ 
+-TOOLS_OPTIMIZE = -g -Wall -fno-strict-aliasing
++# The lcc host tools use identifiers which became C++ keywords in GCC's
++# implicit dialect.  Pin their intended C dialect so current toolchains build
++# the unchanged QVM compiler reliably.
++TOOLS_OPTIMIZE = -std=gnu17 -g -Wall -fno-strict-aliasing
+ TOOLS_CFLAGS += $(TOOLS_OPTIMIZE) \
+                 -DTEMPDIR=\"$(TEMPDIR)\" -DSYSTEM=\"\" \
+                 -I$(Q3LCCSRCDIR) \
+diff --git a/code/cgame/cg_main.c b/code/cgame/cg_main.c
+index 3b1f77b7..363036b5 100644
+--- a/code/cgame/cg_main.c
++++ b/code/cgame/cg_main.c
+@@ -1945,6 +1945,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
+ 	CG_ShaderStateChanged();
+ 
+ 	trap_S_ClearLoopingSounds( qtrue );
++	trap_Cvar_Set( "cg_wasmActive", "0" );
+ }
+ 
+ /*
+@@ -1955,6 +1956,7 @@ Called before every level change or subsystem restart
+ =================
+ */
+ void CG_Shutdown( void ) {
++	trap_Cvar_Set( "cg_wasmActive", "0" );
+ 	// some mods may need to do cleanup work here,
+ 	// like closing files or archiving session data
+ }
+@@ -1981,4 +1983,3 @@ void CG_KeyEvent(int key, qboolean down) {
+ void CG_MouseEvent(int x, int y) {
+ }
+ #endif
+-
+diff --git a/code/cgame/cg_snapshot.c b/code/cgame/cg_snapshot.c
+index 1bf8970d..4a978d3a 100644
+--- a/code/cgame/cg_snapshot.c
++++ b/code/cgame/cg_snapshot.c
+@@ -89,6 +89,7 @@ void CG_SetInitialSnapshot( snapshot_t *snap ) {
+ 	entityState_t	*state;
+ 
+ 	cg.snap = snap;
++	trap_Cvar_Set( "cg_wasmActive", "1" );
+ 
+ 	BG_PlayerStateToEntityState( &snap->ps, &cg_entities[ snap->ps.clientNum ].currentState, qfalse );
+ 
+@@ -400,4 +401,3 @@ void CG_ProcessSnapshots( void ) {
+ 	}
+ 
+ }
+-
+diff --git a/code/cgame/cg_view.c b/code/cgame/cg_view.c
+index 0fc763a9..e70c66d3 100644
+--- a/code/cgame/cg_view.c
++++ b/code/cgame/cg_view.c
+@@ -746,6 +746,18 @@ static void CG_PlayBufferedSounds( void ) {
+ 
+ //=========================================================================
+ 
++static void CG_ApplyWasmResize( void ) {
++	char serial[32];
++	char applied[32];
++
++	trap_Cvar_VariableStringBuffer( "cg_wasmResizeSerial", serial, sizeof(serial) );
++	trap_Cvar_VariableStringBuffer( "cg_wasmResizeApplied", applied, sizeof(applied) );
++	if( serial[0] && Q_stricmp( serial, applied ) ) {
++		trap_Cvar_Set( "cg_wasmResizeApplied", serial );
++		trap_SendConsoleCommand( "vid_restart fast\n" );
++	}
++}
++
+ /*
+ =================
+ CG_DrawActiveFrame
+@@ -758,6 +770,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 
+ 	cg.time = serverTime;
+ 	cg.demoPlayback = demoPlayback;
++	CG_ApplyWasmResize();
+ 
+ 	// update cvars
+ 	CG_UpdateCvars();
+@@ -870,4 +883,3 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 
+ 
+ }
+-
+diff --git a/code/game/g_client.c b/code/game/g_client.c
+index ee88fac5..d8f8b8c1 100644
+--- a/code/game/g_client.c
++++ b/code/game/g_client.c
+@@ -46,7 +46,6 @@ void SP_info_player_deathmatch( gentity_t *ent ) {
+ 		ent->flags |= FL_NO_HUMANS;
+ 	}
+ }
+-
+ /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32)
+ equivelant to info_player_deathmatch
+ */
+@@ -1043,6 +1042,11 @@ void ClientBegin( int clientNum ) {
+ 		}
+ 	}
+ 	G_LogPrintf( "ClientBegin: %i\n", clientNum );
++	if ( ent->r.svFlags & SVF_BOT ) {
++		G_Printf( "WASM_BOT_JOINED: %i\n", clientNum );
++	} else {
++		G_Printf( "WASM_HUMAN_JOINED: %i\n", clientNum );
++	}
+ 
+ 	// count current clients and rank for scoreboard
+ 	CalculateRanks();
+@@ -1313,6 +1317,11 @@ void ClientDisconnect( int clientNum ) {
+ 	}
+ 
+ 	G_LogPrintf( "ClientDisconnect: %i\n", clientNum );
++	if ( ent->r.svFlags & SVF_BOT ) {
++		G_Printf( "WASM_BOT_LEFT: %i\n", clientNum );
++	} else {
++		G_Printf( "WASM_HUMAN_LEFT: %i\n", clientNum );
++	}
+ 
+ 	// if we are playing in tourney mode and losing, give a win to the other player
+ 	if ( (g_gametype.integer == GT_TOURNAMENT )
+@@ -1348,5 +1357,3 @@ void ClientDisconnect( int clientNum ) {
+ 		BotAIShutdownClient( clientNum, qfalse );
+ 	}
+ }
+-
+-
+diff --git a/code/q3_ui/ui_atoms.c b/code/q3_ui/ui_atoms.c
+index 020a33e5..210c24eb 100644
+--- a/code/q3_ui/ui_atoms.c
++++ b/code/q3_ui/ui_atoms.c
+@@ -30,6 +30,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ uiStatic_t		uis;
+ qboolean		m_entersound;		// after a frame, so caching won't disrupt the sound
+ 
++static void UI_ApplyWasmPointer( void ) {
++	char serial[32];
++	char applied[32];
++	char value[32];
++
++	trap_Cvar_VariableStringBuffer( "ui_wasmPointerSerial", serial, sizeof(serial) );
++	trap_Cvar_VariableStringBuffer( "ui_wasmPointerApplied", applied, sizeof(applied) );
++	if( !serial[0] || !Q_stricmp( serial, applied ) ) {
++		return;
++	}
++
++	uis.cursorx = Com_Clamp( 0, SCREEN_WIDTH, trap_Cvar_VariableValue( "ui_wasmPointerX" ) );
++	uis.cursory = Com_Clamp( 0, SCREEN_HEIGHT, trap_Cvar_VariableValue( "ui_wasmPointerY" ) );
++	Com_sprintf( value, sizeof(value), "%d", uis.cursorx );
++	trap_Cvar_Set( "ui_wasmPointerAppliedX", value );
++	Com_sprintf( value, sizeof(value), "%d", uis.cursory );
++	trap_Cvar_Set( "ui_wasmPointerAppliedY", value );
++	trap_Cvar_Set( "ui_wasmPointerApplied", serial );
++	UI_MouseEvent( 0, 0 );
++}
++
+ void QDECL Com_Error( int level, const char *error, ... ) {
+ 	va_list		argptr;
+ 	char		text[1024];
+@@ -102,6 +123,9 @@ void UI_PushMenu( menuframework_s *menu )
+ 	}
+ 
+ 	uis.activemenu = menu;
++	trap_Cvar_Set( "ui_nativeMenu", "1" );
++	trap_Cvar_Set( "ui_captureIntent", "0" );
++	trap_Cvar_Set( "ui_wasmCaptureTarget", "" );
+ 
+ 	// default cursor position
+ 	menu->cursor      = 0;
+@@ -157,6 +181,8 @@ void UI_ForceMenuOff (void)
+ 	trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
+ 	trap_Key_ClearStates();
+ 	trap_Cvar_Set( "cl_paused", "0" );
++	trap_Cvar_Set( "ui_nativeMenu", "0" );
++	trap_Cvar_Set( "ui_wasmCaptureTarget", "" );
+ }
+ 
+ /*
+@@ -851,6 +877,10 @@ void UI_KeyEvent( int key, int down ) {
+ 		return;
+ 	}
+ 
++	// The browser publishes an absolute point before its SDL button event. Apply
++	// that exact 640x480 position before Q3 resolves mouse focus and activation.
++	UI_ApplyWasmPointer();
++
+ 	if (!down) {
+ 		return;
+ 	}
+@@ -1184,6 +1214,21 @@ void UI_UpdateScreen( void ) {
+ 	trap_UpdateScreen();
+ }
+ 
++static void UI_ApplyWasmResize( void ) {
++	char serial[32];
++	char applied[32];
++
++	trap_Cvar_VariableStringBuffer( "ui_wasmResizeSerial", serial, sizeof(serial) );
++	trap_Cvar_VariableStringBuffer( "ui_wasmResizeApplied", applied, sizeof(applied) );
++	if( serial[0] && Q_stricmp( serial, applied ) ) {
++		trap_Cvar_Set( "ui_wasmResizeApplied", serial );
++		// The browser already published the new drawing buffer and forced mode
++		// cvars. Put QuakeJS's own fast mode update at the front of the native
++		// command buffer instead of waiting behind the desktop SDL debounce.
++		trap_Cmd_ExecuteText( EXEC_NOW, "vid_restart fast\n" );
++	}
++}
++
+ /*
+ =================
+ UI_Refresh
+@@ -1191,6 +1236,7 @@ UI_Refresh
+ */
+ void UI_Refresh( int realtime )
+ {
++	UI_ApplyWasmResize();
+ 	uis.frametime = realtime - uis.realtime;
+ 	uis.realtime  = realtime;
+ 
+@@ -1198,6 +1244,11 @@ void UI_Refresh( int realtime )
+ 		return;
+ 	}
+ 
++	// Apply browser absolute coordinates before hover state and menu draw. SDL's
++	// relative mouse path remains exclusively for captured gameplay look.
++	UI_ApplyWasmPointer();
++	trap_Cvar_Set( "ui_wasmCaptureTarget", "" );
++
+ 	UI_UpdateCvars();
+ 
+ 	if ( uis.activemenu )
+diff --git a/code/q3_ui/ui_cinematics.c b/code/q3_ui/ui_cinematics.c
+index e2fd778b..c7c41048 100644
+--- a/code/q3_ui/ui_cinematics.c
++++ b/code/q3_ui/ui_cinematics.c
+@@ -168,10 +168,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_intro.string				= "INTRO";
+ 	cinematicsMenuInfo.cin_intro.color				= color_red;
+ 	cinematicsMenuInfo.cin_intro.style				= UI_CENTER;
+-	if( uis.demoversion ) {
+-		cinematicsMenuInfo.cin_intro.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier1.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier1.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -182,10 +178,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier1.string				= "Tier 1";
+ 	cinematicsMenuInfo.cin_tier1.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier1.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 1 ) ) {
+-		cinematicsMenuInfo.cin_tier1.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier2.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier2.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -196,10 +188,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier2.string				= "Tier 2";
+ 	cinematicsMenuInfo.cin_tier2.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier2.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 2 ) ) {
+-		cinematicsMenuInfo.cin_tier2.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier3.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier3.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -210,10 +198,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier3.string				= "Tier 3";
+ 	cinematicsMenuInfo.cin_tier3.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier3.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 3 ) ) {
+-		cinematicsMenuInfo.cin_tier3.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier4.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier4.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -224,10 +208,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier4.string				= "Tier 4";
+ 	cinematicsMenuInfo.cin_tier4.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier4.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 4 ) ) {
+-		cinematicsMenuInfo.cin_tier4.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier5.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier5.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -238,10 +218,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier5.string				= "Tier 5";
+ 	cinematicsMenuInfo.cin_tier5.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier5.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 5 ) ) {
+-		cinematicsMenuInfo.cin_tier5.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier6.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier6.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -252,10 +228,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier6.string				= "Tier 6";
+ 	cinematicsMenuInfo.cin_tier6.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier6.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 6 ) ) {
+-		cinematicsMenuInfo.cin_tier6.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_tier7.generic.type		= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_tier7.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -266,10 +238,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_tier7.string				= "Tier 7";
+ 	cinematicsMenuInfo.cin_tier7.color				= color_red;
+ 	cinematicsMenuInfo.cin_tier7.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 7 ) ) {
+-		cinematicsMenuInfo.cin_tier7.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += VERTICAL_SPACING;
+ 	cinematicsMenuInfo.cin_end.generic.type			= MTYPE_PTEXT;
+ 	cinematicsMenuInfo.cin_end.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -280,10 +248,6 @@ static void UI_CinematicsMenu_Init( void ) {
+ 	cinematicsMenuInfo.cin_end.string				= "END";
+ 	cinematicsMenuInfo.cin_end.color				= color_red;
+ 	cinematicsMenuInfo.cin_end.style				= UI_CENTER;
+-	if( !UI_CanShowTierVideo( 8 ) ) {
+-		cinematicsMenuInfo.cin_end.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	cinematicsMenuInfo.back.generic.type		= MTYPE_BITMAP;
+ 	cinematicsMenuInfo.back.generic.name		= ART_BACK0;
+ 	cinematicsMenuInfo.back.generic.flags		= QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
+diff --git a/code/q3_ui/ui_credits.c b/code/q3_ui/ui_credits.c
+index f51e5da7..4198fb6d 100644
+--- a/code/q3_ui/ui_credits.c
++++ b/code/q3_ui/ui_credits.c
+@@ -94,11 +94,16 @@ static sfxHandle_t UI_CreditMenu_Key( int key ) {
+ 		return 0;
+ 	}
+ 
++	if( key == K_ESCAPE ) {
++		UI_PopMenu();
++		return menu_out_sound;
++	}
++
+ 	s_credits.frame++;
+-	if (s_credits.frame == 1) {
++	if( s_credits.frame == 1 ) {
+ 		s_credits.menu.draw = UI_CreditMenu_Draw_ioq3;
+ 	} else {
+-		trap_Cmd_ExecuteText( EXEC_APPEND, "quit\n" );
++		UI_PopMenu();
+ 	}
+ 	return 0;
+ }
+diff --git a/code/q3_ui/ui_ingame.c b/code/q3_ui/ui_ingame.c
+index b6871623..f359ee68 100644
+--- a/code/q3_ui/ui_ingame.c
++++ b/code/q3_ui/ui_ingame.c
+@@ -36,63 +36,34 @@ INGAME MENU
+ //#define INGAME_FRAME					"menu/art/cut_frame"
+ #define INGAME_MENU_VERTICAL_SPACING	28
+ 
+-#define ID_TEAM					10
+-#define ID_ADDBOTS				11
+-#define ID_REMOVEBOTS			12
+ #define ID_SETUP				13
+ #define ID_SERVERINFO			14
+ #define ID_LEAVEARENA			15
+-#define ID_RESTART				16
+ #define ID_QUIT					17
+ #define ID_RESUME				18
+-#define ID_TEAMORDERS			19
+ 
+ 
+ typedef struct {
+ 	menuframework_s	menu;
+ 
+ 	menubitmap_s	frame;
+-	menutext_s		team;
+ 	menutext_s		setup;
+ 	menutext_s		server;
+ 	menutext_s		leave;
+-	menutext_s		restart;
+-	menutext_s		addbots;
+-	menutext_s		removebots;
+-	menutext_s		teamorders;
+ 	menutext_s		quit;
+ 	menutext_s		resume;
+ } ingamemenu_t;
+ 
+ static ingamemenu_t	s_ingame;
+ 
++static void InGame_MenuDraw( void ) {
++	menucommon_s *focused;
+ 
+-/*
+-=================
+-InGame_RestartAction
+-=================
+-*/
+-static void InGame_RestartAction( qboolean result ) {
+-	if( !result ) {
+-		return;
+-	}
+-
+-	UI_PopMenu();
+-	trap_Cmd_ExecuteText( EXEC_APPEND, "map_restart 0\n" );
+-}
+-
+-
+-/*
+-=================
+-InGame_QuitAction
+-=================
+-*/
+-static void InGame_QuitAction( qboolean result ) {
+-	if( !result ) {
+-		return;
++	focused = s_ingame.menu.cursor >= 0 ? s_ingame.menu.items[s_ingame.menu.cursor] : NULL;
++	if( focused == &s_ingame.resume.generic && (focused->flags & QMF_HASMOUSEFOCUS) ) {
++		trap_Cvar_Set( "ui_wasmCaptureTarget", "resume" );
+ 	}
+-	UI_PopMenu();
+-	UI_CreditMenu();
++	Menu_Draw( &s_ingame.menu );
+ }
+ 
+ 
+@@ -107,43 +78,21 @@ void InGame_Event( void *ptr, int notification ) {
+ 	}
+ 
+ 	switch( ((menucommon_s*)ptr)->id ) {
+-	case ID_TEAM:
+-		UI_TeamMainMenu();
+-		break;
+-
+ 	case ID_SETUP:
+ 		UI_SetupMenu();
+ 		break;
+ 
+ 	case ID_LEAVEARENA:
+-		trap_Cmd_ExecuteText( EXEC_APPEND, "disconnect\n" );
+-		break;
+-
+-	case ID_RESTART:
+-		UI_ConfirmMenu( "RESTART ARENA?", 0, InGame_RestartAction );
+-		break;
+-
+ 	case ID_QUIT:
+-		UI_ConfirmMenu( "EXIT GAME?",  0, InGame_QuitAction );
++		trap_Cmd_ExecuteText( EXEC_APPEND, "disconnect\n" );
+ 		break;
+ 
+ 	case ID_SERVERINFO:
+ 		UI_ServerInfoMenu();
+ 		break;
+ 
+-	case ID_ADDBOTS:
+-		UI_AddBotsMenu();
+-		break;
+-
+-	case ID_REMOVEBOTS:
+-		UI_RemoveBotsMenu();
+-		break;
+-
+-	case ID_TEAMORDERS:
+-		UI_TeamOrdersMenu();
+-		break;
+-
+ 	case ID_RESUME:
++		trap_Cvar_Set( "ui_captureIntent", "1" );
+ 		UI_PopMenu();
+ 		break;
+ 	}
+@@ -157,9 +106,6 @@ InGame_MenuInit
+ */
+ void InGame_MenuInit( void ) {
+ 	int		y;
+-	uiClientState_t	cs;
+-	char	info[MAX_INFO_STRING];
+-	int		team;
+ 
+ 	memset( &s_ingame, 0 ,sizeof(ingamemenu_t) );
+ 
+@@ -167,6 +113,7 @@ void InGame_MenuInit( void ) {
+ 
+ 	s_ingame.menu.wrapAround = qtrue;
+ 	s_ingame.menu.fullscreen = qfalse;
++	s_ingame.menu.draw = InGame_MenuDraw;
+ 
+ 	s_ingame.frame.generic.type			= MTYPE_BITMAP;
+ 	s_ingame.frame.generic.flags		= QMF_INACTIVE;
+@@ -176,69 +123,7 @@ void InGame_MenuInit( void ) {
+ 	s_ingame.frame.width				= 466;//359;
+ 	s_ingame.frame.height				= 332;//256;
+ 
+-	//y = 96;
+-	y = 88;
+-	s_ingame.team.generic.type			= MTYPE_PTEXT;
+-	s_ingame.team.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_ingame.team.generic.x				= 320;
+-	s_ingame.team.generic.y				= y;
+-	s_ingame.team.generic.id			= ID_TEAM;
+-	s_ingame.team.generic.callback		= InGame_Event; 
+-	s_ingame.team.string				= "START";
+-	s_ingame.team.color					= color_red;
+-	s_ingame.team.style					= UI_CENTER|UI_SMALLFONT;
+-
+-	y += INGAME_MENU_VERTICAL_SPACING;
+-	s_ingame.addbots.generic.type		= MTYPE_PTEXT;
+-	s_ingame.addbots.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_ingame.addbots.generic.x			= 320;
+-	s_ingame.addbots.generic.y			= y;
+-	s_ingame.addbots.generic.id			= ID_ADDBOTS;
+-	s_ingame.addbots.generic.callback	= InGame_Event; 
+-	s_ingame.addbots.string				= "ADD BOTS";
+-	s_ingame.addbots.color				= color_red;
+-	s_ingame.addbots.style				= UI_CENTER|UI_SMALLFONT;
+-	if( !trap_Cvar_VariableValue( "sv_running" ) || !trap_Cvar_VariableValue( "bot_enable" ) || (trap_Cvar_VariableValue( "g_gametype" ) == GT_SINGLE_PLAYER)) {
+-		s_ingame.addbots.generic.flags |= QMF_GRAYED;
+-	}
+-
+-	y += INGAME_MENU_VERTICAL_SPACING;
+-	s_ingame.removebots.generic.type		= MTYPE_PTEXT;
+-	s_ingame.removebots.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_ingame.removebots.generic.x			= 320;
+-	s_ingame.removebots.generic.y			= y;
+-	s_ingame.removebots.generic.id			= ID_REMOVEBOTS;
+-	s_ingame.removebots.generic.callback	= InGame_Event; 
+-	s_ingame.removebots.string				= "REMOVE BOTS";
+-	s_ingame.removebots.color				= color_red;
+-	s_ingame.removebots.style				= UI_CENTER|UI_SMALLFONT;
+-	if( !trap_Cvar_VariableValue( "sv_running" ) || !trap_Cvar_VariableValue( "bot_enable" ) || (trap_Cvar_VariableValue( "g_gametype" ) == GT_SINGLE_PLAYER)) {
+-		s_ingame.removebots.generic.flags |= QMF_GRAYED;
+-	}
+-
+-	y += INGAME_MENU_VERTICAL_SPACING;
+-	s_ingame.teamorders.generic.type		= MTYPE_PTEXT;
+-	s_ingame.teamorders.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_ingame.teamorders.generic.x			= 320;
+-	s_ingame.teamorders.generic.y			= y;
+-	s_ingame.teamorders.generic.id			= ID_TEAMORDERS;
+-	s_ingame.teamorders.generic.callback	= InGame_Event; 
+-	s_ingame.teamorders.string				= "TEAM ORDERS";
+-	s_ingame.teamorders.color				= color_red;
+-	s_ingame.teamorders.style				= UI_CENTER|UI_SMALLFONT;
+-	if( !(trap_Cvar_VariableValue( "g_gametype" ) >= GT_TEAM) ) {
+-		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
+-	}
+-	else {
+-		trap_GetClientState( &cs );
+-		trap_GetConfigString( CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING );
+-		team = atoi( Info_ValueForKey( info, "t" ) );
+-		if( team == TEAM_SPECTATOR ) {
+-			s_ingame.teamorders.generic.flags |= QMF_GRAYED;
+-		}
+-	}
+-
+-	y += INGAME_MENU_VERTICAL_SPACING;
++	y = 156;
+ 	s_ingame.setup.generic.type			= MTYPE_PTEXT;
+ 	s_ingame.setup.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+ 	s_ingame.setup.generic.x			= 320;
+@@ -260,20 +145,6 @@ void InGame_MenuInit( void ) {
+ 	s_ingame.server.color				= color_red;
+ 	s_ingame.server.style				= UI_CENTER|UI_SMALLFONT;
+ 
+-	y += INGAME_MENU_VERTICAL_SPACING;
+-	s_ingame.restart.generic.type		= MTYPE_PTEXT;
+-	s_ingame.restart.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_ingame.restart.generic.x			= 320;
+-	s_ingame.restart.generic.y			= y;
+-	s_ingame.restart.generic.id			= ID_RESTART;
+-	s_ingame.restart.generic.callback	= InGame_Event; 
+-	s_ingame.restart.string				= "RESTART ARENA";
+-	s_ingame.restart.color				= color_red;
+-	s_ingame.restart.style				= UI_CENTER|UI_SMALLFONT;
+-	if( !trap_Cvar_VariableValue( "sv_running" ) ) {
+-		s_ingame.restart.generic.flags |= QMF_GRAYED;
+-	}
+-
+ 	y += INGAME_MENU_VERTICAL_SPACING;
+ 	s_ingame.resume.generic.type			= MTYPE_PTEXT;
+ 	s_ingame.resume.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -308,13 +179,8 @@ void InGame_MenuInit( void ) {
+ 	s_ingame.quit.style					= UI_CENTER|UI_SMALLFONT;
+ 
+ 	Menu_AddItem( &s_ingame.menu, &s_ingame.frame );
+-	Menu_AddItem( &s_ingame.menu, &s_ingame.team );
+-	Menu_AddItem( &s_ingame.menu, &s_ingame.addbots );
+-	Menu_AddItem( &s_ingame.menu, &s_ingame.removebots );
+-	Menu_AddItem( &s_ingame.menu, &s_ingame.teamorders );
+ 	Menu_AddItem( &s_ingame.menu, &s_ingame.setup );
+ 	Menu_AddItem( &s_ingame.menu, &s_ingame.server );
+-	Menu_AddItem( &s_ingame.menu, &s_ingame.restart );
+ 	Menu_AddItem( &s_ingame.menu, &s_ingame.resume );
+ 	Menu_AddItem( &s_ingame.menu, &s_ingame.leave );
+ 	Menu_AddItem( &s_ingame.menu, &s_ingame.quit );
+@@ -342,7 +208,7 @@ void UI_InGameMenu( void ) {
+ 
+ 	// set menu cursor to a nice location
+ 	uis.cursorx = 319;
+-	uis.cursory = 80;
++	uis.cursory = 156;
+ 
+ 	InGame_MenuInit();
+ 	UI_PushMenu( &s_ingame.menu );
+diff --git a/code/q3_ui/ui_menu.c b/code/q3_ui/ui_menu.c
+index 6afacbac..46f6d774 100644
+--- a/code/q3_ui/ui_menu.c
++++ b/code/q3_ui/ui_menu.c
+@@ -32,14 +32,10 @@ MAIN MENU
+ #include "ui_local.h"
+ 
+ 
+-#define ID_SINGLEPLAYER			10
+-#define ID_MULTIPLAYER			11
++#define ID_JOIN_GAME			10
+ #define ID_SETUP				12
+-#define ID_DEMOS				13
+ #define ID_CINEMATICS			14
+-#define ID_TEAMARENA		15
+-#define ID_MODS					16
+-#define ID_EXIT					17
++#define ID_CREDITS				17
+ 
+ #define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner5.md3"
+ #define MAIN_MENU_VERTICAL_SPACING		34
+@@ -48,14 +44,10 @@ MAIN MENU
+ typedef struct {
+ 	menuframework_s	menu;
+ 
+-	menutext_s		singleplayer;
+-	menutext_s		multiplayer;
++	menutext_s		joinGame;
+ 	menutext_s		setup;
+-	menutext_s		demos;
+ 	menutext_s		cinematics;
+-	menutext_s		teamArena;
+-	menutext_s		mods;
+-	menutext_s		exit;
++	menutext_s		credits;
+ 
+ 	qhandle_t		bannerModel;
+ } mainmenu_t;
+@@ -70,21 +62,6 @@ typedef struct {
+ 
+ static errorMessage_t s_errorMessage;
+ 
+-/*
+-=================
+-MainMenu_ExitAction
+-=================
+-*/
+-static void MainMenu_ExitAction( qboolean result ) {
+-	if( !result ) {
+-		return;
+-	}
+-	UI_PopMenu();
+-	UI_CreditMenu();
+-}
+-
+-
+-
+ /*
+ =================
+ Main_MenuEvent
+@@ -96,37 +73,22 @@ void Main_MenuEvent (void* ptr, int event) {
+ 	}
+ 
+ 	switch( ((menucommon_s*)ptr)->id ) {
+-	case ID_SINGLEPLAYER:
+-		UI_SPLevelMenu();
+-		break;
+-
+-	case ID_MULTIPLAYER:
+-		UI_ArenaServersMenu();
++	case ID_JOIN_GAME:
++		trap_Cvar_Set( "ui_joinGameStatus", "WAKING ARENA..." );
++		trap_Cvar_Set( "ui_captureIntent", "1" );
++		trap_Cvar_Set( "ui_joinGameRequested", "1" );
+ 		break;
+ 
+ 	case ID_SETUP:
+ 		UI_SetupMenu();
+ 		break;
+ 
+-	case ID_DEMOS:
+-		UI_DemosMenu();
+-		break;
+-
+ 	case ID_CINEMATICS:
+ 		UI_CinematicsMenu();
+ 		break;
+ 
+-	case ID_MODS:
+-		UI_ModsMenu();
+-		break;
+-
+-	case ID_TEAMARENA:
+-		trap_Cvar_Set( "fs_game", BASETA);
+-		trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart;" );
+-		break;
+-
+-	case ID_EXIT:
+-		UI_ConfirmMenu( "EXIT GAME?", 0, MainMenu_ExitAction );
++	case ID_CREDITS:
++		UI_CreditMenu();
+ 		break;
+ 	}
+ }
+@@ -163,6 +125,29 @@ static void Main_MenuDraw( void ) {
+ 	float			adjust;
+ 	float			x, y, w, h;
+ 	vec4_t			color = {0.5, 0, 0, 1};
++	char			joinStatus[128];
++	char			joinAddress[128];
++	char			joinName[64];
++	menucommon_s	*focused;
++
++	if ( trap_Cvar_VariableValue( "ui_joinGameReady" ) ) {
++		trap_Cvar_Set( "ui_joinGameReady", "0" );
++		trap_Cvar_VariableStringBuffer( "ui_joinGameAddress", joinAddress, sizeof(joinAddress) );
++		if ( joinAddress[0] ) {
++			trap_Cvar_VariableStringBuffer( "ui_joinGameName", joinName, sizeof(joinName) );
++			if ( joinName[0] ) {
++				trap_Cvar_Set( "name", joinName );
++			}
++			trap_Cvar_Set( "ui_joinGameIssued", "1" );
++			trap_Cmd_ExecuteText( EXEC_APPEND, va( "connect %s\n", joinAddress ) );
++			return;
++		}
++	}
++
++	focused = s_main.menu.cursor >= 0 ? s_main.menu.items[s_main.menu.cursor] : NULL;
++	if( focused == &s_main.joinGame.generic && (focused->flags & QMF_HASMOUSEFOCUS) ) {
++		trap_Cvar_Set( "ui_wasmCaptureTarget", "join" );
++	}
+ 
+ 	// setup the refdef
+ 
+@@ -219,6 +204,10 @@ static void Main_MenuDraw( void ) {
+ 	{
+ 		// standard menu drawing
+ 		Menu_Draw( &s_main.menu );		
++		trap_Cvar_VariableStringBuffer( "ui_joinGameStatus", joinStatus, sizeof(joinStatus) );
++		if ( joinStatus[0] ) {
++			UI_DrawString( 320, 410, joinStatus, UI_CENTER|UI_SMALLFONT, color_red );
++		}
+ 	}
+ 
+ 	if (uis.demoversion) {
+@@ -230,33 +219,6 @@ static void Main_MenuDraw( void ) {
+ }
+ 
+ 
+-/*
+-===============
+-UI_TeamArenaExists
+-===============
+-*/
+-static qboolean UI_TeamArenaExists( void ) {
+-	int		numdirs;
+-	char	dirlist[2048];
+-	char	*dirptr;
+-  char  *descptr;
+-	int		i;
+-	int		dirlen;
+-
+-	numdirs = trap_FS_GetFileList( "$modlist", "", dirlist, sizeof(dirlist) );
+-	dirptr  = dirlist;
+-	for( i = 0; i < numdirs; i++ ) {
+-		dirlen = strlen( dirptr ) + 1;
+-    descptr = dirptr + dirlen;
+-		if (Q_stricmp(dirptr, BASETA) == 0) {
+-			return qtrue;
+-		}
+-    dirptr += dirlen + strlen(descptr) + 1;
+-	}
+-	return qfalse;
+-}
+-
+-
+ /*
+ ===============
+ UI_MainMenu
+@@ -268,10 +230,13 @@ and that local cinematics are killed
+ */
+ void UI_MainMenu( void ) {
+ 	int		y;
+-	qboolean teamArena = qfalse;
+ 	int		style = UI_CENTER | UI_DROPSHADOW;
+ 
+ 	trap_Cvar_Set( "sv_killserver", "1" );
++	trap_Cvar_Set( "ui_captureIntent", "0" );
++	trap_Cvar_Set( "ui_joinGameRequested", "0" );
++	uis.cursorx = 320;
++	uis.cursory = 240;
+ 
+ 	if( !uis.demoversion && !ui_cdkeychecked.integer ) {
+ 		char	key[17];
+@@ -310,27 +275,16 @@ void UI_MainMenu( void ) {
+ 	s_main.menu.wrapAround = qtrue;
+ 	s_main.menu.showlogo = qtrue;
+ 
+-	y = 134;
+-	s_main.singleplayer.generic.type		= MTYPE_PTEXT;
+-	s_main.singleplayer.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_main.singleplayer.generic.x			= 320;
+-	s_main.singleplayer.generic.y			= y;
+-	s_main.singleplayer.generic.id			= ID_SINGLEPLAYER;
+-	s_main.singleplayer.generic.callback	= Main_MenuEvent; 
+-	s_main.singleplayer.string				= "SINGLE PLAYER";
+-	s_main.singleplayer.color				= color_red;
+-	s_main.singleplayer.style				= style;
+-
+-	y += MAIN_MENU_VERTICAL_SPACING;
+-	s_main.multiplayer.generic.type			= MTYPE_PTEXT;
+-	s_main.multiplayer.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_main.multiplayer.generic.x			= 320;
+-	s_main.multiplayer.generic.y			= y;
+-	s_main.multiplayer.generic.id			= ID_MULTIPLAYER;
+-	s_main.multiplayer.generic.callback		= Main_MenuEvent; 
+-	s_main.multiplayer.string				= "MULTIPLAYER";
+-	s_main.multiplayer.color				= color_red;
+-	s_main.multiplayer.style				= style;
++	y = 168;
++	s_main.joinGame.generic.type		= MTYPE_PTEXT;
++	s_main.joinGame.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
++	s_main.joinGame.generic.x			= 320;
++	s_main.joinGame.generic.y			= y;
++	s_main.joinGame.generic.id			= ID_JOIN_GAME;
++	s_main.joinGame.generic.callback	= Main_MenuEvent;
++	s_main.joinGame.string				= "JOIN GAME";
++	s_main.joinGame.color				= color_red;
++	s_main.joinGame.style				= style;
+ 
+ 	y += MAIN_MENU_VERTICAL_SPACING;
+ 	s_main.setup.generic.type				= MTYPE_PTEXT;
+@@ -343,17 +297,6 @@ void UI_MainMenu( void ) {
+ 	s_main.setup.color						= color_red;
+ 	s_main.setup.style						= style;
+ 
+-	y += MAIN_MENU_VERTICAL_SPACING;
+-	s_main.demos.generic.type				= MTYPE_PTEXT;
+-	s_main.demos.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_main.demos.generic.x					= 320;
+-	s_main.demos.generic.y					= y;
+-	s_main.demos.generic.id					= ID_DEMOS;
+-	s_main.demos.generic.callback			= Main_MenuEvent; 
+-	s_main.demos.string						= "DEMOS";
+-	s_main.demos.color						= color_red;
+-	s_main.demos.style						= style;
+-
+ 	y += MAIN_MENU_VERTICAL_SPACING;
+ 	s_main.cinematics.generic.type			= MTYPE_PTEXT;
+ 	s_main.cinematics.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+@@ -365,56 +308,21 @@ void UI_MainMenu( void ) {
+ 	s_main.cinematics.color					= color_red;
+ 	s_main.cinematics.style					= style;
+ 
+-	if ( !uis.demoversion && UI_TeamArenaExists() ) {
+-		teamArena = qtrue;
+-		y += MAIN_MENU_VERTICAL_SPACING;
+-		s_main.teamArena.generic.type			= MTYPE_PTEXT;
+-		s_main.teamArena.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-		s_main.teamArena.generic.x				= 320;
+-		s_main.teamArena.generic.y				= y;
+-		s_main.teamArena.generic.id				= ID_TEAMARENA;
+-		s_main.teamArena.generic.callback		= Main_MenuEvent; 
+-		s_main.teamArena.string					= "TEAM ARENA";
+-		s_main.teamArena.color					= color_red;
+-		s_main.teamArena.style					= style;
+-	}
+-
+-	if ( !uis.demoversion ) {
+-		y += MAIN_MENU_VERTICAL_SPACING;
+-		s_main.mods.generic.type			= MTYPE_PTEXT;
+-		s_main.mods.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-		s_main.mods.generic.x				= 320;
+-		s_main.mods.generic.y				= y;
+-		s_main.mods.generic.id				= ID_MODS;
+-		s_main.mods.generic.callback		= Main_MenuEvent; 
+-		s_main.mods.string					= "MODS";
+-		s_main.mods.color					= color_red;
+-		s_main.mods.style					= style;
+-	}
+-
+ 	y += MAIN_MENU_VERTICAL_SPACING;
+-	s_main.exit.generic.type				= MTYPE_PTEXT;
+-	s_main.exit.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+-	s_main.exit.generic.x					= 320;
+-	s_main.exit.generic.y					= y;
+-	s_main.exit.generic.id					= ID_EXIT;
+-	s_main.exit.generic.callback			= Main_MenuEvent; 
+-	s_main.exit.string						= "EXIT";
+-	s_main.exit.color						= color_red;
+-	s_main.exit.style						= style;
+-
+-	Menu_AddItem( &s_main.menu,	&s_main.singleplayer );
+-	Menu_AddItem( &s_main.menu,	&s_main.multiplayer );
++	s_main.credits.generic.type			= MTYPE_PTEXT;
++	s_main.credits.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
++	s_main.credits.generic.x				= 320;
++	s_main.credits.generic.y				= y;
++	s_main.credits.generic.id				= ID_CREDITS;
++	s_main.credits.generic.callback		= Main_MenuEvent;
++	s_main.credits.string					= "CREDITS";
++	s_main.credits.color					= color_red;
++	s_main.credits.style					= style;
++
++	Menu_AddItem( &s_main.menu,	&s_main.joinGame );
+ 	Menu_AddItem( &s_main.menu,	&s_main.setup );
+-	Menu_AddItem( &s_main.menu,	&s_main.demos );
+ 	Menu_AddItem( &s_main.menu,	&s_main.cinematics );
+-	if (teamArena) {
+-		Menu_AddItem( &s_main.menu,	&s_main.teamArena );
+-	}
+-	if ( !uis.demoversion ) {
+-		Menu_AddItem( &s_main.menu,	&s_main.mods );
+-	}
+-	Menu_AddItem( &s_main.menu,	&s_main.exit );             
++	Menu_AddItem( &s_main.menu,	&s_main.credits );
+ 
+ 	trap_Key_SetCatcher( KEYCATCH_UI );
+ 	uis.menusp = 0;
+diff --git a/code/renderergl1/tr_image.c b/code/renderergl1/tr_image.c
+index d1127829..5c1381da 100644
+--- a/code/renderergl1/tr_image.c
++++ b/code/renderergl1/tr_image.c
+@@ -1169,7 +1169,9 @@ static void R_CreateFogImage( void ) {
+ 	int		x,y;
+ 	byte	*data;
+ 	float	d;
++#ifndef __EMSCRIPTEN__
+ 	float	borderColor[4];
++#endif
+ 
+ 	data = ri.Hunk_AllocateTempMemory( FOG_S * FOG_T * 4 );
+ 
+@@ -1190,12 +1192,15 @@ static void R_CreateFogImage( void ) {
+ 	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, IMGTYPE_COLORALPHA, IMGFLAG_CLAMPTOEDGE, 0 );
+ 	ri.Hunk_FreeTempMemory( data );
+ 
++#ifndef __EMSCRIPTEN__
++	// WebGL has no GL_TEXTURE_BORDER_COLOR pname. The fog image already uses
++	// IMGFLAG_CLAMPTOEDGE, so the desktop border-color call is redundant there.
+ 	borderColor[0] = 1.0;
+ 	borderColor[1] = 1.0;
+ 	borderColor[2] = 1.0;
+ 	borderColor[3] = 1;
+-
+ 	qglTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
++#endif
+ }
+ 
+ /*
+@@ -1679,4 +1684,3 @@ void	R_SkinList_f( void ) {
+ 	}
+ 	ri.Printf (PRINT_ALL, "------------------\n");
+ }
+-
+diff --git a/code/renderergl2/tr_image.c b/code/renderergl2/tr_image.c
+index a695f98e..83638b9f 100644
+--- a/code/renderergl2/tr_image.c
++++ b/code/renderergl2/tr_image.c
+@@ -2800,7 +2800,9 @@ static void R_CreateFogImage( void ) {
+ 	int		x,y;
+ 	byte	*data;
+ 	float	d;
++#ifndef __EMSCRIPTEN__
+ 	float	borderColor[4];
++#endif
+ 
+ 	data = ri.Hunk_AllocateTempMemory( FOG_S * FOG_T * 4 );
+ 
+@@ -2821,12 +2823,15 @@ static void R_CreateFogImage( void ) {
+ 	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, IMGTYPE_COLORALPHA, IMGFLAG_CLAMPTOEDGE, 0 );
+ 	ri.Hunk_FreeTempMemory( data );
+ 
++#ifndef __EMSCRIPTEN__
++	// WebGL has no GL_TEXTURE_BORDER_COLOR pname. The fog image already uses
++	// IMGFLAG_CLAMPTOEDGE, so the desktop border-color call is redundant there.
+ 	borderColor[0] = 1.0;
+ 	borderColor[1] = 1.0;
+ 	borderColor[2] = 1.0;
+ 	borderColor[3] = 1;
+-
+ 	qglTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
++#endif
+ }
+ 
+ /*
+@@ -3438,5 +3443,3 @@ void	R_SkinList_f( void ) {
+ 	}
+ 	ri.Printf (PRINT_ALL, "------------------\n");
+ }
+-
+-
+diff --git a/code/sdl/sdl_input.c b/code/sdl/sdl_input.c
+index 5524e231..f73acf0e 100644
+--- a/code/sdl/sdl_input.c
++++ b/code/sdl/sdl_input.c
+@@ -951,10 +951,14 @@ static void IN_ProcessEvents( void )
+ 				Cvar_Set( "r_customwidth", width );
+ 				Cvar_Set( "r_customheight", height );
+ 				Cvar_Set( "r_mode", "-1" );
+-				/* wait until user stops dragging for 1 second, so
+-				   we aren't constantly recreating the GL context while
+-				   he tries to drag...*/
++				/* QuakeJS's fast path updates its existing WebGL context and
++				   patches active UI/cgame dimensions without a context rebuild. */
++#if EMSCRIPTEN
++				Cbuf_AddText( "vid_restart fast\n" );
++				vidRestartTime = 0;
++#else
+ 				vidRestartTime = Sys_Milliseconds() + 1000;
++#endif
+ 			}
+ 			break;
+ 			case SDL_ACTIVEEVENT:
+-- 
+2.53.0
+

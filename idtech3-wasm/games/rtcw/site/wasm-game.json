@@ -1,0 +1,101 @@
+{
+  "id": "rtcw",
+  "defaultVariant": "rtcw-sp",
+  "preferencesNamespace": "idtech3-rtcw",
+  "displayMode": "4:3",
+  "nativeManaged": true,
+  "syncBackbuffer": false,
+  "resizeTransition": "immediate",
+  "menuCursor": "native",
+  "pointerLock": true,
+  "pointerWidth": 640,
+  "pointerHeight": 480,
+  "pointerFit": "contain",
+  "canvasWidth": 1280,
+  "canvasHeight": 720,
+  "maxDpr": 1,
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "identity": false,
+  "graphics": true,
+  "defaultPlayerName": "Player",
+  "profiles": [
+    { "value": "high", "label": "High detail" },
+    { "value": "balanced", "label": "Balanced" },
+    { "value": "performance", "label": "Performance" }
+  ],
+  "defaultProfile": "balanced",
+  "fpsTargets": [30, 60, 120],
+  "defaultFps": 60,
+  "defaultDynamicQuality": true,
+  "persistence": {
+    "root": "/persistent/rtcw",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "controller": {
+    "mode": "disabled"
+  },
+  "adapter": "/game-adapter.js",
+  "variants": {
+    "rtcw-sp": {
+      "title": "Return to Castle Wolfenstein",
+      "kicker": "id Tech 3 · ioRTCW SP",
+      "description": "Fight through the classic single-player campaign with the authentic ioRTCW engine.",
+      "icon": "/rtcw.svg",
+      "background": "/rtcw-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "identity": false,
+      "persistence": {
+        "root": "/persistent/rtcw-sp",
+        "debounceMs": 750,
+        "intervalMs": 5000,
+        "requestDurability": true
+      },
+      "pwa": {
+        "name": "Return to Castle Wolfenstein",
+        "shortName": "RTCW SP",
+        "description": "Return to Castle Wolfenstein for the browser.",
+        "themeColor": "#681b12",
+        "backgroundColor": "#000000",
+        "orientation": "landscape",
+        "icons": [
+          { "src": "/rtcw.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+          { "src": "/rtcw-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "provisioningText": "Install your Return to Castle Wolfenstein single-player PAK files to continue."
+    },
+    "rtcw-mp": {
+      "title": "Return to Castle Wolfenstein Multiplayer",
+      "kicker": "id Tech 3 · ioRTCW MP",
+      "description": "Join classic objective-based matches with the authentic ioRTCW engine.",
+      "icon": "/rtcw.svg",
+      "background": "/rtcw-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "identity": true,
+      "persistence": {
+        "root": "/persistent/rtcw-mp",
+        "debounceMs": 750,
+        "intervalMs": 5000,
+        "requestDurability": true
+      },
+      "pwa": {
+        "name": "Return to Castle Wolfenstein Multiplayer",
+        "shortName": "RTCW MP",
+        "description": "Return to Castle Wolfenstein Multiplayer for the browser.",
+        "themeColor": "#681b12",
+        "backgroundColor": "#000000",
+        "orientation": "landscape",
+        "icons": [
+          { "src": "/rtcw.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+          { "src": "/rtcw-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "provisioningText": "Install your Return to Castle Wolfenstein multiplayer PAK files to continue."
+    }
+  }
+}

@@ -1,0 +1,17 @@
+#include "ui_mp/menudef.h"
+
+{
+menuDef {
+	name "joinserver"
+	visible 0
+	fullScreen 0
+	rect 0 0 0 0
+	onOpen {
+		setcvar ui_wasmJoinRequested 1 ;
+		setcvar ui_wasmJoinTarget 1 ;
+		close joinserver ;
+		close multi_menu ;
+		open main
+	}
+}
+}

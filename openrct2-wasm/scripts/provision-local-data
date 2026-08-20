@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
+image="${1:-openrct2-wasm:dev}"
+volume="${2:-openrct2-data}"
+source_root="${3:-${OPENRCT2_RCT2_DATA:-$HOME/.config/OpenRCT2/rct2}}"
+
+if [[ ! -d "$source_root" ]]; then
+    printf 'RCT2 source directory does not exist: %s\n' "$source_root" >&2
+    exit 1
+fi
+
+docker run --rm \
+    --volume "$source_root:/source:ro" \
+    --volume "$volume:/data" \
+    --volume "$repo_root/scripts/provision-media.cjs:/work/provision-media.cjs:ro" \
+    --entrypoint node \
+    "$image" \
+    /work/provision-media.cjs /source /data

@@ -1,0 +1,32 @@
+{
+  "namespace": "openrct2-installation",
+  "version": "openrct-installation-v2",
+  "files": [],
+  "mediaLibrary": {
+    "namespace": "openrct2-installation",
+    "version": "openrct-installation-v2",
+    "path": "media/openrct2-installation",
+    "minimumEntries": 1,
+    "launcherVisibleWhenReady": false,
+    "maxEntries": 1,
+    "maxFilesPerEntry": 4096,
+    "maxFileBytes": 1073741824,
+    "maxEntryBytes": 3221225472,
+    "maxBrowserCacheBytes": 3221225472,
+    "publicMetadata": ["format", "fileCount", "rct1"],
+    "transformer": {
+      "module": "/media-transformer.mjs",
+      "export": "transformOpenRctInstallers",
+      "version": "openrct-gog-innoextract-v1",
+      "policy": {}
+    },
+    "validator": {
+      "module": "/data-validator.mjs",
+      "export": "validateRct2Installation",
+      "version": "openrct-directory-tree-validator-v2",
+      "maxReadBytes": 32,
+      "maxTotalReadBytes": 64,
+      "policy": {}
+    }
+  }
+}

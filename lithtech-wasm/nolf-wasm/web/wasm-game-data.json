@@ -1,0 +1,83 @@
+{
+  "namespace": "nolf-wasm",
+  "version": "goty-1003-rez-v1",
+  "validator": {
+    "module": "/data-validator.mjs",
+    "export": "validateLithRez",
+    "version": "rezmgr-v1",
+    "maxReadBytes": 256,
+    "maxTotalReadBytes": 2048
+  },
+  "files": [
+    {
+      "key": "nolf",
+      "name": "NOLF.REZ",
+      "names": ["NOLF.REZ", "nolf.rez"],
+      "path": "NOLF.REZ",
+      "size": 618254258,
+      "sha256": "701a40318017ad13bbfae9feb60089351c81ae2dc4c579bd5f64ebb2c5a48ee7",
+      "required": false,
+      "validator": { "policy": { "identity": "NOLF.REZ" } }
+    },
+    {
+      "key": "nolf2",
+      "name": "NOLF2.REZ",
+      "names": ["NOLF2.REZ", "nolf2.rez"],
+      "path": "NOLF2.REZ",
+      "size": 300703727,
+      "sha256": "578965feb92eea18608cd22c0327fc16bba84acdb51b7d1702ba3037f3db1ef4",
+      "required": false,
+      "validator": { "policy": { "identity": "NOLF2.REZ" } }
+    },
+    {
+      "key": "nolfgoty",
+      "name": "NOLFGOTY.REZ",
+      "names": ["NOLFGOTY.REZ", "nolfgoty.rez"],
+      "path": "NOLFGOTY.REZ",
+      "size": 170190784,
+      "sha256": "413d0ec029f162ea55086a4c3fb9c218a0e5d02aa009a7610e4e4a32c7a2eaf0",
+      "required": false,
+      "validator": { "policy": { "identity": "NOLFGOTY.REZ" } }
+    },
+    {
+      "key": "nolfu003",
+      "name": "nolfu003.rez",
+      "names": ["nolfu003.rez", "NOLFU003.REZ"],
+      "path": "nolfu003.rez",
+      "size": 18194503,
+      "sha256": "f4dcc8ddc47e0c01025febda01545448e0e3af9dbf5818fef6da34b323f2fa9a",
+      "required": true,
+      "validator": { "policy": { "identity": "nolfu003.rez" } }
+    },
+    {
+      "key": "nolfcres003",
+      "name": "NOLFCRES003.REZ",
+      "names": ["NOLFCRES003.REZ", "nolfcres003.rez"],
+      "path": "NOLFCRES003.REZ",
+      "size": 745674,
+      "sha256": "e7b5a72a7b30e4ec1147f57aa0399edb1800a66d54bbac122d3e4e55937112dc",
+      "required": true,
+      "validator": { "policy": { "identity": "NOLFCRES003.REZ" } }
+    },
+    {
+      "key": "nolf003cres",
+      "name": "nolf003cres.rez",
+      "names": ["nolf003cres.rez"],
+      "path": "nolf003cres.rez",
+      "size": 745674,
+      "sha256": "4591582626810e3ba84fe3a3bc0ca81900702382eaa1fce94286bf177b0e65ca",
+      "required": false,
+      "validator": { "policy": { "identity": "nolf003cres.rez" } }
+    },
+    {
+      "key": "nolfu003cres",
+      "name": "nolfu003cres.rez",
+      "names": ["nolfu003cres.rez"],
+      "path": "nolfu003cres.rez",
+      "size": 745674,
+      "sha256": "348f210eaeb14e19db712ee581e3710c2855266c107c9c320f099eaedc004333",
+      "required": false,
+      "validator": { "policy": { "identity": "nolfu003cres.rez" } }
+    }
+  ]
+}

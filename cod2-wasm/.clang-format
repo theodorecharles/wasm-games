@@ -1,0 +1,27 @@
+# Match the reconstruction's dominant style: 4-space indent, no tabs,
+# function braces on their own line, control-flow braces attached.
+# ColumnLimit 0 = never re-wrap lines (decompiled code has long lines and
+# hand-aligned constructs; reflowing would create huge, noisy churn).
+BasedOnStyle: LLVM
+Language: Cpp
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 0
+BreakBeforeBraces: Linux
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+IndentCaseLabels: false
+PointerAlignment: Right
+SpaceAfterCStyleCast: false
+SortIncludes: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+AlignTrailingComments: true
+ReflowComments: false
+# Preserve the project's "{ a, b }" braced-initializer spacing (tables, structs).
+Cpp11BracedListStyle: false
+# Keep nested #if/#define indentation (e.g. bytematch.h) rather than flattening it.
+IndentPPDirectives: AfterHash

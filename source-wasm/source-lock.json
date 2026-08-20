@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 2,
+  "framework": {
+    "repository": "https://github.com/theodorecharles/wasm-game-framework.git",
+    "tag": "v0.9.6",
+    "version": "0.9.6",
+    "commit": "73e877f1d7c8f4a6ab47019b91760c8b75d6bd85"
+  },
+  "engine": {
+    "shipped": false,
+    "providedBy": "end-user",
+    "expected": "2017-era nillerusr/ToGL (TOGLES) Source tree",
+    "patches": "patches/",
+    "apply": "scripts/apply-source-patches.mjs"
+  },
+  "gameData": {
+    "combination": "goty-2014-plus-steam-legacy-shaders",
+    "steamAppId": 220,
+    "beta": "steam_legacy",
+    "buildid": "12694556",
+    "iso": "2014 GOTY or Collectors Edition (SteamPipe cabs)",
+    "exclude": ["glshaders.cfg", "*.dll", "*.exe", "*.so", "*.dylib", "*.asi", "hl2/bin"],
+    "prepare": [
+      "scripts/extract-goty-iso.sh",
+      "scripts/combine-owner-data.mjs",
+      "scripts/generate-game-data.mjs"
+    ]
+  }
+}

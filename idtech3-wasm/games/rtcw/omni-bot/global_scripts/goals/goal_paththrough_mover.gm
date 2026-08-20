@@ -1,0 +1,130 @@
+// This script contains functionality to trigger any available movers as set up in the global Map table.
+
+this.Name = "RideMover_PT";
+this.Parent = "LowLevel";		// PathThrough states must be low level or they will not be used.
+
+this.OnPathThrough = function(data)
+{
+	if (Map.RideMovers) {
+		this.mover = Map.RideMovers[data];
+		if (this.mover)
+		{
+			return true;
+		}
+	}
+	Util.ScriptDebugPrint("PathThrough RideMover", "disabled", data + " not found in Map.RideMovers");
+	return false;
+};
+
+this.Enter = function()
+{
+	wpinfo = Util.WpNameInfo(this.mover.startwp);
+	if (!wpinfo) {
+		Util.ScriptDebugPrint("PathThrough RideMover", "disabled", " startwp " + this.mover.startwp + " not found");
+		this.Finished();
+	}
+	this.Pos = wpinfo.position;
+	this.Facing = wpinfo.facing * 1024; //some goals need facing to press button
+
+	this.Bot.DisableCombatMovement = true;
+};
+
+this.Exit = function()
+{
+	this.Bot.DisableCombatMovement = false;
+};
+
+this.Update = function()
+{
+	startPos = this.Bot.GetPosition();
+	this.Goto(startPos);
+
+	mover = this.mover;
+
+	for(;;)
+	{
+		if (mover.board(this) == true) //callback to map script
+		{
+			if (!mover.maxusers) { //unlimited count
+				break;
+			}
+			if (!IsInt(mover.botCount)) {
+				mover.botCount = 0;
+			}
+			if (mover.botCount < mover.maxusers) {
+				++mover.botCount;
+				break;
+			}
+			//there are too many bots, wait this turn
+			sleep(1.5);
+			//bot is often pushed by other bots, return to previous position
+			this.Bot.MoveTowards(startPos);
+			sleep(1);
+		}
+		else
+		{
+			mover.botCount = 0;
+		}
+		//stand in place ...
+		this.Bot.MoveTowards(this.Bot.GetPosition());
+		yield();
+	}
+
+	moverGoal = GetGoal(mover.movergoal);
+	if (!moverGoal)
+	{
+		Util.ScriptDebugPrint("PathThrough RideMover", "disabled", " movergoal " + mover.movergoal + " not found");
+		this.Finished();
+	}
+
+	//get in vehicle
+	if (this.Pos && this.Goto(this.Pos) == EVENT.PATH_FAILED)
+	{
+		this.Finished();
+	}
+
+	this.HighLevelGoal = this.Bot.GetHighLevelGoalName(); //exitwp can depend on current goal
+
+	if (!mover.rideposition) { mover.rideposition = Vec3(); }
+
+	tolerance = mover.Tolerance;
+	if (!tolerance) { tolerance = 400; }
+
+	while (mover.leave(this) != true) //callback to map script
+	{
+		//stand on the rideposition which is relative to entity position
+		pos = GetEntityWorldSpace(moverGoal.GetEntity(), mover.rideposition);
+		this.Bot.MoveTowards(pos);
+
+		//abort if bot is outside the mover
+		if (this.Bot.DistanceTo(pos) > tolerance)
+		{
+			//return to start position if bot failed to get in the mover
+			if (this.Bot.DistanceTo(startPos) < 900)
+			{
+				this.Bot.MoveTowards(startPos);
+				sleep(2);
+			}
+			this.Finished();
+		}
+
+		if (mover.stance)
+			{ this.Bot.PressButton(mover.stance); }
+		yield();
+	}
+
+	//get out of vehicle
+	if (mover.exitwp)
+	{
+		wpinfo = Util.WpNameInfo(mover.exitwp);
+		if (wpinfo)
+		{
+			this.Goto(wpinfo.position);
+		}
+		else {
+			Util.ScriptDebugPrint("PathThrough RideMover", "disabled", " exitwp " + mover.exitwp + " not found");
+		}
+	}
+
+	this.Finished();
+};

@@ -1,0 +1,62 @@
+From eeadefeaeb61f2727cba32ae0fe0f6f1252ca161 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 10:25:00 -0400
+Subject: [PATCH] Add managed RTCW multiplayer join seam
+
+---
+ MP/code/sys/sys_main.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/MP/code/sys/sys_main.c b/MP/code/sys/sys_main.c
+index 20ee596..f0bdbe0 100644
+--- a/MP/code/sys/sys_main.c
++++ b/MP/code/sys/sys_main.c
+@@ -134,6 +134,45 @@ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserArmCaptureIntent( void )
+ 	}
+ }
+ 
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserJoinTarget( void )
++{
++	return rtcwBrowserStarted && Cvar_VariableIntegerValue( "ui_wasmJoinTarget" );
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserJoinRequested( void )
++{
++	int requested;
++
++	if ( !rtcwBrowserStarted ) {
++		return 0;
++	}
++	requested = Cvar_VariableIntegerValue( "ui_wasmJoinRequested" );
++	if ( requested ) {
++		Cvar_Set( "ui_wasmJoinRequested", "0" );
++	}
++	return requested;
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserCancelCaptureIntent( void )
++{
++	rtcwBrowserCaptureIntent = qfalse;
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserJoinServer( const char *address, const char *name )
++{
++	if ( !rtcwBrowserStarted || !address || Q_stricmp( address, "127.0.0.1:27960" ) ) {
++		return 0;
++	}
++	if ( name && name[ 0 ] ) {
++		Cvar_Set( "name", name );
++	}
++	Cvar_Set( "ui_wasmJoinRequested", "0" );
++	Cvar_Set( "ui_wasmJoinTarget", "0" );
++	rtcwBrowserCaptureIntent = qtrue;
++	Cbuf_ExecuteText( EXEC_APPEND, "connect 127.0.0.1:27960\n" );
++	return 1;
++}
++
+ EMSCRIPTEN_KEEPALIVE void RTCW_BrowserSetInputCaptured( int captured )
+ {
+ 	rtcwBrowserInputCaptured = captured ? qtrue : qfalse;
+-- 
+2.53.0
+

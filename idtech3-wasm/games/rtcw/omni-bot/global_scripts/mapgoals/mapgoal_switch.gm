@@ -1,0 +1,212 @@
+this.GoalType = "SWITCH";
+this.Version = 1;
+this.DefaultPriority = 0.7;
+this.MinRadius = 32;
+this.RolePriorityBonus = 0.1;
+this.MaxUsers_InUse(1);
+this.MaxUsers_InProgress(2);
+this.CreateOnLoad = false;
+
+//////////////////////////////////////////////////////////////////////////
+
+this.Schema = Schema();
+this.Schema.Stance = Validate.Enum("stand","crouch","prone").Default("stand");
+this.Schema.Timeout = Validate.NumRange(0,5000).Default(1500);
+this.Schema.Facing = Validate.Type("vector3").Default(Vec3());
+this.Schema.AimPosition = Validate.Type("vector3").Default(Vec3());
+this.Schema.Use = Validate.IntRange(0,1).Default(1);
+
+//////////////////////////////////////////////////////////////////////////
+
+this.InitNewGoal = function()
+{
+	this.Schema.Check(this);
+	this.CreateOnLoad = true; // user created goals need this
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.UpgradeVersion = function(Props)
+{
+	if(Props.Version == 1)
+	{
+		this.Stance = Props.Stance;
+		this.Facing = Props.Facing;
+		this.Timeout = Props.Timeout;
+		this.Use = Props.Use;
+		this.AimPosition = Props.AimPosition;
+
+		if ( !this.Schema.Check(this) )
+		{
+			this.Schema.Stance.CheckPrintErrors(this.Schema,this.Stance);
+			this.Schema.Timeout.CheckPrintErrors(this.Schema,this.Timeout);
+			this.Schema.Facing.CheckPrintErrors(this.Schema,this.Facing);
+			this.Schema.AimPosition.CheckPrintErrors(this.Schema,this.AimPosition);
+			this.Schema.Use.CheckPrintErrors(this.Schema,this.Use);
+
+			// if it's still not valid, disable it
+			if ( !this.Schema.Check(this) )
+			{
+				print(format("Validation failed for %s, disabling",this.GetName()));
+				this.DisableGoal(true);
+			}
+		}
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.Render = function(editMode)
+{
+	offset2 = Vector3(0,0,64);
+
+	while(this.RenderGoal)
+	{
+		goalBasePos = this.GetPosition();
+		goalPos = goalBasePos + offset2;
+
+		if(!this.ExtraDebugText)
+		{
+			this.ExtraDebugText = format("Stance: %s\n",this.Stance)
+				+ format("Timeout: %d\n",this.Timeout)
+				+ format("Use: %d\n",this.Use);
+		}
+
+		this.RenderDefault();
+
+		if ( this.Stance == "crouch" )
+		{
+			stanceOffset = -24;
+		}
+		else if ( this.Stance == "prone" )
+		{
+			stanceOffset = -50;
+		}
+		else
+		{
+			stanceOffset = 0;
+		}
+
+		if(this.IsDisabled())
+		{
+			DrawLine(goalPos,goalBasePos,COLOR.RED,2);
+		}
+		else
+		{
+			DrawLine(goalPos,goalBasePos,COLOR.GREEN,2);
+		}
+
+		aimPos = goalPos + Vector3(0,0,stanceOffset);
+		if ( this.AimPosition && !this.AimPosition.IsZero() )
+		{
+			DrawArrow(aimPos,this.AimPosition,COLOR.YELLOW,2);
+		}
+		else if ( this.Facing && !this.Facing.IsZero() )
+		{
+			DrawArrow(aimPos,aimPos+this.Facing*32,COLOR.BLUE,2);
+		}
+		sleep(2);
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.SaveToTable = function(SaveTable)
+{
+	// save the goal specific properties
+	if(!this.Facing.IsZero()){ SaveTable.Facing = this.Facing; }
+	if(this.Stance != "stand"){ SaveTable.Stance = this.Stance; }
+	if(this.Timeout != 1500){ SaveTable.Timeout = this.Timeout; }
+	if(this.Use != 1){ SaveTable.Use = this.Use; }
+	SaveTable.AimPosition = this.AimPosition;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.Help = function()
+{
+	print(this.GoalType,"goal");
+	print("Optional:");
+	print("		facing - Direction the bot should face");
+	print("		aim - traces to find an aim position. will override facing");
+	print("		stance - stand, crouch, prone");
+	print("		timeout - in milliseconds, default 1500");
+	print("		use - should the bot press the use button, default true");
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.SetProperty = function(property, value)
+{
+	switch(property)
+	{
+		case "facing":
+		{
+			if ( value == "clearall" || value == "clear" )
+			{
+				this.Facing = Vec3();
+				print("Facing cleared");
+			}
+			else
+			{
+				this.Facing = GetLocalFacing();;
+				print("Facing set to",this.Facing);
+			}
+		}
+		case "aim":
+		{
+			if ( value == "clearall" || value == "clear" )
+			{
+				this.AimPosition = Vec3();
+				print("Aim Position cleared");
+			}
+			else
+			{
+				this.AimPosition = Util.TraceForPosition();
+				print("Aim position set to",this.AimPosition);
+			}
+		}
+		case "stance": // crouch, prone, default stand
+		{
+			if(this.Schema.Stance.CheckPrintErrors(this,value))
+			{
+				this.Stance = value;
+			}
+		}
+		case "timeout":
+		{
+			i = ToInt(value);
+			if(typeId(i) == 1)
+			{
+				this.Timeout = i;
+			}
+			else
+			{
+				print(this.GoalType, ": Invalid Timeout, expecting int");
+			}
+		}
+		case "use":
+		{
+			if ( value == "0" || value == "false" )
+			{
+				this.Use = false;
+			}
+			else
+			{
+				this.Use = true;
+			}
+		}
+		default:
+		{
+			print(this.GoalType, ": Invalid property:", property);
+		}
+	}
+
+	this.ExtraDebugText = null;
+};
+
+//////////////////////////////////////////////////////////////////////////
+this.HudDisplay = function(window)
+{
+	this.CreateGuiFromSchema(this.Schema);
+};

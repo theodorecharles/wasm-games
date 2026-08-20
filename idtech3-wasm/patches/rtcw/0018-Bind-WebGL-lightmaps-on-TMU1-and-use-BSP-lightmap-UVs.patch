@@ -1,0 +1,78 @@
+From e9782a8dcef5cf6b37f60713f7add55025d72a4e Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 15:35:28 -0400
+Subject: [PATCH] Bind WebGL lightmaps on TMU1 and use BSP lightmap UVs
+
+qglBindTexture ignored the active unit so the shader sampled the
+albedo as lighting. Use the real GLES bind and tess.texCoords[][1].
+---
+ MP/code/renderer/tr_es2.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/MP/code/renderer/tr_es2.c b/MP/code/renderer/tr_es2.c
+index 0afac9d..5eb55da 100644
+--- a/MP/code/renderer/tr_es2.c
++++ b/MP/code/renderer/tr_es2.c
+@@ -50,6 +50,7 @@ extern void     glBindBuffer( unsigned target, unsigned buffer );
+ extern void     glGenBuffers( int n, unsigned *buffers );
+ extern void     glBufferData( unsigned target, long size, const void *data, unsigned usage );
+ extern void     glActiveTexture( unsigned texture );
++extern void     glBindTexture( unsigned target, unsigned texture );
+ extern void     glDrawArrays( unsigned mode, int first, int count );
+ 
+ typedef struct {
+@@ -201,7 +202,9 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 	const int stride = (int)sizeof( es2LmVert_t );
+ 	const glIndex_t *indexes;
+ 
+-	if ( !input || !diff || !lm || !diffTc || !lmTc ) {
++	(void)diffTc;
++	(void)lmTc;
++	if ( !input || !diff || !lm ) {
+ 		return qfalse;
+ 	}
+ 	if ( input->numIndexes < 3 || input->numVertexes < 3 ) {
+@@ -222,11 +225,14 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 	GL_State( GLS_DEFAULT );
+ 	MatMul( mvp, backEnd.viewParms.projectionMatrix, backEnd.or.modelMatrix );
+ 
++	/* qglBindTexture goes through LEGACY_GL and ignores the active
++	 * unit, so both samples hit the same texture. Use the real GLES
++	 * entry points. Lightmap STs are tess.texCoords[][1]. */
+ 	glActiveTexture( GL_TEXTURE0 );
+-	qglBindTexture( GL_TEXTURE_2D, diffImg->texnum );
++	glBindTexture( GL_TEXTURE_2D, diffImg->texnum );
+ 	glState.currenttextures[0] = (int)diffImg->texnum;
+ 	glActiveTexture( GL_TEXTURE1 );
+-	qglBindTexture( GL_TEXTURE_2D, lmImg->texnum );
++	glBindTexture( GL_TEXTURE_2D, lmImg->texnum );
+ 	glActiveTexture( GL_TEXTURE0 );
+ 
+ 	glUseProgram( s_prog );
+@@ -261,10 +267,10 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 		( dst ).x = tess.xyz[id][0]; \
+ 		( dst ).y = tess.xyz[id][1]; \
+ 		( dst ).z = tess.xyz[id][2]; \
+-		( dst ).u0 = diffTc[id][0]; \
+-		( dst ).v0 = diffTc[id][1]; \
+-		( dst ).u1 = lmTc[id][0]; \
+-		( dst ).v1 = lmTc[id][1]; \
++		( dst ).u0 = tess.texCoords[id][0][0]; \
++		( dst ).v0 = tess.texCoords[id][0][1]; \
++		( dst ).u1 = tess.texCoords[id][1][0]; \
++		( dst ).v1 = tess.texCoords[id][1][1]; \
+ 		( dst ).r = tess.svars.colors[id][0]; \
+ 		( dst ).g = tess.svars.colors[id][1]; \
+ 		( dst ).b = tess.svars.colors[id][2]; \
+@@ -317,7 +323,7 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+ 	glUseProgram( 0 );
+ 	glActiveTexture( GL_TEXTURE1 );
+-	qglBindTexture( GL_TEXTURE_2D, 0 );
++	glBindTexture( GL_TEXTURE_2D, 0 );
+ 	glActiveTexture( GL_TEXTURE0 );
+ 	return qtrue;
+ }
+-- 
+2.53.0
+

@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "msvc-client",
+      "displayName": "Windows MSVC client (x86, Ninja, Debug)",
+      "description": "Native Windows cod2_win32.exe via cl.exe. Run from an x86 Native Tools for VS command prompt.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/msvc",
+      "cacheVariables": {
+        "COD2_WIN_MSVC": "ON",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "msvc-client-release",
+      "displayName": "Windows MSVC client (x86, Ninja, Release /O2)",
+      "description": "Optimized native Windows cod2_win32.exe. Add -DCOD2_SDL2_STATIC=ON for an optimized standalone exe. NOTE: /O2 on decompiler-faithful code is less battle-tested than the Debug build. Run from an x86 Native Tools for VS command prompt.",
+      "inherits": "msvc-client",
+      "binaryDir": "${sourceDir}/build/msvc-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "msvc-client-x64",
+      "displayName": "Windows MSVC client (x64 port, Ninja, Debug) -- COMPILE ONLY",
+      "description": "IN-PROGRESS x86_64 port. Compiles the engine source set (cod2_msvc_objs) under the x64 cl to measure the x64 error surface; does NOT link/run yet (needs the Stage 2 typed-data migration). Run from an x64 Native Tools for VS command prompt.",
+      "inherits": "msvc-client",
+      "binaryDir": "${sourceDir}/build/msvc-x64",
+      "cacheVariables": {
+        "COD2_X64": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "msvc-client", "configurePreset": "msvc-client" },
+    { "name": "msvc-client-release", "configurePreset": "msvc-client-release" },
+    { "name": "msvc-client-x64", "configurePreset": "msvc-client-x64", "targets": ["cod2_msvc_objs"] }
+  ]
+}

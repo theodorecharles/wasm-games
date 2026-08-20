@@ -1,0 +1,161 @@
+{
+  "id": "idtech4",
+  "kicker": "id Tech 4",
+  "defaultVariant": "doom3",
+  "description": "Doom 3, Resurrection of Evil, Quake 4, and Prey in the browser.",
+  "displayMode": "dynamic",
+  "nativeManaged": true,
+  "syncBackbuffer": false,
+  "resizeTransition": "immediate",
+  "pointerWidth": 640,
+  "pointerHeight": 480,
+  "pointerFit": "contain",
+  "canvasWidth": 1280,
+  "canvasHeight": 720,
+  "maxDpr": 1,
+  "pointerLock": true,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/save/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "identity": true,
+  "graphics": true,
+  "advanced": true,
+  "profiles": [
+    { "value": "performance", "label": "Performance" },
+    { "value": "high", "label": "High" },
+    { "value": "ultra", "label": "Ultra" }
+  ],
+  "defaultProfile": "high",
+  "fpsTargets": [30, 60, 120],
+  "defaultFps": 60,
+  "defaultDynamicQuality": false,
+  "dynamicQuality": false,
+  "fps": false,
+  "defaultPlayerName": "Player",
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "adapter": "/game-adapter.js",
+  "variants": {
+    "doom3": {
+      "title": "Doom 3",
+      "description": "Still in development — the Doom 3 browser renderer is not yet complete.",
+      "loadingTitle": "Starting Doom 3…",
+      "identity": false,
+      "defaultPlayerName": "Marine",
+      "icon": "/doom3.ico",
+      "pwa": {
+        "name": "Doom 3",
+        "shortName": "Doom 3",
+        "description": "Still in development — Doom 3 browser renderer work is ongoing.",
+        "themeColor": "#67130c",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/doom3-pwa.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+        ]
+      }
+    },
+    "doom3-mp": {
+      "title": "Doom 3 Multiplayer",
+      "description": "Still in development — the Doom 3 multiplayer browser renderer is not yet complete.",
+      "loadingTitle": "Starting Doom 3 multiplayer…",
+      "identity": true,
+      "defaultPlayerName": "Marine",
+      "icon": "/doom3.ico",
+      "pwa": {
+        "name": "Doom 3 Multiplayer",
+        "shortName": "Doom 3 MP",
+        "description": "Still in development — Doom 3 multiplayer browser renderer work is ongoing.",
+        "themeColor": "#67130c",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/doom3-pwa.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+        ]
+      }
+    },
+    "roe": {
+      "title": "Doom 3: Resurrection of Evil",
+      "description": "Still in development — the Resurrection of Evil browser renderer is not yet complete.",
+      "loadingTitle": "Starting Resurrection of Evil…",
+      "identity": false,
+      "defaultPlayerName": "Marine",
+      "icon": "/roe.png",
+      "pwa": {
+        "name": "Doom 3: Resurrection of Evil",
+        "shortName": "Doom 3: RoE",
+        "description": "Still in development — Resurrection of Evil browser renderer work is ongoing.",
+        "themeColor": "#32100c",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/roe.png", "sizes": "64x64", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "quake4": {
+      "title": "Quake 4",
+      "description": "Still in development — the Quake 4 browser renderer is not yet complete.",
+      "loadingTitle": "Starting Quake 4…",
+      "identity": false,
+      "defaultPlayerName": "Kane",
+      "icon": "/quake4.ico",
+      "background": "/quake4-background.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "name": "Quake 4",
+        "shortName": "Quake 4",
+        "description": "Still in development — Quake 4 browser renderer work is ongoing.",
+        "themeColor": "#5f180d",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/quake4-pwa.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+        ]
+      }
+    },
+    "quake4-mp": {
+      "title": "Quake 4 Multiplayer",
+      "description": "Still in development — the Quake 4 multiplayer browser renderer is not yet complete.",
+      "loadingTitle": "Starting Quake 4 multiplayer…",
+      "identity": true,
+      "defaultPlayerName": "Kane",
+      "icon": "/quake4.ico",
+      "background": "/quake4-background.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "name": "Quake 4 Multiplayer",
+        "shortName": "Quake 4 MP",
+        "description": "Still in development — Quake 4 multiplayer browser renderer work is ongoing.",
+        "themeColor": "#5f180d",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/quake4-pwa.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+        ]
+      }
+    },
+    "prey": {
+      "title": "Prey (2006)",
+      "description": "Still in development — the Prey browser renderer is not yet complete.",
+      "loadingTitle": "Starting Prey…",
+      "identity": false,
+      "defaultPlayerName": "Tommy",
+      "icon": "/prey.ico",
+      "pwa": {
+        "id": "/?variant=prey",
+        "name": "Prey (2006)",
+        "shortName": "Prey",
+        "description": "Still in development — Prey browser renderer work is ongoing.",
+        "themeColor": "#8d2418",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/prey-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any maskable" }
+        ]
+      }
+    }
+  }
+}

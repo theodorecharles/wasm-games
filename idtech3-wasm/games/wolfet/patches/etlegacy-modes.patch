@@ -1,0 +1,246 @@
+--- a/src/game/g_cvars.c
++++ b/src/game/g_cvars.c
+@@ -57,6 +57,7 @@ vmCvar_t g_maxGameClients;
+ vmCvar_t g_minGameClients;
+ vmCvar_t g_dedicated;
+ vmCvar_t g_speed;
++vmCvar_t g_etjsArcade;
+ vmCvar_t g_gravity;
+ vmCvar_t g_cheats;
+ vmCvar_t g_knockback;
+@@ -433,6 +434,7 @@ cvarTable_t gameCvarTable[] =
+ 	{ &g_dedicated,                       "dedicated",                         "0",                          0,                                               0, qfalse, qfalse },
+ 
+ 	{ &g_speed,                           "g_speed",                           "320",                        0,                                               0, qtrue,  qtrue  },
++	{ &g_etjsArcade,                      "g_etjsArcade",                      "0",                          CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
+ 	{ &g_gravity,                         "g_gravity",                         "800",                        0,                                               0, qtrue,  qtrue  },
+ 	{ &g_knockback,                       "g_knockback",                       "1000",                       0,                                               0, qtrue,  qtrue  },
+ 
+--- a/src/game/g_cvars.h
++++ b/src/game/g_cvars.h
+@@ -62,6 +62,7 @@ extern vmCvar_t g_password;
+ extern vmCvar_t sv_privatepassword;
+ extern vmCvar_t g_gravity;
+ extern vmCvar_t g_speed;
++extern vmCvar_t g_etjsArcade;
+ extern vmCvar_t g_knockback;
+ 
+ extern vmCvar_t g_forcerespawn;
+--- a/src/game/bg_pmove.c
++++ b/src/game/bg_pmove.c
+@@ -54,15 +54,19 @@ typedef enum
+ #define PM_FIXEDPHYSICS         cgs.fixedphysics
+ #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
+ #define PM_PRONEDELAY           cgs.pronedelay
++extern vmCvar_t cg_etjsArcade;
++#define PM_ETJS_ARCADE          cg_etjsArcade.integer
+ 
+ #else
+ extern vmCvar_t g_fixedphysics;
+ extern vmCvar_t g_fixedphysicsfps;
+ extern vmCvar_t g_pronedelay;
++extern vmCvar_t g_etjsArcade;
+ 
+ #define PM_FIXEDPHYSICS         g_fixedphysics.integer
+ #define PM_FIXEDPHYSICSFPS      g_fixedphysicsfps.integer
+ #define PM_PRONEDELAY           g_pronedelay.integer
++#define PM_ETJS_ARCADE          g_etjsArcade.integer
+ 
+ #endif
+ 
+@@ -844,6 +848,11 @@ static qboolean PM_CheckJump(void)
+  */
+ static qboolean PM_CheckDoubleJump(void)
+ {
++	if (!PM_ETJS_ARCADE)
++	{
++		return qfalse;
++	}
++
+ 	if (pml.walking || pm->ps->groundEntityNum != ENTITYNUM_NONE || pm->waterlevel > 1 || pml.ladder)
+ 	{
+ 		return qfalse;
+@@ -5005,12 +5014,14 @@ void PM_LadderMove(void)
+  */
+ void PM_Sprint(void)
+ {
+-	/* ETJS fun rules: sprint is always available and the HUD stays full. */
+-	pm->pmext->sprintTime  = SPRINTTIME;
+-	pm->ps->sprintExertTime = 0;
+-	return;
++	if (PM_ETJS_ARCADE)
++	{
++		/* Arcade rules: sprint is always available and the HUD stays full. */
++		pm->pmext->sprintTime   = SPRINTTIME;
++		pm->ps->sprintExertTime = 0;
++		return;
++	}
+ 
+-	/* Kept below for an easy future cvar-backed classic mode. */
+ 	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
+ 	{
+ 		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove)
+--- a/src/cgame/cg_cvars.c
++++ b/src/cgame/cg_cvars.c
+@@ -70,6 +70,7 @@ vmCvar_t cg_drawGun;
+ vmCvar_t cg_rshook;
+ #ifdef __EMSCRIPTEN__
+ vmCvar_t cg_etjsContainUi;
++vmCvar_t cg_etjsArcade;
+ #endif
+ vmCvar_t cg_weapAnims;
+ vmCvar_t cg_weapBankCollisions;
+@@ -348,6 +349,7 @@ static cvarTable_t cvarTable[] =
+ 	{ &cg_rshook,                             "cl_rshook",                             "0",           0,                            0 },
+ #ifdef __EMSCRIPTEN__
+ 	{ &cg_etjsContainUi,                      "etjs_containui",                        "1",           0,                            0 },
++	{ &cg_etjsArcade,                         "g_etjsArcade",                          "0",           0,                            0 },
+ #endif
+ 	{ &cg_weapAnims,                          "cg_weapAnims",                          "15",          CVAR_ARCHIVE,                 0 },
+ 	{ &cg_weapBankCollisions,                 "cg_weapBankCollisions",                 "0",           CVAR_ARCHIVE,                 0 },
+--- a/src/cgame/cg_cvars.h
++++ b/src/cgame/cg_cvars.h
+@@ -74,6 +74,7 @@ extern vmCvar_t cg_gun_z;
+ extern vmCvar_t cg_drawGun;
+ extern vmCvar_t cg_rshook;
+ #ifdef __EMSCRIPTEN__
++extern vmCvar_t cg_etjsArcade;
+ extern vmCvar_t cg_etjsContainUi;
+ #endif
+ extern vmCvar_t cg_weapAnims;
+--- a/src/cgame/cg_event.c
++++ b/src/cgame/cg_event.c
+@@ -237,7 +237,7 @@ static void CG_Obituary(entityState_t *ent)
+ 		etjsMultiKillCount = 0;
+ 		etjsLastKillTime   = 0;
+ 	}
+-	else if (attacker == cg.clientNum && ca && ci->team != ca->team)
++	else if (cg_etjsArcade.integer && attacker == cg.clientNum && ca && ci->team != ca->team)
+ 	{
+ 		int multiIndex;
+ 
+@@ -2017,6 +2017,13 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int durat
+ 
+ static void CG_PlayHitSound(const int clientNum, const int hitSound)
+ {
++#ifdef __EMSCRIPTEN__
++	if (!cg_etjsArcade.integer)
++	{
++		return;
++	}
++#endif
++
+ 	if (hitSound == HIT_NONE)
+ 	{
+ 		return;
+--- a/src/cgame/cg_ents.c
++++ b/src/cgame/cg_ents.c
+@@ -1242,7 +1242,7 @@ static qboolean ETJS_RevealEnemyDeployable(const entityState_t *state)
+ {
+ 	int localTeam;
+ 
+-	if (!cg_rshook.integer || !cg.snap || !ETJS_IsHookDeployable(state))
++	if (!cg_etjsArcade.integer || !cg_rshook.integer || !cg.snap || !ETJS_IsHookDeployable(state))
+ 	{
+ 		return qfalse;
+ 	}
+--- a/src/cgame/cg_players.c
++++ b/src/cgame/cg_players.c
+@@ -2710,7 +2710,7 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entity
+ 	trap_R_AddRefEntityToScene(ent);
+ 
+ #ifdef __EMSCRIPTEN__
+-	if (cg_rshook.integer
++	if (cg_etjsArcade.integer && cg_rshook.integer
+ 	    && es->eType == ET_PLAYER
+ 	    && cg.snap
+ 	    && es->number != cg.snap->ps.clientNum
+--- a/src/cgame/cg_view.c
++++ b/src/cgame/cg_view.c
+@@ -2816,7 +2816,7 @@ void CG_CalcViewValues(void)
+ 			/* Invalidate every frame before CL_FinishMove consumes the result.
+ 			 * This also prevents attack-to-tap-out while dead from reusing aim. */
+ 			trap_Cvar_Set("etjs_target", "-1");
+-			if (cg_rshook.integer && (ucmd.buttons & BUTTON_ATTACK) && cg.snap
++			if (cg_etjsArcade.integer && cg_rshook.integer && (ucmd.buttons & BUTTON_ATTACK) && cg.snap
+ 			    && cg.predictedPlayerState.pm_type == PM_NORMAL
+ 			    && cg.predictedPlayerState.stats[STAT_HEALTH] > 0)
+ 			{
+--- a/src/client/cl_input.c
++++ b/src/client/cl_input.c
+@@ -1152,7 +1152,8 @@ void CL_FinishMove(usercmd_t *cmd)
+ 		cmd->angles[i] = ANGLE2SHORT(cl.viewangles[i]);
+ 	}
+ #ifdef __EMSCRIPTEN__
+-	if (Cvar_VariableIntegerValue("cl_rshook") &&
++	if (Cvar_VariableIntegerValue("g_etjsArcade") &&
++	    Cvar_VariableIntegerValue("cl_rshook") &&
+ 	    Cvar_VariableIntegerValue("etjs_target") >= 0 &&
+ 	    (cmd->buttons & BUTTON_ATTACK))
+ 	{
+--- a/src/client/cl_main.c
++++ b/src/client/cl_main.c
+@@ -37,6 +37,9 @@
+ #include "snd_local.h"
+ 
+ #include <limits.h>
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
+ 
+ #include "../sys/sys_local.h"
+ #include "../sys/sys_loadlib.h"
+@@ -3194,7 +3197,17 @@ void CL_InitRef(void)
+  */
+ static void CL_RsHook_f(void)
+ {
+-	int on = !Cvar_VariableIntegerValue("cl_rshook");
++	int on;
++
++	Cvar_Get("g_etjsArcade", "0", 0);
++	if (!Cvar_VariableIntegerValue("g_etjsArcade"))
++	{
++		Cvar_Set2("cl_rshook", "0", qtrue);
++		Com_Printf("rshook is only available in arcade mode\n");
++		return;
++	}
++
++	on = !Cvar_VariableIntegerValue("cl_rshook");
+ 
+ 	Cvar_Get("cl_rshook", "0", 0);
+ 	Cvar_Set2("cl_rshook", on ? "1" : "0", qtrue);
+@@ -3225,6 +3238,21 @@ static void CL_EtjsJoin_f(void)
+ 		Cbuf_AddText(va("connect %s\n", addr));
+ 	}
+ }
++
++static void CL_EtjsAdmin_f(void)
++{
++	if (!Cvar_VariableIntegerValue("etjs_admin"))
++	{
++		Com_Printf("local server administration is not available for this client\n");
++		return;
++	}
++	EM_ASM({
++		if (Module['etjsAdminCommand'])
++		{
++			Module['etjsAdminCommand'](UTF8ToString($0));
++		}
++	}, Cmd_Args());
++}
+ #endif
+ 
+ /**
+@@ -3280,10 +3308,12 @@ void CL_Init(void)
+ 	Cvar_Set("etjs_splash", "2");
+ 	Cvar_Get("etjs_containui", "1", 0);
+ 	Cvar_Get("etjs_menucount", "0", 0);
++	Cvar_Get("etjs_admin", "0", 0);
+ 	Cmd_AddCommand("rshook", CL_RsHook_f, "Toggle rshook.");
+ 	Cmd_AddCommand("icebot", CL_RsHook_f, "Toggle rshook.");
+ 	Cmd_AddCommand("ethook", CL_RsHook_f, "Toggle rshook.");
+ 	Cmd_AddCommand("etjs_joingame", CL_EtjsJoin_f, "Join the shared ETJS match.");
++	Cmd_AddCommand("etjs_admin", CL_EtjsAdmin_f, "Run a local server administration command.");
+ #endif
+ 	Cmd_AddCommand("cmd", CL_ForwardToServer_f, "Executes a reliable server command.");
+ 	Cmd_AddCommand("configstrings", CL_Configstrings_f, "Prints configstrings.");

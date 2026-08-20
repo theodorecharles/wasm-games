@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly expected_source="4a7ee146caab8888eb31e56a33c0559db89b17bd"
+readonly build_image="ghcr.io/openrct2/openrct2-build@sha256:0e1daa8e3f5a1c6951179aeab5c5de471ea705cb5f756bfb6e0ae5162b7e67be"
+repo_root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
+unexpected_source_changes="$(
+    git -C "$repo_root" diff --name-only "$expected_source" -- . \
+        ':(exclude)WASM-MILESTONE.md' \
+        ':(exclude)scripts/audit-rct2-data' \
+        ':(exclude)scripts/build-wasm-milestone' \
+        ':(exclude)scripts/test-wasm-milestone'
+)"
+
+if ! git -C "$repo_root" merge-base --is-ancestor "$expected_source" HEAD; then
+    printf 'OpenRCT2 source commit %s is not an ancestor of HEAD.\n' "$expected_source" >&2
+    exit 1
+fi
+
+if [[ -n "$unexpected_source_changes" ]]; then
+    printf 'OpenRCT2 source differs from pinned commit %s:\n%s\n' \
+        "$expected_source" "$unexpected_source_changes" >&2
+    exit 1
+fi
+
+docker run --rm \
+    --env "HOST_UID=$(id -u)" \
+    --env "HOST_GID=$(id -g)" \
+    --volume "$repo_root:/src" \
+    --workdir /src \
+    "$build_image" \
+    bash -lc '
+        git config --global --add safe.directory /src
+        . scripts/setenv -q
+        result=0
+        build-emscripten || result=$?
+        chown -R "$HOST_UID:$HOST_GID" build
+        exit "$result"
+    '

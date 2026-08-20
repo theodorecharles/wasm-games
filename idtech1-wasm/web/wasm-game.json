@@ -1,0 +1,250 @@
+{
+  "id": "idtech1-family",
+  "title": "id Tech 1 WASM Suite",
+  "kicker": "Native Doom-engine family source ports",
+  "description": "Classic id Tech 1 games in the browser.",
+  "adapter": "/game-adapter.js",
+  "preferencesNamespace": "idtech1-family",
+  "defaultVariant": "doom",
+  "defaultProfile": "smooth",
+  "defaultFps": 120,
+  "fpsTargets": [60, 90, 120],
+  "identity": false,
+  "graphics": true,
+  "advanced": true,
+  "dynamicQuality": false,
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/persistent/idtech1/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "pointerLock": true,
+  "menuCursor": "none",
+  "nativeManaged": true,
+  "syncBackbuffer": false,
+  "canvasWidth": 960,
+  "canvasHeight": 720,
+  "maxDpr": 1,
+  "theme": {
+    "panel": "rgb(18 10 9 / 96%)",
+    "field": "#180d0c"
+  },
+  "variants": {
+    "doom": {
+      "title": "Doom / Ultimate Doom",
+      "engine": "Crispy Doom / DSDA-Doom",
+      "description": "Chocolate-like original, fixed 4:3 smooth, or native-resolution Modernized play.",
+      "icon": "/assets/doom.png",
+      "iconPixelated": false,
+      "background": "/assets/background-doom.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/doom",
+        "shortName": "Doom",
+        "themeColor": "#a8241c",
+        "backgroundColor": "#100807",
+        "icons": [
+          { "src": "/assets/doom-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/doom-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#a8241c", "accent-strong": "#ef675d", "border": "#6c2923" }
+    },
+    "doom2": {
+      "title": "Doom II",
+      "engine": "Crispy Doom / DSDA-Doom",
+      "description": "Chocolate-like original, fixed 4:3 smooth, or native-resolution Modernized play.",
+      "icon": "/assets/doom.png",
+      "iconPixelated": false,
+      "background": "/assets/background-doom2.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/doom2",
+        "shortName": "Doom II",
+        "themeColor": "#973d18",
+        "backgroundColor": "#120a07",
+        "icons": [
+          { "src": "/assets/doom-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/doom-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#973d18", "accent-strong": "#f1884c", "border": "#66331f" }
+    },
+    "tnt": {
+      "title": "Final Doom: TNT",
+      "engine": "Crispy Doom / DSDA-Doom",
+      "description": "TNT: Evilution with fixed-aspect classic profiles or native-resolution Modernized play.",
+      "icon": "/assets/doom.png",
+      "iconPixelated": false,
+      "background": "/assets/background-tnt.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/tnt",
+        "shortName": "Final Doom TNT",
+        "themeColor": "#8f1f18",
+        "backgroundColor": "#100706",
+        "icons": [
+          { "src": "/assets/doom-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/doom-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#8f1f18", "accent-strong": "#ff5f51", "border": "#732b25" }
+    },
+    "plutonia": {
+      "title": "Final Doom: Plutonia",
+      "engine": "Crispy Doom / DSDA-Doom",
+      "description": "The Plutonia Experiment with fixed-aspect classic profiles or native-resolution Modernized play.",
+      "icon": "/assets/doom.png",
+      "iconPixelated": false,
+      "background": "/assets/background-plutonia.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/plutonia",
+        "shortName": "Final Doom Plutonia",
+        "themeColor": "#7d2620",
+        "backgroundColor": "#100807",
+        "icons": [
+          { "src": "/assets/doom-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/doom-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#7d2620", "accent-strong": "#ef786f", "border": "#642824" }
+    },
+    "heretic": {
+      "title": "Heretic",
+      "engine": "Crispy Heretic / DSDA-Doom",
+      "description": "Heretic with original, smooth, and native-resolution Modernized profiles.",
+      "icon": "/assets/heretic.png",
+      "iconPixelated": false,
+      "background": "/assets/background-heretic.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/heretic",
+        "shortName": "Heretic",
+        "themeColor": "#29633b",
+        "backgroundColor": "#07120a",
+        "icons": [
+          { "src": "/assets/heretic-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/heretic-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#29633b", "accent-strong": "#76c88b", "border": "#335b3e" }
+    },
+    "hexen": {
+      "title": "Hexen",
+      "engine": "Crispy Hexen / DSDA-Doom",
+      "description": "Hexen with original, smooth, and native-resolution Modernized profiles.",
+      "icon": "/assets/hexen.png",
+      "iconPixelated": false,
+      "background": "/assets/background-hexen.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/hexen",
+        "shortName": "Hexen",
+        "themeColor": "#354b89",
+        "backgroundColor": "#080b17",
+        "icons": [
+          { "src": "/assets/hexen-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/hexen-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#354b89", "accent-strong": "#829be0", "border": "#3b4670" }
+    },
+    "chex": {
+      "title": "Chex Quest",
+      "engine": "Crispy Doom / DSDA-Doom",
+      "description": "Chex Quest with original, smooth, and modernized profiles.",
+      "icon": "/assets/doom.png",
+      "iconPixelated": false,
+      "background": "/assets/background-chex.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/idtech1/chex",
+        "shortName": "Chex Quest",
+        "themeColor": "#c5741b",
+        "backgroundColor": "#191006",
+        "icons": [
+          { "src": "/assets/doom-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/doom-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "resizeTransition": "immediate",
+      "pixelated": false,
+      "fps": true,
+      "profiles": [
+        { "value": "original", "label": "Original — Chocolate-like" },
+        { "value": "smooth", "label": "Smooth — Crispy, uncapped" },
+        { "value": "modernized", "label": "Modernized — DSDA dynamic" }
+      ],
+      "theme": { "accent": "#c5741b", "accent-strong": "#ffd064", "border": "#80511f" }
+    }
+  }
+}

@@ -1,0 +1,2668 @@
+// This script contains useful utility scripts for performing common actions.
+global Map = {};
+
+member PlayerClassTable = {};
+
+// This is used as an alternative to grounding goals created by waypoint flags. Each game using waypoints
+// should define this in <game>_utilities.gm
+member WaypointGoalOffset = Vector3(0,0,0);
+
+// color string for debug messages
+member DebugColorString = "";
+
+// games can define goal types that will have route tables auto initialized with makemapgm
+member PrimaryRouteGoalQuery = "";
+
+// tables for GetEntHealthAndArmor, GetCurrentAmmo, GetMostDesiredAmmo, QueryGoals
+// tables can be shared because all scripts run in a single thread
+member HealthTable = {};
+member AmmoTable = {};
+member DesireTable = {};
+member QueryTable = {};
+member GoalsTable = {};
+
+//////////////////////////////////////////////////////////////////////////
+// Helper function for getting a bot by name.
+member GetBotByName = function(name)
+{
+	foreach(bot in BotTable)
+	{
+		if(bot.Name == name)
+		{
+			return bot;
+		}
+	}
+	return null;
+};
+
+member IsHuman = function(ent)
+{
+	return ent != null && GetEntFlags(ent, ENTFLAG.HUMANCONTROLLED);
+};
+
+member IsBot = function(ent)
+{
+	if (ent)
+	{
+		return this.GetBotByName(GetEntName(ent));
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+member MakeRGBA = function(r, g, b, a)
+{
+	assert( IsInt(r), "Param1 wrong type" );
+	assert( IsInt(g), "Param2 wrong type" );
+	assert( IsInt(b), "Param3 wrong type" );
+
+// alpha is optional
+	alpha = 255;
+	if(a)
+	{
+		assert( IsInt(a) );
+		alpha = a;
+	}
+
+	return (((alpha)<<24) | ((b)<<16) | ((g)<<8) | (r));
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+member WaypointAutoSaveInfo =
+{
+	SaveThreadId = null,
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+member WaypointAutoSaveFunction = function(_delay)
+{
+	print("Util.WaypointAutoSaveFunction: Will auto-save waypoints every", _delay, "seconds.");
+
+	// Loop as long as waypoint mode is on.
+	while( Wp.IsWaypointViewOn() )
+	{
+		ExecCommand( "waypoint_save" );
+		sleep( _delay );
+	}
+
+	print("Util.WaypointAutoSaveFunction: Waypoint auto saving disabled with waypoint_view 0");
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+member EnableWaypointAutoSave = function( _enable, _time )
+{
+	if( _enable )
+	{
+		if( _time < 5 ) { _time = 5; }
+
+		print("Util.EnableWaypointAutoSave: Enabling waypoint autosave");
+		ExecCommand("waypoint_view 1");
+
+		if( this.WaypointAutoSaveInfo.SaveThreadId != null )
+		{
+			threadKill( this.WaypointAutoSaveInfo.SaveThreadId );
+		}
+		this.WaypointAutoSaveInfo.SaveThreadId = thread( this.WaypointAutoSaveFunction, _time );
+	}
+	else
+	{
+		// Kill the thread if it exists, and null the
+		if( this.WaypointAutoSaveInfo.SaveThreadId != null )
+		{
+			threadKill( this.WaypointAutoSaveInfo.SaveThreadId );
+			print("Util.EnableWaypointAutoSave: Disabled waypoint autosave");
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetMapGoalPosition = function( Goalname )
+{
+	Goal = this.GetGoal( Goalname, "Util.GetMapGoalPosition" );
+
+	if ( Goal )
+	{
+		GoalPos = Goal.GetPosition();
+
+		if ( GoalPos.IsZero() )
+		{
+			return GetEntPosition( Goal.GetEntity() );
+		}
+
+		return GoalPos;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetWpGUIDPosition = function( wpUID )
+{
+	wptable = {};
+	if ( Wp.GetWaypointByGUID( wpUID, wptable ) )
+	{
+		return wptable.position;
+	}
+	Util.MapDebugPrint("Util.GetWpGUIDPosition: waypoint " + wpUID + " not found", 2);
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member WpNameInfo = function( wpName, msg )
+{
+	wpTable = {};
+	if ( Wp.GetWaypointByName(wpName, wpTable) )
+	{
+		return wpTable;
+	}
+	if (msg)
+	{
+		Util.MapDebugPrint(msg + ": waypoint " + wpName + " not found", 2);
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetWpNamePosition = function( WpName )
+{
+	wptable = this.WpNameInfo(WpName, "Util.GetWpNamePosition");
+	if ( wptable )
+	{
+		return wptable.position;
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetWPPoss = function( wps )
+{
+	wpPoss = {};
+
+	foreach ( index and wp in wps )
+		{ wpPoss[ index ] = this.GetWpNamePosition( wp ); }
+
+	return wpPoss;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetClosestWP = function( entPos, wp1, wp2 )
+{
+	wp1Pos = this.GetWpNamePosition( wp1 );
+	wp2Pos = this.GetWpNamePosition( wp2 );
+
+	if ( entPos.Distance(wp1Pos) < entPos.Distance(wp2Pos) )
+		{ return wp1; }
+	else
+		{ return wp2; }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member WithinBounds = function( pos, minx, miny, maxx, maxy )
+{
+	return !( pos.x < minx || pos.x > maxx || pos.y < miny || pos.y > maxy );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetGoalOffset = function( x, y, z, GoalName )
+{
+	Goal = GetGoal( GoalName );
+	if(Goal)
+	{
+		Goal.SetPosition( Goal.GetPosition() + Vector3( x, y, z ) );
+		Goal.DynamicPosition = false;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetGoalPosition = function( x, y, z, GoalName )
+{
+	Goal = GetGoal( GoalName );
+	if(Goal)
+	{
+		Goal.SetPosition( Vector3( x, y, z ) );
+		Goal.DynamicPosition = false;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetMaxUsers = function( users, GoalNames )
+{
+	if (IsTable(GoalNames)){
+		foreach (goal in GoalNames){
+			this.SetMaxUsers(users, goal);
+		}
+	}else {
+		foreach (goal in this.GetGoals(GoalNames, "Util.SetMaxUsers")) {
+			goal.MaxUsers_InUse( users );
+			goal.MaxUsers_InProgress( users );
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetMaxUsers = function( GoalNames )
+{
+	foreach ( Goal in this.GoalTable(GoalNames) ) {
+		print(format("%s: %d users in use; %d users in progress",
+			Goal.GetName(), Goal.MaxUsers_InUse(), Goal.MaxUsers_InProgress()));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetMaxUsersInUse = function( users, GoalNames )
+{
+	if (IsTable(GoalNames)){
+		foreach (goal in GoalNames){
+			this.SetMaxUsersInUse(users, goal);
+		}
+	}else {
+		foreach (goal in this.GetGoals(GoalNames, "Util.SetMaxUsersInUse")) {
+			goal.MaxUsers_InUse( users );
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetMaxUsersInUse = function( GoalNames )
+{
+	foreach ( Goal in this.GoalTable(GoalNames) ) {
+		print(format("%s: %d users in use", Goal.GetName(), Goal.MaxUsers_InUse()));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetMaxUsersInProgress = function( users, GoalNames )
+{
+	if (IsTable(GoalNames)){
+		foreach (goal in GoalNames){
+			this.SetMaxUsersInProgress(users, goal);
+		}
+	}else {
+		foreach (goal in this.GetGoals(GoalNames, "Util.SetMaxUsersInProgress")) {
+			goal.MaxUsers_InProgress( users );
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetMaxUsersInProgress = function( GoalNames )
+{
+	foreach ( Goal in this.GoalTable(GoalNames) ) {
+		print(format("%s: %d users in progress", Goal.GetName(), Goal.MaxUsers_InProgress()));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetPercentInProgress = function ( percent, GoalNames )
+{
+	yield();yield(); // OnMapLoad needs two frames for BotTable to populate
+
+	inprogress = Max(1, ToInt(Round(tableCount(BotTable) * 0.005 * percent)));
+	this.SetMaxUsersInProgress( inprogress, GoalNames );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddToTable = function( table1, value1 )
+{
+	table1[ tableCount( table1 ) ] = value1;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddTable = function( table1, table2 )
+{
+	table1and2 = {};
+
+	table1len = tableCount( table1 );
+
+	for ( i = 0 ; i < table1len ; ++i )
+		{ table1and2[ i ] = table1[ i ]; }
+
+	table2len = tableCount( table2 );
+
+	for ( i = 0 ; i < table2len ; ++i )
+		{ table1and2[ i + table1len ] = table2[ i ]; }
+
+	return table1and2;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// This function runs an infinite loop of adding and kicking bots. It is used to illustrate
+// how custom script functions can be run continuously to provide custom control over
+// things like the number of bots. Additional behaviors like forcing bots to 1 team can be
+// implemented by starting a similar function to this from a custom command.
+member StressTest = function()
+{
+	sleep(10);
+	for(;;)
+	{
+	//DumpGlobals("globals.txt");
+
+		ran = UnitRandom();
+		if(ran > 0.98)
+		{
+			KickAll();
+		}
+		else if(ran < 0.5)
+		{
+			AddBot();
+		}
+		else
+		{
+			foreach ( bot in BotTable )
+			{
+				print("Util.StressTest: kicked", bot.Name);
+				KickBot(bot.Name);
+				break;
+			}
+		}
+		// Pause for 10 seconds between loop iterations.
+		sleep(RandRange(0, 10));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetNearestVehicle = function( bot, dist )
+{
+	if ( bot == null )
+		{ return null; }
+
+	this.VehiclesInMap();
+
+	Team = bot.GetTeam();
+
+	if ( !dist )
+		{ dist = 10000.0; }
+
+	foreach ( vehEntity and Goal in this.VehicleGoals )
+	{
+		if ( Goal.IsAvailable( Team ) &&
+			bot.DistanceTo( vehEntity ) < dist )
+			{ return vehEntity; }
+	}
+
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetNearestMountableVehicle = function( bot, dist )
+{
+	if ( bot == null ) {
+		return null;
+	}
+
+	// cache these. the assumption is that mountable vehicles won't be deleted
+	if ( !this.MountableVehicleGoals ) {
+		this.VehiclesInMap();
+	}
+
+	Team = bot.GetTeam();
+
+	if ( !dist ) {
+		dist = 10000.0;
+	}
+
+	foreach ( vehEntity and Goal in this.MountableVehicleGoals ) {
+		if ( !GetEntFlags(vehEntity, ENTFLAG.MOUNTABLE) ) {
+			continue;
+		}
+
+		if ( Goal.IsAvailable( Team ) && bot.DistanceTo( vehEntity ) < dist ) {
+			return vehEntity;
+		}
+	}
+
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member IsVehicleDead = function( entity )
+{
+	if ( GetEntClass(entity) == CLASS.VEHICLE_NODAMAGE )
+		{ return false; }
+
+	if ( Map.InvVehicle && Map.InvVehicle[ entity ] )
+		{ return false; }
+
+	if ( GetEntFlags(entity, ENTFLAG.DEAD) )
+		{ return true; }
+
+	return false;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member VehiclesInMap = function()
+{
+	if ( this.VehicleGoals == null )
+	{
+		this.VehicleGoals = {};
+		this.MountableVehicleGoals = {};
+	}
+
+	// cs: this needs constantly updated to handle movers that are deleted
+	tableClear(this.VehicleGoals);
+	tableClear(this.MountableVehicleGoals);
+	MoverGoals = this.GoalTable(0xa411a092 /* MOVER */);
+
+	foreach ( Goal in MoverGoals )
+	{
+		vehEntity = Goal.GetEntity();
+		if (vehEntity)
+		{
+			this.VehicleGoals[ vehEntity ] = Goal;
+
+			// dead movers too i guess
+			if ( GetEntFlags( vehEntity, ENTFLAG.MOUNTABLE, ENTFLAG.DEAD )  )
+			{
+				this.MountableVehicleGoals[ vehEntity ] = Goal;
+			}
+		}
+	}
+
+	return tableCount(MoverGoals) > 0;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member DisplayGoalNames = {};
+
+member DisplayGoalOutput = function()
+{
+	for(;;)
+	{
+		foreach ( GoalName and value in this.DisplayGoalNames )
+		{
+			Goal = GetGoal( GoalName );
+			GoalEnt = Goal.GetEntity();
+			print( "Util.DisplayGoalOutput:", GoalName, Goal.GetPosition(), GetEntFacing( GoalEnt ) );
+		}
+		sleep(2);
+	}
+};
+
+member DisplayGoal = function( goalname, status )
+{
+	if ( !goalname )
+	{
+		tableClear(this.DisplayGoalNames);
+	}
+	else if ( !status || !ToBool(status) )
+	{
+		this.DisplayGoalNames[goalname] = null;
+	}
+	else if ( this.GetMapGoalPosition( goalname ) )
+	{
+		this.DisplayGoalNames[goalname] = true;
+	}
+
+	if (tableCount(this.DisplayGoalNames) > 0)
+	{
+		if ( !this.DisplayGoalThread )
+		{
+			this.DisplayGoalThread = thread( this.DisplayGoalOutput );
+		}
+	} else {
+		if ( this.DisplayGoalThread )
+		{
+			threadKill( this.DisplayGoalThread );
+			this.DisplayGoalThread = null;
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member KillTeam = function( team )
+{
+	foreach ( bot in BotTable )
+	{
+		if ( bot.GetTeam() == team)
+		{
+			bot.ExecCommand( "kill" );
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member OnTriggerPosition = function( goalname, wpname, tolerance, wpfunction )
+{
+	if ( IsString( goalname ) )
+		{ goal = this.GetGoal( goalname, "Util.OnTriggerPosition" ); }
+	else
+		{ goal = goalname; }
+
+	if ( IsVec3( wpname ) ) {
+		position = wpname;
+		wpname = null;
+	} else {
+		position = this.GetWpNamePosition( wpname );
+	}
+
+	if ( goal && position )
+	{
+		if ( IsString( goalname ) )
+			{ entity = goal.GetEntity(); }
+		else
+			{ entity = goal; }
+
+		thread( this.CheckForEntityAtPosition, wpname, entity, position,
+			tolerance, wpfunction );
+	}
+};
+
+member CheckForEntityAtPosition = function( signame, entity, position, tolerance, wpfunction )
+{
+	for(;;)
+	{
+		distance = DistanceBetween( entity, position );
+	//~ print("distance:", distance, "tolerance:", tolerance);
+
+		if ( distance < tolerance )
+		{
+			if (signame) { signal( signame ); }
+
+			if ( wpfunction )
+				{ wpfunction(); }
+
+			return;
+		}
+
+		sleep(1);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member UpdateSwitchData = function()
+{
+	foreach ( name and switchTable in Map.Switches )
+	{
+		switchTable.Waypoint = {};
+
+		if (!IsString(switchTable.WaypointName))
+		{
+			Util.MapDebugPrint( "Util.UpdateSwitchData: Error: No WaypointName defined, Name:" + name, 2 );
+		}
+		else if ( Wp.GetWaypointByName( switchTable.WaypointName, switchTable.Waypoint ) )
+		{
+			if ( switchTable.Waypoint.facing.IsZero() && !IsVec3(switchTable.AimPosition) )
+				{ Util.MapDebugPrint( "Util.UpdateSwitchData: Error: No Facing or AimPosition defined, Waypoint:" +
+					switchTable.WaypointName, 2 ); }
+			else
+				{ Util.MapDebugPrint( "Util.UpdateSwitchData: Succeeded, Waypoint: " +
+					switchTable.WaypointName, true ); }
+		}
+		else
+		{
+			Util.MapDebugPrint( "Util.UpdateSwitchData: Error: Switch Data Failed, Waypoint:" + switchTable.WaypointName, 2 );
+		}
+
+		switchTable.Serial = AllocGoalSerialNum();
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetPositionGoal = function( goalname1, goalname2, offset )
+{
+	if (!offset) { offset = Vector3(); }
+
+	goal1 = this.GetGoal( goalname1, "Util.SetPositionGoal" );
+	goal2 = this.GetGoal( goalname2, "Util.SetPositionGoal" );
+
+	if ( goal1 && goal2 )
+	{
+		goal1.DynamicPosition = false;
+		goal1.DynamicBounds = false;
+		goal1.SetPosition( goal2.GetPosition() + offset );
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AliveCount = function ( team, class )
+{
+	count = 0;
+
+	for ( i = 0; i < Server.MaxPlayers; ++i )
+	{
+		if (!EntityIsValid(i) ) {
+			continue;
+		}
+
+		if ( GetEntTeam(i) == team && GetEntClass(i) == class && !GetEntFlags(i, ENTFLAG.DEAD, ENTFLAG.LIMBO) ) {
+			++count;
+		}
+	}
+
+	return count;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ShowEntityInfo = function (traceType)
+{
+	if ( IsNull(traceType) )
+	{
+		traceType = TRACE.SHOT;
+	}
+
+	info = {};
+	playerEnt = GetLocalEntity();
+	playerId = GetGameIdFromEntity(playerEnt);
+	info.eyePos = GetLocalEyePosition();
+	info.endPos = info.eyePos + GetLocalFacing() * 1024;
+	tr = TraceLine( info.eyePos, info.endPos, 0, traceType, playerId, false );
+	if(tr.end){ DrawDebugLine( info.eyePos, tr.end, COLOR.GREEN, 20 ); }
+
+	if ( !EntityIsValid(tr.entity) )
+	{
+		displaytime = 3;
+		output = "No entity found";
+	}
+	else
+	{
+		DrawEntityOBB( tr.entity, 20, COLOR.GREEN );
+		info.id = GetGameIdFromEntity( tr.entity );
+		info.class = Util.ClassName(GetEntClass(tr.entity));
+		s = format( "%s(%d) class:%s, category:", GetEntityName(tr.entity), info.id, info.class );
+		foreach(cat in CAT){
+			if(GetEntCategory(tr.entity,cat)){ s+=Util.GetTableKey(CAT,cat)+" "; }
+		}
+		displaytime = 20;
+		output = "Entity found:" + s;
+	}
+
+	print( "Util.ShowEntityInfo:", output, ",", tr.end );
+	EchoToScreen( displaytime, output );
+
+	return info;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TraceForEntityInfo = function (startPos, endPos, traceType)
+{
+	if ( IsNull(traceType) )
+	{
+		traceType = TRACE.SHOT;
+	}
+	return TraceLine(startPos, endPos, 0, traceType, 0, false).entity;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TraceForPosition = function()
+{
+	tr = Util.TraceFromPlayer();
+	if ( tr.end ) {
+		return tr.end;
+	}
+	print("Util.TraceForPosition: unable to find position" );
+	return Vector3();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TraceFromPlayer = function(distance, traceType)
+{
+	if( !distance ) { distance = 50000; }
+	if( !traceType) { traceType = TRACE.SHOT; }
+
+	eyePos = GetLocalEyePosition();
+	tr = TraceLine( eyePos, eyePos + GetLocalFacing() * distance, 0, traceType, GetGameIdFromEntity(GetLocalEntity()), false );
+	if ( tr.end && (MAP_DEBUG || Map.Debug) ) { DrawDebugLine( eyePos, tr.end, COLOR.GREEN, 5 ); }
+	return tr;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TraceFromPlane = function(start, normal, distance)
+{
+	tr = TraceLine( start, start + normal * distance, 0, TRACE.SHOT, GetGameIdFromEntity(GetLocalEntity()), false );
+	if ( MAP_DEBUG || Map.Debug ) { DrawDebugLine( start, start + normal * distance, COLOR.BLUE, 5 ); }
+	return tr;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddUsePoint = function( goalname, positions )
+{
+	mg = this.GetGoal(goalname, "Util.AddUsePoint");
+	if ( mg )
+	{
+		if ( IsTable(positions) )
+		{
+			foreach( pos in positions ) {
+				mg.AddUsePoint(pos);
+			}
+		}
+		else {
+			mg.AddUsePoint(positions);
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddUseWp = function( goalname, wpName )
+{
+	if ( IsTable(wpName) )
+	{
+		this.AddUsePoint(goalname, this.GetWPPoss(wpName));
+	}
+	else
+	{
+		this.AddUsePoint(goalname, this.GetWpNamePosition(wpName));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GoalRoutes = function(startname, goalroutes)
+{
+	foreach ( endname and child in goalroutes )
+	{
+		if (endname != "Weight")
+		{
+			weight = child.Weight;
+			if (!weight)
+			{
+				weight = 1.0;
+			}
+
+			foreach (goal in this.GoalsTable)
+			{
+				if (!goal.AddRoute(startname, endname, weight))
+				{
+					if (!GetGoal(startname))
+					{
+						s = startname;
+					}
+					if (!GetGoal(endname))
+					{
+						s = endname;
+					}
+					Util.MapDebugPrint("Util.Routes: " + s + " not found! " + goal.GetName() + " - " + startname + " -> " + endname, 2);
+					break;
+				}
+			}
+			this.GoalRoutes(endname, child);
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member Routes = function(routetable)
+{
+	// Loop through all the top level nodes, these are the goal names
+	foreach ( goalname and goalroutes in routetable )
+	{
+		if (tableCount(this.GetGoals(goalname, "Util.Routes")))
+		{
+			foreach ( name and route in goalroutes )
+			{
+				this.GoalRoutes(name, route);
+			}
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member DistanceView = function(param)
+{
+	this.DistanceViewOn = IsNull(param) || ToBool(param);
+
+	displaytime = 5;
+	playerEnt = GetLocalEntity();
+	playerId = GetGameIdFromEntity(playerEnt);
+
+	while ( this.DistanceViewOn )
+	{
+		eyePos = GetLocalEyePosition();
+		endPos = eyePos + GetLocalFacing() * 50000;
+		tr = TraceLine( eyePos, endPos, 0, TRACE.SHOT, playerId, false );
+		DrawDebugLine( eyePos, tr.end, COLOR.GREEN, displaytime );
+		distance = DistanceBetween( eyePos, tr.end );
+		output = "Distance:" + format( "%f", distance  );
+		print( "Util.DistanceView:", output );
+		EchoToScreen( displaytime, output );
+		sleep( displaytime );
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member DefaultMovers =
+{
+	"MOVER_tank",
+	"MOVER_truck",
+	"MOVER_train1",
+	"MOVER_train2",
+	"MOVER_boat",
+	"MOVER_train",
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ResetMovers = function()
+{
+	this.ProcessMoversCalled = false;
+	this.VehicleGoals = null; // clear old stuff
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ProcessMovers = function()
+{
+	if ( this.ProcessMoversCalled )
+		{ return; }
+
+	this.ProcessMoversCalled = true;
+
+	if ( Map.ShowMovers )
+		{ return; }
+
+	movers = Map.Movers;
+
+	foreach ( goal in this.GoalTable(0xa411a092 /* MOVER */) )
+	{
+		name = goal.GetName();
+
+		if ( IsNull(this.GetTableKey(this.DefaultMovers, name)) &&
+			(!movers || IsNull(this.GetTableKey(movers, name))) )
+		{
+			goal.SetRemoveFlag(true);
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RemoveGoal = function( goalname )
+{
+	foreach ( goal in this.GetGoals(goalname, "Util.RemoveGoal") ) {
+		goal.SetRemoveFlag(true);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetGoal = function( goalname, team )
+{
+	if ( IsNull( goalname ) )
+	{
+		Util.MapDebugPrint( "Util.SetGoal: No goal name specified", 2);
+		return;
+	}
+
+	if ( IsNull( team ) )
+	{
+		team = 0;
+	}
+	SetAvailableMapGoals( team, true, goalname );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ClearGoal = function( goalname, team )
+{
+	if ( IsNull( goalname ) )
+	{
+		Util.MapDebugPrint( "Util.ClearGoal: No goal name specified", 2 );
+		return;
+	}
+
+	if ( IsNull( team ) )
+	{
+		team = 0;
+	}
+	SetAvailableMapGoals( team, false, goalname );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetGoalEnt = function( goalname )
+{
+	Goal = this.GetGoal( goalname, "Util.GetGoalEnt" );
+
+	if ( Goal )
+		{ return Goal.GetEntity(); }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddWaypointArray = function( numx, distx, numy, disty )
+{
+	print("Util.AddWaypointArray: numx:", numx, "distx:", distx, "numy:", numy, "disty:", disty);
+	playerPos = GetLocalPosition();
+
+	for ( j = 0 ; j < numy ; j = j + 1 )
+	{
+		for ( i = 0 ; i < numx ; ++i)
+		{
+			startPos = Vector3( playerPos.x + ( i * distx ),
+				playerPos.y + ( j * disty ), playerPos.z );
+		//~ print("Util.AddWaypointArray: startPos:", startPos);
+			wpPos = this.FindGround( startPos );
+		//~ print("Util.AddWaypointArray: wpPos:", wpPos);
+
+			if ( wpPos )
+				{ Wp.AddWaypoint( wpPos, Vector3() ); }
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member FindGround = function( curPos )
+{
+	playerEnt = GetLocalEntity();
+	playerId = GetGameIdFromEntity(playerEnt);
+	playerPos = curPos;
+	finalPos = null;
+	testPos1 = Vector3( playerPos.x, playerPos.y,
+		playerPos.z + Wp.BottomWaypointOffset);
+	testPos2 = Vector3( playerPos.x, playerPos.y,
+		playerPos.z + Wp.TopWaypointOffset);
+	diff = testPos2 - testPos1;
+	length = diff.Length();
+	direction = diff.Normalize();
+	tr = TraceLine( testPos1, testPos2, 0, TRACE.SHOT, playerId, false );
+
+	if ( !tr.startsolid )
+	{
+	//~ print("Util.FindGround: Not in a solid");
+	// segment is not in a solid, make sure its on the ground
+		testPos3 = testPos1 - (direction * 100000);
+		tr = TraceLine( testPos1, testPos3, 0, TRACE.SHOT, playerId,
+			false );
+
+		if ( tr.end )
+		{
+			testPos1 = tr.end;
+			testPos2 = testPos1 + (direction * length);
+			finalPos = Vector3( testPos1.x, testPos1.y,
+				testPos1.z - Wp.BottomWaypointOffset);
+		}
+
+		return finalPos;
+	}
+
+//~ print("Util.FindGround: In a solid");
+	attempts = 3125;
+
+// segment start is in a solid, look for non solid start
+	while ( tr.startsolid && attempts > 0 )
+	{
+		testPos1 += (direction * 32);
+		testPos2 += (direction * 32);
+		tr = TraceLine( testPos1, testPos2, 0, TRACE.SHOT, playerId,
+			false );
+		--attempts;
+	}
+
+	if ( !tr.startsolid )
+	{
+		testPos3 = testPos1 - (direction * 32);
+		tr = TraceLine( testPos1, testPos3, 0, TRACE.SHOT, playerId,
+			false );
+		testPos1 = tr.end;
+		testPos2 = testPos1 + (direction * length);
+		finalPos = Vector3( testPos1.x, testPos1.y,
+			testPos1.z - Wp.BottomWaypointOffset);
+	}
+
+	return  finalPos;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TestMap = function( _params )
+{
+	if ( GetGameState() == "Playing" )
+	{
+		ExecScript( "testmap.gm" );
+		TestMap.RunTests( _params );
+	}
+	else
+	{
+		print( "Util.TestMap: Can't run command during warmup" );
+		EchoToScreen( 3, "Can't run command during warmup" );
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AutoTestMap = function()
+{
+	params =
+	{
+	};
+
+	if ( GetGameState() == "Playing" )
+	{
+		yield();
+		this.TestMap( params );
+		sleep( 2 );
+		exit();
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddBotTester = function( team, class, name )
+{
+// Add Tester bot
+	sleep( 1 );
+	AddBot(team, class, name);
+	sleep( 1 );
+
+	while ( tableCount( BotTable ) == 0 )
+		{ sleep( 0.5 ); }
+
+	botPtr = this.GetBotByName( name );
+	Util.SetAllRoles(botPtr);
+	return botPtr;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TestBot = function( _params )
+{
+	team = ToInt(_params[0], 0);
+	class = ToInt(_params[1], 0);
+
+	if ( _params[ 0 ] == 0 )
+	{
+		KickBot( "testbot" );
+		global TestBot = false;
+		return;
+	}
+
+	global TestBot = true;
+	AddBot( team, class, "testbot");
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member WeaponName = function(weaponId)
+{
+	if (weaponId<=0)
+	{
+		return "NONE";
+	}
+	return this.GetTableKey(WEAPON, weaponId, "UnknownWeapon" + weaponId);
+};
+
+member WeaponNameToId = function(weap)
+{
+	return this.GetTableValue(WEAPON, weap, -1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ButtonName = function(buttonId)
+{
+	return this.GetTableKey(BTN, buttonId, "UnknownButton");
+};
+
+member ButtonNameToId = function(button)
+{
+	return this.GetTableValue(BTN, button, -1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TeamName = function(teamId)
+{
+	return this.GetTableKey(TEAM, teamId, "UnknownTeam");
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TeamNameToId = function(name)
+{
+	return this.GetTableValue(TEAM, name, -1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ClassName = function(classId)
+{
+	return this.GetTableKey(CLASS, classId, "UnknownClass for id "+ classId);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member CatName = function(catId)
+{
+	return this.GetTableKey(CAT, catId, "UnknownCategory for id "+ classId);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// cache goal positions indexed by goal name
+member CacheGoalPositions = function(forceUpdate)
+{
+	if (!Util.GoalPositionsTable || forceUpdate)
+	{
+		Util.GoalPositionsTable = {};
+		foreach ( goal in Util.GoalTable() ) {
+			Util.GoalPositionsTable[ goal.GetName() ] = goal.GetPosition();
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// echo to screen the closest goal that is being rendered within a given range.
+member EchoCloseGoal = function(range, extraText)
+{
+	Util.CacheGoalPositions(true);
+	playerPos = GetLocalPosition();
+	closestGoal = null;
+	closestDistance = 9999;
+	if ( !range ) { range = 10000; }
+	if ( !extraText ) { extraText = ""; }
+
+	foreach( goalName and goalPos in Util.GoalPositionsTable )
+	{
+		dist = DistanceBetween(playerPos, goalPos);
+		if ( GetGoal(goalName).RenderGoal == 1 && dist < range && dist < closestDistance ) {
+			closestGoal = goalName;
+			closestDistance = dist;
+		}
+	}
+
+	if ( closestGoal ) {
+		s = format("^2%s %s", closestGoal, ToString(extraText));
+	}
+	else {
+		s = "^1No Enabled or Rendered Goals in range, check console";
+	}
+
+	EchoToScreen(10, s);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ShowGoalName = function (radius, showOffset)
+{
+	if ( !radius ) { radius = 100; }
+	playerPos = GetLocalPosition();
+	foundGoal = false;
+
+	foreach ( mapgoal in this.GoalTable() )
+	{
+		if ( DistanceBetween(mapgoal, playerPos) < radius )
+		{
+			foundGoal = true;
+			ent = mapgoal.GetEntity();
+			if(ent)
+			{
+				DrawEntityAABB( ent, 20, COLOR.BLUE );
+			}
+			gName = mapgoal.GetName();
+			print("Util.ShowGoalName: Found: ", gName);
+			if (showOffset && ent)
+				{ this.ShowGoalOffset(gName); }
+		}
+	}
+
+	if ( !foundGoal )
+		{ print("Util.ShowGoalName: No goal found"); }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ShowGoalOffset = function (goalname)
+{
+	g = this.GetGoal(goalname, "Util.ShowGoalOffset");
+	if ( g )
+	{
+		offset = GetEntityLocalSpace(g.GetEntity(), GetLocalPosition());
+		print("Util.ShowGoalOffset: Offset:", offset);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ShowGoalInfo = function ( goalname )
+{
+	goal = this.GetGoal( goalname, "Util.ShowGoalInfo" );
+	if ( goal )
+	{
+		entity = goal.GetEntity();
+
+		print(   "Util.ShowGoalInfo:", "goalname:", goalname, "goal:", goal );
+		print(   "Util.ShowGoalInfo:", "entity:", entity, "health:", this.GetEntHealth(entity),
+			"dead:", GetEntFlags( entity, ENTFLAG.DEAD ) );
+		print(   "Util.ShowGoalInfo:", "goalPos:", goal.GetPosition() );
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//Disable a goal for all teams
+member DisableGoal = function( goal, routes )
+{
+	SetAvailableMapGoals( 0, false, goal );
+
+	if (routes)
+	{
+		SetAvailableMapGoals( 0, true, "ROUTE_.*", true );
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//Enable a goal for all teams
+member EnableGoal = function( goal )
+{
+	SetAvailableMapGoals( 0, true, goal );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//Limit a goal to one team
+member LimitToTeam = function( team, goal )
+{
+	SetAvailableMapGoals( 0, false, goal );
+	SetAvailableMapGoals( team, true, goal );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetGroup = function(exp)
+{
+	goals = {};
+
+	if ( IsNull(exp) )
+	{
+		Util.MapDebugPrint("Util.GetGroup: Invalid Group expression", 2);
+		return goals;
+	}
+
+	params = { Group=exp, SkipInUse=false, SkipNoInuse=false, SkipNoInProgress=false, };
+	GetGoals(goals, 0, ".*", params);
+	return goals;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetGroup = function(goalExp, group)
+{
+	SetGoalGroup(goalExp, group);
+};
+
+member SetGroupForTable = this.SetGroup;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member EnableGroup = function(group, team)
+{
+	if (!team){ team = 0; }
+
+	foreach ( goal in this.GetGroup(group) )
+	{
+		goal.SetAvailable( team, true);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member DisableGroup = function(group, team)
+{
+	if (!team){ team = 0; }
+
+	foreach ( goal in this.GetGroup(group) )
+	{
+		goal.SetAvailable( team, false);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ShowGroup = function(group)
+{
+	print("----- Group:",group,"-----");
+	foreach ( goal in this.GetGroup(group) )
+	{
+		print(goal.GetName());
+	}
+	print("----- End Group -----");
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetRoleForGoals = function(exp, role)
+{
+	SetGoalRole(exp,role);
+};
+
+member SetRoleForTable = this.SetRoleForGoals;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ClearRoleForGoals = function(exp, role)
+{
+	ClearGoalRole(exp,role);
+};
+
+member ClearRoleForTable = this.ClearRoleForGoals;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetRoleForGroup = function(group, role)
+{
+	foreach ( goal in this.GetGroup(group) )
+	{
+		goal.SetRoles(role);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ClearRoleForGroup = function(group, role)
+{
+	foreach ( goal in this.GetGroup(group) )
+	{
+		goal.ClearRoles(role);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ChangeCrucialClassForRole = function(team, role, class)
+{
+	tbl = Map.Roles;
+	if(!IsTable(tbl)){
+		Util.MapDebugPrint("Util.ChangeCrucialClassForRole: Map.Roles does not exist!", 2);
+		return;
+	}
+	if(IsInt(team)){ team = Util.TeamName(team); }
+	tbl = tbl[team];
+	if(!IsTable(tbl)){
+		Util.MapDebugPrint("Util.ChangeCrucialClassForRole: Team " + team + " not found in Map.Roles!", 2);
+		return;
+	}
+	if(IsInt(role)){ role = Util.GetTableKey(ROLE, role); }
+	tbl = tbl[role];
+	if(!IsTable(tbl)){
+		Util.MapDebugPrint("Util.ChangeCrucialClassForRole: Role " + role + " not found in Map.Roles!", 2);
+		return;
+	}
+	if(class == tbl.crucialClass){ return; }
+	tbl.crucialClass = class;
+	if(!tbl.bots){ return; }
+
+	if(IsInt(class)){
+		newClass = {class};
+	}
+	else if(IsTable(class)){
+		n = tableCount(tbl.bots);
+		if(n < tableCount(class)){
+			newClass = {};
+			for(i=0; i<n; ++i){
+				newClass[i] = class[i];
+			}
+		}else{
+			newClass = tableDuplicate(class);
+		}
+	}else{
+		newClass = {};
+	}
+	bots = {};
+	foreach (bot and val in tbl.bots)
+	{
+		if(!bot.Name){ continue; }
+		if(bot.crucialClass){
+			i = this.GetTableKey(newClass, bot.crucialClass);
+			if(IsNull(i)){
+				bot.crucialClass = null;
+			}else{
+				newClass[i] = null;
+			}
+		}
+		if(!bot.crucialClass){
+			c = bot.GetClass();
+			i = this.GetTableKey(newClass, c);
+			if(IsNull(i)){
+				this.AddToTable(bots, bot);
+			}else{
+				bot.crucialClass = c;
+				newClass[i] = null;
+			}
+		}
+	}
+	i=0;
+	foreach (class in newClass)
+	{
+		bot = bots[i];
+		if(!bot){ break; }
+		bot.crucialClass = class;
+		bot.ChangeClass(class);
+		++i;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ExecOnBots = function( param )
+{
+	if ( param )
+	{
+		foreach ( bot in BotTable )
+		{
+			bot.ExecCommand(param);
+		}
+	}
+	else
+		{ print("Util.ExecOnBots: Invalid or no Param"); }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member KillGoal = function( Goals )
+{
+	foreach ( goal in this.GetGoals(Goals, "Util.KillGoal") )
+	{
+		if ( goal.GetEntity() )
+			{ EntityKill( goal.GetEntity() ); }
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ClearWaypointNames = function(verbose)
+{
+	wpTable = {};
+	Wp.GetAllWaypoints(wpTable);
+
+	foreach ( id and waypoint in wpTable )
+	{
+		Wp.SetWaypointName( id, "" );
+		if(verbose == "true" )
+			{ print("cleared wp name from wp id:", id); }
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member IgnorePlayer = function(param)
+{
+	if ( ToBool(param) )
+	{
+		print("Ignore is On");
+		time = null;
+	}
+	else
+	{
+		print("Ignore is Off");
+		time = 0.1;
+	}
+
+	foreach ( bot in BotTable )
+	{
+		bot.IgnoreTarget(GetLocalEntity(), time);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member IgnoreTargetGoal = function( bot, goalname, time )
+{
+	bot.IgnoreTarget( goalname, time );
+};
+
+member IgnoreTargetGoalTable = this.IgnoreTargetGoal;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member IgnoreTargetGoalAll = function( goalname )
+{
+	foreach ( goal in this.GetGoals(goalname, "Util.IgnoreTargetGoalAll") ) {
+		foreach ( bot in BotTable )
+			{ bot.IgnoreTarget( goal.GetEntity() );  }
+	}
+};
+
+member IgnoreTargetGoalAllBots = this.IgnoreTargetGoalAll;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member IgnoreTargetGoalTableAll = function( goaltable )
+{
+	foreach ( goalname in goaltable )
+		{ this.IgnoreTargetGoalAll( goalname ); }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AddInvVehicle = function ( goalname )
+{
+	if ( !Map.InvVehicle )
+		{ Map.InvVehicle = {}; }
+
+	g = this.GetGoal(goalname, "Util.AddInvVehicle");
+	if(g){
+		Map.InvVehicle[ g.GetEntity() ] = true;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TestVoiceMacro = function(macroname)
+{
+	if ( !macroname )
+	{
+		print ( "ERROR: Util.TestVoiceMacro: expecting macro name" );
+		return;
+	}
+
+	tester = null;
+
+	foreach ( bot in BotTable )
+	{
+		tester = bot;
+		break;
+	}
+
+	if ( !tester )
+	{
+		print( "ERROR: Util.TestVoiceMacro: No Bot found" );
+		return;
+	}
+
+	vmID = VOICE[macroname];
+
+	if ( !vmID )
+	{
+		print( "ERROR: Util.TestVoiceMacro: Voice Macro ID not found" );
+		return;
+	}
+
+	tester.SayVoice(vmID);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GoalTable = function(expr, team)
+{
+	gt = {};
+	GetGoals( gt, team, expr );
+	return gt;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetGoals = function(expr, msg)
+{
+	t = this.GoalsTable;
+	GetGoals( t, 0, expr );
+	if (tableCount(t) == 0) {
+		Util.MapDebugPrint(msg + ": goal query for " + expr + " has no results", 2);
+	}
+	return t;
+};
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetGoal = function(name, msg)
+{
+	if (!name) {
+		Util.MapDebugPrint(msg + ": goal name expected", 2);
+		return null;
+	}
+	g = GetGoal(name);
+	if (!g) {
+		Util.MapDebugPrint(msg + ": goal " + name + " not found", 2);
+	}
+	return g;
+};
+///////////////////////////////////////////////////////////////////////////////
+//
+member MapDebugPrint = function(message, dbgLevel)
+{
+	if ( DEBUG_MAP_SCRIPTS || Map.Debug || GetLocalCommand() )
+	{
+		if ( dbgLevel==0 && (DEBUG_GOAL_AVAILABILITY || Map.DebugAvailability) )
+		{
+			yield(); yield();
+			this.ShowActiveGoals();
+		}
+		print(format("%s%s", Util.DebugColorString, message));
+	}
+
+	if ( dbgLevel==2 )
+	{
+		Log(message, 1); //warning
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ScriptDebugPrint = function(goalName, dbgType, msg)
+{
+	if (!DEBUG_SCRIPT_GOALS && (!Map.Debug) || !DEBUG_SCRIPT_GOALS_FILTER[dbgType]) { return; }
+
+	if (!msg)
+	{
+		switch(dbgType)
+		{
+			case "pathfailed":
+			{
+				msg = "path failed";
+			}
+			case "timedout":
+			{
+				msg = "failed, timeout";
+			}
+			case "disabled":
+			{
+				msg = "disabled, invalid goal setup";
+			}
+			default:
+			{
+				msg = "";
+			}
+		}
+	}
+	if(!goalName){ goalName = ""; }
+
+	message = format("%s: %s %s", dbgType, goalName + this.DebugColorString, msg);
+	print(this.DebugColorString + message);
+	Log(message, 1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member MapDeprecateMessage = function(oldfunc, newfunc)
+{
+	this.MapDebugPrint( oldfunc + " is deprecated. use " + newfunc, 1 );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RandomSpawn = function( team, spawn )
+{
+	foreach ( bot in BotTable )
+	{
+		this.RandomBotSpawn(bot, team, spawn);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ChangeSpawn = function( team, spawn, numbots, class )
+{
+	c = 0;
+	b = 0;
+
+	foreach ( bot in BotTable )
+	{
+		if ( bot.GetTeam() == team )
+		{
+			++b;
+
+			// every other bot to avoid low bot count numbers spawning all at a point
+			if ( numbots && numbots != -1 && (b % 2 == 0) ) {
+				continue;
+			}
+
+			// is it class limited?
+			if ( class && bot.GetClass() != class ) {
+				continue;
+			}
+
+			++c;
+			bot.ChangeSpawnPoint( spawn );
+
+			if ( numbots && c >= numbots )
+				{ return; }
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ChangeSpawnForRole = function( team, role, spawn )
+{
+	foreach ( bot in BotTable )
+	{
+		if ( bot.GetTeam() == team && bot.HasRole(role) )
+		{
+			bot.ChangeSpawnPoint( spawn );
+		}
+	}
+
+	// change spawnpt in Map.Roles
+	tbl = Map.Roles;
+	if(IsTable(tbl)) {
+		tbl = tbl[this.TeamName(team)];
+		if(IsTable(tbl)) {
+			tbl = tbl[Util.GetTableKey(ROLE, role)];
+			if(IsTable(tbl)) {
+				tbl.spawnpt = spawn;
+			}
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ChangeBotSpawn = function( bot, team, spawn, numbots )
+{
+	if ( bot.GetTeam() != team ) { return; }
+
+	if ( !Server.Team[team].NumChangedSpawn )
+	{
+		Server.Team[team].NumChangedSpawn = 0;
+	}
+
+	if ( Server.Team[team].Numbots % 2 == 0 && Server.Team[team].NumChangedSpawn < numbots )
+	{
+		++Server.Team[team].NumChangedSpawn;
+		bot.ChangeSpawnPoint(spawn);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RandomBotSpawn = function( bot, team, spawn )
+{
+	if ( bot.GetTeam() == team )
+	{
+		if ( RandInt( 0, 9 ) < 5 )
+		{
+			bot.ChangeSpawnPoint( spawn );
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetRandomFromTable = function(tbl)
+{
+	if ( IsTable(tbl) )
+	{
+		return RandInt(0, tableCount(tbl)-1);
+	}
+	return -1;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member OneBotSay = function(msg)
+{
+	Util.MapDeprecateMessage( "Util.OneBotSay", "Util.BotChat" );
+	Util.BotChat(0, "say", msg, 1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member BotSay = function(bot, msg)
+{
+	if ( MAP_TALK ) {
+		bot.Say(msg);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member OneBotSayTeam = function(team, msg)
+{
+	Util.MapDeprecateMessage( "Util.OneBotSayTeam", "Util.BotChat" );
+	Util.BotChat(team, "sayteam", msg, 1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member OneBotVSayTeam = function(team, vchat)
+{
+	Util.MapDeprecateMessage( "Util.OneBotVSayTeam", "Util.BotChat" );
+	Util.BotChat(team, "vsay", vchat, 1);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// types - "say", "sayteam", "vsay"
+// team 0 = all teams
+member BotChat = function(team, msgType, msg, numBots)
+{
+	if ( MAP_TALK )
+	{
+		bots = 0;
+		foreach ( bot in BotTable )
+		{
+			if ( numBots && bots >= numBots ) {
+				return;
+			}
+			if ( team != 0 && bot.GetTeam() != team ) {
+				continue;
+			}
+
+			switch(msgType)
+			{
+				case "say":
+				{
+					if ( !IsString(msg) ) {
+						Util.MapDebugPrint("Util.BotChat: expecting string for say", 2);
+						return;
+					}
+
+					bot.Say(msg);
+				}
+				case "sayteam":
+				{
+					if ( !IsString(msg) ) {
+						Util.MapDebugPrint("Util.BotChat: expecting string for sayteam", 2);
+						return;
+					}
+
+					bot.SayTeam(msg);
+				}
+				case "vsay":
+				{
+					if ( !IsInt(msg) ) {
+						Util.MapDebugPrint("Util.BotChat: expecting voiceid for vsay", 2);
+						return;
+					}
+
+					bot.SayVoice(msg);
+				}
+				default:
+				{
+					Util.MapDebugPrint("Util.BotChat: Invalid message type!", 2);
+				}
+			}
+
+			++bots;
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RandomChat = function(team, voices)
+{
+	// not if bot chat is disabled
+	if ( !MAP_TALK ) {
+		return;
+	}
+
+	foreach ( bot in BotTable ) {
+		if ( bot.GetTeam() == team && RandInt(1, 10) < 4 ) {
+			bot.SayVoice(Util.GetRandomTableValue(voices));
+			sleep(RandFloat(0.5, 1.5));
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ShowActiveGoals = function(render, routes, showuse)
+{
+	GoalTable = {};
+	P = {};
+	if (render)
+	{
+		ExecCommand("draw_goals off");
+	}
+
+	foreach ( teamName and teamId in TEAM )
+	{
+		if ( teamName == "SPECTATOR" ) { continue; }
+
+		GetGoals( GoalTable, teamId, "", { Sort="priority_name" } );
+
+		print("--------------" + teamName + "--------------");
+
+		foreach( goal in GoalTable )
+		{
+			goalName = goal.GetName();
+
+			if (!routes && (goalName.Find("ROUTE") != -1) ) { continue; }
+
+			if ( !showuse && ((!IsNull(render) && render == 0) || render == teamId) )
+			{
+				goal.RenderGoal = true;
+			}
+
+			if ( !showuse ) {
+				//priority
+				s = "";
+				foreach(class in Util.PlayerClassTable)
+				{
+					P[class] = goal.GetGoalPriority(teamId,class);
+				}
+				diff = false;
+				defaultPrior = -1;
+				isPlant = goalName.Left(5)=="PLANT";
+				foreach(class and prior in P)
+				{
+					if(isPlant && class!=CLASS.ENGINEER && class!=CLASS.COVERTOPS){ continue; }
+					if(defaultPrior<0){
+						defaultPrior=prior;
+					}else if(prior!=defaultPrior){
+						diff = true;
+						break;
+					}
+				}
+				r = "";
+				foreach ( id and role in ROLE ) {
+					if(goal.HasRole(role)) { r += " " + id; }
+				}
+				bonus = 0;
+				if(r.Length()){ bonus = goal.RolePriorityBonus; }
+				if(diff){
+					foreach(prior in P) {
+						if(prior > 0){ prior += bonus; }
+						s+= " " + prior;
+					}
+				}else{
+					if(defaultPrior > 0){ defaultPrior += bonus; }
+					s+= " " + defaultPrior;
+				}
+				//role
+				s+=r;
+			} else {
+				s = format(" inUse: %d - inProgress: %d", goal.MaxUsers_InUse(), goal.MaxUsers_InProgress());
+			}
+			print(teamName + ": " + goalName + " -" + s);
+		}
+
+		// script based switch goals
+		if ( Map.Switches ) {
+			teamMask = (1<<teamId);
+			foreach ( id and switchTable in Map.Switches ) {
+				if ( switchTable.Enabled && (IsNull(switchTable.LimitTeam) || (switchTable.LimitTeam & teamMask)) ) {
+					print(format("%s: Scripted Switch %s is active", teamName, switchTable.WaypointName));
+				}
+			}
+		}
+
+		tableClear(GoalTable);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member InitializeClassTables = function()
+{
+	foreach ( name and teamId in TEAM )
+	{
+		if ( name == "SPECTATOR" )
+		{
+			continue;
+		}
+
+		Server.ClassCount[teamId] = {};
+		Server.MinClassCount[teamId] = {};
+
+		foreach (classId in this.PlayerClassTable)
+		{
+			Server.ClassCount[teamId][classId] = 0;
+		}
+	}
+
+	this.AllClasses = 0;
+	foreach (cls in this.PlayerClassTable)
+	{
+		this.AllClasses |= 1 << cls;
+	}
+
+	this.IndexedSniperWeapons = {};
+	foreach (i in this.SniperWeapons)
+	{
+		this.IndexedSniperWeapons[i] = 1;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member IsSnipeMap = false;
+
+member SnipeMap = function()
+{
+	if (!Util.SniperClass)
+	{
+		print("Util.SnipeMap: No Util.SniperClass defined");
+		return;
+	}
+
+	this.IsSnipeMap = true;
+
+	// reset the min class counts
+	this.InitializeClassTables();
+
+	foreach ( name and teamId in TEAM )
+	{
+		if ( name != "SPECTATOR" )
+		{
+			Server.MinClassCount[teamId][Util.SniperClass] = Server.MaxPlayers;
+		}
+	}
+
+	foreach ( bot in BotTable )
+	{
+		this.ChangeToSniperWeapons(bot); //also add to OnBotJoin
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ChangeToSniperWeapons = function(bot, viewDistance)
+{
+	yield(); yield();
+
+	if ( !viewDistance ) { viewDistance = 10000; }
+
+	weapons = Util.TeamSniperWeapons[Util.TeamName(bot.GetTeam())];
+	if ( weapons )
+	{
+		if ( !bot.CanSnipe() )
+		{
+			if ( bot.GetClass() != Util.SniperClass ) {
+				bot.ChangeClass(Util.SniperClass);
+				yield();
+			}
+			bot.ChangePrimaryWeapon(Util.GetRandomTableValue(weapons));
+		}
+		bot.MaxViewDistance = viewDistance;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member CanBotSnipe = function(bot)
+{
+	return bot.HasAnyWeapon(Util.IndexedSniperWeapons, { CheckCharged=false, CheckAmmo=false });
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetTableKey = function(tbl, value, defaultKey)
+{
+	foreach ( k and v in tbl )
+	{
+		if ( value == v )
+		{
+			return k;
+		}
+	}
+	return defaultKey;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetTableValue = function(tbl, key, defaultValue)
+{
+	foreach ( k and v in tbl )
+	{
+		if ( !key.CompareNoCase(k) )
+		{
+			return v;
+		}
+	}
+	return defaultValue;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ListTableMembers = function(tbl, sortBy)
+{
+	if ( IsTable(tbl) ) {
+		noParam = !sortBy || sortBy=="null";
+		if(noParam){ sortBy = "key"; }
+		sortedTable = tableSort(tbl, sortBy);
+		foreach (value in sortedTable) {
+			if(noParam) {
+				print("  " + value + "  " + ToString(tbl[value]));
+			} else {
+				print("     " + value);
+			}
+		}
+	}
+	else {
+		print("Util.ListTableMembers: Expected table, got " + typeName(tbl));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member AmmoForWeapon = function(bot, wpn)
+{
+	if (bot.GetCurrentAmmo(this.AmmoTable, 0, wpn)) {
+		return this.AmmoTable.CurrentAmmo;
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member HasAmmoForWeapon = function(bot, wpn)
+{
+	return ( this.AmmoForWeapon(bot, wpn) > 0 );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member BotHasAnyRole = function(bot)
+{
+	return bot.HasRole();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SystemUsageTimeline = function(interval)
+{
+	if ( !interval ) { interval = 1; }
+	lastFullCollect = 0;
+	lastIncCollect = 0;
+
+	gmfile = File();
+
+	for(;;)
+	{
+		assert( gmfile.Open( "systemtimeline.gm", "text", false, true ) );
+
+		currentFullCollect = sysGetStatsGCNumFullCollects();
+		fullCollectsForInterval = currentFullCollect - lastFullCollect;
+		lastFullCollect = currentFullCollect;
+		currentIncCollect = sysGetStatsGCNumIncCollects();
+		incCollectsForInterval = currentIncCollect - lastIncCollect;
+		lastIncCollect = currentIncCollect;
+		assert( gmfile.WriteLine(
+			"time: ", sysTime(),
+			" | currentmem: ", sysGetMemoryUsage(),
+			" | fullcollects: ", fullCollectsForInterval,
+			" | inccollects: ", incCollectsForInterval
+			) );
+		gmfile.Close();
+		sleep(interval);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetEntHealth = function(ent)
+{
+	if(GetEntHealthAndArmor(ent, this.HealthTable)) {
+		return this.HealthTable.Health;
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// "day", "date", "time", "m"
+member TimeFormat = function(param)
+{
+	time = System.Time();
+	tokenized = time.Tokenize(" ");
+
+	switch(param)
+	{
+		case "day":
+		{
+			return tokenized[0];
+		}
+		case "date":
+		{
+			year = tokenized[3].SpanExcluding(",");
+			s = format("%s %s %s", tokenized[1], tokenized[2], year);
+			return s;
+		}
+		case "time":
+		{
+			s = format("%s %s", tokenized[4], tokenized[5]);
+			return s;
+		}
+		case "m": // meridiem
+		{
+			return tokenized[5];
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetAllRoles = function(obj)
+{
+	type = typeName(obj);
+	if ( type == "MapGoal" || type == "Bot" ) {
+		foreach ( role in ROLE ) {
+			obj.SetRoles(role);
+		}
+	}
+	else {
+		Util.MapDebugPrint("Util.SetAllRoles: expected MapGoal or Bot, got " + type, 2);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member FindPaththroughNodes = function()
+{
+	if (!Map.PTNodes) { Map.PTNodes = {}; }
+
+	// repeated calls refresh the list
+	tableClear(Map.PTNodes);
+
+	wpTable = {};
+	Wp.GetAllWaypoints( wpTable );
+
+	foreach( id and waypoint in wpTable ) {
+		foreach( ptype and value in waypoint.property ) {
+			if ( ptype == "paththrough" ) {
+				Map.PTNodes[ id ] = {
+					position = waypoint.position,
+					name = value
+				};
+			}
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RenderPaththroughNodes = function(param)
+{
+	if ( ToBool(param) ) {
+		Util.FindPaththroughNodes();
+		num = tableCount(Map.PTNodes);
+		if ( num > 0 ) {
+			print(format("rendering %d paththrough nodes", num));
+			Map.RenderPT = true;
+		}
+	}
+	else {
+		Map.RenderPT = false;
+	}
+
+	while( Map.RenderPT ) {
+		foreach ( ptnode in Map.PTNodes ) {
+			DrawText3d(ptnode.position+Vector3(0,0,48), ptnode.name, COLOR.YELLOW,2,1000);
+		}
+		sleep(2);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ForceRouting = function(goalname, set)
+{
+	foreach ( goal in this.GetGoals(goalname, "Util.ForceRouting") ) {
+		goal.ForceRouting = set;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member SetGoalRange = function(goalname, range)
+{
+	foreach ( goal in this.GetGoals(goalname, "Util.SetGoalRange") ) {
+		goal.SetRange(range);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// Finds goal closest to local player inside a given radius.
+// All arguments are optional.
+member FindClosestGoal = function( radius, regEx, team )
+{
+	if ( !radius ) { radius = 200; }
+	dist = 99999;
+	playerPos = GetLocalPosition();
+
+	foreach ( mapgoal in this.GoalTable(regEx,team) )
+	{
+		evalDist = DistanceBetween( mapgoal, playerPos );
+		if ( evalDist < dist )
+		{
+			dist = evalDist;
+			foundGoal = mapgoal;
+		}
+	}
+
+	if(dist > radius){
+		return null;
+	}
+	return foundGoal;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetRandomTableValue = function(tbl)
+{
+	if ( IsTable(tbl) )
+	{
+		count = tableCount(tbl);
+		if (count > 0)
+		{
+			return tbl[RandInt(0, count-1)];
+		}
+	}
+
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member PathFailed = function(_this)
+{
+	_this.BlackboardDelay(RandInt(7,15));
+
+	if (!DEBUG_SCRIPT_GOALS && !Map.Debug) { return; }
+
+	bot = _this.Bot;
+	if(!bot){ return; }
+	pos = bot.GetPosition();
+	wp = Wp.GetClosestWaypoint(pos);
+	if(wp) {
+		msg = "waypoint UID " + wp.guid;
+	} else {
+		msg = "position " + pos;
+	}
+	if (_this.VehicleEnt) {
+		msg += ", vehicle position " + GetEntPosition(_this.VehicleEnt);
+	}
+
+	Util.ScriptDebugPrint(_this.MapGoal.GetName(), "pathfailed", "- " + msg + ", " + bot.Name);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RouteTo = function(_this, _radius)
+{
+	goal = _this.MapGoal;
+	if (goal)
+	{
+		if ( _this.RouteTo(goal, _radius) == EVENT.PATH_SUCCESS )
+		{
+			_this.MarkInUse();
+			return;
+		}
+		Util.PathFailed(_this);
+	}
+	_this.Finished();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetPriority = function(_this, query, charge, ammo, condition)
+{
+	goalsTable = this.QueryTable;
+	bot = _this.Bot;
+
+	for(;;)
+	{
+		_this.Priority = 0;
+
+		if (!charge || bot.IsWeaponCharged(charge))
+		{
+			if (!ammo || this.HasAmmoForWeapon(bot, ammo))
+			{
+				if ( _this.QueryGoals(goalsTable, query) )
+				{
+					foreach ( goal in goalsTable )
+					{
+						if (!condition || condition(goal, bot, _this))
+						{
+							_this.MapGoal = goal;
+							_this.Priority = goal.GetGoalPriority(bot);
+							break; //the first goal in the table has highest priority
+						}
+					}
+				}
+			}
+		}
+		sleep(2);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member InvalidGoal = function(_this, message)
+{
+	_this.MapGoal.DisableGoal(true);
+	Util.ScriptDebugPrint(_this.MapGoal.GetName(), "disabled", message);
+	_this.Finished();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member TableAddVector = function(tbl, d)
+{
+	if (tbl) {
+		for(i=0; i<tableCount(tbl); ++i) {
+			tbl[i] += d;
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//it's used to fix vehicle offsets in 0.71 mods (NoQuarter 1.2.7)
+member FixMoverPos = function(mover, pos8, pos7, scale)
+{
+	moverGoal = "MOVER_" + mover;
+	ent = GetGoal(moverGoal).GetEntity();
+	pos = GetEntPosition(ent);
+	if (DistanceBetween(pos,pos7) > DistanceBetween(pos,pos8)) {
+		return Vec3(); //nothing to do in 0.8 mod
+	}
+	diff = GetEntityLocalSpace(ent, pos8);
+	if(scale) { diff = Vec3(diff.x * scale.x, diff.y * scale.y, diff.z * scale.z); }
+
+	foreach ( goal in Util.GoalTable({ 0xc39bf2a3 /* BUILD */, 0xba7e23b5 /* ESCORT */, 0x6c166aba /* MOUNT */ }) )
+	{
+		if (goal.Vehicle == moverGoal) {
+			Util.MapDebugPrint("Util.FixMoverPos: " + goal.GetName(), true);
+			Util.TableAddVector(goal.Offsets, diff);
+		}
+	}
+
+	foreach ( goal in Util.GoalTable(0x541798f /* RIDE */) )
+	{
+		if (goal.Vehicle == moverGoal) {
+			Util.MapDebugPrint("Util.FixMoverPos: " + goal.GetName(), true);
+			Util.TableAddVector(goal.BoardPositions, diff);
+			Util.TableAddVector(goal.Seats, diff);
+		}
+	}
+
+	if (Map.RideMovers) {
+		foreach ( name and ride in Map.RideMovers )
+		{
+			if ( ride.movergoal == moverGoal) {
+				Util.MapDebugPrint("Util.FixMoverPos: " + name, true);
+				ride.rideposition += diff;
+			}
+		}
+	}
+	return diff;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member RollCall = function()
+{
+	foreach ( bot in BotTable )
+	{
+		print("^7", bot.GetGameId(), bot.Name);
+
+		goal=bot.GetMapGoalName();
+		if(!goal){ goal=bot.GetHighLevelGoalName(); }
+
+		s="";
+		foreach ( id and role in ROLE ) {
+			if(bot.HasRole(role)) { s= s + " " + id; }
+		}
+		if(s!=""){ s="^2, ROLE:^3"+s; }
+
+		ammo=this.AmmoTable;
+		bot.GetCurrentAmmo(ammo);
+
+		print("TEAM:^3", Util.TeamName(bot.GetTeam()), "^2, CLASS:^3",Util.ClassName(bot.GetClass()), "^2, GOAL:^3",goal, s);
+		print("DIFFICULTY:",bot.aimskill, ", MOVESKILL:", bot.moveskill, ", VIEW DISTANCE:",bot.MaxViewDistance, ", REACTION TIME:",bot.ReactionTime);
+		print("WEAPON:", Util.WeaponName(bot.GetCurrentWeapon()), ", AMMO:",ammo.CurrentAmmo, "/", ammo.MaxAmmo, ", CLIP:",ammo.CurrentClip, "/", ammo.MaxClip, ", HEALTH:",Util.GetEntHealth(bot.GetGameEntity()));
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member LimitToClass = function( goalname, team, class1, class2, class3, class4 )
+{
+	foreach ( class in this.PlayerClassTable )
+	{
+		if ( class == class1 || class == class2 || class == class3 ||
+			class == class4 )
+			{ continue; }
+
+		SetGoalPriority( goalname, 0, team, class);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member ExcludeClass = function( goalname, team, class1, class2, class3, class4 )
+{
+	foreach ( class in this.PlayerClassTable )
+	{
+		if ( class == class1 || class == class2 || class == class3 ||
+			class == class4 )
+			{ SetGoalPriority( goalname, 0, team, class); }
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member GetPositionFromParam = function(param)
+{
+	if ( IsFloatOrInt( param )) // try wp guid first
+	{
+		return Util.GetWpGUIDPosition(ToInt(param));
+	}
+	if ( IsString( param ) )
+	{
+		goal = this.GoalTable( param );
+
+		if ( tableCount(goal) )
+		{
+			return this.GetRandomTableValue(goal).GetPosition();
+		}
+		// try wp name
+		wp = Util.WpNameInfo(param);
+		if ( wp )
+		{
+			return wp.position;
+		}
+		// try paththrough
+		wpTable = {};
+		Wp.GetAllWaypoints(wpTable);
+		foreach ( wp in wpTable )
+		{
+			foreach ( flag && name in wp.property )
+			{
+				if ( flag == "paththrough" && name.Right(param.Length() + 1) == ":" + param ){
+					return wp.position;
+				}
+			}
+		}
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member CappointForFlag = function(flag, cappoint)
+{
+	goal = this.GetGoal(flag, "Util.CappointForFlag");
+	if (!goal){ return; }
+	owner = GetEntOwner(goal.GetEntity());
+	if ( EntityIsValid(owner) && GetEntFlags(owner, ENTFLAG.CARRYINGGOAL) )
+	{
+		n = 1;
+	}
+	else
+	{
+		// Function GetEntOwner does not work after any player who is carrying a goal has been kicked from the server
+		Util.MapDebugPrint( "GetEntOwner failed for " + flag, 2 );
+		n = 0;
+		for ( i = 0; i < 64; ++i )
+		{
+			if ( EntityIsValid(i) && GetEntFlags(i, ENTFLAG.CARRYINGGOAL) ){
+				owner = i;
+				++n;
+			}
+		}
+	}
+
+	if ( n == 1 )
+	{
+		Util.MapDebugPrint( flag + " taken by " + GetEntName(owner), 1 );
+		bot = Util.IsBot(owner);
+		if (bot){
+			bot.CappointGoal = this.GetGoal(cappoint, "Util.CappointForFlag");
+		}
+		return;
+	}
+
+	// Enable all cappoints
+	foreach ( bot in BotTable )
+	{
+		if ( bot.IsCarryingFlag() )
+		{
+			Util.MapDebugPrint( "Enabled all cappoints for bot " + bot.Name, 1 );
+			bot.CappointGoal = null;
+		}
+	}
+	return null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member CheatsEnabled = function()
+{
+	if ( CheatsEnabled() ) {
+		return true;
+	}
+	Error("cheats must be enabled to use this command");
+	print("type /devmap", GetMapName(), "in console");
+	return false;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+member WarpToPosition = function( pos )
+{
+	if ( this.CheatsEnabled() )
+	{
+		s = "setviewpos " + pos[0] + " " + pos[1] + " " + pos[2] + " " + " 0";
+		print(s);
+		ExecCommandOnClient(GetLocalEntity(), s);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////

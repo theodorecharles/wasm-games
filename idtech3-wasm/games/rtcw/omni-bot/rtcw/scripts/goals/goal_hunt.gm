@@ -1,0 +1,49 @@
+// This script provides functionality for the bots to 'hunt' their targets
+
+this.Name = "Hunt";
+this.Parent = "HighLevel";
+this.AutoAdd = false;
+
+this.LimitToTargetClass(CLASS.ANYPLAYER);
+
+this.GetPriority = function()
+{
+	this.Priority = 0.2;
+	block(0);
+};
+
+this.Update = function()
+{
+	lastPos = null;
+
+	for(;;)
+	{
+		target = this.Bot.GetTarget();
+		if (!target){ break; }
+		pos = GetEntPosition(target);
+		if (!pos){ break; }
+
+		d = this.Bot.DistanceTo(pos);
+		if(d<250)
+		{
+			this.Bot.MoveTowards(pos);
+			lastPos=null;
+		}
+		else
+		{
+			if( lastPos==null || DistanceBetween(lastPos,pos) > 200)
+			{
+				lastPos = pos;
+				this.GotoAsync(pos);
+			}
+		}
+		this.Bot.HoldButton(BTN.SPRINT,0.5);
+		sleep(0.5);
+	}
+	this.Finished();
+};
+
+this.Exit = function()
+{
+	this.Bot.ReleaseButton(BTN.SPRINT);
+};

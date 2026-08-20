@@ -1,0 +1,130 @@
+{
+  "id": "goldsource-family",
+  "title": "GoldSource WASM Suite",
+  "kicker": "Xash3D-FWGS WebAssembly",
+  "description": "Half-Life and its GoldSource expansions in the browser.",
+  "adapter": "/game-adapter.js",
+  "preferencesNamespace": "goldsource-family",
+  "defaultVariant": "half-life",
+  "defaultProfile": "webgl2",
+  "defaultFps": 120,
+  "fpsTargets": [60, 90, 120],
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "menuCursor": "browser",
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/persistent/goldsource/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "identity": true,
+  "graphics": true,
+  "advanced": true,
+  "dynamicQuality": false,
+  "pointerLock": true,
+  "displayMode": "dynamic",
+  "nativeManaged": false,
+  "syncBackbuffer": true,
+  "resizeTransition": "immediate",
+  "canvasWidth": 1280,
+  "canvasHeight": 720,
+  "maxDpr": 1,
+  "profiles": [
+    { "value": "webgl2", "label": "WebGL 2 — native viewport" }
+  ],
+  "theme": {
+    "panel": "rgb(7 16 14 / 96%)",
+    "field": "#07120f"
+  },
+  "variants": {
+    "half-life": {
+      "title": "Half-Life",
+      "engine": "Xash3D-FWGS + HLSDK Portable",
+      "description": "Half-Life single-player, with multiplayer available in configured deployments.",
+      "provisioningText": "Select the required Half-Life data files. Matching files are cached in this browser after exact validation.",
+      "icon": "/assets/icon-half-life.svg",
+      "background": "/assets/background-half-life.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/goldsource/half-life",
+        "shortName": "Half-Life",
+        "themeColor": "#d66c12",
+        "backgroundColor": "#07120f",
+        "icons": [
+          { "src": "/game-data/files/icon-192?variant=half-life", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/game-data/files/icon-512?variant=half-life", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "theme": { "accent": "#b9570d", "accent-strong": "#f39a4d", "border": "#6d3c1b" }
+    },
+    "blue-shift": {
+      "title": "Half-Life: Blue Shift",
+      "engine": "Xash3D-FWGS + HLSDK Portable compatibility",
+      "description": "The Blue Shift single-player expansion in the browser.",
+      "provisioningText": "Select the required Half-Life and Blue Shift data files. Matching files are cached in this browser after exact validation.",
+      "identity": false,
+      "icon": "/assets/icon-blue-shift.svg",
+      "background": "/assets/background-blue-shift.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/goldsource/blue-shift",
+        "shortName": "Blue Shift",
+        "themeColor": "#296a92",
+        "backgroundColor": "#06131b",
+        "icons": [
+          { "src": "/game-data/files/icon-192?variant=blue-shift", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/game-data/files/icon-512?variant=blue-shift", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "theme": { "accent": "#245f83", "accent-strong": "#71b6df", "border": "#244c62" }
+    },
+    "opposing-force": {
+      "title": "Half-Life: Opposing Force",
+      "engine": "Xash3D-FWGS + HLSDK Portable compatibility",
+      "description": "Opposing Force single-player, with multiplayer available in configured deployments.",
+      "provisioningText": "Select the required Half-Life and Opposing Force data files. Matching files are cached in this browser after exact validation.",
+      "icon": "/assets/icon-opposing-force.svg",
+      "background": "/assets/background-opposing-force.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/goldsource/opposing-force",
+        "shortName": "Opposing Force",
+        "themeColor": "#577445",
+        "backgroundColor": "#0a1308",
+        "icons": [
+          { "src": "/game-data/files/icon-192?variant=opposing-force", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/game-data/files/icon-512?variant=opposing-force", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "theme": { "accent": "#526d3f", "accent-strong": "#9fc482", "border": "#3e5133" }
+    },
+    "counter-strike": {
+      "title": "Counter-Strike 1.6",
+      "engine": "Xash3D-FWGS + CS16 Client",
+      "description": "Counter-Strike 1.6 multiplayer in the browser.",
+      "provisioningText": "Select the required Half-Life and Counter-Strike data files. Matching files are cached in this browser after exact validation.",
+      "icon": "/assets/icon-counter-strike.svg",
+      "background": "/assets/background-counter-strike.svg",
+      "backgroundPosition": "center",
+      "backgroundSize": "cover",
+      "pwa": {
+        "id": "/apps/goldsource/counter-strike",
+        "shortName": "Counter-Strike",
+        "themeColor": "#6e694e",
+        "backgroundColor": "#11110b",
+        "icons": [
+          { "src": "/game-data/files/icon-192?variant=counter-strike", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/game-data/files/icon-512?variant=counter-strike", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "theme": { "accent": "#6f684b", "accent-strong": "#c7bd88", "border": "#504c3a" }
+    }
+  }
+}

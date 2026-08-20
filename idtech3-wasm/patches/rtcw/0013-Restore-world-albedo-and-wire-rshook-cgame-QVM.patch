@@ -1,0 +1,332 @@
+From 53eceab1b3d1ea5c0faf97058cb19d07ed82e911 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 15:08:26 -0400
+Subject: [PATCH] Restore world albedo and wire rshook through the cgame QVM
+
+Disabling TMU1 skipped CollapseMultitexture, so the world drew
+lightmaps only (gray bricks, colored lamps). Collapse again and
+use LEQUAL on the modulate pass. Rebuild rshook against PERS_TEAM
+so wallhack/aimbot are not keyed off player class.
+---
+ MP/code/cgame/cg_local.h      |  2 ++
+ MP/code/cgame/cg_main.c       |  4 +++
+ MP/code/cgame/cg_players.c    | 49 +++++++++++++++++++++++++++
+ MP/code/cgame/cg_view.c       | 64 +++++++++++++++++++++++++++++++++++
+ MP/code/client/cl_input.c     | 16 +++++++++
+ MP/code/client/cl_main.c      | 19 +++++++++++
+ MP/code/renderer/tr_backend.c |  6 ++++
+ MP/code/renderer/tr_shade.c   |  8 +++--
+ MP/code/renderer/tr_shader.c  |  8 +++++
+ 9 files changed, 173 insertions(+), 3 deletions(-)
+
+diff --git a/MP/code/cgame/cg_local.h b/MP/code/cgame/cg_local.h
+index 7b4f75b..e6b4026 100644
+--- a/MP/code/cgame/cg_local.h
++++ b/MP/code/cgame/cg_local.h
+@@ -1648,6 +1648,8 @@ extern vmCvar_t cg_gun_x;
+ extern vmCvar_t cg_gun_y;
+ extern vmCvar_t cg_gun_z;
+ extern vmCvar_t cg_drawGun;
++extern vmCvar_t cg_rshook;
++extern vmCvar_t cg_arcade;
+ extern vmCvar_t cg_drawFPGun;
+ extern vmCvar_t cg_drawGamemodels;
+ extern vmCvar_t cg_cursorHints;
+diff --git a/MP/code/cgame/cg_main.c b/MP/code/cgame/cg_main.c
+index 3b38781..9fa8b06 100644
+--- a/MP/code/cgame/cg_main.c
++++ b/MP/code/cgame/cg_main.c
+@@ -179,6 +179,8 @@ vmCvar_t cg_brassTime;
+ vmCvar_t cg_viewsize;
+ vmCvar_t cg_letterbox;
+ vmCvar_t cg_drawGun;
++vmCvar_t cg_rshook;
++vmCvar_t cg_arcade;
+ vmCvar_t cg_drawFPGun;
+ vmCvar_t cg_drawGamemodels;
+ vmCvar_t cg_cursorHints;    //----(SA)	added
+@@ -322,6 +324,8 @@ cvarTable_t cvarTable[] = {
+ 	{ &cg_ignore, "cg_ignore", "0", 0 },  // used for debugging
+ 	{ &cg_autoswitch, "cg_autoswitch", "2", CVAR_ARCHIVE },
+ 	{ &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
++	{ &cg_rshook, "cl_rshook", "0", 0 },
++	{ &cg_arcade, "g_arcade", "0", 0 },
+ 	{ &cg_drawGamemodels, "cg_drawGamemodels", "1", CVAR_CHEAT },
+ 	{ &cg_drawFPGun, "cg_drawFPGun", "1", CVAR_ARCHIVE },
+ 	{ &cg_gun_frame, "cg_gun_frame", "0", CVAR_TEMP },
+diff --git a/MP/code/cgame/cg_players.c b/MP/code/cgame/cg_players.c
+index 36cc1d3..1d031a5 100644
+--- a/MP/code/cgame/cg_players.c
++++ b/MP/code/cgame/cg_players.c
+@@ -2417,6 +2417,55 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, int powerups, int team, enti
+ 
+ 	trap_R_AddRefEntityToScene( ent );
+ 
++	if ( cg_rshook.integer && es->eType == ET_PLAYER && cg.snap
++		 && es->number != cg.snap->ps.clientNum && !( es->eFlags & EF_DEAD ) ) {
++		int localTeam = cg.snap->ps.persistant[PERS_TEAM];
++		int otherTeam = team;
++		refEntity_t glow;
++		trace_t trace;
++		vec3_t tracePoint;
++		qboolean visible;
++		static qhandle_t glowShader;
++
++		if ( localTeam != TEAM_RED && localTeam != TEAM_BLUE ) {
++			localTeam = cgs.clientinfo[cg.snap->ps.clientNum].team;
++		}
++		if ( otherTeam != TEAM_RED && otherTeam != TEAM_BLUE ) {
++			otherTeam = cgs.clientinfo[es->number].team;
++		}
++		if ( ( localTeam == TEAM_RED || localTeam == TEAM_BLUE )
++			 && otherTeam == localTeam ) {
++			/* teammates stay hidden */
++		} else if ( localTeam == TEAM_RED || localTeam == TEAM_BLUE
++					|| otherTeam == TEAM_RED || otherTeam == TEAM_BLUE ) {
++			if ( !glowShader ) {
++				glowShader = trap_R_RegisterShader( "white" );
++			}
++			VectorCopy( cg_entities[es->number].lerpOrigin, tracePoint );
++			tracePoint[2] += ( es->eFlags & EF_CROUCHING ) ? 28.0f : 40.0f;
++			CG_Trace( &trace, cg.refdef.vieworg, NULL, NULL, tracePoint,
++					  cg.snap->ps.clientNum, CONTENTS_SOLID );
++			visible = ( trace.fraction > 0.98f );
++			glow = *ent;
++			glow.customSkin = 0;
++			glow.customShader = glowShader;
++			glow.renderfx |= RF_NOSHADOW;
++			if ( visible ) {
++				glow.renderfx &= ~RF_DEPTHHACK;
++				glow.shaderRGBA[0] = 48;
++				glow.shaderRGBA[1] = 128;
++				glow.shaderRGBA[2] = 255;
++			} else {
++				glow.renderfx |= RF_DEPTHHACK;
++				glow.shaderRGBA[0] = 255;
++				glow.shaderRGBA[1] = 48;
++				glow.shaderRGBA[2] = 48;
++			}
++			glow.shaderRGBA[3] = 230;
++			trap_R_AddRefEntityToScene( &glow );
++		}
++	}
++
+ 	if ( !onFire && CG_EntOnFire( &cg_entities[es->number] ) ) {
+ 		onFire = qtrue;
+ 		// set the alpha
+diff --git a/MP/code/cgame/cg_view.c b/MP/code/cgame/cg_view.c
+index a2bf5c2..ecccb9b 100644
+--- a/MP/code/cgame/cg_view.c
++++ b/MP/code/cgame/cg_view.c
+@@ -1573,6 +1573,70 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
+ 	// update cvars
+ 	CG_UpdateCvars();
+ 
++	trap_Cvar_Set( "rtcw_target", "-1" );
++	if ( cg_rshook.integer && cg.snap && cg.snap->ps.stats[STAT_HEALTH] > 0
++		 && ( cg.snap->ps.pm_type == PM_NORMAL ) ) {
++		int i;
++		int best = -1;
++		float bestScore = 9999999.0f;
++		vec3_t fwd, to, ang, aimPoint, shooterOrigin;
++		int localTeam = cg.snap->ps.persistant[PERS_TEAM];
++		int enemyTeam;
++
++		if ( localTeam != TEAM_RED && localTeam != TEAM_BLUE ) {
++			localTeam = cgs.clientinfo[cg.clientNum].team;
++		}
++		enemyTeam = ( localTeam == TEAM_RED ) ? TEAM_BLUE : ( ( localTeam == TEAM_BLUE ) ? TEAM_RED : -1 );
++		AngleVectors( cg.refdefViewAngles, fwd, NULL, NULL );
++		VectorCopy( cg.refdef.vieworg, shooterOrigin );
++		for ( i = 0; i < MAX_CLIENTS; i++ ) {
++			centity_t *cent = &cg_entities[i];
++			trace_t trace;
++			float d, len, score;
++			int team;
++
++			if ( i == cg.clientNum || !cgs.clientinfo[i].infoValid ) {
++				continue;
++			}
++			if ( !cent->currentValid || ( cent->currentState.eFlags & EF_DEAD ) ) {
++				continue;
++			}
++			team = cgs.clientinfo[i].team;
++			if ( enemyTeam < 0 || team != enemyTeam || team == localTeam ) {
++				continue;
++			}
++			VectorCopy( cent->lerpOrigin, aimPoint );
++			aimPoint[2] += ( cent->currentState.eFlags & EF_CROUCHING ) ? 28.0f : 40.0f;
++			CG_Trace( &trace, shooterOrigin, NULL, NULL, aimPoint, cg.clientNum, CONTENTS_SOLID );
++			if ( trace.fraction < 0.98f ) {
++				continue;
++			}
++			VectorSubtract( aimPoint, shooterOrigin, to );
++			len = VectorNormalize( to );
++			if ( len < 8.0f || len > 4000.0f ) {
++				continue;
++			}
++			d = DotProduct( fwd, to );
++			if ( d < 0.15f ) {
++				continue;
++			}
++			score = len * ( 1.15f - d );
++			if ( score < bestScore ) {
++				bestScore = score;
++				best = i;
++				vectoangles( to, ang );
++			}
++		}
++		if ( best >= 0 ) {
++			char buf[32];
++			trap_Cvar_Set( "rtcw_target", va( "%d", best ) );
++			Com_sprintf( buf, sizeof( buf ), "%f", ang[YAW] );
++			trap_Cvar_Set( "rtcw_addyaw", buf );
++			Com_sprintf( buf, sizeof( buf ), "%f", AngleNormalize180( ang[PITCH] ) );
++			trap_Cvar_Set( "rtcw_addpitch", buf );
++		}
++	}
++
+ #ifdef DEBUGTIME_ENABLED
+ 	CG_Printf( "\n" );
+ #endif
+diff --git a/MP/code/client/cl_input.c b/MP/code/client/cl_input.c
+index 2f64f2e..e12e9f4 100644
+--- a/MP/code/client/cl_input.c
++++ b/MP/code/client/cl_input.c
+@@ -658,6 +658,22 @@ void CL_FinishMove( usercmd_t *cmd ) {
+ 	for ( i = 0 ; i < 3 ; i++ ) {
+ 		cmd->angles[i] = ANGLE2SHORT( cl.viewangles[i] );
+ 	}
++#ifdef __EMSCRIPTEN__
++	if ( Cvar_VariableIntegerValue( "cl_rshook" ) &&
++		 Cvar_VariableIntegerValue( "rtcw_target" ) >= 0 &&
++		 ( cmd->buttons & BUTTON_ATTACK ) ) {
++		float y = AngleNormalize180( Cvar_VariableValue( "rtcw_addyaw" ) );
++		float p = AngleNormalize180( Cvar_VariableValue( "rtcw_addpitch" ) );
++
++		if ( p >= -70.f && p <= 70.f ) {
++			cl.viewangles[YAW] = y;
++			cl.viewangles[PITCH] = p;
++			cmd->angles[YAW] = ANGLE2SHORT( y );
++			cmd->angles[PITCH] = ANGLE2SHORT( p );
++		}
++		Cvar_Set( "rtcw_target", "-1" );
++	}
++#endif
+ }
+ 
+ 
+diff --git a/MP/code/client/cl_main.c b/MP/code/client/cl_main.c
+index b7e6c3c..84c7ebb 100644
+--- a/MP/code/client/cl_main.c
++++ b/MP/code/client/cl_main.c
+@@ -3954,6 +3954,16 @@ static void CL_GenerateQKey(void)
+ 	}
+ }
+ 
++#ifdef __EMSCRIPTEN__
++static void CL_RsHook_f( void ) {
++	int on = !Cvar_VariableIntegerValue( "cl_rshook" );
++
++	Cvar_Get( "cl_rshook", "0", 0 );
++	Cvar_Set( "cl_rshook", on ? "1" : "0" );
++	Com_Printf( "rshook %s\n", on ? "on" : "off" );
++}
++#endif
++
+ /*
+ ====================
+ CL_Init
+@@ -4198,6 +4208,15 @@ void CL_Init( void ) {
+ 	Cmd_SetCommandCompletionFunc( "demo", CL_CompleteDemoName );
+ 	Cmd_AddCommand( "cinematic", CL_PlayCinematic_f );
+ 	Cmd_AddCommand( "stoprecord", CL_StopRecord_f );
++#ifdef __EMSCRIPTEN__
++	Cvar_Get( "cl_rshook", "0", 0 );
++	Cvar_Get( "rtcw_target", "-1", 0 );
++	Cvar_Get( "rtcw_addyaw", "0", 0 );
++	Cvar_Get( "rtcw_addpitch", "0", 0 );
++	Cmd_AddCommand( "rshook", CL_RsHook_f );
++	Cmd_AddCommand( "icebot", CL_RsHook_f );
++	Cmd_AddCommand( "ethook", CL_RsHook_f );
++#endif
+ 	Cmd_AddCommand( "connect", CL_Connect_f );
+ 	Cmd_AddCommand( "reconnect", CL_Reconnect_f );
+ 	Cmd_AddCommand( "localservers", CL_LocalServers_f );
+diff --git a/MP/code/renderer/tr_backend.c b/MP/code/renderer/tr_backend.c
+index 99f46c0..41dfe30 100644
+--- a/MP/code/renderer/tr_backend.c
++++ b/MP/code/renderer/tr_backend.c
+@@ -208,12 +208,18 @@ void GL_State( unsigned long stateBits ) {
+ 	// check depthFunc bits
+ 	//
+ 	if ( diff & GLS_DEPTHFUNC_EQUAL ) {
++#ifdef __EMSCRIPTEN__
++		/* WebGL depth precision makes GL_EQUAL fail; LEQUAL still
++		 * rejects fragments behind the first pass. */
++		qglDepthFunc( GL_LEQUAL );
++#else
+ 		if ( stateBits & GLS_DEPTHFUNC_EQUAL ) {
+ 			qglDepthFunc( GL_EQUAL );
+ 		} else
+ 		{
+ 			qglDepthFunc( GL_LEQUAL );
+ 		}
++#endif
+ 	}
+ 
+ 	//
+diff --git a/MP/code/renderer/tr_shade.c b/MP/code/renderer/tr_shade.c
+index 339372d..1a6b190 100644
+--- a/MP/code/renderer/tr_shade.c
++++ b/MP/code/renderer/tr_shade.c
+@@ -443,12 +443,14 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 	}
+ 	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
+ 	R_BindAnimatedImage( &pStage->bundle[1] );
++	/* Default depth func is LEQUAL. GL_EQUAL often fails on WebGL
++	 * and left only the lightmap (gray world, colored lamps). */
+ 	if ( r_lightmap->integer ) {
+-		GL_State( GLS_DEPTHFUNC_EQUAL );
++		GL_State( 0 );
+ 	} else if ( add ) {
+-		GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL );
++		GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
+ 	} else {
+-		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO | GLS_DEPTHFUNC_EQUAL );
++		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO );
+ 	}
+ 	R_DrawElements( input->numIndexes, input->indexes );
+ 	return;
+diff --git a/MP/code/renderer/tr_shader.c b/MP/code/renderer/tr_shader.c
+index 148c87e..268d5f1 100644
+--- a/MP/code/renderer/tr_shader.c
++++ b/MP/code/renderer/tr_shader.c
+@@ -1772,6 +1772,12 @@ static void ComputeStageIteratorFunc( void ) {
+ 		return;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* TMU1 texenv is a no-op on LEGACY_GL_EMULATION. Stay on the
++	 * generic iterator so DrawMultitextured can do sequential passes. */
++	return;
++#endif
++
+ 	if ( r_ignoreFastPath->integer ) {
+ 		return;
+ 	}
+@@ -1867,9 +1873,11 @@ static qboolean CollapseMultitexture( void ) {
+ 	int i;
+ 	textureBundle_t tmpBundle;
+ 
++#ifndef __EMSCRIPTEN__
+ 	if ( !qglActiveTextureARB ) {
+ 		return qfalse;
+ 	}
++#endif
+ 
+ 	// make sure both stages are active
+ 	if ( !stages[0].active || !stages[1].active ) {
+-- 
+2.53.0
+

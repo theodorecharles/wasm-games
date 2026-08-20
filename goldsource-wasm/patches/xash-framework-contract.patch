@@ -1,0 +1,265 @@
+diff --git a/engine/client/cl_main.c b/engine/client/cl_main.c
+index 1cc40aed..30a685f7 100644
+--- a/engine/client/cl_main.c
++++ b/engine/client/cl_main.c
+@@ -25,6 +25,10 @@ GNU General Public License for more details.
+ #include "pm_local.h"
+ #include "multi_emulator.h"
+ 
++#if XASH_EMSCRIPTEN
++#include <emscripten.h>
++#endif
++
+ #define MAX_CMD_BUFFER        8000
+ #define CL_CONNECTION_TIMEOUT 15.0f
+ #define CL_CONNECTION_RETRIES 5
+@@ -104,6 +108,74 @@ client_t		cl;
+ client_static_t	cls;
+ clgame_static_t	clgame;
+ 
++#if XASH_EMSCRIPTEN
++int WasmGame_RuntimeState( void );
++int WasmGame_CaptureIntent( void );
++int WasmGame_PlayerNameStatus( const char *expected );
++
++/* Browser-framework state contract. Keep this seam synchronous and derived
++ * only from authoritative client/menu/load state. */
++EMSCRIPTEN_KEEPALIVE int WasmGame_RuntimeState( void )
++{
++	if( !cls.initialized )
++		return 0; /* menu */
++
++	if( cls.key_dest == key_console || cls.key_dest == key_message )
++		return 0; /* menu */
++
++	if( cls.state == ca_cinematic || cl.intermission )
++		return 3; /* debrief */
++
++	if( cls.key_dest == key_menu || UI_IsVisible( ))
++		return cls.state == ca_active && !cl.background ? 2 : 0; /* paused/menu */
++
++	if( cl.paused )
++		return 2; /* paused */
++
++	if( cls.key_dest == key_game && !cl.background &&
++		( cls.state == ca_connecting || cls.state == ca_connected ||
++		  cls.state == ca_validate || cls.disable_screen ||
++		  GameState->curstate != STATE_RUNFRAME ||
++		  GameState->nextstate != STATE_RUNFRAME ))
++		return 4; /* loading */
++
++	if( cls.state == ca_active && cls.key_dest == key_game &&
++		cl.validsequence && Key_IsDown( K_TAB ))
++		return 3; /* scoreboard */
++
++	if( cls.state == ca_active && cls.key_dest == key_game &&
++		!cl.background && cl.validsequence && !cl.first_frame )
++		return 1; /* gameplay */
++
++	return cls.key_dest == key_game && !cl.background ? 4 : 0; /* loading/menu */
++}
++
++EMSCRIPTEN_KEEPALIVE int WasmGame_CaptureIntent( void )
++{
++	return WasmGame_RuntimeState() == 4;
++}
++
++/* 0: mismatch, 1: pending/local userinfo matches, 2: the active server's
++ * scoreboard entry for this client matches. */
++EMSCRIPTEN_KEEPALIVE int WasmGame_PlayerNameStatus( const char *expected )
++{
++	const char *local;
++
++	if( !COM_CheckString( expected ))
++		return 0;
++
++	local = Info_ValueForKey( cls.userinfo, "name" );
++	if( Q_stricmp( local, expected ))
++		return 0;
++
++	if( cls.state == ca_active && cl.playernum >= 0 && cl.playernum < MAX_CLIENTS &&
++		COM_CheckString( cl.players[cl.playernum].name ))
++		return Q_stricmp( cl.players[cl.playernum].name, expected ) ? 0 : 2;
++
++	return 1;
++}
++#endif
++
+ //======================================================================
+ int GAME_EXPORT CL_Active( void )
+ {
+diff --git a/engine/client/input.c b/engine/client/input.c
+index ac29cd1d..4ce3f6fa 100644
+--- a/engine/client/input.c
++++ b/engine/client/input.c
+@@ -26,6 +26,11 @@ GNU General Public License for more details.
+ #include "cursor_type.h"
+ #include "platform/platform.h"
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#include <emscripten/html5.h>
++#endif
++
+ void*		in_mousecursor;
+ qboolean	in_mouseactive;				// false when not focus app
+ qboolean	in_mouseinitialized;
+@@ -33,6 +38,12 @@ qboolean	in_mouse_suspended;
+ POINT		in_lastvalidpos;
+ qboolean	in_mouse_savedpos;
+ static int in_mstate = 0;
++#if XASH_EMSCRIPTEN
++static qboolean wasm_game_input_captured;
++static qboolean wasm_game_pointer_valid;
++static int wasm_game_pointer_x;
++static int wasm_game_pointer_y;
++#endif
+ static struct inputstate_s
+ {
+ 	float lastpitch, lastyaw;
+@@ -215,6 +226,16 @@ void IN_SetRelativeMouseMode( qboolean set )
+ 
+ 	if( set && !s_bRawInput )
+ 	{
++#if XASH_EMSCRIPTEN
++		EmscriptenPointerlockChangeEvent status;
++
++		/* The framework is the only pointer-lock owner. Native relative mode
++		 * follows its explicit capture signal and the browser's current state. */
++		if( !wasm_game_input_captured ||
++			emscripten_get_pointerlock_status( &status ) != EMSCRIPTEN_RESULT_SUCCESS ||
++			!status.isActive )
++			return;
++#endif
+ #if XASH_SDL >= 2
+ 		SDL_GetRelativeMouseState( NULL, NULL );
+ #if XASH_SDL == 2
+@@ -244,6 +265,61 @@ void IN_SetRelativeMouseMode( qboolean set )
+ 	}
+ }
+ 
++#if XASH_EMSCRIPTEN
++EMSCRIPTEN_KEEPALIVE void WasmGame_SetInputCaptured( int captured );
++EMSCRIPTEN_KEEPALIVE void WasmGame_PointerMove( int x, int y );
++EMSCRIPTEN_KEEPALIVE void WasmGame_ControllerAction( int action, int pressed );
++
++EMSCRIPTEN_KEEPALIVE void WasmGame_SetInputCaptured( int captured )
++{
++	wasm_game_input_captured = captured ? true : false;
++	IN_SetRelativeMouseMode( wasm_game_input_captured );
++}
++
++EMSCRIPTEN_KEEPALIVE void WasmGame_PointerMove( int x, int y )
++{
++	wasm_game_pointer_x = x;
++	wasm_game_pointer_y = y;
++	wasm_game_pointer_valid = true;
++}
++
++static int WasmGame_ControllerKeyForAction( int action )
++{
++	switch( action )
++	{
++	case 0: return 'w';
++	case 1: return 's';
++	case 2: return 'a';
++	case 3: return 'd';
++	case 4: return K_MOUSE1;
++	case 5: return K_MOUSE2;
++	case 6: return K_SPACE;
++	case 7: return K_CTRL;
++	case 8: return 'r';
++	case 9: return 'e';
++	case 10: return K_MWHEELDOWN;
++	case 11: return K_MWHEELUP;
++	case 12: return K_TAB;
++	case 13: return K_ESCAPE;
++	case 14: return K_SHIFT;
++	case 15: return 'f';
++	case 16: return K_ENTER;
++	case 17: return K_UPARROW;
++	case 18: return K_DOWNARROW;
++	case 19: return K_LEFTARROW;
++	case 20: return K_RIGHTARROW;
++	default: return 0;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void WasmGame_ControllerAction( int action, int pressed )
++{
++	int key = WasmGame_ControllerKeyForAction( action );
++	if( key )
++		Key_Event( key, pressed ? true : false );
++}
++#endif
++
+ void IN_SetMouseGrab( qboolean set )
+ {
+ 	static qboolean s_bMouseGrab;
+@@ -352,7 +428,17 @@ static void IN_MouseMove( void )
+-	Platform_GetMousePos( &x, &y );
+-
+-	VGui_MouseMove( x, y );
+-
+-	// if the menu is visible, move the menu cursor
+-	UI_MouseMove( x, y );
++	Platform_GetMousePos( &x, &y );
++#if XASH_EMSCRIPTEN
++	/* The framework maps browser coordinates into the current native
++	 * backbuffer. SDL's browser-side absolute coordinates can otherwise lag
++	 * or use a different CSS scale after a dynamic resize. */
++	if( wasm_game_pointer_valid && !wasm_game_input_captured )
++	{
++		x = bound( 0, wasm_game_pointer_x, refState.width - 1 );
++		y = bound( 0, wasm_game_pointer_y, refState.height - 1 );
++	}
++#endif
++
++	VGui_MouseMove( x, y );
++
++	// if the menu is visible, move the menu cursor
++	UI_MouseMove( x, y );
+ }
+diff --git a/engine/platform/sdl2/in_sdl2.c b/engine/platform/sdl2/in_sdl2.c
+index 44839159..82a5adc0 100644
+--- a/engine/platform/sdl2/in_sdl2.c
++++ b/engine/platform/sdl2/in_sdl2.c
+@@ -16,2 +16,5 @@ GNU General Public License for more details.
+-
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ #include "common.h"
+@@ -37,2 +40,14 @@ static struct
+-
++#if XASH_EMSCRIPTEN
++EMSCRIPTEN_KEEPALIVE void WasmGame_ControllerMouse( int dx, int dy );
++
++static int wasm_controller_mouse_x;
++static int wasm_controller_mouse_y;
++
++EMSCRIPTEN_KEEPALIVE void WasmGame_ControllerMouse( int dx, int dy )
++{
++	wasm_controller_mouse_x += dx;
++	wasm_controller_mouse_y += dy;
++}
++#endif
++
+ /*
+@@ -73,6 +88,11 @@ void Platform_MouseMove( float *x, float *y )
+ {
+-	int m_x, m_y;
+-	SDL_GetRelativeMouseState( &m_x, &m_y );
+-	*x = (float)m_x;
+-	*y = (float)m_y;
++	int m_x, m_y;
++	SDL_GetRelativeMouseState( &m_x, &m_y );
++#if XASH_EMSCRIPTEN
++	m_x += wasm_controller_mouse_x;
++	m_y += wasm_controller_mouse_y;
++	wasm_controller_mouse_x = wasm_controller_mouse_y = 0;
++#endif
++	*x = (float)m_x;
++	*y = (float)m_y;
+ }

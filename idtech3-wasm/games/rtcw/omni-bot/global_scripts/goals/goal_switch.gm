@@ -1,0 +1,57 @@
+// This script contains functionality to trigger switches
+this.Name = "SWITCH";
+this.Parent = "HighLevel";
+this.SkipGetPriorityWhenActive = true;
+
+this.Enter = this.MarkInProgress;
+
+this.GetPriority = function()
+{
+	Util.GetPriority(this,0x93e05f71 /* SWITCH */);
+};
+
+this.Update = function()
+{
+	Util.RouteTo(this);
+
+	if (this.MapGoal.AimPosition && !this.MapGoal.AimPosition.IsZero())
+	{
+		this.AddAimRequest(Priority.High, "position", this.MapGoal.AimPosition);
+	}
+	else if (!this.MapGoal.Facing.IsZero())
+	{
+		this.AddAimRequest(Priority.High, "facing", this.MapGoal.Facing);
+	}
+
+	timeout = 0;
+	while(timeout < this.MapGoal.Timeout && this.MapGoal.IsAvailable(this.Bot.GetTeam()))
+	{
+		timeout += 250;
+
+		switch(this.MapGoal.Stance)
+		{
+			case "crouch":
+			{
+				this.Bot.HoldButton(BTN.CROUCH, 0.5);
+			}
+			case "prone":
+			{
+				this.Bot.HoldButton(BTN.PRONE, 0.5);
+			}
+		}
+
+		if (this.MapGoal.Use)
+		{
+			this.Bot.PressButton(BTN.USE);
+		}
+
+		sleep(0.25);
+	}
+	
+	if (timeout >= this.MapGoal.Timeout) {
+		Util.ScriptDebugPrint(this.MapGoal.GetName(), "timedout");
+		this.BlackboardDelay(5);
+	}
+
+	this.Finished();
+};

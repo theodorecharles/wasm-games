@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+image="${1:-openrct2-wasm:dev}"
+data_volume="${2:-}"
+container="openrct2-wasm-test-$$"
+
+cleanup() {
+    docker rm -f "$container" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+docker run --rm --detach --name "$container" --publish 127.0.0.1::8088 "$image" >/dev/null
+port="$(docker port "$container" 8088/tcp | sed -n '1s/.*://p')"
+base_url="http://127.0.0.1:$port"
+
+for _ in $(seq 1 60); do
+    if curl --silent --fail "$base_url/status" >/dev/null; then
+        break
+    fi
+    sleep 0.25
+done
+curl --silent --fail "$base_url/status" >/dev/null
+
+status="$(curl --silent --fail "$base_url/game-data/status")"
+node -e '
+const value = JSON.parse(process.argv[1]);
+if (value.ready !== false) throw new Error("an empty data volume must not be ready");
+if (value.mediaLibrary?.configured !== true || value.mediaLibrary.ready !== false) throw new Error("media library missing-state contract failed");
+if (value.mediaLibrary.launcherVisibleWhenReady !== false) throw new Error("ready-only launcher policy is missing");
+' "$status"
+
+for private_path in /data /data/ /local-data /local-data/; do
+    code="$(curl --silent --output /dev/null --write-out '%{http_code}' "$base_url$private_path")"
+    if [[ "$code" != "404" ]]; then
+        printf 'Private path %s returned HTTP %s.\n' "$private_path" "$code" >&2
+        exit 1
+    fi
+done
+
+for public_path in \
+    / /wasm-game.json /wasm-game-data.json /game-adapter.js /openrct2-worker.js /openrct2-audio-bridge.mjs /openrct2-hot-cache.mjs /data-validator.mjs \
+    /media-transformer.mjs \
+    /app.webmanifest /service-worker.js /openrct2.ico /openrct2-192.png /openrct2-512.png \
+    /runtime/openrct2.js /runtime/openrct2.wasm /runtime/openrct2.data; do
+    curl --silent --fail --head "$base_url$public_path" >/dev/null
+done
+
+headers="$(curl --silent --dump-header - --output /dev/null --header 'Range: bytes=0-15' "$base_url/runtime/openrct2.data" | tr -d '\r')"
+grep -qi '^HTTP/.* 206' <<<"$headers"
+grep -qi '^content-range: bytes 0-15/' <<<"$headers"
+root_headers="$(curl --silent --head "$base_url/" | tr -d '\r')"
+grep -qi '^cross-origin-opener-policy: same-origin' <<<"$root_headers"
+grep -qi '^cross-origin-embedder-policy: require-corp' <<<"$root_headers"
+
+docker run --rm --entrypoint sh "$image" -c '
+    test ! -e /opt/game-site/RCT2.EXE
+    test ! -e /opt/game-site/Data/g1.dat
+    test ! -e /opt/game-site/Data/ch.dat
+    ! find /opt/game-site -type f -print | grep -Eiq "/(RCT2\\.EXE|g1\\.dat|ch\\.dat)$"
+'
+test "$(docker run --rm --entrypoint innoextract "$image" --version | sed -n '1s/ .*//p')" = "innoextract"
+test "$(docker image inspect "$image" --format '{{index .Config.Labels "io.openrct2.innoextract.version"}}')" = "1.9-r10"
+
+if [[ -n "$data_volume" ]]; then
+    docker rm -f "$container" >/dev/null
+    docker run --rm --detach --name "$container" --publish 127.0.0.1::8088 \
+        --mount "source=$data_volume,target=/data" "$image" >/dev/null
+    port="$(docker port "$container" 8088/tcp | sed -n '1s/.*://p')"
+    base_url="http://127.0.0.1:$port"
+    for _ in $(seq 1 60); do
+        if curl --silent --fail "$base_url/status" >/dev/null; then
+            break
+        fi
+        sleep 0.25
+    done
+    provisioned_state="$(curl --silent --fail "$base_url/game-data/status")"
+    node -e '
+const value = JSON.parse(process.argv[1]);
+if (value.ready !== true || value.mediaLibrary?.ready !== true) throw new Error("provisioned media library must be ready");
+if (value.mediaLibrary.launcherVisibleWhenReady !== false) throw new Error("ready media controls must remain hidden");
+const entry = value.mediaLibrary.entries?.[0];
+if (!entry || entry.fileCount < 4 || entry.totalSize <= 0) throw new Error("provisioned media inventory is incomplete");
+' "$provisioned_state"
+fi
+
+docker image inspect "$image" --format '{{.Id}}'
+sha256sum <(docker image inspect "$image" --format '{{json .RootFS.Layers}}')
+printf 'OpenRCT2 image package, range serving, isolation headers, data state, and private-data boundary passed.\n'

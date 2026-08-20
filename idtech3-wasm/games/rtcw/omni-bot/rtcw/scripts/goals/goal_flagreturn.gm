@@ -1,0 +1,48 @@
+// This script contains functionality to return flag (or radar parts, documents etc.) which were dropped by enemy
+this.Name = "FLAGRETURN";
+this.Parent = "HighLevel";
+this.SkipGetPriorityWhenActive = true;
+
+this.GetPriority = function()
+{
+	Util.GetPriority(this,0xa06840e5 /* FLAGRETURN */,0,0, function(goal, bot)
+	{
+		ent = goal.GetEntity();
+		return ent && bot.CanGrabItem(ent);
+	});
+};
+
+this.Enter = function()
+{
+	this.MarkInProgress();
+	this.MarkInUse();
+
+	this.TargetPosition = this.MapGoal.GetPosition();
+	this.DynamicGotoThread = this.ForkThread(this.DynamicGoto);
+};
+
+this.Exit = function()
+{
+	if(this.DynamicGotoThread) { this.KillThread(this.DynamicGotoThread); }
+};
+
+this.DynamicGoto = function()
+{
+	if(this.Goto(this.TargetPosition,0) == EVENT.PATH_FAILED)
+	{
+		Util.PathFailed(this);
+	}
+	this.Finished();
+};
+
+
+this.Update = function()
+{
+	pos = this.MapGoal.GetPosition();
+	if(DistanceBetween(pos,this.TargetPosition) > 100)
+	{
+		this.TargetPosition = pos;
+		this.KillThread(this.DynamicGotoThread);
+		this.DynamicGotoThread = this.ForkThread(this.DynamicGoto);
+	}
+};

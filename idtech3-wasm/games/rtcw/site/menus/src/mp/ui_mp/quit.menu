@@ -1,0 +1,18 @@
+#include "ui_mp/menudef.h"
+
+{
+menuDef {
+	name "quit_popmenu"
+	visible 0
+	fullScreen 0
+	rect 0 0 0 0
+	onOpen { close quit_popmenu ; open main }
+}
+menuDef {
+	name "quit"
+	visible 0
+	fullScreen 0
+	rect 0 0 0 0
+	onOpen { close quit ; open main }
+}
+}

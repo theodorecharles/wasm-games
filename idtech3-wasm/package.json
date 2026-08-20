@@ -1,0 +1,17 @@
+{
+  "name": "idtech3-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "id Tech 3 browser-engine family workspace",
+  "license": "SEE LICENSE IN LICENSES.md",
+  "scripts": {
+    "test": "node tests/static.test.js && node tests/security.test.js && node tests/password.test.js && node tests/rtcw-server.test.js && node tests/rtcw-adapter.test.js && node --test games/wolfet/tests/admin.test.js games/wolfet/tests/botfill.test.js games/wolfet/tests/custom-maps.test.js games/wolfet/tests/mode.test.js games/wolfet/tests/persist.test.js games/wolfet/tests/player-name.test.js",
+    "prepare:q3": "sh scripts/prepare-source.sh quake3",
+    "prepare:rtcw": "sh scripts/prepare-source.sh rtcw",
+    "prepare:wolfet": "sh scripts/prepare-wolfet-source.sh",
+    "build:q3": "sh scripts/build-q3-site.sh",
+    "image:q3": "sh scripts/build-q3-image.sh",
+    "image:rtcw": "sh scripts/build-rtcw-images.sh",
+    "image:wolfet": "sh scripts/build-wolfet-image.sh"
+  }
+}

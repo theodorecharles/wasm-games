@@ -1,0 +1,63 @@
+{
+  "namespace": "nolf2-wasm",
+  "version": "retail-rez-v1",
+  "validator": {
+    "module": "/data-validator.mjs",
+    "export": "validateLithRez",
+    "version": "rezmgr-v1",
+    "maxReadBytes": 256,
+    "maxTotalReadBytes": 2048
+  },
+  "files": [
+    {
+      "key": "game",
+      "name": "GAME.REZ",
+      "names": ["GAME.REZ", "game.rez"],
+      "path": "GAME.REZ",
+      "size": 224475015,
+      "sha256": "442d176659b72426bd17701e226e000b32037bfcc0df1e3897cd78f2d5c5752f",
+      "required": true,
+      "validator": { "policy": { "identity": "GAME.REZ" } }
+    },
+    {
+      "key": "game2",
+      "name": "GAME2.REZ",
+      "names": ["GAME2.REZ", "game2.rez"],
+      "path": "GAME2.REZ",
+      "size": 1138259607,
+      "sha256": "f0d6883d035f32ad77307bcb8f44fd449e285476e49884161d8e80eecce6fb73",
+      "required": false,
+      "validator": { "policy": { "identity": "GAME2.REZ" } }
+    },
+    {
+      "key": "sound",
+      "name": "SOUND.REZ",
+      "names": ["SOUND.REZ", "sound.rez"],
+      "path": "SOUND.REZ",
+      "size": 360255681,
+      "sha256": "45e265829ba24a16d92f4a5775058c895774278c0514a3f53cf00f3d965cac35",
+      "required": false,
+      "validator": { "policy": { "identity": "SOUND.REZ" } }
+    },
+    {
+      "key": "gamedll",
+      "name": "GAMEDLL.REZ",
+      "names": ["GAMEDLL.REZ", "gamedll.rez"],
+      "path": "GAMEDLL.REZ",
+      "size": 6304090,
+      "sha256": "cb4eba665dc3e62848783d575d78f31a7ad08e4ccf0685279c8ff12f0a981d8f",
+      "required": true,
+      "validator": { "policy": { "identity": "GAMEDLL.REZ" } }
+    },
+    {
+      "key": "engine",
+      "name": "Engine.REZ",
+      "names": ["Engine.REZ", "engine.rez"],
+      "path": "Engine.REZ",
+      "size": 102162,
+      "sha256": "cd999462cd5dbab870a3f6032f0ad4a3abe5614dfdda0b59ee018176a9e710c5",
+      "required": true,
+      "validator": { "policy": { "identity": "Engine.REZ" } }
+    }
+  ]
+}

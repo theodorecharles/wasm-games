@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>wolfet-wasm</Name>
+  <Repository>tedcharles/wolfet-wasm:latest</Repository>
+  <Registry>https://hub.docker.com/r/tedcharles/wolfet-wasm</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/theodorecharles/wolfet-wasm/issues</Support>
+  <Project>https://github.com/theodorecharles/wolfet-wasm</Project>
+  <Overview>Play Wolfenstein: Enemy Territory in a web browser. Runs a WebAssembly/WebGL 2 client and a shared ET: Legacy Objective server with official maps, optional Omni-Bot population, custom PK3 support, and automatic idle sleep.</Overview>
+  <Description>Open the WebUI after installation, enter a player name, and press Play. On first start the container downloads the official free Enemy Territory game data from Splash Damage, verifies its pinned checksums, and stores it under /data. Add custom maps by placing compatible PK3 files in /data/custom_maps, then restart the container. The image supports amd64 hosts only.</Description>
+  <Category>GameServers:</Category>
+  <WebUI>http://[IP]:[PORT:8088]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/theodorecharles/unraid-templates/master/wolfet-wasm.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/theodorecharles/unraid-templates/master/wolfet-wasm.png</Icon>
+  <ExtraSearchTerms>Wolfenstein Enemy Territory ET Legacy browser WebAssembly WebGL game server</ExtraSearchTerms>
+  <License>GPL-3.0-or-later</License>
+  <Requires>An amd64/x86_64 Unraid host and outbound internet access on first start to obtain the official game data.</Requires>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText>Support the developer</DonateText>
+  <DonateLink>https://github.com/sponsors/theodorecharles</DonateLink>
+
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/wolfet-wasm" Mode="rw" Description="Persistent official game data, generated configuration, bans, and custom_maps PK3 drop folder." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/wolfet-wasm</Config>
+  <Config Name="Web UI" Target="8088" Default="8088" Mode="tcp" Description="Browser game, WebSocket proxy, health, and status HTTP port." Type="Port" Display="always" Required="true" Mask="false">8088</Config>
+  <Config Name="Enemy Territory UDP" Target="27960" Default="27960" Mode="udp" Description="Native Enemy Territory dedicated-server query and connection port. Browser gameplay uses the Web UI port." Type="Port" Display="always" Required="true" Mask="false">27960</Config>
+  <Config Name="Game Mode" Target="ETJS_MODE" Default="arcade" Mode="" Description="arcade enables faster movement, double jump, unlimited stamina, hit sounds, and the optional visibility/targeting layer. vanilla uses stock-style movement and disables those additions." Type="Variable" Display="always" Required="true" Mask="false">arcade</Config>
+  <Config Name="Match Population" Target="ETJS_SLOTS" Default="12" Mode="" Description="Human-plus-bot population maintained by the server; enter an integer from 2 through 63." Type="Variable" Display="always" Required="true" Mask="false">12</Config>
+  <Config Name="Keep Server Alive" Target="KEEP_ALIVE" Default="false" Mode="" Description="Set true to keep the dedicated match running indefinitely. When false, only the lightweight web host remains active while idle." Type="Variable" Display="always" Required="true" Mask="false">false</Config>
+  <Config Name="Idle Timeout" Target="IDLE_TIMEOUT" Default="15m" Mode="" Description="When Keep Server Alive is false, stop the dedicated process after this long without human players. Accepts seconds or values such as 10m or 2h." Type="Variable" Display="always" Required="true" Mask="false">15m</Config>
+  <Config Name="Game Password" Target="WASM_GAME_PASSWORD" Default="" Mode="" Description="Optional password for browser game data, Play/wake, match status, administration, and WebSocket access. Leave empty for public access." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="Password Session Lifetime" Target="WASM_GAME_PASSWORD_TTL" Default="12h" Mode="" Description="Lifetime of an authenticated browser session, for example 30m, 12h, or 48h." Type="Variable" Display="advanced" Required="true" Mask="false">12h</Config>
+  <Config Name="Framework TLS Proxy Trust" Target="WASM_GAME_TRUST_PROXY" Default="false" Mode="" Description="Set true only behind a controlled TLS reverse proxy that replaces X-Forwarded-Proto, so password cookies receive the Secure attribute." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Omni-Bot" Target="ETJS_OMNIBOT" Default="1" Mode="" Description="Set to 1 for automatic bot fill or 0 to disable bots." Type="Variable" Display="advanced" Required="true" Mask="false">1</Config>
+  <Config Name="RCON Password" Target="ETJS_RCON" Default="" Mode="" Description="Optional dedicated-server RCON password. Leave empty to generate and persist a random password under /data." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Trusted Reverse Proxy" Target="ETJS_TRUST_PROXY" Default="0" Mode="" Description="Set to 1 only when a same-host reverse proxy replaces X-Forwarded-For and clients cannot bypass it." Type="Variable" Display="advanced" Required="true" Mask="false">0</Config>
+  <Config Name="Administrator IPs" Target="ETJS_ADMIN_IPS" Default="" Mode="" Description="Optional comma-separated admin IP allowlist for NAT or proxy setups where automatic same-host detection is insufficient." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+</Container>

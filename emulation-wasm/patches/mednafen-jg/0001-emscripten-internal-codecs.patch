@@ -1,0 +1,135 @@
+diff --git a/jollygood/Makefile b/jollygood/Makefile
+index af00af4..7d6da1d 100644
+--- a/jollygood/Makefile
++++ b/jollygood/Makefile
+@@ -8,9 +8,9 @@ FLAGS_DEPS := -std=gnu99 -fomit-frame-pointer -fwrapv
+ FLAGS := -std=gnu++11 -fjump-tables -fno-fast-math \
+ 	-fno-unsafe-math-optimizations -fomit-frame-pointer -fsigned-char \
+ 	-fstrict-aliasing -fwrapv
+-DEFS := -DHAVE_CONFIG_H -DHAVE_LIBFLAC -DLSB_FIRST -DMPC_FIXED_POINT \
++DEFS := -DHAVE_CONFIG_H -DLSB_FIRST -DMPC_FIXED_POINT \
+ 	-DMDFN_DISABLE_NO_OPT_ERRWARN -DMDFN_DISABLE_PICPIE_ERRWARN \
+-	-DICONV_CONST=
++	-DICONV_CONST= -DZSTD_NO_TRACE=1 -DZSTD_HAVE_WEAK_SYMBOLS=0
+ 
+ SRCDIR := $(SOURCEDIR)/../src
+ 
+@@ -31,7 +31,8 @@ DOCS := ../COPYING README
+ MKDIRS := cdplay cdrom cheat_formats compress demo hash hw_cpu/m68k \
+ 	hw_cpu/v810 hw_cpu/z80-fuse hw_misc/arcade_card hw_sound/pce_psg \
+ 	hw_sound/sms_apu hw_sound/ym2413 hw_sound/ym2612 hw_video/huc6270 \
+-	mpcdec mthreading quicklz sound string resampler time video
++	mpcdec mthreading quicklz sound string resampler time video minilzo \
++	zstd/common zstd/decompress
+ 
+ override INSTALL_DATA := 0
+ override INSTALL_EXAMPLE := 0
+@@ -43,12 +44,22 @@ override PREREQ += $(SOURCEDIR)/conf/config.h
+ 
+ EXT := cpp
+ 
+-INCLUDES += $(CFLAGS_FLAC) $(CFLAGS_TRIO) $(CFLAGS_ZLIB) $(CFLAGS_ZSTD)
+-LIBS += $(LIBS_FLAC) $(LIBS_TRIO) $(LIBS_ZLIB) $(LIBS_ZSTD)
++INCLUDES += $(CFLAGS_TRIO) $(CFLAGS_ZLIB) -I$(SRCDIR)/zstd
++LIBS += $(LIBS_TRIO) $(LIBS_ZLIB)
+ 
+-override REQUIRES_PRIVATE += $(PKGCONF_FLAC) $(PKGCONF_ZLIB) $(PKGCONF_ZSTD)
++override REQUIRES_PRIVATE += $(PKGCONF_ZLIB)
+ 
+-CSRCS := resampler/resample.c
++CSRCS := resampler/resample.c \
++	minilzo/minilzo.c \
++	zstd/common/entropy_common.c \
++	zstd/common/error_private.c \
++	zstd/common/fse_decompress.c \
++	zstd/common/xxhash.c \
++	zstd/common/zstd_common.c \
++	zstd/decompress/huf_decompress.c \
++	zstd/decompress/zstd_ddict.c \
++	zstd/decompress/zstd_decompress_block.c \
++	zstd/decompress/zstd_decompress.c
+ 
+ CXXSRCS := ExtMemStream.cpp \
+ 	FileStream.cpp \
+@@ -80,7 +91,6 @@ CXXSRCS := ExtMemStream.cpp \
+ 	testsexp.cpp \
+ 	cdplay/cdplay.cpp \
+ 	cdrom/CDAFReader.cpp \
+-	cdrom/CDAFReader_FLAC.cpp \
+ 	cdrom/CDAFReader_PCM.cpp \
+ 	cdrom/CDAccess.cpp \
+ 	cdrom/CDAccess_CCD.cpp \
+@@ -143,6 +153,8 @@ CXXSRCS := ExtMemStream.cpp \
+ 	video/text.cpp \
+ 	video/video.cpp
+ 
++ifneq ($(MEDNAFEN_JG_PSX_ONLY),1)
++
+ # Atari Lynx
+ DEFS += -DWANT_LYNX_EMU
+ MKDIRS += lynx
+@@ -265,6 +277,8 @@ CXXSRCS += pcfx/fxscsi.cpp  \
+ 	pcfx/soundbox.cpp \
+ 	pcfx/timer.cpp
+ 
++endif
++
+ # Sony PlayStation
+ DEFS += -DWANT_PSX_EMU
+ MKDIRS += psx/input
+@@ -294,6 +308,8 @@ CXXSRCS += psx/cdc.cpp \
+ 	psx/spu.cpp \
+ 	psx/timer.cpp
+ 
++ifneq ($(MEDNAFEN_JG_PSX_ONLY),1)
++
+ # Sega Master System
+ # Required for MD support
+ DEFS += -DWANT_SMS_EMU
+@@ -398,21 +414,13 @@ CXXSRCS += wswan/comm.cpp \
+ 	wswan/tcache.cpp \
+ 	wswan/v30mz.cpp
+ 
++endif
++
+ # The Jolly Good API Shim
+ JGSRCS := serial.cpp \
+ 	stubs.cpp \
+ 	jg.cpp
+ 
+-# Darwin specific
+-ifeq ($(PLATFORM), Darwin)
+-	MKDIRS += minilzo
+-	CSRCS += minilzo/minilzo.c
+-else
+-	INCLUDES += $(CFLAGS_LZO)
+-	LIBS += $(LIBS_LZO)
+-	override REQUIRES_PRIVATE += $(PKGCONF_LZO)
+-endif
+-
+ # Windows specific
+ ifeq ($(PLATFORM), Windows)
+ 	CXXSRCS += win32-common.cpp \
+diff --git a/jollygood/minilzo/minilzo.h b/jollygood/minilzo/minilzo.h
+index 3186430..2819ba1 100644
+--- a/jollygood/minilzo/minilzo.h
++++ b/jollygood/minilzo/minilzo.h
+@@ -1,4 +1,4 @@
+-#ifdef __APPLE__
++#if defined(__APPLE__) || defined(__EMSCRIPTEN__)
+ #include <mednafen/minilzo/_minilzo.h>
+ #else
+ #include <lzo1x.h>
+diff --git a/src/mthreading/MThreading_POSIX.cpp b/src/mthreading/MThreading_POSIX.cpp
+index d112841..99922c2 100644
+--- a/src/mthreading/MThreading_POSIX.cpp
++++ b/src/mthreading/MThreading_POSIX.cpp
+@@ -212,7 +212,7 @@ uintptr_t Thread_ID(void)
+  return LocalThreadID;
+ }
+ 
+-#if defined(PTHREAD_AFFINITY_NP)
++#if defined(PTHREAD_AFFINITY_NP) && !defined(__EMSCRIPTEN__)
+ //template<typename T> static T MDFN_PTHREAD_NP_CPUSET_T_HELPER(int (*)(pthread_t, size_t, T*)) { T dummy; CPU_ZERO(&dummy); return dummy; }
+ //typedef decltype(MDFN_PTHREAD_NP_CPUSET_T_HELPER(pthread_getaffinity_np)) MDFN_PTHREAD_NP_CPUSET_T;
+ 

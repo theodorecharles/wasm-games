@@ -1,0 +1,80 @@
+{
+  "namespace": "emulation-media",
+  "version": "media-v2",
+  "mediaLibrary": {
+    "minimumEntries": 1,
+    "maxEntries": 512,
+    "maxFilesPerEntry": 64,
+    "publicMetadata": ["system", "format", "fileCount"],
+    "validator": {
+      "module": "/data-validator.mjs",
+      "export": "validateConsoleMediaBundle",
+      "version": "console-media-bundle-v2",
+      "maxReadBytes": 1048576,
+      "maxTotalReadBytes": 4194304,
+      "policy": {}
+    }
+  },
+  "variants": {
+    "nes": {
+      "files": [],
+      "mediaLibrary": {
+        "maxFilesPerEntry": 1,
+        "maxFileBytes": 67108864,
+        "maxEntryBytes": 67108864,
+        "maxBrowserCacheBytes": 67108864,
+        "validator": { "policy": { "system": "nes" } }
+      }
+    },
+    "snes": {
+      "files": [],
+      "mediaLibrary": {
+        "maxFilesPerEntry": 1,
+        "maxFileBytes": 67108864,
+        "maxEntryBytes": 67108864,
+        "maxBrowserCacheBytes": 67108864,
+        "validator": { "policy": { "system": "snes" } }
+      }
+    },
+    "ps1": {
+      "files": [
+        {
+          "key": "firmware",
+          "name": "scph5500.bin",
+          "names": [
+            "scph5500.bin", "scph5501.bin", "scph5502.bin",
+            "scph1000.bin", "scph1001.bin", "scph1002.bin",
+            "psxonpsp660.bin", "bios.bin"
+          ],
+          "path": "firmware/ps1/firmware.bin",
+          "size": 524288,
+          "validator": {
+            "module": "/data-validator.mjs",
+            "export": "validateConsoleMedia",
+            "version": "ps1-firmware-512k-v1",
+            "maxReadBytes": 16,
+            "maxTotalReadBytes": 16,
+            "policy": { "kind": "ps1-firmware" }
+          }
+        }
+      ],
+      "mediaLibrary": {
+        "maxFilesPerEntry": 64,
+        "maxFileBytes": 1073741824,
+        "maxEntryBytes": 1073741824,
+        "maxBrowserCacheBytes": 1073741824,
+        "validator": { "policy": { "system": "ps1" } }
+      }
+    },
+    "ps2": {
+      "files": [],
+      "mediaLibrary": {
+        "maxFilesPerEntry": 1,
+        "maxFileBytes": 17179869184,
+        "maxEntryBytes": 17179869184,
+        "maxBrowserCacheBytes": 0,
+        "validator": { "policy": { "system": "ps2" } }
+      }
+    }
+  }
+}

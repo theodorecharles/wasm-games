@@ -1,0 +1,166 @@
+{
+  "id": "emulation-family",
+  "title": "Console Emulation WASM",
+  "kicker": "Native console cores in WebAssembly",
+  "description": "Choose a console and launch its browser runtime.",
+  "adapter": "/game-adapter.js",
+  "preferencesNamespace": "emulation-family",
+  "persistenceNamespace": "emulation-family",
+  "defaultVariant": "nes",
+  "identity": false,
+  "graphics": false,
+  "advanced": false,
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "pointerLock": false,
+  "displayMode": "4:3",
+  "canvasWidth": 960,
+  "canvasHeight": 720,
+  "pixelated": true,
+  "syncBackbuffer": false,
+  "resizeTransition": "immediate",
+  "controller": {
+    "mode": "custom",
+    "connectOnLauncher": true,
+    "allowKeyboardFallback": true
+  },
+  "persistence": {
+    "root": "/persistent/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "variants": {
+    "nes": {
+      "title": "NES WASM",
+      "engine": "Nestopia JG 1.54.0",
+      "description": "NES and Famicom emulation through the Nestopia JG core.",
+      "status": "Still in development",
+      "runtimeReady": false,
+      "icon": "/assets/nes.svg",
+      "background": "/assets/background.svg",
+      "nativeWidth": 256,
+      "nativeHeight": 240,
+      "runtime": {
+        "script": "/nes/emulator.js",
+        "wasm": "/nes/emulator.wasm",
+        "factory": "createNesEmulationModule"
+      },
+      "media": {
+        "library": true,
+        "extensions": ["nes", "unf", "unif"],
+        "firmware": []
+      },
+      "pwa": {
+        "id": "/apps/emulation/nes",
+        "name": "NES WASM",
+        "shortName": "NES",
+        "description": "NES and Famicom browser runtime.",
+        "themeColor": "#c6c6c6",
+        "backgroundColor": "#101114",
+        "icons": [
+          { "src": "/assets/nes.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+        ]
+      }
+    },
+    "snes": {
+      "title": "SNES WASM",
+      "engine": "bsnes-jg 2.1.1",
+      "description": "SNES and Super Famicom emulation through the bsnes-jg core.",
+      "status": "Still in development",
+      "runtimeReady": false,
+      "icon": "/assets/snes.svg",
+      "background": "/assets/background.svg",
+      "nativeWidth": 256,
+      "nativeHeight": 224,
+      "runtime": {
+        "script": "/snes/emulator.js",
+        "wasm": "/snes/emulator.wasm",
+        "factory": "createSnesEmulationModule"
+      },
+      "media": {
+        "library": true,
+        "extensions": ["sfc", "smc"],
+        "firmware": []
+      },
+      "pwa": {
+        "id": "/apps/emulation/snes",
+        "name": "SNES WASM",
+        "shortName": "SNES",
+        "description": "SNES and Super Famicom browser runtime.",
+        "themeColor": "#6c5ba7",
+        "backgroundColor": "#101114",
+        "icons": [
+          { "src": "/assets/snes.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+        ]
+      }
+    },
+    "ps1": {
+      "title": "PlayStation WASM",
+      "engine": "Mednafen JG 1.32.1.2",
+      "description": "PlayStation emulation through the Mednafen JG core.",
+      "status": "Still in development",
+      "runtimeReady": false,
+      "icon": "/assets/ps1.svg",
+      "background": "/assets/background.svg",
+      "pixelated": false,
+      "nativeWidth": 640,
+      "nativeHeight": 480,
+      "runtime": {
+        "script": "/ps1/emulator.js",
+        "wasm": "/ps1/emulator.wasm",
+        "factory": "createPs1EmulationModule"
+      },
+      "media": {
+        "library": true,
+        "extensions": ["cue", "bin"],
+        "firmware": ["PlayStation firmware (512 KiB)"]
+      },
+      "pwa": {
+        "id": "/apps/emulation/ps1",
+        "name": "PlayStation WASM",
+        "shortName": "PS1",
+        "description": "PlayStation browser runtime.",
+        "themeColor": "#5e6871",
+        "backgroundColor": "#0c0f12",
+        "icons": [
+          { "src": "/assets/ps1.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+        ]
+      }
+    },
+    "ps2": {
+      "title": "PlayStation 2 WASM",
+      "engine": "Play! 0.77",
+      "description": "PlayStation 2 emulation through a new Play! native-core host.",
+      "status": "Still in development",
+      "runtimeReady": false,
+      "icon": "/assets/ps2.svg",
+      "background": "/assets/background.svg",
+      "pixelated": false,
+      "nativeWidth": 640,
+      "nativeHeight": 480,
+      "runtime": {
+        "script": "/ps2/emulator.js",
+        "wasm": "/ps2/emulator.wasm",
+        "factory": "createPs2EmulationModule",
+        "requiresRandomAccessMedia": true
+      },
+      "media": {
+        "library": true,
+        "extensions": ["iso"],
+        "firmware": []
+      },
+      "pwa": {
+        "id": "/apps/emulation/ps2",
+        "name": "PlayStation 2 WASM",
+        "shortName": "PS2",
+        "description": "PlayStation 2 browser runtime.",
+        "themeColor": "#233977",
+        "backgroundColor": "#050816",
+        "icons": [
+          { "src": "/assets/ps2.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+        ]
+      }
+    }
+  }
+}

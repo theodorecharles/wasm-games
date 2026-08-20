@@ -1,0 +1,57 @@
+{
+  "id": "cod2-family",
+  "engine": "IW 2.0 reconstruction",
+  "kicker": "Call of Duty 2 WASM",
+  "description": "Still in development — Call of Duty 2 does not launch in this build.",
+  "defaultVariant": "cod2-mp",
+  "preferencesNamespace": "cod2-wasm",
+  "adapter": "/game-adapter.js",
+  "displayMode": "16:9",
+  "canvasWidth": 1280,
+  "canvasHeight": 720,
+  "pixelated": false,
+  "pointerLock": false,
+  "fullscreen": false,
+  "identity": false,
+  "graphics": false,
+  "advanced": false,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": false,
+  "theme": {
+    "accent": "#9d8b63",
+    "accentStrong": "#d7c59a",
+    "panel": "#171815",
+    "text": "#f0eee6"
+  },
+  "variants": {
+    "cod2-mp": {
+      "title": "Call of Duty 2 Multiplayer",
+      "shortTitle": "CoD2 MP",
+      "description": "Still in development — Call of Duty 2 does not launch in this build.",
+      "loadingTitle": "Opening Call of Duty 2 status…",
+      "provisioningText": "Install the required Call of Duty 2 main/*.iwd files into this container to continue.",
+      "icon": "/cod2-diagnostic.svg",
+      "iconPixelated": false,
+      "pwa": {
+        "id": "/?game=cod2-mp",
+        "name": "Call of Duty 2 WASM",
+        "shortName": "CoD2 WASM",
+        "description": "Still in development — Call of Duty 2 does not launch in this build.",
+        "startUrl": "/?game=cod2-mp",
+        "themeColor": "#9d8b63",
+        "backgroundColor": "#11120f",
+        "orientation": "landscape",
+        "icons": [
+          {
+            "src": "/cod2-diagnostic.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+          }
+        ]
+      }
+    }
+  }
+}

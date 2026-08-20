@@ -1,0 +1,41 @@
+BasedOnStyle: WebKit
+
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakTemplateDeclarations: Yes
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterExternBlock: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyNamespace: true
+  SplitEmptyRecord: false
+
+BreakBeforeBinaryOperators: None
+BreakInheritanceList: BeforeComma
+ColumnLimit: 120
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+KeepEmptyLinesAtTheStartOfBlocks: false
+NamespaceIndentation: All
+SpaceAfterCStyleCast: true
+SpaceInEmptyBlock: false
+TabWidth: 4
+ReflowComments: false
+AttributeMacros: [ARTS_IMPORT, ARTS_EXPORT, ARTS_RESTRICT]
+Macros: ["arnew=new", "arnewa=new", "as_owner=(MAGIC)", "as_ptr=(MAGIC)", "as_raw=(MAGIC)", "as_rc=(MAGIC)"]

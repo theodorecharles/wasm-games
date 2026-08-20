@@ -1,0 +1,21 @@
+{
+  "variant": "blue-shift",
+  "gamedir": "bshift",
+  "title": "Half-Life: Blue Shift",
+  "engine": "goldsource",
+  "engineRuntime": "Xash3D-FWGS + HLSDK Portable compatibility",
+  "multiplayer": false,
+  "description": "The Blue Shift single-player expansion in the browser.",
+  "image": "ghcr.io/theodorecharles/blue-shift-wasm",
+  "ports": { "host": 8018, "container": 8088 },
+  "icon": "assets/icon.svg",
+  "background": "assets/background.svg",
+  "theme": { "accent": "#245f83", "accentStrong": "#71b6df", "border": "#244c62", "pwa": "#296a92" },
+  "dataDir": "goldsource",
+  "dataFiles": [
+    { "name": "valve-owner.pk3", "path": "goldsource/valve-owner.pk3", "mountName": "valve/owner-valve.pk3", "size": 271240725, "sha256": "70aed2d728525b3ef34bc50090e0a00c63f8c4c14c6a3e7fbee7c03b235f83d0" },
+    { "name": "valve-liblist.gam", "path": "goldsource/valve-liblist.gam", "mountName": "valve/liblist.gam", "size": 333, "sha256": "0d4034ebaabcc54ad9f00bb89e9677d5f34c3d3beda9185a69d5ac719e0e2ffb" },
+    { "name": "bshift-owner.pk3", "path": "goldsource/bshift-owner.pk3", "mountName": "bshift/owner-bshift.pk3", "size": 167073210, "sha256": "79c08b5968efead53ccb631addee918d3b0bff0ccdb7868895de7b740dbff249" },
+    { "name": "bshift-liblist.gam", "path": "goldsource/bshift-liblist.gam", "mountName": "bshift/liblist.gam", "size": 369, "sha256": "b4faacddb4334c1449772bcc30619a58c76f50ccf4a97d1682fbc5b055e5db0a" }
+  ]
+}

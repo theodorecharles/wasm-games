@@ -1,0 +1,1630 @@
+diff -Naur a/src/cgame/cg_character.c b/src/cgame/cg_character.c
+--- a/src/cgame/cg_character.c	2026-08-16 11:23:47.487266859 -0400
++++ b/src/cgame/cg_character.c	2026-08-16 11:23:47.488341922 -0400
+@@ -567,20 +567,30 @@
+ {
+ 	if (cent && cent->currentState.eType == ET_CORPSE)
+ 	{
+-		if (cent->currentState.onFireStart >= 0)
++		int ch = cent->currentState.onFireStart;
++
++		if (ch >= 0 && ch < MAX_CHARACTERS && cgs.gameCharacters[ch])
+ 		{
+-			return cgs.gameCharacters[cent->currentState.onFireStart];
++			return cgs.gameCharacters[ch];
+ 		}
+ 		else
+ 		{
+-			if (cent->currentState.modelindex < 4)
++			int team = cent->currentState.modelindex;
++			int cls  = cent->currentState.modelindex2;
++
++			if (team >= 4)
++			{
++				team -= 4;
++			}
++			if (team != TEAM_AXIS && team != TEAM_ALLIES)
+ 			{
+-				return BG_GetCharacter(cent->currentState.modelindex, cent->currentState.modelindex2);
++				team = TEAM_AXIS;
+ 			}
+-			else
++			if (cls < 0 || cls >= NUM_PLAYER_CLASSES)
+ 			{
+-				return BG_GetCharacter(cent->currentState.modelindex - 4, cent->currentState.modelindex2);
++				cls = 0;
+ 			}
++			return BG_GetCharacter(team, cls);
+ 		}
+ 	}
+ 
+@@ -589,6 +599,10 @@
+ 		int team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+ 		int cls  = (cent->currentState.powerups >> PW_OPS_CLASS_1) & 7;
+ 
++		if (cls < 0 || cls >= NUM_PLAYER_CLASSES)
++		{
++			cls = 0;
++		}
+ 		return BG_GetCharacter(team, cls);
+ 	}
+ 
+@@ -597,7 +611,20 @@
+ 		return ci->character;
+ 	}
+ 
+-	return BG_GetCharacter(ci->team, ci->cls);
++	{
++		int team = ci->team;
++		int cls  = ci->cls;
++
++		if (team != TEAM_AXIS && team != TEAM_ALLIES)
++		{
++			team = TEAM_AXIS;
++		}
++		if (cls < 0 || cls >= NUM_PLAYER_CLASSES)
++		{
++			cls = 0;
++		}
++		return BG_GetCharacter(team, cls);
++	}
+ }
+ 
+ /**
+@@ -608,6 +635,11 @@
+  */
+ bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps)
+ {
++	if (ps->clientNum < 0 || ps->clientNum >= MAX_CLIENTS)
++	{
++		return BG_GetCharacter(TEAM_AXIS, 0);
++	}
++
+ 	if (ps->powerups[PW_OPS_DISGUISED])
+ 	{
+ 		int team = cgs.clientinfo[ps->clientNum].team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+@@ -625,11 +657,28 @@
+ 		{
+ 			cls |= 4;
+ 		}
++		if (cls >= NUM_PLAYER_CLASSES)
++		{
++			cls = 0;
++		}
+ 
+ 		return BG_GetCharacter(team, cls);
+ 	}
+ 
+-	return BG_GetCharacter(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].cls);
++	{
++		int team = cgs.clientinfo[ps->clientNum].team;
++		int cls  = cgs.clientinfo[ps->clientNum].cls;
++
++		if (team != TEAM_AXIS && team != TEAM_ALLIES)
++		{
++			team = TEAM_AXIS;
++		}
++		if (cls < 0 || cls >= NUM_PLAYER_CLASSES)
++		{
++			cls = 0;
++		}
++		return BG_GetCharacter(team, cls);
++	}
+ }
+ 
+ /**
+diff -Naur a/src/cgame/cg_cvars.c b/src/cgame/cg_cvars.c
+--- a/src/cgame/cg_cvars.c	2026-08-16 11:23:47.440088256 -0400
++++ b/src/cgame/cg_cvars.c	2026-08-16 11:23:47.441249992 -0400
+@@ -67,8 +67,8 @@
+ vmCvar_t cg_brassTime;
+ vmCvar_t cg_letterbox;
+ vmCvar_t cg_drawGun;
+-vmCvar_t cg_rshook;
+ #ifdef __EMSCRIPTEN__
++vmCvar_t cg_aimbot;
+ vmCvar_t cg_etjsContainUi;
+ vmCvar_t cg_etjsArcade;
+ #endif
+@@ -346,8 +346,8 @@
+ {
+ 	{ &cg_autoswitch,                         "cg_autoswitch",                         "2",           CVAR_ARCHIVE,                 0 },
+ 	{ &cg_drawGun,                            "cg_drawGun",                            "1",           CVAR_ARCHIVE,                 0 },
+-	{ &cg_rshook,                             "cl_rshook",                             "0",           0,                            0 },
+ #ifdef __EMSCRIPTEN__
++	{ &cg_aimbot,                             "cl_aimbot",                             "0",           0,                            0 },
+ 	{ &cg_etjsContainUi,                      "etjs_containui",                        "1",           0,                            0 },
+ 	{ &cg_etjsArcade,                         "g_etjsArcade",                          "0",           0,                            0 },
+ #endif
+diff -Naur a/src/cgame/cg_cvars.h b/src/cgame/cg_cvars.h
+--- a/src/cgame/cg_cvars.h	2026-08-16 11:23:47.445848355 -0400
++++ b/src/cgame/cg_cvars.h	2026-08-16 11:23:47.447139282 -0400
+@@ -72,8 +72,8 @@
+ extern vmCvar_t cg_gun_y;
+ extern vmCvar_t cg_gun_z;
+ extern vmCvar_t cg_drawGun;
+-extern vmCvar_t cg_rshook;
+ #ifdef __EMSCRIPTEN__
++extern vmCvar_t cg_aimbot;
+ extern vmCvar_t cg_etjsArcade;
+ extern vmCvar_t cg_etjsContainUi;
+ #endif
+diff -Naur a/src/cgame/cg_draw.c b/src/cgame/cg_draw.c
+--- a/src/cgame/cg_draw.c	2026-08-16 11:23:47.451275629 -0400
++++ b/src/cgame/cg_draw.c	2026-08-16 11:23:47.452582547 -0400
+@@ -35,6 +35,9 @@
+  */
+ 
+ #include "cg_local.h"
++#ifdef __EMSCRIPTEN__
++#include "eth32nix.h"
++#endif
+ 
+ char *Binding_FromName(const char *cvar);
+ void Controls_GetConfig(void);
+@@ -3145,6 +3148,11 @@
+ 		return;
+ 	}
+ 
++	if (cg.snap->ps.clientNum < 0 || cg.snap->ps.clientNum >= MAX_CLIENTS)
++	{
++		return;
++	}
++
+ 	scale = CG_ComputeScale(comp);
+ 
+ 	lineHeight        = comp->location.h * 0.5f;
+@@ -3262,7 +3270,8 @@
+ 
+ 			CG_DrawPic(x + startClass, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+ 
+-			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
++			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0 &&
++			    cgs.clientinfo[cg.snap->ps.clientNum].rank < NUM_EXPERIENCE_LEVELS)
+ 			{
+ 				CG_DrawPic(x + startClass + startRank, y + heightIconsOffset, iconsSize, iconsSize, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+ 			}
+@@ -3296,7 +3305,8 @@
+ 
+ 		CG_DrawPic(x + startClass, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+ 
+-		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
++		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0 &&
++		    cgs.clientinfo[cg.snap->ps.clientNum].rank < NUM_EXPERIENCE_LEVELS)
+ 		{
+ 			int startRank;
+ 
+@@ -4364,6 +4374,10 @@
+ 		CG_Spawnpoints_Draw();
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	ETH32_Draw2D();
++#endif
++
+ 	// Info overlays
+ 	CG_DrawOverlays();
+ 
+@@ -4800,7 +4814,7 @@
+ void CG_DrawActive()
+ {
+ 	// optionally draw the info screen instead
+-	if (!cg.snap)
++	if (!cg.snap || (cg.snap->snapFlags & SNAPFLAG_NOT_ACTIVE))
+ 	{
+ 		CG_DrawInformation(qfalse);
+ 		return;
+diff -Naur a/src/cgame/cg_ents.c b/src/cgame/cg_ents.c
+--- a/src/cgame/cg_ents.c	2026-08-16 11:23:47.457024958 -0400
++++ b/src/cgame/cg_ents.c	2026-08-16 11:23:47.458254641 -0400
+@@ -1232,6 +1232,8 @@
+ }
+ 
+ #ifdef __EMSCRIPTEN__
++#include "eth32nix.h"
++
+ static qboolean ETJS_IsHookDeployable(const entityState_t *state)
+ {
+ 	return state->weapon == WP_LANDMINE || state->weapon == WP_DYNAMITE ||
+@@ -1242,7 +1244,7 @@
+ {
+ 	int localTeam;
+ 
+-	if (!cg_etjsArcade.integer || !cg_rshook.integer || !cg.snap || !ETJS_IsHookDeployable(state))
++	if (!ETH32_RevealDeployable(state) || !cg.snap || !ETJS_IsHookDeployable(state))
+ 	{
+ 		return qfalse;
+ 	}
+@@ -1616,6 +1618,7 @@
+ 		CG_AddRefEntityWithPowerups(&ent, s1->powerups, TEAM_FREE, s1, vec3_origin);
+ #ifdef __EMSCRIPTEN__
+ 		ETJS_AddDeployableHookShell(&ent, cent);
++		ETH32_ItemChams(&ent, cent);
+ #endif
+ 	}
+ 
+diff -Naur a/src/cgame/cg_loadpanel.c b/src/cgame/cg_loadpanel.c
+--- a/src/cgame/cg_loadpanel.c	2026-08-16 11:23:47.493113689 -0400
++++ b/src/cgame/cg_loadpanel.c	2026-08-16 11:23:47.494326150 -0400
+@@ -318,7 +318,9 @@
+ 		bg_mappic = 0;
+ 
+ 		BG_PanelButtonsSetup(loadpanelButtons);
++#ifndef __EMSCRIPTEN__
+ 		C_PanelButtonsSetup(loadpanelButtons, cgs.wideXoffset);
++#endif
+ 
+ 		bg_loadscreeninited = qtrue;
+ 	}
+@@ -510,7 +512,7 @@
+  */
+ void CG_LoadPanel_RenderCampaignTypeText(panel_button_t *button)
+ {
+-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s:", CG_LoadPanel_GameTypeName(cgs.gametype)), 0, 0, button->font->style, button->font->font);
++	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s:", CG_LoadPanel_GameTypeName(cgs.gametype)), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+ }
+ 
+ /**
+@@ -564,29 +566,29 @@
+ 		cs = DC->nameForCampaign();
+ 		if (!cs)
+ 		{
+-			return;
++			cs = (*cgs.rawmapname) ? cgs.rawmapname : "Campaign";
+ 		}
+-
+-		cs = va("%s %iof%i", cs, cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
+-
+-		scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cs));
+-
+-		w = CG_Text_Width_Ext(cs, button->font->scalex * scaleF, 0, button->font->font);
+-		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cs, 0, 0, 0, button->font->font);
+-
++		else
++		{
++			cs = va("%s %iof%i", cs, cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
++		}
++	}
++	else if (cgs.arenaInfoLoaded && cgs.arenaData.longname[0])
++	{
++		cs = cgs.arenaData.longname;
++	}
++	else if (cgs.rawmapname[0])
++	{
++		cs = cgs.rawmapname;
+ 	}
+ 	else
+ 	{
+-		if (!cgs.arenaInfoLoaded)
+-		{
+-			return;
+-		}
+-
+-		scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cgs.arenaData.longname)); // FIXME: up to 128 chars !
+-
+-		w = CG_Text_Width_Ext(cgs.arenaData.longname, button->font->scalex * scaleF, 0, button->font->font);
+-		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cgs.arenaData.longname, 0, 0, 0, button->font->font);
++		cs = "Loading";
+ 	}
++
++	scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cs));
++	w      = CG_Text_Width_Ext(cs, button->font->scalex * scaleF, 0, button->font->font);
++	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cs, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+ }
+ 
+ /**
+@@ -603,30 +605,23 @@
+ 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
+ 	{
+ 		cs = DC->descriptionForCampaign();
+-		if (!cs)
+-		{
+-			return;
+-		}
+-
+ 	}
+-	else if (cgs.gametype == GT_WOLF_LMS)
++	else if (cgs.gametype == GT_WOLF_LMS && cgs.arenaInfoLoaded)
+ 	{
+-		if (!cgs.arenaInfoLoaded)
+-		{
+-			return;
+-		}
+-
+ 		cs = cgs.arenaData.lmsdescription;
+ 	}
+-	else
++	else if (cgs.arenaInfoLoaded)
+ 	{
+-		if (!cgs.arenaInfoLoaded)
+-		{
+-			return;
+-		}
+-
+ 		cs = cgs.arenaData.description;
+ 	}
++	else
++	{
++		cs = NULL;
++	}
++	if (!cs || !cs[0])
++	{
++		cs = (*cgs.rawmapname) ? va("Loading %s...", cgs.rawmapname) : "Loading map...";
++	}
+ 
+ 	Q_strncpyz(buffer, cs, sizeof(buffer));
+ 	while ((s = strchr(buffer, '*')))
+@@ -644,7 +639,7 @@
+ 		if (*p == '\n')
+ 		{
+ 			*p++ = '\0';
+-			DC->drawTextExt(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, 0, button->font->font);
++			DC->drawTextExt(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+ 			y += 8;
+ 			s  = p;
+ 		}
+@@ -653,6 +648,10 @@
+ 			p++;
+ 		}
+ 	}
++	if (*s)
++	{
++		DC->drawTextExt(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
++	}
+ }
+ 
+ /**
+@@ -781,5 +780,7 @@
+  */
+ void CG_LoadPanel_LoadingBarText(panel_button_t *button)
+ {
+-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cg.infoScreenText, 0, 0, 0, button->font->font);
++	const char *status = cg.infoScreenText[0] ? cg.infoScreenText : "LOADING";
++
++	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, status, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+ }
+diff -Naur a/src/cgame/cg_main.c b/src/cgame/cg_main.c
+--- a/src/cgame/cg_main.c	2026-08-16 11:23:47.462865036 -0400
++++ b/src/cgame/cg_main.c	2026-08-16 11:23:47.464266421 -0400
+@@ -35,6 +35,9 @@
+ 
+ #include "cg_local.h"
+ #include "cg_cvars.h"
++#ifdef __EMSCRIPTEN__
++#include "eth32nix.h"
++#endif
+ 
+ displayContextDef_t cgDC;
+ 
+@@ -2455,6 +2458,9 @@
+ 	cgs.demoCamera.noclip    = qfalse;
+ 	cgs.currentMenuLevel     = ML_MAIN;
+ #endif
++#ifdef __EMSCRIPTEN__
++	ETH32_Init();
++#endif
+ }
+ 
+ /**
+diff -Naur a/src/cgame/cg_newDraw.c b/src/cgame/cg_newDraw.c
+--- a/src/cgame/cg_newDraw.c	2026-08-16 11:23:47.469125741 -0400
++++ b/src/cgame/cg_newDraw.c	2026-08-16 11:23:47.470346107 -0400
+@@ -33,6 +33,9 @@
+  */
+ 
+ #include "cg_local.h"
++#ifdef __EMSCRIPTEN__
++#include "eth32nix.h"
++#endif
+ 
+ /**
+  * @brief CG_TrimLeftPixels
+@@ -660,6 +663,12 @@
+  */
+ void CG_MouseEvent(int x, int y)
+ {
++#ifdef __EMSCRIPTEN__
++	if (ETH32_MouseEvent(x, y))
++	{
++		return;
++	}
++#endif
+ 	/* The debrief uses its own panel cursor while eventHandling remains NONE. */
+ 	if (cg.snap && cg.snap->ps.pm_type == PM_INTERMISSION)
+ 	{
+@@ -1046,6 +1055,12 @@
+ 
+ void CG_KeyEvent(int key, qboolean down)
+ {
++#ifdef __EMSCRIPTEN__
++	if (ETH32_KeyEvent(key, down))
++	{
++		return;
++	}
++#endif
+ 	switch (cgs.eventHandling)
+ 	{
+ 	// Demos get their own keys
+diff -Naur a/src/cgame/cg_players.c b/src/cgame/cg_players.c
+--- a/src/cgame/cg_players.c	2026-08-16 11:23:47.476299107 -0400
++++ b/src/cgame/cg_players.c	2026-08-16 11:23:47.477329867 -0400
+@@ -34,6 +34,9 @@
+  */
+ 
+ #include "cg_local.h"
++#ifdef __EMSCRIPTEN__
++#include "eth32nix.h"
++#endif
+ 
+ #define SWING_RIGHT 1.f
+ #define SWING_LEFT  2.f
+@@ -295,10 +298,18 @@
+ 	// class
+ 	v           = Info_ValueForKey(configstring, "c");
+ 	newInfo.cls = Q_atoi(v);
++	if (newInfo.cls < 0 || newInfo.cls >= NUM_PLAYER_CLASSES)
++	{
++		newInfo.cls = 0;
++	}
+ 
+ 	// latched class
+ 	v                  = Info_ValueForKey(configstring, "lc");
+ 	newInfo.latchedcls = Q_atoi(v);
++	if (newInfo.latchedcls < 0 || newInfo.latchedcls >= NUM_PLAYER_CLASSES)
++	{
++		newInfo.latchedcls = 0;
++	}
+ 
+ 	if (CG_IsDemoVersionBelow(2, 85, 0))
+ 	{
+@@ -312,6 +323,10 @@
+ 	// rank
+ 	v            = Info_ValueForKey(configstring, "r");
+ 	newInfo.rank = Q_atoi(v);
++	if (newInfo.rank < 0 || newInfo.rank >= NUM_EXPERIENCE_LEVELS)
++	{
++		newInfo.rank = 0;
++	}
+ 
+ 	// fireteam
+ 	v                = Info_ValueForKey(configstring, "f");
+@@ -335,7 +350,12 @@
+ 	v = Info_ValueForKey(configstring, "ch");
+ 	if (*v)
+ 	{
+-		newInfo.character = cgs.gameCharacters[atoi(v)];
++		int ch = Q_atoi(v);
++
++		if (ch >= 0 && ch < MAX_CHARACTERS)
++		{
++			newInfo.character = cgs.gameCharacters[ch];
++		}
+ 	}
+ 
+ 	v = Info_ValueForKey(configstring, "s");
+@@ -354,9 +374,13 @@
+ 		}
+ 	}
+ 
+-	// disguise clientNum
++	// disguise clientNum — server writes -1 when the player is not disguised
+ 	v                         = Info_ValueForKey(configstring, "dn");
+-	newInfo.disguiseClientNum = Q_atoi(v);
++	newInfo.disguiseClientNum = *v ? Q_atoi(v) : -1;
++	if (newInfo.disguiseClientNum < -1 || newInfo.disguiseClientNum >= MAX_CLIENTS)
++	{
++		newInfo.disguiseClientNum = -1;
++	}
+ 
+ 	// weapon and latchedweapon ( FIXME: make these more secure )
+ 	v              = Info_ValueForKey(configstring, "w");
+@@ -1204,20 +1228,29 @@
+ 
+ 	bg_character_t *character;
+ 
+-	if (cent->currentState.onFireStart >= 0)
++	if (cent->currentState.onFireStart >= 0 &&
++	    cent->currentState.onFireStart < MAX_CHARACTERS)
+ 	{
+ 		character = cgs.gameCharacters[cent->currentState.onFireStart];
+ 	}
+ 	else
+ 	{
+-		if (cent->currentState.modelindex < 4)
++		int team = cent->currentState.modelindex;
++		int cls  = cent->currentState.modelindex2;
++
++		if (team >= 4)
+ 		{
+-			character = BG_GetCharacter(cent->currentState.modelindex, cent->currentState.modelindex2);
++			team -= 4;
+ 		}
+-		else
++		if (team != TEAM_AXIS && team != TEAM_ALLIES)
++		{
++			team = TEAM_AXIS;
++		}
++		if (cls < 0 || cls >= NUM_PLAYER_CLASSES)
+ 		{
+-			character = BG_GetCharacter(cent->currentState.modelindex - 4, cent->currentState.modelindex2);
++			cls = 0;
+ 		}
++		character = BG_GetCharacter(team, cls);
+ 	}
+ 
+ 	if (!character)
+@@ -2387,18 +2420,18 @@
+ 		else // !sameTeam
+ 		{
+ 			if (cg_fireteamSprites.integer
+-			    && cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
+-			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
+-			    && CG_IsOnSameFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum, cg.clientNum)
+-			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)->membersNumber > 1) // don't display FT icon with only 1 member in FT
++			    && ci->disguiseClientNum >= 0 && ci->disguiseClientNum < MAX_CLIENTS
++			    && CG_IsOnFireteam(ci->disguiseClientNum)
++			    && CG_IsOnSameFireteam(ci->disguiseClientNum, cg.clientNum)
++			    && CG_IsOnFireteam(ci->disguiseClientNum)->membersNumber > 1) // don't display FT icon with only 1 member in FT
+ 			{
+ 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
+-				                     cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected
++				                     cgs.clientinfo[ci->disguiseClientNum].selected
+ 				                         ? cgs.fireteamSpritesColorSelected : cgs.fireteamSpritesColor);
+ 			}
+ 
+ 			// shoutcasters see undercover enemies
+-			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1 && cgs.clientinfo[cg.clientNum].shoutcaster)
++			if (ci->disguiseClientNum >= 0 && ci->disguiseClientNum < MAX_CLIENTS && cgs.clientinfo[cg.clientNum].shoutcaster)
+ 			{
+ 				CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++, NULL);
+ 			}
+@@ -2710,53 +2743,11 @@
+ 	trap_R_AddRefEntityToScene(ent);
+ 
+ #ifdef __EMSCRIPTEN__
+-	if (cg_etjsArcade.integer && cg_rshook.integer
+-	    && es->eType == ET_PLAYER
+-	    && cg.snap
+-	    && es->number != cg.snap->ps.clientNum
+-	    && !(es->eFlags & EF_DEAD)
+-	    && (cg.snap->ps.teamNum == TEAM_SPECTATOR ||
+-	        ((es->teamNum == TEAM_AXIS || es->teamNum == TEAM_ALLIES)
+-	         ? es->teamNum != cg.snap->ps.teamNum
+-	         : team != cg.snap->ps.teamNum))
+-	    && cgs.media.shoutcastLandmineShader)
+-	{
+-		refEntity_t glow = *ent;
+-		trace_t       trace;
+-		vec3_t        tracePoint;
+-		qboolean      visible;
+-
+-		VectorCopy(cg_entities[es->number].lerpOrigin, tracePoint);
+-		tracePoint[2] += (es->eFlags & EF_PRONE) ? 18.f : ((es->eFlags & EF_CROUCHING) ? 28.f : 40.f);
+-		CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, tracePoint,
+-		         cg.snap->ps.clientNum, CONTENTS_SOLID);
+-		visible = trace.fraction > 0.98f;
+-
+-		glow.renderfx    |= RF_NOSHADOW;
+-		glow.customSkin   = 0;
+-		/* ETL's shoutcast shell is a translucent, slightly expanded
+-		 * environment-mapped construction texture with tcMod scroll.  It gives
+-		 * the moving liquid/weapon-shine layer the hook originally intended. */
+-		glow.customShader = cgs.media.shoutcastLandmineShader;
+-		if (visible)
+-		{
+-			/* Blue: directly visible enemy, depth-tested against the world. */
+-			glow.renderfx      &= ~RF_DEPTHHACK;
+-			glow.shaderRGBA[0]  = 48;
+-			glow.shaderRGBA[1]  = 128;
+-			glow.shaderRGBA[2]  = 255;
+-		}
+-		else
+-		{
+-			/* Red: world-occluded enemy, pulled forward for the wall silhouette. */
+-			glow.renderfx      |= RF_DEPTHHACK;
+-			glow.shaderRGBA[0]  = 255;
+-			glow.shaderRGBA[1]  = 48;
+-			glow.shaderRGBA[2]  = 48;
+-		}
+-		glow.shaderRGBA[3] = 210;
+-		trap_R_AddRefEntityToScene(&glow);
++	if (es->eType == ET_PLAYER)
++	{
++		ETH32_CaptureHead(es->number, ent);
+ 	}
++	ETH32_PlayerChams(ent, es, team);
+ #endif
+ 
+ 	if (onFire)
+@@ -3265,10 +3256,12 @@
+ 		CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
+ 	}
+ 
+-	// adjust rank for disguised player
+-	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
++	// adjust rank for disguised player. Never index clientinfo[] with the
++	// entity number — corpses reuse this path and number is >= MAX_CLIENTS.
++	if ((cent->currentState.powerups & (1 << PW_OPS_DISGUISED)) &&
++	    ci->disguiseClientNum >= 0 && ci->disguiseClientNum < MAX_CLIENTS)
+ 	{
+-		rank = cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].rank;
++		rank = cgs.clientinfo[ci->disguiseClientNum].rank;
+ 		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+ 	}
+ 	else
+@@ -3312,7 +3305,7 @@
+ 				}
+ 				if (i == ACC_RANK)
+ 				{
+-					if (rank <= 0)
++					if (rank <= 0 || rank >= NUM_EXPERIENCE_LEVELS)
+ 					{
+ 						continue;
+ 					}
+@@ -3487,27 +3480,24 @@
+  */
+ qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation)
+ {
+-	clientInfo_t *ci;
+-	centity_t    *cent;
+-	refEntity_t  *refent;
+-	vec3_t       tempAxis[3];
+-	vec3_t       org;
+-	int          i;
++	centity_t   *cent;
++	refEntity_t *refent;
++	vec3_t      tempAxis[3];
++	vec3_t      org;
++	int         i;
+ 
+ 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+ 	{
+ 		return qfalse;
+ 	}
+ 
+-	ci = &cgs.clientinfo[clientNum];
+-
+ 	if (cg.snap && clientNum == cg.snap->ps.clientNum && cg.renderingThirdPerson)
+ 	{
+ 		cent = &cg.predictedPlayerEntity;
+ 	}
+ 	else
+ 	{
+-		cent = &cg_entities[ci->clientNum];
++		cent = &cg_entities[clientNum];
+ 		if (!cent->currentValid)
+ 		{
+ 			return qfalse;      // not currently in PVS
+@@ -3546,12 +3536,16 @@
+  */
+ qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *orientation)
+ {
+-	clientInfo_t *ci = &cgs.clientinfo[clientNum];
+-	centity_t    *cent;
+-	refEntity_t  *refent;
+-	vec3_t       tempAxis[3];
+-	vec3_t       org;
+-	int          i;
++	centity_t   *cent;
++	refEntity_t *refent;
++	vec3_t      tempAxis[3];
++	vec3_t      org;
++	int         i;
++
++	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
++	{
++		return qfalse;
++	}
+ 
+ 	if (cg.snap && clientNum == cg.snap->ps.clientNum && cg.renderingThirdPerson)
+ 	{
+@@ -3559,7 +3553,7 @@
+ 	}
+ 	else
+ 	{
+-		cent = &cg_entities[ci->clientNum];
++		cent = &cg_entities[clientNum];
+ 		if (!cent->currentValid)
+ 		{
+ 			return qfalse;      // not currently in PVS
+diff -Naur a/src/cgame/cg_view.c b/src/cgame/cg_view.c
+--- a/src/cgame/cg_view.c	2026-08-16 11:23:47.481658684 -0400
++++ b/src/cgame/cg_view.c	2026-08-16 11:23:47.483095145 -0400
+@@ -34,6 +34,9 @@
+  */
+ 
+ #include "cg_local.h"
++#ifdef __EMSCRIPTEN__
++#include "eth32nix.h"
++#endif
+ 
+ #ifdef __EMSCRIPTEN__
+ /* Dead-camera input must remain independent of the predicted player state.
+@@ -2527,6 +2530,7 @@
+ }
+ 
+ #ifdef __EMSCRIPTEN__
++#if 0 /* superseded by compiled-in ETH32NIX */
+ /**
+  * Return a sane, slightly-low head target for the ETJS assist.  Head tags are
+  * generated while drawing a model, so never trust one without also checking
+@@ -2573,6 +2577,357 @@
+ 	CG_Trace(&trace, from, NULL, NULL, aimPoint, cg.clientNum, MASK_SHOT);
+ 	return trace.fraction > 0.98f || trace.entityNum == clientNum;
+ }
++
++/*
++ * CCHookReloaded aimbot (arcade /cchook), ported off the published source
++ * without the injector: hitscan only, head box then body box, screen-distance
++ * ranking, sticky target while attack is held.
++ */
++#define ETJS_CCHOOK_HEAD_STEP 0.5f
++#define ETJS_CCHOOK_BODY_STEP 0.3f
++
++static qboolean ETJS_CcHookHitscan(int weapon)
++{
++	switch (weapon)
++	{
++	case WP_KNIFE:
++	case WP_KNIFE_KABAR:
++	case WP_LUGER:
++	case WP_COLT:
++	case WP_SILENCER:
++	case WP_SILENCED_COLT:
++	case WP_AKIMBO_COLT:
++	case WP_AKIMBO_LUGER:
++	case WP_AKIMBO_SILENCEDCOLT:
++	case WP_AKIMBO_SILENCEDLUGER:
++	case WP_MP40:
++	case WP_THOMPSON:
++	case WP_STEN:
++	case WP_MP34:
++	case WP_KAR98:
++	case WP_CARBINE:
++	case WP_GARAND:
++	case WP_GARAND_SCOPE:
++	case WP_K43:
++	case WP_K43_SCOPE:
++	case WP_FG42:
++	case WP_FG42_SCOPE:
++	case WP_MOBILE_MG42:
++	case WP_MOBILE_MG42_SET:
++	case WP_MOBILE_BROWNING:
++	case WP_MOBILE_BROWNING_SET:
++		return qtrue;
++	default:
++		return qfalse;
++	}
++}
++
++static qboolean ETJS_CcHookPointVisible(const vec3_t from, const vec3_t pt, int skip)
++{
++	trace_t tr;
++
++	CG_Trace(&tr, from, NULL, NULL, pt, cg.clientNum, MASK_SHOT);
++	return tr.fraction > 0.98f || tr.entityNum == skip;
++}
++
++static qboolean ETJS_CcHookBoxVisible(const vec3_t from, const vec3_t mins, const vec3_t maxs,
++                                      float step, vec3_t visOut, int skip)
++{
++	vec3_t boxSize, scaledMins, scaledMaxs, mid;
++	vec3_t corners[8];
++	float  sd;
++	int    i;
++
++	VectorAdd(mins, maxs, visOut);
++	VectorScale(visOut, 0.5f, visOut);
++	if (ETJS_CcHookPointVisible(from, visOut, skip))
++	{
++		return qtrue;
++	}
++
++	boxSize[0] = Q_fabs(maxs[0] - mins[0]);
++	boxSize[1] = Q_fabs(maxs[1] - mins[1]);
++	boxSize[2] = Q_fabs(maxs[2] - mins[2]);
++
++	for (sd = step; sd < 0.99f; sd += step)
++	{
++		VectorScale(boxSize, -sd * 0.5f, scaledMins);
++		VectorScale(boxSize, sd * 0.5f, scaledMaxs);
++		VectorAdd(scaledMins, visOut, scaledMins);
++		VectorAdd(scaledMaxs, visOut, scaledMaxs);
++
++		VectorSet(corners[0], scaledMaxs[0], scaledMaxs[1], scaledMaxs[2]);
++		VectorSet(corners[1], scaledMaxs[0], scaledMaxs[1], scaledMins[2]);
++		VectorSet(corners[2], scaledMins[0], scaledMaxs[1], scaledMins[2]);
++		VectorSet(corners[3], scaledMins[0], scaledMaxs[1], scaledMaxs[2]);
++		VectorSet(corners[4], scaledMaxs[0], scaledMins[1], scaledMaxs[2]);
++		VectorSet(corners[5], scaledMaxs[0], scaledMins[1], scaledMins[2]);
++		VectorSet(corners[6], scaledMins[0], scaledMins[1], scaledMins[2]);
++		VectorSet(corners[7], scaledMins[0], scaledMins[1], scaledMaxs[2]);
++
++		for (i = 0; i < 7; i++)
++		{
++			VectorAdd(corners[i], corners[i + 1], mid);
++			VectorScale(mid, 0.5f, mid);
++			if (ETJS_CcHookPointVisible(from, mid, skip))
++			{
++				VectorCopy(mid, visOut);
++				return qtrue;
++			}
++		}
++		for (i = 0; i < 8; i++)
++		{
++			if (ETJS_CcHookPointVisible(from, corners[i], skip))
++			{
++				VectorCopy(corners[i], visOut);
++				return qtrue;
++			}
++		}
++	}
++
++	return qfalse;
++}
++
++static qboolean ETJS_CcHookWorldToScreen(const vec3_t point, float *x, float *y)
++{
++	vec3_t trans;
++	float  z, px, py;
++
++	VectorSubtract(point, cg.refdef.vieworg, trans);
++	z = DotProduct(trans, cg.refdef.viewaxis[0]);
++	if (z <= 8.f)
++	{
++		return qfalse;
++	}
++
++	px = tan((double)cg.refdef.fov_x * M_PI / 360.0);
++	py = tan((double)cg.refdef.fov_y * M_PI / 360.0);
++	if (px == 0.f || py == 0.f)
++	{
++		return qfalse;
++	}
++
++	*x = 320.f - DotProduct(trans, cg.refdef.viewaxis[1]) * 320.f / (z * px);
++	*y = 240.f - DotProduct(trans, cg.refdef.viewaxis[2]) * 240.f / (z * py);
++	return qtrue;
++}
++
++static void ETJS_CcHookHeadOffset(const centity_t *cent, vec3_t offset)
++{
++	qboolean moving = VectorLengthSquared(cent->currentState.pos.trDelta) > 1.f;
++
++	/* ET: Legacy head hitbox from CCHookReloaded. */
++	if (cent->currentState.eFlags & (EF_PRONE | EF_PRONE_MOVING))
++	{
++		VectorSet(offset, 0.0f, 0.3f, 6.9f);
++	}
++	else if (cent->currentState.eFlags & EF_CROUCHING)
++	{
++		if (moving)
++		{
++			VectorSet(offset, 0.0f, -0.7f, 7.0f);
++		}
++		else
++		{
++			VectorSet(offset, -0.3f, 0.8f, 7.0f);
++		}
++	}
++	else if (moving)
++	{
++		VectorSet(offset, 0.0f, 0.0f, 6.5f);
++	}
++	else
++	{
++		VectorSet(offset, 0.3f, 0.3f, 7.0f);
++	}
++}
++
++static qboolean ETJS_CcHookEnemy(int clientNum, int localTeam, int enemyTeam)
++{
++	centity_t *cent = &cg_entities[clientNum];
++
++	if (clientNum == cg.clientNum || !cgs.clientinfo[clientNum].infoValid)
++	{
++		return qfalse;
++	}
++	if (!cent->currentValid || cent->currentState.eType != ET_PLAYER ||
++	    (cent->currentState.eFlags & EF_DEAD))
++	{
++		return qfalse;
++	}
++	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
++	{
++		return qfalse;
++	}
++	if (enemyTeam == TEAM_FREE ||
++	    (cent->currentState.teamNum != enemyTeam &&
++	     cgs.clientinfo[clientNum].team != enemyTeam) ||
++	    cent->currentState.teamNum == localTeam ||
++	    cgs.clientinfo[clientNum].team == localTeam)
++	{
++		return qfalse;
++	}
++	return qtrue;
++}
++
++static qboolean ETJS_CcHookGetAimPos(int clientNum, qboolean head, const vec3_t from, vec3_t aimPos)
++{
++	centity_t    *cent = &cg_entities[clientNum];
++	orientation_t tag;
++	vec3_t        offset, mins, maxs, origin;
++	vec3_t        tagDelta;
++	qboolean      haveTag = qfalse;
++
++	if (CG_GetTag(clientNum, "tag_head", &tag))
++	{
++		haveTag = qtrue;
++	}
++	else if (cent->pe.headRefEnt.hModel)
++	{
++		VectorCopy(cent->pe.headRefEnt.origin, tag.origin);
++		AxisCopy(cent->pe.headRefEnt.axis, tag.axis);
++		VectorSubtract(tag.origin, cent->lerpOrigin, tagDelta);
++		haveTag = VectorLengthSquared(tagDelta) <= Square(128.f);
++	}
++
++	if (head)
++	{
++		if (!haveTag)
++		{
++			return qfalse;
++		}
++
++		ETJS_CcHookHeadOffset(cent, offset);
++		VectorCopy(tag.origin, origin);
++		VectorMA(origin, offset[0], tag.axis[0], origin);
++		VectorMA(origin, offset[1], tag.axis[1], origin);
++		VectorMA(origin, offset[2], tag.axis[2], origin);
++
++		VectorSet(mins, -5.5f, -5.5f, -6.0f);
++		VectorSet(maxs, 5.5f, 5.5f, 6.0f);
++		VectorAdd(mins, origin, mins);
++		VectorAdd(maxs, origin, maxs);
++		return ETJS_CcHookBoxVisible(from, mins, maxs, ETJS_CCHOOK_HEAD_STEP, aimPos, clientNum);
++	}
++
++	VectorCopy(cent->lerpOrigin, origin);
++	VectorSet(mins, -18.f, -18.f, -24.f);
++	VectorSet(maxs, 18.f, 18.f, 48.f);
++	VectorAdd(mins, origin, mins);
++	VectorAdd(maxs, origin, maxs);
++	return ETJS_CcHookBoxVisible(from, mins, maxs, ETJS_CCHOOK_BODY_STEP, aimPos, clientNum);
++}
++
++static int ETJS_CcHookPickTarget(const vec3_t from, int localTeam, int enemyTeam, qboolean head, vec3_t aimPos)
++{
++	int    i, best = -1;
++	float  bestDist = 1e30f;
++	vec3_t localAim;
++	float  x, y, dist;
++
++	for (i = 0; i < MAX_CLIENTS; i++)
++	{
++		if (!ETJS_CcHookEnemy(i, localTeam, enemyTeam))
++		{
++			continue;
++		}
++		if (!ETJS_CcHookGetAimPos(i, head, from, localAim))
++		{
++			continue;
++		}
++		if (!ETJS_CcHookWorldToScreen(localAim, &x, &y))
++		{
++			continue;
++		}
++
++		dist = sqrt((x - 320.f) * (x - 320.f) + (y - 240.f) * (y - 240.f));
++		if (best >= 0 && dist >= bestDist)
++		{
++			continue;
++		}
++		best     = i;
++		bestDist = dist;
++		VectorCopy(localAim, aimPos);
++	}
++
++	return best;
++}
++
++static qboolean ETJS_ApplyHookAim(const vec3_t shooterOrigin, const vec3_t aimPoint, int target, qboolean snapLimit)
++{
++	vec3_t to, ang;
++	int    rawYaw, rawPitch;
++
++	VectorSubtract(aimPoint, shooterOrigin, to);
++	vectoangles(to, ang);
++	if (Q_fabs(AngleNormalize180(ang[PITCH])) > 70.f)
++	{
++		return qfalse;
++	}
++	if (snapLimit &&
++	    Q_fabs(AngleDelta(ang[PITCH], cg.predictedPlayerState.viewangles[PITCH])) > 45.f)
++	{
++		return qfalse;
++	}
++
++	rawYaw   = ANGLE2SHORT(ang[YAW]) - cg.predictedPlayerState.delta_angles[YAW];
++	rawPitch = ANGLE2SHORT(ang[PITCH]) - cg.predictedPlayerState.delta_angles[PITCH];
++	trap_Cvar_Set("etjs_addyaw", va("%f", SHORT2ANGLE(rawYaw)));
++	trap_Cvar_Set("etjs_addpitch", va("%f", SHORT2ANGLE(rawPitch)));
++	trap_Cvar_Set("etjs_aimworldpitch", va("%f", AngleNormalize180(ang[PITCH])));
++	trap_Cvar_Set("etjs_target", va("%d", target));
++	cg.predictedPlayerState.viewangles[YAW]   = ang[YAW];
++	cg.predictedPlayerState.viewangles[PITCH] = ang[PITCH];
++	return qtrue;
++}
++
++static void ETJS_CcHookAim(const vec3_t shooterOrigin)
++{
++	static int etjsCcHookTarget = -1;
++	int        localTeam = cg.snap->ps.teamNum;
++	int        enemyTeam;
++	int        target;
++	vec3_t     aimPoint;
++	qboolean   valid = qfalse;
++
++	if (localTeam != TEAM_AXIS && localTeam != TEAM_ALLIES)
++	{
++		localTeam = cgs.clientinfo[cg.clientNum].team;
++	}
++	enemyTeam = (localTeam == TEAM_AXIS) ? TEAM_ALLIES
++	            : ((localTeam == TEAM_ALLIES) ? TEAM_AXIS : TEAM_FREE);
++
++	if (etjsCcHookTarget >= 0)
++	{
++		if (ETJS_CcHookEnemy(etjsCcHookTarget, localTeam, enemyTeam) &&
++		    (ETJS_CcHookGetAimPos(etjsCcHookTarget, qtrue, shooterOrigin, aimPoint) ||
++		     ETJS_CcHookGetAimPos(etjsCcHookTarget, qfalse, shooterOrigin, aimPoint)))
++		{
++			valid  = qtrue;
++			target = etjsCcHookTarget;
++		}
++	}
++
++	if (!valid)
++	{
++		target = ETJS_CcHookPickTarget(shooterOrigin, localTeam, enemyTeam, qtrue, aimPoint);
++		if (target < 0)
++		{
++			target = ETJS_CcHookPickTarget(shooterOrigin, localTeam, enemyTeam, qfalse, aimPoint);
++		}
++		valid = target >= 0;
++	}
++
++	if (valid && ETJS_ApplyHookAim(shooterOrigin, aimPoint, target, qfalse))
++	{
++		etjsCcHookTarget = target;
++	}
++	else
++	{
++		etjsCcHookTarget = -1;
++	}
++}
++#endif /* superseded by compiled-in ETH32NIX */
+ #endif
+ 
+ /**
+@@ -2649,11 +3004,7 @@
+ 	// pacifier, don't even try to read snapshots
+ 	if (cg.infoScreenText[0] != 0)
+ 	{
+-#ifdef __EMSCRIPTEN__
+-		CG_DrawActive();
+-#else
+ 		CG_DrawInformation(qfalse);
+-#endif
+ 		return;
+ 	}
+ 
+@@ -2704,10 +3055,8 @@
+ 			CG_DPrintf("ETJS frame %d waiting for snap (%p flags=%d)\n",
+ 			          etjsFrameLog, (void *)cg.snap, cg.snap ? cg.snap->snapFlags : -1);
+ 		}
+-		CG_DrawActive();
+-#else
+-		CG_DrawInformation(qfalse);
+ #endif
++		CG_DrawInformation(qfalse);
+ 		return;
+ 	}
+ 
+@@ -2816,108 +3165,7 @@
+ 			/* Invalidate every frame before CL_FinishMove consumes the result.
+ 			 * This also prevents attack-to-tap-out while dead from reusing aim. */
+ 			trap_Cvar_Set("etjs_target", "-1");
+-			if (cg_etjsArcade.integer && cg_rshook.integer && (ucmd.buttons & BUTTON_ATTACK) && cg.snap
+-			    && cg.predictedPlayerState.pm_type == PM_NORMAL
+-			    && cg.predictedPlayerState.stats[STAT_HEALTH] > 0)
+-			{
+-				int      i, best = -1;
+-				float    bestScore = 1e30f;
+-				vec3_t   fwd, to, ang, aimPoint, shooterOrigin;
+-				int      localTeam = cg.snap->ps.teamNum;
+-				int      enemyTeam;
+-
+-				if (localTeam != TEAM_AXIS && localTeam != TEAM_ALLIES)
+-				{
+-					localTeam = cgs.clientinfo[cg.clientNum].team;
+-				}
+-				enemyTeam = (localTeam == TEAM_AXIS) ? TEAM_ALLIES
+-				            : ((localTeam == TEAM_ALLIES) ? TEAM_AXIS : TEAM_FREE);
+-
+-				AngleVectors(cg.predictedPlayerState.viewangles, fwd, NULL, NULL);
+-				VectorCopy(cg.predictedPlayerState.origin, shooterOrigin);
+-				shooterOrigin[2] += cg.predictedPlayerState.viewheight;
+-				for (i = 0; i < MAX_CLIENTS; i++)
+-				{
+-					centity_t *cent = &cg_entities[i];
+-					float     d, len, score;
+-
+-					if (i == cg.clientNum || !cgs.clientinfo[i].infoValid)
+-					{
+-						continue;
+-					}
+-					if (!ETJS_RsAimPoint(i, aimPoint))
+-					{
+-						continue;
+-					}
+-					/* Require a positively identified enemy from both live entity and
+-					 * client metadata where available. Never infer enemy from "not self". */
+-					if (enemyTeam == TEAM_FREE ||
+-					    (cent->currentState.teamNum != enemyTeam &&
+-					     cgs.clientinfo[i].team != enemyTeam) ||
+-					    cent->currentState.teamNum == localTeam ||
+-					    cgs.clientinfo[i].team == localTeam)
+-					{
+-						continue;
+-					}
+-
+-					VectorSubtract(aimPoint, shooterOrigin, to);
+-					len    = VectorNormalize(to);
+-					if (len < 8.f || len > 32768.f || Q_fabs(to[2]) > 0.94f)
+-					{
+-						continue;
+-					}
+-					d = DotProduct(fwd, to);
+-					if (d < 0.55f)
+-					{
+-						continue;
+-					}
+-
+-					/* Never acquire through world geometry.  Treat visibility as a
+-					 * hard safety condition instead of a score preference. */
+-					if (!ETJS_RsTargetVisible(i, shooterOrigin, aimPoint))
+-					{
+-						continue;
+-					}
+-
+-					/* Distance is primary while angular error breaks close calls. */
+-					score = len / (0.35f + d * d);
+-					if (score < bestScore)
+-					{
+-						bestScore = score;
+-						best      = i;
+-					}
+-				}
+-				if (best >= 0)
+-				{
+-					int rawYaw, rawPitch;
+-
+-					if (ETJS_RsAimPoint(best, aimPoint))
+-					{
+-						VectorSubtract(aimPoint, shooterOrigin, to);
+-						vectoangles(to, ang);
+-						/* Reject malformed/stale transforms at the last possible point.
+-						 * Keep both the absolute pitch and the one-frame vertical turn well
+-						 * away from a straight-up/down camera snap. */
+-						if (Q_fabs(AngleNormalize180(ang[PITCH])) <= 70.f
+-						    && Q_fabs(AngleDelta(ang[PITCH],
+-						                         cg.predictedPlayerState.viewangles[PITCH])) <= 45.f)
+-						{
+-							/* CL_FinishMove writes raw usercmd angles; pmove adds the
+-							 * server delta_angles. Convert the desired world aim back to
+-							 * command space so the shot and rendered crosshair coincide. */
+-							rawYaw = ANGLE2SHORT(ang[YAW]) - cg.predictedPlayerState.delta_angles[YAW];
+-							rawPitch = ANGLE2SHORT(ang[PITCH]) - cg.predictedPlayerState.delta_angles[PITCH];
+-							trap_Cvar_Set("etjs_addyaw", va("%f", SHORT2ANGLE(rawYaw)));
+-							trap_Cvar_Set("etjs_addpitch", va("%f", SHORT2ANGLE(rawPitch)));
+-							trap_Cvar_Set("etjs_aimworldpitch",
+-							              va("%f", AngleNormalize180(ang[PITCH])));
+-							trap_Cvar_Set("etjs_target", va("%d", best));
+-							cg.predictedPlayerState.viewangles[YAW]   = ang[YAW];
+-							cg.predictedPlayerState.viewangles[PITCH] = ang[PITCH];
+-						}
+-					}
+-				}
+-			}
++			ETH32_AimFrame();
+ 		}
+ 	}
+ #endif
+diff -Naur a/src/client/cl_input.c b/src/client/cl_input.c
+--- a/src/client/cl_input.c	2026-08-16 11:23:47.498864871 -0400
++++ b/src/client/cl_input.c	2026-08-16 11:23:47.500145369 -0400
+@@ -732,6 +732,15 @@
+ {
+ 	int movespeed;
+ 	int forward = 0, side = 0, up = 0;
++#ifdef __EMSCRIPTEN__
++	if (Cvar_VariableIntegerValue("cl_aimbotmenu"))
++	{
++		cmd->forwardmove = 0;
++		cmd->rightmove   = 0;
++		cmd->upmove      = 0;
++		return;
++	}
++#endif
+ 
+ 	// adjust for speed key / running
+ 	// the walking flag is to keep animations consistant
+@@ -997,6 +1006,14 @@
+ 	float accelSensitivity;
+ 	float rate;
+ 	float deltaStrafeSensitivity;
++#ifdef __EMSCRIPTEN__
++	if (Cvar_VariableIntegerValue("cl_aimbotmenu"))
++	{
++		cl.mouseDx[0] = cl.mouseDx[1] = 0;
++		cl.mouseDy[0] = cl.mouseDy[1] = 0;
++		return;
++	}
++#endif
+ 
+ 	// allow mouse smoothing
+ 	if (m_filter->integer)
+@@ -1088,8 +1105,18 @@
+ 	/* In browser builds, do not set BUTTON_TALK from leftover catchers.
+ 	 * Leftover CGAME state after limbo made pmove zero movement. Drop only
+ 	 * that leftover — do not clear
+-	 * KEYCATCH_UI or Escape / the in-game menu can never stay up. */
+-	if (cls.state == CA_ACTIVE && !(cls.keyCatchers & KEYCATCH_CONSOLE))
++	 * KEYCATCH_UI or Escape / the in-game menu can never stay up.
++	 * The ETH32 settings overlay keeps KEYCATCH_CGAME on purpose so the
++	 * stock menu stays down while the browser cursor and clicks reach it. */
++	if (Cvar_VariableIntegerValue("cl_aimbotmenu"))
++	{
++		cls.keyCatchers |= KEYCATCH_CGAME;
++		if (!cl_bypassMouseInput->integer)
++		{
++			cmd->buttons |= BUTTON_TALK;
++		}
++	}
++	else if (cls.state == CA_ACTIVE && !(cls.keyCatchers & KEYCATCH_CONSOLE))
+ 	{
+ 		if (!Cvar_VariableIntegerValue("etjs_limbo")
+ 		    && !Cvar_VariableIntegerValue("etjs_intermission"))
+@@ -1153,9 +1180,19 @@
+ 	}
+ #ifdef __EMSCRIPTEN__
+ 	if (Cvar_VariableIntegerValue("g_etjsArcade") &&
+-	    Cvar_VariableIntegerValue("cl_rshook") &&
++	    Cvar_VariableIntegerValue("cl_aimbot") &&
++	    !Cvar_VariableIntegerValue("cl_aimbotmenu") &&
++	    Cvar_VariableIntegerValue("etjs_autofire"))
++	{
++		cmd->buttons |= BUTTON_ATTACK;
++	}
++	if (Cvar_VariableIntegerValue("g_etjsArcade") &&
++	    Cvar_VariableIntegerValue("cl_aimbot") &&
++	    !Cvar_VariableIntegerValue("cl_aimbotmenu") &&
+ 	    Cvar_VariableIntegerValue("etjs_target") >= 0 &&
+-	    (cmd->buttons & BUTTON_ATTACK))
++	    ((cmd->buttons & BUTTON_ATTACK) ||
++	     Cvar_VariableIntegerValue("etjs_autofire") ||
++	     Cvar_VariableIntegerValue("etjs_aimlock")))
+ 	{
+ 		float y          = AngleNormalize180(Cvar_VariableValue("etjs_addyaw"));
+ 		float p          = AngleNormalize180(Cvar_VariableValue("etjs_addpitch"));
+@@ -1859,6 +1896,12 @@
+ void ETJS_SetMove(int forward, int right, int up)
+ {
+ 	static int moveLog;
++	if (Cvar_VariableIntegerValue("cl_aimbotmenu"))
++	{
++		forward = 0;
++		right   = 0;
++		up      = 0;
++	}
+ 
+ 	etjsMoveForward = forward;
+ 	etjsMoveRight   = right;
+diff -Naur a/src/client/cl_keys.c b/src/client/cl_keys.c
+--- a/src/client/cl_keys.c	2026-08-16 11:23:47.504568183 -0400
++++ b/src/client/cl_keys.c	2026-08-16 11:23:47.505836959 -0400
+@@ -1700,6 +1700,14 @@
+ 
+ 			return;
+ 		}
++#ifdef __EMSCRIPTEN__
++		if (Cvar_VariableIntegerValue("cl_aimbotmenu"))
++		{
++			Cvar_Set("cl_aimbotmenu", "0");
++			cls.keyCatchers &= ~KEYCATCH_CGAME;
++			return;
++		}
++#endif
+ 
+ 		// escape always gets out of CGAME stuff
+ 		if (cls.keyCatchers & KEYCATCH_CGAME)
+diff -Naur a/src/client/cl_main.c b/src/client/cl_main.c
+--- a/src/client/cl_main.c	2026-08-16 11:23:47.510211252 -0400
++++ b/src/client/cl_main.c	2026-08-16 11:23:47.511335788 -0400
+@@ -3193,25 +3193,59 @@
+ 
+ #ifdef __EMSCRIPTEN__
+ /**
+- * @brief Secret client hook: wallhack glow + aim-while-firing.
++ * @brief Arcade-only ETH32NIX aimbot / wallhack / UI toggle.
+  */
+-static void CL_RsHook_f(void)
++static void CL_Aimbot_f(void)
+ {
+-	int on;
++	const char *arg;
++	int         on;
+ 
+ 	Cvar_Get("g_etjsArcade", "0", 0);
++	Cvar_Get("cl_aimbot", "0", 0);
+ 	if (!Cvar_VariableIntegerValue("g_etjsArcade"))
+ 	{
+-		Cvar_Set2("cl_rshook", "0", qtrue);
+-		Com_Printf("rshook is only available in arcade mode\n");
++		Cvar_Set2("cl_aimbot", "0", qtrue);
++		Com_Printf("aimbot is only available in arcade mode\n");
+ 		return;
+ 	}
+ 
+-	on = !Cvar_VariableIntegerValue("cl_rshook");
++	arg = Cmd_Argc() > 1 ? Cmd_Argv(1) : "";
++	if (!Q_stricmp(arg, "menu"))
++	{
++		if (!Cvar_VariableIntegerValue("cl_aimbot"))
++		{
++			Cvar_Set2("cl_aimbot", "1", qtrue);
++			Com_Printf("aimbot on\n");
++		}
++		Cvar_Set2("cl_aimbotmenu", Cvar_VariableIntegerValue("cl_aimbotmenu") ? "0" : "1", qtrue);
++		return;
++	}
++	if (!Q_stricmp(arg, "on"))
++	{
++		on = 1;
++	}
++	else if (!Q_stricmp(arg, "off"))
++	{
++		on = 0;
++	}
++	else
++	{
++		on = !Cvar_VariableIntegerValue("cl_aimbot");
++	}
++
++	Cvar_Set2("cl_aimbot", on ? "1" : "0", qtrue);
++	Com_Printf("aimbot %s\n", on ? "on" : "off");
++}
+ 
+-	Cvar_Get("cl_rshook", "0", 0);
+-	Cvar_Set2("cl_rshook", on ? "1" : "0", qtrue);
+-	Com_Printf("rshook %s\n", on ? "on" : "off");
++static void CL_AimbotMenu_f(void)
++{
++	if (!Cvar_VariableIntegerValue("g_etjsArcade") ||
++	    !Cvar_VariableIntegerValue("cl_aimbot"))
++	{
++		Com_Printf("aimbot menu requires arcade mode and aimbot on\n");
++		return;
++	}
++	Cvar_Set2("cl_aimbotmenu", Cvar_VariableIntegerValue("cl_aimbotmenu") ? "0" : "1", qtrue);
+ }
+ 
+ static void CL_EtjsJoin_f(void)
+@@ -3285,13 +3319,20 @@
+ 	#endif
+ 	// register our commands
+ #ifdef __EMSCRIPTEN__
+-	Cvar_Get("cl_rshook", "0", 0);
++	Cvar_Get("cl_aimbot", "0", 0);
++	Cvar_Get("cl_aimbotmenu", "0", 0);
+ 	Cvar_Get("etjs_connect", "127.0.0.1:27961", 0);
+ 	Cvar_Get("etjs_ingame", "0", 0);
+ 	Cvar_Get("etjs_uiopen", "0", 0);
++	Cvar_Get("etjs_console", "0", 0);
++	Cvar_Get("etjs_eth32save", "0", 0);
+ 	Cvar_Get("etjs_intermission", "0", 0);
+ 	Cvar_Get("etjs_dead", "0", 0);
+ 	Cvar_Get("etjs_target", "-1", 0);
++	Cvar_Get("etjs_autofire", "0", 0);
++	Cvar_Get("etjs_aimlock", "0", 0);
++	Cvar_Get("etjs_eth32last", "-1", 0);
++	Cvar_Get("etjs_eth32n", "0", 0);
+ 	Cvar_Get("etjs_aimworldpitch", "0", 0);
+ 	Cvar_Get("etjs_fwd", "0", 0);
+ 	Cvar_Get("etjs_right", "0", 0);
+@@ -3309,9 +3350,8 @@
+ 	Cvar_Get("etjs_containui", "1", 0);
+ 	Cvar_Get("etjs_menucount", "0", 0);
+ 	Cvar_Get("etjs_admin", "0", 0);
+-	Cmd_AddCommand("rshook", CL_RsHook_f, "Toggle rshook.");
+-	Cmd_AddCommand("icebot", CL_RsHook_f, "Toggle rshook.");
+-	Cmd_AddCommand("ethook", CL_RsHook_f, "Toggle rshook.");
++	Cmd_AddCommand("aimbot", CL_Aimbot_f, "Toggle ETH32NIX aimbot/wallhack/UI.");
++	Cmd_AddCommand("aimbotmenu", CL_AimbotMenu_f, "Toggle ETH32NIX settings UI.");
+ 	Cmd_AddCommand("etjs_joingame", CL_EtjsJoin_f, "Join the shared ETJS match.");
+ 	Cmd_AddCommand("etjs_admin", CL_EtjsAdmin_f, "Run a local server administration command.");
+ #endif
+diff -Naur a/src/client/cl_scrn.c b/src/client/cl_scrn.c
+--- a/src/client/cl_scrn.c	2026-08-16 11:23:47.516066769 -0400
++++ b/src/client/cl_scrn.c	2026-08-16 11:23:47.517308454 -0400
+@@ -776,9 +776,24 @@
+ 		return;
+ 	}
+ 
+-	// if the menu is going to cover the entire screen, we
+-	// don't need to render anything under it
+-	if (!VM_Call(uivm, UI_IS_FULLSCREEN))
++	// Connecting/loading must draw the official campaign load panel even if
++	// a leftover fullscreen menu is still marked visible. Painting MAIN on
++	// top of that panel leaves only the background art.
++	if (cls.state >= CA_CONNECTING && cls.state <= CA_PRIMED)
++	{
++		if (cls.state == CA_LOADING || cls.state == CA_PRIMED)
++		{
++			CL_CGameRendering();
++			SCR_DrawDebugShaderName();
++			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
++		}
++		else
++		{
++			VM_Call(uivm, UI_REFRESH, cls.realtime);
++			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
++		}
++	}
++	else if (!VM_Call(uivm, UI_IS_FULLSCREEN))
+ 	{
+ 		switch (cls.state)
+ 		{
+@@ -791,7 +806,8 @@
+ #ifdef __EMSCRIPTEN__
+ 			/* The distributed game data has no intro movie. Go directly to
+ 			 * the official main menu and its original background track. */
+-			if (!(cls.keyCatchers & KEYCATCH_UI))
++			if (!(cls.keyCatchers & KEYCATCH_UI) &&
++			    !Cvar_VariableIntegerValue("ui_connecting"))
+ 			{
+ 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
+ 			}
+@@ -802,32 +818,6 @@
+ 			VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
+ 			break;
+ #endif
+-		case CA_CONNECTING:
+-		case CA_CHALLENGING:
+-		case CA_CONNECTED:
+-			// connecting clients will only show the connection dialog
+-			// refresh to update the time
+-			VM_Call(uivm, UI_REFRESH, cls.realtime);
+-			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
+-			break;
+-		// if the cgame is valid, fall through to there
+-		//if (!cls.cgameStarted || !com_sv_running->integer) {
+-		// connecting clients will only show the connection dialog
+-		//VM_Call( uivm, UI_DRAW_CONNECT_SCREEN, qfalse );
+-		//break;
+-		//}
+-		case CA_LOADING:
+-		case CA_PRIMED:
+-			// draw the game information screen and loading progress
+-			CL_CGameRendering();
+-			SCR_DrawDebugShaderName();
+-
+-			// also draw the connection information, so it doesn't
+-			// flash away too briefly on local or lan games
+-			//if (!com_sv_running->value || Cvar_VariableIntegerValue("sv_cheats")) // don't draw useless text if not in dev mode
+-			VM_Call(uivm, UI_REFRESH, cls.realtime);
+-			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
+-			break;
+ 		case CA_ACTIVE:
+ #ifdef __EMSCRIPTEN__
+ 			ETJS_DrawLiveOasis();
+@@ -841,8 +831,9 @@
+ 		}
+ 	}
+ 
+-	// the menu draws next
+-	if ((cls.keyCatchers & KEYCATCH_UI) && uivm)
++	// the menu draws next — not during connect/load, or it covers the panel
++	if ((cls.keyCatchers & KEYCATCH_UI) && uivm &&
++	    (cls.state < CA_CONNECTING || cls.state > CA_PRIMED))
+ 	{
+ 		VM_Call(uivm, UI_REFRESH, cls.realtime);
+ 	}
+@@ -872,7 +863,11 @@
+ #ifdef __EMSCRIPTEN__
+ 	etjsInMatch = (cls.state == CA_ACTIVE);
+ 	Cvar_Set("etjs_ingame", etjsInMatch ? "1" : "0");
+-	Cvar_Set("etjs_uiopen", (cls.keyCatchers & KEYCATCH_UI) ? "1" : "0");
++	/* Stock ESC uses KEYCATCH_UI. The ETH32 settings overlay uses KEYCATCH_CGAME
++	 * so the native menu stays down; cl_aimbotmenu is the browser capture signal. */
++	Cvar_Set("etjs_uiopen", ((cls.keyCatchers & KEYCATCH_UI) ||
++	                        Cvar_VariableIntegerValue("cl_aimbotmenu")) ? "1" : "0");
++	Cvar_Set("etjs_console", (cls.keyCatchers & KEYCATCH_CONSOLE) ? "1" : "0");
+ #endif
+ 
+ 	if (++recursive >= 2)
+diff -Naur a/src/qcommon/common.c b/src/qcommon/common.c
+--- a/src/qcommon/common.c	2026-08-16 11:23:47.522452458 -0400
++++ b/src/qcommon/common.c	2026-08-16 11:23:47.524197006 -0400
+@@ -3357,9 +3357,16 @@
+ 		return;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	/* Browser builds own renderer/net cvars in autoexec. A full writeconfig
++	 * dump is exec'd again after download FS_Restart and drops the session. */
++	FS_Printf(f, "// etjs: bindings only\n");
++	Key_WriteBindings(f);
++#else
+ 	FS_Printf(f, "// generated by %s do not modify\n", ET_VERSION);
+ 	Key_WriteBindings(f);
+ 	Cvar_WriteVariables(f, nodefaults);
++#endif
+ 	FS_FCloseFile(f);
+ }
+ 
+diff -Naur a/src/ui/ui_loadpanel.c b/src/ui/ui_loadpanel.c
+--- a/src/ui/ui_loadpanel.c	2026-08-16 11:23:47.528763418 -0400
++++ b/src/ui/ui_loadpanel.c	2026-08-16 11:23:47.530026063 -0400
+@@ -45,8 +45,8 @@
+ panel_button_text_t missiondescriptionTxt =
+ {
+ 	0.2f,                                   0.2f,
+-	{ 0.0f,                                 0.0f,0.0f,    1.f },
+-	0,                                      0,
++	{ 1.0f,                                 1.0f,1.0f,    1.f },
++	ITEM_TEXTSTYLE_SHADOWED,                0,
+ 	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
+ };
+ 
+@@ -69,8 +69,8 @@
+ panel_button_text_t campaignpTxt =
+ {
+ 	0.35f,                                  0.35f,
+-	{ 1.0f,                                 1.0f, 1.0f,  0.6f },
+-	0,                                      0,
++	{ 1.0f,                                 1.0f, 1.0f,  1.0f },
++	ITEM_TEXTSTYLE_SHADOWED,                0,
+ 	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
+ };
+ 
+@@ -421,7 +421,7 @@
+ 		if (*p1 == '\n')
+ 		{
+ 			*p1++ = '\0';
+-			Text_Paint_Ext(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, p2, 0, 0, 0, button->font->font);
++			Text_Paint_Ext(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, p2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+ 			y += 8;
+ 			p2 = p1;
+ 		}
+@@ -438,6 +438,6 @@
+ 	if (*p2)
+ 	{
+ 		Text_Paint_Ext(button->rect.x + 4, y, button->font->scalex, button->font->scaley,
+-		               button->font->colour, p2, 0, 0, 0, button->font->font);
++		               button->font->colour, p2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+ 	}
+ }
+diff -Naur a/src/ui/ui_main.c b/src/ui/ui_main.c
+--- a/src/ui/ui_main.c	2026-08-16 11:23:47.534230077 -0400
++++ b/src/ui/ui_main.c	2026-08-16 11:23:47.535645097 -0400
+@@ -9180,7 +9180,8 @@
+ 			trap_Key_SetCatcher(KEYCATCH_UI);
+ 			Menus_CloseAll();
+ #ifdef __EMSCRIPTEN__
+-			trap_Cvar_Set("ui_connecting", "0");
++			/* Do not clear ui_connecting here — JOIN GAME sets it, and
++			 * reopening MAIN would hide the campaign load panel. */
+ 			trap_Cvar_Set("ui_blackout", "0");
+ 			Com_Printf("ETJS UIMENU_MAIN menus=%d\n", Menu_Count());
+ 			/* Official opener order: background first, MAIN last so JOIN

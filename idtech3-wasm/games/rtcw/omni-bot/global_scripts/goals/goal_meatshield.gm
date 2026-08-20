@@ -1,0 +1,60 @@
+this.Name = "MeatShield";
+this.Parent = "HighLevel";
+this.AlwaysRecieveEvents = true;
+this.AutoAdd = false;	// Don't add it to everyone automatically.
+
+this.SquadInfo = {};
+
+this.Enter = function()
+{
+	this.Stop();
+	this.AddAimRequest(Priority.Low, "movedirection");
+	this.AddWeaponRequest(Priority.Low, WEAPON.KNIFE);
+
+	this.Bot.Say("Forming Up!");
+
+	this.EscortInfo[this.Bot] = tableCount(this.EscortInfo);
+};
+
+this.Exit = function()
+{
+	// remove bot from the escort list
+	this.EscortInfo[this.Bot] = null;
+	this.EscortInfo = null;
+};
+
+this.Update = function()
+{
+	for(;;)
+	{
+		lp = GetEntPosition(this.Player);
+		lf = GetEntFacing(this.Player);
+		dest = lp + lf * 150 + CrossProduct(lf,Vec3(0,0,1)) * ((this.EscortInfo[this.Bot] - 0.5 * tableCount(this.EscortInfo)) * 64);
+
+		//DrawLine(lp,dest,COLOR.GREEN,1);
+
+		if (this.Bot.DistanceTo(dest) > 800)
+		{
+			this.Goto(dest);
+		}
+		else
+		{
+			this.Bot.MoveTowards(dest);
+		}
+		yield();
+	}
+};
+
+this.Events[EVENT.TEAM_VOICE] = function(source, id)
+{
+	if (id == VOICE.COVER_ME && !this.EscortInfo)
+	{
+		if (!this.SquadInfo[source])
+		{
+			this.SquadInfo[source] = {};
+		}
+		this.Player = source;
+		this.EscortInfo = this.SquadInfo[source];
+		this.Priority = 2;
+	}
+};

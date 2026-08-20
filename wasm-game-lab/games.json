@@ -1,0 +1,53 @@
+[
+  { "id": "wolfet", "title": "Wolfenstein: Enemy Territory", "family": "idtech3-wasm", "variant": "wolfet", "icon": "wolfet.ico", "service": "wolfet", "port": 8088, "path": "/", "status": "Live" },
+
+  { "id": "blood", "title": "Blood", "family": "build-wasm", "variant": "blood", "icon": "blood.ico", "service": "blood", "port": 8007, "path": "/", "status": "Still in development" },
+  { "id": "duke3d", "title": "Duke Nukem 3D", "family": "build-wasm", "variant": "duke3d", "icon": "duke3d.ico", "service": "duke3d", "port": 18007, "path": "/", "status": "Still in development" },
+
+  { "id": "quake", "title": "Quake", "family": "idtech2-wasm", "variant": "quake", "icon": "quake1.ico", "service": "quake1", "port": 8081, "path": "/", "status": "Still in development" },
+  { "id": "quake2", "title": "Quake II", "family": "idtech2-wasm", "variant": "quake2", "icon": "quake2.ico", "service": "quake2", "port": 8082, "path": "/", "status": "Still in development" },
+  { "id": "quake3", "title": "Quake III Arena", "family": "idtech3-wasm", "variant": "quake3", "icon": "quake3.ico", "service": "quake3", "port": 8083, "path": "/", "status": "Still in development" },
+  { "id": "rtcw-sp", "title": "RTCW Single Player", "family": "idtech3-wasm", "variant": "rtcw-sp", "icon": "rtcw.ico", "service": "rtcw-sp", "port": 8085, "path": "/", "status": "Still in development" },
+  { "id": "rtcw-mp", "title": "RTCW Multiplayer", "family": "idtech3-wasm", "variant": "rtcw-mp", "icon": "rtcw.ico", "service": "rtcw-mp", "port": 18085, "path": "/", "status": "Still in development" },
+
+  { "id": "doom", "title": "Doom / Ultimate Doom", "family": "idtech1-wasm", "variant": "doom", "icon": "doom.ico", "service": "idtech1", "port": 8010, "path": "/?game=doom", "status": "Still in development" },
+  { "id": "doom2", "title": "Doom II", "family": "idtech1-wasm", "variant": "doom2", "icon": "doom.ico", "service": "idtech1", "port": 8010, "path": "/?game=doom2", "status": "Still in development" },
+  { "id": "tnt", "title": "Final Doom: TNT", "family": "idtech1-wasm", "variant": "tnt", "icon": "doom.ico", "service": "idtech1", "port": 8010, "path": "/?game=tnt", "status": "Still in development" },
+  { "id": "plutonia", "title": "Final Doom: Plutonia", "family": "idtech1-wasm", "variant": "plutonia", "icon": "doom.ico", "service": "idtech1", "port": 8010, "path": "/?game=plutonia", "status": "Still in development" },
+  { "id": "heretic", "title": "Heretic", "family": "idtech1-wasm", "variant": "heretic", "icon": "heretic.ico", "service": "idtech1", "port": 8010, "path": "/?game=heretic", "status": "Still in development" },
+  { "id": "hexen", "title": "Hexen", "family": "idtech1-wasm", "variant": "hexen", "icon": "hexen.ico", "service": "idtech1", "port": 8010, "path": "/?game=hexen", "status": "Still in development" },
+  { "id": "chex", "title": "Chex Quest", "family": "idtech1-wasm", "variant": "chex", "icon": "doom.ico", "service": "idtech1", "port": 8010, "path": "/?game=chex", "status": "Still in development" },
+  { "id": "wolf3d", "title": "Wolfenstein 3D", "family": "wolf3d-wasm", "variant": "wolf3d", "icon": "wolf3d.ico", "service": "wolf3d", "port": 8011, "path": "/", "status": "Still in development" },
+  { "id": "spear", "title": "Spear of Destiny", "family": "wolf3d-wasm", "variant": "spear", "icon": "wolf3d.ico", "service": "spear", "port": 8012, "path": "/", "status": "Still in development" },
+
+  { "id": "doom3", "title": "Doom 3 Single Player", "family": "idtech4-wasm", "variant": "doom3", "icon": "doom3.ico", "service": "doom3", "port": 8086, "path": "/", "status": "Still in development" },
+  { "id": "doom3-mp", "title": "Doom 3 Multiplayer", "family": "idtech4-wasm", "variant": "doom3-mp", "icon": "doom3.ico", "service": "doom3-mp", "port": 18086, "path": "/", "status": "Still in development" },
+  { "id": "roe", "title": "Doom 3: Resurrection of Evil", "family": "idtech4-wasm", "variant": "roe", "icon": "roe.ico", "service": "roe", "port": 18087, "path": "/", "status": "Still in development" },
+  { "id": "quake4", "title": "Quake 4 Single Player", "family": "idtech4-wasm", "variant": "quake4", "icon": "quake4.ico", "service": "quake4", "port": 8084, "path": "/", "status": "Still in development" },
+  { "id": "quake4-mp", "title": "Quake 4 Multiplayer", "family": "idtech4-wasm", "variant": "quake4-mp", "icon": "quake4.ico", "service": "quake4-mp", "port": 18084, "path": "/", "status": "Still in development" },
+  { "id": "prey", "title": "Prey (2006)", "family": "idtech4-wasm", "variant": "prey", "icon": "prey.ico", "service": "prey", "port": 8087, "path": "/", "status": "Still in development" },
+
+  { "id": "jill1", "title": "Jill of the Jungle", "family": "dosbox-wasm", "variant": "jill1", "icon": "dosbox.ico", "service": "dosbox", "port": 8016, "path": "/?game=jill1", "status": "Still in development" },
+  { "id": "jill2", "title": "Jill Goes Underground", "family": "dosbox-wasm", "variant": "jill2", "icon": "dosbox.ico", "service": "dosbox", "port": 8016, "path": "/?game=jill2", "status": "Still in development" },
+  { "id": "jill3", "title": "Jill Saves the Prince", "family": "dosbox-wasm", "variant": "jill3", "icon": "dosbox.ico", "service": "dosbox", "port": 8016, "path": "/?game=jill3", "status": "Still in development" },
+  { "id": "jazz", "title": "Jazz Jackrabbit", "family": "dosbox-wasm", "variant": "jazz", "icon": "dosbox.ico", "service": "jazz", "port": 8020, "path": "/", "status": "Still in development" },
+  { "id": "duke1", "title": "Duke Nukem", "family": "dosbox-wasm", "variant": "duke1", "icon": "dosbox.ico", "service": "duke1", "port": 8021, "path": "/", "status": "Still in development" },
+  { "id": "duke2", "title": "Duke Nukem II", "family": "dosbox-wasm", "variant": "duke2", "icon": "dosbox.ico", "service": "duke2", "port": 8022, "path": "/", "status": "Still in development" },
+  { "id": "gta", "title": "Grand Theft Auto (DOS Demo)", "family": "dosbox-wasm", "variant": "gta", "icon": "dosbox.ico", "service": "gta", "port": 8023, "path": "/", "status": "Still in development" },
+  { "id": "nfs", "title": "The Need for Speed", "family": "dosbox-wasm", "variant": "nfs", "icon": "dosbox.ico", "service": "nfs", "port": 8024, "path": "/", "status": "Still in development" },
+  { "id": "simcity2000", "title": "SimCity 2000", "family": "dosbox-wasm", "variant": "simcity2000", "icon": "dosbox.ico", "service": "simcity2000", "port": 8025, "path": "/", "status": "Still in development" },
+  { "id": "openrct2", "title": "OpenRCT2", "family": "openrct2-wasm", "variant": "openrct2", "icon": "openrct2.ico", "service": "openrct2", "port": 8026, "path": "/", "status": "Still in development" },
+
+  { "id": "half-life", "title": "Half-Life", "family": "goldsource-wasm", "variant": "half-life", "icon": "halflife.ico", "service": "goldsource", "port": 8017, "path": "/?game=half-life", "status": "Still in development" },
+  { "id": "blue-shift", "title": "Half-Life: Blue Shift", "family": "goldsource-wasm", "variant": "blue-shift", "icon": "blueshift.ico", "service": "goldsource", "port": 8017, "path": "/?game=blue-shift", "status": "Still in development" },
+  { "id": "opposing-force", "title": "Half-Life: Opposing Force", "family": "goldsource-wasm", "variant": "opposing-force", "icon": "opfor.ico", "service": "goldsource", "port": 8017, "path": "/?game=opposing-force", "status": "Still in development" },
+  { "id": "counter-strike", "title": "Counter-Strike", "family": "goldsource-wasm", "variant": "counter-strike", "icon": "counterstrike.ico", "service": "goldsource", "port": 8017, "path": "/?game=counter-strike&server=127.0.0.1:4190", "status": "Still in development" },
+
+  { "id": "hl2", "title": "Half-Life 2", "family": "source-wasm", "variant": "hl2", "icon": "halflife2.ico", "service": "source", "port": 8019, "path": "/", "status": "Still in development" },
+  { "id": "cod2-mp", "title": "Call of Duty 2 Multiplayer", "family": "cod2-wasm", "variant": "cod2-mp", "icon": "cod2-diagnostic.svg", "service": "cod2", "port": 8014, "path": "/", "status": "Still in development" },
+
+  { "id": "nes", "title": "Nintendo Entertainment System", "family": "emulation-wasm", "variant": "nes", "icon": "nes.svg", "launchable": false, "runtimeNote": "No NES runtime image exists yet.", "status": "Still in development" },
+  { "id": "snes", "title": "Super Nintendo Entertainment System", "family": "emulation-wasm", "variant": "snes", "icon": "snes.svg", "launchable": false, "runtimeNote": "No SNES runtime image exists yet.", "status": "Still in development" },
+  { "id": "ps1", "title": "PlayStation", "family": "emulation-wasm", "variant": "ps1", "icon": "ps1.svg", "launchable": false, "runtimeNote": "No PlayStation runtime image exists yet.", "status": "Still in development" },
+  { "id": "ps2", "title": "PlayStation 2", "family": "emulation-wasm", "variant": "ps2", "icon": "ps2.svg", "launchable": false, "runtimeNote": "No PlayStation 2 runtime image exists yet.", "status": "Still in development" }
+]

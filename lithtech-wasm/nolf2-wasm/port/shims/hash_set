@@ -1,0 +1,8 @@
+/* SGI/STLPort <hash_set> for gcc 15 gnu++98 (ButeMgr). */
+#ifndef PORT_HASH_SET
+#define PORT_HASH_SET
+#include <ext/hash_set>
+namespace std {
+	using ::__gnu_cxx::hash_set;
+}
+#endif

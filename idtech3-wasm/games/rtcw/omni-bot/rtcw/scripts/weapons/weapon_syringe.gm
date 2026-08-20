@@ -1,0 +1,7 @@
+//used by medic, goal REVIVE
+this.Name = "Syringe";
+this.WeaponId = WEAPON.SYRINGE;
+
+this.PrimaryFire.WeaponType = "item";
+this.PrimaryFire.LowAmmoThreshold = 0;
+this.PrimaryFire.LowAmmoPriority = 0.8;

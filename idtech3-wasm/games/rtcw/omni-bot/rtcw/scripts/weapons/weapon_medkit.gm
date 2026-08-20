@@ -1,0 +1,7 @@
+//used by medic, goals DeliverSupplies, DispenseHealth, SupplySelf
+this.Name = "Health Pack";
+this.WeaponId = WEAPON.MEDKIT;
+
+this.PrimaryFire.WeaponType = "item";
+this.PrimaryFire.RequiresAmmo = false;
+this.PrimaryFire.WaterProof = true;

@@ -1,0 +1,106 @@
+From b5df531e91dc8ae5c6fef21c901264545a7a542f Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 15:12:28 -0400
+Subject: [PATCH] Draw lightmaps before albedo so WebGL keeps both
+
+Collapsing to albedo-first left the world fullbright. Sequential
+lightmap then modulate matches the pass that already showed lighting.
+---
+ MP/code/renderer/tr_shade.c  | 62 +++++++++++++++++++++++-------------
+ MP/code/renderer/tr_shader.c |  2 --
+ 2 files changed, 39 insertions(+), 25 deletions(-)
+
+diff --git a/MP/code/renderer/tr_shade.c b/MP/code/renderer/tr_shade.c
+index 1a6b190..5b695f5 100644
+--- a/MP/code/renderer/tr_shade.c
++++ b/MP/code/renderer/tr_shade.c
+@@ -429,31 +429,47 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
+ 	GL_State( pStage->stateBits );
+ 
+ #ifdef __EMSCRIPTEN__
+-	/* WolfET: LEGACY_GL_EMULATION does not implement TMU1 texenv. Draw
+-	 * base then modulate/add the lightmap as a second pass. */
+-	GL_SelectTexture( 0 );
+-	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
+-	R_BindAnimatedImage( &pStage->bundle[0] );
+-	R_DrawElements( input->numIndexes, input->indexes );
++	/* Lightmap first (that pass is what actually showed lighting),
++	 * then albedo * dest. Albedo-first left the world fullbright. */
++	{
++		textureBundle_t *diff, *lm;
++		float ( *diffTc )[2], ( *lmTc )[2];
++
++		if ( pStage->bundle[0].isLightmap ) {
++			lm = &pStage->bundle[0];
++			diff = &pStage->bundle[1];
++			lmTc = input->svars.texcoords[0];
++			diffTc = input->svars.texcoords[1];
++		} else {
++			diff = &pStage->bundle[0];
++			lm = &pStage->bundle[1];
++			diffTc = input->svars.texcoords[0];
++			lmTc = input->svars.texcoords[1];
++		}
+ 
+-	add = ( tess.shader->multitextureEnv == GL_ADD );
+-	for ( v = 0; v < input->numVertexes; v++ ) {
+-		input->svars.texcoords[0][v][0] = input->svars.texcoords[1][v][0];
+-		input->svars.texcoords[0][v][1] = input->svars.texcoords[1][v][1];
+-	}
+-	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
+-	R_BindAnimatedImage( &pStage->bundle[1] );
+-	/* Default depth func is LEQUAL. GL_EQUAL often fails on WebGL
+-	 * and left only the lightmap (gray world, colored lamps). */
+-	if ( r_lightmap->integer ) {
+-		GL_State( 0 );
+-	} else if ( add ) {
+-		GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
+-	} else {
+-		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO );
++		GL_State( GLS_DEFAULT );
++		GL_SelectTexture( 0 );
++		qglTexCoordPointer( 2, GL_FLOAT, 0, lmTc );
++		R_BindAnimatedImage( lm );
++		R_DrawElements( input->numIndexes, input->indexes );
++
++		if ( !r_lightmap->integer && diff && diff->image[0] ) {
++			add = ( tess.shader->multitextureEnv == GL_ADD );
++			for ( v = 0; v < input->numVertexes; v++ ) {
++				input->svars.texcoords[0][v][0] = diffTc[v][0];
++				input->svars.texcoords[0][v][1] = diffTc[v][1];
++			}
++			qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
++			R_BindAnimatedImage( diff );
++			if ( add ) {
++				GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
++			} else {
++				GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO );
++			}
++			R_DrawElements( input->numIndexes, input->indexes );
++		}
++		return;
+ 	}
+-	R_DrawElements( input->numIndexes, input->indexes );
+-	return;
+ #endif
+ 
+ 	// this is an ugly hack to work around a GeForce driver
+diff --git a/MP/code/renderer/tr_shader.c b/MP/code/renderer/tr_shader.c
+index 268d5f1..9b565c8 100644
+--- a/MP/code/renderer/tr_shader.c
++++ b/MP/code/renderer/tr_shader.c
+@@ -1873,11 +1873,9 @@ static qboolean CollapseMultitexture( void ) {
+ 	int i;
+ 	textureBundle_t tmpBundle;
+ 
+-#ifndef __EMSCRIPTEN__
+ 	if ( !qglActiveTextureARB ) {
+ 		return qfalse;
+ 	}
+-#endif
+ 
+ 	// make sure both stages are active
+ 	if ( !stages[0].active || !stages[1].active ) {
+-- 
+2.53.0
+

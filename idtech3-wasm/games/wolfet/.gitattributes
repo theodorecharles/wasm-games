@@ -1,0 +1,12 @@
+* text=auto eol=lf
+*.patch text eol=lf
+*.wasm binary
+*.pk3 binary
+*.wav binary
+*.png binary
+*.ico binary
+patches/*.patch -whitespace
+runtime/legacy/maps/* -whitespace
+runtime/legacy/ui/* -whitespace
+runtime/omni-bot-user/*.cfg text eol=crlf -whitespace
+third_party/** -whitespace

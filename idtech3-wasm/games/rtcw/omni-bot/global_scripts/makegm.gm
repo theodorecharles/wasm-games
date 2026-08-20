@@ -1,0 +1,646 @@
+if (Mapgm) { return; }
+// Store it neatly under a global table.
+global Mapgm = {};
+
+Mapgm.ET = GetGameName() == "Enemy Territory";
+mod = GetModName();
+Mapgm.Fortress = (mod == "Fortress Forever" || mod == "Team Fortress" || mod == "openfortress");
+
+// Customize the following values:
+Mapgm.AddRouteFunction = true; // add the InitializeRoute function with skeleton routing for primary goals
+
+///////////////////////////////////////////////////////////////////////////////
+
+Mapgm.Open = function(name)
+{
+	if(Mapgm.file){
+		Mapgm.file.Close();
+		Mapgm.file = null;
+	}
+	Mapgm.FileName = name;
+	Mapgm.file = File();
+	assert(Mapgm.file.Open(name, "text", false));
+};
+
+Mapgm.Out = function(line)
+{
+	assert(Mapgm.file.WriteLine(line));
+};
+
+Mapgm.Close = function()
+{
+	print("^gFile", Mapgm.FileName, "created. Size:", Mapgm.file.FileSize(), "bytes.");
+	Mapgm.file.Close();
+	Mapgm.file = null;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Mapgm.GetGoalNameTable = function(exp)
+{
+	TempTable = {};
+
+	foreach (goal in Util.GoalTable(exp))
+	{
+		name = goal.GetName();
+		if (name.Right(4) != "_lms") {
+			TempTable[name] = name;
+		}
+	}
+
+	return tableSort(TempTable);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Mapgm.GetGoalTable = function(GoalNameTable)
+{
+	GoalTable = {};
+
+	foreach (index and GoalName in GoalNameTable)
+		{ GoalTable[index] = GetGoal(GoalName); }
+
+	return GoalTable;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// take an expression of goals and output a trigger function in gm script
+Mapgm.MakeOnTriggerFunctions = function(GoalExp, Suffix, test)
+{
+	Out = function(name, test)
+	{
+		o = Mapgm.Out;
+		o("\t" + name + " = function()");
+		o("\t{");
+		if (test) {
+			o("\t\tTestMap.Pass();");
+			o("");
+		}
+		o("\t\tUtil.MapDebugPrint(\"" + name + "\");");
+		o("\t},");
+		o("");
+	};
+
+	foreach (goal in Mapgm.GetGoalNameTable(GoalExp + "_.*"))
+	{
+		name = goal.RightAt(GoalExp.Length() + 1);
+		funcName = name + Suffix;
+		ch = name.Left(1);
+		if (ch >= "0" && ch <= "9")
+		{
+			funcName = GoalExp + "_" + funcName;
+		}
+
+		if (GoalExp == "CHECKPOINT")
+		{
+			foreach (i in Mapgm.Teams)
+			{
+				Out(name + "_" + Util.TeamNames[i][1] + Suffix, test);
+			}
+			continue;
+		}
+
+		Out(funcName, test);
+	}
+};
+
+Mapgm.MakeTestMapOnTriggerFunctions = function(GoalExp, Suffix)
+{
+	Mapgm.MakeOnTriggerFunctions(GoalExp, Suffix, true);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// take an expression of goals and output a trigger call in gm script
+Mapgm.MakeOnTriggerCalls = function(GoalExp, Suffix, test)
+{
+	Out = function(t, f)
+	{
+		Mapgm.Out("\tOnTrigger(\"" + t + "\", Map." + f + ");");
+	};
+
+	foreach (GoalName in Mapgm.GetGoalNameTable(GoalExp + "_.*"))
+	{
+		name = GoalName.RightAt(GoalExp.Length() + 1);
+		funcName = name + Suffix;
+		ch = name.Left(1);
+		if (ch >= "0" && ch <= "9")
+		{
+			funcName = GoalExp + "_" + funcName;
+		}
+
+		if (Mapgm.Fortress)
+		{
+			if (GoalExp == "FLAG")
+			{
+				if (test)
+				{
+					if (name == "blue_flag" || name == "red_flag" ||
+						 name == "yellow_flag" || name == "green_flag" ||
+						 name == "blueflag" || name == "redflag" ||
+						 name == "yellowflag" || name == "greenflag" ||
+						 name == "ball")
+						{ funcName = "TestMap.OnFlag"; }
+					else
+						{ funcName = "TestMap.OnCPFlag"; }
+					Out(name, funcName);
+				}
+				else
+				{
+					Out("Flag " + name + " pickedup", funcName);
+				}
+				continue;
+			}
+
+			if (GoalExp == "CAPPOINT")
+			{
+				if (!test)
+				{
+					goal = GetGoal(GoalName);
+					foreach (i in Mapgm.Teams)
+					{
+						if (!goal.IsAvailable(i))
+						{
+							Out("Flag " + Util.TeamNames[i][2] + "_flag returned", funcName);
+						}
+					}
+				}
+				continue;
+			}
+		}
+
+		if (GoalExp == "CHECKPOINT")
+		{
+			foreach (i in Mapgm.Teams)
+			{
+				Out("MISSING_STRING", name + "_" + Util.TeamNames[i][1] + Suffix);
+			}
+			continue;
+		}
+
+		Out("MISSING_STRING", funcName);
+	}
+};
+
+Mapgm.MakeTestMapOnTriggerCalls = function(GoalExp, Suffix)
+{
+	Mapgm.MakeOnTriggerCalls(GoalExp, Suffix, true);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// take an expression of goals and output a runtest call in gm script
+Mapgm.MakeRunTestCalls = function(ClassString, GoalExp)
+{
+	GoalNameTable = Mapgm.GetGoalNameTable(GoalExp + "_.*");
+	GoalTable = Mapgm.GetGoalTable(GoalNameTable);
+
+	GoalTimeOut = 120;
+	if (GoalExp == "SENTRY") { GoalTimeOut = 180; }
+
+	foreach (i in Mapgm.Teams)
+	{
+		AddedGoals = false;
+
+		foreach (index and Goal in GoalTable)
+		{
+			if (Goal.IsAvailable(i))
+			{
+				Mapgm.Out("\t\tTestMap.RunTest(TEAM." + Util.TeamNames[i][0] +
+					", " + ClassString +
+					", \"" + GoalNameTable[index] +
+					"\", " + GoalTimeOut + ");");
+				AddedGoals = true;
+			}
+		}
+
+		if (AddedGoals)
+			{ Mapgm.Out(""); }
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Mapgm.MakeCTFRunTestCalls = function()
+{
+	OutRun = function(i, goal)
+	{
+		Mapgm.Out("\t\tTestMap.RunTest(TEAM." + Util.TeamNames[i][0] +
+			", " + Util.FlagCarrier + ", \"" + goal.GetName() + "\", 120);");
+	};
+	Out = Mapgm.Out;
+
+	FlagTable = Util.GoalTable("FLAG_.*");
+	TotalFlags = tableCount(FlagTable);
+	CappointTable = Util.GoalTable("CAPPOINT_.*");
+	TotalCappoints = tableCount(CappointTable);
+
+	if (TotalFlags == 0 && TotalCappoints == 0)
+		{ return; }
+
+	TotalTeams = tableCount(Mapgm.Teams);
+
+	//~ print("TotalTeams:", TotalTeams, "TotalFlags:", TotalFlags, "TotalCappoints:", TotalCappoints);
+
+	// Simple CTF or Simple CTF with a single flag (ball)
+	if (TotalFlags == 1 || TotalCappoints == 1 ||
+		 (TotalTeams == TotalFlags && TotalTeams == TotalCappoints))
+	{
+		foreach (i in Mapgm.Teams)
+		{
+			foreach (flag in FlagTable)
+			{
+				if (flag.IsAvailable(i))
+				{
+					foreach (cappoint in CappointTable)
+					{
+						if (cappoint.IsAvailable(i))
+						{
+							OutRun(i, flag);
+							OutRun(i, cappoint);
+							Out("\t\tsleep(2);");
+							Out("");
+						}
+					}
+				}
+			}
+		}
+
+		return;
+	}
+
+	// Simple CP CTF
+	if (TotalFlags == TotalCappoints)
+	{
+		TempTable = {};
+
+		foreach (Goal in FlagTable)
+			{ TempTable[Goal.GetName()] = Goal; }
+
+		FlagTableSorted = tableSort(TempTable, "key");
+
+		TempTable = {};
+
+		foreach (Goal in CappointTable)
+			{ TempTable[Goal.GetName()] = Goal; }
+
+		CappointTableSorted = tableSort(TempTable, "key");
+
+		foreach (i in Mapgm.Teams)
+		{
+			Out("\t\tsleep(45);");
+			foreach (j and flag in FlagTableSorted)
+			{
+				cappoint = CappointTableSorted[j];
+				if (flag.IsAvailable(i) && cappoint.IsAvailable(i))
+				{
+					OutRun(i, flag);
+					OutRun(i, cappoint);
+					Out("\t\tsleep(15);");
+					Out("");
+				}
+			}
+		}
+
+		return;
+	}
+
+	// No idea, pop em out
+	Mapgm.MakeRunTestCalls(Util.FlagCarrier, "FLAG");
+	Mapgm.MakeRunTestCalls(Util.FlagCarrier, "CAPPOINT");
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Mapgm.DecideTeams = function(_params)
+{
+	if (tableCount(_params))
+	{
+		Mapgm.Teams = _params;
+	}
+	else
+	{
+		Mapgm.Teams = {};
+		for (i = 1 ; i <= 4 ; ++i)
+		{
+			if (Util.HaveTeam[i])
+			{
+				Mapgm.Teams[i - 1] = i;
+			}
+		}
+	}
+	Util.ProcessMovers();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Mapgm.MakeTrigger = function(f)
+{
+	f("BUILD", "_Built");
+	f("PLANT", "_Destroyed");
+	f("DETPACK", "_Destroyed");
+	f("FLAG", "_Taken");
+	if (Mapgm.ET)
+	{
+		f("FLAG", "_Returned");
+		f("FLAG", "_Secured");
+	}
+	else
+	{
+		f("CAPPOINT", "_Captured");
+	}
+	f("CHECKPOINT", "_Captured");
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// create a map script template in gm script
+Mapgm.MakeMapgm = function(_params)
+{
+	Mapgm.DecideTeams(_params);
+
+	if (GameName == "RTCW-MP" && GetGameType() == 7)
+		{ suffix = "_cp"; }
+	else
+		{ suffix = ""; }
+
+	gmName = GetMapName() + suffix + ".gm";
+
+	// check for existence of file before possibly destroying something
+	if (System.FileExists(gmName))
+	{
+	  print("^8For security reasons, the make map gm script won't overwrite existing files.");
+	  print("^8Please delete the file " + gmName + " in the user directory and do /map_restart before creating a new one.");
+	  return;
+	}
+
+	Mapgm.Open(gmName);
+	Mapgm.MakeRevisionHeader();
+	Out = Mapgm.Out;
+	Out("global Map =");
+	Out("{");
+	Out("\tDebug = 1, // please delete this line before distributing your script");
+	Out("");
+
+	Mapgm.MakeTrigger(Mapgm.MakeOnTriggerFunctions);
+
+	Out("};");
+	Out("");
+	Out("global OnMapLoad = function()");
+	Out("{");
+	//Out("\t// Register callback functions");
+
+	Mapgm.MakeTrigger(Mapgm.MakeOnTriggerCalls);
+
+	Out("");
+	Out("\t//~Util.DisableGoal(\".*\", true);");
+
+	foreach (i in Mapgm.Teams)
+	{
+		Out("\t//~SetAvailableMapGoals(TEAM." + Util.TeamNames[i][0] + ", true, \"ATTACK.*\");");
+	}
+	Out("");
+
+	if (Mapgm.ET)
+	{
+		//Out("\t// Max users per goal");
+		Out("\t//Util.SetMaxUsers(1, \"MOUNTMG42.*\");");
+		Out("");
+		//Out("\t// Camp times");
+		Out("\t//SetMapGoalProperties(\"MOUNTMG42.*\", {MinCampTime=15, MaxCampTime=90});");
+		Out("");
+	}
+	Out("");
+	Out("\tUtil.MapDebugPrint(\"Omni-bot map script for \" + GetMapName() + \" executed.\");");
+	Out("};");
+	Out("");
+	Out("global OnBotJoin = function(bot)");
+	Out("{");
+	//Out("\t// Uncomment for shootable breakables");
+	Out("\t//~bot.TargetBreakableDist = 90;");
+	//Out("\t// Only set MaxViewDistance on maps with limited sight (e.g. fog)");
+	Out("\t//~bot.MaxViewDistance = 2400;");
+	Out("};");
+
+	if (Mapgm.AddRouteFunction)
+	{
+		Out("");
+		Out("global InitializeRoutes = function()");
+		Out("{");
+		Out("\tMapRoutes =");
+		Out("\t{");
+
+		foreach (goal in Util.GoalTable(Util.PrimaryRouteGoalQuery))
+		{
+			Out(format("\t\t%s =", goal.GetName()));
+			Out("\t\t{");
+			Out("\t\t},");
+		}
+
+		Out("\t};");
+		Out("\tUtil.Routes(MapRoutes);");
+		Out("};");
+	}
+
+	Mapgm.Close();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// create a test map script template in gm script
+Mapgm.MakeTestMapgm = function(_params)
+{
+	Mapgm.DecideTeams(_params);
+
+	if (GameName == "RTCW-MP" && GetGameType() == 7)
+		{ MapName = GetMapName() + "_cp"; }
+	else
+		{ MapName = GetMapName(); }
+
+	Mapgm.Open(MapName + "_test.gm");
+
+	Out = Mapgm.Out;
+	Out("global Map =");
+	Out("{");
+	Out("\tMapName = \"" + MapName + "\",");
+	Out("\tQuiet = true,");
+	Out("");
+
+	Mapgm.MakeTrigger(Mapgm.MakeTestMapOnTriggerFunctions);
+
+	Out("");
+	Out("\tTests = function()");
+	Out("\t{");
+
+	Mapgm.MakeTrigger(Mapgm.MakeTestMapOnTriggerCalls);
+
+	Out("");
+
+	foreach (i in Mapgm.Teams)
+	{
+		Out("\t\tSetAvailableMapGoals(TEAM." + Util.TeamNames[i][0] + ", false, \".*\");");
+	}
+
+	Out("");
+	Out("\t\tSetGoalPriority(\".*\", 1.0);");
+
+	f = function(t1, t2)
+	{
+		Mapgm.Out("");
+		Mapgm.Out("\t\tif (TestMap.Do" + t1 + ")");
+		Mapgm.Out("\t\t\t { Map." + t2 + "Tests(); }");
+	};
+	f("Obj", "Objective");
+	f("Snipe", "Snipe");
+	if (Mapgm.ET)
+	{
+		f("MG42", "MobileMG42");
+	}
+	if (Mapgm.Fortress)
+	{
+		f("Sentry", "Sentry");
+	}
+	f("Obj", "LastObjective");
+	Out("\t},");
+
+	Out("");
+	Out("\tObjectiveTests = function()");
+	Out("\t{");
+	f = Mapgm.MakeRunTestCalls;
+	f("CLASS.ENGINEER", "CHECKPOINT");
+	f("CLASS.ENGINEER", "BUILD");
+	f("CLASS.ENGINEER", "PLANT");
+	f("CLASS.DEMOMAN", "DETPACK");
+	f("CLASS.ENGINEER", "MOUNTMG42");
+	f("CLASS.ENGINEER", "REPAIRMG42");
+	f("CLASS.ENGINEER", "MOVER");
+	Mapgm.MakeCTFRunTestCalls();
+	Out("\t},");
+
+	Out("");
+	Out("\tSnipeTests = function()");
+	Out("\t{");
+	Out("\t\tMap.OpenUpMap();");
+	f(Util.Sniper, "SNIPE");
+	Out("\t},");
+
+	if (Mapgm.ET)
+	{
+		Out("");
+		Out("\tMobileMG42Tests = function()");
+		Out("\t{");
+		Out("\t\tMap.OpenUpMap();");
+		f("CLASS.SOLDIER", "MOBILEMG42");
+		Out("\t},");
+	}
+	if (Mapgm.Fortress)
+	{
+		Out("");
+		Out("\tSentryTests = function()");
+		Out("\t{");
+		f("CLASS.ENGINEER", "SENTRY");
+		Out("\t},");
+	}
+
+	Out("");
+	Out("\tLastObjectiveTests = function()");
+	Out("\t{");
+	Out("\t},");
+
+	Out("");
+	Out("\tOpenUpMap = function()");
+	Out("\t{");
+	Out("\t},");
+
+	Out("};");
+	Out("");
+
+	Out("global OnBotJoin = function(bot)");
+	Out("{");
+	Out("\t//~ bot.TargetBreakableDist = 300.0;");
+	Out("\tteam = bot.GetTeam();");
+	Out("\tclass = bot.GetClass();");
+
+	if (Mapgm.ET)
+	{
+		Out("");
+		Out("\tif (class == CLASS.SOLDIER)");
+		Out("\t\t{ bot.ChangePrimaryWeapon(WEAPON.MOBILE_MG42); }");
+		Out("");
+		Out("\tif (class == CLASS.COVERTOPS)");
+		Out("\t{");
+		Out("\t\tif (team == TEAM.ALLIES)");
+		Out("\t\t\t{ bot.ChangePrimaryWeapon(WEAPON.GARAND); }");
+		Out("\t\telse if (team == TEAM.AXIS)");
+		Out("\t\t\t{ bot.ChangePrimaryWeapon(WEAPON.K43); }");
+		Out("\t};");
+	}
+
+	Out("};");
+
+	Mapgm.Close();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// create a list of map goals
+Mapgm.MakeMapGoalList = function(_params)
+{
+	Mapgm.DecideTeams(_params);
+
+	Mapgm.Open(GetMapName() + "_goals.txt");
+
+	f = function(desc, exp)
+	{
+		foreach (i in Mapgm.Teams)
+		{
+			t = {};
+			GetGoals(t, i, exp + "_.*", { Sort="name" });
+			if (tableCount(t))
+			{
+				Mapgm.Out("// " + Util.TeamNames[i][0] + " " + desc + " Goals");
+				foreach (g in t)
+					{ Mapgm.Out("\t" + g.GetName()); }
+			}
+		}
+	};
+	f("Attack", "ATTACK");
+	f("Defend", "DEFEND");
+	f("Ammo Cabinet", "AMMOCAB");
+	f("Health Cabinet", "HEALTHCAB");
+	f("Call Artillery", "CALLARTILLERY");
+	f("Artillery", "ARTILLERY");
+	f("Checkpoint", "CHECKPOINT");
+	f("Flag", "FLAG");
+	f("Cappoint", "CAPPOINT");
+	f("Build", "BUILD");
+	f("Plant", "PLANT");
+	f("Mountable MG42", "MOUNTMG42");
+	f("Repair MG42", "REPAIRMG42");
+	f("Mobile MG42", "MOBILEMG42");
+	f("Mobile Mortar", "MOBILEMORTAR");
+	f("Sniper", "SNIPE");
+	f("Mover", "MOVER");
+	f("Plant Mine", "PLANTMINE");
+	f("Sentry", "SENTRY");
+	Mapgm.Close();
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// write a revision header
+Mapgm.MakeRevisionHeader = function()
+{
+	playerName = GetEntityName(GetLocalEntity());
+
+	// append spaces so tabs match up
+	spaces = "";
+	for (i = playerName.Length(); i > 3; --i) { spaces += " "; }
+
+	Out = Mapgm.Out;
+	Out("//==========================================================================================");
+	Out("//");
+	Out("//  " + Mapgm.FileName);
+	Out("//");
+	Out("// Who" + spaces + "\tWhen\t\tWhat");
+	Out("//------------------------------------------------------------------------------------------");
+	Out("// " + playerName + "\t" + Util.TimeFormat("date") + "\tInitial Script");
+	Out("//");
+	Out("//==========================================================================================");
+	Out("//");
+	Out("");
+};

@@ -1,0 +1,22 @@
+/* SGI/STLPort <hash_map> for gcc 15 gnu++98 (ButeMgr). */
+#ifndef PORT_HASH_MAP
+#define PORT_HASH_MAP
+#include <string>
+#include <ext/hash_map>
+namespace __gnu_cxx {
+	template<> struct hash<std::string> {
+		size_t operator()(const std::string& s) const {
+			unsigned long h = 0;
+			for (size_t i = 0; i < s.size(); ++i)
+				h = 5 * h + (unsigned char)s[i];
+			return (size_t)h;
+		}
+	};
+}
+namespace std {
+	using ::__gnu_cxx::hash_map;
+#if __cplusplus < 201103L
+	using ::__gnu_cxx::hash;
+#endif
+}
+#endif

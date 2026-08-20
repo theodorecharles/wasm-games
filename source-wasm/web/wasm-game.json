@@ -1,0 +1,108 @@
+{
+  "id": "source-wasm",
+  "title": "Source Wasm",
+  "kicker": "Source 1",
+  "description": "Still in development.",
+  "defaultVariant": "hl2",
+  "preferencesNamespace": "source-wasm",
+  "adapter": "/game-adapter.js",
+  "displayMode": "16:9",
+  "menuCursor": "browser",
+  "nativeManaged": false,
+  "syncBackbuffer": true,
+  "pointerWidth": 1280,
+  "pointerHeight": 720,
+  "pointerFit": "contain",
+  "pointerLock": true,
+  "fullscreen": true,
+  "identity": true,
+  "graphics": true,
+  "advanced": true,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/save/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "theme": {
+    "accent": "#dc5c24",
+    "accentStrong": "#f4a261",
+    "panel": "#121416",
+    "text": "#f4efe8"
+  },
+  "icon": "/icon.svg",
+  "background": "/icon.svg",
+  "pwa": {
+    "name": "Source Wasm",
+    "shortName": "Source Wasm",
+    "description": "Still in development.",
+    "themeColor": "#dc5c24",
+    "backgroundColor": "#101214",
+    "orientation": "landscape",
+    "icons": [
+      {
+        "src": "/icon.svg",
+        "sizes": "any",
+        "type": "image/svg+xml",
+        "purpose": "any"
+      }
+    ]
+  },
+  "variants": {
+    "hl2": {
+      "title": "Half-Life 2",
+      "shortTitle": "HL2",
+      "description": "Still in development.",
+      "loadingTitle": "Starting Half-Life 2…",
+      "provisioningText": "Install Steam Half-Life 2 on the steam_legacy beta into this container to continue.",
+      "icon": "/icon.svg",
+      "pwa": {
+        "id": "/?game=hl2",
+        "name": "Half-Life 2 WASM",
+        "shortName": "HL2 WASM",
+        "description": "Still in development.",
+        "startUrl": "/?game=hl2",
+        "themeColor": "#dc5c24",
+        "backgroundColor": "#101214",
+        "orientation": "landscape",
+        "icons": [
+          {
+            "src": "/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+          }
+        ]
+      }
+    },
+    "portal": {
+      "title": "Portal",
+      "shortTitle": "Portal",
+      "description": "Still in development.",
+      "loadingTitle": "Starting Portal…",
+      "provisioningText": "Install Steam Portal into this container to continue.",
+      "icon": "/icon.svg",
+      "pwa": {
+        "id": "/?game=portal",
+        "name": "Portal WASM",
+        "shortName": "Portal WASM",
+        "description": "Still in development.",
+        "startUrl": "/?game=portal",
+        "themeColor": "#dc5c24",
+        "backgroundColor": "#101214",
+        "orientation": "landscape",
+        "icons": [
+          {
+            "src": "/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+          }
+        ]
+      }
+    }
+  }
+}

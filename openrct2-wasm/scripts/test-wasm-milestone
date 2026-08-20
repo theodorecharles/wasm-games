@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
+cd "$repo_root"
+
+required_artifacts=(
+    "build/openrct2.js"
+    "build/openrct2.wasm"
+    "build/openrct2-cli.js"
+    "build/openrct2-cli.wasm"
+    "build/www/openrct2.zip"
+)
+
+for artifact in "${required_artifacts[@]}"; do
+    if [[ ! -s "$artifact" ]]; then
+        printf 'Missing build artifact: %s\n' "$artifact" >&2
+        exit 1
+    fi
+done
+
+node --check build/openrct2.js
+node --check build/openrct2-cli.js
+wasm-validate --enable-threads build/openrct2.wasm
+wasm-validate --enable-threads build/openrct2-cli.wasm
+
+version="$({ timeout 90s node - <<'NODE'
+const start = require('./build/openrct2-cli.js');
+
+(async () => {
+    const module = await start({
+        noInitialRun: true,
+        print: message => console.log(message),
+        printErr: message => console.error(message),
+    });
+    console.log(module.ccall('GetVersion', 'string'));
+    process.exit(0);
+})().catch(error => {
+    console.error(error);
+    process.exit(1);
+});
+NODE
+} 2>&1)"
+
+if [[ "$version" != "OpenRCT2, v0.5.4"* ]]; then
+    printf 'Unexpected WebAssembly version response: %s\n' "$version" >&2
+    exit 1
+fi
+
+if git ls-files | grep -Eiq '(^|/)(RCT2\.EXE|g1\.dat|ch\.dat)$'; then
+    printf 'RCT2 runtime data must not be tracked in this source tree.\n' >&2
+    exit 1
+fi
+
+printf 'WebAssembly module initialized: %s\n' "$version"
+sha256sum \
+    build/openrct2.js \
+    build/openrct2.wasm \
+    build/www/openrct2.zip

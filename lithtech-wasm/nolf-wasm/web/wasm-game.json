@@ -1,0 +1,41 @@
+{
+  "id": "nolf-wasm",
+  "title": "No One Lives Forever",
+  "kicker": "LithTech 2.1",
+  "description": "The Operative: No One Lives Forever, built from the official 1.003 game source.",
+  "provisioningText": "Provide the GOTY disc archives NOLF.REZ, NOLF2.REZ, NOLFGOTY.REZ, nolfu003.rez, and NOLFCRES003.REZ.",
+  "icon": "/icon.svg",
+  "background": "/icon.svg",
+  "adapter": "/game-adapter.js",
+  "displayMode": "4:3",
+  "menuCursor": "browser",
+  "nativeManaged": false,
+  "syncBackbuffer": true,
+  "pointerLock": true,
+  "fullscreen": true,
+  "identity": false,
+  "graphics": false,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/save/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "pwa": {
+    "name": "No One Lives Forever",
+    "shortName": "NOLF",
+    "description": "The Operative: No One Lives Forever in the browser.",
+    "themeColor": "#c4a35a",
+    "backgroundColor": "#100c08",
+    "icons": [
+      {
+        "src": "/icon.svg",
+        "sizes": "any",
+        "type": "image/svg+xml"
+      }
+    ]
+  }
+}

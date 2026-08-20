@@ -1,0 +1,7 @@
+//used by lieutenant, goals DeliverSupplies, DispenseAmmo, SupplySelf
+this.Name = "Ammo Pack";
+this.WeaponId = WEAPON.AMMO_PACK;
+
+this.PrimaryFire.WeaponType = "item";
+this.PrimaryFire.RequiresAmmo = false;
+this.PrimaryFire.WaterProof = true;

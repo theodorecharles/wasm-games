@@ -1,0 +1,22 @@
+{
+  "variant": "counter-strike",
+  "gamedir": "cstrike",
+  "title": "Counter-Strike 1.6",
+  "engine": "goldsource",
+  "engineRuntime": "Xash3D-FWGS + CS16 Client",
+  "multiplayer": true,
+  "description": "Counter-Strike 1.6 multiplayer in the browser.",
+  "image": "ghcr.io/theodorecharles/counter-strike-wasm",
+  "ports": { "host": 8020, "container": 8088 },
+  "icon": "assets/icon.svg",
+  "background": "assets/background.svg",
+  "theme": { "accent": "#6f684b", "accentStrong": "#c7bd88", "border": "#504c3a", "pwa": "#6e694e" },
+  "dataDir": "goldsource",
+  "notes": "Multiplayer uses a WebRTC bridge + listen-server host (see engine/artifacts/runtime/cs-*). The base image serves the client; the bridge/host run as a companion.",
+  "dataFiles": [
+    { "name": "valve-owner.pk3", "path": "goldsource/valve-owner.pk3", "mountName": "valve/owner-valve.pk3", "size": 271240725, "sha256": "70aed2d728525b3ef34bc50090e0a00c63f8c4c14c6a3e7fbee7c03b235f83d0" },
+    { "name": "valve-liblist.gam", "path": "goldsource/valve-liblist.gam", "mountName": "valve/liblist.gam", "size": 333, "sha256": "0d4034ebaabcc54ad9f00bb89e9677d5f34c3d3beda9185a69d5ac719e0e2ffb" },
+    { "name": "cstrike-owner.pk3", "path": "goldsource/cstrike-owner.pk3", "mountName": "cstrike/owner-cstrike.pk3", "size": 142554951, "sha256": "3b3522ee9d9dd68592db64aca5f81ffc61b9687d9bba1f05813ea5ffed7789cb" },
+    { "name": "cstrike-liblist.gam", "path": "goldsource/cstrike-liblist.gam", "mountName": "cstrike/liblist.gam", "size": 335, "sha256": "0dc83870fe4685bf409c3ba630a946da4e5fee6b782f9870242fcdaa6e2c3514" }
+  ]
+}

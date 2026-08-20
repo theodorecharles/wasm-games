@@ -1,0 +1,67 @@
+this.GoalType = "ROUTE";
+this.Version = 1;
+this.DefaultPriority = 0.7;
+this.RenderDefaultBounds = false;
+this.RenderDefaultGroup = false;
+this.RenderDefaultAtCenterBounds = false;
+this.MinRadius = 32;
+
+//////////////////////////////////////////////////////////////////////////
+
+this.Schema = Schema();
+this.Schema.Radius = Validate.NumRange(this.MinRadius, 999).Default(125);
+
+//////////////////////////////////////////////////////////////////////////
+
+this.InitNewGoal = function()
+{
+	this.Schema.Check(this);
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.UpgradeVersion = function(Props)
+{
+	if(Props.Version==0)
+	{
+		//upgrade from old waypoint format
+		Props.Version = 1;
+		this.SetPosition(this.GetPosition() + Util.WaypointGoalOffset);
+	}
+	else if(Props.Version == 1)
+	{
+		this.Schema.Check(Props);
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.Render = function()
+{
+	offset2 = Vector3(0,0,64);
+
+	while(this.RenderGoal)
+	{
+		goalBasePos = this.GetPosition();
+		goalPos = goalBasePos + offset2;
+
+		this.RenderDefault();
+
+		if(this.IsDisabled())
+		{
+			DrawLine(goalPos,goalBasePos,COLOR.RED,2);
+		}
+		else
+		{
+			DrawLine(goalPos,goalBasePos,COLOR.GREEN,2);
+		}
+
+		sleep(2);
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
+this.HudDisplay = function(window)
+{
+	this.CreateGuiFromSchema(this.Schema);
+};

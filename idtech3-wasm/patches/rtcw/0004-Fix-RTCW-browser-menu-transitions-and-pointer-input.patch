@@ -1,0 +1,147 @@
+From 793df5af907e7b5643df18a35911ceaba1116dbf Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 10:15:00 -0400
+Subject: [PATCH] Fix RTCW browser menu transitions and pointer input
+
+---
+ MP/code/client/cl_input.c |  7 +++++++
+ MP/code/ui/ui_main.c      | 24 ++++++++++++++++++++++++
+ SP/code/client/cl_input.c |  7 +++++++
+ SP/code/ui/ui_main.c      | 21 ++++++++++++++++++++-
+ 4 files changed, 58 insertions(+), 1 deletion(-)
+
+diff --git a/MP/code/client/cl_input.c b/MP/code/client/cl_input.c
+index de2ab82..2f64f2e 100644
+--- a/MP/code/client/cl_input.c
++++ b/MP/code/client/cl_input.c
+@@ -424,6 +424,12 @@ CL_MouseEvent
+ */
+ void CL_MouseEvent( int dx, int dy, int time ) {
+ 	if ( Key_GetCatcher( ) & KEYCATCH_UI ) {
++#ifdef __EMSCRIPTEN__
++		// The framework supplies an absolute 640x480 UI cursor. SDL's relative
++		// motion would otherwise move the same cursor a second time and make it
++		// drift away from the browser pointer.
++		return;
++#else
+ 		// NERVE - SMF - if we just want to pass it along to game
+ 		if ( cl_bypassMouseInput->integer == 1 ) {
+ 			cl.mouseDx[cl.mouseIndex] += dx;
+@@ -431,6 +437,7 @@ void CL_MouseEvent( int dx, int dy, int time ) {
+ 		} else {
+ 			VM_Call( uivm, UI_MOUSE_EVENT, dx, dy );
+ 		}
++#endif
+ 
+ 	} else if (Key_GetCatcher( ) & KEYCATCH_CGAME) {
+ 		VM_Call( cgvm, CG_MOUSE_EVENT, dx, dy );
+diff --git a/MP/code/ui/ui_main.c b/MP/code/ui/ui_main.c
+index d8d9259..d1a78ca 100644
+--- a/MP/code/ui/ui_main.c
++++ b/MP/code/ui/ui_main.c
+@@ -1402,6 +1402,29 @@ qboolean Load_Menu( int handle ) {
+ 	return qfalse;
+ }
+ 
++static void UI_ApplyBrowserMainMenuPolicy( void ) {
++#ifdef __EMSCRIPTEN__
++	menuDef_t *menu = Menus_FindByName( "main" );
++	itemDef_t *singlePlayer;
++	itemDef_t *joinGame;
++
++	if ( !menu ) {
++		return;
++	}
++	singlePlayer = Menu_FindItemByName( menu, "play" );
++	if ( singlePlayer ) {
++		singlePlayer->window.flags &= ~( WINDOW_VISIBLE | WINDOW_HASFOCUS );
++	}
++	joinGame = Menu_FindItemByName( menu, "playselection" );
++	if ( joinGame ) {
++		joinGame->text = String_Alloc( "JOIN GAME" );
++		joinGame->action = String_Alloc( "setcvar ui_wasmJoinRequested 1; setcvar ui_wasmJoinTarget 0" );
++		joinGame->mouseEnter = String_Alloc( "setcvar ui_wasmJoinTarget 1" );
++		joinGame->mouseExit = String_Alloc( "setcvar ui_wasmJoinTarget 0" );
++	}
++#endif
++}
++
+ void UI_LoadMenus( const char *menuFile, qboolean reset ) {
+ 	pc_token_t token;
+ 	int handle;
+@@ -1448,6 +1471,7 @@ void UI_LoadMenus( const char *menuFile, qboolean reset ) {
+ 	Com_DPrintf( "UI menu load time = %d milli seconds\n", trap_Milliseconds() - start );
+ 
+ 	trap_PC_FreeSource( handle );
++	UI_ApplyBrowserMainMenuPolicy();
+ }
+ 
+ void UI_Load( void ) {
+diff --git a/SP/code/client/cl_input.c b/SP/code/client/cl_input.c
+index 116e0de..b8dd61b 100644
+--- a/SP/code/client/cl_input.c
++++ b/SP/code/client/cl_input.c
+@@ -408,7 +408,14 @@ CL_MouseEvent
+ */
+ void CL_MouseEvent( int dx, int dy, int time ) {
+ 	if ( Key_GetCatcher( ) & KEYCATCH_UI ) {
++#ifdef __EMSCRIPTEN__
++		// The framework supplies an absolute 640x480 UI cursor. SDL's relative
++		// motion would otherwise move the same cursor a second time and make it
++		// drift away from the browser pointer.
++		return;
++#else
+ 		VM_Call( uivm, UI_MOUSE_EVENT, dx, dy );
++#endif
+ 	} else if (Key_GetCatcher( ) & KEYCATCH_CGAME) {
+ 		VM_Call( cgvm, CG_MOUSE_EVENT, dx, dy );
+ 	} else {
+diff --git a/SP/code/ui/ui_main.c b/SP/code/ui/ui_main.c
+index d5fb550..fed0304 100644
+--- a/SP/code/ui/ui_main.c
++++ b/SP/code/ui/ui_main.c
+@@ -1030,6 +1030,21 @@ qboolean Load_Menu( int handle ) {
+ 	return qfalse;
+ }
+ 
++static void UI_ApplyBrowserMainMenuPolicy( void ) {
++#ifdef __EMSCRIPTEN__
++	menuDef_t *menu = Menus_FindByName( "main" );
++	itemDef_t *multiplayer;
++
++	if ( !menu ) {
++		return;
++	}
++	multiplayer = Menu_FindItemByName( menu, "playselection" );
++	if ( multiplayer ) {
++		multiplayer->window.flags &= ~( WINDOW_VISIBLE | WINDOW_HASFOCUS );
++	}
++#endif
++}
++
+ void UI_LoadMenus( const char *menuFile, qboolean reset ) {
+ 	pc_token_t token;
+ 	int handle;
+@@ -1080,6 +1095,7 @@ void UI_LoadMenus( const char *menuFile, qboolean reset ) {
+ 	Com_DPrintf( "UI menu load time = %d milli seconds\n", trap_Milliseconds() - start );
+ 
+ 	trap_PC_FreeSource( handle );
++	UI_ApplyBrowserMainMenuPolicy();
+ }
+ 
+ 
+@@ -4827,7 +4843,10 @@ static void UI_RunMenuScript( char **args ) {
+ 		} else if ( Q_stricmp( name, "playerstart" ) == 0 ) {
+ 			trap_Cmd_ExecuteText( EXEC_APPEND, "fade 0 0 0 0 3\n" );    // fade screen up
+ 			trap_Cvar_Set( "g_playerstart", "1" );                 // set cvar which will trigger "playerstart" in script
+-			Menus_CloseAll();
++			// Browser input can complete the pregame click without a later mouse-up
++			// reaching an unfocused menu. Use the normal active-menu shutdown path
++			// so the key catcher, held keys, and pause state are cleared atomically.
++			_UI_SetActiveMenu( UIMENU_NONE );
+ 			//----(SA)	end
+ 
+ 		} else if ( Q_stricmp( name, "LoadMods" ) == 0 ) {
+-- 
+2.53.0
+

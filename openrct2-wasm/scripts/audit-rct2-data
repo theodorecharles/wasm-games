@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+    printf 'Usage: %s /path/to/RollerCoaster\ Tycoon\ 2\n' "$0" >&2
+    exit 2
+fi
+
+data_root="${1%/}"
+required_files=(
+    "RCT2.EXE"
+    "Data/ch.dat"
+    "Data/g1.dat"
+)
+required_directories=(
+    "Data"
+    "ObjData"
+    "Scenarios"
+    "Tracks"
+)
+
+for relative_path in "${required_files[@]}"; do
+    if [[ ! -f "$data_root/$relative_path" ]]; then
+        printf 'Missing required file: %s\n' "$data_root/$relative_path" >&2
+        exit 1
+    fi
+done
+
+for relative_path in "${required_directories[@]}"; do
+    if [[ ! -d "$data_root/$relative_path" ]]; then
+        printf 'Missing required directory: %s\n' "$data_root/$relative_path" >&2
+        exit 1
+    fi
+done
+
+printf 'RCT2 data layout: complete\n'
+printf 'Root: %s\n' "$data_root"
+for relative_path in "${required_directories[@]}"; do
+    file_count="$(find "$data_root/$relative_path" -type f -printf '.' | wc -c)"
+    byte_count="$(du -sb "$data_root/$relative_path" | cut -f1)"
+    printf '%-10s %6s files %12s bytes\n' "$relative_path" "$file_count" "$byte_count"
+done

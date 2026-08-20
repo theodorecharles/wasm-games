@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly framework_commit="ad0226db55a2925bb250c6e31ca6786bd0dc73bd"
+repo_root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
+framework_root="${WASM_GAME_FRAMEWORK_ROOT:-/home/ted/Development/wasm/wasm-game-framework}"
+site_root="$repo_root/build-framework/site"
+
+cd "$repo_root"
+node --check web/game-adapter.js
+node --check web/openrct2-worker.js
+node --check web/openrct2-audio-bridge.mjs
+node --check web/openrct2-hot-cache.mjs
+node --check web/data-validator.mjs
+node --check web/media-transformer.mjs
+bash -n scripts/provision-gog-volume
+node scripts/test-audio-bridge.mjs
+node scripts/test-hot-cache.mjs
+node "$framework_root/scripts/check-game-package.js" "$site_root"
+wasm-validate --enable-threads build-framework/openrct2.wasm
+
+node - <<'NODE'
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+
+const root = process.env.OPENRCT2_RCT2_DATA || path.join(process.env.HOME, '.config/OpenRCT2/rct2');
+const firstFile = directory => {
+  const name = fs.readdirSync(path.join(root, directory), { withFileTypes: true })
+    .find(entry => entry.isFile())?.name;
+  if (!name) throw new Error(`${directory} has no regular files.`);
+  return `${directory}/${name}`;
+};
+const names = ['Data/g1.dat', 'Data/ch.dat', firstFile('ObjData'), firstFile('Scenarios'), firstFile('Tracks')];
+
+(async () => {
+  const validator = await import(pathToFileURL(path.resolve('web/data-validator.mjs')).href);
+  const files = names.map(name => {
+    const target = path.join(root, ...name.split('/'));
+    const stat = fs.statSync(target);
+    return {
+      name,
+      size: stat.size,
+      async read(offset, length) {
+        const handle = await fs.promises.open(target, 'r');
+        try {
+          const bytes = Buffer.alloc(length);
+          const result = await handle.read(bytes, 0, length, offset);
+          return bytes.subarray(0, result.bytesRead);
+        } finally { await handle.close(); }
+      }
+    };
+  });
+  const result = await validator.validateRct2Installation({ files });
+  assert.equal(result.accepted, true, result.error);
+  assert.equal(result.identity, 'rct2-installation');
+  console.log('bounded RCT2 installation validator passed');
+})().catch(error => { console.error(error); process.exitCode = 1; });
+NODE
+
+if find web -maxdepth 1 -type f \( -name 'index.html' -o -name '*.css' -o -name 'service-worker.js' -o -name 'manifest.webmanifest' \) | grep -q .; then
+    printf 'Downstream browser shell assets are present under web/.\n' >&2
+    exit 1
+fi
+if git ls-files | grep -Eiq '(^|/)(RCT2\.EXE|g1\.dat|ch\.dat)$'; then
+    printf 'RCT2 runtime data must not be tracked in this source tree.\n' >&2
+    exit 1
+fi
+
+grep -q '"version": "0.9.6"' "$site_root/wasm-game-framework.json"
+grep -q "\"commit\": \"$framework_commit\"" "$site_root/wasm-game.json"
+grep -q '"menuCursor": "browser"' "$site_root/wasm-game.json"
+grep -q '"controller": { "mode": "disabled" }' "$site_root/wasm-game.json"
+grep -q 'launcherVisibleWhenReady.*false' <(tr -d '\n' < "$site_root/wasm-game-data.json")
+grep -q '"transformer"' "$site_root/wasm-game-data.json"
+grep -q 'transformOpenRctInstallers' "$site_root/media-transformer.mjs"
+if grep -Eiq 'controller(Frame|Changed)|getGamepads|gamepadconnected|gamepaddisconnected' \
+    "$site_root/game-adapter.js" "$site_root/openrct2-worker.js" "$site_root/openrct2-audio-bridge.mjs"; then
+    printf 'OpenRCT2 must not poll or map emulator-only controllers.\n' >&2
+    exit 1
+fi
+grep -q 'EmscriptenPersistData' emscripten/deps.js
+grep -q 'EmscriptenPersistData(true)' src/openrct2-ui/input/ShortcutManager.cpp
+if grep -Eiq 'document\.createElement|show(Open|Save)FilePicker|JSZip' emscripten/deps.js; then
+    printf 'OpenRCT2 worker dependencies contain a DOM-only save/load path.\n' >&2
+    exit 1
+fi
+grep -q 'return Windows::LoadsaveOpen' src/openrct2-ui/interface/FileBrowser.cpp
+if grep -Eq 'Emscripten(Load|Save)Game|LoadGameCallback' \
+    src/openrct2-ui/interface/FileBrowser.cpp src/openrct2-ui/interface/FileBrowser.h; then
+    printf 'OpenRCT2 must use its worker-safe native load/save browser.\n' >&2
+    exit 1
+fi
+grep -q 'Module\["_OpenRCT2Wasm_RuntimeState"\]' build-framework/openrct2.js
+grep -q 'Module\["_OpenRCT2Wasm_FramebufferVariation"\]' build-framework/openrct2.js
+grep -q 'Module\["_OpenRCT2Wasm_CursorX"\]' build-framework/openrct2.js
+grep -q 'Module\["_OpenRCT2Wasm_PointerMove"\]' build-framework/openrct2.js
+grep -q 'Module\["_OpenRCT2Wasm_PointerButton"\]' build-framework/openrct2.js
+grep -q 'OpenRCT2::StoreMouseInput' src/openrct2-ui/WasmGameFramework.cpp
+grep -q 'creates a circular wait' src/openrct2/object/ObjectManager.cpp
+grep -q 'never cover the title/game UI with the' src/openrct2/Context.cpp
+awk '/#ifdef __EMSCRIPTEN__/{wasm=1} wasm && /gOpenRCT2ShowChangelog = false/{disabled=1} wasm && /#else/{exit} END{exit !(wasm && disabled)}' \
+    src/openrct2/Context.cpp
+awk '/#ifdef __EMSCRIPTEN__/{wasm=1} wasm && /loadSingleObject\(object\)/{single=1} wasm && /#else/{exit} END{exit !(wasm && single)}' \
+    src/openrct2/object/ObjectManager.cpp
+grep -q 'Module\["_OpenRCT2Wasm_PointerWheel"\]' build-framework/openrct2.js
+grep -q 'Module\["_OpenRCT2Wasm_TextInput"\]' build-framework/openrct2.js
+grep -q 'Module\["_OpenRCT2Wasm_Key"\]' build-framework/openrct2.js
+if grep -q 'Module\["_OpenRCT2Wasm_Controller' build-framework/openrct2.js; then
+    printf 'OpenRCT2 must not expose emulator-only controller seams.\n' >&2
+    exit 1
+fi
+grep -q 'Module\["setCanvasSize"\]' build-framework/openrct2.js
+if grep -q 'var entryFunction=__emscripten_proxy_main' build-framework/openrct2.js; then
+    printf 'OpenRCT2 must run in its dedicated application worker, not PROXY_TO_PTHREAD.\n' >&2
+    exit 1
+fi
+grep -q 'PThread' build-framework/openrct2.js
+grep -q 'WORKERFS' build-framework/openrct2.js
+grep -q 'createWorkerFsHotCache' "$site_root/openrct2-worker.js"
+grep -q 'shouldCacheDirectory(group.directory)' "$site_root/openrct2-worker.js"
+
+sha256sum \
+    build-framework/openrct2.js \
+    build-framework/openrct2.wasm \
+    build-framework/openrct2.data \
+    build-framework/site/openrct2.ico \
+    build-framework/site/openrct2-192.png \
+    build-framework/site/openrct2-512.png

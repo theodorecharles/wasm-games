@@ -1,0 +1,263 @@
+// This script contains functionality to control testbot
+this.Name = "TestBot";
+this.Parent = "HighLevel";
+this.AlwaysRecieveEvents = true;
+this.AutoAdd = false;	// Don't add this script to every bot automatically. It is added in def_bot.gm
+
+this.Initialize = function()
+{
+	this.Debug = true;
+	this.PersistentPriority = 2;
+};
+
+this.GetPriority = function()
+{
+	this.Priority = this.PersistentPriority;
+	block(0);
+};
+
+this.Enter = function()
+{
+	this.Stop();
+};
+
+this.Events[EVENT.FEEL_PAIN] = function(Inflictor)
+{
+	if(Inflictor)
+	{
+		this.Bot.Say("Hurt by ", GetEntName(Inflictor));
+	}
+};
+
+this.Events[EVENT.DEATH] = function(Inflictor, MeansOfDeath)
+{
+	who = GetEntName(Inflictor);
+	if(who)
+	{
+		this.Bot.Say(who, " killed me with ", MeansOfDeath);
+	}
+	else
+	{
+		this.Bot.Say("I died from ", MeansOfDeath);
+	}
+};
+
+this.Events[EVENT.WEAPON_FIRE] = function(WeaponId, Projectile)
+{
+	this.Bot.Say("Fired Weapon ", Util.WeaponName(WeaponId), ", projectile ", Projectile);
+
+	// if(Projectile)
+	// {
+		// endTime = GetTime() + 5000;
+		// dowhile(GetTime() < endTime)
+		// {
+			// projVel = GetEntVelocity(Projectile);
+			// print("Projectile Velocity ", projVel.Length());
+			// yield();
+		// }
+	// }
+};
+
+this.Events[EVENT.KILLEDSOMEONE] = function(Victim, MeansOfDeath)
+{
+	this.Bot.Say("I killed ", GetEntName(Victim), " with ", MeansOfDeath);
+};
+
+this.Events[EVENT.TEAM_CHAT_MSG] = function(who, msg)
+{
+	if(msg && msg.Find("bot ") == 0)
+	{
+		bot = this.Bot;
+		cmd = msg.RightAt(4);
+		print("testbot got msg", cmd);
+		switch(cmd)
+		{
+		case "go":
+		{
+			bot.Say("free roam");
+			this.PersistentPriority = 0;
+			this.Finished();
+		}
+		case "stop":
+		{
+			bot.Say("stopping");
+			this.Initialize();
+			this.Priority = this.PersistentPriority;
+			this.Stop();
+		}
+		case "wait":
+		{
+			this.Goto(bot.GetPosition());
+		}
+		case "dyno":
+		{
+			if (bot.HasWeapon(WEAPON.DYNAMITE))
+			{
+				this.AddWeaponRequest(WEAPON.DYNAMITE);
+				//this.BlockForWeaponChange(WEAPON.DYNAMITE);
+				sleep(1.2);
+				bot.PressButton(BTN.ATTACK1);
+				sleep(2);
+				this.ReleaseWeaponRequest();
+				ent = bot.GetNearest(CAT.AVOID, CLASS.DYNAMITE_ENT);
+				if (ent) {
+					bot.Say("I see dyno");
+				} else {
+					bot.Say("I'm blind!");
+				}
+			}
+		}
+		case "searchdyno":
+		{
+			this.SearchDyno = !this.SearchDyno;
+			while(this.SearchDyno) {
+				ent = bot.GetNearest(CAT.AVOID, CLASS.DYNAMITE_ENT);
+				if (ent) {
+					bot.Say("Found it!");
+					break;
+				}
+				bot.Say("still searching");
+				sleep(1);
+			}
+		}
+		case "shootoff":
+		{
+			bot.Say("not shooting");
+			bot.EnableShooting(0);
+		}
+		case "shooton":
+		{
+			bot.Say("shooting");
+			bot.EnableShooting(1);
+		}
+		case "jump":
+		{
+			bot.PressButton(BTN.JUMP);
+		}
+		case "reload":
+		{
+			bot.PressButton(BTN.RELOAD);
+		}
+		case "shoot":
+		{
+			bot.Say("shoot");
+			bot.HoldButton(BTN.ATTACK1, 5);
+		}
+		case "shoot2":
+		{
+			bot.Say("shoot2");
+			bot.HoldButton(BTN.ATTACK2, 5);
+		}
+		case "crouch":
+		{
+			bot.HoldButton(BTN.CROUCH, 5);
+		}
+		case "holdcrouch":
+		{
+			bot.HoldButton(BTN.CROUCH, -1);
+		}
+		case "releasecrouch":
+		{
+			bot.ReleaseButton(BTN.CROUCH);
+		}
+		case "holdprone":
+		{
+			bot.HoldButton(BTN.PRONE, -1);
+		}
+		case "releaseprone":
+		{
+			bot.ReleaseButton(BTN.PRONE);
+		}
+		case "forward":
+		{
+			bot.HoldButton(BTN.FORWARD, 5);
+		}
+		case "backward":
+		{
+			bot.HoldButton(BTN.BACKWARD, 5);
+		}
+		case "strafe_l":
+		{
+			bot.HoldButton(BTN.STRAFE_L, 5);
+		}
+		case "strafe_r":
+		{
+			bot.HoldButton(BTN.STRAFE_R, 5);
+		}
+		case "spin":
+		{
+			testfunc = function()
+			{
+				for(;;)
+				{
+					entFace = Vec3FromSpherical(GetTime() * 2,0,1);
+					this.AimVector = entFace;
+
+					// draw a debug aid
+					startPos = this.Bot.GetEyePosition() + Vector3(0,0,80);
+					DrawDebugLine(startPos, startPos + entFace * 64, COLOR.RED, 0.1);
+					DrawDebugLine(startPos + Vector3(0,0,32), startPos - Vector3(0,0,32), COLOR.GREEN, 0.1);
+					yield();
+				}
+			};
+
+			if(this.TestHeadingThread)
+			{
+				this.ReleaseAimRequest();
+				threadKill(this.TestHeadingThread);
+				this.TestHeadingThread = null;
+			}
+			else
+			{
+				this.AddAimRequest(Priority.High, "facing");
+				this.TestHeadingThread = this:thread(testfunc, 1);
+			}
+		}
+		case "come":
+		{
+			bot.Say("omw.");
+			res = this.Goto(GetEntPosition(who), 32);
+			if(this.Bot){
+				if(res == EVENT.PATH_FAILED)
+					{ bot.Say("Can't do it!"); }
+				else
+					{ bot.Say("Did it!"); }
+			}
+		}
+		case "move":
+		{
+			bot.Say("moving");
+			bot.MoveTowards(GetEntPosition(who));
+		}
+		default:
+		{
+			if(cmd.Find("selectweapon ")==0)
+			{
+				wpn = Util.WeaponNameToId(cmd.RightAt(13));
+				bot.Say("switching to " + Util.WeaponName(wpn));
+				this.AddWeaponRequest(Priority.Medium, ToInt(wpn));
+			}
+			else if(cmd.Find("goto ")==0)
+			{
+				sPos = cmd.RightAt(5);
+				vPos = ToVector(sPos);
+				if(IsVec3(vPos)){
+					if(this.Goto(vPos) == EVENT.PATH_FAILED)
+						{ bot.Say("Path failed!"); }
+					else
+						{ bot.Say("Path succeeded!"); }
+				}else{
+					print("invalid vector " + sPos);
+				}
+			}
+			else
+			{
+				bot.Say("Command: ", cmd);
+				bot.ExecCommand(cmd);
+			}
+		}
+		}
+	}
+};
+
+this.Events[EVENT.GLOBAL_CHAT_MSG] = this.Events[EVENT.TEAM_CHAT_MSG];

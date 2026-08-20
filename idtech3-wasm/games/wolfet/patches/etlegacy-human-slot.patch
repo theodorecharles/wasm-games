@@ -1,0 +1,229 @@
+diff --git a/src/game/g_cmds.c b/src/game/g_cmds.c
+index b5fb25982..47ce6476b 100644
+--- a/src/game/g_cmds.c
++++ b/src/game/g_cmds.c
+@@ -1469,8 +1469,18 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
+ 		{
+ 			int counts[TEAM_NUM_TEAMS];
+ 
+-			counts[TEAM_ALLIES] = TeamCount(ent - g_entities, TEAM_ALLIES);
+-			counts[TEAM_AXIS]   = TeamCount(ent - g_entities, TEAM_AXIS);
++			/* Humans are balanced against humans. Fill bots must not block
++			 * a player switching Axis <-> Allies. */
++			if (!G_ClientIsFillBot(ent))
++			{
++				counts[TEAM_ALLIES] = G_TeamCountHumans(ent - g_entities, TEAM_ALLIES);
++				counts[TEAM_AXIS]   = G_TeamCountHumans(ent - g_entities, TEAM_AXIS);
++			}
++			else
++			{
++				counts[TEAM_ALLIES] = TeamCount(ent - g_entities, TEAM_ALLIES);
++				counts[TEAM_AXIS]   = TeamCount(ent - g_entities, TEAM_AXIS);
++			}
+ 
+ 			// We allow a spread of one
+ 			if (team == TEAM_AXIS && counts[TEAM_AXIS] - counts[TEAM_ALLIES] >= 1)
+@@ -1493,9 +1503,15 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
+ 	if (g_maxGameClients.integer > 0)
+ 	{
+ 		// don't force spectate on 'class' command - force team to spec only if we're trying to switch from spec to either team
+-		if (oldTeam == TEAM_SPECTATOR && team != oldTeam && level.numNonSpectatorClients >= g_maxGameClients.integer)
++		while (oldTeam == TEAM_SPECTATOR && team != oldTeam &&
++		       level.numNonSpectatorClients >= g_maxGameClients.integer)
+ 		{
+-			team = TEAM_SPECTATOR;
++			if ((ent->r.svFlags & SVF_BOT) ||
++			    !G_YieldBotSlot(team, client->sess.latchPlayerType))
++			{
++				team = TEAM_SPECTATOR;
++				break;
++			}
+ 		}
+ 	}
+ 
+diff --git a/src/game/g_local.h b/src/game/g_local.h
+index 59571c573..9ef544585 100644
+--- a/src/game/g_local.h
++++ b/src/game/g_local.h
+@@ -2432,6 +2432,9 @@ void G_shuffleTeamsSR(void);
+ void G_swapTeamLocks(void);
+ void G_swapTeams(void);
+ qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent);
++qboolean G_ClientIsFillBot(gentity_t *ent);
++int G_TeamCountHumans(int ignoreClientNum, team_t team);
++qboolean G_YieldBotSlot(team_t team, int playerType);
+ void G_teamReset(int team_num, qboolean fClearSpecLock);
+ void G_verifyMatchState(team_t nTeam);
+ void G_updateSpecLock(int nTeam, qboolean fLock);
+diff --git a/src/game/g_referee.c b/src/game/g_referee.c
+index e53176ec3..eb6ec2307 100644
+--- a/src/game/g_referee.c
++++ b/src/game/g_referee.c
+@@ -377,8 +377,12 @@ void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
+ 
+ 	if (team_maxplayers.integer && TeamCount(-1, team_id) >= team_maxplayers.integer)
+ 	{
+-		G_refPrintf(ent, "Sorry, the %s team is already full!", aTeams[team_id]);
+-		return;
++		if ((player->r.svFlags & SVF_BOT) ||
++		    !G_YieldBotSlot(team_id, player->client->sess.playerType))
++		{
++			G_refPrintf(ent, "Sorry, the %s team is already full!", aTeams[team_id]);
++			return;
++		}
+ 	}
+ 
+ 	if (player->client->sess.tvflags & 1)
+diff --git a/src/game/g_team.c b/src/game/g_team.c
+index 30b9249fd..29c64f8f7 100644
+--- a/src/game/g_team.c
++++ b/src/game/g_team.c
+@@ -1875,6 +1875,112 @@ void G_verifyMatchState(team_t nTeam)
+ 	G_checkReady();
+ }
+ 
++/**
++ * @brief True for Omni-Bot / fill bots that should yield to a human.
++ */
++qboolean G_ClientIsFillBot(gentity_t *ent)
++{
++	if (!ent || !ent->inuse || !ent->client)
++	{
++		return qfalse;
++	}
++	if (ent->r.svFlags & SVF_BOT)
++	{
++		return qtrue;
++	}
++	if (Q_stristr(ent->client->pers.netname, "[BOT]"))
++	{
++		return qtrue;
++	}
++	return qfalse;
++}
++
++/**
++ * @brief Count humans on a team, ignoring fill bots and ignoreClientNum.
++ */
++int G_TeamCountHumans(int ignoreClientNum, team_t team)
++{
++	int i, ref, count = 0;
++
++	for (i = 0; i < level.numConnectedClients; i++)
++	{
++		ref = level.sortedClients[i];
++		if (ref == ignoreClientNum)
++		{
++			continue;
++		}
++		if (level.clients[ref].sess.sessionTeam != team)
++		{
++			continue;
++		}
++		if (G_ClientIsFillBot(g_entities + ref))
++		{
++			continue;
++		}
++		count++;
++	}
++
++	return count;
++}
++
++/**
++ * @brief Disconnect one bot on team so a human can take the slot.
++ *        Prefers a bot whose class matches playerType when that is valid.
++ * @return qtrue if a bot was removed
++ */
++qboolean G_YieldBotSlot(team_t team, int playerType)
++{
++	int       i, ref, fallback = -1, preferred = -1;
++	gentity_t *bot;
++
++	if (team != TEAM_AXIS && team != TEAM_ALLIES)
++	{
++		return qfalse;
++	}
++
++	for (i = 0; i < level.numConnectedClients; i++)
++	{
++		ref = level.sortedClients[i];
++		bot = g_entities + ref;
++
++		if (!G_ClientIsFillBot(bot))
++		{
++			continue;
++		}
++		if (bot->client->sess.sessionTeam != team)
++		{
++			continue;
++		}
++
++		if (playerType >= PC_SOLDIER && playerType <= PC_COVERTOPS &&
++		    (bot->client->sess.latchPlayerType == playerType ||
++		     bot->client->sess.playerType == playerType))
++		{
++			preferred = ref;
++			break;
++		}
++		if (fallback < 0)
++		{
++			fallback = ref;
++		}
++	}
++
++	ref = (preferred >= 0) ? preferred : fallback;
++	if (ref < 0)
++	{
++		return qfalse;
++	}
++
++	/* Move them off the team before the drop so TeamCount updates even if
++	 * the engine defers ClientDisconnect until the next frame. */
++	level.clients[ref].sess.sessionTeam    = TEAM_SPECTATOR;
++	level.clients[ref].sess.spectatorState = SPECTATOR_FREE;
++	G_LogPrintf("YieldBotSlot: dropping %i (%s) for human join on team %i\n",
++	            ref, level.clients[ref].pers.netname, team);
++	trap_DropClient(ref, "slot yielded to player", 0);
++	return qtrue;
++}
++
+ /**
+  * @brief Checks to see if a specified team is allowing players to join.
+  * @param[in] nTeam
+@@ -1906,6 +2012,14 @@ qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent)
+ 			return qfalse;
+ 		}
+ 
++		// Humans take a bot slot instead of being told the team is full.
++		if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt &&
++		    !(ent->r.svFlags & SVF_BOT) &&
++		    G_YieldBotSlot(nTeam, ent->client->sess.latchPlayerType))
++		{
++			cnt = TeamCount(-1, nTeam);
++		}
++
+ 		if (g_gametype.integer != GT_WOLF_LMS)
+ 		{
+ 			// Check for full teams
+@@ -1913,10 +2027,8 @@ qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent)
+ 			{
+ 				G_printFull(va("The %s team is full!", aTeams[nTeam]), ent);
+ 				return qfalse;
+-
+-				// Check for locked teams
+ 			}
+-			else if (teamInfo[nTeam].team_lock && (!(ent->client->pers.invite & nTeam)))
++			if (teamInfo[nTeam].team_lock && (!(ent->client->pers.invite & nTeam)))
+ 			{
+ 				G_printFull(va("The %s team is LOCKED!", aTeams[nTeam]), ent);
+ 				return qfalse;
+@@ -1929,7 +2041,7 @@ qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent)
+ 				G_printFull(va("The %s team is full!", aTeams[nTeam]), ent);
+ 				return qfalse;
+ 			}
+-			else if (g_gamestate.integer == GS_PLAYING && g_lms_lockTeams.integer && (!(ent->client->pers.invite & nTeam)))
++			if (g_gamestate.integer == GS_PLAYING && g_lms_lockTeams.integer && (!(ent->client->pers.invite & nTeam)))
+ 			{
+ 				G_printFull(va("The %s team is LOCKED!", aTeams[nTeam]), ent);
+ 				return qfalse;

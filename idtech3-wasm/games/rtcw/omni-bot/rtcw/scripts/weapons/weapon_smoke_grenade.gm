@@ -1,0 +1,9 @@
+//used by lieutenant, goal AIRSTRIKE
+this.Name = "Smoke Grenade";
+this.WeaponId = WEAPON.SMOKE_GRENADE;
+
+this.PrimaryFire.WeaponType = "item";
+this.PrimaryFire.RequiresAmmo = false;
+this.PrimaryFire.WaterProof = true;
+this.PrimaryFire.FireOnRelease = true;
+this.PrimaryFire.IgnoreReload = true;

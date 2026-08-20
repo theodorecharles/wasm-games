@@ -1,0 +1,26 @@
+{
+  "namespace": "source-wasm",
+  "version": "goty-2014-plus-legacy-shaders-v1",
+  "variants": {
+    "hl2": {
+      "namespace": "source-hl2",
+      "version": "goty-2014-plus-legacy-shaders-v1",
+      "files": [
+        {
+          "key": "hl2-gameinfo.txt",
+          "name": "gameinfo.txt",
+          "path": "hl2/gameinfo.txt",
+          "size": 334,
+          "required": true
+        },
+        {
+          "key": "hl2-steam.inf",
+          "name": "steam.inf",
+          "path": "hl2/steam.inf",
+          "size": 87,
+          "required": true
+        }
+      ]
+    }
+  }
+}

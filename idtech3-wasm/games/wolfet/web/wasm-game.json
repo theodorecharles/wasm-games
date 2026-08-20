@@ -1,0 +1,63 @@
+{
+  "id": "wolfet",
+  "title": "Enemy Territory",
+  "kicker": "Wolfenstein",
+  "description": "Wolfenstein: Enemy Territory in your browser.",
+  "icon": "/img/et-512.png",
+  "iconPixelated": true,
+  "pwa": {
+    "id": "/",
+    "name": "Wolfenstein: Enemy Territory",
+    "shortName": "WolfET",
+    "description": "Wolfenstein: Enemy Territory in your browser.",
+    "startUrl": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "landscape",
+    "themeColor": "#6b542c",
+    "backgroundColor": "#000000",
+    "icons": [
+      { "src": "/img/et-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+      { "src": "/img/et-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    ]
+  },
+  "displayMode": "dynamic",
+  "nativeManaged": true,
+  "syncBackbuffer": false,
+  "resizeTransition": "immediate",
+  "maxDpr": 1,
+  "pointerWidth": 640,
+  "pointerHeight": 480,
+  "pointerFit": "contain",
+  "menuCursor": "native",
+  "pointerLock": true,
+  "fullscreen": true,
+  "identity": true,
+  "graphics": true,
+  "profiles": [
+    { "value": "3", "label": "Maximum" },
+    { "value": "2", "label": "Balanced" },
+    { "value": "1", "label": "Performance" },
+    { "value": "0", "label": "Minimum" }
+  ],
+  "defaultProfile": "3",
+  "fpsTargets": [30, 60, 120],
+  "defaultFps": 60,
+  "defaultDynamicQuality": true,
+  "defaultPlayerName": "Player",
+  "persistence": {
+    "root": "/persistent/wolfet",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "controller": {
+    "mode": "disabled"
+  },
+  "adapter": "/game-adapter.js",
+  "theme": {
+    "accent": "#c4a35a",
+    "accent-strong": "#f0d48a",
+    "border": "#6b542c"
+  }
+}

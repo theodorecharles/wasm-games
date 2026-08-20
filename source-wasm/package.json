@@ -1,0 +1,19 @@
+{
+  "name": "source-wasm-wasm",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Source Wasm browser game",
+  "scripts": {
+    "test": "node test/package-contract.test.js && node test/adapter.test.js && node test/owner-bridge.test.mjs && node test/combine-owner-data.test.mjs && node test/steam-data-audit.test.mjs",
+    "start": "node scripts/start.js",
+    "sync-framework": "node scripts/sync-framework.js",
+    "prepare-inputs": "bash scripts/prepare.sh",
+    "build:engine": "bash scripts/build-web.sh",
+    "build:data": "node scripts/generate-game-data.mjs",
+    "build:image": "bash scripts/build-image.sh"
+  },
+  "wasmGameFramework": {
+    "package": "@wasm-game-framework/browser",
+    "version": "0.9.6"
+  }
+}

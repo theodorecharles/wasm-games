@@ -1,0 +1,52 @@
+diff --git a/engine/client/cl_main.c b/engine/client/cl_main.c
+index 1cc40ae..9ec38d3 100644
+--- a/engine/client/cl_main.c
++++ b/engine/client/cl_main.c
+@@ -1007,8 +1007,14 @@ CL_Quit_f
+ */
+ void CL_Quit_f( void )
+ {
++#if XASH_EMSCRIPTEN
++	// The browser tab is the process; there is nothing to quit into.
++	// Swallow quit/exit so menu and console paths stay inert.
++	Con_Printf( "Close the browser tab to quit the game.\n" );
++#else
+ 	CL_Disconnect();
+ 	Sys_Quit( "command" );
++#endif
+ }
+ 
+ /*
+diff --git a/3rdparty/mainui/menus/Main.cpp b/3rdparty/mainui/menus/Main.cpp
+index 7194e29..093de3a 100644
+--- a/3rdparty/mainui/menus/Main.cpp
++++ b/3rdparty/mainui/menus/Main.cpp
+@@ -134,7 +134,8 @@ bool CMenuMain::KeyDown( int key )
+ 		}
+ 		else
+ 		{
+-			QuitDialogCb( );
++			// Browser build: no quit dialog on Escape at the main menu;
++			// closing the tab is the only way out.
+ 		}
+ 		return true;
+ 	}
+@@ -291,15 +292,14 @@ void CMenuMain::_Init( void )
+ 
+ 	AddItem( configuration );
+ 	AddItem( saveRestore );
+-	AddItem( multiPlayer );
+ 
+ 	if ( bCustomGame )
+ 		AddItem( customGame );
+ 
+-	AddItem( previews );
+-	AddItem( quit );
++	// Browser build: single-player only, closing the tab is the only way
++	// out, and the previews link is dead in a browser — those three items
++	// (multiPlayer, previews, quit, quitButton) are not added.
+ 	AddItem( minimizeBtn );
+-	AddItem( quitButton );
+ }
+ 
+ /*

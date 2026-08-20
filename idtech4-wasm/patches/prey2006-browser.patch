@@ -1,0 +1,1251 @@
+diff --git a/neo/CMakeLists.txt b/neo/CMakeLists.txt
+index 9139574..17f29b4 100644
+--- a/neo/CMakeLists.txt
++++ b/neo/CMakeLists.txt
+@@ -26,6 +26,7 @@ include(PackagePk4)
+ 
+ option(ENGINE						"Build the main executable." ON)
+ option(DEDICATED					"Build the dedicated server executable." ON)
++option(PREYWASM_CLIENT				"Build the single-threaded Emscripten client" OFF)
+ if(MSVC)
+ 	option(TOOLS					"Build the tools game code (Visual Studio+SDL2/SDL3 only)" ON)
+ 	option(MAYA_IMPORT				"Build the include maya import tool (Requires MayaSDK)." OFF)
+@@ -38,6 +39,45 @@ option(REPRODUCIBLE_BUILD			"Replace __DATE__ and __TIME__ by hardcoded values f
+ option(LINUX_RELEASE_BINS			"Set RPATH to \$ORIGIN/libs/ for Linux binary releases" OFF)
+ option(HARDLINK_GAME				"Compile gamecode into executable (no game DLLs)" OFF)
+ option(FREETYPE					"Enable Freetype support." OFF)
++
++if(PREYWASM_CLIENT)
++	if(NOT EMSCRIPTEN)
++		message(FATAL_ERROR "PREYWASM_CLIENT requires the Emscripten CMake toolchain")
++	endif()
++
++	set(ENGINE ON CACHE BOOL "Build the main executable" FORCE)
++	set(DEDICATED OFF CACHE BOOL "Build the dedicated server executable" FORCE)
++	set(BASE ON CACHE BOOL "Build the base game code" FORCE)
++	set(HARDLINK_GAME ON CACHE BOOL "Compile gamecode into executable" FORCE)
++	set(SDL3 OFF CACHE BOOL "Use SDL3 instead of SDL2" FORCE)
++	set(IMGUI OFF CACHE BOOL "Build with Dear ImGui integration" FORCE)
++	set(FREETYPE OFF CACHE BOOL "Enable Freetype support" FORCE)
++	set(CMAKE_DISABLE_FIND_PACKAGE_CURL TRUE)
++	add_compile_options("-sUSE_SDL=2" "-fexceptions")
++	set(PREYWASM_LINK_FLAGS
++		"-sUSE_SDL=2"
++		"-sALLOW_MEMORY_GROWTH=1"
++		"-sINITIAL_MEMORY=268435456"
++		"-sMAXIMUM_MEMORY=2147483648"
++		"-sSTACK_SIZE=8388608"
++		"-sFORCE_FILESYSTEM=1"
++		"-sMIN_WEBGL_VERSION=2"
++		"-sMAX_WEBGL_VERSION=2"
++		"-sUSE_WEBGL2=1"
++		"-sLEGACY_GL_EMULATION=1"
++		"-sOFFSCREENCANVAS_SUPPORT=1"
++		"-sEXIT_RUNTIME=0"
++		"-sENVIRONMENT=worker"
++		"-sEXPORTED_RUNTIME_METHODS=FS,WORKERFS,IDBFS,callMain"
++		"-sASSERTIONS=1"
++		"-sDISABLE_EXCEPTION_CATCHING=0"
++		"-lworkerfs.js"
++		"-lidbfs.js"
++	)
++	string(REPLACE ";" " " PREYWASM_LINK_FLAGS "${PREYWASM_LINK_FLAGS}")
++	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PREYWASM_LINK_FLAGS}")
++	add_definitions(-DPREYWASM_CLIENT=1)
++endif()
+ if(NOT MSVC) # GCC/clang or compatible, hopefully
+ 	option(FORCE_COLORED_OUTPUT	"Always produce ANSI-colored compiler warnings/errors (GCC/Clang only; esp. useful with ninja)." OFF)
+ 	option(ASAN					"Enable GCC/Clang Adress Sanitizer (ASan)" OFF) # TODO: MSVC might also support this, somehow?
+@@ -79,7 +119,7 @@ include(CPUDefine)
+ set(sys_thirdparty_libs)
+ 
+ # libs
+-if(UNIX)
++if(UNIX AND NOT PREYWASM_CLIENT)
+ 	find_package(PkgConfig REQUIRED)
+ endif()
+ 
+@@ -92,7 +132,11 @@ else()
+ endif()
+ list(APPEND sys_thirdparty_libs ${OPENAL_LIBRARY})
+ 
+-if (SDL3)
++if(PREYWASM_CLIENT)
++	get_filename_component(PREYWASM_SYSROOT_INCLUDE "${OPENAL_INCLUDE_DIR}" DIRECTORY)
++	include_directories("${PREYWASM_SYSROOT_INCLUDE}/SDL2")
++	set(SDLX_LIBRARY "-sUSE_SDL=2")
++elseif (SDL3)
+ 	if(UNIX)
+ 		# 1. Look for a SDL3 package,
+ 		# 2. look for the SDL3-shared component, and
+@@ -282,7 +326,7 @@ if(D3_COMPILER_IS_GCC_OR_CLANG)
+ 
+ 	if(NOT CMAKE_CROSSCOMPILING AND ONATIVE)
+ 		add_compile_options(-march=native)
+-	elseif(cpu STREQUAL "x86")
++	elseif(NOT PREYWASM_CLIENT AND cpu STREQUAL "x86")
+ 		add_compile_options(-march=pentium3)
+ 	endif()
+ 
+@@ -1362,9 +1406,11 @@ else()
+ 		sys/linux/main.cpp
+ 	)
+ 
+-	set(src_sys_core
+-		sys/glimp.cpp
+-	)
++	if(PREYWASM_CLIENT)
++		set(src_sys_core sys/glimp_emscripten.cpp)
++	else()
++		set(src_sys_core sys/glimp.cpp)
++	endif()
+ endif()
+ 
+ include_directories(${CMAKE_BINARY_DIR})
+@@ -1390,6 +1436,13 @@ endif()
+ target_include_directories(idlib PRIVATE "${CMAKE_SOURCE_DIR}/idlib")
+ target_precompile_headers(idlib PRIVATE "${CMAKE_SOURCE_DIR}/idlib/precompiled.h")
+ 
++if(PREYWASM_CLIENT)
++	# Several inherited source files carry a per-file optimization level. Clang
++	# refuses to reuse a PCH produced at a different level, so keep the browser
++	# build deterministic by compiling these translation units directly.
++	set_target_properties(idlib PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
++endif()
++
+ set_target_properties(idlib PROPERTIES FOLDER "libs")
+ 
+ # ================================= Engine ======================================
+@@ -1421,6 +1474,9 @@ if(ENGINE)
+ 	endif()
+ 
+ 	target_precompile_headers(${ENGINE_BINARY} PRIVATE "${CMAKE_SOURCE_DIR}/idlib/precompiled.h")
++	if(PREYWASM_CLIENT)
++		set_target_properties(${ENGINE_BINARY} PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
++	endif()
+ 
+ 	target_include_directories(${ENGINE_BINARY} PRIVATE "${CMAKE_SOURCE_DIR}/idlib" "${CMAKE_SOURCE_DIR}/libs/imgui")
+ 
+diff --git a/neo/Prey/game_anim.cpp b/neo/Prey/game_anim.cpp
+index 5c5fa12..74335b4 100644
+--- a/neo/Prey/game_anim.cpp
++++ b/neo/Prey/game_anim.cpp
+@@ -151,7 +151,15 @@ bool hhAnim::CallFrameCommandsExtra( const frameCommand_t &command, idEntity *en
+ 	switch( command.type ) {
+ 		case FC_EVENT_ARGS: {
+ 			if ( command.function && command.parmList && command.function->eventdef ) {
++#ifdef __EMSCRIPTEN__
++				// wasm32 stores event arguments in 32-bit slots; make the intended
++				// pointer-width conversion explicit to avoid the long/int overload
++				// ambiguity in Emscripten's ABI.
++				ent->ProcessEvent( command.function->eventdef,
++					static_cast<int>( reinterpret_cast<intptr_t>( command.parmList ) ) );
++#else
+ 				ent->ProcessEvent( command.function->eventdef, (intptr_t)command.parmList );
++#endif
+ 			}	
+ 			return( true );
+ 		}
+@@ -241,4 +249,3 @@ idStr hhAnim::InitFrameCommandEvent( frameCommand_t &command, const idStr& cmdSt
+ 
+ 	return error;
+ }
+-
+diff --git a/neo/framework/Common.cpp b/neo/framework/Common.cpp
+index a1d7516..c4825fe 100644
+--- a/neo/framework/Common.cpp
++++ b/neo/framework/Common.cpp
+@@ -38,6 +38,10 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ #include "Session_local.h"
+ 
++#if defined( __EMSCRIPTEN__ )
++#include <emscripten/emscripten.h>
++#endif
++
+ #include "../tools/compilers/dmap/dmap.h"
+ 
+ #ifdef _WIN32
+@@ -1086,6 +1090,9 @@ void idCommonLocal::WriteConfigToFile( const char *filename ) {
+ 	idKeyInput::WriteBindings( f );
+ 	cvarSystem->WriteFlaggedVariables( CVAR_ARCHIVE, "seta", f );
+ 	fileSystem->CloseFile( f );
++#if defined( __EMSCRIPTEN__ )
++	EM_ASM( { self.idtech4PersistenceDirty?.(); } );
++#endif
+ }
+ 
+ /*
+@@ -2908,6 +2915,13 @@ void idCommonLocal::Init( int argc, char **argv ) {
+ 	// we want to use the SDL event queue for dedicated servers. That
+ 	// requires video to be initialized, so we just use the dummy
+ 	// driver for headless boxen
++#ifdef PREYWASM_CLIENT
++	printf( "[prey-wasm] initializing SDL timer services\n" );
++	fflush( stdout );
++	if ( SDL_Init( SDL_INIT_TIMER ) != 0 ) {
++		Sys_Error( "Error while initializing SDL: %s", SDL_GetError() );
++	}
++#else
+ #if SDL_VERSION_ATLEAST(3, 0, 0)
+ 	SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "dummy");
+ #elif SDL_VERSION_ATLEAST(2, 0, 0)
+@@ -2933,6 +2947,7 @@ void idCommonLocal::Init( int argc, char **argv ) {
+ 			Sys_Error("Error while initializing SDL: %s", SDL_GetError());
+ 		}
+ 	}
++#endif
+ 
+ 	Sys_InitThreads();
+ 
+@@ -3058,10 +3073,14 @@ void idCommonLocal::Init( int argc, char **argv ) {
+ 		Sys_Error( "Error during initialization" );
+ 	}
+ 
++#ifndef PREYWASM_CLIENT
+ 	async_timer = SDL_AddTimer(USERCMD_MSEC, AsyncTimer, NULL);
+ 
+ 	if (!async_timer)
+ 		Sys_Error("Error while starting the async timer: %s", SDL_GetError());
++#else
++	async_timer = 0;
++#endif
+ }
+ 
+ 
+diff --git a/neo/framework/FileSystem.cpp b/neo/framework/FileSystem.cpp
+index ec0865c..ea3f6c4 100644
+--- a/neo/framework/FileSystem.cpp
++++ b/neo/framework/FileSystem.cpp
+@@ -3740,6 +3740,10 @@ idFileSystemLocal::StartBackgroundReadThread
+ =================
+ */
+ void idFileSystemLocal::StartBackgroundDownloadThread() {
++#ifdef __EMSCRIPTEN__
++	common->Printf( "browser filesystem: background reads run cooperatively\n" );
++	return;
++#endif
+ 	if ( !backgroundThread.threadHandle ) {
+ 		Sys_CreateThread( BackgroundDownloadThread, &backgroundThread_exit, backgroundThread, "backgroundDownload" );
+ 	} else {
+@@ -3753,6 +3757,20 @@ idFileSystemLocal::BackgroundDownload
+ =================
+ */
+ void idFileSystemLocal::BackgroundDownload( backgroundDownload_t *bgl ) {
++#ifdef __EMSCRIPTEN__
++	// The first browser milestone is single-threaded. File reads complete on
++	// the calling frame; URL downloads stay disabled until a bounded browser
++	// transport exists.
++	if ( bgl->opcode == DLTYPE_FILE ) {
++		bgl->f->Seek( bgl->file.position, FS_SEEK_SET );
++		bgl->f->Read( bgl->file.buffer, bgl->file.length );
++		bgl->completed = true;
++	} else {
++		bgl->url.status = DL_FAILED;
++		bgl->completed = true;
++	}
++	return;
++#endif
+ 	if ( bgl->opcode == DLTYPE_FILE ) {
+ 		if ( dynamic_cast<idFile_Permanent *>(bgl->f) ) {
+ 			// add the bgl to the background download list
+diff --git a/neo/framework/Session.cpp b/neo/framework/Session.cpp
+index c707a01..e79e9d0 100644
+--- a/neo/framework/Session.cpp
++++ b/neo/framework/Session.cpp
+@@ -32,6 +32,10 @@ If you have questions concerning this license or the applicable additional terms
+ #include "Session_local.h"
+ #include "../sound/snd_local.h"
+ 
++#if defined( __EMSCRIPTEN__ )
++#include <emscripten/emscripten.h>
++#endif
++
+ #define CDKEY_FILEPATH "../" BASE_GAMEDIR "/" CDKEY_FILE
+ #ifdef HUMANHEAD_XP // HUMANHEAD mdl
+ #define XPKEY_FILEPATH "../" BASE_GAMEDIR "/" XPKEY_FILE
+@@ -1902,6 +1906,9 @@ bool idSessionLocal::SaveGame( const char *saveName, bool autosave, const char*
+ 
+ 	syncNextGameFrame = true;
+ 
++#if defined( __EMSCRIPTEN__ )
++	EM_ASM( { self.idtech4PersistenceSave?.(); } );
++#endif
+ 
+ 	return true;
+ #endif
+@@ -3472,4 +3479,4 @@ void idSessionLocal::HideSubtitle( void ) const {
+ 	guiSubtitles->SetStateFloat( "subtitleAlpha3", 0 );
+ 	/*guiSubtitles->SetStateFloat( "subtitleAlpha4", 0 );
+ 	guiSubtitles->SetStateFloat( "subtitleAlpha5", 0 );*/
+-}
+\ No newline at end of file
++}
+diff --git a/neo/framework/Session_local.h b/neo/framework/Session_local.h
+index 3eab32d..322d52c 100644
+--- a/neo/framework/Session_local.h
++++ b/neo/framework/Session_local.h
+@@ -99,6 +99,10 @@ public:
+ 	virtual void		Frame();
+ 
+ 	virtual bool		IsMultiplayer();
++#ifdef PREYWASM_CLIENT
++	bool				IsGUIActive() const { return guiActive != NULL; }
++	bool				IsMapSpawned() const { return mapSpawned; }
++#endif
+ 
+ 	virtual bool		ProcessEvent( const sysEvent_t *event );
+ 
+diff --git a/neo/game/Game_local.cpp b/neo/game/Game_local.cpp
+index 233752e..ee7fa00 100644
+--- a/neo/game/Game_local.cpp
++++ b/neo/game/Game_local.cpp
+@@ -59,10 +59,12 @@ hhProfiler *				profiler = NULL;
+ // HUMANHEAD END
+ 
+ idCVar com_forceGenericSIMD( "com_forceGenericSIMD", "0", CVAR_BOOL|CVAR_SYSTEM, "force generic platform independent SIMD" );
+-idCVar g_printlocations( "g_printlocations", "0", CVAR_BOOL, "print area/location mappings");
+ 
+ #endif
+ 
++// Used by gamecode in both DLL and hardlinked builds.
++idCVar g_printlocations( "g_printlocations", "0", CVAR_BOOL, "print area/location mappings" );
++
+ idRenderWorld *				gameRenderWorld = NULL;		// all drawing is done to this world
+ idSoundWorld *				gameSoundWorld = NULL;		// all audio goes to this world
+ 
+diff --git a/neo/renderer/RenderSystem_init.cpp b/neo/renderer/RenderSystem_init.cpp
+index 14fddb9..64c9ad2 100644
+--- a/neo/renderer/RenderSystem_init.cpp
++++ b/neo/renderer/RenderSystem_init.cpp
+@@ -234,6 +234,16 @@ idCVar r_glDebugContext( "r_glDebugContext", "0", CVAR_RENDERER | CVAR_BOOL | CV
+ #define QGLPROC(name, rettype, args) rettype (APIENTRYP q##name) args;
+ #include "renderer/qgl_proc.h"
+ 
++#ifdef __EMSCRIPTEN__
++// WebGL deliberately omits a number of desktop compatibility entry points
++// which Doom 3 resolves eagerly but never uses in its ARB2 render path. Keep
++// typed fallbacks so the capability scan can complete without making indirect
++// calls through a mismatched generic function signature.
++#define QGLPROC(name, rettype, args) \
++	static rettype APIENTRY PREYWASM_Missing_##name args { return (rettype)0; }
++#include "renderer/qgl_proc.h"
++#endif
++
+ void ( APIENTRY * qglMultiTexCoord2fARB )( GLenum texture, GLfloat s, GLfloat t );
+ void ( APIENTRY * qglMultiTexCoord2fvARB )( GLenum texture, GLfloat *st );
+ void ( APIENTRY * qglActiveTextureARB )( GLenum texture );
+@@ -514,6 +524,14 @@ static void R_CheckPortableExtensions( void ) {
+ 		}
+ 	}
+ 
++	// Emscripten's legacy GL layer implements the fixed-function combine and
++	// DOT3 operations needed by Doom 3, but WebGL does not advertise their old
++	// desktop extension names. Treat the linked emulation as the capability.
++#ifdef __EMSCRIPTEN__
++	glConfig.textureEnvCombineAvailable = true;
++	glConfig.envDot3Available = true;
++#endif
++
+ 	// check for minimum set
+ 	if ( !glConfig.multitextureAvailable || !glConfig.textureEnvCombineAvailable || !glConfig.cubeMapAvailable
+ 		|| !glConfig.envDot3Available ) {
+@@ -787,14 +805,22 @@ void R_InitOpenGL( void ) {
+ 		r_multiSamples.SetInteger( 0 );
+ 	}
+ 
+-// load qgl function pointers
+ #define QGLPROC(name, rettype, args) \
+ 	q##name = (rettype(APIENTRYP)args)GLimp_ExtensionPointer(#name); \
+-	if (!q##name) \
+-		common->FatalError("Unable to initialize OpenGL (%s)", #name);
++	if (!q##name) { \
++		PREYWASM_ASSIGN_MISSING_GL(name) \
++	}
++#ifndef __EMSCRIPTEN__
++#define PREYWASM_ASSIGN_MISSING_GL(name) common->FatalError("Unable to initialize OpenGL (%s)", #name);
++#else
++#define PREYWASM_ASSIGN_MISSING_GL(name) q##name = &PREYWASM_Missing_##name;
++#endif
+ 
+ #include "renderer/qgl_proc.h"
+ 
++#undef PREYWASM_ASSIGN_MISSING_GL
++#undef QGLPROC
++
+ 	// input and sound systems need to be tied to the new window
+ 	Sys_InitInput();
+ 	soundSystem->InitHW();
+diff --git a/neo/renderer/draw_arb2.cpp b/neo/renderer/draw_arb2.cpp
+index ba041f9..f135666 100644
+--- a/neo/renderer/draw_arb2.cpp
++++ b/neo/renderer/draw_arb2.cpp
+@@ -31,6 +31,94 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ #include "tr_local.h"
+ 
++#ifdef __EMSCRIPTEN__
++#include <GLES3/gl3.h>
++
++// WebGL 2 has no ARB assembly-program API. This real GLSL ES 3 program is
++// used only by the browser interaction backend; desktop keeps the ARB path.
++typedef struct {
++	GLuint program;
++	GLint modelViewMatrix, projectionMatrix;
++	GLint localLightOrigin, localViewOrigin;
++	GLint lightProjectionS, lightProjectionT, lightProjectionQ, lightFalloffS;
++	GLint bumpMatrixS, bumpMatrixT, diffuseMatrixS, diffuseMatrixT, specularMatrixS, specularMatrixT;
++	GLint colorModulate, colorAdd, diffuseColor, specularColor;
++} preywasmWebGL2Interaction_t;
++
++static preywasmWebGL2Interaction_t preywasmInteraction = {};
++
++static const char *preywasmInteractionVertexShader =
++	"#version 300 es\nprecision highp float;\n"
++	"layout(location=0) in vec3 a_position; layout(location=2) in vec4 a_color;\n"
++	"layout(location=8) in vec2 attr_TexCoord; layout(location=9) in vec3 attr_Tangent;\n"
++	"layout(location=10) in vec3 attr_Bitangent; layout(location=11) in vec3 attr_Normal;\n"
++	"uniform mat4 uModelViewMatrix; uniform mat4 uProjectionMatrix;\n"
++	"uniform vec4 uLocalLightOrigin; uniform vec4 uLocalViewOrigin;\n"
++	"uniform vec4 uLightProjectionS; uniform vec4 uLightProjectionT; uniform vec4 uLightProjectionQ; uniform vec4 uLightFalloffS;\n"
++	"uniform vec4 uBumpMatrixS; uniform vec4 uBumpMatrixT; uniform vec4 uDiffuseMatrixS; uniform vec4 uDiffuseMatrixT;\n"
++	"uniform vec4 uSpecularMatrixS; uniform vec4 uSpecularMatrixT; uniform vec4 uColorModulate; uniform vec4 uColorAdd;\n"
++	"out vec2 vBump; out vec2 vDiffuse; out vec2 vSpecular; out vec3 vProjection; out vec2 vFalloff;\n"
++	"out vec3 vLight; out vec3 vHalf; out vec4 vColor;\n"
++	"vec3 tangentVector(vec3 v){return vec3(dot(attr_Tangent,v),dot(attr_Bitangent,v),dot(attr_Normal,v));}\n"
++	"void main(){vec4 p=vec4(a_position,1.0);vec4 st=vec4(attr_TexCoord,0.0,1.0);\n"
++	"vec3 l=uLocalLightOrigin.xyz-p.xyz;vec3 v=uLocalViewOrigin.xyz-p.xyz;vLight=tangentVector(l);vHalf=tangentVector(normalize(l)+normalize(v));\n"
++	"vBump=vec2(dot(st,uBumpMatrixS),dot(st,uBumpMatrixT));vDiffuse=vec2(dot(st,uDiffuseMatrixS),dot(st,uDiffuseMatrixT));\n"
++	"vSpecular=vec2(dot(st,uSpecularMatrixS),dot(st,uSpecularMatrixT));\n"
++	"vProjection=vec3(dot(p,uLightProjectionS),dot(p,uLightProjectionT),dot(p,uLightProjectionQ));vFalloff=vec2(dot(p,uLightFalloffS),0.5);\n"
++	"vColor=a_color*uColorModulate+uColorAdd;gl_Position=uProjectionMatrix*uModelViewMatrix*p;}\n";
++
++static const char *preywasmInteractionFragmentShader =
++	"#version 300 es\nprecision highp float;\n"
++	"uniform sampler2D uBumpMap; uniform sampler2D uFalloffMap; uniform sampler2D uProjectionMap; uniform sampler2D uDiffuseMap; uniform sampler2D uSpecularMap;\n"
++	"uniform vec4 uDiffuseColor; uniform vec4 uSpecularColor;\n"
++	"in vec2 vBump; in vec2 vDiffuse; in vec2 vSpecular; in vec3 vProjection; in vec2 vFalloff; in vec3 vLight; in vec3 vHalf; in vec4 vColor;\n"
++	"out vec4 fragColor;void main(){vec3 n=texture(uBumpMap,vBump).agb*2.0-1.0;float d=max(dot(normalize(vLight),normalize(n)),0.0);\n"
++	"float s=pow(max(dot(normalize(vHalf),normalize(n)),0.0),16.0);vec3 light=texture(uFalloffMap,vFalloff).rgb*textureProj(uProjectionMap,vProjection).rgb;\n"
++	"vec3 diffuse=texture(uDiffuseMap,vDiffuse).rgb*uDiffuseColor.rgb*d;vec3 specular=texture(uSpecularMap,vSpecular).rgb*uSpecularColor.rgb*s;\n"
++	"fragColor=vec4((diffuse+specular)*light*vColor.rgb,0.0);}\n";
++
++static bool PreyWASM_CompileShader( GLenum type, const char *source, GLuint &shader ) {
++	shader = glCreateShader( type ); glShaderSource( shader, 1, &source, NULL ); glCompileShader( shader );
++	GLint compiled = GL_FALSE; glGetShaderiv( shader, GL_COMPILE_STATUS, &compiled );
++	if ( compiled == GL_TRUE ) return true;
++	char log[2048]; GLsizei written = 0; glGetShaderInfoLog( shader, sizeof( log ), &written, log );
++	common->Warning( "WebGL2 interaction shader compile failed: %s", written > 0 ? log : "no driver log" );
++	glDeleteShader( shader ); shader = 0; return false;
++}
++
++static bool PreyWASM_InitWebGL2Interaction( void ) {
++	if ( preywasmInteraction.program != 0 ) return true;
++	GLuint vertexShader = 0, fragmentShader = 0;
++	if ( !PreyWASM_CompileShader( GL_VERTEX_SHADER, preywasmInteractionVertexShader, vertexShader ) ||
++		 !PreyWASM_CompileShader( GL_FRAGMENT_SHADER, preywasmInteractionFragmentShader, fragmentShader ) ) {
++		if ( vertexShader != 0 ) glDeleteShader( vertexShader ); return false;
++	}
++	GLuint program = glCreateProgram(); glAttachShader( program, vertexShader ); glAttachShader( program, fragmentShader ); glLinkProgram( program );
++	GLint linked = GL_FALSE; glGetProgramiv( program, GL_LINK_STATUS, &linked );
++	if ( linked != GL_TRUE ) {
++		char log[2048]; GLsizei written = 0; glGetProgramInfoLog( program, sizeof( log ), &written, log );
++		common->Warning( "WebGL2 interaction program link failed: %s", written > 0 ? log : "no driver log" );
++		glDeleteProgram( program ); glDeleteShader( vertexShader ); glDeleteShader( fragmentShader ); return false;
++	}
++	glDeleteShader( vertexShader ); glDeleteShader( fragmentShader ); preywasmInteraction.program = program;
++#define PREYWASM_UNIFORM(field, name) preywasmInteraction.field = glGetUniformLocation( program, name )
++	PREYWASM_UNIFORM( modelViewMatrix, "uModelViewMatrix" ); PREYWASM_UNIFORM( projectionMatrix, "uProjectionMatrix" );
++	PREYWASM_UNIFORM( localLightOrigin, "uLocalLightOrigin" ); PREYWASM_UNIFORM( localViewOrigin, "uLocalViewOrigin" );
++	PREYWASM_UNIFORM( lightProjectionS, "uLightProjectionS" ); PREYWASM_UNIFORM( lightProjectionT, "uLightProjectionT" );
++	PREYWASM_UNIFORM( lightProjectionQ, "uLightProjectionQ" ); PREYWASM_UNIFORM( lightFalloffS, "uLightFalloffS" );
++	PREYWASM_UNIFORM( bumpMatrixS, "uBumpMatrixS" ); PREYWASM_UNIFORM( bumpMatrixT, "uBumpMatrixT" );
++	PREYWASM_UNIFORM( diffuseMatrixS, "uDiffuseMatrixS" ); PREYWASM_UNIFORM( diffuseMatrixT, "uDiffuseMatrixT" );
++	PREYWASM_UNIFORM( specularMatrixS, "uSpecularMatrixS" ); PREYWASM_UNIFORM( specularMatrixT, "uSpecularMatrixT" );
++	PREYWASM_UNIFORM( colorModulate, "uColorModulate" ); PREYWASM_UNIFORM( colorAdd, "uColorAdd" );
++	PREYWASM_UNIFORM( diffuseColor, "uDiffuseColor" ); PREYWASM_UNIFORM( specularColor, "uSpecularColor" );
++#undef PREYWASM_UNIFORM
++	glUseProgram( program ); glUniform1i( glGetUniformLocation( program, "uBumpMap" ), 1 );
++	glUniform1i( glGetUniformLocation( program, "uFalloffMap" ), 2 ); glUniform1i( glGetUniformLocation( program, "uProjectionMap" ), 3 );
++	glUniform1i( glGetUniformLocation( program, "uDiffuseMap" ), 4 ); glUniform1i( glGetUniformLocation( program, "uSpecularMap" ), 5 ); glUseProgram( 0 );
++	common->Printf( "WebGL2 GLSL ES interaction program linked successfully\n" ); return true;
++}
++#endif
++
+ /*
+ =========================================================================================
+ 
+@@ -55,6 +143,34 @@ RB_ARB2_DrawInteraction
+ ==================
+ */
+ void	RB_ARB2_DrawInteraction( const drawInteraction_t *din ) {
++#ifdef __EMSCRIPTEN__
++	GLfloat modelView[16], projection[16];
++	qglGetFloatv( GL_MODELVIEW_MATRIX, modelView ); qglGetFloatv( GL_PROJECTION_MATRIX, projection );
++	glUniformMatrix4fv( preywasmInteraction.modelViewMatrix, 1, GL_FALSE, modelView );
++	glUniformMatrix4fv( preywasmInteraction.projectionMatrix, 1, GL_FALSE, projection );
++	glUniform4fv( preywasmInteraction.localLightOrigin, 1, din->localLightOrigin.ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.localViewOrigin, 1, din->localViewOrigin.ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.lightProjectionS, 1, din->lightProjection[0].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.lightProjectionT, 1, din->lightProjection[1].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.lightProjectionQ, 1, din->lightProjection[2].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.lightFalloffS, 1, din->lightProjection[3].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.bumpMatrixS, 1, din->bumpMatrix[0].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.bumpMatrixT, 1, din->bumpMatrix[1].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.diffuseMatrixS, 1, din->diffuseMatrix[0].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.diffuseMatrixT, 1, din->diffuseMatrix[1].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.specularMatrixS, 1, din->specularMatrix[0].ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.specularMatrixT, 1, din->specularMatrix[1].ToFloatPtr() );
++	static const float zero[4] = { 0, 0, 0, 0 }, one[4] = { 1, 1, 1, 1 }, negOne[4] = { -1, -1, -1, -1 };
++	const float *modulate = zero, *add = one;
++	if ( din->vertexColor == SVC_MODULATE ) { modulate = one; add = zero; }
++	else if ( din->vertexColor == SVC_INVERSE_MODULATE ) { modulate = negOne; add = one; }
++	glUniform4fv( preywasmInteraction.colorModulate, 1, modulate ); glUniform4fv( preywasmInteraction.colorAdd, 1, add );
++	glUniform4fv( preywasmInteraction.diffuseColor, 1, din->diffuseColor.ToFloatPtr() );
++	glUniform4fv( preywasmInteraction.specularColor, 1, din->specularColor.ToFloatPtr() );
++	GL_SelectTextureNoClient( 1 ); din->bumpImage->Bind(); GL_SelectTextureNoClient( 2 ); din->lightFalloffImage->Bind();
++	GL_SelectTextureNoClient( 3 ); din->lightImage->Bind(); GL_SelectTextureNoClient( 4 ); din->diffuseImage->Bind();
++	GL_SelectTextureNoClient( 5 ); din->specularImage->Bind(); RB_DrawElementsWithCounters( din->surf->geo ); return;
++#else
+ 	// load all the vertex program parameters
+ 	qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, din->localLightOrigin.ToFloatPtr() );
+ 	qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_VIEW_ORIGIN, din->localViewOrigin.ToFloatPtr() );
+@@ -138,6 +254,7 @@ void	RB_ARB2_DrawInteraction( const drawInteraction_t *din ) {
+ 
+ 	// draw it
+ 	RB_DrawElementsWithCounters( din->surf->geo );
++#endif
+ }
+ 
+ 
+@@ -156,11 +273,16 @@ void RB_ARB2_CreateDrawInteractions( const drawSurf_t *surf ) {
+ 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHMASK | backEnd.depthFunc );
+ 
+ 	// bind the vertex program
++#ifdef __EMSCRIPTEN__
++	if ( !PreyWASM_InitWebGL2Interaction() ) common->Error( "WebGL2 interaction program is unavailable" );
++	glUseProgram( preywasmInteraction.program );
++#else
+ 	qglBindProgramARB( GL_VERTEX_PROGRAM_ARB, VPROG_INTERACTION );
+ 	qglBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, FPROG_INTERACTION );
+ 
+ 	qglEnable(GL_VERTEX_PROGRAM_ARB);
+ 	qglEnable(GL_FRAGMENT_PROGRAM_ARB);
++#endif
+ 
+ 	// enable the vertex arrays
+ 	qglEnableVertexAttribArrayARB( 8 );
+@@ -170,6 +292,7 @@ void RB_ARB2_CreateDrawInteractions( const drawSurf_t *surf ) {
+ 	qglEnableClientState( GL_COLOR_ARRAY );
+ 
+ 	// texture 0 is the normalization cube map for the vector towards the light
++#ifndef __EMSCRIPTEN__
+ 	GL_SelectTextureNoClient( 0 );
+ 	if ( backEnd.vLight->lightShader->IsAmbientLight() ) {
+ 		globalImages->ambientNormalMap->Bind();
+@@ -180,6 +303,7 @@ void RB_ARB2_CreateDrawInteractions( const drawSurf_t *surf ) {
+ 	// texture 6 is the specular lookup table
+ 	GL_SelectTextureNoClient( 6 );
+ 	globalImages->specularTableImage->Bind();
++#endif
+ 
+ 	for ( ; surf ; surf=surf->nextOnLight ) {
+ 		// perform setup here that will not change over multiple interaction passes
+@@ -205,8 +329,9 @@ void RB_ARB2_CreateDrawInteractions( const drawSurf_t *surf ) {
+ 	qglDisableClientState( GL_COLOR_ARRAY );
+ 
+ 	// disable features
+-	GL_SelectTextureNoClient( 6 );
+-	globalImages->BindNull();
++#ifndef __EMSCRIPTEN__
++	GL_SelectTextureNoClient( 6 ); globalImages->BindNull();
++#endif
+ 
+ 	GL_SelectTextureNoClient( 5 );
+ 	globalImages->BindNull();
+@@ -226,8 +351,11 @@ void RB_ARB2_CreateDrawInteractions( const drawSurf_t *surf ) {
+ 	backEnd.glState.currenttmu = -1;
+ 	GL_SelectTexture( 0 );
+ 
+-	qglDisable(GL_VERTEX_PROGRAM_ARB);
+-	qglDisable(GL_FRAGMENT_PROGRAM_ARB);
++#ifdef __EMSCRIPTEN__
++	glUseProgram( 0 );
++#else
++	qglDisable(GL_VERTEX_PROGRAM_ARB); qglDisable(GL_FRAGMENT_PROGRAM_ARB);
++#endif
+ }
+ 
+ 
+@@ -278,6 +406,7 @@ void RB_ARB2_DrawInteractions( void ) {
+ 			qglStencilFunc( GL_ALWAYS, 128, 255 );
+ 		}
+ 
++#ifndef __EMSCRIPTEN__
+ 		if ( r_useShadowVertexProgram.GetBool() ) {
+ 			qglEnable( GL_VERTEX_PROGRAM_ARB );
+ 			qglBindProgramARB( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW );
+@@ -288,7 +417,9 @@ void RB_ARB2_DrawInteractions( void ) {
+ 			RB_StencilShadowPass( vLight->localShadows );
+ 			RB_ARB2_CreateDrawInteractions( vLight->globalInteractions );
+ 			qglDisable( GL_VERTEX_PROGRAM_ARB );	// if there weren't any globalInteractions, it would have stayed on
+-		} else {
++		} else
++#endif
++		{
+ 			RB_StencilShadowPass( vLight->globalShadows );
+ 			RB_ARB2_CreateDrawInteractions( vLight->localInteractions );
+ 			RB_StencilShadowPass( vLight->localShadows );
+@@ -636,12 +767,19 @@ R_ReloadARBPrograms_f
+ ==================
+ */
+ void R_ReloadARBPrograms_f( const idCmdArgs &args ) {
++#ifndef __EMSCRIPTEN__
+ 	int		i;
++#endif
+ 
+ 	common->Printf( "----- R_ReloadARBPrograms -----\n" );
++#ifdef __EMSCRIPTEN__
++	if ( !PreyWASM_InitWebGL2Interaction() ) common->Error( "WebGL2 GLSL ES interaction program failed readiness validation" );
++	common->Printf( "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped\n" );
++#else
+ 	for ( i = 0 ; progs[i].name[0] ; i++ ) {
+ 		R_LoadARBProgram( i );
+ 	}
++#endif
+ }
+ 
+ /*
+@@ -653,6 +791,9 @@ void R_ARB2_Init( void ) {
+ 	common->Printf( "ARB2 renderer: " );
+ 
+ 	if ( !glConfig.ARBVertexProgramAvailable || !glConfig.ARBFragmentProgramAvailable ) {
++#ifdef __EMSCRIPTEN__
++		if ( PreyWASM_InitWebGL2Interaction() ) { common->Printf( "WebGL2 GLSL ES path available.\n" ); return; }
++#endif
+ 		common->Printf( "Not available.\n" );
+ 		return;
+ 	}
+diff --git a/neo/sound/snd_efxfile.cpp b/neo/sound/snd_efxfile.cpp
+index f4d9cbd..3c33b91 100644
+--- a/neo/sound/snd_efxfile.cpp
++++ b/neo/sound/snd_efxfile.cpp
+@@ -31,6 +31,42 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ #include "snd_local.h"
+ 
++#ifdef PREYWASM_CLIENT
++
++idSoundEffect::idSoundEffect() : effect( 0 ) {
++}
++
++idSoundEffect::~idSoundEffect() {
++}
++
++bool idSoundEffect::alloc() {
++	return false;
++}
++
++idEFXFile::idEFXFile() {
++}
++
++idEFXFile::~idEFXFile() {
++}
++
++void idEFXFile::Clear() {
++	effects.DeleteContents( true );
++}
++
++bool idEFXFile::FindEffect( idStr &, ALuint * ) {
++	return false;
++}
++
++bool idEFXFile::ReadEffect( idLexer &, idSoundEffect * ) {
++	return false;
++}
++
++bool idEFXFile::LoadFile( const char *, bool ) {
++	return false;
++}
++
++#else
++
+ #define mB_to_gain(millibels, property) \
+ 	_mB_to_gain(millibels,AL_EAXREVERB_MIN_ ## property, AL_EAXREVERB_MAX_ ## property)
+ 
+@@ -303,3 +339,5 @@ bool idEFXFile::LoadFile( const char *filename, bool OSPath ) {
+ 
+ 	return true;
+ }
++
++#endif // PREYWASM_CLIENT
+diff --git a/neo/sound/snd_local.h b/neo/sound/snd_local.h
+index bcc5884..2d1f98b 100644
+--- a/neo/sound/snd_local.h
++++ b/neo/sound/snd_local.h
+@@ -43,9 +43,53 @@ If you have questions concerning this license or the applicable additional terms
+ #include <AL/alc.h>
+ #include <AL/alext.h>
+ 
++#if defined(PREYWASM_CLIENT) && !defined(ALC_EXT_EFX)
++// Emscripten's OpenAL emulation intentionally omits the EFX API. Keep the
++// existing sound mixer buildable while the browser client reports EFX as
++// unavailable at runtime.
++#ifndef AL_APIENTRY
++#define AL_APIENTRY
++#endif
++#ifndef ALC_APIENTRY
++#define ALC_APIENTRY
++#endif
++typedef void (AL_APIENTRY *LPALGENEFFECTS)(ALsizei, ALuint *);
++typedef void (AL_APIENTRY *LPALDELETEEFFECTS)(ALsizei, const ALuint *);
++typedef ALboolean (AL_APIENTRY *LPALISEFFECT)(ALuint);
++typedef void (AL_APIENTRY *LPALEFFECTI)(ALuint, ALenum, ALint);
++typedef void (AL_APIENTRY *LPALEFFECTF)(ALuint, ALenum, ALfloat);
++typedef void (AL_APIENTRY *LPALEFFECTFV)(ALuint, ALenum, const ALfloat *);
++typedef void (AL_APIENTRY *LPALGENFILTERS)(ALsizei, ALuint *);
++typedef void (AL_APIENTRY *LPALDELETEFILTERS)(ALsizei, const ALuint *);
++typedef ALboolean (AL_APIENTRY *LPALISFILTER)(ALuint);
++typedef void (AL_APIENTRY *LPALFILTERI)(ALuint, ALenum, ALint);
++typedef void (AL_APIENTRY *LPALFILTERF)(ALuint, ALenum, ALfloat);
++typedef void (AL_APIENTRY *LPALGENAUXILIARYEFFECTSLOTS)(ALsizei, ALuint *);
++typedef void (AL_APIENTRY *LPALDELETEAUXILIARYEFFECTSLOTS)(ALsizei, const ALuint *);
++typedef ALboolean (AL_APIENTRY *LPALISAUXILIARYEFFECTSLOT)(ALuint);
++typedef void (AL_APIENTRY *LPALAUXILIARYEFFECTSLOTI)(ALuint, ALenum, ALint);
++typedef void (AL_APIENTRY *LPALAUXILIARYEFFECTSLOTF)(ALuint, ALenum, ALfloat);
++
++#define AL_DIRECT_FILTER             0x20005
++#define AL_AUXILIARY_SEND_FILTER     0x20006
++#define AL_EFFECTSLOT_EFFECT         0x0001
++#define AL_EFFECTSLOT_GAIN           0x0002
++#define AL_EFFECTSLOT_NULL           0x0000
++#define AL_LOWPASS_GAIN              0x0001
++#define AL_LOWPASS_GAINHF            0x0002
++#define AL_FILTER_TYPE               0x8001
++#define AL_FILTER_NULL               0x0000
++#define AL_FILTER_LOWPASS            0x0001
++#define ALC_CONNECTED                0x0313
++#endif
++
++#ifdef PREYWASM_CLIENT
++typedef ALCboolean (ALC_APIENTRY *LPALCRESETDEVICESOFT)(ALCdevice *, const ALCint *);
++#endif
++
+ // DG: make this code build with older OpenAL headers that don't know about ALC_SOFT_HRTF
+ //     which provides LPALCRESETDEVICESOFT for idSoundSystemLocal::alcResetDeviceSOFT()
+-#ifndef ALC_SOFT_HRTF
++#if !defined(ALC_SOFT_HRTF) && !defined(PREYWASM_CLIENT)
+   typedef ALCboolean (ALC_APIENTRY*LPALCRESETDEVICESOFT)(ALCdevice *device, const ALCint *attribs);
+ #endif
+ 
+diff --git a/neo/sys/glimp_emscripten.cpp b/neo/sys/glimp_emscripten.cpp
+new file mode 100644
+index 0000000..b284a7d
+--- /dev/null
++++ b/neo/sys/glimp_emscripten.cpp
+@@ -0,0 +1,166 @@
++/*
++===========================================================================
++
++Downstream Emscripten GLimp bridge for a worker-owned OffscreenCanvas.
++
++===========================================================================
++*/
++
++#include "idlib/precompiled.h"
++#pragma hdrstop
++
++#include "renderer/tr_local.h"
++
++#include <emscripten.h>
++#include <emscripten/html5.h>
++#include <emscripten/html5_webgl.h>
++
++static EMSCRIPTEN_WEBGL_CONTEXT_HANDLE webContext = 0;
++static glimpParms_t currentParms = {};
++static int currentSwapInterval = 1;
++
++// The browser shell transfers its canvas to this dedicated engine worker.  The
++// selector-based HTML5 helpers fall back to document.querySelector() in a
++// non-pthread worker, where document intentionally does not exist.  Operate on
++// the transferred OffscreenCanvas directly instead.
++EM_JS( EMSCRIPTEN_WEBGL_CONTEXT_HANDLE, PREYWASM_CreateWorkerWebGLContext,
++	( int alpha, int antialias ), {
++	const canvas = Module['canvas'];
++	if ( !canvas || typeof canvas.getContext !== 'function' ) {
++		return 0;
++	}
++	return GL.createContext( canvas, {
++		alpha: !!alpha,
++		depth: true,
++		stencil: true,
++		antialias: !!antialias,
++		premultipliedAlpha: true,
++		preserveDrawingBuffer: false,
++		powerPreference: 'high-performance',
++		failIfMajorPerformanceCaveat: false,
++		majorVersion: 2,
++		minorVersion: 0,
++		enableExtensionsByDefault: true,
++		explicitSwapControl: true,
++		proxyContextToMainThread: 0,
++		renderViaOffscreenBackBuffer: false
++	});
++} );
++
++EM_JS( int, PREYWASM_ResizeWorkerCanvas, ( int width, int height ), {
++	const canvas = Module['canvas'];
++	if ( !canvas ) {
++		return 0;
++	}
++	canvas.width = width;
++	canvas.height = height;
++	return 1;
++} );
++
++bool GLimp_Init( glimpParms_t parms ) {
++	common->Printf( "[prey-wasm] creating worker WebGL 2 context\n" );
++
++	webContext = PREYWASM_CreateWorkerWebGLContext( 1, parms.multiSamples > 0 ? 1 : 0 );
++	if ( webContext <= 0 ) {
++		common->Warning( "emscripten_webgl_create_context failed: %ld\n", static_cast<long>( webContext ) );
++		return false;
++	}
++	if ( emscripten_webgl_make_context_current( webContext ) != EMSCRIPTEN_RESULT_SUCCESS ) {
++		common->Warning( "Could not make worker WebGL context current\n" );
++		emscripten_webgl_destroy_context( webContext );
++		webContext = 0;
++		return false;
++	}
++
++	currentParms = parms;
++	glConfig.vidWidth = parms.width;
++	glConfig.vidHeight = parms.height;
++	glConfig.winWidth = parms.width;
++	glConfig.winHeight = parms.height;
++	glConfig.isFullscreen = false;
++	PREYWASM_ResizeWorkerCanvas( parms.width, parms.height );
++	common->Printf( "[prey-wasm] worker WebGL 2 context is current at %d x %d\n", parms.width, parms.height );
++	return true;
++}
++
++bool GLimp_SetScreenParms( glimpParms_t parms, bool ) {
++	currentParms = parms;
++	glConfig.vidWidth = parms.width;
++	glConfig.vidHeight = parms.height;
++	glConfig.winWidth = parms.width;
++	glConfig.winHeight = parms.height;
++	glConfig.isFullscreen = false;
++	return PREYWASM_ResizeWorkerCanvas( parms.width, parms.height ) != 0;
++}
++
++float GLimp_GetDisplayRefresh() {
++	return 60.0f;
++}
++
++glimpParms_t GLimp_GetCurState() {
++	return currentParms;
++}
++
++void GLimp_Shutdown() {
++	if ( webContext ) {
++		emscripten_webgl_destroy_context( webContext );
++		webContext = 0;
++	}
++}
++
++void GLimp_SwapBuffers() {
++	emscripten_webgl_commit_frame();
++}
++
++void GLimp_SetGamma( unsigned short[256], unsigned short[256], unsigned short[256] ) {
++}
++
++void GLimp_ResetGamma() {
++}
++
++void GLimp_ActivateContext() {
++	if ( webContext ) {
++		emscripten_webgl_make_context_current( webContext );
++	}
++}
++
++void GLimp_DeactivateContext() {
++	emscripten_webgl_make_context_current( 0 );
++}
++
++GLExtension_t GLimp_ExtensionPointer( const char *name ) {
++	return reinterpret_cast<GLExtension_t>( emscripten_webgl_get_proc_address( name ) );
++}
++
++void GLimp_GrabInput( int ) {
++}
++
++bool GLimp_SetSwapInterval( int swapInterval ) {
++	currentSwapInterval = swapInterval;
++	return true;
++}
++
++int GLimp_GetSwapInterval() {
++	return currentSwapInterval;
++}
++
++bool GLimp_SetWindowResizable( bool ) {
++	return true;
++}
++
++void GLimp_UpdateWindowSize() {
++	glConfig.vidWidth = currentParms.width;
++	glConfig.vidHeight = currentParms.height;
++	glConfig.winWidth = currentParms.width;
++	glConfig.winHeight = currentParms.height;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int PREYWASM_BrowserResize( int width, int height ) {
++	if ( width < 320 || height < 200 ) {
++		return 0;
++	}
++	glimpParms_t parms = currentParms;
++	parms.width = width;
++	parms.height = height;
++	return GLimp_SetScreenParms( parms ) ? 1 : 0;
++}
+diff --git a/neo/sys/linux/main.cpp b/neo/sys/linux/main.cpp
+index ce9e733..d50068f 100644
+--- a/neo/sys/linux/main.cpp
++++ b/neo/sys/linux/main.cpp
+@@ -39,6 +39,13 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ #include <locale.h>
+ 
++#ifdef PREYWASM_CLIENT
++#include <emscripten/emscripten.h>
++#include "framework/Session_local.h"
++#include "sys/sys_sdl.h"
++#include "ui/UserInterface.h"
++#endif
++
+ 
+ 
+ #undef snprintf // no, I don't want to use idStr::snPrintf() here.
+@@ -384,9 +391,102 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
+ main
+ ===============
+ */
++#ifdef PREYWASM_CLIENT
++static int d3wasmLastBrowserState = -1;
++
++static int PREYWASM_CurrentBrowserState( void ) {
++	if ( !sessLocal.IsMapSpawned() ) {
++		return 0;
++	}
++	return sessLocal.IsGUIActive() ? 2 : 1;
++}
++
++static void PREYWASM_ReportBrowserState( void ) {
++	const int state = PREYWASM_CurrentBrowserState();
++	if ( state == d3wasmLastBrowserState ) {
++		return;
++	}
++	d3wasmLastBrowserState = state;
++	EM_ASM( {
++		postMessage( { type: 'engine-state', state: $0 === 1 ? 'gameplay' : ($0 === 2 ? 'paused' : 'menu') } );
++	}, state );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserOpenMenu( void ) {
++	if ( sessLocal.IsMapSpawned() ) {
++		sessLocal.StartMenu();
++	}
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserCapture( int captured ) {
++	Sys_GrabMouseCursor( captured != 0 );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserPointer( int x, int y, int relative ) {
++	if ( !relative ) {
++		idUserInterface *activeGui = sessLocal.GetActiveMenu();
++		if ( activeGui != NULL ) {
++			activeGui->SetCursor( x, y );
++			return;
++		}
++	}
++	SDL_Event event = {};
++	event.type = SDL_MOUSEMOTION;
++	event.motion.x = relative ? 0 : x;
++	event.motion.y = relative ? 0 : y;
++	event.motion.xrel = relative ? x : 0;
++	event.motion.yrel = relative ? y : 0;
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserPointerButton( int browserButton, int down ) {
++	SDL_Event event = {};
++	event.type = down ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
++	event.button.button = browserButton == 2 ? SDL_BUTTON_RIGHT : browserButton == 1 ? SDL_BUTTON_MIDDLE : SDL_BUTTON_LEFT;
++	event.button.state = down ? SDL_PRESSED : SDL_RELEASED;
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserKey( int scan, int key, int down, int repeat ) {
++	SDL_Event event = {};
++	event.type = down ? SDL_KEYDOWN : SDL_KEYUP;
++	event.key.state = down ? SDL_PRESSED : SDL_RELEASED;
++	event.key.repeat = repeat ? 1 : 0;
++	event.key.keysym.scancode = static_cast<SDL_Scancode>( scan );
++	event.key.keysym.sym = key ? static_cast<SDL_Keycode>( key ) : SDL_GetKeyFromScancode( event.key.keysym.scancode );
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserText( int codepoint ) {
++	if ( codepoint <= 0 || codepoint > 0x7f ) {
++		return;
++	}
++	SDL_Event event = {};
++	event.type = SDL_TEXTINPUT;
++	event.text.text[0] = static_cast<char>( codepoint );
++	event.text.text[1] = '\0';
++	SDL_PushEvent( &event );
++}
++
++static void PREYWASM_Frame( void ) {
++	// The native async thread is intentionally folded into the browser frame.
++	// This is enough for the single-thread checkpoint and keeps the browser event
++	// loop in control; audio cadence will need its own timer before playability.
++	common->Async();
++	common->Frame();
++	PREYWASM_ReportBrowserState();
++}
++#endif
++
+ int main(int argc, char **argv) {
+-	// Prevent running Doom 3 as root
+-	// Borrowed from Yamagi Quake II
++#ifdef PREYWASM_CLIENT
++	printf( "[prey-wasm] native main entered\n" );
++	fflush( stdout );
++#endif
++	// Prevent running Doom 3 as root. Emscripten reports a synthetic uid in a
++	// browser sandbox, so the native filesystem safety check does not apply.
++	// Borrowed from Yamagi Quake II.
++#ifndef PREYWASM_CLIENT
+ 	if (getuid() == 0) {
+ 		printf("Doom 3 shouldn't be run as root! Backing out to save your ass. If\n");
+ 		printf("you really know what you're doing, edit neo/sys/linux/main.cpp and remove\n");
+@@ -394,6 +494,7 @@ int main(int argc, char **argv) {
+ 
+ 		return 1;
+ 	}
++#endif
+ 	// fallback path to the binary for systems without /proc
+ 	// while not 100% reliable, its good enough
+ 	if (argc > 0) {
+@@ -404,11 +505,17 @@ int main(int argc, char **argv) {
+ 	}
+ 
+ 	SetExecutablePath(path_exe);
++#ifdef PREYWASM_CLIENT
++	printf( "[prey-wasm] executable path initialized\n" ); fflush( stdout );
++#endif
+ 	if (path_exe[0] == '\0') {
+ 		memcpy(path_exe, path_argv, sizeof(path_exe));
+ 	}
+ 
+ 	SetSavePath();
++#ifdef PREYWASM_CLIENT
++	printf( "[prey-wasm] save path initialized\n" ); fflush( stdout );
++#endif
+ 
+ 	// some ladspa-plugins (that may be indirectly loaded by doom3 if they're
+ 	// used by alsa) call setlocale(LC_ALL, ""); This sets LC_ALL to $LANG or
+@@ -417,7 +524,13 @@ int main(int argc, char **argv) {
+ 	// so set $LC_ALL to "C".
+ 	setenv("LC_ALL", "C", 1);
+ 
++#ifdef PREYWASM_CLIENT
++	printf( "[prey-wasm] initializing platform signal seam\n" ); fflush( stdout );
++#endif
+ 	Posix_InitSignalHandlers();
++#ifdef PREYWASM_CLIENT
++	printf( "[prey-wasm] entering common initialization\n" ); fflush( stdout );
++#endif
+ 
+ 	if ( argc > 1 ) {
+ 		common->Init( argc-1, &argv[1] );
+@@ -425,8 +538,13 @@ int main(int argc, char **argv) {
+ 		common->Init( 0, NULL );
+ 	}
+ 
++#ifdef PREYWASM_CLIENT
++	common->Printf( "[prey-wasm] common initialization complete; scheduling cooperative frames\n" );
++	emscripten_set_main_loop( PREYWASM_Frame, 0, true );
++#else
+ 	while (1) {
+ 		common->Frame();
+ 	}
++#endif
+ 	return 0;
+ }
+diff --git a/neo/sys/platform.h b/neo/sys/platform.h
+index 5567f57..399666e 100644
+--- a/neo/sys/platform.h
++++ b/neo/sys/platform.h
+@@ -157,6 +157,11 @@ If you have questions concerning this license or the applicable additional terms
+ #ifdef __unix__
+ 	#if defined( __linux__ )
+ 		#define BUILD_OS_ID				2
++	#elif defined( __EMSCRIPTEN__ )
++		// Use the Linux protocol identifier for the browser checkpoint. Native
++		// multiplayer transport remains disabled, but shared filesystem checks
++		// and protocol structures require a stable existing platform slot.
++		#define BUILD_OS_ID				2
+ 	#elif defined( __FreeBSD__ )
+ 		#define BUILD_OS_ID				3
+ 	#endif
+diff --git a/neo/sys/posix/posix_net.cpp b/neo/sys/posix/posix_net.cpp
+index 300656b..75e527e 100644
+--- a/neo/sys/posix/posix_net.cpp
++++ b/neo/sys/posix/posix_net.cpp
+@@ -272,6 +272,17 @@ void Sys_InitNetworking(void)
+ 
+ 	num_interfaces = 0;
+ 
++#ifdef __EMSCRIPTEN__
++	// Browsers do not expose host interface enumeration. Keep the engine's
++	// loopback assumptions intact; remote transport will be supplied by the
++	// later WebSocket bridge rather than native BSD interface discovery.
++	netint[0].ip = 0x7f000001u;
++	netint[0].mask = 0xff000000u;
++	num_interfaces = 1;
++	common->Printf( "browser networking: loopback interface only\n" );
++	return;
++#endif
++
+ 	if( getifaddrs( &ifap ) < 0 ) {
+ 		common->FatalError( "InitNetworking: SIOCGIFCONF error - %s\n", strerror( errno ) );
+ 		return;
+diff --git a/neo/sys/threads.cpp b/neo/sys/threads.cpp
+index b6f7817..209480a 100644
+--- a/neo/sys/threads.cpp
++++ b/neo/sys/threads.cpp
+@@ -102,6 +102,22 @@ void Sys_InitThreads() {
+ 	mainThreadID = SDL_GetCurrentThreadID();
+ 	mainThreadIDset = true;
+ 
++#ifdef PREYWASM_CLIENT
++	// The browser build has no pthread pool. Keep all engine work on the
++	// cooperative browser loop instead of asking SDL for condition variables,
++	// which are unavailable in Emscripten's non-pthread runtime.
++	for (int i = 0; i < MAX_TRIGGER_EVENTS; i++) {
++		signaled[i] = false;
++		waiting[i] = false;
++	}
++	for (int i = 0; i < MAX_THREADS; i++) {
++		thread[i] = NULL;
++	}
++	thread_count = 0;
++	Sys_Printf("browser threading: cooperative single-thread primitives\n");
++	return;
++#endif
++
+ 	// critical sections
+ 	for (int i = 0; i < MAX_CRITICAL_SECTIONS; i++) {
+ 		mutex[i] = SDL_CreateMutex();
+@@ -138,6 +154,10 @@ Sys_ShutdownThreads
+ ==================
+ */
+ void Sys_ShutdownThreads() {
++#ifdef PREYWASM_CLIENT
++	thread_count = 0;
++	return;
++#endif
+ 	// threads
+ 	for (int i = 0; i < MAX_THREADS; i++) {
+ 		if (!thread[i])
+@@ -175,6 +195,10 @@ Sys_EnterCriticalSection
+ void Sys_EnterCriticalSection(int index) {
+ 	assert(index >= 0 && index < MAX_CRITICAL_SECTIONS);
+ 
++#ifdef PREYWASM_CLIENT
++	return;
++#endif
++
+ #if SDL_VERSION_ATLEAST(3, 0, 0)
+ 	SDL_LockMutex(mutex[index]); // in SDL3, this returns void and can't fail
+ #else // SDL2 and SDL1.2
+@@ -191,6 +215,10 @@ Sys_LeaveCriticalSection
+ void Sys_LeaveCriticalSection(int index) {
+ 	assert(index >= 0 && index < MAX_CRITICAL_SECTIONS);
+ 
++#ifdef PREYWASM_CLIENT
++	return;
++#endif
++
+ #if SDL_VERSION_ATLEAST(3, 0, 0)
+ 	SDL_UnlockMutex(mutex[index]); // in SDL3, this returns void and can't fail
+ #else // SDL2 and SDL1.2
+@@ -220,6 +248,13 @@ Sys_WaitForEvent
+ void Sys_WaitForEvent(int index) {
+ 	assert(index >= 0 && index < MAX_TRIGGER_EVENTS);
+ 
++#ifdef PREYWASM_CLIENT
++	// A browser frame must never block. Background I/O is synchronous at the
++	// D3WASM seam, so consume a pending signal and return cooperatively.
++	signaled[index] = false;
++	return;
++#endif
++
+ 	Sys_EnterCriticalSection(CRITICAL_SECTION_SYS);
+ 
+ 	assert(!waiting[index]);	// WaitForEvent from multiple threads? that wouldn't be good
+@@ -248,6 +283,11 @@ Sys_TriggerEvent
+ void Sys_TriggerEvent(int index) {
+ 	assert(index >= 0 && index < MAX_TRIGGER_EVENTS);
+ 
++#ifdef PREYWASM_CLIENT
++	signaled[index] = true;
++	return;
++#endif
++
+ 	Sys_EnterCriticalSection(CRITICAL_SECTION_SYS);
+ 
+ 	if (waiting[index]) {
+@@ -271,6 +311,13 @@ Sys_CreateThread
+ ==================
+ */
+ void Sys_CreateThread(xthread_t function, void *parms, xthreadInfo& info, const char *name) {
++#ifdef PREYWASM_CLIENT
++	(void)function;
++	(void)parms;
++	memset(&info, 0, sizeof(info));
++	Sys_Printf("WARNING: browser build ignored thread request for '%s'\n", name);
++	return;
++#endif
+ 	Sys_EnterCriticalSection();
+ 
+ #if SDL_VERSION_ATLEAST(2, 0, 0)
+@@ -303,6 +350,10 @@ Sys_DestroyThread
+ ==================
+ */
+ void Sys_DestroyThread(xthreadInfo& info) {
++#ifdef PREYWASM_CLIENT
++	memset(&info, 0, sizeof(info));
++	return;
++#endif
+ 	assert(info.threadHandle);
+ 
+ 	SDL_WaitThread(info.threadHandle, NULL);
+@@ -338,6 +389,12 @@ find the name of the calling thread
+ ==================
+ */
+ const char *Sys_GetThreadName(int *index) {
++#ifdef PREYWASM_CLIENT
++	if (index) {
++		*index = -1;
++	}
++	return "main";
++#endif
+ 	const char *name;
+ 
+ 	Sys_EnterCriticalSection();

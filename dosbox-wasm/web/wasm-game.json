@@ -1,0 +1,193 @@
+{
+  "id": "dosbox-family",
+  "title": "DOSBox WASM Suite",
+  "kicker": "Native DOSBox source in WebAssembly",
+  "description": "Choose a classic DOS game and play it in a contained DOS viewport.",
+  "adapter": "/game-adapter.js",
+  "preferencesNamespace": "dosbox-family",
+  "defaultVariant": "jill1",
+  "identity": false,
+  "graphics": false,
+  "advanced": false,
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "pointerLock": false,
+  "menuCursor": "none",
+  "displayMode": "4:3",
+  "canvasWidth": 960,
+  "canvasHeight": 720,
+  "pixelated": true,
+  "syncBackbuffer": false,
+  "controller": {
+    "mode": "disabled"
+  },
+  "persistence": {
+    "root": "/persistent/dosbox/{variant}",
+    "debounceMs": 750,
+    "intervalMs": 5000,
+    "requestDurability": true
+  },
+  "theme": {
+    "accent": "#1d4e99",
+    "accent-strong": "#f4cc45",
+    "border": "#3564a8",
+    "panel": "rgb(8 19 42 / 96%)",
+    "field": "#0d2348"
+  },
+  "variants": {
+    "jill1": {
+      "title": "Jill of the Jungle",
+      "engine": "DOSBox 0.74-3",
+      "description": "Episode 1 with WASD mapped to the original arrow-key movement.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/jill1",
+        "shortName": "Jill 1",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "jill2": {
+      "title": "Jill Goes Underground",
+      "engine": "DOSBox 0.74-3",
+      "description": "Episode 2 with WASD mapped to the original arrow-key movement.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/jill2",
+        "shortName": "Jill 2",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "jill3": {
+      "title": "Jill Saves the Prince",
+      "engine": "DOSBox 0.74-3",
+      "description": "Episode 3 with WASD mapped to the original arrow-key movement.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/jill3",
+        "shortName": "Jill 3",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "jazz": {
+      "title": "Jazz Jackrabbit",
+      "engine": "DOSBox 0.74-3",
+      "description": "The original high-speed platformer with WASD mapped to arrow-key movement.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/jazz",
+        "shortName": "Jazz",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "duke1": {
+      "title": "Duke Nukem",
+      "engine": "DOSBox 0.74-3",
+      "description": "The original 1991 side-scrolling episode with WASD mapped to arrow-key movement.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/duke1",
+        "shortName": "Duke 1",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "duke2": {
+      "title": "Duke Nukem II",
+      "engine": "DOSBox 0.74-3",
+      "description": "The 1993 sequel with WASD mapped to arrow-key movement.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/duke2",
+        "shortName": "Duke 2",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "gta": {
+      "title": "Grand Theft Auto (DOS Demo)",
+      "engine": "DOSBox 0.74-3",
+      "description": "The original 1997 Grand Theft Auto eight-bit-color DOS demo.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/gta",
+        "shortName": "GTA DOS",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "nfs": {
+      "title": "The Need for Speed",
+      "engine": "DOSBox 0.74-3",
+      "description": "The original DOS racer with Sound Blaster audio and its native cinematic presentation.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/nfs",
+        "shortName": "NFS DOS",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    },
+    "simcity2000": {
+      "title": "SimCity 2000",
+      "menuCursor": "native",
+      "engine": "DOSBox 0.74-3",
+      "description": "The revised 1993 DOS city builder configured for VESA graphics and Sound Blaster 16 audio.",
+      "icon": "/assets/dosbox.ico",
+      "iconPixelated": true,
+      "pwa": {
+        "id": "/apps/dosbox/simcity2000",
+        "shortName": "SC2000",
+        "themeColor": "#1d4e99",
+        "backgroundColor": "#050b18",
+        "icons": [
+          { "src": "/assets/dosbox-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/assets/dosbox-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      }
+    }
+  }
+}

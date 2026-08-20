@@ -1,0 +1,132 @@
+diff --git a/deps/libco/libco.c b/deps/libco/libco.c
+index 9ba7a44..a4a28fc 100644
+--- a/deps/libco/libco.c
++++ b/deps/libco/libco.c
+@@ -4,7 +4,9 @@
+   #define LIBCO_MPROTECT
+ #endif
+
+-#if defined(__clang__) || defined(__GNUC__)
++#if defined(__EMSCRIPTEN__)
++  #include "emscripten.c"
++#elif defined(__clang__) || defined(__GNUC__)
+   #if defined(__i386__)
+     #include "x86.c"
+   #elif defined(__amd64__)
+diff --git a/deps/libco/emscripten.c b/deps/libco/emscripten.c
+new file mode 100644
+index 0000000..a07c2a7
+--- /dev/null
++++ b/deps/libco/emscripten.c
+@@ -0,0 +1,111 @@
++#define LIBCO_C
++#include "libco.h"
++#include "settings.h"
++
++#include <emscripten/fiber.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include <string.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++enum { LIBCO_ASYNCIFY_STACK_SIZE = 64 * 1024 };
++enum { LIBCO_EMSCRIPTEN_MAGIC = 0x4a47464u };
++
++typedef struct {
++  uint32_t magic;
++  int owns_block;
++  emscripten_fiber_t fiber;
++  void (*coentry)(void);
++  void *asyncify_stack;
++} cothread_struct;
++
++static thread_local cothread_struct co_primary;
++static thread_local cothread_struct *co_running;
++static thread_local unsigned char co_primary_asyncify[LIBCO_ASYNCIFY_STACK_SIZE];
++
++static void co_init_primary(void) {
++  if (co_running) return;
++  memset(&co_primary, 0, sizeof(co_primary));
++  co_primary.magic = LIBCO_EMSCRIPTEN_MAGIC;
++  emscripten_fiber_init_from_current_context(&co_primary.fiber,
++    co_primary_asyncify, sizeof(co_primary_asyncify));
++  co_running = &co_primary;
++}
++
++static void co_entry_trampoline(void *opaque) {
++  cothread_struct *thread = (cothread_struct *)opaque;
++  co_running = thread;
++  thread->coentry();
++  co_running = &co_primary;
++  emscripten_fiber_swap(&thread->fiber, &co_primary.fiber);
++}
++
++cothread_t co_active(void) {
++  co_init_primary();
++  return (cothread_t)co_running;
++}
++
++cothread_t co_derive(void *memory, unsigned int size, void (*coentry)(void)) {
++  co_init_primary();
++  const size_t header_size = (sizeof(cothread_struct) + 15u) & ~(size_t)15u;
++  if (!memory || size <= header_size + 1024u || !coentry) return 0;
++
++  cothread_struct *thread = (cothread_struct *)memory;
++  int owns_block = 0;
++  if (thread->magic == LIBCO_EMSCRIPTEN_MAGIC) {
++    owns_block = thread->owns_block;
++    free(thread->asyncify_stack);
++  }
++  memset(thread, 0, sizeof(*thread));
++  thread->magic = LIBCO_EMSCRIPTEN_MAGIC;
++  thread->owns_block = owns_block;
++  thread->coentry = coentry;
++  thread->asyncify_stack = malloc(LIBCO_ASYNCIFY_STACK_SIZE);
++  if (!thread->asyncify_stack) return 0;
++
++  void *c_stack = (unsigned char *)memory + header_size;
++  const size_t c_stack_size = size - header_size;
++  emscripten_fiber_init(&thread->fiber, co_entry_trampoline, thread,
++    c_stack, c_stack_size, thread->asyncify_stack, LIBCO_ASYNCIFY_STACK_SIZE);
++  return (cothread_t)thread;
++}
++
++cothread_t co_create(unsigned int size, void (*coentry)(void)) {
++  void *memory = calloc(1, size);
++  if (!memory) return 0;
++  cothread_struct *thread = (cothread_struct *)co_derive(memory, size, coentry);
++  if (!thread) {
++    free(memory);
++    return 0;
++  }
++  thread->owns_block = 1;
++  return (cothread_t)thread;
++}
++
++void co_delete(cothread_t cothread) {
++  cothread_struct *thread = (cothread_struct *)cothread;
++  if (!thread || thread == &co_primary) return;
++  const int owns_block = thread->magic == LIBCO_EMSCRIPTEN_MAGIC && thread->owns_block;
++  if (thread->magic == LIBCO_EMSCRIPTEN_MAGIC) free(thread->asyncify_stack);
++  if (owns_block) free(thread);
++}
++
++void co_switch(cothread_t cothread) {
++  co_init_primary();
++  cothread_struct *next = (cothread_struct *)cothread;
++  if (!next || next == co_running) return;
++  cothread_struct *previous = co_running;
++  co_running = next;
++  emscripten_fiber_swap(&previous->fiber, &next->fiber);
++}
++
++int co_serializable(void) {
++  return 0;
++}
++
++#ifdef __cplusplus
++}
++#endif

@@ -1,0 +1,19 @@
+set(EMULATION_CORE_ARCHIVE
+  "${CMAKE_CURRENT_SOURCE_DIR}/build/core/ps1/libmednafen-jg.a")
+if(NOT EXISTS "${EMULATION_CORE_ARCHIVE}")
+  message(FATAL_ERROR "Build the pinned Mednafen JG core first: VARIANT=ps1 ./scripts/build-native-core.sh")
+endif()
+
+add_library(mednafen_jg STATIC IMPORTED GLOBAL)
+set_target_properties(mednafen_jg PROPERTIES IMPORTED_LOCATION "${EMULATION_CORE_ARCHIVE}")
+set(EMULATION_CORE_TARGET mednafen_jg)
+set(EMULATION_HOST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/engine/src/jg_browser_host.cpp")
+set(EMULATION_COMPILE_DEFINITIONS EMULATION_VARIANT_PS1=1)
+set(EMULATION_COMPILE_OPTIONS "SHELL:-pthread")
+set(EMULATION_FACTORY_NAME createPs1EmulationModule)
+set(EMULATION_LINK_OPTIONS
+  "SHELL:-pthread"
+  "SHELL:-sPTHREAD_POOL_SIZE=2"
+  "SHELL:-sUSE_ZLIB=1"
+  "SHELL:-sINITIAL_MEMORY=268435456"
+  "SHELL:-sMAXIMUM_MEMORY=2147483648")

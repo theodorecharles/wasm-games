@@ -1,0 +1,14 @@
+#ifndef IDTECH1_WASM_CONFIG_H
+#define IDTECH1_WASM_CONFIG_H
+
+#define PACKAGE_NAME "id Tech 1 WASM Suite"
+#define PACKAGE_TARNAME "idtech1-wasm"
+#define PACKAGE_VERSION "@PROJECT_VERSION@"
+#define PACKAGE_STRING "id Tech 1 WASM Suite @PROJECT_VERSION@"
+#define PROGRAM_PREFIX "crispy-"
+
+#define HAVE_DIRENT_H 1
+#define HAVE_DECL_STRCASECMP 1
+#define HAVE_DECL_STRNCASECMP 1
+
+#endif

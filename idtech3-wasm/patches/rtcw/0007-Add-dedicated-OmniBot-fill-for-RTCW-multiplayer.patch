@@ -1,0 +1,241 @@
+From f9d2c673cb92e8ced8064da52d49d76b831dac7c Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 12:44:07 -0400
+Subject: [PATCH] Add dedicated OmniBot fill for RTCW multiplayer
+
+Server-side bot add/kick on stock WolfMP protocol so the WASM client
+can join without an fs_game mod.
+---
+ MP/Makefile              |   1 +
+ MP/code/game/g_bot.c     |   4 ++
+ MP/code/game/g_local.h   |   5 ++
+ MP/code/game/g_main.c    |   1 +
+ MP/code/game/g_omnibot.c | 145 +++++++++++++++++++++++++++++++++++++++
+ MP/code/game/g_svcmds.c  |   4 ++
+ 6 files changed, 160 insertions(+)
+ create mode 100644 MP/code/game/g_omnibot.c
+
+diff --git a/MP/Makefile b/MP/Makefile
+index 8aa5afa..00166ba 100644
+--- a/MP/Makefile
++++ b/MP/Makefile
+@@ -2659,6 +2659,7 @@ Q3GOBJ_ = \
+   $(B)/$(BASEGAME)/game/g_alarm.o \
+   $(B)/$(BASEGAME)/game/g_antilag.o \
+   $(B)/$(BASEGAME)/game/g_bot.o \
++  $(B)/$(BASEGAME)/game/g_omnibot.o \
+   $(B)/$(BASEGAME)/game/g_client.o \
+   $(B)/$(BASEGAME)/game/g_cmds.o \
+   $(B)/$(BASEGAME)/game/g_combat.o \
+diff --git a/MP/code/game/g_bot.c b/MP/code/game/g_bot.c
+index 8f9235e..aa5dc4c 100644
+--- a/MP/code/game/g_bot.c
++++ b/MP/code/game/g_bot.c
+@@ -481,6 +481,10 @@ qboolean G_BotConnect( int clientNum, qboolean restart ) {
+ 	Q_strncpyz( settings.characterfile, Info_ValueForKey( userinfo, "characterfile" ), sizeof( settings.characterfile ) );
+ 	settings.skill = atoi( Info_ValueForKey( userinfo, "skill" ) );
+ 
++	if ( G_OmniBot_Active() ) {
++		return qtrue;
++	}
++
+ 	if ( !BotAISetupClient( clientNum, &settings ) ) {
+ 		trap_DropClient( clientNum, "BotAISetupClient failed" );
+ 		return qfalse;
+diff --git a/MP/code/game/g_local.h b/MP/code/game/g_local.h
+index 3124fa0..2be3747 100644
+--- a/MP/code/game/g_local.h
++++ b/MP/code/game/g_local.h
+@@ -1046,6 +1046,11 @@ void G_QueueBotBegin( int clientNum );
+ qboolean G_BotConnect( int clientNum, qboolean restart );
+ void Svcmd_AddBot_f( void );
+ 
++// g_omnibot.c
++void G_OmniBot_Init( void );
++qboolean G_OmniBot_Active( void );
++qboolean G_OmniBot_ConsoleCommand( void );
++
+ // ai_main.c
+ #define MAX_FILEPATH            144
+ 
+diff --git a/MP/code/game/g_main.c b/MP/code/game/g_main.c
+index f76a724..5f75598 100644
+--- a/MP/code/game/g_main.c
++++ b/MP/code/game/g_main.c
+@@ -1136,6 +1136,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
+ 	G_ProcessIPBans();
+ 
+ 	G_InitMemory();
++	G_OmniBot_Init();
+ 
+ 	// NERVE - SMF - intialize gamestate
+ 	if ( g_gamestate.integer == GS_INITIALIZE ) {
+diff --git a/MP/code/game/g_omnibot.c b/MP/code/game/g_omnibot.c
+new file mode 100644
+index 0000000..5da677e
+--- /dev/null
++++ b/MP/code/game/g_omnibot.c
+@@ -0,0 +1,145 @@
++/*
++===========================================================================
++Dedicated OmniBot fill for the RTCW WASM arena.
++Server-side only: stock WolfMP protocol, no client fs_game, no botlib addbot.
++===========================================================================
++*/
++
++#include "g_local.h"
++
++static vmCvar_t g_omnibotEnable;
++static vmCvar_t g_omnibotPath;
++
++static int OmniBotClass( const char *name ) {
++	if ( !Q_stricmp( name, "medic" ) ) {
++		return PC_MEDIC;
++	}
++	if ( !Q_stricmp( name, "engineer" ) ) {
++		return PC_ENGINEER;
++	}
++	if ( !Q_stricmp( name, "lieutenant" ) || !Q_stricmp( name, "lt" ) || !Q_stricmp( name, "fieldops" ) ) {
++		return PC_LT;
++	}
++	return PC_SOLDIER;
++}
++
++static const char *OmniBotTeamArg( const char *name ) {
++	if ( !Q_stricmp( name, "allies" ) || !Q_stricmp( name, "blue" ) || !Q_stricmp( name, "b" ) ) {
++		return "blue";
++	}
++	return "red";
++}
++
++void G_OmniBot_Init( void ) {
++	trap_Cvar_Register( &g_omnibotEnable, "omnibot_enable", "1", CVAR_ARCHIVE | CVAR_LATCH );
++	trap_Cvar_Register( &g_omnibotPath, "omnibot_path", "/opt/omni-bot", CVAR_ARCHIVE );
++	if ( g_omnibotEnable.integer ) {
++		G_Printf( "OmniBot dedicated fill enabled path=%s\n", g_omnibotPath.string );
++	}
++}
++
++qboolean G_OmniBot_Active( void ) {
++	return g_omnibotEnable.integer ? qtrue : qfalse;
++}
++
++static void G_OmniBot_Add( const char *teamName, const char *className ) {
++	int clientNum;
++	int playerClass;
++	char userinfo[MAX_INFO_STRING];
++	char botName[MAX_NETNAME];
++	gentity_t *ent;
++	const char *teamArg;
++
++	if ( !G_OmniBot_Active() ) {
++		G_Printf( "OmniBot is disabled\n" );
++		return;
++	}
++
++	teamArg = OmniBotTeamArg( teamName );
++	playerClass = OmniBotClass( className );
++	Com_sprintf( botName, sizeof( botName ), "^o[BOT]^7%s%s",
++				 !Q_stricmp( teamArg, "blue" ) ? "Allies" : "Axis",
++				 playerClass == PC_MEDIC ? "Medic" :
++				 playerClass == PC_ENGINEER ? "Engineer" :
++				 playerClass == PC_LT ? "Lieutenant" : "Soldier" );
++
++	clientNum = trap_BotAllocateClient();
++	if ( clientNum == -1 ) {
++		G_Printf( "OmniBot: no free client slots\n" );
++		return;
++	}
++
++	userinfo[0] = '\0';
++	Info_SetValueForKey( userinfo, "name", botName );
++	Info_SetValueForKey( userinfo, "rate", "25000" );
++	Info_SetValueForKey( userinfo, "snaps", "20" );
++	Info_SetValueForKey( userinfo, "model", "multi" );
++	Info_SetValueForKey( userinfo, "skill", "3" );
++	Info_SetValueForKey( userinfo, "team", teamArg );
++	trap_SetUserinfo( clientNum, userinfo );
++
++	if ( ClientConnect( clientNum, qtrue, qtrue ) ) {
++		trap_DropClient( clientNum, "OmniBot connect rejected" );
++		return;
++	}
++
++	ent = &g_entities[clientNum];
++	if ( !ent->client ) {
++		return;
++	}
++	ent->r.svFlags |= SVF_BOT;
++	ent->client->sess.latchPlayerType = playerClass;
++	ent->client->sess.playerType = playerClass;
++	SetTeam( ent, teamArg );
++	ClientBegin( clientNum );
++	G_Printf( "OmniBot added %s %s as %s\n", teamArg, className, botName );
++}
++
++static void G_OmniBot_Kick( const char *name ) {
++	int i;
++	char compare[MAX_NETNAME];
++
++	if ( !name || !name[0] ) {
++		return;
++	}
++	for ( i = 0; i < level.maxclients; i++ ) {
++		if ( !g_entities[i].inuse || !g_entities[i].client ) {
++			continue;
++		}
++		if ( !( g_entities[i].r.svFlags & SVF_BOT ) ) {
++			continue;
++		}
++		Q_strncpyz( compare, g_entities[i].client->pers.netname, sizeof( compare ) );
++		if ( Q_stricmp( compare, name ) && !strstr( compare, name ) ) {
++			continue;
++		}
++		trap_DropClient( i, "OmniBot kicked" );
++		G_Printf( "OmniBot kicked %s\n", compare );
++		return;
++	}
++}
++
++qboolean G_OmniBot_ConsoleCommand( void ) {
++	char cmd[MAX_TOKEN_CHARS];
++	char arg1[MAX_TOKEN_CHARS];
++	char arg2[MAX_TOKEN_CHARS];
++
++	trap_Argv( 0, cmd, sizeof( cmd ) );
++	if ( Q_stricmp( cmd, "bot" ) ) {
++		return qfalse;
++	}
++	trap_Argv( 1, arg1, sizeof( arg1 ) );
++	trap_Argv( 2, arg2, sizeof( arg2 ) );
++	if ( !Q_stricmp( arg1, "addbot" ) ) {
++		char arg3[MAX_TOKEN_CHARS];
++		trap_Argv( 3, arg3, sizeof( arg3 ) );
++		G_OmniBot_Add( arg2, arg3[0] ? arg3 : "soldier" );
++		return qtrue;
++	}
++	if ( !Q_stricmp( arg1, "kickbot" ) ) {
++		G_OmniBot_Kick( arg2 );
++		return qtrue;
++	}
++	G_Printf( "OmniBot usage: bot addbot <axis|allies> <soldier|medic|engineer|lieutenant>\n" );
++	return qtrue;
++}
+diff --git a/MP/code/game/g_svcmds.c b/MP/code/game/g_svcmds.c
+index 38271c8..1242b76 100644
+--- a/MP/code/game/g_svcmds.c
++++ b/MP/code/game/g_svcmds.c
+@@ -634,6 +634,10 @@ qboolean    ConsoleCommand( void ) {
+ 		return qtrue;
+ 	}
+ 
++	if ( G_OmniBot_ConsoleCommand() ) {
++		return qtrue;
++	}
++
+ 	if ( Q_stricmp( cmd, "addbot" ) == 0 ) {
+ 		Svcmd_AddBot_f();
+ 		return qtrue;
+-- 
+2.53.0
+

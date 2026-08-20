@@ -1,0 +1,18 @@
+{
+  "name": "nolf-wasm-wasm",
+  "private": true,
+  "version": "0.1.0",
+  "description": "No One Lives Forever browser runtime",
+  "scripts": {
+    "test": "node test/package-contract.test.js && node test/rez-validator.test.js && node test/adapter-state.test.js && node test/probe-cli.test.js && node test/lith-session.test.js",
+    "start": "node scripts/start.js",
+    "start:local": "WASM_GAME_DATA_ROOT=/home/ted/Development/wasm/data/nolf/game node scripts/start.js",
+    "build:web": "bash scripts/build-web.sh",
+    "sync-framework": "node scripts/sync-framework.js",
+    "build:image": "bash scripts/build-image.sh"
+  },
+  "wasmGameFramework": {
+    "package": "@wasm-game-framework/browser",
+    "version": "0.9.6"
+  }
+}

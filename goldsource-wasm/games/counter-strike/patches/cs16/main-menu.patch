@@ -1,0 +1,86 @@
+diff --git a/menus/Main.cpp b/menus/Main.cpp
+index a84704e..6d73d03 100644
+--- a/menus/Main.cpp
++++ b/menus/Main.cpp
+@@ -73,6 +73,7 @@ private:
+ 	CMenuPicButton	readme;
+ 	CMenuPicButton	previews;
+ 	CMenuPicButton	quit;
++	CMenuPicButton	joinGame;
+ 
+ 	// buttons on top right. Maybe should be drawn if fullscreen == 1?
+ 	CMenuBitmap	minimizeBtn;
+@@ -135,7 +136,8 @@ bool CMenuMain::KeyDown( int key )
+ 		}
+ 		else
+ 		{
+-			QuitDialogCb( );
++			// Browser build: no quit dialog on Escape at the main menu;
++			// closing the tab is the only way out.
+ 		}
+ 		return true;
+ 	}
+@@ -238,6 +240,12 @@ void CMenuMain::_Init( void )
+ 	quit.iFlags |= QMF_NOTIFY;
+ 	quit.onReleased = VoidCb( &CMenuMain::QuitDialogCb );
+ 
++	// Browser build: the main menu is a single-purpose join screen for the
++	// hosted match. No picture is set, so the name renders as text.
++	joinGame.SetNameAndStatus( L( "Join Game" ), L( "Connect to the hosted match" ) );
++	joinGame.iFlags |= QMF_NOTIFY;
++	joinGame.onReleased.SetCommand( false, "connect 127.0.0.1:8080\n" );
++
+ 	quitButton.SetPicture( ART_CLOSEBTN_N, ART_CLOSEBTN_F, ART_CLOSEBTN_D );
+ 	quitButton.iFlags = QMF_MOUSEONLY;
+ 	quitButton.eFocusAnimation = QM_HIGHLIGHTIFFOCUS;
+@@ -290,6 +298,7 @@ void CMenuMain::_Init( void )
+ 	AddItem( console );
+ 	AddItem( disconnect );
+ 	AddItem( resumeGame );
++	AddItem( joinGame );
+ 	AddItem( newGame );
+ 
+ 	if ( bTrainMap )
+@@ -303,10 +312,8 @@ void CMenuMain::_Init( void )
+ 		AddItem( customGame );
+ 
+ 	AddItem( readme );
+-	AddItem( previews );
+-	AddItem( quit );
++	// Browser build: no previews (dead link), no quit UI (close the tab).
+ 	AddItem( minimizeBtn );
+-	AddItem( quitButton );
+ }
+ 
+ /*
+@@ -361,6 +368,8 @@ void CMenuMain::VidInit( bool connected )
+ 	}
+ 
+ 	newGame.SetCoord( hoffset, yoffset );
++	// Join Game takes the top slot (newGame is never shown).
++	joinGame.SetCoord( hoffset, yoffset );
+ 	yoffset -= ygap;
+ 
+ 	if( connected )
+@@ -385,6 +394,21 @@ void CMenuMain::VidInit( bool connected )
+ 	// they exist in the original and can be mistakenly clicked
+ 	newGame.SetVisibility( false );
+ 
++	// Browser build: the main menu is just the join button; everything
++	// else belongs to the in-game (pause) menu.
++	joinGame.SetVisibility( !connected );
++	console.SetVisibility( connected );
++	hazardCourse.SetVisibility( connected );
++	configuration.SetVisibility( connected );
++	saveRestore.SetVisibility( connected );
++	multiPlayer.SetVisibility( connected );
++	customGame.SetVisibility( connected );
++	readme.SetVisibility( connected );
++
++	// Keep the cursor on Join Game so Enter activates it immediately.
++	if( !connected )
++		SetCursorToItem( joinGame, false );
++
+ 	if( connected && single )
+ 	{
+ 		saveRestore.SetNameAndStatus( L( "Save\\Load Game" ), L( "StringsList_192" ) );

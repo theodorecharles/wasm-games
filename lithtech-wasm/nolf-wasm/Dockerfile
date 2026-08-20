@@ -1,0 +1,5 @@
+ARG FRAMEWORK_IMAGE=wasm-game-framework:0.9.6
+FROM ${FRAMEWORK_IMAGE}
+ARG GAME_VARIANT=suite
+COPY web/ /opt/game-site/
+ENV WASM_GAME_VARIANT=${GAME_VARIANT}

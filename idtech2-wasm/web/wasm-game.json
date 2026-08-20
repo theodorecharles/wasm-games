@@ -1,0 +1,137 @@
+{
+  "id": "idtech2-family",
+  "title": "id Tech 2 WASM Suite",
+  "kicker": "Native Quake-family source ports",
+  "description": "Quake and Quake II in the browser.",
+  "adapter": "/game-adapter.js",
+  "preferencesNamespace": "idtech2-family",
+  "defaultVariant": "quake",
+  "fullscreen": true,
+  "defaultFullscreen": false,
+  "pointerLock": true,
+  "identity": true,
+  "theme": {
+    "panel": "rgb(16 11 8 / 96%)",
+    "field": "#18110c"
+  },
+  "variants": {
+    "quake": {
+      "title": "Quake",
+      "menuCursor": "none",
+      "kicker": "id Tech 2 · original WinQuake engine",
+      "engine": "Official WinQuake GPL source",
+      "description": "Original or high-resolution dynamic software-rendered Quake.",
+      "loadingTitle": "Starting Quake…",
+      "icon": "/quake.ico",
+      "iconPixelated": true,
+      "background": "/quake-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "pwa": {
+        "id": "/apps/idtech2/quake",
+        "name": "Quake",
+        "shortName": "Quake",
+        "description": "Original Quake engine in the id Tech 2 WASM suite.",
+        "themeColor": "#a3472a",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/quake-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/quake-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "4:3",
+      "canvasWidth": 640,
+      "canvasHeight": 480,
+      "pixelated": true,
+      "nativeManaged": true,
+      "syncBackbuffer": false,
+      "controller": {
+        "mode": "disabled"
+      },
+      "persistence": {
+        "root": "/persistent/idtech2/{variant}",
+        "debounceMs": 750,
+        "intervalMs": 5000,
+        "requestDurability": true
+      },
+      "graphics": true,
+      "advanced": true,
+      "fps": false,
+      "dynamicQuality": false,
+      "profiles": [
+        { "value": "original", "label": "Original — 640×480, 4:3" },
+        { "value": "modernized", "label": "Modernized — dynamic high-resolution software renderer" }
+      ],
+      "defaultProfile": "original",
+      "defaultPlayerName": "Ranger",
+      "provisioningText": "Select pak0.pak and pak1.pak from the Quake game-data folder. Matching files are cached in this browser after exact validation.",
+      "theme": {
+        "accent": "#a3472a",
+        "accent-strong": "#e79b68",
+        "border": "#65331f"
+      }
+    },
+    "quake2": {
+      "title": "Quake II",
+      "menuCursor": "browser",
+      "kicker": "id Tech 2 · Yamagi native source",
+      "engine": "Yamagi Quake II GPL source",
+      "description": "Native-source Quake II with dynamic aspect-correct WebGL 2 rendering and real quality ceilings.",
+      "loadingTitle": "Starting Quake II…",
+      "icon": "/quake2.ico",
+      "iconPixelated": false,
+      "background": "/quake2-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "pwa": {
+        "id": "/apps/idtech2/quake2",
+        "name": "Quake II",
+        "shortName": "Quake II",
+        "description": "Native-source Quake II in the id Tech 2 WASM suite.",
+        "themeColor": "#c67535",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/quake2-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/quake2-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "dynamic",
+      "nativeManaged": true,
+      "syncBackbuffer": false,
+      "controller": {
+        "mode": "disabled"
+      },
+      "persistence": {
+        "root": "/persistent/idtech2/{variant}",
+        "debounceMs": 750,
+        "intervalMs": 5000,
+        "requestDurability": true
+      },
+      "resizeTransition": "immediate",
+      "canvasWidth": 1280,
+      "canvasHeight": 720,
+      "pixelated": false,
+      "maxDpr": 1,
+      "graphics": true,
+      "advanced": true,
+      "fps": true,
+      "dynamicQuality": true,
+      "profiles": [
+        { "value": "medium", "label": "Medium" },
+        { "value": "high", "label": "High" },
+        { "value": "ultra", "label": "Ultra" }
+      ],
+      "defaultProfile": "high",
+      "fpsTargets": [30, 60, 120],
+      "defaultFps": 60,
+      "defaultDynamicQuality": true,
+      "defaultPlayerName": "Ranger",
+      "provisioningText": "Select pak0.pak, pak1.pak, and pak2.pak from the baseq2 folder. Matching files are cached in this browser after exact validation.",
+      "theme": {
+        "accent": "#c67535",
+        "accent-strong": "#f2b16b",
+        "border": "#724827"
+      }
+    }
+  }
+}

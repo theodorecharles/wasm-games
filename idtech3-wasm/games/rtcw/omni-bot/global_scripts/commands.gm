@@ -1,0 +1,2147 @@
+// It is also possible to register custom commands, that will be called in a similar way to the other bot commands,
+// such as /bot waypoint. These command functions will recieve a table that is filled with all the additional options
+// that were part of the command.
+// For example, if the user typed the following command into the games console
+//		testme hi how are you
+//	This testcommand function would be called, and the params variable would be a table that contains 4 items
+//	These items can be referenced by a number, such as params[0], params[1], etc...
+// Script commands are an easy way to bind complex script functions to a command that can be executed from
+// the games console.
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["testme"] =
+{
+	Func = function(_params)
+	{
+		print("Test Command");
+		foreach ( name and val in _params )
+		{ print( name, typeName(val), val ); }
+	},
+	Help =
+	{
+		"Test command, prints out all arguments",
+		"Usage: /bot testme",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["showweapons"] =
+{
+	Func = function(_params)
+	{
+		print("Printing Weapon List");
+
+		foreach ( name and Id in WEAPON )
+			{ print("Weapon " + name +" : id " + Id); }
+	},
+
+	Help =
+	{
+		"Show Weapons, lists all weapons in the WEAPON table",
+		"Usage: /bot showweapons",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["showevents"] =
+{
+	Func = function(_params)
+	{
+		print("Printing Event List");
+
+		foreach ( name and Id in EVENT )
+			{ print("Event " + name +" : id " + Id); }
+	},
+
+	Help =
+	{
+		"Show Events, lists all events in the EVENT table",
+		"Usage: /bot showevents",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dumpglobals"] =
+{
+	Func = function(_params)
+	{
+		print("Dumping Global functions, references and typefunctions");
+		dumpGlobals("globals_functions.gm", DUMP.FUNCTIONS);
+		dumpGlobals("globals_references.gm", DUMP.REFERENCES);
+		dumpGlobals("globals_typefunctions.gm", DUMP.TYPEFUNCTIONS);
+		dumpGlobals("globals_all.gm", DUMP.ALL);
+		dumpGlobals("globals_all2.gm");
+	},
+
+	Help =
+	{
+		"Dump Globals, writes all functions and references to files in the ~\user directory",
+		"Usage: /bot dumpglobals",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["autosave"] =
+{
+	Func = function(_params)
+	{
+		delay = ToInt(_params[0], 20);
+		Util.EnableWaypointAutoSave(delay>0, delay);
+	},
+
+	Help =
+	{
+		"My Waypoint Mode, enables waypoint view and autosave",
+		"Usage: /bot mywpmode",
+	},
+};
+
+Commands["mywpmode"] = Commands["autosave"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["numthreads"] =
+{
+	Func = function(_params)
+	{
+		print("Number of threads", tableCount(threadAllIds()));
+	},
+
+	Help =
+	{
+		"Number of Threads, prints the number of current threads",
+		"Usage: /bot numthreads",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["goal_exp"] =
+{
+	Func = function(_params)
+	{
+		print("goal_exp");
+
+		foreach ( index and goal in Util.GoalTable(_params[0]) )
+			{ print(index, goal, goal.GetName()); }
+	},
+
+	Help =
+	{
+		"Goal Exp, lists each goal index, mapgoal, and name",
+		"Usage: /bot goal_exp",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["stresstest"] =
+{
+	Func = function(_params)
+	{
+		thread( Util.StressTest );
+	},
+
+	Help =
+	{
+		"Stress Test, this command should only be used by developers",
+		"Usage: /bot stresstest",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dg"] =
+{
+	Func = function( _params )
+	{
+		Util.DisplayGoal( _params[ 0 ], _params[ 1 ] );
+	},
+
+	Help =
+	{
+		"Display Goal, runs a thread that lists the given goals name, position, and facing",
+		"Usage: /bot dg <goalname> <true|false>",
+		"Note: useful for mover type goals",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dwon"] =
+{
+	Func = function( _params )
+	{
+		EnableDebugWindow( 1 );
+	},
+
+	Help =
+	{
+		"Debug Window On, opens up the debug window",
+		"Usage: /bot dwon",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dwoff"] =
+{
+	Func = function( _params )
+	{
+		EnableDebugWindow( 0 );
+	},
+
+	Help =
+	{
+		"Debug Window Off, closes the debug window",
+		"Usage: /bot dwoff",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["kt"] =
+{
+	Func = function( _params )
+	{
+		Util.KillTeam( _params[ 0 ] );
+	},
+
+	Help =
+	{
+		"Kill Team, kills all bots on the given team",
+		"Usage: /bot kt <teamname>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["showentityinfo"] =
+{
+	Func = function( _params )
+	{
+		if ( _params[0] ) {
+			type = Util.GetTableValue(TRACE, ToString(_params[0]));
+			if(!type){ Error("ERROR: Invalid TRACE parameter"); }
+		}
+		Util.ShowEntityInfo(type);
+	},
+
+	Help =
+	{
+		"Show Entity Info, runs a traceline and returns entity information",
+		"Usage: /bot sei <trace_mask>",
+	},
+};
+
+Commands["sei"] = Commands["showentityinfo"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["sg"] =
+{
+	Func = function( _params )
+	{
+		Util.SetGoal( _params[ 0 ], _params[ 1 ] );
+	},
+
+	Help =
+	{
+		"Set Goal, enables the given goalname for the given team",
+		"Usage: /bot sg <goalname> <team>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["cg"] =
+{
+	Func = function( _params )
+	{
+		Util.ClearGoal( _params[ 0 ], _params[ 1 ] );
+	},
+
+	Help =
+	{
+		"Clear Goal, disables the given goalname for the given team",
+		"Usage: /bot cg <goalname> <team>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["wpa"] =
+{
+	Func = function( _params )
+	{
+		Util.AddWaypointArray( _params[ 0 ], _params[ 1 ], _params[ 2 ],
+			_params[ 3 ] );
+	},
+
+	Help =
+	{
+		"Waypoint Array, adds an array of waypoints numx by numy, distx and disty apart",
+		"Usage: /bot wpa <numx> <distx> <numy> <disty>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["tracebox"] =
+{
+	Func = function( _params )
+	{
+		drawfunc = function()
+		{
+			delay = 0.5;
+
+			while(TRACE_BOX)
+			{
+				localaabb = GetLocalAABB();
+				TRACE_BOX.Expand(localaabb);
+				TRACE_BOX.Render(delay);
+				sleep(delay);
+			}
+		};
+
+		if(!TRACE_BOX)
+		{
+			print("Starting Box Trace");
+			p = GetLocalPosition();
+			global TRACE_BOX = AABB(p,p);
+			thread(drawfunc);
+		}
+		else
+		{
+			print("Trace Box ", TRACE_BOX);
+			TRACE_BOX.Render(10);
+
+			global TRACE_BOX = null;
+		}
+	},
+
+	Help =
+	{
+		"Trace Box, builds an AABB based on the players position",
+		"Usage: /bot tracebox",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["tracetrajectory"] =
+{
+	Func = function( _params )
+	{
+		drawfunc = function()
+		{
+			delay = 1;
+
+			while(TRACE_TRAJECTORY)
+			{
+				DrawTrajectory(TRACE_TRAJECTORY,COLOR.MAGENTA,delay);
+				sleep(delay);
+			}
+		};
+
+		if(!TRACE_TRAJECTORY)
+		{
+			if(_params[0] == null)
+			{
+				print("tracetrajectory usage: tracetrajectory speed interval[optional] duration[optional] bounceloss[optional]");
+				return;
+			}
+
+			speed = ToFloat(_params[0]);
+			interval = ToFloat(_params[1],0.1);
+			duration = ToFloat(_params[2],5.0);
+			bounceloss = ToFloat(_params[3],1.0);
+
+			print("Starting Trajectory Trace");
+
+			global TRACE_TRAJECTORY =
+			{
+				Position = GetLocalEyePosition(),
+				Velocity = GetLocalFacing() * speed,
+				Interval = interval,
+				Duration = duration,
+				BounceLoss = bounceloss,
+				StopAtHit = false,
+			};
+
+			thread(drawfunc);
+		}
+		else
+		{
+			global TRACE_TRAJECTORY = null;
+		}
+	},
+
+	Help =
+	{
+		"Draws trajectory from player position and facing",
+		"Usage: /bot tracetrajectory speed interval[optional] duration[optional] bounceloss[optional]",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["trigger_bounds"] =
+{
+	Func = function( _params )
+	{
+		drawfunc = function()
+		{
+			delay = 0.5;
+
+			while(TRACE_TRIGGER)
+			{
+				localaabb = GetLocalAABB();
+				TRACE_TRIGGER.Expand(localaabb);
+				TRACE_TRIGGER.Render(delay);
+				sleep(delay);
+			}
+		};
+
+		if(!TRACE_TRIGGER)
+		{
+			print("Starting Trigger Trace");
+			p = GetLocalPosition();
+			global TRACE_TRIGGER = AABB(p,p);
+			thread(drawfunc);
+		}
+		else
+		{
+			if(_params[0]=="cancel")
+			{
+				global TRACE_TRIGGER = null;
+				return;
+			}
+
+			print("Trace Box ", TRACE_TRIGGER);
+			TRACE_TRIGGER.Render(10);
+
+			triggerInfo =
+			{
+				Name="TestTrigger",
+				TriggerOnClass=CLASS.ANYPLAYER,
+				OnEnter = function(ent)
+				{
+					print(GetEntName(ent),"entered aabb trigger");
+				},
+				OnExit = function(ent)
+				{
+					print(GetEntName(ent),"exited aabb trigger");
+				},
+			};
+			s = OnTriggerRegion(TRACE_TRIGGER,triggerInfo);
+			print("AABB Trigger Created:",s);
+
+			// write it out to file for easy copy / paste
+			gmfile = File();
+			fileName = GetMapName() + "_regiontriggers.gm";
+			assert( gmfile.Open( fileName, "text", false, true ) );
+
+			if (_params[1] && (_params[0] && RegionTrigger && RegionTrigger[_params[0]])) {
+				str = format("\tRegionTrigger.Create(AABB(%s), \"%s\", \"%s\");", ToString(TRACE_TRIGGER), _params[0], _params[1]);
+			}
+			else if (_params[0]) {
+				str = format("\tOnTriggerRegion(AABB(%s), Map.%s);", ToString(TRACE_TRIGGER), _params[0]);
+			}
+			else {
+				str = format("\tOnTriggerRegion(AABB(%s), RegionTrigger.DisableCombatMovement);", ToString(TRACE_TRIGGER));
+			}
+
+			assert( gmfile.WriteLine( str ) );
+			gmfile.Close();
+			System.CopyToClipboard(str);
+			global TRACE_TRIGGER = null;
+		}
+	},
+
+	Help =
+	{
+		"Trigger Bounds, builds an AABB region trigger based on the players position",
+		"Usage: /bot trigger_bounds",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["trigger_aimpos"] =
+{
+	Func = function( _params )
+	{
+		radius = 256;
+		pt = typeName(_params[0]);
+		if(pt=="float"||pt=="int")
+		{
+			radius =_params[0];
+		}
+		p = GetLocalAimPosition();
+
+		triggerInfo =
+		{
+			Name="TestTrigger",
+			TriggerOnClass=CLASS.ANYPLAYER,
+			OnEnter = function(ent)
+			{
+				print(GetEntName(ent),"entered sphere trigger");
+			},
+			OnExit = function(ent)
+			{
+				print(GetEntName(ent),"exited sphere trigger");
+			},
+		};
+		s = OnTriggerRegion(p,radius,triggerInfo);
+
+		print("Sphere Trigger Created:", s);
+		print("Sphere:",p,"radius",radius);
+		
+		str = format("\tOnTriggerRegion(Vec3(%d,%d,%d), %d, RegionTrigger.DisableCombatMovement);", ToInt(p.x), ToInt(p.y), ToInt(p.z), ToInt(radius));
+		System.CopyToClipboard(str);
+	},
+
+	Help =
+	{
+		"Trigger Aim Position, creates a region trigger based on the players aim position",
+		"Usage: /bot trigger_aimpos",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["aim_pos"] =
+{
+	Func = function( _params )
+	{
+		if ( _params[0] ) {
+			type = Util.GetTableValue(TRACE, ToString(_params[0]));
+			if(!type){ Error("ERROR: Invalid TRACE parameter"); }
+		}
+		print(GetLocalAimPosition(type));
+	},
+
+	Help =
+	{
+		"Aim Position, lists the players current aim position",
+		"Usage: /bot aim_pos <trace_mask>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["testwin"] =
+{
+	Func = function( _params )
+	{
+		RunScript("testdebugwindows.gm");
+	},
+
+	Help =
+	{
+		"Test Windows, tests the debug window script testdebugwindows.gm",
+		"Usage: /bot testwin",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["testmap"] =
+{
+	Func = function( _params )
+	{
+		Util.TestMap( _params );
+	},
+
+	Help =
+	{
+		"Test Map, starts the auto testing of maps based on the testmap scripts",
+		"Usage: /bot testmap",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// The command, "\bot makegm",  executes the function Mapgm.MakeMapgm to create
+//  a map script in gm script, a testmap script in gm script and a map goal list text file
+Commands["makegm"] =
+{
+	Func = function( _params )
+	{
+		ExecScript( "makegm.gm" );
+		EchoToScreen( 3, "Executing make gm script." );
+		print( "Executing make gm script." );
+		Mapgm.MakeMapgm( _params );
+		Mapgm.MakeTestMapgm( _params );
+		Mapgm.MakeMapGoalList( _params );
+	},
+
+	Help =
+	{
+		"Make GM, creates a map script and test map script for the current map",
+		"Usage: /bot makegm",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// The command, "\bot makemapgm",  executes the function Mapgm.MakeMapgm to create
+//  a map script in gm script
+Commands["makemapgm"] =
+{
+	Func = function( _params )
+	{
+		ExecScript( "makegm.gm" );
+		EchoToScreen( 3, "Executing make map gm script." );
+		print( "Executing make map gm script." );
+		Mapgm.MakeMapgm( _params );
+	},
+
+	Help =
+	{
+		"Make Map GM, creates a map script for the current map",
+		"Usage: /bot makemapgm",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// The command, "\bot maketestmapgm",  executes the function Mapgm.MakeMapgm to create
+//  a testmap script in gm script
+Commands["maketestmapgm"] =
+{
+	Func = function( _params )
+	{
+		ExecScript( "makegm.gm" );
+		EchoToScreen( 3, "Executing make testmap gm script." );
+		print( "Executing make map gm script." );
+		Mapgm.MakeTestMapgm( _params );
+	},
+
+	Help =
+	{
+		"Make Test Map GM, creates a test map script for the current map",
+		"Usage: /bot maketestmapgm",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// The command, "\bot makemapgoallist",  executes the function Mapgm.MakeMapgm to create
+//  a map goal list text file
+Commands["makemapgoallist"] =
+{
+	Func = function( _params )
+	{
+		ExecScript( "makegm.gm" );
+		EchoToScreen( 3, "Executing make map goal list script." );
+		print( "Executing make map goal list script." );
+		Mapgm.MakeMapGoalList( _params );
+	},
+
+	Help =
+	{
+		"Make Map Goal List, creates a map goal list for the current map",
+		"Usage: /bot makemapgoallist",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["testbot"] =
+{
+	Func = function( _params )
+	{
+		if ( !_params[0] )
+		{
+			print( "Usage: /bot testbot <team> <class>" );
+			return;
+		}
+		Util.TestBot( _params );
+	},
+
+	Help =
+	{
+		"Test Bot, adds a testbot to the given team with the given class",
+		"Usage: /bot testbot <team> <class>",
+		"Usage: /bot testbot 0 - kicks the test bot",
+		"Note: once a map restarts, the tesbot is released to a regular state",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+Commands["sgn"] =
+{
+	Func = function( _params )
+	{
+		Util.ShowGoalName( _params[ 0 ], _params[ 1 ] );
+	},
+
+	Help =
+	{
+		"Show Goal Name, lists all goals found within the given radius",
+		"Usage: /bot sgn <radius> <optional true>",
+		"Note: passing the optional true parameter will give player offset",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+Commands["sgo"] =
+{
+	Func = function( _params )
+	{
+		Util.ShowGoalOffset( _params[ 0 ] );
+	},
+
+	Help =
+	{
+		"Show Goal Offset, lists players offset to the given goal",
+		"Usage: /bot sgo <goalname>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+Commands["sgi"] =
+{
+	Func = function( _params )
+	{
+		Util.ShowGoalInfo( _params[ 0 ] );
+	},
+
+	Help =
+	{
+		"Show Goal Info, lists information about the given goal",
+		"Usage: /bot sgi <goalname>",
+		"Note: lists goals health, DEAD status, entity number, and position",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+Commands["eob"] =
+{
+	Func = function( _params )
+	{
+		Util.ExecOnBots(_params[0]);
+	},
+
+	Help =
+	{
+		"Exec on Bots, executes the given command on all bots",
+		"Usage: /bot eob <command>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+Commands["dist"] =
+{
+	Func = function( _params )
+	{
+		Util.DistanceView(_params[0]);
+	},
+
+	Help =
+	{
+		"Distance View, gives distance to a players aim position",
+		"Usage: /bot dist, /bot dist off",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["kg"] =
+{
+	Func = function( _params )
+	{
+		foreach ( Goals in _params )
+			{ Util.KillGoal( Goals ); }
+	},
+
+	Help =
+	{
+		"Kill Goal, damage a given goal if cheats are allowed",
+		"Usage: /bot kg <goalname>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["ip"] =
+{
+	Func = function( _params )
+	{
+		Util.IgnorePlayer(_params[0]);
+	},
+
+	Help =
+	{
+		"Ignore Player, bots won't shoot player",
+		"Usage: /bot ip <on|off>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["cwn"] =
+{
+	Func = function( _params )
+	{
+		Util.ClearWaypointNames(_params[0]);
+	},
+
+	Help =
+	{
+		"Clear Waypoint Names, remove all waypoint names",
+		"Usage: /bot cwn <optional true>",
+		"Note: the true parameter will list each waypoint that has been cleared",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dump_autocomplete"] =
+{
+	Formats =
+	{
+		Npp =
+		{
+			CreateFile = function()
+			{
+				gmfile = File();
+				gmName = "omni-bot.xml";
+				assert( gmfile.Open( gmName, "text", false ) );
+				return gmfile;
+			},
+			Header = function(gmfile)
+			{
+				gmfile.WriteLine("<?xml version=\"1.0\" encoding=\"Windows-1252\" ?>");
+				gmfile.WriteLine("<NotepadPlus>");
+				gmfile.WriteLine("	<AutoComplete language=\"GameMonkey\">");
+				gmfile.WriteLine("		<Environment ignoreCase=\"yes\" startFunc=\"(\" stopFunc=\")\" paramSeparator=\",\" terminal=\";\" />");
+			},
+			Footer = function(gmfile)
+			{
+				gmfile.WriteLine("	</AutoComplete>");
+				gmfile.WriteLine("</NotepadPlus>");
+			},
+			Var = function(gmfile,name)
+			{
+				gmfile.WriteLine("			<KeyWord name=\"", name, "\"/>");
+			},
+			Func = function(gmfile,name,shortname)
+			{
+				// does it have a param descriptor?
+				if(OmnibotAPI && OmnibotAPI[shortname])
+				{
+					doc = OmnibotAPI[shortname];
+
+					gmfile.WriteLine("			<KeyWord name=\"", name, "\" func=\"yes\">");
+
+					foreach ( x and rv in doc.RetVal )
+					{
+						if(doc.Decription)
+						{
+							gmfile.WriteLine("				<Overload retVal=\"", rv, "\" desc=\"", doc.Decription, "\">");
+						}
+						else
+						{
+							gmfile.WriteLine("				<Overload retVal=\"", rv, "\">");
+						}
+
+
+
+						// if(typeName(doc.Param[x]) == "table")
+						// {
+
+						// }
+
+						foreach ( param in doc.Param )
+						{
+							gmfile.WriteLine("					<Param retVal=\"", param, "\"/>");
+						}
+
+						gmfile.WriteLine("				</Overload>");
+					}
+
+					gmfile.WriteLine("			</KeyWord>");
+				}
+				else
+				{
+					gmfile.WriteLine("			<KeyWord name=\"", name, "\" func=\"yes\"/>");
+				}
+			},
+		},
+	},
+
+	DumpTable = function(gmFile,formattbl,tbl,path)
+	{
+		dmpTable = Commands["dump_autocomplete"].DumpTable;
+
+		foreach ( name and val in tbl )
+		{
+			kt = typeName(name);
+			vt = typeName(val);
+
+			if(kt != "string")
+			{
+				continue;
+			}
+
+			p = path;
+			if(p!="")
+			{
+				p += ".";
+			}
+			p += name;
+
+			if(vt == "function")
+			{
+				formattbl.Func(gmFile,p,name);
+			}
+			else if(vt == "table")
+			{
+				formattbl.Var(gmFile,p);
+				dmpTable(gmFile,formattbl,val,p);
+			}
+			else
+			{
+				formattbl.Var(gmFile,p);
+			}
+		}
+	},
+
+	Func = function( _params )
+	{
+		ExecScript("functions.gm");
+
+		// dump all format types
+		fmtTable = Commands["dump_autocomplete"].Formats;
+		dmpTable = Commands["dump_autocomplete"].DumpTable;
+		foreach ( name and tbl in fmtTable )
+		{
+			print("Dumping auto complete for", name);
+			gmFile = tbl.CreateFile();
+			tbl.Header(gmFile);
+			dmpTable(gmFile,tbl,globals(),"");
+			tbl.Footer(gmFile);
+			gmFile.Close();
+			print("Done Dumping auto complete for", name);
+		}
+
+		// clear the api table to let go of the memory
+		global OmnibotAPI = null;
+		sysCollectGarbage(true);
+	},
+
+	Help =
+	{
+		"Creates an xml file for autocompletion with Notepad++",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["ab"] =
+{
+	Func = function( _params )
+	{
+		if ( !IsInt(_params[0]) || _params[0] < 1 )
+		{
+			Error( "number of bots must be greater than 0" );
+			return;
+		}
+
+		for ( i = 0; i < _params[0]; ++i )
+		{
+			if(OnBotAutoJoin) {
+				// OnBotAutoJoin should give us a table of bot info to use
+				t = OnBotAutoJoin();
+				// cs: passing an empty table may not give expected results
+				if(tableCount(t) != 0) {
+					AddBot(t);
+				}
+				else {
+					AddBot();
+				}
+			}
+			else {
+				AddBot();
+			}
+			yield(); // give time for server manager to update bot counts
+		}
+	},
+
+	Help =
+	{
+		"Add Bots, add a given number of bots",
+		"Usage: /bot ab <numbots>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["mypos"] =
+{
+	Func = function()
+	{
+		print("pos: ", GetEntPosition(GetLocalEntity()));
+		print("facing: ", GetLocalFacing());
+	},
+
+	Help =
+	{
+		"My Position, gets the players current position and facing",
+		"Usage: /bot mypos",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["keepbot"] =
+{
+	Func = function( _params )
+	{
+		foundMatch = false;
+
+		foreach ( bot in BotTable )
+		{
+			n = bot.Name;
+			if ( n.Find(_params[0])!= -1 )
+			{
+				foundMatch = true;
+			}
+		}
+
+		if (foundMatch)
+		{
+			foreach ( bot in BotTable )
+			{
+				n = bot.Name;
+				if ( n.Find(_params[0])== -1 )
+				{
+					KickBot(n);
+				}
+			}
+		}
+		else
+		{
+			print("Keep Bot: No match found, keeping all bots");
+		}
+	},
+
+	Help =
+	{
+		"Keep Bot, remove all bots without the given partial name",
+		"Usage: /bot keepbot <partial botname>",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["botgoal"] =
+{
+	Func = function( _params )
+	{
+		foreach ( bot in BotTable )
+		{
+			n = bot.Name;
+			if ( !_params[0] || n.Find(_params[0])!= -1 )
+			{
+				g = bot.GetMapGoalName();
+				if(!g){ g = bot.GetHighLevelGoalName(); }
+				bot.Say("My high level goal is " + g);
+			}
+		}
+	},
+
+	Help =
+	{
+		"Bot Goal, used for debugging a bots goal on remote server"
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["testvoice"] =
+{
+	Func = function( _params )
+	{
+		if ( !_params[0] )
+		{
+			Error( "ERROR: command testvoice expects one parameter" );
+			return;
+		}
+
+		Util.TestVoiceMacro( _params[0] );
+	},
+
+	Help =
+	{
+		" Test Voice Macro, used for testing a bots usage of given voice macro ",
+		" usage, /bot testvoice <voice macro name>",
+		"example, /bot testvoice NEED_MEDIC",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["sag"] =
+{
+	Func = function( _params )
+	{
+		Util.ShowActiveGoals( _params[0], _params[1], _params[2] );
+	},
+
+	Help =
+	{
+		"Show Active Goals, lists and optionally renders each currently active goal by team",
+		"Usage: /bot sag <optional render teamId>, <optional bool routes>, <optional bool show use slots>",
+		"Example: /bot sag 0 0 1  - shows active goals for both team plus current MaxInuse and MaxInProgress settings",
+	},
+};
+
+Commands["showactive"] = Commands["sag"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["wiki_commands"] =
+{
+	Func = function()
+	{
+		cmdFile = File();
+		assert( cmdFile.Open( "wiki_commands.gm", "text", false ) );
+		assert( cmdFile.WriteLine( "{{TOCright}}\n") );
+
+		sorted = tableSort(Commands, "key");
+
+		foreach( index and cmd in sorted )
+		{
+			txt = "===" + cmd + "===";
+
+			if ( Commands[cmd].Help )
+			{
+				foreach ( i and text in Commands[cmd].Help )
+				{
+					txt += "\n" + "        " + text;
+				}
+			}
+
+			assert( cmdFile.WriteLine(txt) );
+			assert( cmdFile.Write( System.NewLine ) );
+		}
+
+		cmdFile.Close();
+	},
+
+	Help =
+	{
+		"write all script commands to a file in wiki markup",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["table_members"] =
+{
+	Func = function(_params)
+	{
+		ExecCommand("script_run Util.ListTableMembers("+ _params[0] + "," + "'" + _params[1] + "');");
+	},
+
+	Help =
+	{
+		"prints a sorted list of table members to the console for the given table name",
+		"optionally list by 'value' by passing value as the second param"
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["trace_pos"] =
+{
+	Func = function( _params )
+	{
+		print("Trace Position: ", Util.TraceForPosition() );
+	},
+
+	Help =
+	{
+		"returns position from a trace",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["sendtrigger"] =
+{
+	TestFunc = function(trigger)
+	{
+		print("sendtrigger triggered!");
+		print("ent: " + trigger.Entity, "action: " + trigger.Action, "activator: " + GetEntName(trigger.Activator));
+	},
+
+	Func = function( _params )
+	{
+		if ( !Commands["sendtrigger"].TriggerInfo )
+		{
+			Commands["sendtrigger"].TriggerInfo =
+			{
+				Entity = null,
+				Activator = GetLocalEntity(),
+				TagName = "Testing SendTrigger",
+				Action = "A test of the SendTrigger function",
+			};
+
+			OnTrigger( "Testing SendTrigger", Commands["sendtrigger"].TestFunc );
+			sleep(1);
+		}
+
+		SendTrigger(Commands["sendtrigger"].TriggerInfo);
+	},
+
+	Help =
+	{
+		"test command and example of sending a trigger from script",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["sysusage"] =
+{
+	Func = function( _params )
+	{
+		if (!Util.SystemUsageThread) {
+			print("Starting system usage timeline thread");
+			Util.SystemUsageThread = thread(Util.SystemUsageTimeline, _params[0]);
+		}
+		else {
+			threadKill(Util.SystemUsageThread);
+			Util.SystemUsageThread = null;
+			print("Killed system usage timeline thread");
+		}
+	},
+
+	Help =
+	{
+		"writes a timeline of system usage stats to systemtimeline.gm",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["time"] =
+{
+	Func = function(_params)
+	{
+		EchoToScreen(3, Util.TimeFormat("time"));
+	},
+
+	Help =
+	{
+		"echo's the current time to the screen",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["goal_echo"] =
+{
+	Func = function(_params)
+	{
+		Util.EchoCloseGoal(150, "Selected");
+	},
+
+	Help =
+	{
+		"echo's the closest enabled and rendering goal within goal_edit range to the screen",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["showgroup"] =
+{
+	Func = function(_params)
+	{
+		Util.ShowGroup(_params[0]);
+	},
+
+	Help =
+	{
+		"lists all goals of a given group in console",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dbg_mapscripts"] =
+{
+	Func = function(_params)
+	{
+		// toggle it
+		global DEBUG_MAP_SCRIPTS = !DEBUG_MAP_SCRIPTS;
+		if ( DEBUG_MAP_SCRIPTS ) {
+			print("map script debugging enabled");
+		}
+		else {
+			print("map script debugging disabled");
+		}
+	},
+
+	Help =
+	{
+		"toggle map script debugging",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dbg_goalavailability"] =
+{
+	Func = function(_params)
+	{
+		global DEBUG_GOAL_AVAILABILITY = !DEBUG_GOAL_AVAILABILITY;
+		if ( DEBUG_GOAL_AVAILABILITY ) {
+			print("goal availability debugging enabled");
+		}
+		else {
+			print("goal availability debugging disabled");
+		}
+	},
+
+	Help =
+	{
+		"toggle goal availability debugging",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["dbg_scriptgoals"] =
+{
+	Func = function(_params)
+	{
+		global DEBUG_SCRIPT_GOALS = !DEBUG_SCRIPT_GOALS;
+		if ( DEBUG_SCRIPT_GOALS ) {
+			print("script goals debugging enabled");
+		}
+		else {
+			print("script goals debugging disabled");
+		}
+	},
+
+	Help =
+	{
+		"toggle script goals debugging (pathfailed, timedout, ...)",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["draw_paththrough"] =
+{
+	Func = function(_params)
+	{
+		Util.RenderPaththroughNodes(_params[0]);
+	},
+
+	Help =
+	{
+		"render 3d text over paththrough node locations",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["fix_waterwps"] =
+{
+	Func = function(_params)
+	{
+		wpTable = {};
+		Wp.GetAllWaypoints(wpTable);
+
+		foreach ( wp in wpTable ) {
+			foreach ( flag && set in wp.flags ) {
+				if ( flag == "underwater" && set == 1 ) {
+					if ( !(GetPointContents(wp.position + Vector3(0,0,128)) & CONTENT.WATER) ) {
+						Wp.SetWaypointFlag(wp.guid, "inwater", true);
+					}
+				}
+			}
+		}
+	},
+
+	Help =
+	{
+		"adds inwater flag to waypoints close to the water surface",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["testbotroles"] =
+{
+	Func = function(_params)
+	{
+		if ( tableCount(BotTable) < 1 ) {
+			print("adding testbot");
+			ExecCommand("testbot 1 1");
+			yield();
+		}
+
+		usebot = null;
+		foreach ( bot in BotTable ) {
+			usebot = bot;
+			break;
+		}
+
+		if (!usebot) {
+			print("please add a bot first");
+			return;
+		}
+
+		print("testing single role");
+		usebot.SetRoles(ROLE.DEFENDER);
+		yield();
+		if ( !usebot.HasRole(ROLE.DEFENDER) ) {
+			print("single role failed!");
+			return;
+		}
+
+		print("\ntesting accumulated role");
+
+		usebot.SetRoles(ROLE.DEFENDER1);
+		yield();
+		if ( !usebot.HasRole(ROLE.DEFENDER) || !usebot.HasRole(ROLE.DEFENDER1) ) {
+			print("accumulated role failed!");
+			return;
+		}
+
+		print("\ntesting single role removal");
+
+		usebot.ClearRoles(ROLE.DEFENDER1);
+		yield();
+		if ( !usebot.HasRole(ROLE.DEFENDER) || usebot.HasRole(ROLE.DEFENDER1) ) {
+			print("single role removal failed!");
+			return;
+		}
+
+		print("\nall tests passed\n");
+	},
+
+	Help =
+	{
+		"test bot roles",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// delete all waypoints that do not have properties / flags
+Commands["waypoint_startover"] =
+{
+	Func = function(params)
+	{
+		wpTable = {};
+		Wp.GetAllWaypoints(wpTable);
+
+		foreach ( wp in wpTable ) {
+			keep = false;
+
+			foreach ( flag && set in wp.flags ) {
+				if ( set == 1 ) {
+					keep = true;
+				}
+			}
+
+			foreach( ptype and value in wp.property ) {
+				if ( ptype == "paththrough" ) {
+					keep = true;
+				}
+			}
+
+			if (!keep) {
+				Wp.DeleteWaypoint(wp.guid);
+			}
+		}
+	},
+
+	Help =
+	{
+		"delete all waypoints that do not have properties / flags",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// print and draw goals range
+Commands["draw_goalrange"] = function(_params)
+{
+	foreach(mg in Util.GoalTable(_params[0]))
+	{
+		range = mg.GetRange();
+		if (range > 0) {
+			print(mg.GetName(), range);
+			if(mg.GoalType!="AMMOCAB" && mg.GoalType!="HEALTHCAB") {
+				DrawRadius(mg.GetPosition(), range, COLOR.CYAN, 20);
+			}
+		}
+		aabb = mg.GetRangeAABB();
+		if (aabb) {
+			print(mg.GetName(), aabb);
+			aabb.Render(20, COLOR.CYAN);
+		}
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["wt"] =
+{
+	Func = function( _params )
+	{
+		pos = Util.GetPositionFromParam( _params[0] );
+		if ( pos )
+		{
+			Util.WarpToPosition(pos + Vector3(0,0,24));
+		}
+		else
+		{
+			Error( "Warpto: Invalid goal name, waypoint name, waypoint UID or paththrough name!^2" );
+		}
+	},
+
+	Help =
+	{
+		"Warp To, will teleport player to given goal or waypoint name if cheats are enabled",
+		"Usage: /bot wt <goalname|wpname>",
+	},
+};
+
+Commands["warpto"] = Commands["wt"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["wb"] =
+{
+	Func = function( _params )
+	{
+		if ( !Util.CheatsEnabled() ) { return; }
+
+		b = Util.GetBotByName("testbot");
+		if ( !b )
+		{
+			Error("no testbot found");
+			return;
+		}
+
+		localEnt = GetLocalEntity();
+
+		if ( _params[0] )
+		{
+			wp = Util.WpNameInfo(_params[0], "WarpBot");
+			if ( wp )
+			{
+				pos = wp.position + Vector3(0,0,24);
+			}
+		}
+		else
+		{
+			pos = GetEntPosition(localEnt);
+			if ( pos )
+			{
+				pos += Vector3(100,0,24);
+			}
+			else
+			{
+				Error("Unable to get local position^2");
+			}
+		}
+
+		if (pos)
+		{
+			s = "setviewpos " + pos[0] + " " + pos[1] + " " + pos[2] + " " + " 0";
+			print(s);
+			ExecCommandOnClient(localEnt, s);
+			yield();
+			ExecCommandOnClient(b.GetGameEntity(), s);
+			yield();yield();
+			ExecCommandOnClient(localEnt, "say_team bot come");
+		}
+	},
+
+	Help =
+	{
+		"Warp Test Bot, will teleport testbot to given waypoint name if cheats are enabled",
+		"Usage: /bot wb <wpname>",
+	},
+};
+
+Commands["warpbot"] = Commands["wb"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["wab"] =
+{
+	Func = function( _params )
+	{
+		if ( !Util.CheatsEnabled() ) { return; }
+
+		if ( _params[0] ) {
+			foundMatch = null;
+			foreach ( bot in BotTable ) {
+				if ( bot.Name.Find(_params[0])!= -1 ) {
+					foundMatch = bot;
+					break;
+				}
+			}
+
+			if (foundMatch) {
+				// can't warp if dead or limbo
+				if ( foundMatch.Health < 1 || foundMatch.HasEntityFlag(ENTFLAG.LIMBO) ) {
+					Error("bot must be alive to warp!");
+					return;
+				}
+
+				pos = GetLocalPosition();
+				if (pos) {
+					pos += Vector3(0,0,24);
+					s = "setviewpos " + pos[0] + " " + pos[1] + " " + pos[2] + " " + " 0";
+
+					// disable the bot while it's getting ready to warp
+					foundMatch.Enable(false);
+					ExecCommandOnClient(foundMatch.GetGameEntity(), s);
+					sleep(2);
+					foundMatch.Enable(true);
+					return;
+				}
+			}
+
+			Error("no bot found with the name ", _params[0]);
+		}
+		else {
+			Error("/bot wab requires a partial or full bot name");
+		}
+	},
+
+	Help =
+	{
+		"Warp any bot, will teleport a bot matching given name to the player",
+		"Usage: /bot wab",
+	},
+};
+
+Commands["warpanybot"] = Commands["wab"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["wtgo"] =
+{
+	Func = function( _params )
+	{
+		goal = Util.GetGoal( _params[0], "WarpToGoalOffset" );
+		if ( goal )
+		{
+			offset = Vector3( _params[1], _params[2], _params[3] );
+			Util.WarpToPosition(GetEntityWorldSpace( goal.GetEntity(), offset));
+		}
+	},
+
+	Help =
+	{
+		"Warp To Goal Offset, will teleport player to given goal real world offset if cheats are enabled",
+		"Usage: /bot wtgo <goalname> <x> <y> <z>",
+	},
+};
+
+Commands["warptogoaloffset"] = Commands["wtgo"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["rollcall"] =
+{
+	Func = function( _params )
+	{
+		Util.RollCall();
+	},
+
+	Help =
+	{
+		"Roll Call, lists each bots name, team, class, and entity",
+		"Usage: /bot rollcall",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["moveskill"] =
+{
+	Func = function(_params)
+	{
+		p = _params[0];
+		if ( IsNull(p) )
+		{
+			print( "Combat Movement Difficulty is", ConfigGet("CombatMovement","moveskill") );
+			return;
+		}
+
+		if ( !IsInt(p) || p < 0 || p > 4 )
+		{
+			Error( "ERROR: Invalid moveskill. Valid values are from 0 to 4" );
+			return;
+		}
+
+		ConfigSet("CombatMovement","moveskill", p );
+
+		foreach ( bot in BotTable )
+		{
+			if (p == 4)
+			{
+				bot.moveskill = RandInt(0, 3);
+				continue;
+			}
+
+			bot.moveskill = p;
+		}
+
+		print( "Combat Movement difficulty set to ", p );
+	},
+
+	Help =
+	{
+		"Combat Difficulty, sets persistent combat movement difficulty",
+		"0 = off, 1 = easy, 2 = medium, 3 = hard, 4 = random",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["draw_oids"] =
+{
+	Func = function( _params )
+	{
+		for ( i = 64; i < 1024; ++i )
+		{
+			if (EntityIsValid(i) && GetEntClass(i) == CLASS.GOAL)
+			{
+				DrawEntityAABB( i, 60, COLOR.RED );
+				center = GetEntWorldAABB(i).CenterPoint();
+				DrawText3d(center, i + " : " + GetEntName(i) ,COLOR.WHITE, 60, textDrawRadius);
+			}
+		}
+	},
+
+	Help =
+	{
+		"Draw Objective Info Displays, waypoint tool. draws the bounds of all OID's in the map",
+		"Usage: /bot draw_oids",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["draw_spawns"] =
+{
+	Func = function( _params )
+	{
+		for ( i = 64; i < 1024; ++i )
+		{
+			if (EntityIsValid(i) && GetEntClass(i) == CLASS.PLAYERSTART)
+			{
+				pos = GroundPoint(GetEntPosition(i));
+				c = COLOR.RED;
+				if (GetEntTeam(i) == 2){ c = COLOR.BLUE; }
+				DrawLine(pos,pos+Vector3(0,0,64),c,60);
+			}
+		}
+	},
+
+	Help =
+	{
+		"Draw spawn points, waypoint tool. draws the bounds of all spawn points in the map",
+		"Usage: /bot draw_spawns",
+	},
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["fgp"] =
+{
+	Func = function( _params )
+	{
+		wpTable = {};
+		foreach ( goal in Util.GoalTable("\\(CAMP.*\nDEFEND.*\nATTACK.*\nSNIPE.*\nROUTE.*\nMOBILE.*\nCAPPOINT.*\nPLANTMINE.*\n.*ART.*\\)") )
+		{
+			if ( Wp.GetWaypointByName(goal.GetTagName(), wpTable) )
+			{
+				type = goal.GetGoalType();
+				pos = goal.GetPosition();
+				foreach( flag and set in wpTable.flags )
+				{
+					if ( !flag.CompareNoCase(type) )
+					{
+						// tagname == wp name and goal type == wp flag. woot
+						// so it's a match. now check z coord for the fubar ones
+						if ( wpTable.position.z - pos.z > 54 )
+						{
+							goal.SetPosition(wpTable.position + Util.WaypointGoalOffset);
+							goal.RenderGoal = true;
+							print ( goal.GetName(), "needs checked. it was detected as being too low and moved" );
+						}
+					}
+				}
+			}
+
+			tableClear(wpTable);
+		}
+	},
+
+	Help =
+	{
+		"fix waypoint based goal positions that were incorectly set to ground position",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["fgs"] =
+{
+	Func = function( _params )
+	{
+		wpTable = {};
+		foreach ( goal in Util.GoalTable({ 0xa9ef3654 /* CAMP */, 0x4fed19c1 /* DEFEND */, 0x4595b8fd /* ATTACK */, 0xe8fbadc0 /* SNIPE */,
+			0x731f6315 /* PANZER */, 0x9fa9940a /* VENOM */, 0x86584d00 /* FLAME */ }) )
+		{
+			oldtag = goal.GetTagName();
+			if ( Wp.GetWaypointByName(oldtag, wpTable) )
+			{
+				type = goal.GetGoalType();
+				pos = goal.GetPosition();
+				tag = oldtag.ReplaceCharsInSet().TrimRight(); // replaces spaces with _
+
+				foreach( flag and set in wpTable.flags )
+				{
+					stanceChanged = false;
+					if ( !flag.CompareNoCase(type) )
+					{
+						foreach ( ptype and value in wpTable.property )
+						{
+							if ( ptype == "stance" )
+							{
+								goal.SetProperty("Stance", value);
+								stanceChanged = true;
+								goal.RenderGoal = true;
+								print(goal.GetName(), "stance changed to", value);
+							}
+						}
+					}
+
+					if ( _params[0] == 1 && set == 1 && (flag == "crouch" || flag == "prone" ) )
+					{
+						// can we remove the flag?
+						removeFlag = false;
+						offset = Vector3(0,0,200);
+						tr = TraceLine( wpTable.position, wpTable.position + offset, 0, TRACE.SHOT, 0, false );
+
+						if ( !tr.end )
+						{
+							dist = 200;
+						}
+						else
+						{
+							dist = DistanceBetween(wpTable.position, tr.end);
+						}
+
+						if ( dist > 70 )
+						{
+							removeFlag = true;
+						}
+						else if ( dist > 40 && flag == "prone" )
+						{
+							removeFlag = true;
+						}
+
+						if ( removeFlag )
+						{
+							Wp.SetWaypointFlag(oldtag, flag, false);
+
+							// set the property too so it works without a goals file
+							Wp.SetWaypointProperty(oldtag, "stance", flag);
+
+							print( "waypoint flag", flag, "removed from", tag );
+						}
+
+						// default to property setting
+						if ( !stanceChanged )
+						{
+							goal.SetProperty("Stance", flag);
+							stanceChanged = true;
+							goal.RenderGoal = true;
+							print(goal.GetName(), "stance changed to", flag);
+						}
+					}
+				}
+			}
+
+			tableClear(wpTable);
+		}
+
+		if ( _params[0] == 1) {
+			print("all stances fixed based on waypoint properties and waypoint flags");
+		}
+		else {
+			print("all stances fixed based on waypoint properties. note: use /bot fgs 1 to fix based on flags and properties");
+		}
+	},
+
+	Help =
+	{
+		"fix waypoint based goal stances. optionally use /bot fgs 1 to check for waypoint flags",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["stuckstart"] =
+{
+	Func = function( _params )
+	{
+		if ( !Util.CheatsEnabled() ) { return; }
+
+		stuckagefile = GetMapName() + "_stuckages.gm";
+		if (!ExecScript( stuckagefile )) {
+			Error("Error opening file scripts/" + stuckagefile + " !" );
+			return;
+		}
+
+		// copy all non-dupes to a temp table
+		temp = {};
+		dupeCount = 0;
+		foreach ( pos in Stuckages ) {
+			dupe = false;
+			foreach ( tempId and tempPos in temp ) {
+				if ( DistanceBetween(pos, tempPos) < 150 ) {
+					dupe = true;
+				}
+			}
+			if (!dupe) {
+				temp[ tableCount(temp) ] = pos;
+			}
+			else {
+				++dupeCount;
+			}
+		}
+
+		print(format("^3omitted %d duplicates", dupeCount));
+
+		ind = 0;
+		total = tableCount(temp);
+		foreach ( pos in temp ) {
+			++ind;
+			EchoToScreen(2, "^1at stuckage pos "+ ind + " of " + total);
+			s = "setviewpos " + pos.x + " " + pos.y + " " + pos.z + " " + " 0";
+			ExecCommandOnClient(GetLocalEntity(), s);
+			block("nextstuck");
+		}
+
+		if ( ind == 0 ) {
+			print("no stuckage vectors defined for this map");
+		}
+		else {
+			print("finished iterating through stuckage vectors");
+		}
+	},
+
+	Help =
+	{
+		"start iterating through the stuckage table for the map",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["stucknext"] =
+{
+	Func = function( _params )
+	{
+		signal("nextstuck");
+	},
+
+	Help =
+	{
+		"used with stuckage checking. sends a signal to advance to the next stuckage vector",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["saveplayerpos"] =
+{
+	Func = function( _params )
+	{
+		pos = GetLocalPosition();
+		str = "Vec3(" + ToInt(pos.x) + "," + ToInt(pos.y) + "," + ToInt(pos.z) + ")";
+		if (_params[0]) { str = ToString(_params[0]) + ": " + str; }
+		DrawDebugLine( pos - Vec3(0,0,6), pos + Vec3(0,0,6), COLOR.CYAN, 15 );
+
+		gmName = GetMapName() + "_positions.txt";
+		gmfile = File();
+		assert( gmfile.Open( gmName, "text", false, true ), "^1Error writing to file!" );
+		assert( gmfile.WriteLine( str), "^1Error writing to file!" );
+		gmfile.Close();
+		print( "Current player position written to " + gmName + ". Drawing cyan debug line for 15 seconds." );
+		System.CopyToClipboard(str);
+	},
+
+	Help =
+	{
+		"writes player positions to a file in user folder",
+	},
+};
+
+Commands["spp"] = Commands["saveplayerpos"];
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["saveusepoint"] =
+{
+	Func = function( _params )
+	{
+		if ( _params[0] )
+			{ regEx = _params[0]; }
+		else
+			{ regEx = ".*"; }
+		goal = Util.FindClosestGoal( 200, regEx );
+		if ( !goal )
+		{
+			print( "No goal found!" );
+			return;
+		}
+		goalname = goal.GetName();
+		print( "Using goal: " + goalname );
+		pos = GetLocalPosition();
+		str = "\tUtil.AddUsePoint( \"" + goalname + "\", Vec3(" + ToInt(pos.x) + "," + ToInt(pos.y) + "," + ToInt(pos.z) + ") );";
+		DrawDebugLine( pos - Vec3(0,0,6), pos + Vec3(0,0,6), COLOR.CYAN, 15 );
+
+		fileName = GetMapName() + "_positions.txt";
+		file = File();
+		assert( file.Open( fileName, "text", false, true ), "^1Error writing to file!" );
+		assert( file.WriteLine( str), "^1Error writing to file!" );
+		file.Close();
+		print( "Usepoint written to " + fileName + ". Drawing cyan debug line for 15 seconds." );
+		System.CopyToClipboard(str);
+	},
+
+	Help =
+	{
+		"stores player position as usepoint in a file in user folder",
+	},
+};
+
+Commands["sup"] = Commands["saveusepoint"];
+
+///////////////////////////////////////////////////////////////////////////////
+// find all waypoints that have the same position as another
+// and name them so you can /bot wt DUPE1 etc.
+Commands["wp_check"] =
+{
+	Func = function( _params )
+	{
+		if ( !Wp.IsWaypointViewOn() ) {
+			Error( "ERROR: Waypoint View must be enabled" );
+			return;
+		}
+		wpTable = {};
+		Wp.GetAllWaypoints( wpTable );
+		dupecount = 0;
+
+		foreach( id and waypoint in wpTable )
+		{
+			pos = waypoint.position;
+			foreach( xid and xwaypoint in wpTable )
+			{
+				if ( pos == xwaypoint.position && id != xid ) {
+					++dupecount;
+					Wp.SetWaypointName( id, "DUPE" + dupecount );
+					break;
+				}
+			}
+		}
+		print( "dupe check complete. found ", dupecount, "duplicates" );
+	},
+
+	Help =
+	{
+		"Finds any waypoints that have the same position as others",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["cleargoalflags"] =
+{
+	Func = function( _params )
+	{
+		flags = { "attack", "defend", "mobilemg42", "mobilemortar", "snipe", "callartillery", "artillery_s", "artillery_d", "plantmine", "route" , "cappoint", "ammo", "health" };
+		indexedFlags = {};
+		foreach (f in flags) { indexedFlags[f] = 1; }
+		wpTable = {};
+		Wp.GetAllWaypoints(wpTable);
+		foreach( id and wp in wpTable ) {
+			foreach( flag and set in wp.flags ) {
+				if (indexedFlags[flag]){
+					name = wp.name;
+					if(!name){ name = wp.guid; }
+					print(flag, name);
+					Wp.SetWaypointFlag(wp.guid, { flag, "axis", "allies" }, false);
+					Wp.SetWaypointName(id, "");
+					if (flag == "defend" || flag == "attack" || flag == "snipe") {
+						if (wp.flags["crouch"]) {
+							Wp.SetWaypointFlag(wp.guid, "crouch", false);
+						}
+						if (wp.flags["prone"]) {
+							Wp.SetWaypointFlag(wp.guid, "prone", false);
+						}
+					}
+				}
+			}
+		}
+	},
+
+	Help =
+	{
+		"clears deprecated waypoint flags (attack, snipe, ...) and names of those waypoints",
+	},
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+Commands["entitylist"] =
+{
+	Func = function( _params )
+	{
+		count=0;
+		for(i=0; i<4096; ++i)
+		{
+			if(EntityIsValid(i))
+			{
+				++count;
+				cls = GetEntClass(i);
+				if(cls){ cls=Util.ClassName(cls); } else { cls=""; }
+				s = "";
+				foreach(cat in CAT)
+				{
+					if(GetEntCategory(i,cat)){ s+=Util.GetTableKey(CAT,cat)+" "; }
+				}
+				print(i, GetEntityName(i), cls, GetEntPosition(i), s);
+			}
+		}
+		print("Total:", count);
+	},
+
+	Help =
+	{
+		"prints all entities name, class, position and categories",
+	},
+};

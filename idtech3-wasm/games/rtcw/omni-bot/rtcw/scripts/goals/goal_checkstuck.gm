@@ -1,0 +1,121 @@
+// This script contains functionality to jump or kill stucked bot
+this.Name = "CheckStuck";
+this.Parent = "LowLevel";
+this.KillWhenStuck = true;
+this.LogStuckage = false;
+this.Interval = 0.6;
+this.KillTime = 5.0; // time before /killing
+this.TargetTimeout = 10; // time to destroy breakables or kill enemies
+this.SidestepTimeout = 3; // time to strafe left to sidestep another player
+this.JumpLimit = 1;
+this.Debug = false;
+
+this.GetPriority = function()
+{
+	stuckPos = null;
+	stucktime = 0;
+
+	for(;;)
+	{
+		if ( this.JustSpawned ) {
+			for (i = 0; i < 3; i += 1) {
+				sleep(1.2);
+				// player cannot move while standing up after he is revived,
+				// reset stuck timer to prevent pathfailed errors immediately after revive
+				this.Bot.ResetStuckTime();
+			}
+			this.JustSpawned = false;
+		}
+
+		if ( this.Bot.IsStuck(this.Interval) )
+		{
+			if (stucktime == 0) {
+				jumpAttempts = 0;
+				waitTime = 0;
+				stuckPos = this.Bot.GetPosition();
+			}
+
+			// stuck time gets reset for each new path, so lets accumulate our own
+			stucktime += this.Interval;
+
+			if ( this.Debug ) {
+				this.Bot.Say("I've been stuck for " + stucktime + " seconds");
+			}
+
+			// is the bot blocked by a player?
+			nearestPlayer = this.Bot.GetNearest(CAT.PLAYER);
+			if (nearestPlayer && this.Bot.DistanceTo(nearestPlayer) < 65 && this.Bot.InFieldOfView(GetEntPosition(nearestPlayer), 180) && stucktime < this.SidestepTimeout)
+			{
+				if ( this.Debug ) {
+					DrawEntityAABB(nearestPlayer, 30, COLOR.RED);
+					DrawEntityAABB(this.Bot.GetGameEntity(), 30, COLOR.BLUE);
+				}
+					this.Bot.HoldButton(BTN.STRAFE_L, 0.5);
+
+					if ( this.Debug ) {
+						this.Bot.Say("side stepping player");
+					}
+
+				// reset the stuck timer so they don't get a new goal
+				this.Bot.ResetStuckTime();
+				waitTime = stucktime;
+				jumpAttempts = 9;
+			}
+			else if ( this.Bot.HasTarget() && stucktime < this.TargetTimeout)
+			{
+				if (jumpAttempts < 9 && GetEntClass(this.Bot.GetTarget())==CLASS.BREAKABLE) {
+					//don't jump at breakables
+					jumpAttempts = 9;
+				}
+				this.Bot.ResetStuckTime();
+				waitTime = stucktime;
+			}
+			else if ( stucktime >= this.KillTime + waitTime )
+			{
+				//if (this.Bot.Name=="testbot"){ return; }
+
+				if (this.LogStuckage) {
+					// write it to the log
+					this.StuckageLog();
+				}
+
+				yield();
+				if ( this.KillWhenStuck ) {
+					this.Bot.ExecCommand("kill");
+				}
+				stucktime = 0;
+			}
+			if ( jumpAttempts < this.JumpLimit)
+			{
+				this.Bot.PressButton(BTN.JUMP);
+				++jumpAttempts;
+			}
+		}
+		else
+		{
+			if ( stuckPos && this.Bot.DistanceTo(stuckPos) > 100 ) {
+				stuckPos = null;
+				stucktime = 0;
+			}
+		}
+
+		sleep(this.Interval);
+	}
+};
+
+this.OnSpawn = function()
+{
+	this.JustSpawned = true;
+};
+
+// Note: this will write to ~/omni-bot/et/user. the file will need to be copied to ~/omni-bot/et/scripts
+this.StuckageLog = function()
+{
+	gmfile = File();
+	assert(gmfile.Open(GetMapName() + "_stuckages.gm", "text", false, true));
+	if (gmfile.FileSize() == 0) {
+		assert(gmfile.WriteLine("global Stuckages = {};"));
+	}
+	assert(gmfile.WriteLine("Stuckages[tableCount(Stuckages)] = Vec3" + this.Bot.GetPosition() + ";"));
+	gmfile.Close();
+};

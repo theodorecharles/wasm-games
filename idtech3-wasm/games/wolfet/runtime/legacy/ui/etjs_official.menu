@@ -1,0 +1,257 @@
+// Official ET 2.60 main menu, pre-expanded (no #include / macros).
+// Assets are the real pak0 shaders: et_clouds, et_logo_huge, company logos.
+
+assetGlobalDef {
+	font 0 "ariblk" 16
+	font 1 "ariblk" 27
+	font 2 "courbd" 21
+	font 3 "courbd" 30
+	cursor "ui/assets/3_cursor3"
+	gradientBar "ui/assets/gradientbar1.tga"
+	fadeClamp 1.0
+	fadeCycle 1
+	fadeAmount 0.1
+	shadowColor 0.1 0.1 0.1 0.25
+}
+
+menuDef {
+	name "backgroundmusic"
+	fullScreen 1
+	visible 1
+	onOpen {
+		playlooped "sound/music/menu_server.wav"
+	}
+}
+
+menuDef {
+	name "background_1"
+	fullScreen 0
+	rect 0 0 640 480
+	visible 0
+	itemDef {
+		name "colour"
+		rect 0 0 640 480
+		style 1
+		backcolor .70 .63 .49 1
+		visible 1
+		decoration
+	}
+	itemDef {
+		name "clouds"
+		rect 0 0 640 480
+		style 3
+		background "ui/assets/et_clouds"
+		visible 1
+		decoration
+	}
+}
+
+menuDef {
+	name "main_opener"
+	visible 0
+	fullscreen 0
+	rect 16 16 128 104
+	onOpen {
+		open background_1 ;
+		open main ;
+		close main_opener
+	}
+}
+
+menuDef {
+	name "main"
+	visible 0
+	fullscreen 0
+	rect 16 16 128 104
+	style 1
+
+	onOpen {
+		playlooped "sound/music/menu_server.wav"
+	}
+
+	onEsc {
+		clearFocus
+	}
+
+	itemDef {
+		name "et_logo"
+		rect 104 124 400 200
+		style 3
+		background "ui/assets/et_logo_huge"
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "sd_logo"
+		rect 4 394 54 54
+		style 3
+		background "ui/assets/logo_sd_dark"
+		forecolor 1 1 1 1
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "atvi_logo"
+		rect 444 421 108 27
+		style 3
+		background "ui/assets/logo_atvi_dark"
+		forecolor 1 1 1 1
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "id_logo"
+		rect 560 400 48 48
+		style 3
+		background "ui/assets/logo_id_dark"
+		forecolor 1 1 1 1
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "window"
+		group "grpMain"
+		rect 0 0 128 104
+		style 1
+		backcolor 0 0 0 .2
+		border 1
+		bordercolor .5 .5 .5 .5
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "titlebar"
+		group "grpMain"
+		rect 2 2 50 24
+		style 1
+		backcolor .16 .2 .17 .8
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "titlebargradient"
+		group "grpMain"
+		rect 52 2 74 24
+		style 2
+		backcolor .16 .2 .17 .8
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "windowtitle"
+		group "grpMain"
+		rect 2 2 124 24
+		text "MAIN"
+		textfont 1
+		textscale .4
+		textalignx 3
+		textaligny 20
+		forecolor .6 .6 .6 1
+		border 1
+		bordercolor .1 .1 .1 .2
+		visible 1
+		decoration
+	}
+
+	itemDef {
+		name "bttnJOIN GAME"
+		group "grpMain"
+		rect 6 32 116 18
+		type 1
+		text "JOIN GAME"
+		textfont 3
+		textscale .3
+		textalign 1
+		textalignx 58
+		textaligny 14
+		style 1
+		backcolor .3 .3 .3 .4
+		forecolor .6 .6 .6 1
+		border 1
+		bordercolor .1 .1 .1 .5
+		visible 1
+		mouseEnter {
+			setitemcolor "bttnJOIN GAME" forecolor .9 .9 .9 1 ;
+			setitemcolor "bttnJOIN GAME" backcolor .5 .5 .5 .4
+		}
+		mouseExit {
+			setitemcolor "bttnJOIN GAME" forecolor .6 .6 .6 1 ;
+			setitemcolor "bttnJOIN GAME" backcolor .3 .3 .3 .4
+		}
+		action {
+			play "sound/menu/select.wav" ;
+			exec "etjs_joingame"
+		}
+	}
+
+	itemDef {
+		name "bttnOPTIONS"
+		group "grpMain"
+		rect 6 56 116 18
+		type 1
+		text "OPTIONS"
+		textfont 3
+		textscale .3
+		textalign 1
+		textalignx 58
+		textaligny 14
+		style 1
+		backcolor .3 .3 .3 .4
+		forecolor .6 .6 .6 1
+		border 1
+		bordercolor .1 .1 .1 .5
+		visible 1
+		mouseEnter {
+			setitemcolor "bttnOPTIONS" forecolor .9 .9 .9 1 ;
+			setitemcolor "bttnOPTIONS" backcolor .5 .5 .5 .4
+		}
+		mouseExit {
+			setitemcolor "bttnOPTIONS" forecolor .6 .6 .6 1 ;
+			setitemcolor "bttnOPTIONS" backcolor .3 .3 .3 .4
+		}
+		action {
+			play "sound/menu/select.wav" ;
+			close main ;
+			open options
+		}
+	}
+
+	itemDef {
+		name "bttnCREDITS"
+		group "grpMain"
+		rect 6 80 116 18
+		type 1
+		text "CREDITS"
+		textfont 3
+		textscale .3
+		textalign 1
+		textalignx 58
+		textaligny 14
+		style 1
+		backcolor .3 .3 .3 .4
+		forecolor .6 .6 .6 1
+		border 1
+		bordercolor .1 .1 .1 .5
+		visible 1
+		mouseEnter {
+			setitemcolor "bttnCREDITS" forecolor .9 .9 .9 1 ;
+			setitemcolor "bttnCREDITS" backcolor .5 .5 .5 .4
+		}
+		mouseExit {
+			setitemcolor "bttnCREDITS" forecolor .6 .6 .6 1 ;
+			setitemcolor "bttnCREDITS" backcolor .3 .3 .3 .4
+		}
+		action {
+			play "sound/menu/select.wav" ;
+			close main ;
+			open credits_quit
+		}
+	}
+}

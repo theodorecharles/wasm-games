@@ -1,0 +1,35 @@
+// This script contains functionality to take checkpoints (capture forward spawns)
+this.Name = "CHECKPOINT";
+this.Parent = "HighLevel";
+this.SkipGetPriorityWhenActive = true;
+
+this.GetPriority = function()
+{
+	Util.GetPriority(this,0xf7e4a57f /* CHECKPOINT */,0,0, function(goal)
+	{
+		// cs: if a flag is locked, it will be entflag.disabled
+		return !GetEntFlags(goal.GetEntity(), ENTFLAG.DISABLED);
+	});
+};
+
+this.Enter = this.MarkInProgress;
+
+this.Update = function()
+{
+	Util.RouteTo(this);
+
+	pos = this.MapGoal.GetPosition();
+	this.AddAimRequest(Priority.Medium, "position", pos);
+
+	for (timeout = 60; timeout > 0; --timeout) { // 3 seconds
+		this.Bot.MoveTowards(pos);
+		yield();
+	}
+
+	if (timeout < 1) {
+		Util.ScriptDebugPrint(this.MapGoal.GetName(), "timedout");
+		this.BlackboardDelay(10);
+	}
+
+	this.Finished();
+};

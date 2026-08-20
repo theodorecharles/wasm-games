@@ -1,0 +1,12 @@
+{
+  "name": "dosbox-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native DOSBox browser suite for classic DOS games",
+  "scripts": {
+    "build": "./scripts/build-web.sh",
+    "manifest:data": "node scripts/generate-data-manifest.js",
+    "test:native": "node scripts/test-native-runtime.js web/dist",
+    "test": "./scripts/test-web.sh"
+  }
+}

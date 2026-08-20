@@ -1,0 +1,297 @@
+--- a/src/client/cl_scrn.c
++++ b/src/client/cl_scrn.c
+@@ -114,6 +114,155 @@
+ static qhandle_t etjsLogoSd;
+ static qhandle_t etjsLogoEt;
+ 
++static void ETJS_Contain640(float *x, float *y, float *w, float *h)
++{
++	float scale = MIN(cls.glconfig.vidWidth / 640.f, cls.glconfig.vidHeight / 480.f);
++	float xbias = (cls.glconfig.vidWidth - 640.f * scale) * 0.5f;
++	float ybias = (cls.glconfig.vidHeight - 480.f * scale) * 0.5f;
++
++	if (x)
++	{
++		*x = *x * scale + xbias;
++	}
++	if (y)
++	{
++		*y = *y * scale + ybias;
++	}
++	if (w)
++	{
++		*w *= scale;
++	}
++	if (h)
++	{
++		*h *= scale;
++	}
++}
++
++static void ETJS_DrawLoadLine(float x640, float y640, float cw, float ch, const char *text)
++{
++	float      x, y, w, h, startX;
++	const char *s;
++	int        maxChars, n;
++
++	if (!text || !text[0])
++	{
++		return;
++	}
++
++	/* camp_side is 440–640. Official TTF starts near 464. */
++	x = x640;
++	y = y640;
++	w = cw;
++	h = ch;
++	ETJS_Contain640(&x, &y, &w, &h);
++	startX    = x;
++	maxChars  = (int)((168.f / cw) + 0.5f);
++	if (maxChars < 8)
++	{
++		maxChars = 8;
++	}
++
++	/* Use the console charset so width/height stay under our control.
++	 * SRC_DrawSingleChar prefers the TTF console font and ignores size. */
++	re.SetColor(colorBlack);
++	x = startX + 1.f;
++	s = text;
++	n = 0;
++	while (*s && n < maxChars)
++	{
++		int   ch, row, col;
++
++		if (Q_IsColorString(s))
++		{
++			s += 2;
++			continue;
++		}
++		ch  = Q_UTF8_CodePoint(s) & 255;
++		row = ch >> 4;
++		col = ch & 15;
++		re.DrawStretchPic(x + 1.f, y + 1.f, w, h,
++		                  col * 0.0625f, row * 0.0625f,
++		                  col * 0.0625f + 0.0625f, row * 0.0625f + 0.0625f,
++		                  cls.charSetShader);
++		x += w;
++		s += Q_UTF8_Width(s);
++		n++;
++	}
++
++	re.SetColor(colorWhite);
++	x = startX;
++	s = text;
++	n = 0;
++	while (*s && n < maxChars)
++	{
++		int   ch, row, col;
++
++		if (Q_IsColorString(s))
++		{
++			s += 2;
++			continue;
++		}
++		ch  = Q_UTF8_CodePoint(s) & 255;
++		row = ch >> 4;
++		col = ch & 15;
++		re.DrawStretchPic(x, y, w, h,
++		                  col * 0.0625f, row * 0.0625f,
++		                  col * 0.0625f + 0.0625f, row * 0.0625f + 0.0625f,
++		                  cls.charSetShader);
++		x += w;
++		s += Q_UTF8_Width(s);
++		n++;
++	}
++	re.SetColor(NULL);
++}
++
++/**
++ * Charset status on the campaign side panel. Drawn last so it cannot lose
++ * to camp_side. Sized for the 200px-wide official text column.
++ */
++static void ETJS_DrawLoadStatus(void)
++{
++	const char *status;
++	const char *detail;
++	float      x = 464.f;
++	float      y = 28.f;
++
++	if (cls.state < CA_CONNECTING || cls.state > CA_PRIMED)
++	{
++		return;
++	}
++
++	switch (cls.state)
++	{
++	case CA_CONNECTING:
++		status = "Awaiting connection...";
++		break;
++	case CA_CHALLENGING:
++		status = "Awaiting challenge...";
++		break;
++	case CA_CONNECTED:
++		status = "Awaiting gamestate...";
++		break;
++	case CA_LOADING:
++	case CA_PRIMED:
++		detail = Cvar_VariableString("etjs_loadstatus");
++		status = (detail && detail[0]) ? detail : "LOADING";
++		break;
++	default:
++		status = "CONNECTING...";
++		break;
++	}
++
++	ETJS_DrawLoadLine(x, y, 10.f, 16.f, "CONNECTING...");
++	y += 22.f;
++	if (cls.servername[0])
++	{
++		ETJS_DrawLoadLine(x, y, 8.f, 12.f, cls.servername);
++		y += 18.f;
++	}
++	ETJS_DrawLoadLine(x, y, 8.f, 12.f, status);
++}
++
+ static void ETJS_Fill640(float x, float y, float w, float h, float r, float g, float b, float a)
+ {
+ 	vec4_t color;
+@@ -777,8 +926,9 @@
+ 	}
+ 
+ 	// Connecting/loading must draw the official campaign load panel even if
+-	// a leftover fullscreen menu is still marked visible. Painting MAIN on
+-	// top of that panel leaves only the background art.
++	// a leftover fullscreen menu is still marked visible. Do not run UI_REFRESH
++	// here — MAIN/background_1 would paint after or under the panel and hide
++	// the campaign/status text.
+ 	if (cls.state >= CA_CONNECTING && cls.state <= CA_PRIMED)
+ 	{
+ 		if (cls.state == CA_LOADING || cls.state == CA_PRIMED)
+@@ -789,9 +939,11 @@
+ 		}
+ 		else
+ 		{
+-			VM_Call(uivm, UI_REFRESH, cls.realtime);
+ 			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
+ 		}
++#ifdef __EMSCRIPTEN__
++		ETJS_DrawLoadStatus();
++#endif
+ 	}
+ 	else if (!VM_Call(uivm, UI_IS_FULLSCREEN))
+ 	{
+--- a/src/client/cl_main.c
++++ b/src/client/cl_main.c
+@@ -3210,6 +3210,13 @@
+ 	}
+ 
+ 	arg = Cmd_Argc() > 1 ? Cmd_Argv(1) : "";
++	if (!Q_stricmp(arg, "settings"))
++	{
++		Cvar_Set2("cl_aimbot", "1", qtrue);
++		Cvar_Set2("cl_aimbotmenu", "1", qtrue);
++		Com_Printf("aimbot on\n");
++		return;
++	}
+ 	if (!Q_stricmp(arg, "menu"))
+ 	{
+ 		if (!Cvar_VariableIntegerValue("cl_aimbot"))
+@@ -3259,6 +3266,7 @@
+ 		addr = "127.0.0.1:27961";
+ 	}
+ 	Com_DPrintf("ETJS join name=%s connect=%s\n", name ? name : "", addr);
++	Cvar_Set("ui_connecting", "1");
+ 	handled = EM_ASM_INT({
+ 		if (Module['etjsWakeAndJoin'])
+ 		{
+@@ -3323,6 +3331,7 @@
+ 	Cvar_Get("cl_aimbotmenu", "0", 0);
+ 	Cvar_Get("etjs_connect", "127.0.0.1:27961", 0);
+ 	Cvar_Get("etjs_ingame", "0", 0);
++	Cvar_Get("etjs_loadstatus", "", 0);
+ 	Cvar_Get("etjs_uiopen", "0", 0);
+ 	Cvar_Get("etjs_console", "0", 0);
+ 	Cvar_Get("etjs_eth32save", "0", 0);
+--- a/src/ui/ui_main.c
++++ b/src/ui/ui_main.c
+@@ -9444,10 +9444,17 @@
+  */
+ void UI_DrawConnectScreen(qboolean overlay)
+ {
++#ifdef __EMSCRIPTEN__
++	/* Overlay mode is a no-op on desktop because cgame already painted the
++	 * panel. In the browser, cgame can still skip a frame (not-active snap),
++	 * so always paint the official campaign load panel. */
++	UI_DrawLoadPanel(qfalse, overlay);
++#else
+ 	if (!overlay)
+ 	{
+ 		UI_DrawLoadPanel(qfalse, qfalse);
+ 	}
++#endif
+ }
+ 
+ /**
+--- a/src/cgame/cg_info.c
++++ b/src/cgame/cg_info.c
+@@ -99,6 +99,9 @@
+ void CG_LoadingString(const char *s)
+ {
+ 	Q_strncpyz(cg.infoScreenText, s, sizeof(cg.infoScreenText));
++#ifdef __EMSCRIPTEN__
++	trap_Cvar_Set("etjs_loadstatus", (s && *s) ? s : "LOADING");
++#endif
+ 
+ 	if (s && *s)
+ 	{
+@@ -116,10 +119,19 @@
+ 	static int nextcall = 0;
+ 	int        ms;
+ 
++#ifdef __EMSCRIPTEN__
++	/* A not-active first snap is still the loading transition. Stock returns
++	 * as soon as cg.snap is non-NULL, which skips the campaign panel. */
++	if (cg.snap && !(cg.snap->snapFlags & SNAPFLAG_NOT_ACTIVE))
++	{
++		return;
++	}
++#else
+ 	if (cg.snap)
+ 	{
+ 		return;     // we are in the world, no need to draw information
+ 	}
++#endif
+ 
+ 	ms = trap_Milliseconds();
+ 
+--- a/src/cgame/cg_limbopanel.c
++++ b/src/cgame/cg_limbopanel.c
+@@ -4240,6 +4240,13 @@
+ 			continue;
+ 		}
+ 
++		// Bots are fill. A human can take that slot, so they do not make
++		// the team button look full.
++		if (cgs.clientinfo[i].botSkill > 0 || Q_stristr(cgs.clientinfo[i].name, "[BOT]"))
++		{
++			continue;
++		}
++
+ 		cnt++;
+ 	}
+ 
+--- a/src/renderer/tr_backend.c
++++ b/src/renderer/tr_backend.c
+@@ -1148,7 +1148,10 @@
+ 	{
+ 		tess.xyz[i][0] = verts[i].xyz[0];
+ 		tess.xyz[i][1] = verts[i].xyz[1];
+-		tess.xyz[i][2] = verts[i].xyz[2];
++		/* WebGL clips glOrtho(..., 0, 1) at z=0. Large load-panel quads on
++		 * that plane swallow later glyph quads, so the campaign art shows
++		 * and the status text does not. Park 2D inside the volume. */
++		tess.xyz[i][2] = backEnd.projection2D ? -0.5f : verts[i].xyz[2];
+ 		tess.texCoords[i][0][0] = verts[i].st[0];
+ 		tess.texCoords[i][0][1] = verts[i].st[1];
+ 		Com_Memcpy(tess.vertexColors[i], verts[i].modulate, sizeof(tess.vertexColors[i]));

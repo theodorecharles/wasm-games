@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+image="${OPENRCT2_IMAGE:-openrct2-wasm:dev}"
+token="openrct2-gog-smoke"
+container="openrct2-gog-smoke-$$"
+data_root="$(mktemp -d /tmp/openrct2-gog-data.XXXXXX)"
+
+cleanup() {
+    docker rm -f "$container" >/dev/null 2>&1 || true
+    find "$data_root" -mindepth 1 -delete 2>/dev/null || true
+    rmdir "$data_root" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+if [[ "$#" -lt 2 ]]; then
+    printf 'Usage: %s <rct2-setup.exe> <rct2-setup-1.bin> [rct1-setup.exe rct1-setup-1.bin]\n' "$0" >&2
+    exit 2
+fi
+
+docker run --rm --detach --name "$container" --publish 127.0.0.1::8088 \
+    --env "WASM_SETUP_TOKEN=$token" --volume "$data_root:/data" "$image" >/dev/null
+port="$(docker port "$container" 8088/tcp | sed -n '1s/.*://p')"
+base="http://127.0.0.1:$port"
+for _ in $(seq 1 120); do
+    curl --silent --fail "$base/healthz" >/dev/null 2>&1 && break
+    sleep 0.25
+done
+
+node - "$base" "$token" "$@" <<'NODE'
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const fsp = require('node:fs/promises');
+const path = require('node:path');
+
+(async () => {
+  const [base, token, ...filenames] = process.argv.slice(2);
+  const local = await Promise.all(filenames.map(async filename => ({
+    filename,
+    name: path.basename(filename),
+    size: (await fsp.stat(filename)).size
+  })));
+  const headers = { authorization: `Bearer ${token}` };
+  let response = await fetch(`${base}/game-data/media/uploads`, {
+    method: 'POST', headers: { ...headers, 'content-type': 'application/json' },
+    body: JSON.stringify({ files: local.map(({ name, size }) => ({ name, size })) })
+  });
+  if (response.status !== 201) throw new Error(`begin upload: HTTP ${response.status}: ${await response.text()}`);
+  const upload = await response.json();
+  for (const descriptor of upload.files) {
+    const source = local.find(file => file.name === descriptor.name);
+    assert.ok(source, `server requested unknown upload ${descriptor.name}`);
+    response = await fetch(`${base}/game-data/media/uploads/${upload.id}/files/${descriptor.id}`, {
+      method: 'PUT', headers, body: fs.createReadStream(source.filename), duplex: 'half'
+    });
+    if (response.status !== 201) throw new Error(`${descriptor.name}: HTTP ${response.status}: ${await response.text()}`);
+  }
+  response = await fetch(`${base}/game-data/media/uploads/${upload.id}/commit`, { method: 'POST', headers });
+  if (response.status !== 201) throw new Error(`commit upload: HTTP ${response.status}: ${await response.text()}`);
+  const entry = await response.json();
+  assert.ok(entry.fileCount > 1000);
+  assert.equal(entry.metadata.rct1, filenames.length === 4);
+  const status = await (await fetch(`${base}/game-data/status`)).json();
+  assert.equal(status.ready, true);
+  assert.equal(status.mediaLibrary.entries[0].id, entry.id);
+  process.stdout.write(`HTTP-imported ${entry.fileCount} files (${entry.totalSize} bytes) as ${entry.id}.\n`);
+})().catch(error => { console.error(error); process.exitCode = 1; });
+NODE
+
+test "$(curl --silent --output /dev/null --write-out '%{http_code}' "$base/data")" = 404
+test "$(curl --silent --output /dev/null --write-out '%{http_code}' "$base/local-data")" = 404
+printf 'OpenRCT2 GOG launch-card upload, transform, validation, and private-data boundary passed.\n'

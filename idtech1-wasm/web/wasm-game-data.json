@@ -1,0 +1,105 @@
+{
+  "namespace": "idtech1-family",
+  "version": "structural-owner-wads-2026-08-14-v4",
+  "validator": {
+    "module": "/data-validator.mjs",
+    "export": "validateIdTech1Data",
+    "version": "idtech1-wad-directory-v2",
+    "maxReadBytes": 1048576,
+    "maxTotalReadBytes": 1048600,
+    "policy": { "maxLumps": 65536 }
+  },
+  "variants": {
+    "doom": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "doom.wad",
+          "names": ["DOOM.WAD"],
+          "path": "DOOM.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "doom", "identification": "IWAD" } }
+        }
+      ]
+    },
+    "doom2": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "doom2.wad",
+          "names": ["DOOM2.WAD"],
+          "path": "DOOM2.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "doom2", "identification": "IWAD" } }
+        }
+      ]
+    },
+    "tnt": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "tnt.wad",
+          "names": ["TNT.WAD"],
+          "path": "TNT.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "tnt", "identification": "IWAD" } }
+        }
+      ]
+    },
+    "plutonia": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "plutonia.wad",
+          "names": ["PLUTONIA.WAD"],
+          "path": "PLUTONIA.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "plutonia", "identification": "IWAD" } }
+        }
+      ]
+    },
+    "heretic": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "heretic.wad",
+          "names": ["HERETIC.WAD"],
+          "path": "HERETIC.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "heretic", "identification": "IWAD" } }
+        }
+      ]
+    },
+    "hexen": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "hexen.wad",
+          "names": ["HEXEN.WAD"],
+          "path": "HEXEN.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "hexen", "identification": "IWAD" } }
+        }
+      ]
+    },
+    "chex": {
+      "files": [
+        {
+          "key": "iwad",
+          "name": "chex.wad",
+          "names": ["CHEX.WAD"],
+          "path": "CHEX.WAD",
+          "minSize": 12,
+          "maxSize": 67108864,
+          "validator": { "policy": { "family": "chex", "identification": "PWAD" } }
+        }
+      ]
+    }
+  }
+}

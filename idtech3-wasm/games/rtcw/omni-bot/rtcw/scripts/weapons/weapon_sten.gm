@@ -1,0 +1,6 @@
+this.Name = "Sten";
+this.WeaponId = WEAPON.STEN;
+
+this.PrimaryFire.DefaultDesirability = 0.7;
+this.PrimaryFire.LowAmmoThreshold = 5;
+this.PrimaryFire.LowAmmoPriority = 0.8;

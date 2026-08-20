@@ -1,0 +1,817 @@
+From 6ea99cbd786b61d5b6808929325bdb3c3543b3a7 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 04:15:00 -0400
+Subject: [PATCH] Add RTCW framework browser integration seams
+
+---
+ MP/Makefile             |   3 +-
+ MP/code/qcommon/files.c |  22 +++-
+ MP/code/sdl/sdl_glimp.c |  15 +++
+ MP/code/sdl/sdl_input.c |   4 +-
+ MP/code/sys/sys_main.c  | 243 ++++++++++++++++++++++++++++++++++++++++
+ SP/Makefile             |   3 +-
+ SP/code/qcommon/files.c |  22 +++-
+ SP/code/sdl/sdl_glimp.c |  15 +++
+ SP/code/sdl/sdl_input.c |   4 +-
+ SP/code/sys/sys_main.c  | 243 ++++++++++++++++++++++++++++++++++++++++
+ 10 files changed, 568 insertions(+), 6 deletions(-)
+
+diff --git a/MP/Makefile b/MP/Makefile
+index 60a106e..8085ad8 100644
+--- a/MP/Makefile
++++ b/MP/Makefile
+@@ -1070,7 +1070,8 @@ ifeq ($(PLATFORM),emscripten)
+     -sINITIAL_MEMORY=268435456 \
+     -sSTACK_SIZE=2097152 \
+     -sFORCE_FILESYSTEM=1 \
+-    -sEXPORTED_RUNTIME_METHODS=['callMain','FS','IDBFS'] \
++    -sEXPORTED_FUNCTIONS=['_main','_malloc','_free'] \
++    -sEXPORTED_RUNTIME_METHODS=['callMain','FS','IDBFS','stringToNewUTF8'] \
+     -lidbfs.js \
+     -sINVOKE_RUN=0 \
+     -sEXIT_RUNTIME=0 \
+diff --git a/MP/code/qcommon/files.c b/MP/code/qcommon/files.c
+index 1e5e946..f0c8a96 100644
+--- a/MP/code/qcommon/files.c
++++ b/MP/code/qcommon/files.c
+@@ -298,6 +298,9 @@ typedef struct qfile_us {
+ typedef struct {
+ 	qfile_ut handleFiles;
+ 	qboolean handleSync;
++#ifdef __EMSCRIPTEN__
++	qboolean browserPersistentWrite;
++#endif
+ 	int fileSize;
+ 	int zipFilePos;
+ 	int zipFileLen;
+@@ -307,6 +310,10 @@ typedef struct {
+ 
+ static fileHandleData_t fsh[MAX_FILE_HANDLES];
+ 
++#ifdef __EMSCRIPTEN__
++extern void RTCW_BrowserPersistenceChanged( int immediate );
++#endif
++
+ // TTimo - show_bug.cgi?id=540
+ // wether we did a reorder on the current search path when joining the server
+ static qboolean fs_reordered;
+@@ -912,6 +919,11 @@ void FS_FCloseFile( fileHandle_t f ) {
+ 	if ( fsh[f].handleFiles.file.o ) {
+ 		fclose( fsh[f].handleFiles.file.o );
+ 	}
++#ifdef __EMSCRIPTEN__
++	if ( fsh[f].browserPersistentWrite ) {
++		RTCW_BrowserPersistenceChanged( !Q_stricmpn( fsh[f].name, "save/", 5 ) );
++	}
++#endif
+ 	Com_Memset( &fsh[f], 0, sizeof( fsh[f] ) );
+ }
+ 
+@@ -952,6 +964,9 @@ fileHandle_t FS_FOpenFileWrite( const char *filename ) {
+ 	Q_strncpyz( fsh[f].name, filename, sizeof( fsh[f].name ) );
+ 
+ 	fsh[f].handleSync = qfalse;
++#ifdef __EMSCRIPTEN__
++	fsh[f].browserPersistentWrite = qtrue;
++#endif
+ 	if ( !fsh[f].handleFiles.file.o ) {
+ 		f = 0;
+ 	}
+@@ -994,6 +1009,9 @@ fileHandle_t FS_FOpenFileAppend( const char *filename ) {
+ 
+ 	fsh[f].handleFiles.file.o = Sys_FOpen( ospath, "ab" );
+ 	fsh[f].handleSync = qfalse;
++#ifdef __EMSCRIPTEN__
++	fsh[f].browserPersistentWrite = qtrue;
++#endif
+ 	if ( !fsh[f].handleFiles.file.o ) {
+ 		f = 0;
+ 	}
+@@ -1775,6 +1793,9 @@ int FS_Delete( char *filename ) {
+ 	ospath = FS_BuildOSPath( fs_homepath->string, fs_gamedir, filename );
+ 
+ 	if ( remove( ospath ) != -1 ) {  // success
++#ifdef __EMSCRIPTEN__
++		RTCW_BrowserPersistenceChanged( 1 );
++#endif
+ 		return 1;
+ 	}
+ #endif
+@@ -4546,4 +4567,3 @@ qboolean FS_VerifyPak( const char *pak ) {
+ 	return qfalse;
+ }
+ 
+-
+diff --git a/MP/code/sdl/sdl_glimp.c b/MP/code/sdl/sdl_glimp.c
+index 4379f3c..c327e93 100644
+--- a/MP/code/sdl/sdl_glimp.c
++++ b/MP/code/sdl/sdl_glimp.c
+@@ -60,6 +60,21 @@ typedef enum
+ SDL_Window *SDL_window = NULL;
+ static SDL_GLContext SDL_glContext = NULL;
+ 
++#ifdef __EMSCRIPTEN__
++qboolean GLimp_BrowserResize( int width, int height )
++{
++	if ( !SDL_window || width < 2 || height < 2 ) {
++		return qfalse;
++	}
++
++	SDL_SetWindowSize( SDL_window, width, height );
++	glConfig.vidWidth = width;
++	glConfig.vidHeight = height;
++	glConfig.windowAspect = (float)width / (float)height;
++	return qtrue;
++}
++#endif
++
+ cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
+ cvar_t *r_allowResize; // make window resizable
+ cvar_t *r_centerWindow;
+diff --git a/MP/code/sdl/sdl_input.c b/MP/code/sdl/sdl_input.c
+index 47f99c2..d5fe223 100644
+--- a/MP/code/sdl/sdl_input.c
++++ b/MP/code/sdl/sdl_input.c
+@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ 
+ #ifdef __EMSCRIPTEN__
+ #include <emscripten/html5.h>
++extern int RTCW_BrowserInputCaptured( void );
+ #endif
+ 
+ #include "../client/client.h"
+@@ -357,7 +358,8 @@ static void IN_ActivateMouse( qboolean isFullscreen )
+ #ifdef __EMSCRIPTEN__
+ 	{
+ 		EmscriptenPointerlockChangeEvent pointerLock;
+-		qboolean locked = emscripten_get_pointerlock_status( &pointerLock ) == EMSCRIPTEN_RESULT_SUCCESS && pointerLock.isActive;
++		qboolean locked = RTCW_BrowserInputCaptured() &&
++			emscripten_get_pointerlock_status( &pointerLock ) == EMSCRIPTEN_RESULT_SUCCESS && pointerLock.isActive;
+ 
+ 		// Browser menus need ordinary absolute mouse input.  Requesting SDL
+ 		// relative mode here arms pointer lock on the next click and consumes
+diff --git a/MP/code/sys/sys_main.c b/MP/code/sys/sys_main.c
+index 298b1a4..867d119 100644
+--- a/MP/code/sys/sys_main.c
++++ b/MP/code/sys/sys_main.c
+@@ -51,9 +51,248 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include "../qcommon/q_shared.h"
+ #include "../qcommon/qcommon.h"
+ 
++#if defined(__EMSCRIPTEN__) && !defined(DEDICATED)
++#include "../client/client.h"
++#endif
++
+ static char binaryPath[ MAX_OSPATH ] = { 0 };
+ static char installPath[ MAX_OSPATH ] = { 0 };
+ 
++#if defined(__EMSCRIPTEN__) && !defined(DEDICATED)
++#define RTCW_BROWSER_CONTROLLER_KEYS 512
++
++static qboolean rtcwBrowserStarted = qfalse;
++static qboolean rtcwBrowserInputCaptured = qfalse;
++static qboolean rtcwBrowserCaptureIntent = qfalse;
++static byte rtcwBrowserControllerKeys[ RTCW_BROWSER_CONTROLLER_KEYS ];
++
++extern void Com_WriteConfiguration( void );
++extern qboolean GLimp_BrowserResize( int width, int height );
++
++EM_JS( void, RTCW_BrowserNotifyPersistence, ( int immediate ), {
++	if ( typeof Module.rtcwPersistenceChanged === 'function' ) {
++		Module.rtcwPersistenceChanged( Boolean( immediate ) );
++	}
++} );
++
++void RTCW_BrowserPersistenceChanged( int immediate )
++{
++	RTCW_BrowserNotifyPersistence( immediate ? 1 : 0 );
++}
++
++static int RTCW_BrowserTranslateControllerKey( int key )
++{
++	if ( key > 0 && key < 128 ) {
++		return key;
++	}
++
++	switch ( key ) {
++		case 1001: return K_UPARROW;
++		case 1002: return K_DOWNARROW;
++		case 1003: return K_LEFTARROW;
++		case 1004: return K_RIGHTARROW;
++		case 1010: return K_SHIFT;
++		case 1020: return K_MOUSE1;
++		case 1021: return K_MOUSE2;
++		case 1030: return K_MWHEELDOWN;
++		case 1031: return K_MWHEELUP;
++		default: return 0;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRuntimeState( void )
++{
++	int catcher;
++
++	if ( !rtcwBrowserStarted ) {
++		return 4; /* loading */
++	}
++
++	catcher = Key_GetCatcher();
++	if ( clc.state == CA_CINEMATIC ) {
++		return 3; /* cinematic/debrief */
++	}
++	if ( clc.state == CA_ACTIVE ) {
++		return catcher ? 2 : 1; /* paused/menu overlay or gameplay */
++	}
++	if ( clc.state >= CA_CONNECTING && clc.state < CA_ACTIVE ) {
++		return 4; /* loading/connecting */
++	}
++	return 0; /* native menu */
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserCaptureIntent( void )
++{
++	int state = RTCW_BrowserRuntimeState();
++	return rtcwBrowserCaptureIntent && ( state == 1 || state == 4 );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserArmCaptureIntent( void )
++{
++	if ( rtcwBrowserStarted ) {
++		rtcwBrowserCaptureIntent = qtrue;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserSetInputCaptured( int captured )
++{
++	rtcwBrowserInputCaptured = captured ? qtrue : qfalse;
++	if ( rtcwBrowserInputCaptured ) {
++		rtcwBrowserCaptureIntent = qfalse;
++	} else if ( rtcwBrowserStarted ) {
++		Key_ClearStates();
++	}
++}
++
++int RTCW_BrowserInputCaptured( void )
++{
++	return rtcwBrowserInputCaptured;
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerKey( int browserKey, int down )
++{
++	int key;
++
++	if ( !rtcwBrowserStarted ) {
++		return;
++	}
++
++	key = RTCW_BrowserTranslateControllerKey( browserKey );
++	if ( !key || key >= RTCW_BROWSER_CONTROLLER_KEYS ||
++		rtcwBrowserControllerKeys[ key ] == ( down ? 1 : 0 ) ) {
++		return;
++	}
++
++	if ( down && key == K_ENTER && RTCW_BrowserRuntimeState() == 0 ) {
++		rtcwBrowserCaptureIntent = qtrue;
++	}
++	rtcwBrowserControllerKeys[ key ] = down ? 1 : 0;
++	CL_KeyEvent( key, down ? qtrue : qfalse, Sys_Milliseconds() );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerReleaseAll( void )
++{
++	int key;
++
++	for ( key = 0; key < RTCW_BROWSER_CONTROLLER_KEYS; key++ ) {
++		if ( rtcwBrowserControllerKeys[ key ] ) {
++			CL_KeyEvent( key, qfalse, Sys_Milliseconds() );
++			rtcwBrowserControllerKeys[ key ] = 0;
++		}
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerLook( float x, float y )
++{
++	if ( rtcwBrowserStarted && RTCW_BrowserRuntimeState() == 1 ) {
++		CL_MouseEvent( (int)x, (int)y, Sys_Milliseconds() );
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserOpenMenu( void )
++{
++	if ( !rtcwBrowserStarted || RTCW_BrowserRuntimeState() != 1 ) {
++		return;
++	}
++	RTCW_BrowserControllerReleaseAll();
++	CL_KeyEvent( K_ESCAPE, qtrue, Sys_Milliseconds() );
++	CL_KeyEvent( K_ESCAPE, qfalse, Sys_Milliseconds() );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserConfigureControls( void )
++{
++	if ( !rtcwBrowserStarted ) {
++		return;
++	}
++	Key_SetBinding( 'w', "+forward" );
++	Key_SetBinding( 's', "+back" );
++	Key_SetBinding( 'a', "+moveleft" );
++	Key_SetBinding( 'd', "+moveright" );
++	Key_SetBinding( K_SPACE, "+moveup" );
++	Key_SetBinding( 'c', "+movedown" );
++	Key_SetBinding( 'r', "+reload" );
++	Key_SetBinding( 'e', "+activate" );
++	Key_SetBinding( 'q', "weapnext" );
++	Key_SetBinding( K_MOUSE1, "+attack" );
++	Key_SetBinding( K_MOUSE2, "+attack2" );
++	Key_SetBinding( K_MWHEELDOWN, "weapprev" );
++	Key_SetBinding( K_MWHEELUP, "weapnext" );
++	Key_SetBinding( K_TAB, "+scores" );
++	Key_SetBinding( K_SHIFT, "+sprint" );
++	Cvar_Set( "cl_freelook", "1" );
++	Cvar_Set( "m_filter", "0" );
++	Cvar_Set( "sensitivity", "5" );
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserControlsMask( void )
++{
++	int mask = 0;
++	if ( Key_GetBinding( 'w' ) && !Q_stricmp( Key_GetBinding( 'w' ), "+forward" ) ) mask |= 1;
++	if ( Key_GetBinding( 's' ) && !Q_stricmp( Key_GetBinding( 's' ), "+back" ) ) mask |= 2;
++	if ( Key_GetBinding( 'a' ) && !Q_stricmp( Key_GetBinding( 'a' ), "+moveleft" ) ) mask |= 4;
++	if ( Key_GetBinding( 'd' ) && !Q_stricmp( Key_GetBinding( 'd' ), "+moveright" ) ) mask |= 8;
++	if ( Key_GetBinding( K_MOUSE1 ) && !Q_stricmp( Key_GetBinding( K_MOUSE1 ), "+attack" ) ) mask |= 16;
++	if ( Key_GetBinding( K_SPACE ) && !Q_stricmp( Key_GetBinding( K_SPACE ), "+moveup" ) ) mask |= 32;
++	if ( Cvar_VariableIntegerValue( "cl_freelook" ) == 1 ) mask |= 64;
++	if ( Cvar_VariableIntegerValue( "m_filter" ) == 0 ) mask |= 128;
++	return mask;
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserWriteConfiguration( void )
++{
++	if ( rtcwBrowserStarted ) {
++		Com_WriteConfiguration();
++		RTCW_BrowserPersistenceChanged( 0 );
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserSetPlayerName( const char *name )
++{
++	if ( rtcwBrowserStarted && name && name[ 0 ] ) {
++		Cvar_Set( "name", name );
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserApplyPreferences( int quality, int fps )
++{
++	if ( !rtcwBrowserStarted ) {
++		return;
++	}
++	quality = Com_Clamp( 0, 2, quality );
++	Cvar_SetValue( "r_picmip", 2 - quality );
++	Cvar_SetValue( "r_lodbias", 2 - quality );
++	Cvar_SetValue( "r_subdivisions", quality == 2 ? 4 : ( quality == 1 ? 8 : 16 ) );
++	Cvar_SetValue( "r_dynamiclight", quality > 0 ? 1 : 0 );
++	Cvar_SetValue( "com_maxfps", Com_Clamp( 20, 240, fps ) );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserResize( int width, int height )
++{
++	if ( !rtcwBrowserStarted || width < 2 || height < 2 || width > 8192 || height > 8192 ) {
++		return;
++	}
++	if ( !GLimp_BrowserResize( width, height ) ) {
++		return;
++	}
++	cls.glconfig.vidWidth = width;
++	cls.glconfig.vidHeight = height;
++	cls.glconfig.windowAspect = (float)width / (float)height;
++	Cvar_SetValue( "r_mode", -1 );
++	Cvar_SetValue( "r_customwidth", width );
++	Cvar_SetValue( "r_customheight", height );
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRenderWidth( void )
++{
++	return rtcwBrowserStarted ? cls.glconfig.vidWidth : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRenderHeight( void )
++{
++	return rtcwBrowserStarted ? cls.glconfig.vidHeight : 0;
++}
++#endif
++
+ /*
+ =================
+ Sys_SetBinaryPath
+@@ -770,6 +1009,10 @@ int main( int argc, char **argv )
+ 	Com_Init( commandLine );
+ 	NET_Init( );
+ 
++#if defined(__EMSCRIPTEN__) && !defined(DEDICATED)
++	rtcwBrowserStarted = qtrue;
++#endif
++
+ 	signal( SIGILL, Sys_SigHandler );
+ 	signal( SIGFPE, Sys_SigHandler );
+ 	signal( SIGSEGV, Sys_SigHandler );
+diff --git a/SP/Makefile b/SP/Makefile
+index 65842d8..b83ca3a 100644
+--- a/SP/Makefile
++++ b/SP/Makefile
+@@ -1059,7 +1059,8 @@ ifeq ($(PLATFORM),emscripten)
+     -sINITIAL_MEMORY=268435456 \
+     -sSTACK_SIZE=2097152 \
+     -sFORCE_FILESYSTEM=1 \
+-    -sEXPORTED_RUNTIME_METHODS=['callMain','FS','IDBFS'] \
++    -sEXPORTED_FUNCTIONS=['_main','_malloc','_free'] \
++    -sEXPORTED_RUNTIME_METHODS=['callMain','FS','IDBFS','stringToNewUTF8'] \
+     -lidbfs.js \
+     -sINVOKE_RUN=0 \
+     -sEXIT_RUNTIME=0 \
+diff --git a/SP/code/qcommon/files.c b/SP/code/qcommon/files.c
+index bca9523..0fcd3fb 100644
+--- a/SP/code/qcommon/files.c
++++ b/SP/code/qcommon/files.c
+@@ -310,6 +310,9 @@ typedef struct qfile_us {
+ typedef struct {
+ 	qfile_ut handleFiles;
+ 	qboolean handleSync;
++#ifdef __EMSCRIPTEN__
++	qboolean browserPersistentWrite;
++#endif
+ 	int fileSize;
+ 	int zipFilePos;
+ 	int zipFileLen;
+@@ -319,6 +322,10 @@ typedef struct {
+ 
+ static fileHandleData_t fsh[MAX_FILE_HANDLES];
+ 
++#ifdef __EMSCRIPTEN__
++extern void RTCW_BrowserPersistenceChanged( int immediate );
++#endif
++
+ // TTimo - https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=540
+ // wether we did a reorder on the current search path when joining the server
+ static qboolean fs_reordered;
+@@ -1036,6 +1043,11 @@ void FS_FCloseFile( fileHandle_t f ) {
+ 	if ( fsh[f].handleFiles.file.o ) {
+ 		fclose( fsh[f].handleFiles.file.o );
+ 	}
++#ifdef __EMSCRIPTEN__
++	if ( fsh[f].browserPersistentWrite ) {
++		RTCW_BrowserPersistenceChanged( !Q_stricmpn( fsh[f].name, "save/", 5 ) );
++	}
++#endif
+ 	Com_Memset( &fsh[f], 0, sizeof( fsh[f] ) );
+ }
+ 
+@@ -1076,6 +1088,9 @@ fileHandle_t FS_FOpenFileWrite( const char *filename ) {
+ 	Q_strncpyz( fsh[f].name, filename, sizeof( fsh[f].name ) );
+ 
+ 	fsh[f].handleSync = qfalse;
++#ifdef __EMSCRIPTEN__
++	fsh[f].browserPersistentWrite = qtrue;
++#endif
+ 	if ( !fsh[f].handleFiles.file.o ) {
+ 		f = 0;
+ 	}
+@@ -1118,6 +1133,9 @@ fileHandle_t FS_FOpenFileAppend( const char *filename ) {
+ 
+ 	fsh[f].handleFiles.file.o = Sys_FOpen( ospath, "ab" );
+ 	fsh[f].handleSync = qfalse;
++#ifdef __EMSCRIPTEN__
++	fsh[f].browserPersistentWrite = qtrue;
++#endif
+ 	if ( !fsh[f].handleFiles.file.o ) {
+ 		f = 0;
+ 	}
+@@ -1773,6 +1791,9 @@ int FS_Delete( char *filename ) {
+ 	ospath = FS_BuildOSPath( fs_homepath->string, fs_gamedir, filename );
+ 
+ 	if ( remove( ospath ) != -1 ) {  // success
++#ifdef __EMSCRIPTEN__
++		RTCW_BrowserPersistenceChanged( 1 );
++#endif
+ 		return 1;
+ 	}
+ 
+@@ -4506,4 +4527,3 @@ const char *FS_GetCurrentGameDir(void)
+ 
+ 	return com_basegame->string;
+ }
+-
+diff --git a/SP/code/sdl/sdl_glimp.c b/SP/code/sdl/sdl_glimp.c
+index 4379f3c..c327e93 100644
+--- a/SP/code/sdl/sdl_glimp.c
++++ b/SP/code/sdl/sdl_glimp.c
+@@ -60,6 +60,21 @@ typedef enum
+ SDL_Window *SDL_window = NULL;
+ static SDL_GLContext SDL_glContext = NULL;
+ 
++#ifdef __EMSCRIPTEN__
++qboolean GLimp_BrowserResize( int width, int height )
++{
++	if ( !SDL_window || width < 2 || height < 2 ) {
++		return qfalse;
++	}
++
++	SDL_SetWindowSize( SDL_window, width, height );
++	glConfig.vidWidth = width;
++	glConfig.vidHeight = height;
++	glConfig.windowAspect = (float)width / (float)height;
++	return qtrue;
++}
++#endif
++
+ cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
+ cvar_t *r_allowResize; // make window resizable
+ cvar_t *r_centerWindow;
+diff --git a/SP/code/sdl/sdl_input.c b/SP/code/sdl/sdl_input.c
+index 47f99c2..d5fe223 100644
+--- a/SP/code/sdl/sdl_input.c
++++ b/SP/code/sdl/sdl_input.c
+@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ 
+ #ifdef __EMSCRIPTEN__
+ #include <emscripten/html5.h>
++extern int RTCW_BrowserInputCaptured( void );
+ #endif
+ 
+ #include "../client/client.h"
+@@ -357,7 +358,8 @@ static void IN_ActivateMouse( qboolean isFullscreen )
+ #ifdef __EMSCRIPTEN__
+ 	{
+ 		EmscriptenPointerlockChangeEvent pointerLock;
+-		qboolean locked = emscripten_get_pointerlock_status( &pointerLock ) == EMSCRIPTEN_RESULT_SUCCESS && pointerLock.isActive;
++		qboolean locked = RTCW_BrowserInputCaptured() &&
++			emscripten_get_pointerlock_status( &pointerLock ) == EMSCRIPTEN_RESULT_SUCCESS && pointerLock.isActive;
+ 
+ 		// Browser menus need ordinary absolute mouse input.  Requesting SDL
+ 		// relative mode here arms pointer lock on the next click and consumes
+diff --git a/SP/code/sys/sys_main.c b/SP/code/sys/sys_main.c
+index e94ccf7..3976caf 100644
+--- a/SP/code/sys/sys_main.c
++++ b/SP/code/sys/sys_main.c
+@@ -51,9 +51,248 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include "../qcommon/q_shared.h"
+ #include "../qcommon/qcommon.h"
+ 
++#if defined(__EMSCRIPTEN__) && !defined(DEDICATED)
++#include "../client/client.h"
++#endif
++
+ static char binaryPath[ MAX_OSPATH ] = { 0 };
+ static char installPath[ MAX_OSPATH ] = { 0 };
+ 
++#if defined(__EMSCRIPTEN__) && !defined(DEDICATED)
++#define RTCW_BROWSER_CONTROLLER_KEYS 512
++
++static qboolean rtcwBrowserStarted = qfalse;
++static qboolean rtcwBrowserInputCaptured = qfalse;
++static qboolean rtcwBrowserCaptureIntent = qfalse;
++static byte rtcwBrowserControllerKeys[ RTCW_BROWSER_CONTROLLER_KEYS ];
++
++extern void Com_WriteConfiguration( void );
++extern qboolean GLimp_BrowserResize( int width, int height );
++
++EM_JS( void, RTCW_BrowserNotifyPersistence, ( int immediate ), {
++	if ( typeof Module.rtcwPersistenceChanged === 'function' ) {
++		Module.rtcwPersistenceChanged( Boolean( immediate ) );
++	}
++} );
++
++void RTCW_BrowserPersistenceChanged( int immediate )
++{
++	RTCW_BrowserNotifyPersistence( immediate ? 1 : 0 );
++}
++
++static int RTCW_BrowserTranslateControllerKey( int key )
++{
++	if ( key > 0 && key < 128 ) {
++		return key;
++	}
++
++	switch ( key ) {
++		case 1001: return K_UPARROW;
++		case 1002: return K_DOWNARROW;
++		case 1003: return K_LEFTARROW;
++		case 1004: return K_RIGHTARROW;
++		case 1010: return K_SHIFT;
++		case 1020: return K_MOUSE1;
++		case 1021: return K_MOUSE2;
++		case 1030: return K_MWHEELDOWN;
++		case 1031: return K_MWHEELUP;
++		default: return 0;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRuntimeState( void )
++{
++	int catcher;
++
++	if ( !rtcwBrowserStarted ) {
++		return 4; /* loading */
++	}
++
++	catcher = Key_GetCatcher();
++	if ( clc.state == CA_CINEMATIC ) {
++		return 3; /* cinematic/debrief */
++	}
++	if ( clc.state == CA_ACTIVE ) {
++		return catcher ? 2 : 1; /* paused/menu overlay or gameplay */
++	}
++	if ( clc.state >= CA_CONNECTING && clc.state < CA_ACTIVE ) {
++		return 4; /* loading/connecting */
++	}
++	return 0; /* native menu */
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserCaptureIntent( void )
++{
++	int state = RTCW_BrowserRuntimeState();
++	return rtcwBrowserCaptureIntent && ( state == 1 || state == 4 );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserArmCaptureIntent( void )
++{
++	if ( rtcwBrowserStarted ) {
++		rtcwBrowserCaptureIntent = qtrue;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserSetInputCaptured( int captured )
++{
++	rtcwBrowserInputCaptured = captured ? qtrue : qfalse;
++	if ( rtcwBrowserInputCaptured ) {
++		rtcwBrowserCaptureIntent = qfalse;
++	} else if ( rtcwBrowserStarted ) {
++		Key_ClearStates();
++	}
++}
++
++int RTCW_BrowserInputCaptured( void )
++{
++	return rtcwBrowserInputCaptured;
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerKey( int browserKey, int down )
++{
++	int key;
++
++	if ( !rtcwBrowserStarted ) {
++		return;
++	}
++
++	key = RTCW_BrowserTranslateControllerKey( browserKey );
++	if ( !key || key >= RTCW_BROWSER_CONTROLLER_KEYS ||
++		rtcwBrowserControllerKeys[ key ] == ( down ? 1 : 0 ) ) {
++		return;
++	}
++
++	if ( down && key == K_ENTER && RTCW_BrowserRuntimeState() == 0 ) {
++		rtcwBrowserCaptureIntent = qtrue;
++	}
++	rtcwBrowserControllerKeys[ key ] = down ? 1 : 0;
++	CL_KeyEvent( key, down ? qtrue : qfalse, Sys_Milliseconds() );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerReleaseAll( void )
++{
++	int key;
++
++	for ( key = 0; key < RTCW_BROWSER_CONTROLLER_KEYS; key++ ) {
++		if ( rtcwBrowserControllerKeys[ key ] ) {
++			CL_KeyEvent( key, qfalse, Sys_Milliseconds() );
++			rtcwBrowserControllerKeys[ key ] = 0;
++		}
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserControllerLook( float x, float y )
++{
++	if ( rtcwBrowserStarted && RTCW_BrowserRuntimeState() == 1 ) {
++		CL_MouseEvent( (int)x, (int)y, Sys_Milliseconds() );
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserOpenMenu( void )
++{
++	if ( !rtcwBrowserStarted || RTCW_BrowserRuntimeState() != 1 ) {
++		return;
++	}
++	RTCW_BrowserControllerReleaseAll();
++	CL_KeyEvent( K_ESCAPE, qtrue, Sys_Milliseconds() );
++	CL_KeyEvent( K_ESCAPE, qfalse, Sys_Milliseconds() );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserConfigureControls( void )
++{
++	if ( !rtcwBrowserStarted ) {
++		return;
++	}
++	Key_SetBinding( 'w', "+forward" );
++	Key_SetBinding( 's', "+back" );
++	Key_SetBinding( 'a', "+moveleft" );
++	Key_SetBinding( 'd', "+moveright" );
++	Key_SetBinding( K_SPACE, "+moveup" );
++	Key_SetBinding( 'c', "+movedown" );
++	Key_SetBinding( 'r', "+reload" );
++	Key_SetBinding( 'e', "+activate" );
++	Key_SetBinding( 'q', "weapnext" );
++	Key_SetBinding( K_MOUSE1, "+attack" );
++	Key_SetBinding( K_MOUSE2, "+attack2" );
++	Key_SetBinding( K_MWHEELDOWN, "weapprev" );
++	Key_SetBinding( K_MWHEELUP, "weapnext" );
++	Key_SetBinding( K_TAB, "+scores" );
++	Key_SetBinding( K_SHIFT, "+sprint" );
++	Cvar_Set( "cl_freelook", "1" );
++	Cvar_Set( "m_filter", "0" );
++	Cvar_Set( "sensitivity", "5" );
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserControlsMask( void )
++{
++	int mask = 0;
++	if ( Key_GetBinding( 'w' ) && !Q_stricmp( Key_GetBinding( 'w' ), "+forward" ) ) mask |= 1;
++	if ( Key_GetBinding( 's' ) && !Q_stricmp( Key_GetBinding( 's' ), "+back" ) ) mask |= 2;
++	if ( Key_GetBinding( 'a' ) && !Q_stricmp( Key_GetBinding( 'a' ), "+moveleft" ) ) mask |= 4;
++	if ( Key_GetBinding( 'd' ) && !Q_stricmp( Key_GetBinding( 'd' ), "+moveright" ) ) mask |= 8;
++	if ( Key_GetBinding( K_MOUSE1 ) && !Q_stricmp( Key_GetBinding( K_MOUSE1 ), "+attack" ) ) mask |= 16;
++	if ( Key_GetBinding( K_SPACE ) && !Q_stricmp( Key_GetBinding( K_SPACE ), "+moveup" ) ) mask |= 32;
++	if ( Cvar_VariableIntegerValue( "cl_freelook" ) == 1 ) mask |= 64;
++	if ( Cvar_VariableIntegerValue( "m_filter" ) == 0 ) mask |= 128;
++	return mask;
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserWriteConfiguration( void )
++{
++	if ( rtcwBrowserStarted ) {
++		Com_WriteConfiguration();
++		RTCW_BrowserPersistenceChanged( 0 );
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserSetPlayerName( const char *name )
++{
++	if ( rtcwBrowserStarted && name && name[ 0 ] ) {
++		Cvar_Set( "name", name );
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserApplyPreferences( int quality, int fps )
++{
++	if ( !rtcwBrowserStarted ) {
++		return;
++	}
++	quality = Com_Clamp( 0, 2, quality );
++	Cvar_SetValue( "r_picmip", 2 - quality );
++	Cvar_SetValue( "r_lodbias", 2 - quality );
++	Cvar_SetValue( "r_subdivisions", quality == 2 ? 4 : ( quality == 1 ? 8 : 16 ) );
++	Cvar_SetValue( "r_dynamiclight", quality > 0 ? 1 : 0 );
++	Cvar_SetValue( "com_maxfps", Com_Clamp( 20, 240, fps ) );
++}
++
++EMSCRIPTEN_KEEPALIVE void RTCW_BrowserResize( int width, int height )
++{
++	if ( !rtcwBrowserStarted || width < 2 || height < 2 || width > 8192 || height > 8192 ) {
++		return;
++	}
++	if ( !GLimp_BrowserResize( width, height ) ) {
++		return;
++	}
++	cls.glconfig.vidWidth = width;
++	cls.glconfig.vidHeight = height;
++	cls.glconfig.windowAspect = (float)width / (float)height;
++	Cvar_SetValue( "r_mode", -1 );
++	Cvar_SetValue( "r_customwidth", width );
++	Cvar_SetValue( "r_customheight", height );
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRenderWidth( void )
++{
++	return rtcwBrowserStarted ? cls.glconfig.vidWidth : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int RTCW_BrowserRenderHeight( void )
++{
++	return rtcwBrowserStarted ? cls.glconfig.vidHeight : 0;
++}
++#endif
++
+ /*
+ =================
+ Sys_SetBinaryPath
+@@ -770,6 +1009,10 @@ int main( int argc, char **argv )
+ 	Com_Init( commandLine );
+ 	NET_Init( );
+ 
++#if defined(__EMSCRIPTEN__) && !defined(DEDICATED)
++	rtcwBrowserStarted = qtrue;
++#endif
++
+ 	signal( SIGILL, Sys_SigHandler );
+ 	signal( SIGFPE, Sys_SigHandler );
+ 	signal( SIGSEGV, Sys_SigHandler );
+-- 
+2.53.0
+

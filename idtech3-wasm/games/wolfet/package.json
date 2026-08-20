@@ -1,0 +1,38 @@
+{
+  "name": "wolfet-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Wolfenstein: Enemy Territory in the browser with shared Vanilla and Arcade matches",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theodorecharles/wolfet-wasm.git"
+  },
+  "scripts": {
+    "setup": "npm run setup:engine && npm run setup:data && npm run build:tools && npm run build:pak && npm run build:server-mod",
+    "setup:data": "sh scripts/fetch-game-data.sh",
+    "setup:engine": "sh scripts/setup-etlegacy.sh",
+    "reference:quakejs": "sh scripts/setup-quakejs-reference.sh",
+    "sync:framework": "sh scripts/sync-framework.sh",
+    "prestart": "npm run sync:framework",
+    "pretest": "npm run sync:framework",
+    "build": "npm run build:tools && npm run build:pak && npm run build:server-mod && npm run build:web",
+    "build:tools": "sh scripts/build-tools.sh",
+    "build:pak": "sh scripts/build-etjs-pak.sh",
+    "build:server-mod": "sh scripts/build-server-mod.sh",
+    "build:web": "sh scripts/build-web-client.sh",
+    "start": "node server/index.js",
+    "test": "node --test tests/*.test.js",
+    "test:e2e": "node scripts/playwright-etjs.js",
+    "playwright:install": "playwright install chromium"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "playwright": "1.57.0"
+  }
+}

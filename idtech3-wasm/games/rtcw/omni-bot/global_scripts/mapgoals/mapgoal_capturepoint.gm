@@ -1,0 +1,44 @@
+this.GoalType = "CapPoint";
+this.Version = 1;
+this.DefaultPriority = 1.1;
+this.MinRadius = 32;
+this.RolePriorityBonus = 0.1;
+
+//////////////////////////////////////////////////////////////////////////
+
+this.UpgradeVersion = function(Props)
+{
+	if(Props.Version==0)
+	{
+		//upgrade from old waypoint format
+		Props.Version = 1;
+
+		this.SetPosition(this.GetPosition() + Util.WaypointGoalOffset);
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+this.Render = function()
+{
+	offset2 = Vector3(0,0,64);
+
+	while(this.RenderGoal)
+	{
+		goalBasePos = this.GetPosition();
+		goalPos = goalBasePos + offset2;
+
+		this.RenderDefault();
+
+		if(this.IsDisabled())
+		{
+			DrawLine(goalPos,goalBasePos,COLOR.RED,2);
+		}
+		else
+		{
+			DrawLine(goalPos,goalBasePos,COLOR.GREEN,2);
+		}
+
+		sleep(2);
+	}
+};

@@ -1,0 +1,421 @@
+From 1bf7b377e01c5ddb85572c9aeef34d864650dd82 Mon Sep 17 00:00:00 2001
+From: Ted Charles <me@tedcharles.net>
+Date: Sat, 15 Aug 2026 15:30:47 -0400
+Subject: [PATCH] Multiply map albedo and lightmaps in one WebGL shader
+
+Sequential framebuffer blend never applied the second pass, so the
+world was either fullbright textures or lightmaps only. Sample both
+in one program like WolfET.
+---
+ MP/Makefile                 |   1 +
+ MP/code/renderer/tr_es2.c   | 325 ++++++++++++++++++++++++++++++++++++
+ MP/code/renderer/tr_local.h |   7 +
+ MP/code/renderer/tr_shade.c |  23 +--
+ 4 files changed, 340 insertions(+), 16 deletions(-)
+ create mode 100644 MP/code/renderer/tr_es2.c
+
+diff --git a/MP/Makefile b/MP/Makefile
+index a6addb0..047ed28 100644
+--- a/MP/Makefile
++++ b/MP/Makefile
+@@ -2011,6 +2011,7 @@ Q3ROBJ = \
+   $(B)/renderer/tr_noise.o \
+   $(B)/renderer/tr_scene.o \
+   $(B)/renderer/tr_shade.o \
++  $(B)/renderer/tr_es2.o \
+   $(B)/renderer/tr_shade_calc.o \
+   $(B)/renderer/tr_shader.o \
+   $(B)/renderer/tr_shadows.o \
+diff --git a/MP/code/renderer/tr_es2.c b/MP/code/renderer/tr_es2.c
+new file mode 100644
+index 0000000..0afac9d
+--- /dev/null
++++ b/MP/code/renderer/tr_es2.c
+@@ -0,0 +1,325 @@
++#include "tr_local.h"
++
++#ifdef __EMSCRIPTEN__
++
++#ifndef GL_VERTEX_SHADER
++#define GL_VERTEX_SHADER        0x8B31
++#endif
++#ifndef GL_FRAGMENT_SHADER
++#define GL_FRAGMENT_SHADER      0x8B30
++#endif
++#ifndef GL_COMPILE_STATUS
++#define GL_COMPILE_STATUS       0x8B81
++#endif
++#ifndef GL_LINK_STATUS
++#define GL_LINK_STATUS          0x8B82
++#endif
++#ifndef GL_ARRAY_BUFFER
++#define GL_ARRAY_BUFFER         0x8892
++#endif
++#ifndef GL_STREAM_DRAW
++#define GL_STREAM_DRAW          0x88E0
++#endif
++#ifndef GL_TEXTURE0
++#define GL_TEXTURE0             0x84C0
++#endif
++#ifndef GL_TEXTURE1
++#define GL_TEXTURE1             0x84C1
++#endif
++
++extern unsigned glCreateShader( unsigned type );
++extern void     glShaderSource( unsigned shader, int count, const char *const *string, const int *length );
++extern void     glCompileShader( unsigned shader );
++extern void     glGetShaderiv( unsigned shader, unsigned pname, int *params );
++extern void     glGetShaderInfoLog( unsigned shader, int bufSize, int *length, char *infoLog );
++extern unsigned glCreateProgram( void );
++extern void     glAttachShader( unsigned program, unsigned shader );
++extern void     glLinkProgram( unsigned program );
++extern void     glGetProgramiv( unsigned program, unsigned pname, int *params );
++extern void     glGetProgramInfoLog( unsigned program, int bufSize, int *length, char *infoLog );
++extern void     glUseProgram( unsigned program );
++extern int      glGetAttribLocation( unsigned program, const char *name );
++extern int      glGetUniformLocation( unsigned program, const char *name );
++extern void     glUniformMatrix4fv( int location, int count, unsigned char transpose, const float *value );
++extern void     glUniform1i( int location, int v0 );
++extern void     glUniform1f( int location, float v0 );
++extern void     glEnableVertexAttribArray( unsigned index );
++extern void     glDisableVertexAttribArray( unsigned index );
++extern void     glVertexAttribPointer( unsigned index, int size, unsigned type, unsigned char normalized, int stride, const void *pointer );
++extern void     glBindBuffer( unsigned target, unsigned buffer );
++extern void     glGenBuffers( int n, unsigned *buffers );
++extern void     glBufferData( unsigned target, long size, const void *data, unsigned usage );
++extern void     glActiveTexture( unsigned texture );
++extern void     glDrawArrays( unsigned mode, int first, int count );
++
++typedef struct {
++	float         x, y, z;
++	float         u0, v0;
++	float         u1, v1;
++	unsigned char r, g, b, a;
++} es2LmVert_t;
++
++static unsigned s_prog;
++static int      s_uMvp, s_uTex0, s_uTex1, s_uAdd;
++static int      s_aPos, s_aUv0, s_aUv1, s_aColor;
++static unsigned s_vbo;
++static qboolean s_ready;
++static qboolean s_failed;
++
++static void MatMul( float *out, const float *a, const float *b ) {
++	int i, j, k;
++	float tmp[16];
++
++	for ( i = 0; i < 4; i++ ) {
++		for ( j = 0; j < 4; j++ ) {
++			float s = 0.f;
++			for ( k = 0; k < 4; k++ ) {
++				s += a[k * 4 + j] * b[i * 4 + k];
++			}
++			tmp[i * 4 + j] = s;
++		}
++	}
++	Com_Memcpy( out, tmp, sizeof( tmp ) );
++}
++
++static unsigned Compile( unsigned type, const char *src ) {
++	unsigned sh = glCreateShader( type );
++	int ok = 0;
++	const char *p = src;
++
++	if ( !sh ) {
++		return 0;
++	}
++	glShaderSource( sh, 1, &p, NULL );
++	glCompileShader( sh );
++	glGetShaderiv( sh, GL_COMPILE_STATUS, &ok );
++	if ( !ok ) {
++		char log[256];
++		log[0] = 0;
++		glGetShaderInfoLog( sh, sizeof( log ) - 1, NULL, log );
++		ri.Printf( PRINT_ALL, "ES2 lightmap compile failed: %s\n", log );
++		return 0;
++	}
++	return sh;
++}
++
++static void ES2_Init( void ) {
++	static const char *vs =
++		"attribute vec3 a_pos;\n"
++		"attribute vec2 a_uv0;\n"
++		"attribute vec2 a_uv1;\n"
++		"attribute vec4 a_color;\n"
++		"uniform mat4 u_mvp;\n"
++		"varying highp vec2 v_uv0;\n"
++		"varying highp vec2 v_uv1;\n"
++		"varying vec4 v_color;\n"
++		"void main(){\n"
++		"  gl_Position = u_mvp * vec4(a_pos, 1.0);\n"
++		"  v_uv0 = a_uv0;\n"
++		"  v_uv1 = a_uv1;\n"
++		"  v_color = a_color;\n"
++		"}\n";
++	static const char *fs =
++		"precision highp float;\n"
++		"uniform sampler2D u_tex0;\n"
++		"uniform sampler2D u_tex1;\n"
++		"uniform float u_add;\n"
++		"varying highp vec2 v_uv0;\n"
++		"varying highp vec2 v_uv1;\n"
++		"varying vec4 v_color;\n"
++		"void main(){\n"
++		"  vec4 d = texture2D(u_tex0, v_uv0);\n"
++		"  vec4 l = texture2D(u_tex1, v_uv1);\n"
++		"  gl_FragColor = (u_add > 0.5) ? (d + l) * v_color : d * l * v_color;\n"
++		"}\n";
++	unsigned vsh, fsh;
++	int ok = 0;
++
++	if ( s_ready || s_failed ) {
++		return;
++	}
++	vsh = Compile( GL_VERTEX_SHADER, vs );
++	fsh = Compile( GL_FRAGMENT_SHADER, fs );
++	if ( !vsh || !fsh ) {
++		s_failed = qtrue;
++		return;
++	}
++	s_prog = glCreateProgram();
++	glAttachShader( s_prog, vsh );
++	glAttachShader( s_prog, fsh );
++	glLinkProgram( s_prog );
++	glGetProgramiv( s_prog, GL_LINK_STATUS, &ok );
++	if ( !ok ) {
++		char log[256];
++		log[0] = 0;
++		glGetProgramInfoLog( s_prog, sizeof( log ) - 1, NULL, log );
++		ri.Printf( PRINT_ALL, "ES2 lightmap link failed: %s\n", log );
++		s_failed = qtrue;
++		return;
++	}
++	s_aPos = glGetAttribLocation( s_prog, "a_pos" );
++	s_aUv0 = glGetAttribLocation( s_prog, "a_uv0" );
++	s_aUv1 = glGetAttribLocation( s_prog, "a_uv1" );
++	s_aColor = glGetAttribLocation( s_prog, "a_color" );
++	s_uMvp = glGetUniformLocation( s_prog, "u_mvp" );
++	s_uTex0 = glGetUniformLocation( s_prog, "u_tex0" );
++	s_uTex1 = glGetUniformLocation( s_prog, "u_tex1" );
++	s_uAdd = glGetUniformLocation( s_prog, "u_add" );
++	glGenBuffers( 1, &s_vbo );
++	s_ready = qtrue;
++	ri.Printf( PRINT_ALL, "...ES2 lightmap program ready\n" );
++}
++
++static image_t *BundleImage( textureBundle_t *bundle ) {
++	int64_t index;
++
++	if ( !bundle || !bundle->image[0] ) {
++		return tr.defaultImage;
++	}
++	if ( bundle->numImageAnimations <= 1 ) {
++		return bundle->image[0];
++	}
++	index = (int64_t)( tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE );
++	index >>= FUNCTABLE_SIZE2;
++	if ( index < 0 ) {
++		index = 0;
++	}
++	while ( index >= bundle->numImageAnimations ) {
++		index -= bundle->numImageAnimations;
++	}
++	return bundle->image[index];
++}
++
++qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
++							  textureBundle_t *diff, float ( *diffTc )[2],
++							  textureBundle_t *lm, float ( *lmTc )[2],
++							  qboolean add ) {
++	static es2LmVert_t packed[1536];
++	float mvp[16];
++	image_t *diffImg, *lmImg;
++	int i, out, packedCap;
++	const int stride = (int)sizeof( es2LmVert_t );
++	const glIndex_t *indexes;
++
++	if ( !input || !diff || !lm || !diffTc || !lmTc ) {
++		return qfalse;
++	}
++	if ( input->numIndexes < 3 || input->numVertexes < 3 ) {
++		return qfalse;
++	}
++
++	ES2_Init();
++	if ( !s_ready ) {
++		return qfalse;
++	}
++
++	diffImg = BundleImage( diff );
++	lmImg = BundleImage( lm );
++	if ( !diffImg || !lmImg ) {
++		return qfalse;
++	}
++
++	GL_State( GLS_DEFAULT );
++	MatMul( mvp, backEnd.viewParms.projectionMatrix, backEnd.or.modelMatrix );
++
++	glActiveTexture( GL_TEXTURE0 );
++	qglBindTexture( GL_TEXTURE_2D, diffImg->texnum );
++	glState.currenttextures[0] = (int)diffImg->texnum;
++	glActiveTexture( GL_TEXTURE1 );
++	qglBindTexture( GL_TEXTURE_2D, lmImg->texnum );
++	glActiveTexture( GL_TEXTURE0 );
++
++	glUseProgram( s_prog );
++	glUniformMatrix4fv( s_uMvp, 1, 0, mvp );
++	if ( s_uTex0 >= 0 ) {
++		glUniform1i( s_uTex0, 0 );
++	}
++	if ( s_uTex1 >= 0 ) {
++		glUniform1i( s_uTex1, 1 );
++	}
++	if ( s_uAdd >= 0 ) {
++		glUniform1f( s_uAdd, add ? 1.f : 0.f );
++	}
++
++	indexes = input->indexes;
++	packedCap = (int)( sizeof( packed ) / sizeof( packed[0] ) );
++	i = 0;
++	while ( i + 2 < input->numIndexes ) {
++		out = 0;
++		while ( i + 2 < input->numIndexes && out + 3 <= packedCap ) {
++			unsigned id0 = indexes[i];
++			unsigned id1 = indexes[i + 1];
++			unsigned id2 = indexes[i + 2];
++			i += 3;
++			if ( id0 >= (unsigned)input->numVertexes
++				 || id1 >= (unsigned)input->numVertexes
++				 || id2 >= (unsigned)input->numVertexes ) {
++				continue;
++			}
++#define PACK( dst, id ) \
++	do { \
++		( dst ).x = tess.xyz[id][0]; \
++		( dst ).y = tess.xyz[id][1]; \
++		( dst ).z = tess.xyz[id][2]; \
++		( dst ).u0 = diffTc[id][0]; \
++		( dst ).v0 = diffTc[id][1]; \
++		( dst ).u1 = lmTc[id][0]; \
++		( dst ).v1 = lmTc[id][1]; \
++		( dst ).r = tess.svars.colors[id][0]; \
++		( dst ).g = tess.svars.colors[id][1]; \
++		( dst ).b = tess.svars.colors[id][2]; \
++		( dst ).a = tess.svars.colors[id][3]; \
++	} while ( 0 )
++			PACK( packed[out], id0 );
++			out++;
++			PACK( packed[out], id1 );
++			out++;
++			PACK( packed[out], id2 );
++			out++;
++#undef PACK
++		}
++		if ( out < 3 ) {
++			break;
++		}
++		glBindBuffer( GL_ARRAY_BUFFER, s_vbo );
++		glBufferData( GL_ARRAY_BUFFER, (long)out * (long)stride, packed, GL_STREAM_DRAW );
++		if ( s_aPos >= 0 ) {
++			glEnableVertexAttribArray( (unsigned)s_aPos );
++			glVertexAttribPointer( (unsigned)s_aPos, 3, GL_FLOAT, 0, stride, (const void *)0 );
++		}
++		if ( s_aUv0 >= 0 ) {
++			glEnableVertexAttribArray( (unsigned)s_aUv0 );
++			glVertexAttribPointer( (unsigned)s_aUv0, 2, GL_FLOAT, 0, stride, (const void *)( sizeof( float ) * 3 ) );
++		}
++		if ( s_aUv1 >= 0 ) {
++			glEnableVertexAttribArray( (unsigned)s_aUv1 );
++			glVertexAttribPointer( (unsigned)s_aUv1, 2, GL_FLOAT, 0, stride, (const void *)( sizeof( float ) * 5 ) );
++		}
++		if ( s_aColor >= 0 ) {
++			glEnableVertexAttribArray( (unsigned)s_aColor );
++			glVertexAttribPointer( (unsigned)s_aColor, 4, GL_UNSIGNED_BYTE, 1, stride, (const void *)( sizeof( float ) * 7 ) );
++		}
++		glDrawArrays( GL_TRIANGLES, 0, out );
++	}
++
++	if ( s_aPos >= 0 ) {
++		glDisableVertexAttribArray( (unsigned)s_aPos );
++	}
++	if ( s_aUv0 >= 0 ) {
++		glDisableVertexAttribArray( (unsigned)s_aUv0 );
++	}
++	if ( s_aUv1 >= 0 ) {
++		glDisableVertexAttribArray( (unsigned)s_aUv1 );
++	}
++	if ( s_aColor >= 0 ) {
++		glDisableVertexAttribArray( (unsigned)s_aColor );
++	}
++	glBindBuffer( GL_ARRAY_BUFFER, 0 );
++	glUseProgram( 0 );
++	glActiveTexture( GL_TEXTURE1 );
++	qglBindTexture( GL_TEXTURE_2D, 0 );
++	glActiveTexture( GL_TEXTURE0 );
++	return qtrue;
++}
++
++#endif
+\ No newline at end of file
+diff --git a/MP/code/renderer/tr_local.h b/MP/code/renderer/tr_local.h
+index a442153..981e66a 100644
+--- a/MP/code/renderer/tr_local.h
++++ b/MP/code/renderer/tr_local.h
+@@ -1508,6 +1508,13 @@ void RB_EndSurface( void );
+ void RB_CheckOverflow( int verts, int indexes );
+ #define RB_CHECKOVERFLOW( v,i ) if ( tess.numVertexes + ( v ) >= SHADER_MAX_VERTEXES || tess.numIndexes + ( i ) >= SHADER_MAX_INDEXES ) {RB_CheckOverflow( v,i );}
+ 
++#ifdef __EMSCRIPTEN__
++qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
++							  textureBundle_t *diff, float ( *diffTc )[2],
++							  textureBundle_t *lm, float ( *lmTc )[2],
++							  qboolean add );
++#endif
++
+ void RB_StageIteratorGeneric( void );
+ void RB_StageIteratorSky( void );
+ void RB_StageIteratorVertexLitTexture( void );
+diff --git a/MP/code/renderer/tr_shade.c b/MP/code/renderer/tr_shade.c
+index 93ef39e..83a4c48 100644
+--- a/MP/code/renderer/tr_shade.c
++++ b/MP/code/renderer/tr_shade.c
+@@ -410,28 +410,19 @@ static void RB_DrawAlbedoThenLightmap( shaderCommands_t *input,
+ 									   textureBundle_t *diff, float ( *diffTc )[2],
+ 									   textureBundle_t *lm, float ( *lmTc )[2],
+ 									   qboolean add ) {
++	/* FFP blend of a second pass never multiplies on WebGL. One
++	 * shader samples albedo * lightmap so both stay visible. */
++	if ( !r_lightmap->integer
++		 && RB_ES2_DrawLightmap( input, diff, diffTc, lm, lmTc, add ) ) {
++		return;
++	}
++
+ 	GL_SelectTexture( 0 );
+ 	GL_State( GLS_DEFAULT );
+ 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
+ 	qglTexCoordPointer( 2, GL_FLOAT, 0, diffTc );
+ 	R_BindAnimatedImage( diff );
+ 	R_DrawElements( input->numIndexes, input->indexes );
+-
+-	if ( r_lightmap->integer || !lm || !lm->image[0] ) {
+-		return;
+-	}
+-
+-	qglTexCoordPointer( 2, GL_FLOAT, 0, lmTc );
+-	R_BindAnimatedImage( lm );
+-	if ( add ) {
+-		GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
+-	} else {
+-		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO );
+-	}
+-	qglEnable( GL_POLYGON_OFFSET_FILL );
+-	qglPolygonOffset( -8.0f, -8.0f );
+-	R_DrawElements( input->numIndexes, input->indexes );
+-	qglDisable( GL_POLYGON_OFFSET_FILL );
+ }
+ #endif
+ 
+-- 
+2.53.0
+
