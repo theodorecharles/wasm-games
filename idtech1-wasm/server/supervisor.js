@@ -3,7 +3,7 @@
 
 const http = require('node:http');
 const path = require('node:path');
-const { spawn } = require('node:child_process');
+const { execFileSync, spawn } = require('node:child_process');
 const { attachClassicWebSocketProxy } = require('./classic-ws-proxy');
 const { attachZandronumWebSocketProxy } = require('./zandronum-ws-proxy');
 
@@ -19,6 +19,19 @@ const CLASSIC_SERVER = String(process.env.IDTECH1_CLASSIC_SERVER || '/usr/games/
 const ZANDRONUM_SERVER = String(process.env.IDTECH1_ZANDRONUM_SERVER || '/opt/zandronum/zandronum-server');
 const ZANDRONUM_ROOT = path.resolve(process.env.IDTECH1_ZANDRONUM_ROOT || path.dirname(ZANDRONUM_SERVER));
 const DATA_ROOT = path.resolve(process.env.WASM_GAME_DATA_ROOT || '/data');
+
+function classicEngineVersion() {
+  try {
+    const value = execFileSync(CLASSIC_SERVER, ['--version'], {
+      encoding: 'utf8', timeout: 3000, stdio: ['ignore', 'pipe', 'ignore']
+    }).trim();
+    return value || path.basename(CLASSIC_SERVER);
+  } catch (_) {
+    return path.basename(CLASSIC_SERVER);
+  }
+}
+
+const CLASSIC_ENGINE = classicEngineVersion();
 
 let classicProxy = null;
 let zandronumProxy = null;
@@ -197,7 +210,7 @@ function publicStatus() {
   return Object.freeze({
     ...lifecycle.status(),
     mode: modern ? 'modernized' : 'classic',
-    engine: modern ? 'Zandronum 3.3-alpha' : 'Chocolate Doom 3.1.1 compatible',
+    engine: modern ? 'Zandronum 3.3-alpha' : CLASSIC_ENGINE,
     variant: activeVariant,
     connect: modern ? `127.0.0.1:${ZANDRONUM_PORT}` : '1',
     wsPath: modern ? '/ws/zandronum' : '/ws/classic',

@@ -15,9 +15,10 @@ Every case must prove all of the following or the test exits nonzero:
 - closing both clients makes the framework-managed server sleep automatically;
 - Modernized uses Zandronum with two server-side bots (four total players).
 
-Original and Smooth use the Chocolate-compatible server and assign the two
-browser clients slots 0 and 1. Modernized assigns them slots 2 and 3 after the
-two bots.
+Original and Smooth use the official Chocolate Doom 3.1.1 dedicated server
+(built from pinned commit `410d96855b5df5410ff591a90efeafa889119224`) and
+assign the two browser clients slots 0 and 1. Modernized assigns them slots 2
+and 3 after the two bots.
 
 Reproduce the complete proof from a running local supervisor and two Chrome
 CDP endpoints on ports 9225 and 9226:

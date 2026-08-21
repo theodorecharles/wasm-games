@@ -70,6 +70,8 @@ build() {
        test ! -e /opt/game-site/index.html && \
        test ! -e /opt/game-site/service-worker.js && \
        test ! -e /opt/game-site/app.webmanifest"
+    [[ "$(docker run --rm --entrypoint /usr/games/chocolate-server "${image_ref}" --version)" == \
+       'Chocolate Doom 3.1.1' ]]
     [[ "$(docker inspect --format '{{json .Config.Entrypoint}}' "${image_ref}")" == \
        '["/usr/bin/tini","--","node","/opt/idtech1-server/supervisor.js"]' ]]
     echo "verified ${image_ref} (${variant}, framework ${required_framework_version})"
