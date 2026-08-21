@@ -1,0 +1,3050 @@
+diff --git a/src/Mac/DirectX_9/CDirect3DDevice.c b/src/Mac/DirectX_9/CDirect3DDevice.c
+index ba56873..8dd423c 100644
+--- a/src/Mac/DirectX_9/CDirect3DDevice.c
++++ b/src/Mac/DirectX_9/CDirect3DDevice.c
+@@ -1783,9 +1783,13 @@ HRESULT CDirect3DDevice_DrawIndexedPrimitive(const CDirect3DDevice *_this,
+ 
+     if (1)
+     {
++#ifndef __EMSCRIPTEN__
+         extern void glBindTexture(unsigned int, unsigned int);
++#endif
+         {
++#ifndef __EMSCRIPTEN__
+             extern void glBindTexture(unsigned int, unsigned int);
++#endif
+             DWORD colorOp = g_textureStageState[0][D3DTSS_COLOROP];
+             unsigned int glTexID;
+             GfxImage *materialImage = NULL;
+diff --git a/src/PC/game_mp/g_client_script_cmd_mp.c b/src/PC/game_mp/g_client_script_cmd_mp.c
+index 9878c5b..f79705a 100644
+--- a/src/PC/game_mp/g_client_script_cmd_mp.c
++++ b/src/PC/game_mp/g_client_script_cmd_mp.c
+@@ -110,6 +110,12 @@ extern Bool BG_IsWeaponValid(const playerState_t *ps, int weaponIndex);
+ extern qboolean G_GivePlayerWeapon(playerState_t *pPS, int iWeaponIndex);
+ extern void G_SelectWeaponIndex(int clientNum, int iWeaponIndex);
+ extern void G_SetEquippedOffHand(int clientNum, int offHandIndex);
++extern qboolean SV_BotIsTestClient(int clientNum);
++extern qboolean SV_BotStop(int clientNum);
++extern qboolean SV_BotSetMovement(int clientNum, int forward, int right);
++extern qboolean SV_BotSetAngles(int clientNum, const vec_t *angles);
++extern qboolean SV_BotSetWeapon(int clientNum, int weapon);
++extern qboolean SV_BotSetAction(int clientNum, const char *action);
+ extern void BG_PlayerStateToEntityState(playerState_t *ps, gentity_t *ent, qboolean snap, qboolean forceSnap);
+ extern void SetClientViewAngle(gentity_t *ent, const vec_t *angles);
+ extern void Cmd_Score_f(gentity_t *ent);
+@@ -958,6 +964,127 @@ unsigned int PlayerCmd_GetGuid(scr_entref_t entref)
+     return Scr_AddInt(SV_GetGuid(entref.entnum));
+ }
+ 
++static gentity_t *PlayerCmd_GetBotEntity(scr_entref_t entref)
++{
++    gentity_t *pSelf = PlayerCmd_GetPlayerEntity(entref);
++
++    if (!pSelf)
++        return NULL;
++
++    if (!SV_BotIsTestClient(entref.entnum)) {
++        Scr_ObjectError(va("entity %i is not a test client", (int)entref.entnum));
++        return NULL;
++    }
++
++    return pSelf;
++}
++
++static qboolean PlayerCmd_BotParamCount(unsigned int expected, const char *usage)
++{
++    if (Scr_GetNumParam() == expected)
++        return 1;
++
++    Scr_Error(usage);
++    return 0;
++}
++
++static void PlayerCmd_BotIsBot(scr_entref_t entref)
++{
++    if (!PlayerCmd_BotParamCount(0, "USAGE: self isBot()\n"))
++        return;
++
++    if (!PlayerCmd_GetPlayerEntity(entref))
++        return;
++
++    Scr_AddBool(SV_BotIsTestClient(entref.entnum));
++}
++
++static void PlayerCmd_BotStop(scr_entref_t entref)
++{
++    if (!PlayerCmd_BotParamCount(0, "USAGE: self botStop()\n") ||
++        !PlayerCmd_GetBotEntity(entref)) {
++        return;
++    }
++
++    Scr_AddBool(SV_BotStop(entref.entnum));
++}
++
++static void PlayerCmd_BotMovement(scr_entref_t entref)
++{
++    int forward;
++    int right;
++
++    if (!PlayerCmd_BotParamCount(2, "USAGE: self botMovement(<forward>, <right>)\n") ||
++        !PlayerCmd_GetBotEntity(entref)) {
++        return;
++    }
++
++    forward = Scr_GetInt(0);
++    right = Scr_GetInt(1);
++    Scr_AddBool(SV_BotSetMovement(entref.entnum, forward, right));
++}
++
++static void PlayerCmd_BotAngles(scr_entref_t entref)
++{
++    gentity_t *pSelf;
++    vec3_t angles;
++
++    if (!PlayerCmd_BotParamCount(1, "USAGE: self botAngles(<angles>)\n"))
++        return;
++
++    pSelf = PlayerCmd_GetBotEntity(entref);
++    if (!pSelf)
++        return;
++
++    Scr_GetVector(0, angles);
++    SetClientViewAngle(pSelf, angles);
++    Scr_AddBool(SV_BotSetAngles(entref.entnum, angles));
++}
++
++static void PlayerCmd_BotWeapon(scr_entref_t entref)
++{
++    gentity_t *pSelf;
++    const char *weaponName;
++    int weaponIndex;
++
++    if (!PlayerCmd_BotParamCount(1, "USAGE: self botWeapon(<weapon name>)\n"))
++        return;
++
++    pSelf = PlayerCmd_GetBotEntity(entref);
++    if (!pSelf)
++        return;
++
++    weaponName = Scr_GetString(0);
++    weaponIndex = G_GetWeaponIndexForName(weaponName);
++    if (!weaponIndex)
++        Scr_ParamError(0, va("unknown weapon '%s'", weaponName));
++
++    if (!PlayerCmd_HasWeapon(&pSelf->client->ps, weaponIndex)) {
++        Scr_AddBool(0);
++        return;
++    }
++
++    Scr_AddBool(SV_BotSetWeapon(entref.entnum, weaponIndex));
++}
++
++static void PlayerCmd_BotAction(scr_entref_t entref)
++{
++    const char *action;
++
++    if (!PlayerCmd_BotParamCount(1, "USAGE: self botAction(<+/-action>)\n") ||
++        !PlayerCmd_GetBotEntity(entref)) {
++        return;
++    }
++
++    action = Scr_GetString(0);
++    if (!SV_BotSetAction(entref.entnum, action)) {
++        Scr_ParamError(0, va("unknown bot action '%s'", action));
++        return;
++    }
++
++    Scr_AddBool(1);
++}
++
+ void PlayerCmd_giveWeapon(scr_entref_t entref)
+ {
+     gentity_t *pSelf = PlayerCmd_GetPlayerEntity(entref);
+@@ -1517,6 +1644,12 @@ static const BuiltinMethodDef player_methods[] __attribute__((used)) = {
+     { "setorigin", (BuiltinMethod)PlayerCmd_setOrigin, 0 },
+     { "setplayerangles", (BuiltinMethod)PlayerCmd_setAngles, 0 },
+     { "getplayerangles", (BuiltinMethod)PlayerCmd_getAngles, 0 },
++    { "isbot", (BuiltinMethod)PlayerCmd_BotIsBot, 0 },
++    { "botstop", (BuiltinMethod)PlayerCmd_BotStop, 0 },
++    { "botmovement", (BuiltinMethod)PlayerCmd_BotMovement, 0 },
++    { "botangles", (BuiltinMethod)PlayerCmd_BotAngles, 0 },
++    { "botweapon", (BuiltinMethod)PlayerCmd_BotWeapon, 0 },
++    { "botaction", (BuiltinMethod)PlayerCmd_BotAction, 0 },
+     { "usebuttonpressed", (BuiltinMethod)PlayerCmd_useButtonPressed, 0 },
+     { "attackbuttonpressed", (BuiltinMethod)PlayerCmd_attackButtonPressed, 0 },
+     { "meleebuttonpressed", (BuiltinMethod)PlayerCmd_meleeButtonPressed, 0 },
+diff --git a/src/PC/game_mp/g_main_mp.c b/src/PC/game_mp/g_main_mp.c
+index 0c3f40c..d389df6 100644
+--- a/src/PC/game_mp/g_main_mp.c
++++ b/src/PC/game_mp/g_main_mp.c
+@@ -482,7 +482,7 @@ extern void G_SpawnTriggerHurt(int numBrushModels);
+ extern void GScr_PostResetTimeout(void);
+ extern short int CheckTeamStatus(void);
+ extern void DeathmatchScoreboardMessage(gentity_t *ent);
+-extern const char *SL_ConvertToString(unsigned short index);
++extern const char *SL_ConvertToString(unsigned int index);
+ extern void Dvar_SetBool(const dvar_t *dvar, int value);
+ extern void SaveRegisteredWeapons(void);
+ extern void SaveRegisteredItems(void);
+@@ -694,7 +694,7 @@ extern void G_SpawnTriggerHurt(int numBrushModels);
+ extern void GScr_PostResetTimeout(void);
+ extern short int CheckTeamStatus(void);
+ extern void DeathmatchScoreboardMessage(gentity_t *ent);
+-extern const char *SL_ConvertToString(unsigned short index);
++extern const char *SL_ConvertToString(unsigned int index);
+ extern void Dvar_SetBool(const dvar_t *dvar, int value);
+ extern void SaveRegisteredWeapons(void);
+ extern void SaveRegisteredItems(void);
+diff --git a/src/PC/qcommon/md4.c b/src/PC/qcommon/md4.c
+index 07b27d2..5a9c622 100644
+--- a/src/PC/qcommon/md4.c
++++ b/src/PC/qcommon/md4.c
+@@ -1,5 +1,9 @@
++#ifdef COD2_DOWNSTREAM_WASM_CORE_PROBE
++#include "cod2_wasm_core_types.h"
++#else
+ #include "common_types.h"
+ #include "imports.h"
++#endif
+ #include <string.h>
+ 
+ extern void Com_Memcpy(void *dest, const void *src, int count);
+diff --git a/src/PC/server_mp/sv_client_mp.c b/src/PC/server_mp/sv_client_mp.c
+index 0f7a363..01747fb 100644
+--- a/src/PC/server_mp/sv_client_mp.c
++++ b/src/PC/server_mp/sv_client_mp.c
+@@ -56,6 +56,7 @@ extern void Z_VirtualFreeInternal(void *ptr);
+ 
+ extern void ClientDisconnect(int clientNum);
+ extern void SV_SetUserinfo(int index, const char *val);
++extern void SV_BotResetClient(int clientNum);
+ extern int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode);
+ extern void FS_Printf(fileHandle_t h, const char *fmt, ...);
+ extern char *I_CleanStr(char *string);
+@@ -1127,13 +1128,16 @@ challenge_found:
+ 
+ void SV_FreeClient(client_t *cl)
+ {
++    int clientNum = SV_ClientNumForClient(cl);
++
+     SV_CloseDownload(cl);
+ 
+     if (SV_Loaded()) {
+-        ClientDisconnect(SV_ClientNumForClient(cl));
++        ClientDisconnect(clientNum);
+     }
+ 
+-    SV_SetUserinfo(SV_ClientNumForClient(cl), "");
++    SV_BotResetClient(clientNum);
++    SV_SetUserinfo(clientNum, "");
+     SV_FreeClientScriptId(cl);
+ }
+ 
+@@ -1744,6 +1748,7 @@ gentity_t *SV_AddTestClient(void)
+         return NULL;
+ 
+     cl->bIsTestClient = 1;
++    SV_BotResetClient(clientNum);
+     SV_SendClientGameState(cl);
+ 
+     memset(&nullcmd, 0, sizeof(nullcmd));
+diff --git a/src/PC/server_mp/sv_main_mp.c b/src/PC/server_mp/sv_main_mp.c
+index ed864fe..b52d227 100644
+--- a/src/PC/server_mp/sv_main_mp.c
++++ b/src/PC/server_mp/sv_main_mp.c
+@@ -16,10 +16,7 @@ extern void LargeLocal_LargeLocal(LargeLocal *ll, int size);
+ extern void *LargeLocal_GetBuf(LargeLocal *ll);
+ extern void ZN10LargeLocalD1Ev(LargeLocal *ll);
+ extern playerState_t *SV_GameClientNum(int num);
+-extern int G_GetClientArchiveTime(int clientNum);
+ extern void SV_ClientThink(client_t *cl, usercmd_t *cmd);
+-extern float randomf(void);
+-extern float crandom(void);
+ extern const char *Dvar_InfoString(int bit);
+ extern Bool Dvar_GetBool(const char *dvarName);
+ extern int Dvar_GetInt(const char *dvarName);
+@@ -132,6 +129,13 @@ void SV_PacketEvent(netadr_t from, msg_t *msg);
+ void SV_FreeClientScriptId(client_t *cl);
+ void SV_RunFrame(void);
+ void SV_BotUserMove(client_t *cl);
++qboolean SV_BotIsTestClient(int clientNum);
++void SV_BotResetClient(int clientNum);
++qboolean SV_BotStop(int clientNum);
++qboolean SV_BotSetMovement(int clientNum, int forward, int right);
++qboolean SV_BotSetAngles(int clientNum, const vec_t *angles);
++qboolean SV_BotSetWeapon(int clientNum, int weapon);
++qboolean SV_BotSetAction(int clientNum, const char *action);
+ void SV_SendServerCommand(client_t *cl, svscmd_type type, const char *fmt, ...);
+ void SV_Frame(int msec);
+ 
+@@ -803,50 +807,205 @@ void SV_RunFrame(void)
+     G_RunFrame(*(int *)((char *)&svs + 4));
+ }
+ 
+-void SV_BotUserMove(client_t *cl)
++#define COD2_BOT_MAX_CLIENTS 64
++
++typedef struct cod2BotCommandState_s {
++    int buttons;
++    signed char forwardmove;
++    signed char rightmove;
++    byte weapon;
++    qboolean hasWeapon;
++    vec3_t angles;
++    qboolean hasAngles;
++} cod2BotCommandState_t;
++
++typedef struct cod2BotActionDef_s {
++    const char *name;
++    int buttonMask;
++} cod2BotActionDef_t;
++
++/* These masks are the native CL_CmdButtons/CL_KeyMove usercmd contract. */
++static const cod2BotActionDef_t s_botActions[] = {
++    { "fire",        0x00001 },
++    { "melee",       0x00004 },
++    { "activate",    0x00008 },
++    { "reload",      0x00010 },
++    { "usereload",   0x00020 },
++    { "leanleft",    0x00040 },
++    { "leanright",   0x00080 },
++    { "goprone",     0x00100 },
++    { "gocrouch",    0x00200 },
++    { "gostand",     0x00400 },
++    { "jump",        0x00400 },
++    { "ads",         0x01000 },
++    { "binoculars",  0x04000 },
++    { "holdbreath",  0x08000 },
++    { "frag",        0x10000 },
++    { "smoke",       0x20000 },
++    { NULL,            0x00000 },
++};
++
++/*
++ * Test clients share client_t with network clients, and that reconstructed
++ * layout is pinned to the original 32-bit ABI. Keep bot intent out-of-line so
++ * adding browser/server bot support cannot move any reconstructed field.
++ */
++static cod2BotCommandState_t s_botCmdState[COD2_BOT_MAX_CLIENTS];
++
++static qboolean SV_BotClientNumInRange(int clientNum)
+ {
+-    usercmd_t nullcmd;
+-    int clientNum;
++    return clientNum >= 0 && clientNum < COD2_BOT_MAX_CLIENTS &&
++           svs.clients && sv_maxclients &&
++           clientNum < sv_maxclients->current.integer;
++}
+ 
+-    if (!cl->gentity)
++qboolean SV_BotIsTestClient(int clientNum)
++{
++    client_t *cl;
++
++    if (!SV_BotClientNumInRange(clientNum))
++        return 0;
++
++    cl = &svs.clients[clientNum];
++    return cl->state != 0 && cl->bIsTestClient &&
++           cl->netchan.remoteAddress.type == NA_BOT;
++}
++
++void SV_BotResetClient(int clientNum)
++{
++    if (clientNum < 0 || clientNum >= COD2_BOT_MAX_CLIENTS)
+         return;
+ 
+-    memset(&nullcmd, 0, sizeof(nullcmd));
++    memset(&s_botCmdState[clientNum], 0, sizeof(s_botCmdState[clientNum]));
++}
+ 
+-    clientNum = (int)(cl - svs.clients);
+-    nullcmd.weapon = (byte)SV_GameClientNum(clientNum)->weapon;
++qboolean SV_BotStop(int clientNum)
++{
++    cod2BotCommandState_t *state;
+ 
+-    if (!G_GetClientArchiveTime(clientNum)) {
+-        if (randomf() < 0.5f)
+-            nullcmd.buttons |= 1;
++    if (!SV_BotIsTestClient(clientNum))
++        return 0;
+ 
+-        if (randomf() < 0.5f)
+-            nullcmd.buttons |= 0x28;
++    state = &s_botCmdState[clientNum];
++    state->buttons = 0;
++    state->forwardmove = 0;
++    state->rightmove = 0;
++    return 1;
++}
+ 
+-        if (randomf() < 0.33000001311302185f) {
+-            nullcmd.forwardmove = 127;
+-        } else if (randomf() < 0.5f) {
+-            nullcmd.forwardmove = -127;
+-        }
++static signed char SV_BotClampMove(int value)
++{
++    if (value > 127)
++        return 127;
++    if (value < -127)
++        return -127;
++    return (signed char)value;
++}
++
++qboolean SV_BotSetMovement(int clientNum, int forward, int right)
++{
++    cod2BotCommandState_t *state;
++
++    if (!SV_BotIsTestClient(clientNum))
++        return 0;
++
++    state = &s_botCmdState[clientNum];
++    state->forwardmove = SV_BotClampMove(forward);
++    state->rightmove = SV_BotClampMove(right);
++    return 1;
++}
++
++qboolean SV_BotSetAngles(int clientNum, const vec_t *angles)
++{
++    cod2BotCommandState_t *state;
++
++    if (!angles || !SV_BotIsTestClient(clientNum))
++        return 0;
+ 
+-        if (randomf() < 0.33000001311302185f) {
+-            nullcmd.rightmove = 127;
+-        } else if (randomf() < 0.5f) {
+-            nullcmd.rightmove = -127;
++    state = &s_botCmdState[clientNum];
++    state->angles[0] = angles[0];
++    state->angles[1] = angles[1];
++    state->angles[2] = angles[2];
++    state->hasAngles = 1;
++    return 1;
++}
++
++qboolean SV_BotSetWeapon(int clientNum, int weapon)
++{
++    cod2BotCommandState_t *state;
++
++    if (weapon < 0 || weapon > 255 || !SV_BotIsTestClient(clientNum))
++        return 0;
++
++    state = &s_botCmdState[clientNum];
++    state->weapon = (byte)weapon;
++    state->hasWeapon = 1;
++    return 1;
++}
++
++qboolean SV_BotSetAction(int clientNum, const char *action)
++{
++    const cod2BotActionDef_t *def;
++    cod2BotCommandState_t *state;
++    qboolean pressed;
++
++    if (!SV_BotIsTestClient(clientNum) || !action ||
++        (action[0] != '+' && action[0] != '-') || !action[1]) {
++        return 0;
++    }
++
++    pressed = action[0] == '+';
++    state = &s_botCmdState[clientNum];
++
++    for (def = s_botActions; def->name; ++def) {
++        if (!strcmp(action + 1, def->name)) {
++            if (pressed)
++                state->buttons |= def->buttonMask;
++            else
++                state->buttons &= ~def->buttonMask;
++            return 1;
+         }
++    }
+ 
+-        if (randomf() < 0.33000001311302185f)
+-            nullcmd.angles[0] = (int)(crandom() * 360.0f);
++    return 0;
++}
+ 
+-        if (randomf() < 0.33000001311302185f)
+-            nullcmd.angles[1] = (int)(crandom() * 360.0f);
++void SV_BotUserMove(client_t *cl)
++{
++    cod2BotCommandState_t *state;
++    playerState_t *ps;
++    usercmd_t cmd;
++    int clientNum;
++    int i;
++    const float angleToShort = 65536.0f / 360.0f;
++
++    if (!cl->gentity)
++        return;
++
++    clientNum = (int)(cl - svs.clients);
++    if (!SV_BotIsTestClient(clientNum))
++        return;
++
++    state = &s_botCmdState[clientNum];
++    ps = SV_GameClientNum(clientNum);
++    if (!ps)
++        return;
+ 
+-        if (randomf() < 0.33000001311302185f)
+-            nullcmd.angles[2] = (int)(crandom() * 360.0f);
++    memset(&cmd, 0, sizeof(cmd));
++    cmd.serverTime = svs.time;
++    cmd.buttons = state->buttons;
++    cmd.forwardmove = state->forwardmove;
++    cmd.rightmove = state->rightmove;
++    cmd.weapon = state->hasWeapon ? state->weapon : (byte)ps->weapon;
++    cmd.offHandIndex = (byte)ps->offHandIndex;
++
++    for (i = 0; i < 3; ++i) {
++        float angle = state->hasAngles ? state->angles[i] : ps->viewangles[i];
++        cmd.angles[i] = ((int)(angle * angleToShort) & 0xffff) - ps->delta_angles[i];
+     }
+ 
+     cl->deltaMessage = cl->netchan.outgoingSequence - 1;
+-    SV_ClientThink(cl, &nullcmd);
++    SV_ClientThink(cl, &cmd);
+ }
+ 
+ void SV_SendServerCommand(client_t *cl, svscmd_type type, const char *fmt, ...)
+diff --git a/src/headers/PC/server_mp/sv_funcs.h b/src/headers/PC/server_mp/sv_funcs.h
+index 9df8138..e6a59fa 100644
+--- a/src/headers/PC/server_mp/sv_funcs.h
++++ b/src/headers/PC/server_mp/sv_funcs.h
+@@ -46,6 +46,13 @@ void SV_BeginDownload_f(client_t *cl);
+ void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta);
+ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
+ gentity_t *SV_AddTestClient(void);
++qboolean SV_BotIsTestClient(int clientNum);
++void SV_BotResetClient(int clientNum);
++qboolean SV_BotStop(int clientNum);
++qboolean SV_BotSetMovement(int clientNum, int forward, int right);
++qboolean SV_BotSetAngles(int clientNum, const vec_t *angles);
++qboolean SV_BotSetWeapon(int clientNum, int weapon);
++qboolean SV_BotSetAction(int clientNum, const char *action);
+ 
+ gentity_t *SV_GentityNum(int num);
+ playerState_t *SV_GameClientNum(int num);
+diff --git a/src/imports/opengl.h b/src/imports/opengl.h
+index 3c911f4..df5e1b3 100644
+--- a/src/imports/opengl.h
++++ b/src/imports/opengl.h
+@@ -1,11 +1,16 @@
+ #ifndef IMPORTS_OPENGL_H
+ #define IMPORTS_OPENGL_H
+ 
+-#ifdef __EMSCRIPTEN__
++#if defined(__EMSCRIPTEN__)
+ 
++#if defined(COD2_DOWNSTREAM_WASM)
++#include "downstream/wasm/web_gl_compat.h"
++#else
+ #include "web/webgl2_compat.h"
++#endif
+ 
+ void glBegin(unsigned int mode);
++void glBindTexture(unsigned int target, unsigned int texture);
+ int glBindVertexArrayAPPLE(unsigned int array);
+ int glBlendEquationEXT(unsigned int mode);
+ int glBlendFuncSeparateEXT(unsigned int srcRGB, unsigned int dstRGB, unsigned int srcAlpha, unsigned int dstAlpha);
+diff --git a/src/stubs/link_stubs.c b/src/stubs/link_stubs.c
+index 3503a56..9c638fb 100644
+--- a/src/stubs/link_stubs.c
++++ b/src/stubs/link_stubs.c
+@@ -730,8 +730,9 @@ char tr[64] __attribute__((aligned(4))) = { 0 };
+ char TXNSetTypeAttributes[64] __attribute__((aligned(4))) = { 0 };
+ extern unsigned char __ZN12UI_Component1gE[];
+ #ifdef __EMSCRIPTEN__
+-
+-unsigned char UI_Component_g[224] __attribute__((alias("__ZN12UI_Component1gE")));
++/* WebAssembly has no cross-object ELF-style aliases.  The reconstructed C UI
++ * module provides UI_Component_g directly; the generated BSS blob retains the
++ * separately named C++ storage symbol for address-table compatibility. */
+ #elif defined(_MSC_VER)
+ /* alias UI_Component_g -> the C++ member symbol. The C identifier
+  * __ZN12UI_Component1gE emits MSVC symbol ___ZN12UI_Component1gE (one extra
+diff --git a/src/web/README.md b/src/web/README.md
+deleted file mode 100644
+index ba28402..0000000
+--- a/src/web/README.md
++++ /dev/null
+@@ -1,208 +0,0 @@
+-# Web Build
+-
+-This target builds the port with Emscripten, SDL2, WASM, and WebGL2. With the
+-[Emscripten SDK](https://emscripten.org) active (`emcc` on PATH):
+-
+-```sh
+-emcmake cmake -S . -B build-web
+-cmake --build build-web -j
+-```
+-
+-Output is written to `build-web/` (`cod2.html`, `cod2.js`, `cod2.wasm`, and the
+-asset-loader `cod2_fs.js`). Serve that directory over HTTP and supply your own
+-data via the in-page folder picker.
+-
+-The build keeps no extra state; Emscripten's cache lives under the ignored
+-build directory.
+-
+-The target requests a WebGL2/ES3 context with:
+-
+-```text
+--sUSE_SDL=2 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES3=1
+-```
+-
+-## Asset loading (point the browser at your CoD2 install)
+-
+-The page never bundles game assets. On first run it shows a landing screen with
+-**"Select your Call of Duty 2 folder"**. The loader (`src/web/cod2_fs.js`) then:
+-
+-1. **Picks the folder** with the File System Access API
+-   (`showDirectoryPicker`, Chromium-only). Pick either the install root (the
+-   folder that contains `main/`) or `main/` itself. The folder is validated to
+-   look like a CoD2 install (it must contain `main/*.iwd`).
+-2. **Caches assets into OPFS** (Origin Private File System) — the iwd archives
+-   plus loose `*.cfg` / localization / config files the engine reads off disk.
+-   OPFS is disk-backed and persistent, so the data survives reloads and is never
+-   uploaded. A per-file freshness check (same size ⇒ skip) avoids re-copying.
+-   `navigator.storage.persist()` is requested so the cache is not evicted.
+-   Progress (per file and total MB) is shown.
+-3. **Remembers the folder**: the `FileSystemDirectoryHandle` is stored in
+-   IndexedDB. On reload the handle is read back and `queryPermission({mode:'read'})`
+-   is checked — if `granted`, the game resumes silently; if `prompt`, a
+-   **"Resume from …"** button calls `requestPermission`. If the disk handle is
+-   gone or permission is refused, the game boots straight from the OPFS cache
+-   (**"Play from cached assets"**). **Change folder** re-runs the picker;
+-   **Clear cache** wipes OPFS + the saved handle.
+-4. **Mounts the assets into the engine FS** and launches with
+-   `+set fs_basepath /cod2 +set fs_homepath /cod2home`, so `FS_Startup` finds
+-   `/cod2/main/*.iwd` and config/savegames persist under `/cod2home`.
+-
+-Non-Chromium browsers (no File System Access API) fall back to a
+-`<input webkitdirectory>` picker that streams the selected assets straight into
+-the engine FS for that session (no folder memory — that needs Chromium).
+-
+-### Zero-copy direct read (preferred): `make web WORKERFS=1`
+-
+-This variant reads the iwd archives **directly from the picked disk folder** —
+-**no copy into OPFS, no full-RAM load**. The folder is the live source; bytes are
+-sliced on demand as the engine seeks the ZIP central directory and per-file data.
+-
+-How it works:
+-
+-1. The shell (`src/web/shell.html`) calls `Cod2Fs.enumerateInstall(handle)`, which
+-   validates the folder and returns live `File` objects from the picked
+-   `FileSystemDirectoryHandle` (it also remembers the handle in IndexedDB). No
+-   bytes are read or copied at this point.
+-2. It mounts those File objects read-only with **WORKERFS**:
+-   `FS.mount(WORKERFS, { files: [{name:'main/iw_00.iwd', data:File}, …] }, '/cod2')`.
+-   WORKERFS serves **synchronous** slice reads via `FileReaderSync`, which only
+-   exists on a **Worker** thread — so `main()` must run on a worker.
+-3. `-sPROXY_TO_PTHREAD=1` (+ `-pthread`, SharedArrayBuffer) moves `main()` to a
+-   worker; SDL2's canvas/GL then uses **OffscreenCanvas**
+-   (`-sOFFSCREENCANVAS_SUPPORT=1`, `-sOFFSCREENCANVASES_TO_PTHREAD=#canvas` to
+-   transfer `#canvas` at startup).
+-4. The game launches with `+set fs_basepath /cod2 +set fs_homepath /cod2home`.
+-   `/cod2/main/*.iwd` resolves to the WORKERFS-mounted File objects.
+-5. **OPFS is used ONLY for `/cod2home`** (savegames, config, `players/`): the
+-   shell mirrors the small OPFS `home/` subtree into the writable FS on boot and
+-   flushes it back on an interval + at `pagehide`. The read-only assets are never
+-   duplicated.
+-
+-On reload the remembered handle is restored from IndexedDB and re-granted
+-(silent if `granted`, one click if `prompt`), then re-mounted — **no re-pick, no
+-copy**. There is no "play from cached assets" because nothing is cached.
+-
+-Because of `-pthread`, the page **must be served cross-origin isolated** with the
+-COOP/COEP headers shown below. `make web-serve` (Python's `http.server`) does NOT
+-send them — use a server that does.
+-
+-```text
+-Cross-Origin-Opener-Policy: same-origin
+-Cross-Origin-Embedder-Policy: require-corp
+-```
+-
+-Build:
+-
+-```sh
+-source /tmp/emsdk/emsdk_env.sh
+-EM_CACHE=/tmp/emscripten_cache TMPDIR=/tmp make web WORKERFS=1
+-```
+-
+-> **Status / honesty note.** The `WORKERFS=1` build links and produces the
+-> artifacts with the WORKERFS + `PROXY_TO_PTHREAD` + OffscreenCanvas flags. The
+-> mount wiring matches the emscripten WORKERFS API for the bundled emsdk.
+-> **In-browser verification (does SDL2's GL renderer run correctly on the worker
+-> with OffscreenCanvas, and do the synchronous WORKERFS reads satisfy
+-> `FS_Startup`'s random-access ZIP seeks) is the user's test — it has not been
+-> run in a real browser here.** If the SDL+GL+OffscreenCanvas combination misbehaves
+-> in your browser, the default `make web` (MEMFS) and `make web WASMFS=1` paths
+-> remain available as fallbacks, but those DO copy assets (into RAM / OPFS
+-> respectively).
+-
+-### Filesystem mount: MEMFS (default) vs WASMFS+OPFS vs WORKERFS
+-
+-There are three ways assets reach the C filesystem. **WORKERFS (above) is the
+-only true zero-copy path.** The two below copy the assets:
+-
+-* **Default `make web` — legacy MEMFS.** On boot the OPFS-cached files are
+-  streamed once into the in-memory FS at `/cod2`. Works on **any** static
+-  server (no special headers). Trade-off: the assets occupy wasm heap RAM
+-  (`-sALLOW_MEMORY_GROWTH=1` covers it), so trim to the maps you need.
+-
+-* **`make web WASMFS=1` — WASMFS + OPFS backend.** The C filesystem is backed by
+-  WASMFS and the OPFS tree is mounted directly at `/cod2`, so the engine reads
+-  iwd bytes **on demand** from OPFS — the archives are never copied into RAM.
+-  This is the preferred architecture for full installs. It adds `-sWASMFS`,
+-  `-DWEB_WASMFS` (activates `cod2_mount_opfs()` in
+-  `src/web/cod2_wasmfs_mount.c`),
+-  and **`-pthread`** (the OPFS backend proxies blocking I/O to a dedicated
+-  worker). Because of `-pthread`, the page **must be served cross-origin
+-  isolated** — the server has to send:
+-
+-  ```text
+-  Cross-Origin-Opener-Policy: same-origin
+-  Cross-Origin-Embedder-Policy: require-corp
+-  ```
+-
+-  Without those headers a `-pthread` build will not start. `make web-serve`
+-  (Python's `http.server`) does **not** send them, so for the WASMFS variant use
+-  a server that does (e.g. `emrun --no_browser` or a small static server that
+-  adds the COOP/COEP headers).
+-
+-## Manual browser test (requires a real browser — cannot be run here)
+-
+-1. Build and serve:
+-   ```sh
+-   source /tmp/emsdk/emsdk_env.sh
+-   EM_CACHE=/tmp/emscripten_cache TMPDIR=/tmp make web
+-   make web-serve        # serves build/web/ on http://localhost:8000
+-   ```
+-2. Open `http://localhost:8000/cod2.html` in **Chrome or Edge**.
+-3. Click **"Select your Call of Duty 2 folder"** and choose your CoD2 install
+-   (the folder containing `main/`). Approve the read permission.
+-4. Watch the copy progress (per-file + total MB). When it finishes the canvas
+-   appears and the game starts with `fs_basepath=/cod2`.
+-5. **Reload the page.** It should resume **without re-picking** — either silently
+-   (permission still granted) or via the **"Resume from …"** button. Disconnect
+-   the drive / move the folder and reload: it should offer **"Play from cached
+-   assets"** and boot from OPFS.
+-6. Use **Clear cache** to reset, and **Change folder** to point at a different
+-   install.
+-7. (Optional) Verify the OPFS cache exists: DevTools → Application → Storage →
+-   *Origin Private File System* should show `cod2/main/*.iwd`.
+-8. For the WASMFS on-demand variant: `make web WASMFS=1`, serve with COOP/COEP
+-   headers, and confirm it boots without copying the iwds into RAM.
+-
+-### Manual browser test — WORKERFS zero-copy (`make web WORKERFS=1`)
+-
+-This is the no-copy path. The page must be **cross-origin isolated** (COOP/COEP).
+-
+-1. Build:
+-   ```sh
+-   source /tmp/emsdk/emsdk_env.sh
+-   EM_CACHE=/tmp/emscripten_cache TMPDIR=/tmp make web WORKERFS=1
+-   ```
+-2. Serve `build/web/` over HTTP **with COOP/COEP headers** (plain `http.server`
+-   will not work — pthreads need cross-origin isolation). For example a tiny
+-   Python server that adds:
+-   ```text
+-   Cross-Origin-Opener-Policy: same-origin
+-   Cross-Origin-Embedder-Policy: require-corp
+-   ```
+-3. Open `http://localhost:PORT/cod2.html` in **Chrome or Edge**. Confirm the
+-   console shows the runtime initializing on a worker (PROXY_TO_PTHREAD).
+-4. Click **"Select your Call of Duty 2 folder"** and pick
+-   your Call of Duty 2 install directory (the folder containing `main/`). Grant
+-   read permission.
+-   It should say "Reading your install…" then "Mounting N files (read-only, no
+-   copy)…" and start — **with NO copy progress bar**, because nothing is copied.
+-5. Verify zero-copy: DevTools → Application → Storage → *Origin Private File
+-   System* should contain **only `home/`** (config/saves) and **NO `cod2/`**
+-   asset cache. The wasm heap should not balloon by the size of the iwds.
+-6. **Reload the page.** It resumes from the remembered handle — silently if
+-   permission is still `granted`, or via **"Resume from …"** (one click) if
+-   `prompt`. **No re-pick, no copy.**
+-7. **Change folder** re-runs the picker and re-mounts. **Clear cache** forgets
+-   the handle (and clears the OPFS `home/` profile).
+-
+-## Preloading (alternative)
+-
+-To package assets into Emscripten's virtual filesystem at build time instead,
+-pass paths through `WEB_PRELOAD`:
+-
+-```sh
+-make web WEB_PRELOAD="main"
+-```
+-
+-Preloading the full `main` directory is large; for iteration, prefer a trimmed
+-asset directory.
+diff --git a/src/web/cod2_fs.js b/src/web/cod2_fs.js
+deleted file mode 100644
+index d609317..0000000
+--- a/src/web/cod2_fs.js
++++ /dev/null
+@@ -1,268 +0,0 @@
+-(function (global) {
+-  'use strict';
+-
+-  var IDB_NAME = 'cod2-web-fs-v1';
+-  var IDB_STORE = 'kv';
+-  var KEY_DIR_HANDLE = 'install-directory-handle';
+-  var KEY_CACHE_META = 'opfs-cache-meta';
+-  var OPFS_ROOT = 'cod2';
+-
+-  var WANTED_EXT = ['.iwd', '.cfg', '.dat', '.txt', '.menu', '.so', '.dll',
+-                    '.bik', '.roq', '.str', '.gsc', '.csc', '.arena'];
+-
+-  var WANTED_DIRS = ['main', 'zone'];
+-
+-  function openDb() {
+-    return new Promise(function (resolve, reject) {
+-      var req = indexedDB.open(IDB_NAME, 1);
+-      req.onupgradeneeded = function () { req.result.createObjectStore(IDB_STORE); };
+-      req.onsuccess = function () { resolve(req.result); };
+-      req.onerror = function () { reject(req.error); };
+-    });
+-  }
+-  function idbGet(key) {
+-    return openDb().then(function (db) {
+-      return new Promise(function (resolve, reject) {
+-        var tx = db.transaction(IDB_STORE, 'readonly');
+-        var rq = tx.objectStore(IDB_STORE).get(key);
+-        rq.onsuccess = function () { resolve(rq.result); };
+-        rq.onerror = function () { reject(rq.error); };
+-        tx.oncomplete = function () { db.close(); };
+-      });
+-    });
+-  }
+-  function idbSet(key, value) {
+-    return openDb().then(function (db) {
+-      return new Promise(function (resolve, reject) {
+-        var tx = db.transaction(IDB_STORE, 'readwrite');
+-        tx.objectStore(IDB_STORE).put(value, key);
+-        tx.oncomplete = function () { db.close(); resolve(); };
+-        tx.onerror = function () { db.close(); reject(tx.error); };
+-      });
+-    });
+-  }
+-  function idbDel(key) {
+-    return openDb().then(function (db) {
+-      return new Promise(function (resolve, reject) {
+-        var tx = db.transaction(IDB_STORE, 'readwrite');
+-        tx.objectStore(IDB_STORE)['delete'](key);
+-        tx.oncomplete = function () { db.close(); resolve(); };
+-        tx.onerror = function () { db.close(); reject(tx.error); };
+-      });
+-    });
+-  }
+-
+-  function hasFsAccess() { return typeof global.showDirectoryPicker === 'function'; }
+-  function hasOpfs() {
+-    return !!(global.navigator && navigator.storage &&
+-              typeof navigator.storage.getDirectory === 'function');
+-  }
+-
+-  function opfsRoot() { return navigator.storage.getDirectory(); }
+-
+-  async function opfsDir(root, relPath, create) {
+-    var dir = root;
+-    var parts = relPath.split('/').filter(Boolean);
+-    for (var i = 0; i < parts.length; i++) {
+-      dir = await dir.getDirectoryHandle(parts[i], { create: !!create });
+-    }
+-    return dir;
+-  }
+-  async function opfsFileHandle(root, relPath, create) {
+-    var slash = relPath.lastIndexOf('/');
+-    var dir = slash >= 0 ? await opfsDir(root, relPath.slice(0, slash), create) : root;
+-    return dir.getFileHandle(relPath.slice(slash + 1), { create: !!create });
+-  }
+-  async function opfsRead(relPath) {
+-    var root = await opfsRoot();
+-    var base = await opfsDir(root, OPFS_ROOT, false);
+-    var fh = await opfsFileHandle(base, relPath, false);
+-    return fh.getFile();
+-  }
+-  async function opfsClearCache() {
+-    var root = await opfsRoot();
+-    try { await root.removeEntry(OPFS_ROOT, { recursive: true }); } catch (e) {  }
+-    await idbDel(KEY_CACHE_META);
+-  }
+-
+-  function isWantedFile(name) {
+-    var lower = name.toLowerCase();
+-    for (var i = 0; i < WANTED_EXT.length; i++) {
+-      if (lower.endsWith(WANTED_EXT[i])) return true;
+-    }
+-    return false;
+-  }
+-
+-  async function resolveInstallRoot(handle) {
+-
+-    for await (var entry of handle.values()) {
+-      if (entry.kind === 'directory' && entry.name.toLowerCase() === 'main') {
+-        return handle;
+-      }
+-    }
+-
+-    return null;
+-  }
+-
+-  async function scanInstall(pickedHandle) {
+-    var entries = [];
+-    var installRoot = await resolveInstallRoot(pickedHandle);
+-    var pairs;
+-    if (installRoot) {
+-      pairs = [{ dir: installRoot, prefix: '' }];
+-    } else {
+-
+-      pairs = [{ dir: pickedHandle, prefix: 'main' }];
+-    }
+-
+-    async function walk(dirHandle, prefix, depth) {
+-      for await (var entry of dirHandle.values()) {
+-        var rel = prefix ? prefix + '/' + entry.name : entry.name;
+-        if (entry.kind === 'file') {
+-          if (isWantedFile(entry.name)) {
+-            var f = await entry.getFile();
+-            entries.push({ rel: rel, handle: entry, size: f.size, file: f });
+-          }
+-        } else if (entry.kind === 'directory') {
+-          var top = rel.split('/')[0].toLowerCase();
+-
+-          if (depth === 0 && WANTED_DIRS.indexOf(top) < 0) continue;
+-          if (depth < 8) await walk(entry, rel, depth + 1);
+-        }
+-      }
+-    }
+-    for (var i = 0; i < pairs.length; i++) {
+-      await walk(pairs[i].dir, pairs[i].prefix, 0);
+-    }
+-    return entries;
+-  }
+-
+-  function looksLikeInstall(entries) {
+-    for (var i = 0; i < entries.length; i++) {
+-      var r = entries[i].rel.toLowerCase();
+-      if (r.indexOf('main/') === 0 && r.endsWith('.iwd')) return true;
+-    }
+-    return false;
+-  }
+-
+-  async function copyToOpfs(entries, onProgress) {
+-    var root = await opfsRoot();
+-    var base = await opfsDir(root, OPFS_ROOT, true);
+-
+-    var bytesTotal = 0, bytesDone = 0;
+-    for (var i = 0; i < entries.length; i++) bytesTotal += entries[i].size;
+-
+-    var meta = { ready: false, files: [] };
+-    for (var j = 0; j < entries.length; j++) {
+-      var e = entries[j];
+-      var skip = false;
+-
+-      try {
+-        var existing = await opfsFileHandle(base, e.rel, false);
+-        var ef = await existing.getFile();
+-        if (ef.size === e.size) skip = true;
+-      } catch (err) {  }
+-
+-      if (onProgress) onProgress({
+-        phase: skip ? 'skip' : 'copy', fileIndex: j + 1, fileCount: entries.length,
+-        fileName: e.rel, bytesDone: bytesDone, bytesTotal: bytesTotal
+-      });
+-
+-      if (!skip) {
+-        var fh = await opfsFileHandle(base, e.rel, true);
+-        var writable = await fh.createWritable();
+-
+-        await e.file.stream().pipeTo(writable);
+-      }
+-      bytesDone += e.size;
+-      meta.files.push({ path: e.rel, size: e.size });
+-      if (onProgress) onProgress({
+-        phase: 'progress', fileIndex: j + 1, fileCount: entries.length,
+-        fileName: e.rel, bytesDone: bytesDone, bytesTotal: bytesTotal
+-      });
+-    }
+-    meta.ready = true;
+-    await idbSet(KEY_CACHE_META, meta);
+-    if (typeof navigator.storage.persist === 'function') {
+-      try { await navigator.storage.persist(); } catch (e) {  }
+-    }
+-    return meta;
+-  }
+-
+-  async function queryPerm(handle) {
+-    if (!handle || typeof handle.queryPermission !== 'function') return 'denied';
+-    return handle.queryPermission({ mode: 'read' });
+-  }
+-  async function requestPerm(handle) {
+-    if (!handle || typeof handle.requestPermission !== 'function') return 'denied';
+-    return handle.requestPermission({ mode: 'read' });
+-  }
+-
+-  async function enumerateInstall(handle) {
+-    var entries = await scanInstall(handle);
+-    if (!looksLikeInstall(entries)) {
+-      throw new Error('That folder does not look like a CoD2 install ' +
+-        '(no main/*.iwd found). Pick the folder that contains "main".');
+-    }
+-
+-    await idbSet(KEY_DIR_HANDLE, handle);
+-    var files = entries.map(function (e) {
+-      return { path: e.rel, file: e.file, size: e.size };
+-    });
+-    return { name: handle.name || 'cod2', files: files };
+-  }
+-
+-  var OPFS_HOME = 'home';
+-  async function opfsHomeDir(create) {
+-    var root = await opfsRoot();
+-    return opfsDir(root, OPFS_HOME, create !== false);
+-  }
+-
+-  var Cod2Fs = {
+-    OPFS_ROOT: OPFS_ROOT,
+-    OPFS_HOME: OPFS_HOME,
+-    hasFsAccess: hasFsAccess,
+-    hasOpfs: hasOpfs,
+-
+-    enumerateInstall: enumerateInstall,
+-    opfsHomeDir: opfsHomeDir,
+-
+-    async getCacheMeta() {
+-      var m = await idbGet(KEY_CACHE_META);
+-      return (m && m.ready) ? m : null;
+-    },
+-
+-    getSavedHandle() { return idbGet(KEY_DIR_HANDLE); },
+-
+-    queryHandlePermission: queryPerm,
+-    requestHandlePermission: requestPerm,
+-
+-    async pickDirectory() {
+-      if (!hasFsAccess()) {
+-        throw new Error('This browser lacks the File System Access API ' +
+-          '(Chromium-only). Use Chrome, Edge, or another Chromium browser.');
+-      }
+-      return global.showDirectoryPicker({ id: 'cod2', mode: 'read' });
+-    },
+-
+-    async ingestHandle(handle, onProgress) {
+-      if (onProgress) onProgress({ phase: 'scan' });
+-      var entries = await scanInstall(handle);
+-      if (!looksLikeInstall(entries)) {
+-        throw new Error('That folder does not look like a CoD2 install ' +
+-          '(no main/*.iwd found). Pick the folder that contains "main".');
+-      }
+-      await idbSet(KEY_DIR_HANDLE, handle);
+-      var meta = await copyToOpfs(entries, onProgress);
+-      if (onProgress) onProgress({ phase: 'done', fileCount: entries.length });
+-      return meta;
+-    },
+-
+-    readCached: opfsRead,
+-
+-    clearCache: opfsClearCache,
+-    forgetHandle() { return idbDel(KEY_DIR_HANDLE); }
+-  };
+-
+-  global.Cod2Fs = Cod2Fs;
+-})(typeof window !== 'undefined' ? window : this);
+diff --git a/src/web/cod2_wasmfs_mount.c b/src/web/cod2_wasmfs_mount.c
+deleted file mode 100644
+index 4a7a231..0000000
+--- a/src/web/cod2_wasmfs_mount.c
++++ /dev/null
+@@ -1,26 +0,0 @@
+-#include <emscripten/emscripten.h>
+-
+-#if defined(WEB_WASMFS)
+-#include <emscripten/wasmfs.h>
+-#include <sys/stat.h>
+-#include <errno.h>
+-#include <string.h>
+-
+-EMSCRIPTEN_KEEPALIVE int cod2_mount_opfs(void) {
+-    backend_t opfs = wasmfs_create_opfs_backend();
+-    if (!opfs) {
+-        return -1;
+-    }
+-
+-    if (wasmfs_create_directory("/opfs", 0777, opfs) != 0) {
+-
+-        if (errno != EEXIST) {
+-            return -2;
+-        }
+-    }
+-    return 0;
+-}
+-
+-#else
+-
+-#endif
+diff --git a/src/web/shell.html b/src/web/shell.html
+deleted file mode 100644
+index 6512a92..0000000
+--- a/src/web/shell.html
++++ /dev/null
+@@ -1,544 +0,0 @@
+-<!doctype html>
+-<html lang="en">
+-<head>
+-  <meta charset="utf-8">
+-  <meta name="viewport" content="width=device-width, initial-scale=1">
+-  <title>Call of Duty 2 (Web)</title>
+-  <style>
+-    :root { color-scheme: dark; }
+-    html, body {
+-      margin: 0; width: 100%; height: 100%;
+-      background: #0b0d10; color: #d6d9de;
+-      font: 14px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+-      overflow: hidden;
+-    }
+-    #canvas {
+-      position: fixed; inset: 0; width: 100%; height: 100%;
+-      display: none; background: #000; outline: none;
+-    }
+-    #overlay {
+-      position: fixed; inset: 0; z-index: 5;
+-      display: flex; align-items: center; justify-content: center;
+-      background: radial-gradient(circle at 50% 30%, #161b22, #0b0d10 70%);
+-    }
+-    #panel {
+-      width: min(560px, 92vw);
+-      padding: 28px 30px;
+-      background: rgba(18, 22, 28, 0.92);
+-      border: 1px solid #2a323d; border-radius: 12px;
+-      box-shadow: 0 18px 60px rgba(0,0,0,0.5);
+-    }
+-    h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: 0.3px; }
+-    .sub { margin: 0 0 20px; color: #8b95a3; font-size: 13px; }
+-    button {
+-      min-height: 38px; padding: 0 16px; margin: 0 8px 8px 0;
+-      color: #f1f4f8; background: #2d6cdf; border: 1px solid #3f7cef;
+-      border-radius: 7px; font: inherit; font-weight: 600; cursor: pointer;
+-    }
+-    button.secondary { background: #27313d; border-color: #3a4452; font-weight: 500; }
+-    button:disabled { opacity: 0.45; cursor: default; }
+-    button:hover:not(:disabled) { filter: brightness(1.08); }
+-    #msg { margin: 16px 0 4px; min-height: 20px; font-size: 13px; color: #c4ccd6; white-space: pre-wrap; }
+-    #msg.error { color: #ff8d8d; }
+-    #bar { height: 8px; margin-top: 14px; border-radius: 5px; background: #1d242d; overflow: hidden; display: none; }
+-    #barFill { height: 100%; width: 0; background: linear-gradient(90deg,#2d6cdf,#4f9bff); transition: width .15s; }
+-    #fileLine { margin-top: 8px; font-size: 11px; color: #6f7a88; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+-    .note { margin-top: 18px; font-size: 11px; color: #6f7a88; line-height: 1.55; }
+-    .row { display: flex; flex-wrap: wrap; align-items: center; }
+-    #pickFallback { display: none; }
+-  </style>
+-</head>
+-<body>
+-  <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+-
+-  <div id="overlay">
+-    <div id="panel">
+-      <h1>Call of Duty 2 &mdash; Web</h1>
+-      <p class="sub">Runs from your local game files. They stay on your machine; nothing is uploaded.</p>
+-
+-      <div class="row" id="actions">
+-        <button id="pickBtn" type="button" disabled>Select your Call of Duty 2 folder</button>
+-        <button id="resumeBtn" type="button" class="secondary" style="display:none"></button>
+-        <button id="changeBtn" type="button" class="secondary" style="display:none">Change folder</button>
+-        <button id="clearBtn"  type="button" class="secondary" style="display:none">Clear cache</button>
+-      </div>
+-
+-      <!-- Fallback for non-Chromium browsers (no File System Access API). -->
+-      <div id="pickFallback">
+-        <input id="folderInput" type="file" webkitdirectory multiple>
+-      </div>
+-
+-      <div id="msg">Loading runtime&hellip;</div>
+-      <div id="bar"><div id="barFill"></div></div>
+-      <div id="fileLine"></div>
+-
+-      <div class="note" id="note">
+-        Choose the folder that contains <code>main/</code> (your CoD2 install).
+-        Assets are cached on-device (OPFS) and the folder is remembered, so reloads just work.
+-        The folder picker requires a Chromium browser (Chrome / Edge).
+-      </div>
+-    </div>
+-  </div>
+-
+-  <!-- Asset loader library (picker + OPFS cache + IndexedDB handle memory). -->
+-  <script src="cod2_fs.js"></script>
+-  <script>
+-  (function () {
+-    'use strict';
+-
+-    var canvas    = document.getElementById('canvas');
+-    var overlay   = document.getElementById('overlay');
+-    var pickBtn   = document.getElementById('pickBtn');
+-    var resumeBtn = document.getElementById('resumeBtn');
+-    var changeBtn = document.getElementById('changeBtn');
+-    var clearBtn  = document.getElementById('clearBtn');
+-    var folderIn  = document.getElementById('folderInput');
+-    var pickFallback = document.getElementById('pickFallback');
+-    var msgEl     = document.getElementById('msg');
+-    var barEl     = document.getElementById('bar');
+-    var barFill   = document.getElementById('barFill');
+-    var fileLine  = document.getElementById('fileLine');
+-
+-    var runtimeReady = false;
+-    var busy = false;
+-    var started = false;
+-
+-    // Mount roots differ by FS backend:
+-    //   WORKERFS (zero-copy): picked folder's File objects mounted read-only at
+-    //           /cod2/main; writable /cod2home backed by OPFS. No asset copy.
+-    //   WASMFS: OPFS root mounted at /opfs; assets under /opfs/cod2, saves /opfs/home.
+-    //   MEMFS:  assets streamed into /cod2; saves under /cod2home (IDBFS-persisted).
+-    var FS_BASEPATH = '/cod2';
+-    var FS_HOMEPATH = '/cod2home';
+-    var idbfsHome = false;            // MEMFS only: /cod2home backed by IDBFS
+-    var GAME_ARGS = [];               // built once the FS backend is known
+-
+-    function buildArgs() {
+-      GAME_ARGS = ['+set', 'fs_basepath', FS_BASEPATH,
+-                   '+set', 'fs_homepath', FS_HOMEPATH,
+-                   '+set', 'fs_game', '',
+-                   '+set', 'r_fullscreen', '0'];
+-      if (window.Module) Module.arguments = GAME_ARGS;
+-    }
+-
+-    function setMsg(t, isErr) {
+-      msgEl.textContent = t || '';
+-      msgEl.className = isErr ? 'error' : '';
+-    }
+-    function showBar(show) { barEl.style.display = show ? 'block' : 'none'; }
+-    function setProgress(done, total, name) {
+-      if (total > 0) barFill.style.width = Math.min(100, (done / total) * 100) + '%';
+-      fileLine.textContent = name || '';
+-    }
+-    function fmtMB(n) { return (n / (1024 * 1024)).toFixed(1) + ' MB'; }
+-
+-    function setBusy(b) {
+-      busy = b;
+-      pickBtn.disabled = b || !runtimeReady;
+-      resumeBtn.disabled = b || !runtimeReady;
+-      changeBtn.disabled = b || !runtimeReady;
+-      clearBtn.disabled = b || !runtimeReady;
+-    }
+-
+-    // ---- emscripten FS helpers (legacy MEMFS path) ----------------------
+-    function mkdirTree(path) {
+-      var parts = path.split('/').filter(Boolean);
+-      var cur = '';
+-      for (var i = 0; i < parts.length; i++) {
+-        cur += '/' + parts[i];
+-        try { FS.mkdir(cur); }
+-        catch (e) { if (!FS.analyzePath(cur).exists) throw e; }
+-      }
+-    }
+-
+-    function isWasmfsBuild() {
+-      // The WASMFS build links src/web/cod2_wasmfs_mount.c, which exports
+-      // _cod2_mount_opfs. Its presence selects the on-demand OPFS mount.
+-      return typeof Module._cod2_mount_opfs === 'function';
+-    }
+-
+-    function isWorkerfsBuild() {
+-      // The WORKERFS zero-copy build links -lworkerfs.js (WORKERFS global) and
+-      // runs main() on a worker (PROXY_TO_PTHREAD). WORKERFS provides the
+-      // synchronous on-demand reads of the picked folder's File objects.
+-      return typeof WORKERFS !== 'undefined';
+-    }
+-
+-    // Pick mount roots + (MEMFS) persistent home, then build the launch args.
+-    // Must run once the runtime is up (Module._cod2_mount_opfs is then known).
+-    function configureFsBackend() {
+-      if (isWorkerfsBuild()) {
+-        // Zero-copy: read the iwds in place from disk. fs_homepath is a small
+-        // OPFS-backed writable tree; assets are NOT copied anywhere.
+-        FS_BASEPATH = '/cod2';
+-        FS_HOMEPATH = '/cod2home';
+-        idbfsHome = false;
+-      } else if (isWasmfsBuild()) {
+-        FS_BASEPATH = '/opfs/cod2';
+-        FS_HOMEPATH = '/opfs/home';
+-        idbfsHome = false;
+-      } else {
+-        FS_BASEPATH = '/cod2';
+-        FS_HOMEPATH = '/cod2home';
+-        // Persist savegames/config across reloads via IDBFS (MEMFS has no disk).
+-        idbfsHome = (typeof IDBFS !== 'undefined');
+-      }
+-      buildArgs();
+-    }
+-
+-    var homeSyncTimer = 0;
+-    function setupIdbfsHome() {
+-      if (!idbfsHome) return Promise.resolve();
+-      mkdirTree(FS_HOMEPATH);
+-      try { FS.mount(IDBFS, {}, FS_HOMEPATH); } catch (e) { if (e && e.errno !== undefined) {/* already */} }
+-      return new Promise(function (resolve) {
+-        FS.syncfs(true, function () {            // populate from IndexedDB
+-          if (!homeSyncTimer) {
+-            homeSyncTimer = setInterval(function () {
+-              FS.syncfs(false, function () {});
+-            }, 15000);
+-          }
+-          resolve();
+-        });
+-      });
+-    }
+-
+-    // ---- Zero-copy WORKERFS mount (the preferred no-copy path) ----------
+-    // Mount the picked folder's File objects read-only via WORKERFS so the
+-    // engine reads iwd bytes on demand straight off disk -- NO copy to OPFS,
+-    // NO full-RAM load. /cod2home is an OPFS-backed writable tree (savegames,
+-    // config, players/) -- the only thing that is persisted.
+-    async function setupWorkerfsHome() {
+-      // WORKERFS is read-only, so /cod2home cannot be WORKERFS. Use the regular
+-      // (MEMFS) writable FS for the home tree and seed/persist it via OPFS.
+-      mkdirTree(FS_HOMEPATH);
+-      if (!Cod2Fs.hasOpfs()) return;        // RAM-only home (not persisted)
+-      try {
+-        // Mirror the small OPFS "home/" tree into MEMFS on boot, then flush it
+-        // back on an interval and at exit. (Home is tiny -- config + saves.)
+-        await mirrorOpfsHomeIn();
+-        if (!homeSyncTimer) {
+-          homeSyncTimer = setInterval(function () { mirrorOpfsHomeOut(); }, 15000);
+-        }
+-        window.addEventListener('pagehide', function () { mirrorOpfsHomeOut(); });
+-      } catch (e) { /* best-effort persistence */ }
+-    }
+-
+-    async function mirrorOpfsHomeIn() {
+-      var dir = await Cod2Fs.opfsHomeDir(true);
+-      async function walk(handle, prefix) {
+-        for await (var entry of handle.values()) {
+-          var rel = prefix ? prefix + '/' + entry.name : entry.name;
+-          if (entry.kind === 'directory') { mkdirTree(FS_HOMEPATH + '/' + rel); await walk(entry, rel); }
+-          else {
+-            var f = await entry.getFile();
+-            FS.writeFile(FS_HOMEPATH + '/' + rel, new Uint8Array(await f.arrayBuffer()));
+-          }
+-        }
+-      }
+-      await walk(dir, '');
+-    }
+-
+-    async function mirrorOpfsHomeOut() {
+-      if (!Cod2Fs.hasOpfs()) return;
+-      var dir = await Cod2Fs.opfsHomeDir(true);
+-      function listFs(path, prefix, out) {
+-        var ents;
+-        try { ents = FS.readdir(path); } catch (e) { return; }
+-        for (var i = 0; i < ents.length; i++) {
+-          var n = ents[i]; if (n === '.' || n === '..') continue;
+-          var p = path + '/' + n, rel = prefix ? prefix + '/' + n : n;
+-          var st = FS.stat(p);
+-          if (FS.isDir(st.mode)) listFs(p, rel, out);
+-          else out.push({ rel: rel, data: FS.readFile(p) });
+-        }
+-      }
+-      var files = [];
+-      listFs(FS_HOMEPATH, '', files);
+-      for (var i = 0; i < files.length; i++) {
+-        var rel = files[i].rel, slash = rel.lastIndexOf('/');
+-        var d = dir;
+-        if (slash >= 0) {
+-          var parts = rel.slice(0, slash).split('/');
+-          for (var j = 0; j < parts.length; j++) d = await d.getDirectoryHandle(parts[j], { create: true });
+-        }
+-        var fh = await d.getFileHandle(rel.slice(slash + 1), { create: true });
+-        var w = await fh.createWritable();
+-        await w.write(files[i].data); await w.close();
+-      }
+-    }
+-
+-    // Mount the picked folder's live File objects (no copy) at /cod2.
+-    async function mountDirect(install) {
+-      mkdirTree(FS_BASEPATH);
+-      // WORKERFS keys each node by its `name` (full '/'-separated rel path).
+-      // install.files[i].path is "main/iw_00.iwd" etc.
+-      var wf = install.files.map(function (rec) {
+-        return { name: rec.path, data: rec.file };
+-      });
+-      setMsg('Mounting ' + wf.length + ' files (read-only, no copy)…');
+-      FS.mount(WORKERFS, { files: wf }, FS_BASEPATH);
+-      await setupWorkerfsHome();
+-    }
+-
+-    // Mount the cached assets so FS_Startup sees <fs_basepath>/main/*.iwd.
+-    // WASMFS  -> mount OPFS at /opfs (engine reads iwd bytes on demand).
+-    // MEMFS   -> stream each cached file from OPFS into MEMFS once.
+-    async function mountAssets(meta) {
+-      if (isWasmfsBuild()) {
+-        setMsg('Mounting OPFS at /opfs…');
+-        var rc = Module.ccall('cod2_mount_opfs', 'number', [], []);
+-        if (rc !== 0) throw new Error('OPFS mount failed (rc=' + rc + ')');
+-        return;
+-      }
+-      // Legacy MEMFS: stream cached files from OPFS into the in-memory FS.
+-      await setupIdbfsHome();
+-      mkdirTree(FS_BASEPATH);
+-      mkdirTree(FS_HOMEPATH);
+-      var files = meta.files;
+-      var total = 0, done = 0, i;
+-      for (i = 0; i < files.length; i++) total += files[i].size;
+-      showBar(true);
+-      for (i = 0; i < files.length; i++) {
+-        var rec = files[i];
+-        var dst = FS_BASEPATH + '/' + rec.path;
+-        var slash = dst.lastIndexOf('/');
+-        if (slash >= 0) mkdirTree(dst.slice(0, slash));
+-        var f = await Cod2Fs.readCached(rec.path);
+-        var buf = new Uint8Array(await f.arrayBuffer());
+-        FS.writeFile(dst, buf);
+-        done += rec.size;
+-        setMsg('Mounting ' + (i + 1) + '/' + files.length + ' (' + fmtMB(done) + ')');
+-        setProgress(done, total, rec.path);
+-        if ((i & 7) === 0) await new Promise(function (r) { setTimeout(r, 0); });
+-      }
+-      showBar(false);
+-    }
+-
+-    // ---- Flow -----------------------------------------------------------
+-    function onProgress(p) {
+-      if (p.phase === 'scan')  { setMsg('Scanning install…'); showBar(false); return; }
+-      if (p.phase === 'done')  { showBar(false); return; }
+-      if (p.phase === 'copy' || p.phase === 'skip' || p.phase === 'progress') {
+-        showBar(true);
+-        setMsg((p.phase === 'skip' ? 'Cached ' : 'Copying ') +
+-               p.fileIndex + '/' + p.fileCount + '  (' +
+-               fmtMB(p.bytesDone) + ' / ' + fmtMB(p.bytesTotal) + ')');
+-        setProgress(p.bytesDone, p.bytesTotal, p.fileName);
+-      }
+-    }
+-
+-    async function ingestAndBoot(handle) {
+-      setBusy(true);
+-      try {
+-        if (isWorkerfsBuild()) {
+-          // Zero-copy: enumerate the picked folder's File objects and mount
+-          // them directly. The handle is remembered (inside enumerateInstall)
+-          // so reloads re-mount with no re-pick and no copy.
+-          setMsg('Reading your install…'); showBar(false);
+-          var install = await Cod2Fs.enumerateInstall(handle);
+-          await mountDirect(install);
+-          setMsg('Starting…');
+-          startGame();
+-          return;
+-        }
+-        var meta = await Cod2Fs.ingestHandle(handle, onProgress);
+-        await bootFromCache(meta);
+-      } catch (err) {
+-        setBusy(false);
+-        setMsg((err && err.message) ? err.message : String(err), true);
+-      }
+-    }
+-
+-    async function bootFromCache(meta) {
+-      if (!meta) meta = await Cod2Fs.getCacheMeta();
+-      if (!meta) { setMsg('No cached assets. Select your CoD2 folder.', true); setBusy(false); return; }
+-      await mountAssets(meta);
+-      setMsg('Starting…');
+-      startGame();
+-    }
+-
+-    function startGame() {
+-      if (started) return;
+-      started = true;
+-      overlay.style.display = 'none';
+-      canvas.style.display = 'block';
+-      canvas.focus();
+-      try { Module.callMain(GAME_ARGS); }
+-      catch (e) { console.error(e); }
+-    }
+-
+-    // ---- Buttons --------------------------------------------------------
+-    pickBtn.addEventListener('click', function () {
+-      if (busy || !runtimeReady) return;
+-      (async function () {
+-        if (!Cod2Fs.hasFsAccess()) { pickFallback.style.display = 'block'; folderIn.click(); return; }
+-        var handle;
+-        try { handle = await Cod2Fs.pickDirectory(); }
+-        catch (e) { if (e && e.name === 'AbortError') return; throw e; }
+-        await ingestAndBoot(handle);
+-      })().catch(function (err) { setMsg((err && err.message) || String(err), true); });
+-    });
+-
+-    resumeBtn.addEventListener('click', function () {
+-      if (busy || !runtimeReady) return;
+-      (async function () {
+-        var handle = await Cod2Fs.getSavedHandle();
+-        if (!handle) return;
+-        var perm = await Cod2Fs.requestHandlePermission(handle);
+-        if (perm !== 'granted') {
+-          // WORKERFS zero-copy has no asset cache: the folder is required.
+-          if (!isWorkerfsBuild()) {
+-            var meta = await Cod2Fs.getCacheMeta();
+-            if (meta) { setBusy(true); await bootFromCache(meta); return; }
+-          }
+-          setMsg('Permission denied. Re-authorize your CoD2 folder to play.', true);
+-          return;
+-        }
+-        await ingestAndBoot(handle);
+-      })().catch(function (err) { setMsg((err && err.message) || String(err), true); });
+-    });
+-
+-    changeBtn.addEventListener('click', function () {
+-      if (busy || !runtimeReady) return;
+-      (async function () {
+-        if (!Cod2Fs.hasFsAccess()) { pickFallback.style.display = 'block'; folderIn.click(); return; }
+-        var handle = await Cod2Fs.pickDirectory();
+-        await ingestAndBoot(handle);
+-      })().catch(function (err) { if (err && err.name === 'AbortError') return; setMsg((err && err.message) || String(err), true); });
+-    });
+-
+-    clearBtn.addEventListener('click', function () {
+-      if (busy || !runtimeReady) return;
+-      (async function () {
+-        await Cod2Fs.clearCache();
+-        await Cod2Fs.forgetHandle();
+-        setMsg('Cache cleared. Select your CoD2 folder.');
+-        resumeBtn.style.display = 'none';
+-        changeBtn.style.display = 'none';
+-        clearBtn.style.display = 'none';
+-      })().catch(function (err) { setMsg((err && err.message) || String(err), true); });
+-    });
+-
+-    // Fallback <input webkitdirectory> path (non-Chromium): copies the picked
+-    // files into OPFS via a synthetic handle-like adapter is overkill; for the
+-    // fallback we just stream the selected files straight into MEMFS and boot.
+-    folderIn.addEventListener('change', function () {
+-      var files = Array.prototype.slice.call(folderIn.files || []);
+-      if (!files.length) return;
+-      (async function () {
+-        setBusy(true);
+-        mkdirTree(FS_BASEPATH); mkdirTree(FS_HOMEPATH);
+-        // Keep only the wanted assets, mapped under main/ (strip the chosen
+-        // root folder name, like the File System Access path does).
+-        var wanted = files.filter(function (f) {
+-          var rel = (f.webkitRelativePath || f.name).toLowerCase();
+-          return /\.(iwd|cfg|dat|txt|menu|str|gsc|csc|arena|bik|roq)$/.test(rel);
+-        });
+-        if (!wanted.length) { setMsg('No game assets found in that folder.', true); setBusy(false); return; }
+-        var total = 0, done = 0;
+-        wanted.forEach(function (f) { total += f.size; });
+-        showBar(true);
+-        for (var i = 0; i < wanted.length; i++) {
+-          var f = wanted[i];
+-          var parts = (f.webkitRelativePath || f.name).split('/');
+-          if (parts.length > 1) parts.shift();           // strip chosen-root
+-          var rel = parts.join('/');
+-          if (rel.toLowerCase().indexOf('main/') !== 0 && /\.iwd$/i.test(rel)) rel = 'main/' + rel;
+-          var dst = FS_BASEPATH + '/' + rel;
+-          var s = dst.lastIndexOf('/'); if (s >= 0) mkdirTree(dst.slice(0, s));
+-          FS.writeFile(dst, new Uint8Array(await f.arrayBuffer()));
+-          done += f.size;
+-          setMsg('Loading ' + (i + 1) + '/' + wanted.length + ' (' + fmtMB(done) + ')');
+-          setProgress(done, total, rel);
+-          if ((i & 7) === 0) await new Promise(function (r) { setTimeout(r, 0); });
+-        }
+-        showBar(false);
+-        setMsg('Starting…');
+-        startGame();
+-      })().catch(function (err) { setBusy(false); setMsg((err && err.message) || String(err), true); });
+-    });
+-
+-    // ---- On runtime ready: try to resume silently -----------------------
+-    async function afterRuntime() {
+-      runtimeReady = true;
+-      configureFsBackend();
+-      setBusy(false);
+-      pickBtn.disabled = false;
+-
+-      var fsa = Cod2Fs.hasFsAccess();
+-      var opfs = Cod2Fs.hasOpfs();
+-      var workerfs = isWorkerfsBuild();
+-      if (!fsa) {
+-        setMsg('Folder memory needs a Chromium browser. You can still load a ' +
+-               'folder each session below.', true);
+-      }
+-      // The WORKERFS zero-copy build persists only the directory handle (in
+-      // IndexedDB), not an OPFS asset cache -- so it resumes from the handle
+-      // alone and never offers "play from cache".
+-      var meta = workerfs ? null : (opfs ? await Cod2Fs.getCacheMeta() : null);
+-      if (!workerfs && !opfs) { return; }   // no persistence available
+-      var handle = fsa ? await Cod2Fs.getSavedHandle() : null;
+-
+-      if (handle) {
+-        var perm = await Cod2Fs.queryHandlePermission(handle);
+-        if (perm === 'granted') {
+-          // Silent resume from disk (re-validates freshness, cheap if unchanged).
+-          changeBtn.style.display = 'inline-block';
+-          clearBtn.style.display = 'inline-block';
+-          setBusy(true);
+-          await ingestAndBoot(handle);
+-          return;
+-        }
+-        if (perm === 'prompt') {
+-          resumeBtn.textContent = 'Resume from "' + (handle.name || 'folder') + '"';
+-          resumeBtn.style.display = 'inline-block';
+-          changeBtn.style.display = 'inline-block';
+-          clearBtn.style.display = 'inline-block';
+-          setMsg('Welcome back. Resume to re-authorize your folder' +
+-                 (meta ? ', or it will boot from the on-device cache.' : '.'));
+-          return;
+-        }
+-      }
+-
+-      if (meta) {
+-        // Disk handle gone but OPFS cache present -> offer straight boot.
+-        resumeBtn.textContent = 'Play from cached assets';
+-        resumeBtn.style.display = 'inline-block';
+-        if (fsa) changeBtn.style.display = 'inline-block';
+-        clearBtn.style.display = 'inline-block';
+-        setMsg('Cached install found (' + meta.files.length + ' files). ' +
+-               'Play from cache, or pick a folder to refresh.');
+-        // Rewire resume to boot from cache directly.
+-        resumeBtn.onclick = function () {
+-          if (busy) return;
+-          setBusy(true);
+-          bootFromCache(meta).catch(function (err) {
+-            setBusy(false); setMsg((err && err.message) || String(err), true);
+-          });
+-        };
+-        return;
+-      }
+-
+-      setMsg('Select your Call of Duty 2 folder to begin.');
+-    }
+-
+-    // ---- emscripten Module ---------------------------------------------
+-    window.Module = {
+-      noInitialRun: true,
+-      canvas: canvas,
+-      arguments: GAME_ARGS,
+-      print: function (t) { console.log(t); },
+-      printErr: function (t) { console.error(t); },
+-      onRuntimeInitialized: function () {
+-        afterRuntime().catch(function (err) {
+-          console.warn(err); setMsg((err && err.message) || String(err), true);
+-          runtimeReady = true; pickBtn.disabled = false;
+-        });
+-      }
+-    };
+-  })();
+-  </script>
+-  {{{ SCRIPT }}}
+-</body>
+-</html>
+diff --git a/src/web/wasm_aliases.c b/src/web/wasm_aliases.c
+deleted file mode 100644
+index 18c66e9..0000000
+--- a/src/web/wasm_aliases.c
++++ /dev/null
+@@ -1,329 +0,0 @@
+-#ifdef __EMSCRIPTEN__
+-
+-#include "common_types.h"
+-#include "generated_syms.h"
+-
+-extern PlayerKeyState playerKeys[1];
+-
+-qkey_t *keys = 0;
+-int __mh_execute_header = 0;
+-char name[64] __attribute__((aligned(4))) = {0};
+-
+-void *TheStringPackage = 0;
+-
+-const CodeSamplerSource s_codeSamplers[1] = {{0}};
+-const CodeSamplerSource s_defaultCodeSamplers[1] = {{0}};
+-const CodeConstantSource s_codeConsts[1] = {{0}};
+-const CodeConstantSource s_defaultCodeConsts[1] = {{0}};
+-
+-byte *_dvar_shellshock_fadein = 0;
+-byte *_dvar_shellshock_fadeout = 0;
+-byte *_dvar_shellshock_screenblend = 0;
+-byte *_dvar_shellshock_screentype = 0;
+-byte *_dvar_shellshock_screenenabled = 0;
+-byte *_dvar_shellshock_soundfadein = 0;
+-byte *_dvar_shellshock_soundfadeout = 0;
+-byte *_dvar_shellshock_loopfadein = 0;
+-byte *_dvar_shellshock_loopfadeout = 0;
+-byte *_dvar_shellshock_looptype = 0;
+-byte *_dvar_shellshock_sounddrylevellooptype = 0;
+-byte *_dvar_shellshock_soundwetlevellooptype = 0;
+-byte *_dvar_shellshock_soundloopsilent = 0;
+-byte *_dvar_shellshock_viewkickfadein = 0;
+-byte *_dvar_shellshock_viewkickperiod = 0;
+-byte *_dvar_shellshock_viewkickradius = 0;
+-byte *_dvar_shellshock_viewkickpitch = 0;
+-byte *_dvar_shellshock_viewkickyaw = 0;
+-byte *_dvar_shellshock_soundroomtype = 0;
+-byte *_dvar_shellshock_sounddrylevel = 0;
+-byte *_dvar_shellshock_soundwetlevel = 0;
+-byte *_dvar_shellshock_soundmodenddelay = 0;
+-byte *_dvar_shellshock_soundendduration = 0;
+-byte *_dvar_shellshock_soundfade = 0;
+-byte *_dvar_shellshock_mouseenable = 0;
+-byte *_dvar_shellshock_mousefadein = 0;
+-byte *_dvar_shellshock_mouseturnrate = 0;
+-byte *_dvar_shellshock_mousereducemax = 0;
+-byte *_dvar_shellshock_mousesensitivity = 0;
+-
+-void *cg_dvar1;
+-void *cg_dvar2;
+-void *cg_dvar_debug;
+-void *cg_dvar_footsteps;
+-void *cg_dvar_shellshock_max;
+-void *cg_dvar_shellshock_min;
+-void *cg_entities_glob;
+-void *cg_glob;
+-void *_cg_p;
+-void *cg_ptr;
+-void *cgs_glob;
+-void *cgs_ptr;
+-void *clc_ptr;
+-void *clc_ptr_195ee8c;
+-void *cl_ptr;
+-void *cl_showPackets;
+-void *compPointerConfig;
+-void *dvar_autoPickup;
+-void *dvar_compassClampDist;
+-void *dvar_compassClampSaturation;
+-void *dvar_compassFade;
+-void *dvar_compassMaxRange;
+-void *dvar_compassMinRange;
+-void *dvar_compassMinSaturation;
+-void *dvar_compassPingFadeTime;
+-void *dvar_compassSize;
+-void *dvar_developer;
+-void *dvar_errorDecay;
+-void *dvar_nopredict;
+-void *dvar_synchronous;
+-void *g_time_ptr;
+-void *net_profile_dvar;
+-void *sm_dvar_ptr;
+-void *sm_mtl_init;
+-void *sm_mtl_vtable;
+-void *sv_dedicated_dvar;
+-
+-void *cg_entities_ptr;
+-void *cls_ptr;
+-void *com_dvarflags_ptr;
+-void *dx_device_ptr;
+-void *dx_fence;
+-void *fx_developer_check_ptr;
+-void *fx_helper_ptr;
+-void *fx_scheduler_ptr;
+-void *g_backEndData;
+-void *g_bobMax_ptr;
+-void *g_debug_damage_ptr;
+-void *g_drawSurf;
+-void *gfx_buf;
+-void *gfxScene;
+-void *g_password_ptr;
+-void *g_renderState;
+-void *g_scr_data_ptr;
+-void *g_time;
+-void *g_viewInfo;
+-void *g_viewParms;
+-void *nextmap_dvar;
+-void *r_contentmask;
+-void *r_defaultColor;
+-void *r_dvar_ef30;
+-void *r_dvar_ef34;
+-void *r_dvar_ef38;
+-void *r_dvar_ef3c;
+-void *r_dvar_ef44;
+-void *r_dvar_ef48;
+-void *r_dvar_ef4c;
+-void *r_dvar_sunEnable;
+-void *r_frontEndDataOut;
+-void *r_glob;
+-void *r_lightGridContrast;
+-void *r_lightGridEnableTweaks;
+-void *r_lightGridSpread;
+-void *r_lightGridSunDir;
+-void *r_lightGridUseTweakedValues;
+-void *r_sundvar_table;
+-void *r_sunFlareState;
+-void *r_surftype_table_ptr;
+-void *r_videoConfig;
+-void *r_vtable_ptr;
+-void *r_world_ptr;
+-void *scrCompGlob_ptr;
+-void *sv_allowAnonymous_dvar;
+-void *sv_allowDownload_dvar;
+-void *sv_allowedClan1_dvar;
+-void *sv_allowedClan2_dvar;
+-void *sv_cheats_dvar;
+-void *sv_debugRate_dvar;
+-void *sv_debugReliableCmds_dvar;
+-void *sv_disableClientConsole_dvar;
+-void *sv_expectedHunkUsage_dvar;
+-void *sv_floodProtect_dvar;
+-void *sv_fps_dvar;
+-void *sv_gametype_dvar;
+-void *sv_hostname_dvar;
+-void *sv_iwdNames_dvar;
+-void *sv_iwds_dvar;
+-void *sv_kickBanTime_dvar;
+-void *sv_mapname_dvar;
+-void *sv_mapRotationCurrent_dvar;
+-void *sv_mapRotation_dvar;
+-void *sv_maxclients_dvar;
+-void *sv_maxPing_dvar;
+-void *sv_maxRate_dvar;
+-void *sv_minPing_dvar;
+-void *sv_minPingRate_dvar;
+-void *sv_packet_info_dvar;
+-void *sv_padPackets_dvar;
+-void *sv_privateClients_dvar;
+-void *sv_pure_dvar;
+-void *sv_reconnectlimit_dvar;
+-void *sv_referencedIwdNames_dvar;
+-void *sv_referencedIwds_dvar;
+-void *sv_running_dvar;
+-void *sv_serverid_dvar;
+-void *sv_showAverageBPS_dvar;
+-void *sv_showCommands_dvar;
+-void *sv_timeout_dvar;
+-void *sv_voice_dvar;
+-void *sv_voiceQuality_dvar;
+-void *sv_zombietime_dvar;
+-void *trace_mins;
+-
+-__attribute__((constructor))
+-static void Web_InitWasmAliases(void)
+-{
+-    keys = playerKeys[0].keys;
+-
+-    cg_dvar1 = imp_cg_nopredict;
+-    cg_dvar2 = imp_cg_synchronousClients;
+-    cg_dvar_debug = imp_cg_debugEvents;
+-    cg_dvar_footsteps = imp_cg_footsteps;
+-    cg_dvar_shellshock_max = imp_bg_fallDamageMaxHeight;
+-    cg_dvar_shellshock_min = imp_bg_fallDamageMinHeight;
+-    cg_entities_glob = imp_cg_entities;
+-    cg_glob = imp_cg;
+-    _cg_p = imp_cg;
+-    cg_ptr = imp_cg;
+-    cgs_glob = imp_cgs;
+-    cgs_ptr = imp_cgs;
+-    clc_ptr = imp_clc;
+-    clc_ptr_195ee8c = imp_clc;
+-    cl_ptr = imp_cl;
+-    cl_showPackets = imp_cl_shownuments;
+-    compPointerConfig = imp_cg_hudCompassSpringyPointers;
+-    dvar_autoPickup = imp_cg_predictItems;
+-    dvar_compassClampDist = imp_cg_hudObjectiveMaxRange;
+-    dvar_compassClampSaturation = imp_cg_hudObjectiveMinAlpha;
+-    dvar_compassFade = imp_hud_fade_compass;
+-    dvar_compassMaxRange = imp_cg_hudCompassMaxRange;
+-    dvar_compassMinRange = imp_cg_hudCompassMinRange;
+-    dvar_compassMinSaturation = imp_cg_hudCompassMinRadius;
+-    dvar_compassPingFadeTime = imp_cg_hudCompassSoundPingFadeTime;
+-    dvar_compassSize = imp_cg_hudCompassSize;
+-    dvar_developer = imp_cg_showmiss;
+-    dvar_errorDecay = imp_cg_errorDecay;
+-    dvar_nopredict = imp_cg_nopredict;
+-    dvar_synchronous = imp_cg_synchronousClients;
+-    g_time_ptr = imp_bgs;
+-    net_profile_dvar = imp_net_profile;
+-    sm_dvar_ptr = imp_com_statmon;
+-    sm_mtl_init = imp_cls;
+-    sm_mtl_vtable = imp_re;
+-    sv_dedicated_dvar = imp_com_dedicated;
+-    _dvar_shellshock_fadein = (byte *)imp_cg_shock_screenBlendFadeTime;
+-    _dvar_shellshock_fadeout = (byte *)imp_cg_shock_screenBlendTime;
+-    _dvar_shellshock_screenblend = (byte *)imp_cg_shock_viewKickPeriod;
+-    _dvar_shellshock_screentype = (byte *)imp_cg_shock_viewKickRadius;
+-    _dvar_shellshock_screenenabled = (byte *)imp_cg_shock_sound;
+-    _dvar_shellshock_soundfadein = (byte *)imp_cg_shock_soundFadeInTime;
+-    _dvar_shellshock_soundfadeout = (byte *)imp_cg_shock_soundFadeOutTime;
+-    _dvar_shellshock_loopfadein = (byte *)imp_cg_shock_soundLoopFadeTime;
+-    _dvar_shellshock_loopfadeout = (byte *)imp_cg_shock_soundLoopEndDelay;
+-    _dvar_shellshock_looptype = (byte *)imp_cg_shock_soundRoomType;
+-    _dvar_shellshock_sounddrylevellooptype = (byte *)imp_cg_shock_soundDryLevel;
+-    _dvar_shellshock_soundwetlevellooptype = (byte *)imp_cg_shock_soundWetLevel;
+-    _dvar_shellshock_soundloopsilent = (byte *)imp_cg_shock_soundModEndDelay;
+-    _dvar_shellshock_viewkickfadein = (byte *)imp_cg_shock_volume_auto;
+-    _dvar_shellshock_viewkickperiod = (byte *)imp_cg_shock_volume_auto2d;
+-    _dvar_shellshock_viewkickradius = (byte *)imp_cg_shock_volume_menu;
+-    _dvar_shellshock_viewkickpitch = (byte *)imp_cg_shock_volume_weapon;
+-    _dvar_shellshock_viewkickyaw = (byte *)imp_cg_shock_volume_voice;
+-    _dvar_shellshock_soundroomtype = (byte *)imp_cg_shock_volume_item;
+-    _dvar_shellshock_sounddrylevel = (byte *)imp_cg_shock_volume_body;
+-    _dvar_shellshock_soundwetlevel = (byte *)imp_cg_shock_volume_local;
+-    _dvar_shellshock_soundmodenddelay = (byte *)imp_cg_shock_volume_music;
+-    _dvar_shellshock_soundendduration = (byte *)imp_cg_shock_volume_announcer;
+-    _dvar_shellshock_soundfade = (byte *)imp_cg_shock_volume_shellshock;
+-    _dvar_shellshock_mouseenable = (byte *)imp_cg_shock_mouse;
+-    _dvar_shellshock_mousefadein = (byte *)imp_cg_shock_mouse_fadeTime;
+-    _dvar_shellshock_mouseturnrate = (byte *)imp_cg_shock_mouse_maxpitchspeed;
+-    _dvar_shellshock_mousereducemax = (byte *)imp_cg_shock_mouse_maxyawspeed;
+-    _dvar_shellshock_mousesensitivity = (byte *)imp_cg_shock_mouse_sensitivityscale;
+-    cg_entities_ptr = imp_cg_entities;
+-    cls_ptr = imp_cls;
+-    com_dvarflags_ptr = imp_dvar_modifiedFlags;
+-    dx_device_ptr = imp_dx;
+-    dx_fence = imp_alwaysfails;
+-    fx_developer_check_ptr = imp_g_rendererExists;
+-    fx_helper_ptr = imp_theFxHelper;
+-    fx_scheduler_ptr = imp_theFxScheduler;
+-    g_backEndData = imp_dxState;
+-    g_bobMax_ptr = imp_bg_bobMax;
+-    g_debug_damage_ptr = imp_g_debugDamage;
+-    g_drawSurf = imp_tess;
+-    gfx_buf = imp_tess;
+-    gfxScene = imp_scene;
+-    g_password_ptr = imp_g_password;
+-    g_renderState = imp_r_fog;
+-    g_scr_data_ptr = imp_scr_const;
+-    g_time = imp_level_bgs;
+-    g_viewInfo = imp_r_zfar;
+-    g_viewParms = imp_backEndData;
+-    nextmap_dvar = imp_nextmap;
+-    r_contentmask = imp_vec3_origin;
+-    r_defaultColor = imp_colorWhite;
+-    r_dvar_ef30 = imp_r_lightTweakSunColor;
+-    r_dvar_ef34 = imp_r_lightTweakDiffuseFraction;
+-    r_dvar_ef38 = imp_r_lightTweakAmbient;
+-    r_dvar_ef3c = imp_r_lightTweakAmbientColor;
+-    r_dvar_ef44 = imp_r_lightTweakSunDiffuseColor;
+-    r_dvar_ef48 = imp_r_lightTweakSunLight;
+-    r_dvar_ef4c = imp_r_lightTweakSunDirection;
+-    r_dvar_sunEnable = imp_r_drawSun;
+-    r_frontEndDataOut = imp_backEnd;
+-    r_glob = imp_rgp;
+-    r_lightGridContrast = imp_r_vc_makelog;
+-    r_lightGridEnableTweaks = imp_r_showLightGrid;
+-    r_lightGridSpread = imp_r_vc_showlog;
+-    r_lightGridSunDir = imp_vec3_colorintensity;
+-    r_lightGridUseTweakedValues = imp_r_showMissingLightGrid;
+-    r_sundvar_table = imp_s_sundvars;
+-    r_sunFlareState = imp_sunFlareArray;
+-    r_surftype_table_ptr = imp_infoParms;
+-    r_videoConfig = imp_vidConfig;
+-    r_vtable_ptr = imp_ri;
+-    r_world_ptr = imp_vec3_origin;
+-    scrCompGlob_ptr = imp_scrCompileGlob;
+-    sv_allowAnonymous_dvar = imp_sv_allowAnonymous;
+-    sv_allowDownload_dvar = imp_sv_allowDownload;
+-    sv_allowedClan1_dvar = imp_sv_allowedClan1;
+-    sv_allowedClan2_dvar = imp_sv_allowedClan2;
+-    sv_cheats_dvar = imp_sv_cheats;
+-    sv_debugRate_dvar = imp_sv_debugRate;
+-    sv_debugReliableCmds_dvar = imp_sv_debugReliableCmds;
+-    sv_disableClientConsole_dvar = imp_sv_disableClientConsole;
+-    sv_expectedHunkUsage_dvar = imp_com_expectedHunkUsage;
+-    sv_floodProtect_dvar = imp_sv_floodProtect;
+-    sv_fps_dvar = imp_sv_fps;
+-    sv_gametype_dvar = imp_sv_gametype;
+-    sv_hostname_dvar = imp_sv_hostname;
+-    sv_iwdNames_dvar = imp_sv_iwdNames;
+-    sv_iwds_dvar = imp_sv_iwds;
+-    sv_kickBanTime_dvar = imp_sv_kickBanTime;
+-    sv_mapname_dvar = imp_sv_mapname;
+-    sv_mapRotationCurrent_dvar = imp_sv_mapRotationCurrent;
+-    sv_mapRotation_dvar = imp_sv_mapRotation;
+-    sv_maxclients_dvar = imp_sv_maxclients;
+-    sv_maxPing_dvar = imp_sv_maxPing;
+-    sv_maxRate_dvar = imp_sv_maxRate;
+-    sv_minPing_dvar = imp_sv_minPing;
+-    sv_minPingRate_dvar = imp_sv_maxRate;
+-    sv_packet_info_dvar = imp_sv_packet_info;
+-    sv_padPackets_dvar = imp_sv_padPackets;
+-    sv_privateClients_dvar = imp_sv_privateClients;
+-    sv_pure_dvar = imp_sv_pure;
+-    sv_reconnectlimit_dvar = imp_sv_reconnectlimit;
+-    sv_referencedIwdNames_dvar = imp_sv_referencedIwdNames;
+-    sv_referencedIwds_dvar = imp_sv_referencedIwds;
+-    sv_running_dvar = imp_com_sv_running;
+-    sv_serverid_dvar = imp_sv_serverid;
+-    sv_showAverageBPS_dvar = imp_sv_showAverageBPS;
+-    sv_showCommands_dvar = imp_sv_showCommands;
+-    sv_timeout_dvar = imp_sv_timeout;
+-    sv_voice_dvar = imp_sv_voice;
+-    sv_voiceQuality_dvar = imp_sv_voiceQuality;
+-    sv_zombietime_dvar = imp_sv_zombietime;
+-    trace_mins = imp_vec3_origin;
+-}
+-
+-#endif
+diff --git a/src/web/webgl2_compat.c b/src/web/webgl2_compat.c
+deleted file mode 100644
+index c72104c..0000000
+--- a/src/web/webgl2_compat.c
++++ /dev/null
+@@ -1,1015 +0,0 @@
+-#ifdef __EMSCRIPTEN__
+-
+-#include <GLES3/gl3.h>
+-#include <stddef.h>
+-#include <stdint.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#define WEBGL2_WEAK __attribute__((weak))
+-
+-#ifndef GL_ALPHA_TEST
+-#define GL_ALPHA_TEST 0x0BC0
+-#endif
+-#ifndef GL_MODELVIEW
+-#define GL_MODELVIEW 0x1700
+-#endif
+-#ifndef GL_PROJECTION
+-#define GL_PROJECTION 0x1701
+-#endif
+-#ifndef GL_TEXTURE_ENV
+-#define GL_TEXTURE_ENV 0x2300
+-#endif
+-#ifndef GL_TEXTURE_ENV_MODE
+-#define GL_TEXTURE_ENV_MODE 0x2200
+-#endif
+-#ifndef GL_MODULATE
+-#define GL_MODULATE 0x2100
+-#endif
+-#ifndef GL_REPLACE
+-#define GL_REPLACE 0x1E01
+-#endif
+-#ifndef GL_BGRA
+-#define GL_BGRA 0x80E1
+-#endif
+-#ifndef GL_VERTEX_ARRAY
+-#define GL_VERTEX_ARRAY 0x8074
+-#endif
+-#ifndef GL_NORMAL_ARRAY
+-#define GL_NORMAL_ARRAY 0x8075
+-#endif
+-#ifndef GL_COLOR_ARRAY
+-#define GL_COLOR_ARRAY 0x8076
+-#endif
+-#ifndef GL_TEXTURE_COORD_ARRAY
+-#define GL_TEXTURE_COORD_ARRAY 0x8078
+-#endif
+-#ifndef GL_TEXTURE_2D
+-#define GL_TEXTURE_2D 0x0DE1
+-#endif
+-#ifndef GL_TEXTURE0
+-#define GL_TEXTURE0 0x84C0
+-#endif
+-#ifndef GL_TEXTURE1
+-#define GL_TEXTURE1 0x84C1
+-#endif
+-#ifndef GL_QUADS
+-#define GL_QUADS 0x0007
+-#endif
+-#ifndef GL_QUAD_STRIP
+-#define GL_QUAD_STRIP 0x0008
+-#endif
+-#ifndef GL_POLYGON
+-#define GL_POLYGON 0x0009
+-#endif
+-
+-typedef struct {
+-    int enabled;
+-    int size;
+-    GLenum type;
+-    int stride;
+-    const unsigned char *pointer;
+-    int normalized;
+-    int bgra;
+-} WebGL2ClientArray;
+-
+-typedef struct {
+-    float xyz[3];
+-    float color[4];
+-    float tex0[2];
+-    float tex1[2];
+-} WebGL2Vertex;
+-
+-typedef struct {
+-    GLuint program;
+-    GLuint vbo;
+-    GLuint ibo;
+-    GLuint vao;
+-    GLint u_mvp;
+-    GLint u_use_tex0;
+-    GLint u_use_tex1;
+-    GLint u_alpha_test;
+-    GLint u_alpha_func;
+-    GLint u_alpha_ref;
+-    GLenum matrix_mode;
+-    float modelview[16];
+-    float projection[16];
+-    float modelview_stack[32][16];
+-    float projection_stack[32][16];
+-    int modelview_depth;
+-    int projection_depth;
+-    float color[4];
+-    float texcoord[2][2];
+-    int active_tex_unit;
+-    int client_tex_unit;
+-    int texture_2d_enabled[2];
+-    int tex_env_mode[2];
+-    int alpha_test;
+-    GLenum alpha_func;
+-    float alpha_ref;
+-    WebGL2ClientArray vertex_array;
+-    WebGL2ClientArray color_array;
+-    WebGL2ClientArray texcoord_array[2];
+-    WebGL2ClientArray normal_array;
+-    int in_begin;
+-    GLenum begin_mode;
+-    WebGL2Vertex *immediate;
+-    int immediate_count;
+-    int immediate_capacity;
+-} WebGL2CompatState;
+-
+-static WebGL2CompatState gl2;
+-
+-static void mat_identity(float *m)
+-{
+-    memset(m, 0, sizeof(float) * 16);
+-    m[0] = 1.0f;
+-    m[5] = 1.0f;
+-    m[10] = 1.0f;
+-    m[15] = 1.0f;
+-}
+-
+-static void mat_mul(float *out, const float *a, const float *b)
+-{
+-    float r[16];
+-    int row;
+-    int col;
+-
+-    for (col = 0; col < 4; col++) {
+-        for (row = 0; row < 4; row++) {
+-            r[col * 4 + row] =
+-                a[0 * 4 + row] * b[col * 4 + 0] +
+-                a[1 * 4 + row] * b[col * 4 + 1] +
+-                a[2 * 4 + row] * b[col * 4 + 2] +
+-                a[3 * 4 + row] * b[col * 4 + 3];
+-        }
+-    }
+-
+-    memcpy(out, r, sizeof(r));
+-}
+-
+-static float *current_matrix(void)
+-{
+-    return gl2.matrix_mode == GL_PROJECTION ? gl2.projection : gl2.modelview;
+-}
+-
+-static void mat_postmul_current(const float *rhs)
+-{
+-    float *cur = current_matrix();
+-    mat_mul(cur, cur, rhs);
+-}
+-
+-static void gl2_init_state(void)
+-{
+-    static int initialized;
+-
+-    if (initialized)
+-        return;
+-
+-    initialized = 1;
+-    gl2.matrix_mode = GL_MODELVIEW;
+-    mat_identity(gl2.modelview);
+-    mat_identity(gl2.projection);
+-    gl2.color[0] = 1.0f;
+-    gl2.color[1] = 1.0f;
+-    gl2.color[2] = 1.0f;
+-    gl2.color[3] = 1.0f;
+-    gl2.active_tex_unit = 0;
+-    gl2.client_tex_unit = 0;
+-    gl2.tex_env_mode[0] = GL_MODULATE;
+-    gl2.tex_env_mode[1] = GL_MODULATE;
+-    gl2.alpha_func = GL_ALWAYS;
+-    gl2.alpha_ref = 0.0f;
+-}
+-
+-static GLuint compile_shader(GLenum type, const char *src)
+-{
+-    GLuint shader = glCreateShader(type);
+-    GLint ok = 0;
+-
+-    glShaderSource(shader, 1, &src, NULL);
+-    glCompileShader(shader);
+-    glGetShaderiv(shader, GL_COMPILE_STATUS, &ok);
+-    if (!ok) {
+-        char log[1024];
+-        GLsizei len = 0;
+-        glGetShaderInfoLog(shader, sizeof(log), &len, log);
+-        fprintf(stderr, "webgl2 compat shader compile failed: %.*s\n", (int)len, log);
+-    }
+-    return shader;
+-}
+-
+-static void ensure_program(void)
+-{
+-    static const char *vs =
+-        "#version 300 es\n"
+-        "layout(location=0) in vec3 a_pos;\n"
+-        "layout(location=1) in vec4 a_color;\n"
+-        "layout(location=2) in vec2 a_tex0;\n"
+-        "layout(location=3) in vec2 a_tex1;\n"
+-        "uniform mat4 u_mvp;\n"
+-        "out vec4 v_color;\n"
+-        "out vec2 v_tex0;\n"
+-        "out vec2 v_tex1;\n"
+-        "void main() {\n"
+-        "  gl_Position = u_mvp * vec4(a_pos, 1.0);\n"
+-        "  v_color = a_color;\n"
+-        "  v_tex0 = a_tex0;\n"
+-        "  v_tex1 = a_tex1;\n"
+-        "}\n";
+-    static const char *fs =
+-        "#version 300 es\n"
+-        "precision mediump float;\n"
+-        "in vec4 v_color;\n"
+-        "in vec2 v_tex0;\n"
+-        "in vec2 v_tex1;\n"
+-        "uniform sampler2D u_tex0;\n"
+-        "uniform sampler2D u_tex1;\n"
+-        "uniform int u_use_tex0;\n"
+-        "uniform int u_use_tex1;\n"
+-        "uniform int u_alpha_test;\n"
+-        "uniform int u_alpha_func;\n"
+-        "uniform float u_alpha_ref;\n"
+-        "out vec4 fragColor;\n"
+-        "bool alphaPass(float a) {\n"
+-        "  if (u_alpha_func == 512) return false;\n"
+-        "  if (u_alpha_func == 513) return a < u_alpha_ref;\n"
+-        "  if (u_alpha_func == 514) return abs(a - u_alpha_ref) < 0.0001;\n"
+-        "  if (u_alpha_func == 515) return a <= u_alpha_ref;\n"
+-        "  if (u_alpha_func == 516) return a > u_alpha_ref;\n"
+-        "  if (u_alpha_func == 517) return abs(a - u_alpha_ref) >= 0.0001;\n"
+-        "  if (u_alpha_func == 518) return a >= u_alpha_ref;\n"
+-        "  return true;\n"
+-        "}\n"
+-        "void main() {\n"
+-        "  vec4 c = v_color;\n"
+-        "  if (u_use_tex0 != 0) c *= texture(u_tex0, v_tex0);\n"
+-        "  if (u_use_tex1 != 0) c *= texture(u_tex1, v_tex1);\n"
+-        "  if (u_alpha_test != 0 && !alphaPass(c.a)) discard;\n"
+-        "  fragColor = c;\n"
+-        "}\n";
+-    GLuint vert;
+-    GLuint frag;
+-    GLint ok = 0;
+-
+-    gl2_init_state();
+-    if (gl2.program)
+-        return;
+-
+-    vert = compile_shader(GL_VERTEX_SHADER, vs);
+-    frag = compile_shader(GL_FRAGMENT_SHADER, fs);
+-    gl2.program = glCreateProgram();
+-    glAttachShader(gl2.program, vert);
+-    glAttachShader(gl2.program, frag);
+-    glLinkProgram(gl2.program);
+-    glGetProgramiv(gl2.program, GL_LINK_STATUS, &ok);
+-    if (!ok) {
+-        char log[1024];
+-        GLsizei len = 0;
+-        glGetProgramInfoLog(gl2.program, sizeof(log), &len, log);
+-        fprintf(stderr, "webgl2 compat program link failed: %.*s\n", (int)len, log);
+-    }
+-    glDeleteShader(vert);
+-    glDeleteShader(frag);
+-
+-    gl2.u_mvp = glGetUniformLocation(gl2.program, "u_mvp");
+-    gl2.u_use_tex0 = glGetUniformLocation(gl2.program, "u_use_tex0");
+-    gl2.u_use_tex1 = glGetUniformLocation(gl2.program, "u_use_tex1");
+-    gl2.u_alpha_test = glGetUniformLocation(gl2.program, "u_alpha_test");
+-    gl2.u_alpha_func = glGetUniformLocation(gl2.program, "u_alpha_func");
+-    gl2.u_alpha_ref = glGetUniformLocation(gl2.program, "u_alpha_ref");
+-
+-    glGenVertexArrays(1, &gl2.vao);
+-    glGenBuffers(1, &gl2.vbo);
+-    glGenBuffers(1, &gl2.ibo);
+-
+-    glUseProgram(gl2.program);
+-    glUniform1i(glGetUniformLocation(gl2.program, "u_tex0"), 0);
+-    glUniform1i(glGetUniformLocation(gl2.program, "u_tex1"), 1);
+-}
+-
+-static void bind_compat_arrays(const WebGL2Vertex *verts, int vert_count, int use_tex0, int use_tex1)
+-{
+-    float mvp[16];
+-
+-    ensure_program();
+-
+-    mat_mul(mvp, gl2.projection, gl2.modelview);
+-    glUseProgram(gl2.program);
+-    glUniformMatrix4fv(gl2.u_mvp, 1, GL_FALSE, mvp);
+-    glUniform1i(gl2.u_use_tex0, use_tex0);
+-    glUniform1i(gl2.u_use_tex1, use_tex1);
+-    glUniform1i(gl2.u_alpha_test, gl2.alpha_test);
+-    glUniform1i(gl2.u_alpha_func, gl2.alpha_func);
+-    glUniform1f(gl2.u_alpha_ref, gl2.alpha_ref);
+-
+-    glBindVertexArray(gl2.vao);
+-    glBindBuffer(GL_ARRAY_BUFFER, gl2.vbo);
+-    glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(vert_count * sizeof(WebGL2Vertex)), verts, GL_STREAM_DRAW);
+-
+-    glEnableVertexAttribArray(0);
+-    glEnableVertexAttribArray(1);
+-    glEnableVertexAttribArray(2);
+-    glEnableVertexAttribArray(3);
+-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(WebGL2Vertex), (void *)offsetof(WebGL2Vertex, xyz));
+-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(WebGL2Vertex), (void *)offsetof(WebGL2Vertex, color));
+-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(WebGL2Vertex), (void *)offsetof(WebGL2Vertex, tex0));
+-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(WebGL2Vertex), (void *)offsetof(WebGL2Vertex, tex1));
+-}
+-
+-static int component_size(GLenum type)
+-{
+-    switch (type) {
+-    case GL_BYTE:
+-    case GL_UNSIGNED_BYTE:
+-        return 1;
+-    case GL_SHORT:
+-    case GL_UNSIGNED_SHORT:
+-        return 2;
+-    case GL_INT:
+-    case GL_UNSIGNED_INT:
+-    case GL_FLOAT:
+-        return 4;
+-    default:
+-        return 4;
+-    }
+-}
+-
+-static float read_component(const unsigned char *src, GLenum type, int normalized)
+-{
+-    switch (type) {
+-    case GL_BYTE:
+-        return normalized ? (*(const int8_t *)src / 127.0f) : (float)*(const int8_t *)src;
+-    case GL_UNSIGNED_BYTE:
+-        return normalized ? (*(const uint8_t *)src / 255.0f) : (float)*(const uint8_t *)src;
+-    case GL_SHORT:
+-        return normalized ? (*(const int16_t *)src / 32767.0f) : (float)*(const int16_t *)src;
+-    case GL_UNSIGNED_SHORT:
+-        return normalized ? (*(const uint16_t *)src / 65535.0f) : (float)*(const uint16_t *)src;
+-    case GL_INT:
+-        return (float)*(const int32_t *)src;
+-    case GL_UNSIGNED_INT:
+-        return (float)*(const uint32_t *)src;
+-    case GL_FLOAT:
+-    default:
+-        return *(const float *)src;
+-    }
+-}
+-
+-static void array_set(WebGL2ClientArray *array, int size, GLenum type, int stride, const void *pointer, int normalized)
+-{
+-    array->bgra = size == GL_BGRA;
+-    array->size = array->bgra ? 4 : size;
+-    array->type = type;
+-    array->stride = stride ? stride : array->size * component_size(type);
+-    array->pointer = (const unsigned char *)pointer;
+-    array->normalized = normalized;
+-}
+-
+-static void fill_vertex_from_arrays(WebGL2Vertex *dst, unsigned int index)
+-{
+-    int i;
+-
+-    dst->xyz[0] = 0.0f;
+-    dst->xyz[1] = 0.0f;
+-    dst->xyz[2] = 0.0f;
+-    dst->color[0] = gl2.color[0];
+-    dst->color[1] = gl2.color[1];
+-    dst->color[2] = gl2.color[2];
+-    dst->color[3] = gl2.color[3];
+-    dst->tex0[0] = 0.0f;
+-    dst->tex0[1] = 0.0f;
+-    dst->tex1[0] = 0.0f;
+-    dst->tex1[1] = 0.0f;
+-
+-    if (gl2.vertex_array.enabled && gl2.vertex_array.pointer) {
+-        const unsigned char *base = gl2.vertex_array.pointer + index * gl2.vertex_array.stride;
+-        int comps = gl2.vertex_array.size < 3 ? gl2.vertex_array.size : 3;
+-        for (i = 0; i < comps; i++)
+-            dst->xyz[i] = read_component(base + i * component_size(gl2.vertex_array.type), gl2.vertex_array.type, 0);
+-    }
+-
+-    if (gl2.color_array.enabled && gl2.color_array.pointer) {
+-        const unsigned char *base = gl2.color_array.pointer + index * gl2.color_array.stride;
+-        float c[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+-        int comps = gl2.color_array.size < 4 ? gl2.color_array.size : 4;
+-        for (i = 0; i < comps; i++)
+-            c[i] = read_component(base + i * component_size(gl2.color_array.type), gl2.color_array.type, gl2.color_array.normalized);
+-        if (gl2.color_array.bgra) {
+-            dst->color[0] = c[2];
+-            dst->color[1] = c[1];
+-            dst->color[2] = c[0];
+-            dst->color[3] = c[3];
+-        } else {
+-            memcpy(dst->color, c, sizeof(c));
+-        }
+-    }
+-
+-    for (i = 0; i < 2; i++) {
+-        if (gl2.texcoord_array[i].enabled && gl2.texcoord_array[i].pointer) {
+-            const unsigned char *base = gl2.texcoord_array[i].pointer + index * gl2.texcoord_array[i].stride;
+-            float *tex = i == 0 ? dst->tex0 : dst->tex1;
+-            tex[0] = read_component(base, gl2.texcoord_array[i].type, 0);
+-            if (gl2.texcoord_array[i].size > 1)
+-                tex[1] = read_component(base + component_size(gl2.texcoord_array[i].type), gl2.texcoord_array[i].type, 0);
+-        }
+-    }
+-}
+-
+-static unsigned int read_index_value(const void *indices, GLenum type, int i)
+-{
+-    const unsigned char *p = (const unsigned char *)indices;
+-
+-    switch (type) {
+-    case GL_UNSIGNED_BYTE:
+-        return p[i];
+-    case GL_UNSIGNED_INT:
+-        return ((const uint32_t *)indices)[i];
+-    case GL_UNSIGNED_SHORT:
+-    default:
+-        return ((const uint16_t *)indices)[i];
+-    }
+-}
+-
+-static int index_type_size(GLenum type)
+-{
+-    switch (type) {
+-    case GL_UNSIGNED_BYTE:
+-        return 1;
+-    case GL_UNSIGNED_INT:
+-        return 4;
+-    case GL_UNSIGNED_SHORT:
+-    default:
+-        return 2;
+-    }
+-}
+-
+-static uint32_t source_index_value(const void *indices, GLenum type, int i, int first)
+-{
+-    if (!indices)
+-        return (uint32_t)(first + i);
+-    return read_index_value(indices, type, i);
+-}
+-
+-static uint32_t *build_legacy_triangle_indices(GLenum mode, int first, int count, GLenum type, const void *indices, int *out_count)
+-{
+-    uint32_t *out;
+-    int i;
+-    int n;
+-
+-    *out_count = 0;
+-    if (mode == GL_QUADS) {
+-        int quad_count = count / 4;
+-        if (quad_count <= 0)
+-            return NULL;
+-
+-        out = (uint32_t *)malloc((size_t)quad_count * 6 * sizeof(uint32_t));
+-        if (!out)
+-            return NULL;
+-
+-        for (i = 0; i < quad_count; i++) {
+-            uint32_t a = source_index_value(indices, type, i * 4 + 0, first);
+-            uint32_t b = source_index_value(indices, type, i * 4 + 1, first);
+-            uint32_t c = source_index_value(indices, type, i * 4 + 2, first);
+-            uint32_t d = source_index_value(indices, type, i * 4 + 3, first);
+-            int o = i * 6;
+-            out[o + 0] = a;
+-            out[o + 1] = b;
+-            out[o + 2] = c;
+-            out[o + 3] = a;
+-            out[o + 4] = c;
+-            out[o + 5] = d;
+-        }
+-        *out_count = quad_count * 6;
+-        return out;
+-    }
+-
+-    if (mode == GL_QUAD_STRIP) {
+-        int quad_count = (count - 2) / 2;
+-        if (quad_count <= 0)
+-            return NULL;
+-
+-        out = (uint32_t *)malloc((size_t)quad_count * 6 * sizeof(uint32_t));
+-        if (!out)
+-            return NULL;
+-
+-        for (i = 0; i < quad_count; i++) {
+-            uint32_t a = source_index_value(indices, type, i * 2 + 0, first);
+-            uint32_t b = source_index_value(indices, type, i * 2 + 1, first);
+-            uint32_t c = source_index_value(indices, type, i * 2 + 2, first);
+-            uint32_t d = source_index_value(indices, type, i * 2 + 3, first);
+-            int o = i * 6;
+-            out[o + 0] = a;
+-            out[o + 1] = b;
+-            out[o + 2] = c;
+-            out[o + 3] = b;
+-            out[o + 4] = d;
+-            out[o + 5] = c;
+-        }
+-        *out_count = quad_count * 6;
+-        return out;
+-    }
+-
+-    if (mode == GL_POLYGON) {
+-        if (count <= 0)
+-            return NULL;
+-        out = (uint32_t *)malloc((size_t)count * sizeof(uint32_t));
+-        if (!out)
+-            return NULL;
+-        for (n = 0; n < count; n++)
+-            out[n] = source_index_value(indices, type, n, first);
+-        *out_count = count;
+-        return out;
+-    }
+-
+-    return NULL;
+-}
+-
+-static GLenum webgl_draw_mode(GLenum mode)
+-{
+-    if (mode == GL_QUADS || mode == GL_QUAD_STRIP)
+-        return GL_TRIANGLES;
+-    if (mode == GL_POLYGON)
+-        return GL_TRIANGLE_FAN;
+-    return mode;
+-}
+-
+-WEBGL2_WEAK void webgl2_glDrawElements(unsigned int mode, int count, unsigned int type, const void *indices)
+-{
+-    WebGL2Vertex *verts;
+-    void *index_copy;
+-    uint32_t *legacy_indices;
+-    unsigned int max_index = 0;
+-    int i;
+-    int legacy_count = 0;
+-    int use_tex0;
+-    int use_tex1;
+-
+-    gl2_init_state();
+-    if (!gl2.vertex_array.enabled || !gl2.vertex_array.pointer || !indices || count <= 0) {
+-        glDrawElements(webgl_draw_mode(mode), count, type, indices);
+-        return;
+-    }
+-
+-    for (i = 0; i < count; i++) {
+-        unsigned int index = read_index_value(indices, type, i);
+-        if (index > max_index)
+-            max_index = index;
+-    }
+-    if (max_index > 1048576)
+-        return;
+-
+-    verts = (WebGL2Vertex *)malloc((max_index + 1) * sizeof(WebGL2Vertex));
+-    legacy_indices = build_legacy_triangle_indices(mode, 0, count, type, indices, &legacy_count);
+-    index_copy = legacy_indices ? (void *)legacy_indices : malloc((size_t)count * index_type_size(type));
+-    if (!verts || !index_copy) {
+-        free(verts);
+-        free(index_copy);
+-        return;
+-    }
+-
+-    for (i = 0; i <= (int)max_index; i++)
+-        fill_vertex_from_arrays(&verts[i], (unsigned int)i);
+-    if (!legacy_indices)
+-        memcpy(index_copy, indices, (size_t)count * index_type_size(type));
+-
+-    use_tex0 = gl2.texture_2d_enabled[0] && gl2.texcoord_array[0].enabled;
+-    use_tex1 = gl2.texture_2d_enabled[1] && gl2.texcoord_array[1].enabled;
+-    bind_compat_arrays(verts, (int)max_index + 1, use_tex0, use_tex1);
+-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl2.ibo);
+-    if (legacy_indices) {
+-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)(legacy_count * sizeof(uint32_t)), index_copy, GL_STREAM_DRAW);
+-        glDrawElements(webgl_draw_mode(mode), legacy_count, GL_UNSIGNED_INT, 0);
+-    } else {
+-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)(count * index_type_size(type)), index_copy, GL_STREAM_DRAW);
+-        glDrawElements(webgl_draw_mode(mode), count, type, 0);
+-    }
+-
+-    free(verts);
+-    free(index_copy);
+-}
+-
+-WEBGL2_WEAK void webgl2_glDrawArrays(unsigned int mode, int first, int count)
+-{
+-    WebGL2Vertex *verts;
+-    uint32_t *legacy_indices;
+-    int i;
+-    int legacy_count = 0;
+-    int use_tex0;
+-    int use_tex1;
+-
+-    gl2_init_state();
+-    if (!gl2.vertex_array.enabled || !gl2.vertex_array.pointer || count <= 0) {
+-        glDrawArrays(webgl_draw_mode(mode), first, count);
+-        return;
+-    }
+-
+-    verts = (WebGL2Vertex *)malloc((size_t)count * sizeof(WebGL2Vertex));
+-    if (!verts)
+-        return;
+-
+-    for (i = 0; i < count; i++)
+-        fill_vertex_from_arrays(&verts[i], (unsigned int)(first + i));
+-
+-    use_tex0 = gl2.texture_2d_enabled[0] && gl2.texcoord_array[0].enabled;
+-    use_tex1 = gl2.texture_2d_enabled[1] && gl2.texcoord_array[1].enabled;
+-    bind_compat_arrays(verts, count, use_tex0, use_tex1);
+-    legacy_indices = build_legacy_triangle_indices(mode, 0, count, GL_UNSIGNED_INT, NULL, &legacy_count);
+-    if (legacy_indices) {
+-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl2.ibo);
+-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)(legacy_count * sizeof(uint32_t)), legacy_indices, GL_STREAM_DRAW);
+-        glDrawElements(webgl_draw_mode(mode), legacy_count, GL_UNSIGNED_INT, 0);
+-        free(legacy_indices);
+-    } else {
+-        glDrawArrays(webgl_draw_mode(mode), 0, count);
+-    }
+-
+-    free(verts);
+-}
+-
+-WEBGL2_WEAK void webgl2_glDrawRangeElements(unsigned int mode, unsigned int start, unsigned int end, int count, unsigned int type, const void *indices)
+-{
+-    (void)start;
+-    (void)end;
+-    webgl2_glDrawElements(mode, count, type, indices);
+-}
+-
+-WEBGL2_WEAK void webgl2_glEnable(unsigned int cap)
+-{
+-    gl2_init_state();
+-    if (cap == GL_TEXTURE_2D) {
+-        gl2.texture_2d_enabled[gl2.active_tex_unit] = 1;
+-        return;
+-    }
+-    if (cap == GL_ALPHA_TEST) {
+-        gl2.alpha_test = 1;
+-        return;
+-    }
+-    if (cap == 0x0B50 || cap == 0x0B60 || cap == 0x0B57 || cap == 0x0B90)
+-        return;
+-    glEnable(cap);
+-}
+-
+-WEBGL2_WEAK void webgl2_glDisable(unsigned int cap)
+-{
+-    gl2_init_state();
+-    if (cap == GL_TEXTURE_2D) {
+-        gl2.texture_2d_enabled[gl2.active_tex_unit] = 0;
+-        return;
+-    }
+-    if (cap == GL_ALPHA_TEST) {
+-        gl2.alpha_test = 0;
+-        return;
+-    }
+-    if (cap == 0x0B50 || cap == 0x0B60 || cap == 0x0B57 || cap == 0x0B90)
+-        return;
+-    glDisable(cap);
+-}
+-
+-WEBGL2_WEAK void glActiveTextureARB(unsigned int texture)
+-{
+-    gl2_init_state();
+-    if (texture >= GL_TEXTURE0 && texture <= GL_TEXTURE1)
+-        gl2.active_tex_unit = (int)(texture - GL_TEXTURE0);
+-    glActiveTexture(texture);
+-}
+-
+-WEBGL2_WEAK void glClientActiveTextureARB(unsigned int texture)
+-{
+-    gl2_init_state();
+-    if (texture >= GL_TEXTURE0 && texture <= GL_TEXTURE1)
+-        gl2.client_tex_unit = (int)(texture - GL_TEXTURE0);
+-}
+-
+-WEBGL2_WEAK void glEnableClientState(unsigned int array)
+-{
+-    gl2_init_state();
+-    if (array == GL_VERTEX_ARRAY)
+-        gl2.vertex_array.enabled = 1;
+-    else if (array == GL_COLOR_ARRAY)
+-        gl2.color_array.enabled = 1;
+-    else if (array == GL_TEXTURE_COORD_ARRAY)
+-        gl2.texcoord_array[gl2.client_tex_unit].enabled = 1;
+-    else if (array == GL_NORMAL_ARRAY)
+-        gl2.normal_array.enabled = 1;
+-}
+-
+-WEBGL2_WEAK void glDisableClientState(unsigned int array)
+-{
+-    gl2_init_state();
+-    if (array == GL_VERTEX_ARRAY)
+-        gl2.vertex_array.enabled = 0;
+-    else if (array == GL_COLOR_ARRAY)
+-        gl2.color_array.enabled = 0;
+-    else if (array == GL_TEXTURE_COORD_ARRAY)
+-        gl2.texcoord_array[gl2.client_tex_unit].enabled = 0;
+-    else if (array == GL_NORMAL_ARRAY)
+-        gl2.normal_array.enabled = 0;
+-}
+-
+-WEBGL2_WEAK void glVertexPointer(int size, unsigned int type, int stride, const void *pointer)
+-{
+-    gl2_init_state();
+-    array_set(&gl2.vertex_array, size, type, stride, pointer, 0);
+-}
+-
+-WEBGL2_WEAK void glColorPointer(int size, unsigned int type, int stride, const void *pointer)
+-{
+-    gl2_init_state();
+-    array_set(&gl2.color_array, size, type, stride, pointer, type != GL_FLOAT);
+-}
+-
+-WEBGL2_WEAK void glTexCoordPointer(int size, unsigned int type, int stride, const void *pointer)
+-{
+-    gl2_init_state();
+-    array_set(&gl2.texcoord_array[gl2.client_tex_unit], size, type, stride, pointer, 0);
+-}
+-
+-WEBGL2_WEAK int glNormalPointer(unsigned int type, int stride, const void *pointer)
+-{
+-    gl2_init_state();
+-    array_set(&gl2.normal_array, 3, type, stride, pointer, 0);
+-    return 0;
+-}
+-
+-WEBGL2_WEAK void glBegin(unsigned int mode)
+-{
+-    gl2_init_state();
+-    gl2.in_begin = 1;
+-    gl2.begin_mode = mode;
+-    gl2.immediate_count = 0;
+-}
+-
+-static void push_immediate_vertex(float x, float y, float z)
+-{
+-    WebGL2Vertex *v;
+-
+-    if (!gl2.in_begin)
+-        return;
+-    if (gl2.immediate_count == gl2.immediate_capacity) {
+-        int new_capacity = gl2.immediate_capacity ? gl2.immediate_capacity * 2 : 256;
+-        WebGL2Vertex *new_data = (WebGL2Vertex *)realloc(gl2.immediate, (size_t)new_capacity * sizeof(WebGL2Vertex));
+-        if (!new_data)
+-            return;
+-        gl2.immediate = new_data;
+-        gl2.immediate_capacity = new_capacity;
+-    }
+-
+-    v = &gl2.immediate[gl2.immediate_count++];
+-    v->xyz[0] = x;
+-    v->xyz[1] = y;
+-    v->xyz[2] = z;
+-    memcpy(v->color, gl2.color, sizeof(v->color));
+-    memcpy(v->tex0, gl2.texcoord[0], sizeof(v->tex0));
+-    memcpy(v->tex1, gl2.texcoord[1], sizeof(v->tex1));
+-}
+-
+-WEBGL2_WEAK void glEnd(void)
+-{
+-    uint32_t *legacy_indices;
+-    int legacy_count = 0;
+-    int use_tex0;
+-    int use_tex1;
+-
+-    gl2_init_state();
+-    if (!gl2.in_begin)
+-        return;
+-
+-    gl2.in_begin = 0;
+-    if (gl2.immediate_count <= 0)
+-        return;
+-
+-    use_tex0 = gl2.texture_2d_enabled[0];
+-    use_tex1 = gl2.texture_2d_enabled[1];
+-    bind_compat_arrays(gl2.immediate, gl2.immediate_count, use_tex0, use_tex1);
+-    legacy_indices = build_legacy_triangle_indices(gl2.begin_mode, 0, gl2.immediate_count, GL_UNSIGNED_INT, NULL, &legacy_count);
+-    if (legacy_indices) {
+-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl2.ibo);
+-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)(legacy_count * sizeof(uint32_t)), legacy_indices, GL_STREAM_DRAW);
+-        glDrawElements(webgl_draw_mode(gl2.begin_mode), legacy_count, GL_UNSIGNED_INT, 0);
+-        free(legacy_indices);
+-    } else {
+-        glDrawArrays(webgl_draw_mode(gl2.begin_mode), 0, gl2.immediate_count);
+-    }
+-}
+-
+-WEBGL2_WEAK void glVertex2f(float x, float y)
+-{
+-    push_immediate_vertex(x, y, 0.0f);
+-}
+-
+-WEBGL2_WEAK void glVertex3f(float x, float y, float z)
+-{
+-    push_immediate_vertex(x, y, z);
+-}
+-
+-WEBGL2_WEAK void glColor4f(float r, float g, float b, float a)
+-{
+-    gl2_init_state();
+-    gl2.color[0] = r;
+-    gl2.color[1] = g;
+-    gl2.color[2] = b;
+-    gl2.color[3] = a;
+-}
+-
+-WEBGL2_WEAK void glTexCoord2f(float s, float t)
+-{
+-    gl2_init_state();
+-    gl2.texcoord[gl2.active_tex_unit][0] = s;
+-    gl2.texcoord[gl2.active_tex_unit][1] = t;
+-}
+-
+-WEBGL2_WEAK void glMatrixMode(unsigned int mode)
+-{
+-    gl2_init_state();
+-    if (mode == GL_MODELVIEW || mode == GL_PROJECTION)
+-        gl2.matrix_mode = mode;
+-}
+-
+-WEBGL2_WEAK void glLoadIdentity(void)
+-{
+-    gl2_init_state();
+-    mat_identity(current_matrix());
+-}
+-
+-WEBGL2_WEAK void glLoadMatrixf(const float *m)
+-{
+-    gl2_init_state();
+-    if (m)
+-        memcpy(current_matrix(), m, sizeof(float) * 16);
+-}
+-
+-WEBGL2_WEAK void glPushMatrix(void)
+-{
+-    gl2_init_state();
+-    if (gl2.matrix_mode == GL_PROJECTION) {
+-        if (gl2.projection_depth < 32)
+-            memcpy(gl2.projection_stack[gl2.projection_depth++], gl2.projection, sizeof(gl2.projection));
+-    } else {
+-        if (gl2.modelview_depth < 32)
+-            memcpy(gl2.modelview_stack[gl2.modelview_depth++], gl2.modelview, sizeof(gl2.modelview));
+-    }
+-}
+-
+-WEBGL2_WEAK void glPopMatrix(void)
+-{
+-    gl2_init_state();
+-    if (gl2.matrix_mode == GL_PROJECTION) {
+-        if (gl2.projection_depth > 0)
+-            memcpy(gl2.projection, gl2.projection_stack[--gl2.projection_depth], sizeof(gl2.projection));
+-    } else {
+-        if (gl2.modelview_depth > 0)
+-            memcpy(gl2.modelview, gl2.modelview_stack[--gl2.modelview_depth], sizeof(gl2.modelview));
+-    }
+-}
+-
+-WEBGL2_WEAK void glScalef(float x, float y, float z)
+-{
+-    float s[16];
+-
+-    gl2_init_state();
+-    mat_identity(s);
+-    s[0] = x;
+-    s[5] = y;
+-    s[10] = z;
+-    mat_postmul_current(s);
+-}
+-
+-WEBGL2_WEAK void glOrtho(double left, double right, double bottom, double top, double zNear, double zFar)
+-{
+-    float o[16];
+-    float rl = (float)(right - left);
+-    float tb = (float)(top - bottom);
+-    float fn = (float)(zFar - zNear);
+-
+-    gl2_init_state();
+-    mat_identity(o);
+-    if (rl == 0.0f || tb == 0.0f || fn == 0.0f)
+-        return;
+-    o[0] = 2.0f / rl;
+-    o[5] = 2.0f / tb;
+-    o[10] = -2.0f / fn;
+-    o[12] = -(float)(right + left) / rl;
+-    o[13] = -(float)(top + bottom) / tb;
+-    o[14] = -(float)(zFar + zNear) / fn;
+-    mat_postmul_current(o);
+-}
+-
+-WEBGL2_WEAK void glAlphaFunc(unsigned int func, float ref)
+-{
+-    gl2_init_state();
+-    gl2.alpha_func = func;
+-    gl2.alpha_ref = ref;
+-}
+-
+-WEBGL2_WEAK void glTexEnvi(unsigned int target, unsigned int pname, int param)
+-{
+-    gl2_init_state();
+-    if (target == GL_TEXTURE_ENV && pname == GL_TEXTURE_ENV_MODE)
+-        gl2.tex_env_mode[gl2.active_tex_unit] = param;
+-}
+-
+-WEBGL2_WEAK void glTexEnvfv(unsigned int target, unsigned int pname, const float *params)
+-{
+-    if (params)
+-        glTexEnvi(target, pname, (int)params[0]);
+-}
+-
+-WEBGL2_WEAK int glTexEnvf(unsigned int target, unsigned int pname, float param)
+-{
+-    glTexEnvi(target, pname, (int)param);
+-    return 0;
+-}
+-
+-WEBGL2_WEAK void glClearDepth(double depth) { glClearDepthf((float)depth); }
+-WEBGL2_WEAK void glDepthRange(double zNear, double zFar) { glDepthRangef((float)zNear, (float)zFar); }
+-WEBGL2_WEAK int glBlendEquationEXT(unsigned int mode) { glBlendEquation(mode); return 0; }
+-WEBGL2_WEAK int glBlendFuncSeparateEXT(unsigned int srcRGB, unsigned int dstRGB, unsigned int srcAlpha, unsigned int dstAlpha)
+-{
+-    glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+-    return 0;
+-}
+-WEBGL2_WEAK int glCompressedTexImage2DARB(unsigned int target, int level, unsigned int internalformat, int width, int height, int border, int imageSize, const void *data)
+-{
+-    glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+-    return 0;
+-}
+-WEBGL2_WEAK int glCompressedTexImage3DARB(unsigned int target, int level, unsigned int internalformat, int width, int height, int depth, int border, int imageSize, const void *data)
+-{
+-    glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
+-    return 0;
+-}
+-WEBGL2_WEAK int glVertexAttribPointerARB(unsigned int index, int size, unsigned int type, unsigned char normalized, int stride, const void *pointer)
+-{
+-    glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+-    return 0;
+-}
+-WEBGL2_WEAK int glEnableVertexAttribArrayARB(unsigned int index) { glEnableVertexAttribArray(index); return 0; }
+-WEBGL2_WEAK int glDisableVertexAttribArrayARB(unsigned int index) { glDisableVertexAttribArray(index); return 0; }
+-WEBGL2_WEAK int glBindVertexArrayAPPLE(unsigned int array) { glBindVertexArray(array); return 0; }
+-WEBGL2_WEAK int glGenVertexArraysAPPLE(int n, unsigned int *arrays) { glGenVertexArrays(n, arrays); return 0; }
+-WEBGL2_WEAK int glDeleteVertexArraysAPPLE(int n, const unsigned int *arrays) { glDeleteVertexArrays(n, arrays); return 0; }
+-
+-WEBGL2_WEAK void glBindProgramARB(unsigned int target, unsigned int program) { (void)target; (void)program; }
+-WEBGL2_WEAK int glColorMaterial(unsigned int face, unsigned int mode) { (void)face; (void)mode; return 0; }
+-WEBGL2_WEAK int glCombinerParameterfvNV(unsigned int pname, const float *params) { (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glCombinerStageParameterfvNV(unsigned int stage, unsigned int pname, const float *params) { (void)stage; (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glDeleteFencesAPPLE(int n, const unsigned int *fences) { (void)n; (void)fences; return 0; }
+-WEBGL2_WEAK int glDeleteProgramsARB(int n, const unsigned int *programs) { (void)n; (void)programs; return 0; }
+-WEBGL2_WEAK int glDrawBuffer(unsigned int mode) { (void)mode; return 0; }
+-WEBGL2_WEAK int glFinishFenceAPPLE(unsigned int fence) { (void)fence; return 0; }
+-WEBGL2_WEAK int glFlushVertexArrayRangeAPPLE(int length, const void *pointer) { (void)length; (void)pointer; return 0; }
+-WEBGL2_WEAK int glFogf(unsigned int pname, float param) { (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK void glFogfv(unsigned int pname, const float *params) { (void)pname; (void)params; }
+-WEBGL2_WEAK int glFogi(unsigned int pname, int param) { (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glGenFencesAPPLE(int n, unsigned int *fences)
+-{
+-    int i;
+-    if (fences) {
+-        for (i = 0; i < n; i++)
+-            fences[i] = (unsigned int)(i + 1);
+-    }
+-    return 0;
+-}
+-WEBGL2_WEAK int glGenProgramsARB(int n, unsigned int *programs)
+-{
+-    int i;
+-    if (programs) {
+-        for (i = 0; i < n; i++)
+-            programs[i] = (unsigned int)(i + 1);
+-    }
+-    return 0;
+-}
+-WEBGL2_WEAK int glGetProgramivARB(unsigned int target, unsigned int pname, int *params)
+-{
+-    (void)target;
+-    (void)pname;
+-    if (params)
+-        *params = 1;
+-    return 0;
+-}
+-WEBGL2_WEAK int glLightModelfv(unsigned int pname, const float *params) { (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glLightModeli(unsigned int pname, int param) { (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glLightf(unsigned int light, unsigned int pname, float param) { (void)light; (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glLightfv(unsigned int light, unsigned int pname, const float *params) { (void)light; (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glMaterialf(unsigned int face, unsigned int pname, float param) { (void)face; (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glMaterialfv(unsigned int face, unsigned int pname, const float *params) { (void)face; (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glPointParameterfARB(unsigned int pname, float param) { (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glPointParameterfvARB(unsigned int pname, const float *params) { (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glPolygonMode(unsigned int face, unsigned int mode) { (void)face; (void)mode; return 0; }
+-WEBGL2_WEAK int glPopAttrib(void) { return 0; }
+-WEBGL2_WEAK int glPopClientAttrib(void) { return 0; }
+-WEBGL2_WEAK void glProgramEnvParameter4fvARB(unsigned int target, unsigned int index, const float *params) { (void)target; (void)index; (void)params; }
+-WEBGL2_WEAK int glProgramStringARB(unsigned int target, unsigned int format, int len, const void *string) { (void)target; (void)format; (void)len; (void)string; return 0; }
+-WEBGL2_WEAK int glPushAttrib(unsigned int mask) { (void)mask; return 0; }
+-WEBGL2_WEAK int glPushClientAttrib(unsigned int mask) { (void)mask; return 0; }
+-WEBGL2_WEAK int glSetFenceAPPLE(unsigned int fence) { (void)fence; return 0; }
+-WEBGL2_WEAK int glShadeModel(unsigned int mode) { (void)mode; return 0; }
+-WEBGL2_WEAK int glTestFenceAPPLE(unsigned int fence) { (void)fence; return 1; }
+-WEBGL2_WEAK int glTexGenfv(unsigned int coord, unsigned int pname, const float *params) { (void)coord; (void)pname; (void)params; return 0; }
+-WEBGL2_WEAK int glTexGeni(unsigned int coord, unsigned int pname, int param) { (void)coord; (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glVertexArrayParameteriAPPLE(unsigned int pname, int param) { (void)pname; (void)param; return 0; }
+-WEBGL2_WEAK int glVertexArrayRangeAPPLE(int length, const void *pointer) { (void)length; (void)pointer; return 0; }
+-
+-#endif
+diff --git a/src/web/webgl2_compat.h b/src/web/webgl2_compat.h
+deleted file mode 100644
+index cb5a10c..0000000
+--- a/src/web/webgl2_compat.h
++++ /dev/null
+@@ -1,48 +0,0 @@
+-#ifndef WEB_WEBGL2_COMPAT_H
+-#define WEB_WEBGL2_COMPAT_H
+-
+-#ifdef __EMSCRIPTEN__
+-
+-void glActiveTextureARB(unsigned int texture);
+-void glAlphaFunc(unsigned int func, float ref);
+-void glBindProgramARB(unsigned int target, unsigned int program);
+-void glBindTexture(unsigned int target, unsigned int texture);
+-void glBindVertexArray(unsigned int array);
+-void glBlendFunc(unsigned int sfactor, unsigned int dfactor);
+-void glClear(unsigned int mask);
+-void glClearColor(float red, float green, float blue, float alpha);
+-void glClearDepth(double depth);
+-void glClearStencil(int s);
+-void glClientActiveTextureARB(unsigned int texture);
+-void glColor4f(float red, float green, float blue, float alpha);
+-void glColorMask(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
+-void glColorPointer(int size, unsigned int type, int stride, const void *pointer);
+-void glDepthFunc(unsigned int func);
+-void glDepthMask(unsigned char flag);
+-void glDepthRange(double zNear, double zFar);
+-void glDisableClientState(unsigned int array);
+-void glEnableClientState(unsigned int array);
+-void glFogfv(unsigned int pname, const float *params);
+-unsigned int glGetError(void);
+-void glGetIntegerv(unsigned int pname, int *data);
+-void glLoadIdentity(void);
+-void glLoadMatrixf(const float *m);
+-void glMatrixMode(unsigned int mode);
+-void glProgramEnvParameter4fvARB(unsigned int target, unsigned int index, const float *params);
+-void glScalef(float x, float y, float z);
+-void glTexCoordPointer(int size, unsigned int type, int stride, const void *pointer);
+-void glTexEnvfv(unsigned int target, unsigned int pname, const float *params);
+-void glTexEnvi(unsigned int target, unsigned int pname, int param);
+-void glTexParameteri(unsigned int target, unsigned int pname, int param);
+-void glVertexPointer(int size, unsigned int type, int stride, const void *pointer);
+-void glViewport(int x, int y, int width, int height);
+-
+-void webgl2_glDisable(unsigned int cap);
+-void webgl2_glDrawArrays(unsigned int mode, int first, int count);
+-void webgl2_glDrawElements(unsigned int mode, int count, unsigned int type, const void *indices);
+-void webgl2_glDrawRangeElements(unsigned int mode, unsigned int start, unsigned int end, int count, unsigned int type, const void *indices);
+-void webgl2_glEnable(unsigned int cap);
+-
+-#endif
+-
+-#endif

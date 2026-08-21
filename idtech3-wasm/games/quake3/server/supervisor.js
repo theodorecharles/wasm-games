@@ -242,5 +242,5 @@ process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
 
 server.listen(PUBLIC_PORT, '0.0.0.0', () => {
-  process.stdout.write(`quake3-wasm: framework 0.9.4 + QuakeJS supervisor on tcp/${PUBLIC_PORT}\n`);
+  process.stdout.write(`quake3-wasm: framework 0.9.6 + QuakeJS supervisor on tcp/${PUBLIC_PORT}\n`);
 });

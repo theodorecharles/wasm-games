@@ -1,108 +1,78 @@
 # wasm-games
 
-Browser ports of classic games, each compiled to WebAssembly and served as a
-self-contained static site. One repository holds every engine's **port layer** —
-adapters, build scripts, patches, JSON manifests, Dockerfiles and unraid
-templates — organized per engine and per game.
+Source-only WebAssembly ports of classic games. This monorepo contains the
+browser adapters, deterministic source locks and patches, build scripts,
+manifests, server supervisors, and container packaging. Original game data and
+generated `.wasm`/`.data` artifacts are not committed; owner-supplied data is
+mounted from `/home/ted/wasm-game-data` during local development.
 
-> **This repo is source-only.** It contains *our* code: the WASM port glue,
-> build orchestration, patches, manifests and packaging. It does **not** contain
-> the original game/engine source code, compiled `.wasm` binaries, build
-> artifacts, or copyrighted game data (`.pk3`/`.wad`/`.pak`). Original sources
-> live in **forks** (see below) and are cloned at Docker build time; game data is
-> supplied by you at runtime via a volume mount.
+The shared runtime lives in the separate
+[`wasm-game-framework`](https://github.com/theodorecharles/wasm-game-framework)
+repository. The workstation launcher lives in the separate
+[`wasm-game-lab`](https://github.com/theodorecharles/wasm-game-lab) repository.
 
-## The framework
+## Browser-proven roster
 
-Everything here builds on **[wasm-game-framework](https://github.com/theodorecharles/wasm-game-framework)** — the shared runtime/launcher (shell UI, input capture, persistence, PWA, Docker base image) that every game sits on. It's linked into this repo as a git submodule at [`wasm-game-framework/`](wasm-game-framework/) and the build scripts expect it (or `WASM_FRAMEWORK_DIR` pointing at a checkout).
+These results were recorded in Google Chrome on 2026-08-21. “Browser-proven”
+means the built game reached the stated native runtime condition; it is
+stronger than a successful compile or static-site smoke test.
 
-```
-wasm-games            ← this repo: per-engine, per-game port layers + packaging
-wasm-game-framework   ← shared runtime all games build on (separate repo/submodule)
-<engine forks>        ← original game/engine sources, cloned at build time
-```
+| Engine | Game | Proven result | Evidence |
+| --- | --- | --- | --- |
+| Build | Blood | Playable E1M1; keyboard plus horizontal and vertical mouse look | [`mouselook.json`](build-wasm/proofs/mouselook.json) |
+| Build | Duke Nukem 3D | Playable L.A. Meltdown; keyboard plus native yaw and horizon mouse look | [`mouselook.json`](build-wasm/proofs/mouselook.json) |
+| GoldSource | Half-Life | Intro advanced from `c0a0` through `c0a0e` into gameplay | [`campaign-intros.json`](goldsource-wasm/proofs/campaign-intros.json) |
+| GoldSource | Half-Life: Blue Shift | Intro advanced from `ba_tram1` through `ba_tram3` into gameplay | [`campaign-intros.json`](goldsource-wasm/proofs/campaign-intros.json) |
+| GoldSource | Half-Life: Opposing Force | Helicopter intro advanced from `of0a0` to playable `of1a1` | [`campaign-intros.json`](goldsource-wasm/proofs/campaign-intros.json) |
+| GoldSource | Counter-Strike 1.6 | Playable `de_dust2` with four YaPB bots | [`counter-strike-bots.json`](goldsource-wasm/proofs/counter-strike-bots.json) |
+| id Tech 1 | Doom, Doom II, TNT, Plutonia, Heretic, Hexen, Chex Quest | 21/21 two-browser multiplayer combinations passed across Original, Smooth, and Modernized profiles; Modernized adds two bots | [`multiplayer-21.json`](idtech1-wasm/proofs/multiplayer-21.json) |
+| id Tech 2 | Quake | Two Chrome clients plus two FrikBot bots, independent mouse look, server auto-wake/sleep | [`quake-multiplayer.json`](idtech2-wasm/proofs/quake-multiplayer.json) |
+| id Tech 2 | Quake II | Two Chrome clients plus two 3ZB2 bots, independent mouse look, server auto-wake/sleep | [`quake2-multiplayer.json`](idtech2-wasm/proofs/quake2-multiplayer.json) |
+| id Tech 2 | Quake II: The Reckoning | Owner PAK validated and playable `xswamp` reached with the native Xatrix module | [`quake2-expansions.json`](idtech2-wasm/proofs/quake2-expansions.json) |
+| id Tech 2 | Quake II: Ground Zero | Owner PAK validated and playable `rbase1` reached with the native Rogue module | [`quake2-expansions.json`](idtech2-wasm/proofs/quake2-expansions.json) |
 
-## Repository layout
+The id Tech 1 multiplayer menu maps **New Game** to single-player and **Join
+Deathmatch** to the managed multiplayer path. Original and Smooth use the
+Chocolate-compatible server; Modernized uses Zandronum with bots. Quake and
+Quake II use managed native servers with bots and the framework’s automatic
+wake/idle-sleep lifecycle.
 
-```
-<engine>-wasm/                  one folder per engine/runtime
-  package.json, src/, scripts/, patches/, native/, web/   (the shared engine build)
-  sources.json                  upstream → fork mapping for this engine
-  games/
-    <game>/                     one folder per game
-      game.json                 manifest: variant, gamedir, ports, theme, data files (sha256)
-      Dockerfile                per-game image (framework base + staged web bundle)
-      unraid.xml                unraid Community Applications template
-      assets/                   icon.svg, background.svg
-      patches/                  per-game patches (when present)
-wasm-game-framework/            (submodule → the framework repo)
-wasm-game-lab/                  the portal that aggregates all games (compose, games.json)
-```
+## Full project roster
 
-**Reference implementation:** [`goldsource-wasm/`](goldsource-wasm/) — fully wired
-to this layout with four games (Half-Life, Blue Shift, Opposing Force,
-Counter-Strike). The other engines are imported as their port layer and are being
-migrated to the same `games/<game>/` + fork model over time.
+| Engine family | Games | Current status |
+| --- | --- | --- |
+| `build-wasm` | Blood; Duke Nukem 3D | ✅ Browser-proven, including mouse look |
+| `goldsource-wasm` | Half-Life; Blue Shift; Opposing Force; Counter-Strike 1.6 | ✅ Browser-proven; all campaigns passed their intro sequences; CS bots proven |
+| `idtech1-wasm` | Doom / Ultimate Doom; Doom II; Final Doom TNT; Final Doom Plutonia; Heretic; Hexen; Chex Quest | ✅ Browser-proven multiplayer, 21/21 profile matrix |
+| `idtech2-wasm` | Quake; Quake II; The Reckoning; Ground Zero | ✅ Browser-proven; multiplayer/bots on base games and both expansions playable |
+| `idtech3-wasm` | Quake III Arena; RTCW single-player; RTCW multiplayer; Wolfenstein: Enemy Territory | 🟡 Retest; WolfET remains the lab’s established live release |
+| `idtech4-wasm` | Doom 3; Doom 3 Multiplayer; Resurrection of Evil; Quake 4; Quake 4 Multiplayer; Prey (2006) | 🟡 Retest |
+| `wolf3d-wasm` | Wolfenstein 3D; Spear of Destiny | 🟡 Retest |
+| `dosbox-wasm` | Jill I–III; Jazz Jackrabbit; Duke Nukem I–II; GTA DOS demo; The Need for Speed; SimCity 2000 | 🟡 Retest; Need for Speed is the known broken variant |
+| `source-wasm` | Half-Life 2; Portal | 🔴 Still in development; the published SDK has no Source engine runtime |
+| `openrct2-wasm` | OpenRCT2 | 🟡 Retest |
+| `openut-wasm` | Unreal Tournament | 🟡 Retest |
+| `lithtech-wasm` | No One Lives Forever; No One Lives Forever 2 | 🟡 Source/runtime work remains |
+| `midtown-wasm` | Midtown Madness; Midtown Madness 2 | 🟡 Source/runtime work remains |
+| `cod2-wasm` | Call of Duty 2 Multiplayer | 🔴 Diagnostic client only; native link/runtime blocker remains |
+| `emulation-wasm` | NES; SNES; PlayStation; PlayStation 2 | ⚪ Runtime images are not yet available |
 
-## Conventions
+Machine-readable status and data paths live in [`games.catalog.json`](games.catalog.json).
+The detailed recovery and verification record is in
+[`PROJECT-TRACKER.md`](PROJECT-TRACKER.md). The running workstation portal and
+its 18 live shortcuts are recorded in
+[`game-lab-runtime.json`](proofs/game-lab-runtime.json).
 
-- **Original source = forks, not commits.** Each engine records its upstreams in
-  `sources.json` (`upstream` → `fork` under `github.com/theodorecharles`). Docker
-  builds clone the fork and apply the engine's `patches/`. Never vendored in.
-- **Game data is a runtime volume.** Containers read the engine data dir at
-  `/data`. Each `game.json` lists the exact files (with sha256) it needs; you
-  supply your own legally-owned files. Nothing copyrighted is committed.
-- **One Docker image per game**, published to GHCR as
-  `ghcr.io/theodorecharles/<game>-wasm`, serving on container port `8088`.
-- **One unraid template per game** (`unraid.xml`), wiring the GHCR image, the web
-  port, and the `/data` volume.
+## Layout and verification
 
-## Game status
-
-### GoldSource (`goldsource-wasm/`) — the active project
-
-| Game | Status | Notes |
-|---|---|---|
-| **Half-Life** | ✅ Working | Single-player boots to menu & in-game. Quit/multiplayer/previews removed (tab-close is the only quit). |
-| **Counter-Strike** | 🟡 Working w/ caveats | In-engine **Join Game** button → self-hosted **de_dust2** listen server over a WebRTC bridge. Mic-permission prompt fixed. Uses the **software renderer** to dodge a WebGL2 black-menu bug. **Open:** menu looks "too big" (text-only Join button styling); WebGL2 menu root-cause; bots disabled (YaPB↔ReGameDLL `null function` crash). |
-| **Blue Shift** | 🔴 Broken | Boots to menu, but shows a stray **"THE END"** item and **Quit is still present** (the `xash-no-quit` patch didn't take on its menu build), and New Game doesn't start. Needs the menu patch rebuilt/applied + a New Game/chapter-load fix. |
-| **Opposing Force** | 🟡 Needs verification | Engine rebuilt alongside the others; not re-verified end-to-end recently. |
-
-**Running services (local dev):** the GoldSource suite on `:8017`, the CS WebRTC
-bridge on `:4190`, and a headless CS listen-server host. Play via
-`http://127.0.0.1:8017` (or `?game=counter-strike` on the bridge origin `:4190`).
-
-### Other engines — imported as port layer, migration in progress
-
-`source-wasm`, `idtech1–4-wasm`, `build-wasm`, `dosbox-wasm`, `emulation-wasm`,
-`openrct2-wasm`, `openut-wasm`, `wolf3d-wasm`, `jill-wasm`, `lithtech-wasm`,
-`midtown-wasm`, `cod2-wasm` — these are imported as their **port layer only**
-(build scripts, patches, manifests, web). Each still needs: fork its upstream,
-extract our changes into `patches/`, point its Dockerfile at the fork, and add a
-`games/<game>/` layout + `unraid.xml`. See *Roadmap*.
-
-## Building & running
+Each engine family has an `engine.json`, and each catalog game has a
+`games/<game>/game.json`, `sources.json`, and ordered patch series. Validate the
+source-only layout with:
 
 ```bash
-# clone with the framework submodule
-git clone --recurse-submodules git@github.com:theodorecharles/wasm-games.git
-cd wasm-games/goldsource-wasm
-
-# build the shared web bundle + one Docker image per game
-./scripts/build-images.sh          # DOCKER_REGISTRY / DOCKER_TAG overridable
-
-# push to GHCR (after `docker login ghcr.io`)
-docker push ghcr.io/theodorecharles/half-life-wasm:latest
+node scripts/validate-layout.mjs
 ```
 
-Game data is provisioned at runtime (mounted at `/data`); see each
-`games/<game>/game.json` for the required files and checksums.
-
-## Roadmap / open items (for the next pass)
-
-1. **Fix Blue Shift** — apply the no-quit/menu patch to its menu build; fix New Game start; remove the stray "THE END" item.
-2. **CS polish** — fix the oversized main menu; root-cause the WebGL2 black menu (drop the soft-renderer workaround); re-enable bots (fix YaPB↔ReGameDLL).
-3. **Verify Opposing Force** end-to-end.
-4. **Migrate remaining engines** to the `games/<game>/` + fork model: fork each upstream, extract our changes into `patches/`, point the Dockerfile at the fork, add `game.json` + `unraid.xml`.
-5. **Strip temp diagnostics** from `goldsource-wasm/src/framework-adapter.js` (`__csXash`, net-call counters).
-6. **Push images to GHCR** and validate the unraid templates on a live server.
+Engine-specific test and image scripts live under each family’s `scripts/`
+directory. Builds use the sibling framework checkout by default or
+`WASM_FRAMEWORK_DIR` when explicitly supplied.

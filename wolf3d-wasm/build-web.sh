@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-dist_dir="$repo_dir/build-web/dist"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
-required_framework_version="0.9.4"
-required_framework_commit="c4ad3b9e075f881d32f044299fbfeee703a9169d"
+engine_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source_dir="$("${engine_dir}/scripts/fetch-source")"
+dist_dir="$engine_dir/.work/dist"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
+required_framework_version="0.9.6"
+required_framework_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
 framework_version="$(node -p "require('$framework_dir/package.json').version")"
 framework_commit="$(git -C "$framework_dir" rev-parse HEAD)"
 
@@ -41,25 +42,25 @@ rm -f \
 build_variant() {
     local variant="$1"
     local output="$2"
-    emmake make -C "$repo_dir" clean WEB=1 WEB_VARIANT="$variant" \
-        CC=emcc CXX=em++ BINARY="build-web/dist/$output.js"
-    emmake make -C "$repo_dir" -j"$(nproc)" \
+    emmake make -C "$source_dir" clean WEB=1 WEB_VARIANT="$variant" \
+        CC=emcc CXX=em++ BINARY="$dist_dir/$output.js"
+    emmake make -C "$source_dir" -j"$(nproc)" \
         WEB=1 \
         WEB_VARIANT="$variant" \
         CC=emcc \
         CXX=em++ \
-        BINARY="build-web/dist/$output.js"
+        BINARY="$dist_dir/$output.js"
 }
 
 build_variant wolf3d wolf3d
 build_variant spear spear
 
-cp "$repo_dir/web/game-adapter.js" "$repo_dir/web/wasm-game.json" \
-    "$repo_dir/web/wasm-game-data.json" "$dist_dir/"
-cp "$repo_dir/win/Wolf4SDL.ico" "$dist_dir/wolf3d.ico"
+cp "$engine_dir/web/game-adapter.js" "$engine_dir/web/wasm-game.json" \
+    "$engine_dir/web/wasm-game-data.json" "$dist_dir/"
+cp "$source_dir/win/Wolf4SDL.ico" "$dist_dir/wolf3d.ico"
 if command -v magick >/dev/null 2>&1; then
-    magick "$repo_dir/win/Wolf4SDL.ico[1]" -filter point -resize 192x192 "$dist_dir/wolf3d-192.png"
-    magick "$repo_dir/win/Wolf4SDL.ico[1]" -filter point -resize 512x512 "$dist_dir/wolf3d-512.png"
+    magick "$source_dir/win/Wolf4SDL.ico[1]" -filter point -resize 192x192 "$dist_dir/wolf3d-192.png"
+    magick "$source_dir/win/Wolf4SDL.ico[1]" -filter point -resize 512x512 "$dist_dir/wolf3d-512.png"
 else
     printf 'ImageMagick is required to build the authentic PWA icons.\n' >&2
     exit 1

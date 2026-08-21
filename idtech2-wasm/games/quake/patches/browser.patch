@@ -1,0 +1,2055 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 00000000..82af376e
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,149 @@
++cmake_minimum_required(VERSION 3.20)
++
++project(idtech2_quake_wasm C)
++
++if(NOT EMSCRIPTEN)
++    message(FATAL_ERROR "This target requires Emscripten. Run scripts/build-web.sh.")
++endif()
++
++set(QUAKE_SOURCES
++    WinQuake/cl_demo.c
++    WinQuake/cl_input.c
++    WinQuake/cl_main.c
++    WinQuake/cl_parse.c
++    WinQuake/cl_tent.c
++    WinQuake/chase.c
++    WinQuake/cmd.c
++    WinQuake/common.c
++    WinQuake/console.c
++    WinQuake/crc.c
++    WinQuake/cvar.c
++    WinQuake/draw.c
++    WinQuake/d_edge.c
++    WinQuake/d_fill.c
++    WinQuake/d_init.c
++    WinQuake/d_modech.c
++    WinQuake/d_part.c
++    WinQuake/d_polyse.c
++    WinQuake/d_scan.c
++    WinQuake/d_sky.c
++    WinQuake/d_sprite.c
++    WinQuake/d_surf.c
++    WinQuake/d_vars.c
++    WinQuake/d_zpoint.c
++    WinQuake/host.c
++    WinQuake/host_cmd.c
++    WinQuake/keys.c
++    WinQuake/menu.c
++    WinQuake/mathlib.c
++    WinQuake/model.c
++    WinQuake/net_loop.c
++    WinQuake/net_main.c
++    WinQuake/net_bsd.c
++    WinQuake/net_dgrm.c
++    WinQuake/net_websocket.c
++    WinQuake/net_vcr.c
++    WinQuake/nonintel.c
++    WinQuake/pr_cmds.c
++    WinQuake/pr_edict.c
++    WinQuake/pr_exec.c
++    WinQuake/r_aclip.c
++    WinQuake/r_alias.c
++    WinQuake/r_bsp.c
++    WinQuake/r_draw.c
++    WinQuake/r_edge.c
++    WinQuake/r_efrag.c
++    WinQuake/r_light.c
++    WinQuake/r_main.c
++    WinQuake/r_misc.c
++    WinQuake/r_part.c
++    WinQuake/r_sky.c
++    WinQuake/r_sprite.c
++    WinQuake/r_surf.c
++    WinQuake/r_vars.c
++    WinQuake/sbar.c
++    WinQuake/screen.c
++    WinQuake/snd_dma.c
++    WinQuake/snd_emscripten.c
++    WinQuake/snd_mem.c
++    WinQuake/snd_mix.c
++    WinQuake/sv_main.c
++    WinQuake/sv_move.c
++    WinQuake/sv_phys.c
++    WinQuake/sv_user.c
++    WinQuake/view.c
++    WinQuake/wad.c
++    WinQuake/world.c
++    WinQuake/zone.c
++    WinQuake/cd_null.c
++    WinQuake/sys_emscripten.c
++    WinQuake/vid_emscripten.c
++)
++
++add_executable(quake1 ${QUAKE_SOURCES})
++set_target_properties(quake1 PROPERTIES
++    C_STANDARD 90
++    C_STANDARD_REQUIRED ON
++    C_EXTENSIONS ON
++    OUTPUT_NAME quake1
++    SUFFIX ".js"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/web/dist"
++)
++
++target_include_directories(quake1 PRIVATE WinQuake)
++target_compile_definitions(quake1 PRIVATE
++    stricmp=strcasecmp
++    WEBQUAKE=1
++)
++target_compile_options(quake1 PRIVATE
++    "SHELL:-s USE_SDL=2"
++    -fno-common
++    -Wno-deprecated-non-prototype
++    -Wno-incompatible-pointer-types
++    -Wno-implicit-function-declaration
++    -Wno-int-conversion
++    -Wno-parentheses
++)
++
++target_link_options(quake1 PRIVATE
++    "SHELL:-s USE_SDL=2"
++    "SHELL:-s ALLOW_MEMORY_GROWTH=1"
++    "SHELL:-s INITIAL_MEMORY=67108864"
++    "SHELL:-s STACK_SIZE=1048576"
++    "SHELL:-s NO_EXIT_RUNTIME=1"
++    "SHELL:-s ASYNCIFY=1"
++    "SHELL:-s ASYNCIFY_STACK_SIZE=65536"
++    "SHELL:-s ASSERTIONS=1"
++    "SHELL:-s EXIT_RUNTIME=0"
++    "SHELL:-s ENVIRONMENT=web"
++    "SHELL:-s EXPORTED_FUNCTIONS=['_main','_malloc','_free']"
++    "SHELL:-s EXPORTED_RUNTIME_METHODS=['FS','callMain']"
++    "SHELL:-lidbfs.js"
++)
++
++file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/web/dist")
++configure_file(
++    "${CMAKE_SOURCE_DIR}/web/game-adapter.js"
++    "${CMAKE_SOURCE_DIR}/web/dist/game-adapter.js"
++    COPYONLY
++)
++configure_file(
++    "${CMAKE_SOURCE_DIR}/web/wasm-game.json"
++    "${CMAKE_SOURCE_DIR}/web/dist/wasm-game.json"
++    COPYONLY
++)
++configure_file(
++    "${CMAKE_SOURCE_DIR}/web/wasm-game-data.json"
++    "${CMAKE_SOURCE_DIR}/web/dist/wasm-game-data.json"
++    COPYONLY
++)
++configure_file(
++    "${CMAKE_SOURCE_DIR}/WinQuake/quake.ico"
++    "${CMAKE_SOURCE_DIR}/web/dist/quake.ico"
++    COPYONLY
++)
++
++if(CMAKE_BUILD_TYPE STREQUAL "Debug")
++    target_compile_options(quake1 PRIVATE -g3)
++    target_link_options(quake1 PRIVATE -g3 "SHELL:-s ASSERTIONS=2")
++endif()
+diff --git a/WinQuake/net_websocket.c b/WinQuake/net_websocket.c
+new file mode 100644
+index 00000000..76e26272
+--- /dev/null
++++ b/WinQuake/net_websocket.c
+@@ -0,0 +1,279 @@
++/*
++ * Browser datagram transport for the original Quake networking layer.
++ * Each browser WebSocket is paired with a unique UDP socket by the suite
++ * supervisor, preserving Quake's ordinary datagram protocol unchanged.
++ */
++#include "quakedef.h"
++#include "net_udp.h"
++
++#include <emscripten/emscripten.h>
++
++#define Q1WEB_QUEUE_PACKETS 128
++#define Q1WEB_PACKET_BYTES 2048
++#define Q1WEB_AF_INET 2
++
++typedef struct
++{
++    int length;
++    byte data[Q1WEB_PACKET_BYTES];
++} q1web_packet_t;
++
++static q1web_packet_t q1web_queue[Q1WEB_QUEUE_PACKETS];
++static int q1web_head;
++static int q1web_tail;
++static int q1web_count;
++static int q1web_received;
++static int q1web_sent;
++static int q1web_open;
++static int q1web_server_port;
++
++static void Q1Web_SetAddress(struct qsockaddr *addr, int port)
++{
++    Q_memset(addr, 0, sizeof(*addr));
++    addr->sa_family = Q1WEB_AF_INET;
++    addr->sa_data[0] = (unsigned char)((port >> 8) & 255);
++    addr->sa_data[1] = (unsigned char)(port & 255);
++    addr->sa_data[2] = 127;
++    addr->sa_data[3] = 0;
++    addr->sa_data[4] = 0;
++    addr->sa_data[5] = 1;
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1Web_NetworkReceive(const byte *data, int length)
++{
++    q1web_packet_t *packet;
++
++    if (!data || length <= 0 || length > Q1WEB_PACKET_BYTES)
++        return;
++
++    if (q1web_count == Q1WEB_QUEUE_PACKETS)
++    {
++        q1web_head = (q1web_head + 1) % Q1WEB_QUEUE_PACKETS;
++        q1web_count--;
++    }
++
++    packet = &q1web_queue[q1web_tail];
++    packet->length = length;
++    Q_memcpy(packet->data, data, length);
++    q1web_tail = (q1web_tail + 1) % Q1WEB_QUEUE_PACKETS;
++    q1web_count++;
++    q1web_received++;
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1Web_NetworkOpened(void)
++{
++    q1web_open = 1;
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1Web_NetworkClosed(void)
++{
++    q1web_open = 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1Web_NetworkState(void)
++{
++    return q1web_open;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1Web_NetworkPacketsReceived(void)
++{
++    return q1web_received;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1Web_NetworkPacketsSent(void)
++{
++    return q1web_sent;
++}
++
++EM_JS(int, Q1Web_OpenSocket, (), {
++    var url = Module.quakeWebSocketUrl || "";
++    if (!url) return 0;
++    if (Module.__quakeWebSocket && Module.__quakeWebSocket.readyState <= 1) return 1;
++    var socket = new WebSocket(url);
++    var pending = [];
++    socket.binaryType = 'arraybuffer';
++    Module.__quakeWebSocket = socket;
++    Module.__quakeWebSocketPending = pending;
++    socket.onopen = function () {
++        Module._Q1Web_NetworkOpened();
++        for (var i = 0; i < pending.length; i++) socket.send(pending[i]);
++        pending.length = 0;
++    };
++    socket.onmessage = function (event) {
++        var bytes = new Uint8Array(event.data);
++        if (!bytes.length) return;
++        var ptr = Module._malloc(bytes.length);
++        HEAPU8.set(bytes, ptr);
++        Module._Q1Web_NetworkReceive(ptr, bytes.length);
++        Module._free(ptr);
++    };
++    socket.onclose = function () { Module._Q1Web_NetworkClosed(); };
++    socket.onerror = function () { Module._Q1Web_NetworkClosed(); };
++    return 1;
++});
++
++EM_JS(int, Q1Web_SendPacket, (const byte *data, int length), {
++    var socket = Module.__quakeWebSocket;
++    if (!socket || socket.readyState > 1) return 0;
++    var packet = HEAPU8.slice(data, data + length);
++    if (socket.readyState === 1) socket.send(packet);
++    else {
++        var pending = Module.__quakeWebSocketPending || (Module.__quakeWebSocketPending = []);
++        if (pending.length >= 256) pending.shift();
++        pending.push(packet);
++    }
++    return length;
++});
++
++EM_JS(void, Q1Web_CloseSocket, (), {
++    var socket = Module.__quakeWebSocket;
++    Module.__quakeWebSocket = null;
++    Module.__quakeWebSocketPending = [];
++    if (socket && socket.readyState <= 1) socket.close(1000, 'Quake client shutdown');
++});
++
++int UDP_Init(void)
++{
++    q1web_head = q1web_tail = q1web_count = 0;
++    q1web_received = q1web_sent = q1web_open = 0;
++    q1web_server_port = DEFAULTnet_hostport;
++    if (!Q1Web_OpenSocket())
++        return -1;
++    Q_strcpy(my_tcpip_address, "browser relay");
++    tcpipAvailable = true;
++    return 1;
++}
++
++void UDP_Shutdown(void)
++{
++    Q1Web_CloseSocket();
++    q1web_open = 0;
++    q1web_count = 0;
++    tcpipAvailable = false;
++}
++
++void UDP_Listen(qboolean state)
++{
++    (void)state;
++}
++
++int UDP_OpenSocket(int port)
++{
++    (void)port;
++    return 1;
++}
++
++int UDP_CloseSocket(int socket)
++{
++    (void)socket;
++    return 0;
++}
++
++int UDP_Connect(int socket, struct qsockaddr *addr)
++{
++    (void)socket;
++    (void)addr;
++    return 0;
++}
++
++int UDP_CheckNewConnections(void)
++{
++    return -1;
++}
++
++int UDP_Read(int socket, byte *buf, int len, struct qsockaddr *addr)
++{
++    q1web_packet_t *packet;
++    int copied;
++
++    (void)socket;
++    if (!q1web_count)
++        return 0;
++
++    packet = &q1web_queue[q1web_head];
++    copied = packet->length < len ? packet->length : len;
++    Q_memcpy(buf, packet->data, copied);
++    q1web_head = (q1web_head + 1) % Q1WEB_QUEUE_PACKETS;
++    q1web_count--;
++    Q1Web_SetAddress(addr, q1web_server_port);
++    return copied;
++}
++
++int UDP_Write(int socket, byte *buf, int len, struct qsockaddr *addr)
++{
++    int result;
++
++    (void)socket;
++    (void)addr;
++    result = Q1Web_SendPacket(buf, len);
++    if (result > 0)
++        q1web_sent++;
++    return result ? len : -1;
++}
++
++int UDP_Broadcast(int socket, byte *buf, int len)
++{
++    return UDP_Write(socket, buf, len, NULL);
++}
++
++char *UDP_AddrToString(struct qsockaddr *addr)
++{
++    static char text[32];
++    sprintf(text, "127.0.0.1:%d", UDP_GetSocketPort(addr));
++    return text;
++}
++
++int UDP_StringToAddr(char *string, struct qsockaddr *addr)
++{
++    char *colon;
++    int port;
++
++    port = DEFAULTnet_hostport;
++    colon = Q_strrchr(string, ':');
++    if (colon && colon[1])
++        port = Q_atoi(colon + 1);
++    Q1Web_SetAddress(addr, port);
++    return 0;
++}
++
++int UDP_GetSocketAddr(int socket, struct qsockaddr *addr)
++{
++    (void)socket;
++    Q1Web_SetAddress(addr, DEFAULTnet_hostport);
++    return 0;
++}
++
++int UDP_GetNameFromAddr(struct qsockaddr *addr, char *name)
++{
++    Q_strcpy(name, UDP_AddrToString(addr));
++    return 0;
++}
++
++int UDP_GetAddrFromName(char *name, struct qsockaddr *addr)
++{
++    return UDP_StringToAddr(name, addr);
++}
++
++int UDP_AddrCompare(struct qsockaddr *addr1, struct qsockaddr *addr2)
++{
++    if (addr1->sa_family != addr2->sa_family)
++        return -1;
++    if (Q_memcmp(addr1->sa_data + 2, addr2->sa_data + 2, 4))
++        return -1;
++    if (addr1->sa_data[0] != addr2->sa_data[0] || addr1->sa_data[1] != addr2->sa_data[1])
++        return 1;
++    return 0;
++}
++
++int UDP_GetSocketPort(struct qsockaddr *addr)
++{
++    return ((int)addr->sa_data[0] << 8) | addr->sa_data[1];
++}
++
++int UDP_SetSocketPort(struct qsockaddr *addr, int port)
++{
++    addr->sa_data[0] = (unsigned char)((port >> 8) & 255);
++    addr->sa_data[1] = (unsigned char)(port & 255);
++    q1web_server_port = port;
++    return 0;
++}
+diff --git a/WinQuake/snd_emscripten.c b/WinQuake/snd_emscripten.c
+new file mode 100644
+index 00000000..2ce0b8ca
+--- /dev/null
++++ b/WinQuake/snd_emscripten.c
+@@ -0,0 +1,210 @@
++/*
++Copyright (C) 1996-1997 Id Software, Inc.
++
++This program is free software; you can redistribute it and/or
++modify it under the terms of the GNU General Public License
++as published by the Free Software Foundation; either version 2
++of the License, or (at your option) any later version.
++
++Browser SDL2 DMA bridge for the original Quake mixer.
++*/
++
++#include <SDL2/SDL.h>
++#include <emscripten/emscripten.h>
++#include <string.h>
++
++#include "quakedef.h"
++
++#define QUAKE_DMA_SAMPLES 65536
++#define QUAKE_AUDIO_RATE 44100
++
++static SDL_AudioDeviceID audio_device;
++static volatile int dma_sample_pos;
++static qboolean audio_started;
++static volatile unsigned int audio_callbacks;
++static volatile unsigned int audio_nonzero_callbacks;
++
++/* SDL creates its Web Audio context after the framework's Play gesture has
++ * crossed asynchronous data/persistence work.  Resume that engine-owned
++ * context explicitly on later trusted canvas/key gestures. */
++EM_JS(int, SNDDMA_ResumeAudioJS, (), {
++    const context = Module.SDL2 && Module.SDL2.audioContext;
++    if (!context)
++        return 0;
++    if (context.state === 'suspended' && typeof context.resume === 'function') {
++        const pending = context.resume();
++        if (pending && typeof pending.catch === 'function')
++            pending.catch(() => {});
++    }
++    return context.state === 'running' ? 2 : 1;
++});
++
++EM_JS(int, SNDDMA_AudioStateJS, (), {
++    const context = Module.SDL2 && Module.SDL2.audioContext;
++    if (!context)
++        return 0;
++    if (context.state === 'running')
++        return 2;
++    if (context.state === 'suspended')
++        return 1;
++    return 3;
++});
++
++EMSCRIPTEN_KEEPALIVE int SNDDMA_BrowserResumeAudio(void)
++{
++    return SNDDMA_ResumeAudioJS();
++}
++
++EMSCRIPTEN_KEEPALIVE int SNDDMA_BrowserAudioState(void)
++{
++    return SNDDMA_AudioStateJS();
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int SNDDMA_BrowserCallbacks(void)
++{
++    return audio_callbacks;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int SNDDMA_BrowserNonzeroCallbacks(void)
++{
++    return audio_nonzero_callbacks;
++}
++
++static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int length)
++{
++    int bytes_per_sample;
++    int ring_bytes;
++    int byte_pos;
++    int copy_bytes;
++
++    (void)userdata;
++    audio_callbacks++;
++
++    if (!audio_started || !shm || !shm->buffer || !shm->soundalive) {
++        memset(stream, 0, (size_t)length);
++        return;
++    }
++
++    bytes_per_sample = shm->samplebits / 8;
++    ring_bytes = shm->samples * bytes_per_sample;
++    byte_pos = dma_sample_pos * bytes_per_sample;
++
++    while (length > 0) {
++        int index;
++        copy_bytes = ring_bytes - byte_pos;
++        if (copy_bytes > length)
++            copy_bytes = length;
++        memcpy(stream, shm->buffer + byte_pos, (size_t)copy_bytes);
++        for (index = 0; index < copy_bytes; ++index) {
++            if (stream[index] != 0) {
++                audio_nonzero_callbacks++;
++                break;
++            }
++        }
++        stream += copy_bytes;
++        length -= copy_bytes;
++        byte_pos = (byte_pos + copy_bytes) % ring_bytes;
++    }
++
++    dma_sample_pos = byte_pos / bytes_per_sample;
++    shm->samplepos = dma_sample_pos;
++}
++
++qboolean SNDDMA_Init(void)
++{
++    SDL_AudioSpec desired;
++    SDL_AudioSpec obtained;
++
++    if (audio_device)
++        return true;
++
++    if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
++        Con_Printf("[Quake WASM] SDL audio initialization failed: %s\n",
++                   SDL_GetError());
++        return false;
++    }
++
++    memset(&desired, 0, sizeof(desired));
++    desired.freq = QUAKE_AUDIO_RATE;
++    desired.format = AUDIO_S16SYS;
++    desired.channels = 2;
++    desired.samples = 1024;
++    desired.callback = SNDDMA_AudioCallback;
++
++    audio_device = SDL_OpenAudioDevice(NULL, 0, &desired, &obtained,
++                                       SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
++    if (!audio_device) {
++        Con_Printf("[Quake WASM] SDL audio device failed: %s\n", SDL_GetError());
++        SDL_QuitSubSystem(SDL_INIT_AUDIO);
++        return false;
++    }
++
++    if (obtained.format != AUDIO_S16SYS || obtained.channels != 2) {
++        Con_Printf("[Quake WASM] unsupported SDL audio format %u/%u\n",
++                   (unsigned)obtained.format, (unsigned)obtained.channels);
++        SDL_CloseAudioDevice(audio_device);
++        audio_device = 0;
++        SDL_QuitSubSystem(SDL_INIT_AUDIO);
++        return false;
++    }
++
++    shm = &sn;
++    memset((void *)shm, 0, sizeof(*shm));
++    shm->splitbuffer = false;
++    shm->samplebits = 16;
++    shm->speed = obtained.freq;
++    shm->channels = obtained.channels;
++    shm->samples = QUAKE_DMA_SAMPLES;
++    shm->submission_chunk = 1;
++    shm->buffer = Hunk_AllocName(QUAKE_DMA_SAMPLES * 2, "sound dma");
++    if (!shm->buffer) {
++        SDL_CloseAudioDevice(audio_device);
++        audio_device = 0;
++        SDL_QuitSubSystem(SDL_INIT_AUDIO);
++        return false;
++    }
++
++    memset(shm->buffer, 0, QUAKE_DMA_SAMPLES * 2);
++    shm->gamealive = true;
++    shm->soundalive = true;
++    dma_sample_pos = 0;
++    audio_started = false;
++    audio_callbacks = 0;
++    audio_nonzero_callbacks = 0;
++
++    Con_Printf("[Quake WASM] SDL audio: %d Hz, stereo, 16-bit\n",
++               shm->speed);
++    return true;
++}
++
++int SNDDMA_GetDMAPos(void)
++{
++    if (!audio_device || !shm)
++        return 0;
++    shm->samplepos = dma_sample_pos;
++    return dma_sample_pos;
++}
++
++void SNDDMA_Submit(void)
++{
++    if (audio_device && !audio_started) {
++        audio_started = true;
++        SDL_PauseAudioDevice(audio_device, 0);
++    }
++}
++
++void SNDDMA_Shutdown(void)
++{
++    audio_started = false;
++    if (audio_device) {
++        SDL_PauseAudioDevice(audio_device, 1);
++        SDL_CloseAudioDevice(audio_device);
++        audio_device = 0;
++    }
++    if (shm) {
++        shm->soundalive = false;
++        shm->gamealive = false;
++    }
++    shm = NULL;
++    SDL_QuitSubSystem(SDL_INIT_AUDIO);
++}
+diff --git a/WinQuake/sys_emscripten.c b/WinQuake/sys_emscripten.c
+new file mode 100644
+index 00000000..6b419f01
+--- /dev/null
++++ b/WinQuake/sys_emscripten.c
+@@ -0,0 +1,453 @@
++/*
++Copyright (C) 1996-1997 Id Software, Inc.
++
++This program is free software; you can redistribute it and/or
++modify it under the terms of the GNU General Public License
++as published by the Free Software Foundation; either version 2
++of the License, or (at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++
++See the GNU General Public License for more details.
++*/
++
++#include <emscripten/emscripten.h>
++#include <emscripten/console.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <stdarg.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++#include "quakedef.h"
++
++qboolean isDedicated = false;
++int nostdout = 0;
++
++static double frame_oldtime;
++static qboolean host_started = false;
++static qboolean browser_controls_configured = false;
++static qboolean browser_capture_intent = false;
++static qboolean browser_modernized = false;
++static cvar_t browser_defaults_version = {"wasm_browser_defaults_version", "0", true};
++#define BROWSER_CONTROLLER_KEYS 512
++static byte browser_controller_keys[BROWSER_CONTROLLER_KEYS];
++
++EM_JS(void, Q1_NotifyBrowserPersistence, (int immediate), {
++    if (typeof Module.quakePersistenceChanged === 'function')
++        Module.quakePersistenceChanged(Boolean(immediate));
++});
++
++void Sys_BrowserPersistenceChanged(qboolean immediate)
++{
++    Q1_NotifyBrowserPersistence(immediate ? 1 : 0);
++}
++
++qboolean Sys_BrowserModernized(void)
++{
++    return browser_modernized;
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserWriteConfiguration(void)
++{
++    if (host_started)
++        Host_WriteConfiguration();
++}
++
++static int Q1_TranslateBrowserControllerKey(int key)
++{
++    if (key > 0 && key < 128)
++        return key;
++    switch (key) {
++    case 1001: return K_UPARROW;
++    case 1002: return K_DOWNARROW;
++    case 1003: return K_LEFTARROW;
++    case 1004: return K_RIGHTARROW;
++    case 1010: return K_SHIFT;
++    case 1020: return K_MOUSE1;
++    case 1021: return K_MOUSE2;
++    case 1030: return K_MWHEELDOWN;
++    case 1031: return K_MWHEELUP;
++    default: return 0;
++    }
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserControllerKey(int browser_key, int down)
++{
++    int key;
++
++    if (!host_started)
++        return;
++    key = Q1_TranslateBrowserControllerKey(browser_key);
++    if (!key || key >= BROWSER_CONTROLLER_KEYS || browser_controller_keys[key] == (down ? 1 : 0))
++        return;
++    browser_controller_keys[key] = down ? 1 : 0;
++    Key_Event(key, down ? true : false);
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserControllerReleaseAll(void)
++{
++    int key;
++
++    for (key = 0; key < BROWSER_CONTROLLER_KEYS; ++key) {
++        if (browser_controller_keys[key]) {
++            Key_Event(key, false);
++            browser_controller_keys[key] = 0;
++        }
++    }
++}
++
++static void ConfigureBrowserControls(void)
++{
++    /* Apply the browser layout once, after quake.rc/config.cfg have executed.
++     * The archived version marker lets later launches retain the player's own
++     * sensitivity, key bindings, and other config choices. */
++    if (browser_defaults_version.value >= 2.0f)
++        return;
++    Key_SetBinding('w', "+forward");
++    Key_SetBinding('s', "+back");
++    Key_SetBinding('a', "+moveleft");
++    Key_SetBinding('d', "+moveright");
++    Key_SetBinding(' ', "+jump");
++    Key_SetBinding('e', "+use");
++    Key_SetBinding(K_MOUSE1, "+attack");
++    Key_SetBinding(K_MOUSE2, "+jump");
++    Key_SetBinding(K_MWHEELDOWN, "impulse 12");
++    Key_SetBinding(K_MWHEELUP, "impulse 10");
++    Key_SetBinding(K_TAB, "+showscores");
++    Key_SetBinding(K_SHIFT, "+speed");
++    Key_SetBinding('c', "+movedown");
++    Key_SetBinding('q', "impulse 10");
++    Key_SetBinding('f', "impulse 1");
++    Key_SetBinding('z', "");
++    Cvar_Set("lookstrafe", "0");
++    Cvar_Set("lookspring", "0");
++    Cvar_Set("m_filter", "0");
++    Cvar_Set("sensitivity", "8");
++    Cvar_Set("wasm_browser_defaults_version", "2");
++    Host_WriteConfiguration();
++    Q1_NotifyBrowserPersistence(1);
++    Con_Printf("[Quake WASM] browser controls: WASD, sensitivity 8, mouse look/fire, Space jump, E use\n");
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserOpenMenu(void)
++{
++    if (!host_started || key_dest != key_game)
++        return;
++    Key_Event(K_ESCAPE, true);
++    Key_Event(K_ESCAPE, false);
++}
++
++/* Menu input normally reaches SDL on the next animation frame. Dispatching
++ * Enter/Escape through this narrow seam lets the adapter observe the native
++ * menu transition during the original trusted browser key event, which is
++ * the only reliable time to request pointer lock. */
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserDispatchMenuKey(int key)
++{
++    if (!host_started || key_dest != key_menu)
++        return 0;
++    if (key == 13)
++        M_Keydown(K_ENTER);
++    else if (key == 27)
++        M_Keydown(K_ESCAPE);
++    else
++        return 0;
++    return 1;
++}
++
++void Q1_BrowserArmCaptureIntent(void)
++{
++    browser_capture_intent = true;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserRuntimeState(void)
++{
++    if (!host_started)
++    {
++        browser_capture_intent = false;
++        return 0;
++    }
++    if (key_dest != key_game)
++    {
++        browser_capture_intent = false;
++        return (sv.active || cls.state == ca_connected) ? 2 : 0;
++    }
++    /* Menu code raises this bit synchronously for New Game, Load, Save, and
++     * Resume.  Honor it before stale demo/loading state is drained by the
++     * next native frame so pointer lock can use this exact trusted event. */
++    if (browser_capture_intent && cls.demoplayback)
++        return 4;
++    /* An attract demo is not player-controllable gameplay.  Reporting it as
++     * gameplay made an ordinary canvas click hide the cursor and request
++     * pointer lock even though Quake was only playing a demo. */
++    if (cls.demoplayback)
++    {
++        browser_capture_intent = false;
++        return 0;
++    }
++    if (cl.intermission)
++    {
++        browser_capture_intent = false;
++        return 3;
++    }
++    if (sv.paused)
++    {
++        browser_capture_intent = false;
++        return 2;
++    }
++    if (scr_disabled_for_loading || cls.state != ca_connected || cls.signon != SIGNONS)
++        return 4;
++    browser_capture_intent = false;
++    return 1;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserCaptureIntent(void)
++{
++    return browser_capture_intent && Q1_BrowserRuntimeState() == 4;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserControlsMask(void)
++{
++    int mask = 0;
++    if (browser_controls_configured) mask |= 1;
++    if (keybindings['w'] && !strcmp(keybindings['w'], "+forward")) mask |= 2;
++    if (keybindings['s'] && !strcmp(keybindings['s'], "+back")) mask |= 4;
++    if (keybindings['a'] && !strcmp(keybindings['a'], "+moveleft")) mask |= 8;
++    if (keybindings['d'] && !strcmp(keybindings['d'], "+moveright")) mask |= 16;
++    if (keybindings['z'] && keybindings['z'][0] == 0) mask |= 32;
++    if (sensitivity.value == 8.0f) mask |= 64;
++    if (Cvar_VariableValue("m_filter") == 0.0f) mask |= 128;
++    return mask;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserControlsValid(void)
++{
++    return Q1_BrowserControlsMask() == 255;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserSensitivityX100(void)
++{
++    return (int)(sensitivity.value * 100.0f + 0.5f);
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserDemoPlayback(void)
++{
++    return cls.demoplayback ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserMenuActive(void)
++{
++    return key_dest == key_menu ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserConnected(void)
++{
++    return cls.state == ca_connected && cls.signon == SIGNONS ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserOriginX100(void)
++{
++    return cl.viewentity > 0 ? (int)(cl_entities[cl.viewentity].origin[0] * 100.0f) : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserOriginY100(void)
++{
++    return cl.viewentity > 0 ? (int)(cl_entities[cl.viewentity].origin[1] * 100.0f) : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserOriginZ100(void)
++{
++    return cl.viewentity > 0 ? (int)(cl_entities[cl.viewentity].origin[2] * 100.0f) : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserYawX100(void)
++{
++    return (int)(cl.viewangles[1] * 100.0f);
++}
++
++void Sys_DebugNumber(int y, int val) { (void)y; (void)val; }
++
++void Sys_Printf(char *fmt, ...)
++{
++    va_list args;
++    if (nostdout)
++        return;
++    va_start(args, fmt);
++    vprintf(fmt, args);
++    va_end(args);
++}
++void Sys_Warn(char *warning, ...)
++{
++    va_list args;
++    va_start(args, warning);
++    vfprintf(stderr, warning, args);
++    va_end(args);
++}
++
++void Sys_Error(char *error, ...)
++{
++    va_list args;
++    fprintf(stderr, "[Quake WASM] fatal: ");
++    va_start(args, error);
++    vfprintf(stderr, error, args);
++    va_end(args);
++    fprintf(stderr, "\n");
++
++    /*
++     * A fatal Quake error commonly means that the zone or hunk is already
++     * inconsistent.  The native ports attempt a graceful Host_Shutdown here,
++     * but doing so can turn the useful first failure into a second WebAssembly
++     * bounds trap while SDL tears down input or audio.  The page owns those
++     * browser resources and releases them on reload, so preserve the original
++     * C call stack and stop immediately.
++     */
++    emscripten_log(EM_LOG_ERROR | EM_LOG_JS_STACK,
++                   "[Quake WASM] fatal engine call stack");
++    emscripten_cancel_main_loop();
++    abort();
++}
++
++void Sys_Quit(void)
++{
++    emscripten_cancel_main_loop();
++    if (host_started)
++        Host_Shutdown();
++    exit(0);
++}
++
++void Sys_Init(void)
++{
++    Cvar_RegisterVariable(&browser_defaults_version);
++}
++void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
++{
++    (void)startaddr;
++    (void)length;
++}
++void Sys_LowFPPrecision(void) {}
++void Sys_HighFPPrecision(void) {}
++void Sys_Sleep(void) {}
++void Sys_LineRefresh(void) {}
++void Sys_EditFile(char *filename) { (void)filename; }
++
++int Sys_FileTime(char *path)
++{
++    struct stat info;
++    return stat(path, &info) == -1 ? -1 : (int)info.st_mtime;
++}
++
++void Sys_mkdir(char *path)
++{
++    if (mkdir(path, 0777) == -1 && errno != EEXIST)
++        Sys_Warn("Could not create %s: %s\n", path, strerror(errno));
++}
++
++int Sys_FileOpenRead(char *path, int *handle)
++{
++    struct stat info;
++    *handle = open(path, O_RDONLY);
++    if (*handle == -1)
++        return -1;
++    if (fstat(*handle, &info) == -1)
++        Sys_Error("Error stating %s", path);
++    return (int)info.st_size;
++}
++
++int Sys_FileOpenWrite(char *path)
++{
++    int handle = open(path, O_RDWR | O_CREAT | O_TRUNC, 0666);
++    if (handle == -1)
++        Sys_Error("Error opening %s: %s", path, strerror(errno));
++    return handle;
++}
++
++void Sys_FileClose(int handle) { close(handle); }
++void Sys_FileSeek(int handle, int position) { lseek(handle, position, SEEK_SET); }
++int Sys_FileRead(int handle, void *dest, int count) { return (int)read(handle, dest, (size_t)count); }
++int Sys_FileWrite(int handle, void *src, int count) { return (int)write(handle, src, (size_t)count); }
++
++void Sys_DebugLog(char *file, char *fmt, ...)
++{
++    char text[1024];
++    va_list args;
++    int handle;
++    va_start(args, fmt);
++    vsnprintf(text, sizeof(text), fmt, args);
++    va_end(args);
++    handle = open(file, O_WRONLY | O_CREAT | O_APPEND, 0666);
++    if (handle != -1) {
++        write(handle, text, strlen(text));
++        close(handle);
++    }
++}
++
++double Sys_FloatTime(void)
++{
++    return emscripten_get_now() / 1000.0;
++}
++
++char *Sys_ConsoleInput(void) { return NULL; }
++
++static void Quake_Frame(void)
++{
++    double now = Sys_FloatTime();
++    double elapsed = now - frame_oldtime;
++    int frame_before;
++
++    if (elapsed < 0.001)
++        return;
++    if (elapsed > 0.25)
++        elapsed = 0.25;
++    frame_oldtime = now;
++    frame_before = host_framecount;
++    Host_Frame(elapsed);
++    /* Host_Init only queues quake.rc; the first Host_Frame executes its
++     * default/config bindings. Apply browser defaults afterward so the 1996
++     * A=look-up and Z=look-down layout cannot overwrite WASD. */
++    if (!browser_controls_configured && host_framecount > frame_before) {
++        ConfigureBrowserControls();
++        browser_controls_configured = true;
++    }
++}
++
++int main(int argc, char **argv)
++{
++    quakeparms_t parms;
++    int memory_megabytes = 32;
++    int memory_arg;
++
++    memset(&parms, 0, sizeof(parms));
++    COM_InitArgv(argc, argv);
++    browser_modernized = COM_CheckParm("-modernized") != 0;
++
++    memory_arg = COM_CheckParm("-mem");
++    if (memory_arg && memory_arg + 1 < com_argc)
++        memory_megabytes = (int)Q_atof(com_argv[memory_arg + 1]);
++
++    parms.argc = com_argc;
++    parms.argv = com_argv;
++    parms.memsize = memory_megabytes * 1024 * 1024;
++    parms.membase = malloc((size_t)parms.memsize);
++    parms.basedir = "/";
++    if (!parms.membase)
++        Sys_Error("Unable to allocate %d MB for Quake", memory_megabytes);
++
++    printf("[Quake WASM] starting %s software renderer\n",
++           browser_modernized ? "modernized dynamic" : "original 640x480");
++    printf("[Quake WASM] data root: /id1\n");
++    Host_Init(&parms);
++    host_started = true;
++    Sys_Init();
++
++    frame_oldtime = Sys_FloatTime();
++    /* Multiplayer clients must continue sending acknowledgements when a
++     * second Chrome tab is foregrounded. requestAnimationFrame is suspended
++     * for background tabs, so use the cooperative timeout scheduler. */
++    emscripten_set_main_loop(Quake_Frame, 60, 1);
++    return 0;
++}
+diff --git a/WinQuake/vid_emscripten.c b/WinQuake/vid_emscripten.c
+new file mode 100644
+index 00000000..5f898acc
+--- /dev/null
++++ b/WinQuake/vid_emscripten.c
+@@ -0,0 +1,426 @@
++/*
++Copyright (C) 1996-1997 Id Software, Inc.
++
++This program is free software; you can redistribute it and/or
++modify it under the terms of the GNU General Public License
++as published by the Free Software Foundation; either version 2
++of the License, or (at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++
++See the GNU General Public License for more details.
++*/
++
++#include <SDL2/SDL.h>
++#include <emscripten/emscripten.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "quakedef.h"
++#include "d_local.h"
++
++#define BASEWIDTH 640
++#define BASEHEIGHT 480
++
++unsigned short d_8to16table[256];
++unsigned d_8to24table[256];
++int num_shades = 32;
++int d_con_indirect = 0;
++int vid_buffersize;
++
++cvar_t m_filter = {"m_filter", "0", true};
++
++static SDL_Window *window;
++static SDL_Renderer *renderer;
++static SDL_Texture *texture;
++static unsigned *rgba_buffer;
++static byte palette_copy[768];
++static byte *video_allocation;
++static int mouse_buttons;
++static float mouse_x;
++static float mouse_y;
++static float old_mouse_x;
++static float old_mouse_y;
++static byte key_release_pending[256];
++
++static qboolean VID_ResizeBuffers(int width, int height)
++{
++    SDL_Texture *new_texture;
++    byte *new_video_allocation;
++    unsigned *new_rgba_buffer;
++    int zbuffer_size;
++    int cache_size;
++    int framebuffer_size;
++    int allocation_size;
++
++    if (width == (int)vid.width && height == (int)vid.height && texture && video_allocation && rgba_buffer)
++        return true;
++
++    zbuffer_size = width * height * (int)sizeof(*d_pzbuffer);
++    cache_size = D_SurfaceCacheForRes(width, height);
++    framebuffer_size = width * height;
++    allocation_size = zbuffer_size + cache_size + framebuffer_size;
++    new_video_allocation = malloc((size_t)allocation_size);
++    new_rgba_buffer = malloc((size_t)width * height * sizeof(*new_rgba_buffer));
++    new_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
++        SDL_TEXTUREACCESS_STREAMING, width, height);
++    if (!new_video_allocation || !new_rgba_buffer || !new_texture) {
++        free(new_video_allocation);
++        free(new_rgba_buffer);
++        if (new_texture)
++            SDL_DestroyTexture(new_texture);
++        return false;
++    }
++
++    if (video_allocation)
++        D_FlushCaches();
++    free(video_allocation);
++    free(rgba_buffer);
++    if (texture)
++        SDL_DestroyTexture(texture);
++
++    video_allocation = new_video_allocation;
++    rgba_buffer = new_rgba_buffer;
++    texture = new_texture;
++    vid_buffersize = allocation_size;
++    d_pzbuffer = (short *)video_allocation;
++    vid.buffer = video_allocation + zbuffer_size + cache_size;
++    vid.conbuffer = vid.buffer;
++    D_InitCaches(video_allocation + zbuffer_size, cache_size);
++
++    vid.width = vid.conwidth = width;
++    vid.height = vid.conheight = height;
++    vid.rowbytes = vid.conrowbytes = width;
++    /* Quake's vid.aspect is pixel aspect, not display aspect. The historical
++     * formula forces every framebuffer back to a 4:3 projection and therefore
++     * stretches a wide, square-pixel browser framebuffer horizontally.
++     * Modernized uses square pixels; Original remains the fixed 640x480 mode
++     * where both formulas evaluate to 1.0. */
++    vid.aspect = Sys_BrowserModernized()
++        ? 1.0f
++        : ((float)height / (float)width) * (320.0f / 240.0f);
++    vid.recalc_refdef = true;
++    memset(vid.buffer, 0, (size_t)framebuffer_size);
++    memset(rgba_buffer, 0, (size_t)width * height * sizeof(*rgba_buffer));
++
++    SDL_SetWindowSize(window, width, height);
++    SDL_RenderSetLogicalSize(renderer, width, height);
++    Con_Printf("[Quake WASM] software framebuffer: %dx%d\n", width, height);
++    return true;
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserResize(int requested_width, int requested_height)
++{
++    float scale;
++    int width;
++    int height;
++
++    if (!Sys_BrowserModernized() || !renderer)
++        return;
++    width = requested_width;
++    height = requested_height;
++    if (width < 320)
++        width = 320;
++    if (height < 200)
++        height = 200;
++    scale = 1.0f;
++    if (width > MAXWIDTH)
++        scale = (float)MAXWIDTH / (float)width;
++    if (height * scale > MAXHEIGHT)
++        scale = (float)MAXHEIGHT / (float)height;
++    width = (int)(width * scale) & ~1;
++    height = (int)(height * scale) & ~1;
++    if (!VID_ResizeBuffers(width, height))
++        Con_Printf("[Quake WASM] could not resize framebuffer to %dx%d\n", width, height);
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserRenderWidth(void)
++{
++    return (int)vid.width;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserRenderHeight(void)
++{
++    return (int)vid.height;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserModernized(void)
++{
++    return Sys_BrowserModernized() ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int Q1_BrowserPixelAspectX1000(void)
++{
++    return (int)(vid.aspect * 1000.0f + 0.5f);
++}
++
++static int TranslateKey(SDL_Keycode key)
++{
++    switch (key) {
++    case SDLK_PAGEUP: return K_PGUP;
++    case SDLK_PAGEDOWN: return K_PGDN;
++    case SDLK_HOME: return K_HOME;
++    case SDLK_END: return K_END;
++    case SDLK_LEFT: return K_LEFTARROW;
++    case SDLK_RIGHT: return K_RIGHTARROW;
++    case SDLK_DOWN: return K_DOWNARROW;
++    case SDLK_UP: return K_UPARROW;
++    case SDLK_ESCAPE: return K_ESCAPE;
++    case SDLK_RETURN:
++    case SDLK_KP_ENTER: return K_ENTER;
++    case SDLK_TAB: return K_TAB;
++    case SDLK_F1: return K_F1;
++    case SDLK_F2: return K_F2;
++    case SDLK_F3: return K_F3;
++    case SDLK_F4: return K_F4;
++    case SDLK_F5: return K_F5;
++    case SDLK_F6: return K_F6;
++    case SDLK_F7: return K_F7;
++    case SDLK_F8: return K_F8;
++    case SDLK_F9: return K_F9;
++    case SDLK_F10: return K_F10;
++    case SDLK_F11: return K_F11;
++    case SDLK_F12: return K_F12;
++    case SDLK_BACKSPACE: return K_BACKSPACE;
++    case SDLK_DELETE: return K_DEL;
++    case SDLK_PAUSE: return K_PAUSE;
++    case SDLK_LSHIFT:
++    case SDLK_RSHIFT: return K_SHIFT;
++    case SDLK_LCTRL:
++    case SDLK_RCTRL: return K_CTRL;
++    case SDLK_LALT:
++    case SDLK_RALT: return K_ALT;
++    case SDLK_INSERT: return K_INS;
++    case SDLK_KP_MULTIPLY: return '*';
++    case SDLK_KP_PLUS: return '+';
++    case SDLK_KP_MINUS: return '-';
++    case SDLK_KP_DIVIDE: return '/';
++    default:
++        if (key >= 32 && key <= 126)
++            return (int)key;
++        return 0;
++    }
++}
++
++void Sys_SendKeyEvents(void)
++{
++    SDL_Event event;
++    int key;
++    byte key_down_this_poll[256];
++
++    memset(key_down_this_poll, 0, sizeof(key_down_this_poll));
++    for (key = 0; key < 256; ++key) {
++        if (key_release_pending[key]) {
++            Key_Event(key, false);
++            key_release_pending[key] = 0;
++        }
++    }
++
++    while (SDL_PollEvent(&event)) {
++        switch (event.type) {
++        case SDL_KEYDOWN:
++        case SDL_KEYUP:
++            if (event.key.repeat)
++                break;
++            key = TranslateKey(event.key.keysym.sym);
++            if (key && event.type == SDL_KEYDOWN) {
++                Key_Event(key, true);
++                key_down_this_poll[key] = 1;
++            } else if (key && key_down_this_poll[key]) {
++                /* Remote-control and accessibility clients can emit a full
++                 * key press between two animation frames. Keep that press
++                 * down for one native frame so Quake's movement sampler sees
++                 * the same input a physical keyboard would provide. */
++                key_release_pending[key] = 1;
++            } else if (key) {
++                Key_Event(key, false);
++            }
++            break;
++        case SDL_MOUSEMOTION:
++            mouse_x += (float)event.motion.xrel;
++            mouse_y += (float)event.motion.yrel;
++            break;
++        case SDL_MOUSEBUTTONDOWN:
++        case SDL_MOUSEBUTTONUP:
++            if (event.button.button == SDL_BUTTON_LEFT)
++                key = K_MOUSE1;
++            else if (event.button.button == SDL_BUTTON_RIGHT)
++                key = K_MOUSE2;
++            else if (event.button.button == SDL_BUTTON_MIDDLE)
++                key = K_MOUSE3;
++            else
++                key = 0;
++            if (key)
++                Key_Event(key, event.type == SDL_MOUSEBUTTONDOWN);
++            break;
++        case SDL_MOUSEWHEEL:
++            key = event.wheel.y > 0 ? K_MWHEELUP : K_MWHEELDOWN;
++            Key_Event(key, true);
++            Key_Event(key, false);
++            break;
++        case SDL_WINDOWEVENT:
++            if (event.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
++                memset(key_release_pending, 0, sizeof(key_release_pending));
++                Key_ClearStates();
++            }
++            break;
++        case SDL_QUIT:
++            Sys_Quit();
++            break;
++        }
++    }
++}
++
++void VID_SetPalette(unsigned char *palette)
++{
++    int i;
++    memcpy(palette_copy, palette, sizeof(palette_copy));
++    for (i = 0; i < 256; ++i) {
++        unsigned r = palette[i * 3];
++        unsigned g = palette[i * 3 + 1];
++        unsigned b = palette[i * 3 + 2];
++        d_8to24table[i] = 0xff000000u | (r << 16) | (g << 8) | b;
++        d_8to16table[i] = (unsigned short)(((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3));
++    }
++}
++
++void VID_ShiftPalette(unsigned char *palette) { VID_SetPalette(palette); }
++
++void VID_Init(unsigned char *palette)
++{
++    if (SDL_Init(SDL_INIT_VIDEO) != 0)
++        Sys_Error("SDL video initialization failed: %s", SDL_GetError());
++
++    window = SDL_CreateWindow("Quake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
++        BASEWIDTH, BASEHEIGHT, SDL_WINDOW_SHOWN);
++    if (!window)
++        Sys_Error("SDL window creation failed: %s", SDL_GetError());
++
++    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
++    if (!renderer)
++        Sys_Error("SDL renderer creation failed: %s", SDL_GetError());
++
++    /* The software water warp owns a fixed WARP_WIDTH x WARP_HEIGHT scratch
++     * surface even when the normal framebuffer is larger.  Advertising the
++     * 640x480 framebuffer as the warp limit makes D_DrawSpans8 paint hundreds
++     * of kilobytes past that scratch buffer and into the Quake zone. */
++    vid.maxwarpwidth = WARP_WIDTH;
++    vid.maxwarpheight = WARP_HEIGHT;
++    vid.numpages = 1;
++    vid.colormap = host_colormap;
++    vid.fullbright = 256 - LittleLong(*((int *)vid.colormap + 2048));
++    if (!VID_ResizeBuffers(BASEWIDTH, BASEHEIGHT))
++        Sys_Error("Not enough memory for browser video mode");
++
++    VID_SetPalette(palette);
++}
++
++void VID_Shutdown(void)
++{
++    free(rgba_buffer);
++    rgba_buffer = NULL;
++    free(video_allocation);
++    video_allocation = NULL;
++    if (texture) SDL_DestroyTexture(texture);
++    if (renderer) SDL_DestroyRenderer(renderer);
++    if (window) SDL_DestroyWindow(window);
++    texture = NULL;
++    renderer = NULL;
++    window = NULL;
++    SDL_QuitSubSystem(SDL_INIT_VIDEO);
++}
++
++void VID_Update(vrect_t *rects)
++{
++    int count = vid.width * vid.height;
++    int i;
++    (void)rects;
++    for (i = 0; i < count; ++i)
++        rgba_buffer[i] = d_8to24table[vid.buffer[i]];
++    SDL_UpdateTexture(texture, NULL, rgba_buffer, vid.width * (int)sizeof(*rgba_buffer));
++    SDL_RenderClear(renderer);
++    SDL_RenderCopy(renderer, texture, NULL, NULL);
++    SDL_RenderPresent(renderer);
++}
++
++void D_BeginDirectRect(int x, int y, byte *pbitmap, int width, int height)
++{
++    int row;
++    /* File loads begin before VID_Init while the startup WAD is discovered. */
++    if (!vid.buffer || !vid.width || !vid.height)
++        return;
++    if (x < 0)
++        x = vid.width + x - 1;
++    for (row = 0; row < height; ++row)
++        memcpy(vid.buffer + (y + row) * vid.rowbytes + x, pbitmap + row * width, width);
++}
++
++void D_EndDirectRect(int x, int y, int width, int height)
++{
++    (void)x; (void)y; (void)width; (void)height;
++}
++
++void IN_Init(void)
++{
++    Cvar_RegisterVariable(&m_filter);
++    mouse_buttons = 3;
++    (void)mouse_buttons;
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserSetInputCaptured(int captured)
++{
++    /* SDL's Emscripten backend requests pointer lock when relative mode is
++     * enabled.  That must happen only after the browser has accepted a real
++     * canvas gesture, never during engine initialization or launcher Play. */
++    SDL_SetRelativeMouseMode(captured ? SDL_TRUE : SDL_FALSE);
++    if (!captured) {
++        mouse_x = mouse_y = 0.0f;
++        old_mouse_x = old_mouse_y = 0.0f;
++        Key_ClearStates();
++    }
++}
++
++EMSCRIPTEN_KEEPALIVE void Q1_BrowserControllerLook(float x, float y)
++{
++    mouse_x += x;
++    mouse_y += y;
++}
++
++void IN_Shutdown(void) { SDL_SetRelativeMouseMode(SDL_FALSE); }
++void IN_Commands(void) {}
++
++void IN_Move(usercmd_t *cmd)
++{
++    float mx = mouse_x;
++    float my = mouse_y;
++
++    if (m_filter.value) {
++        mx = (mx + old_mouse_x) * 0.5f;
++        my = (my + old_mouse_y) * 0.5f;
++    }
++    old_mouse_x = mouse_x;
++    old_mouse_y = mouse_y;
++    mouse_x = mouse_y = 0.0f;
++
++    mx *= sensitivity.value;
++    my *= sensitivity.value;
++    if ((in_strafe.state & 1) || (lookstrafe.value && (in_mlook.state & 1)))
++        cmd->sidemove += m_side.value * mx;
++    else
++        cl.viewangles[YAW] -= m_yaw.value * mx;
++
++    V_StopPitchDrift();
++    if (!(in_strafe.state & 1)) {
++        cl.viewangles[PITCH] += m_pitch.value * my;
++        if (cl.viewangles[PITCH] > 80)
++            cl.viewangles[PITCH] = 80;
++        if (cl.viewangles[PITCH] < -70)
++            cl.viewangles[PITCH] = -70;
++    } else if ((in_strafe.state & 1) && noclip_anglehack) {
++        cmd->upmove -= m_forward.value * my;
++    } else {
++        cmd->forwardmove -= m_forward.value * my;
++    }
++}
+diff --git a/WinQuake/cl_main.c b/WinQuake/cl_main.c
+index 58121434..8c417d6d 100644
+--- a/WinQuake/cl_main.c
++++ b/WinQuake/cl_main.c
+@@ -225,7 +225,10 @@ void CL_NextDemo (void)
+ 
+ 	SCR_BeginLoadingPlaque ();
+ 
+-	if (!cls.demos[cls.demonum][0] || cls.demonum == MAX_DEMOS)
++	/* Check the bound before indexing the fixed demo-name table.  The retail
++	 * attract loop increments demonum after every queued demo, so the old
++	 * order read one entry beyond cls.demos at the end of a full cycle. */
++	if (cls.demonum < 0 || cls.demonum >= MAX_DEMOS || !cls.demos[cls.demonum][0])
+ 	{
+ 		cls.demonum = 0;
+ 		if (!cls.demos[cls.demonum][0])
+@@ -754,4 +757,3 @@ void CL_Init (void)
+ 	Cmd_AddCommand ("playdemo", CL_PlayDemo_f);
+ 	Cmd_AddCommand ("timedemo", CL_TimeDemo_f);
+ }
+-
+diff --git a/WinQuake/cmd.h b/WinQuake/cmd.h
+index f9eab24e..fc8d80a7 100644
+--- a/WinQuake/cmd.h
++++ b/WinQuake/cmd.h
+@@ -118,4 +118,3 @@ void	Cmd_ForwardToServer (void);
+ void	Cmd_Print (char *text);
+ // used by command functions to send output to either the graphics console or
+ // passed as a print message to the client
+-
+diff --git a/WinQuake/common.c b/WinQuake/common.c
+index e07e6ce9..1875cc3e 100644
+--- a/WinQuake/common.c
++++ b/WinQuake/common.c
+@@ -855,24 +855,46 @@ COM_FileBase
+ */
+ void COM_FileBase (char *in, char *out)
+ {
+-	char *s, *s2;
+-	
+-	s = in + strlen(in) - 1;
+-	
+-	while (s != in && *s != '.')
+-		s--;
+-	
+-	for (s2 = s ; *s2 && *s2 != '/' ; s2--)
+-	;
+-	
+-	if (s-s2 < 2)
+-		strcpy (out,"?model?");
+-	else
++	char *base, *end, *cursor;
++	int length;
++
++	/*
++	 * The original reverse scan dereferenced one byte before `in` for a
++	 * filename without a directory component (notably "gfx.wad").  That is
++	 * undefined on every platform and corrupts adjacent WebAssembly globals
++	 * once the linker layout changes.  Locate the basename and extension with
++	 * bounds checks, and retain the historical 31-character hunk/cache tag.
++	 */
++	base = in;
++	end = in + strlen(in);
++	for (cursor = end; cursor > in; cursor--)
+ 	{
+-		s--;
+-		strncpy (out,s2+1, s-s2);
+-		out[s-s2] = 0;
++		if (cursor[-1] == '/' || cursor[-1] == '\\')
++		{
++			base = cursor;
++			break;
++		}
+ 	}
++
++	for (cursor = end; cursor > base; cursor--)
++	{
++		if (cursor[-1] == '.')
++		{
++			end = cursor - 1;
++			break;
++		}
++	}
++
++	length = end - base;
++	if (length < 1)
++	{
++		strcpy (out, "?model?");
++		return;
++	}
++	if (length > 31)
++		length = 31;
++	memcpy (out, base, length);
++	out[length] = 0;
+ }
+ 
+ 
+@@ -1822,6 +1844,21 @@ void COM_InitFilesystem (void)
+ 
+ 	if (COM_CheckParm ("-proghack"))
+ 		proghack = true;
+-}
+-
+ 
++#ifdef __EMSCRIPTEN__
++// Keep browser-owned writable files ahead of the read-only game archives.
++	i = COM_CheckParm ("-userdir");
++	if (i)
++	{
++		char *userdir;
++
++		if (i >= com_argc-1)
++			Sys_Error ("-userdir requires an absolute path");
++		userdir = com_argv[i+1];
++		if (userdir[0] != '/' || strstr (userdir, "..") || strlen (userdir) >= MAX_OSPATH)
++			Sys_Error ("Invalid browser user directory");
++		Sys_mkdir (userdir);
++		COM_AddGameDirectory (userdir);
++	}
++#endif
++}
+diff --git a/WinQuake/d_edge.c b/WinQuake/d_edge.c
+index 52cc8eb2..1e4594b0 100644
+--- a/WinQuake/d_edge.c
++++ b/WinQuake/d_edge.c
+@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ static int	miplevel;
+ 
+ float		scale_for_mip;
+-int			screenwidth;
++extern int		screenwidth;
+ int			ubasestep, errorterm, erroradjustup, erroradjustdown;
+ int			vstartscan;
+ 
+@@ -115,6 +115,7 @@ void D_DrawSolidSurface (surf_t *surf, int color)
+ }
+ 
+ 
++
+ /*
+ ==============
+ D_CalcGradients
+@@ -328,4 +329,3 @@ void D_DrawSurfaces (void)
+ 		}
+ 	}
+ }
+-
+diff --git a/WinQuake/d_local.h b/WinQuake/d_local.h
+index af924899..ef007b34 100644
+--- a/WinQuake/d_local.h
++++ b/WinQuake/d_local.h
+@@ -66,8 +66,8 @@ extern float	d_sdivzstepu, d_tdivzstepu, d_zistepu;
+ extern float	d_sdivzstepv, d_tdivzstepv, d_zistepv;
+ extern float	d_sdivzorigin, d_tdivzorigin, d_ziorigin;
+ 
+-fixed16_t	sadjust, tadjust;
+-fixed16_t	bbextents, bbextentt;
++extern fixed16_t	sadjust, tadjust;
++extern fixed16_t	bbextents, bbextentt;
+ 
+ 
+ void D_DrawSpans8 (espan_t *pspans);
+@@ -80,7 +80,7 @@ void D_DrawSkyScans8 (espan_t *pspan);
+ void D_DrawSkyScans16 (espan_t *pspan);
+ 
+ void R_ShowSubDiv (void);
+-void (*prealspandrawer)(void);
++extern void (*prealspandrawer)(void);
+ surfcache_t	*D_CacheSurface (msurface_t *surface, int miplevel);
+ 
+ extern int D_MipLevelForScale (float scale);
+@@ -108,4 +108,3 @@ extern int		d_minmip;
+ extern float	d_scalemip[3];
+ 
+ extern void (*d_drawspans) (espan_t *pspan);
+-
+diff --git a/WinQuake/d_vars.c b/WinQuake/d_vars.c
+index 9c9805d6..9fb6dfbc 100644
+--- a/WinQuake/d_vars.c
++++ b/WinQuake/d_vars.c
+@@ -38,6 +38,7 @@ float	d_sdivzstepv, d_tdivzstepv, d_zistepv;
+ float	d_sdivzorigin, d_tdivzorigin, d_ziorigin;
+ 
+ fixed16_t	sadjust, tadjust, bbextents, bbextentt;
++void		(*prealspandrawer)(void);
+ 
+ pixel_t			*cacheblock;
+ int				cachewidth;
+@@ -47,4 +48,3 @@ unsigned int	d_zrowbytes;
+ unsigned int	d_zwidth;
+ 
+ #endif	// !id386
+-
+diff --git a/WinQuake/host.c b/WinQuake/host.c
+index 603f6b3f..0e8bd1fb 100644
+--- a/WinQuake/host.c
++++ b/WinQuake/host.c
+@@ -262,6 +262,9 @@ void Host_WriteConfiguration (void)
+ 		Cvar_WriteVariables (f);
+ 
+ 		fclose (f);
++#ifdef __EMSCRIPTEN__
++		Sys_BrowserPersistenceChanged (false);
++#endif
+ 	}
+ }
+ 
+@@ -502,7 +505,11 @@ qboolean Host_FilterTime (float time)
+ {
+ 	realtime += time;
+ 
+-	if (!cls.timedemo && realtime - oldrealtime < 1.0/72.0)
++	if (!cls.timedemo
++#ifdef __EMSCRIPTEN__
++		&& !Sys_BrowserModernized()
++#endif
++		&& realtime - oldrealtime < 1.0/72.0)
+ 		return false;		// framerate is too high
+ 
+ 	host_frametime = realtime - oldrealtime;
+@@ -955,4 +962,3 @@ void Host_Shutdown(void)
+ 		VID_Shutdown();
+ 	}
+ }
+-
+diff --git a/WinQuake/host_cmd.c b/WinQuake/host_cmd.c
+index e658cd4f..2e5283b2 100644
+--- a/WinQuake/host_cmd.c
++++ b/WinQuake/host_cmd.c
+@@ -550,6 +550,9 @@ void Host_Savegame_f (void)
+ 	}
+ 	fclose (f);
+ 	Con_Printf ("done.\n");
++#ifdef __EMSCRIPTEN__
++	Sys_BrowserPersistenceChanged (true);
++#endif
+ }
+ 
+ 
+@@ -1822,8 +1825,12 @@ void Host_Startdemos_f (void)
+ 	}
+ 	Con_Printf ("%i demo(s) in loop\n", c);
+ 
++	memset (cls.demos, 0, sizeof(cls.demos));
+ 	for (i=1 ; i<c+1 ; i++)
++	{
+ 		strncpy (cls.demos[i-1], Cmd_Argv(i), sizeof(cls.demos[0])-1);
++		cls.demos[i-1][sizeof(cls.demos[0])-1] = 0;
++	}
+ 
+ 	if (!sv.active && cls.demonum != -1 && !cls.demoplayback)
+ 	{
+diff --git a/WinQuake/keys.c b/WinQuake/keys.c
+index 6e48ad48..b9179d47 100644
+--- a/WinQuake/keys.c
++++ b/WinQuake/keys.c
+@@ -507,8 +507,15 @@ void Key_WriteBindings (FILE *f)
+ 
+ 	for (i=0 ; i<256 ; i++)
+ 		if (keybindings[i])
++		{
+ 			if (*keybindings[i])
+ 				fprintf (f, "bind \"%s\" \"%s\"\n", Key_KeynumToString(i), keybindings[i]);
++			else
++				/* Empty bindings are meaningful browser preferences too.  The
++				 * original writer omitted them, allowing default.cfg to restore
++				 * old A/Z look bindings on the next page load. */
++				fprintf (f, "unbind \"%s\"\n", Key_KeynumToString(i));
++		}
+ }
+ 
+ 
+@@ -756,4 +763,3 @@ void Key_ClearStates (void)
+ 		key_repeats[i] = 0;
+ 	}
+ }
+-
+diff --git a/WinQuake/menu.c b/WinQuake/menu.c
+index c3c7ebdd..4772012e 100644
+--- a/WinQuake/menu.c
++++ b/WinQuake/menu.c
+@@ -253,6 +253,8 @@ void M_ToggleMenu_f (void)
+ 			M_Menu_Main_f ();
+ 			return;
+ 		}
++		if (!cls.demoplayback && (sv.active || cls.state == ca_connected))
++			Q1_BrowserArmCaptureIntent ();
+ 		key_dest = key_game;
+ 		m_state = m_none;
+ 		return;
+@@ -309,6 +311,8 @@ void M_Main_Key (int key)
+ 	switch (key)
+ 	{
+ 	case K_ESCAPE:
++		if (!cls.demoplayback && (sv.active || cls.state == ca_connected))
++			Q1_BrowserArmCaptureIntent ();
+ 		key_dest = key_game;
+ 		m_state = m_none;
+ 		cls.demonum = m_save_demonum;
+@@ -362,7 +366,6 @@ void M_Main_Key (int key)
+ int	m_singleplayer_cursor;
+ #define	SINGLEPLAYER_ITEMS	3
+ 
+-
+ void M_Menu_SinglePlayer_f (void)
+ {
+ 	key_dest = key_menu;
+@@ -413,9 +416,16 @@ void M_SinglePlayer_Key (int key)
+ 		switch (m_singleplayer_cursor)
+ 		{
+ 		case 0:
++#ifndef WEBQUAKE
+ 			if (sv.active)
+ 				if (!SCR_ModalMessage("Are you sure you want to\nstart a new game?\n"))
+ 					break;
++#endif
++			/* SCR_ModalMessage spins synchronously waiting for another key.
++			 * A browser cannot deliver that event while the only JS thread is
++			 * blocked, so WebQuake treats the explicit New Game selection as
++			 * confirmation and transitions immediately. */
++			Q1_BrowserArmCaptureIntent ();
+ 			key_dest = key_game;
+ 			if (sv.active)
+ 				Cbuf_AddText ("disconnect\n");
+@@ -539,6 +549,7 @@ void M_Load_Key (int k)
+ 		S_LocalSound ("misc/menu2.wav");
+ 		if (!loadable[load_cursor])
+ 			return;
++		Q1_BrowserArmCaptureIntent ();
+ 		m_state = m_none;
+ 		key_dest = key_game;
+ 
+@@ -578,6 +589,7 @@ void M_Save_Key (int k)
+ 		break;
+ 
+ 	case K_ENTER:
++		Q1_BrowserArmCaptureIntent ();
+ 		m_state = m_none;
+ 		key_dest = key_game;
+ 		Cbuf_AddText (va("save s%i\n", load_cursor));
+diff --git a/WinQuake/menu.h b/WinQuake/menu.h
+index 616de3f8..897c60c0 100644
+--- a/WinQuake/menu.h
++++ b/WinQuake/menu.h
+@@ -34,5 +34,8 @@ void M_Init (void);
+ void M_Keydown (int key);
+ void M_Draw (void);
+ void M_ToggleMenu_f (void);
+-
+-
++#ifdef WEBQUAKE
++void Q1_BrowserArmCaptureIntent (void);
++#else
++#define Q1_BrowserArmCaptureIntent() ((void)0)
++#endif
+diff --git a/WinQuake/net_dgrm.c b/WinQuake/net_dgrm.c
+index a293b77b..99984371 100644
+--- a/WinQuake/net_dgrm.c
++++ b/WinQuake/net_dgrm.c
+@@ -54,6 +54,9 @@ unsigned long inet_addr(const char *cp);
+ 
+ #include "quakedef.h"
+ #include "net_dgrm.h"
++#ifdef WEBQUAKE
++#include <emscripten/emscripten.h>
++#endif
+ 
+ // these two macros are to make the code more readable
+ #define sfunc	net_landrivers[sock->landriver]
+@@ -1302,6 +1305,13 @@ static qsocket_t *_Datagram_Connect (char *host)
+ 					continue;
+ 				}
+ 			}
++#ifdef WEBQUAKE
++			/* WebSocket messages are delivered by the browser event loop. Yield
++			 * cooperatively while waiting so receive callbacks can fill UDP_Read's
++			 * queue without changing the original NetQuake wire protocol. */
++			if (ret == 0)
++				emscripten_sleep(1);
++#endif
+ 		}
+ 		while (ret == 0 && (SetNetTime() - start_time) < 2.5);
+ 		if (ret)
+diff --git a/WinQuake/net_main.c b/WinQuake/net_main.c
+index 5f5d2cf1..12dd8dba 100644
+--- a/WinQuake/net_main.c
++++ b/WinQuake/net_main.c
+@@ -383,6 +383,11 @@ qsocket_t *NET_Connect (char *host)
+ 			numdrivers = 1;
+ 			goto JustDoIt;
+ 		}
++#ifdef WEBQUAKE
++		/* A direct browser relay address does not need LAN discovery. Avoid the
++		 * native blocking server-list pass and proceed to the datagram driver. */
++		goto JustDoIt;
++#endif
+ 
+ 		if (hostCacheCount)
+ 		{
+@@ -950,7 +955,14 @@ void NET_Poll(void)
+ 		if (pp->nextTime > net_time)
+ 			break;
+ 		pollProcedureList = pp->next;
++#ifdef WEBQUAKE
++		/* WebAssembly enforces indirect-call signatures. The browser build only
++		 * schedules the no-argument LAN pollers, so do not pass the legacy modem
++		 * argument that native ABIs historically ignored. */
++		pp->procedure();
++#else
+ 		pp->procedure(pp->arg);
++#endif
+ 	}
+ }
+ 
+diff --git a/WinQuake/quakedef.h b/WinQuake/quakedef.h
+index e4518273..42cb2bfe 100644
+--- a/WinQuake/quakedef.h
++++ b/WinQuake/quakedef.h
+@@ -308,6 +308,7 @@ void Host_ServerFrame (void);
+ void Host_InitCommands (void);
+ void Host_Init (quakeparms_t *parms);
+ void Host_Shutdown(void);
++void Host_WriteConfiguration (void);
+ void Host_Error (char *error, ...);
+ void Host_EndGame (char *message, ...);
+ void Host_Frame (float time);
+diff --git a/WinQuake/r_main.c b/WinQuake/r_main.c
+index 3fe51464..17dc021b 100644
+--- a/WinQuake/r_main.c
++++ b/WinQuake/r_main.c
+@@ -952,7 +952,14 @@ r_refdef must be set before the first call
+ */
+ void R_RenderView_ (void)
+ {
++#ifdef WEBQUAKE
++	/* The original span rasterizer can finish one scanline past the nominal
++	 * 320x200 water-warp view.  Native DOS/WinQuake relied on adjacent stack
++	 * slack; keep the same scratch space explicit in WebAssembly. */
++	byte	warpbuffer[WARP_WIDTH * (WARP_HEIGHT + 1)];
++#else
+ 	byte	warpbuffer[WARP_WIDTH * WARP_HEIGHT];
++#endif
+ 
+ 	r_warpbuffer = warpbuffer;
+ 
+@@ -1052,8 +1059,13 @@ void R_RenderView (void)
+ 	int		delta;
+ 	
+ 	delta = (byte *)&dummy - r_stack_start;
++#ifndef WEBQUAKE
+ 	if (delta < -10000 || delta > 10000)
+ 		Sys_Error ("R_RenderView: called without enough stack");
++#else
++	/* The browser frame callback resumes after main has unwound. */
++	(void)delta;
++#endif
+ 
+ 	if ( Hunk_LowMark() & 3 )
+ 		Sys_Error ("Hunk is missaligned");
+@@ -1082,4 +1094,3 @@ void R_InitTurb (void)
+ 		intsintable[i] = AMP2 + sin(i*3.14159*2/CYCLE)*AMP2;	// AMP2, not 20
+ 	}
+ }
+-
+diff --git a/WinQuake/sys.h b/WinQuake/sys.h
+index c5d61a7f..78343d13 100644
+--- a/WinQuake/sys.h
++++ b/WinQuake/sys.h
+@@ -69,3 +69,7 @@ void Sys_LowFPPrecision (void);
+ void Sys_HighFPPrecision (void);
+ void Sys_SetFPCW (void);
+ 
++#ifdef __EMSCRIPTEN__
++void Sys_BrowserPersistenceChanged (qboolean immediate);
++qboolean Sys_BrowserModernized (void);
++#endif
+diff --git a/WinQuake/world.h b/WinQuake/world.h
+index cddb94fc..d578c759 100644
+--- a/WinQuake/world.h
++++ b/WinQuake/world.h
+@@ -64,6 +64,9 @@ int SV_TruePointContents (vec3_t p);
+ 
+ edict_t	*SV_TestEntityPosition (edict_t *ent);
+ 
++qboolean SV_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f,
++	vec3_t p1, vec3_t p2, trace_t *trace);
++
+ trace_t SV_Move (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int type, edict_t *passedict);
+ // mins and maxs are reletive
+ 
+diff --git a/WinQuake/zone.c b/WinQuake/zone.c
+index e30d7f84..7cc81a83 100644
+--- a/WinQuake/zone.c
++++ b/WinQuake/zone.c
+@@ -932,4 +932,3 @@ void Memory_Init (void *buf, int size)
+ 	mainzone = Hunk_AllocName (zonesize, "zone" );
+ 	Z_ClearZone (mainzone, zonesize);
+ }
+-
+diff --git a/WinQuake/zone.h b/WinQuake/zone.h
+index 7655ad9c..ad85c050 100644
+--- a/WinQuake/zone.h
++++ b/WinQuake/zone.h
+@@ -128,4 +128,3 @@ void *Cache_Alloc (cache_user_t *c, int size, char *name);
+ void Cache_Report (void);
+ 
+ 
+-

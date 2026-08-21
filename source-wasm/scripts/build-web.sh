@@ -5,7 +5,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 engine_root="${SOURCE_ENGINE_ROOT:-${repo_root}/vendor/source-engine}"
 web_dir="${SOURCE_WASM_WEB_DIR:-${repo_root}/web}"
 jobs="${SOURCE_WASM_JOBS:-$(nproc)}"
-framework_root="${WASM_GAME_FRAMEWORK_ROOT:-${repo_root}/vendor/wasm-game-framework}"
+framework_root="${WASM_GAME_FRAMEWORK_ROOT:-${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}}"
 
 if ! command -v emcc >/dev/null 2>&1; then
   emsdk_root="${SOURCE_WASM_EMSDK:-${EMSDK_DIR:-/home/ted/emsdk}}"

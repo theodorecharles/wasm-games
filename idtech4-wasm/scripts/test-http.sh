@@ -21,7 +21,7 @@ for variant in suite doom3 doom3-mp roe quake4 quake4-mp prey; do
     sleep 1
   done
   base_url="http://127.0.0.1:${port}"
-  test "$(curl -fsS "${base_url}/wasm-game-framework.json" | node -pe 'JSON.parse(fs.readFileSync(0)).version')" = "0.9.2"
+  test "$(curl -fsS "${base_url}/wasm-game-framework.json" | node -pe 'JSON.parse(fs.readFileSync(0)).version')" = "0.9.6"
   curl -fsS "${base_url}/" | rg -q 'wasm-game-bootstrap.js'
   curl -fsS "${base_url}/wasm-game.json" | node -e '
     const config = JSON.parse(require("node:fs").readFileSync(0, "utf8"));

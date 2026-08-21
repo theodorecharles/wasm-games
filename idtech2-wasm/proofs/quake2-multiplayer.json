@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T02:00:10-04:00",
+  "result": "pass",
+  "browser": "Google Chrome",
+  "route": "http://localhost:4382/?game=quake2",
+  "engine": {
+    "name": "Quake II WebAssembly",
+    "sourceCommit": "69599f5a7b3c543f33a5cec34811f09a98fbeb45",
+    "artifacts": {
+      "quake2.js": {
+        "bytes": 229335,
+        "sha256": "dcbe0c505ade01d16ddf960fdd45eb100e516b80efefd12f3d11e2c2a70ee1a2"
+      },
+      "quake2.wasm": {
+        "bytes": 1577508,
+        "sha256": "f22bada41596f2919f9208f6cfbef548031ca1611ac14ab2d1ffa12cbff89097"
+      }
+    }
+  },
+  "server": {
+    "engine": "Yamagi q2ded",
+    "game": "Quake II",
+    "map": "q2dm1",
+    "mod": "3ZB2",
+    "modCommit": "334a1e635b9dc4926bcb7aa37d02b341ee99a96a",
+    "state": "running",
+    "nativePlayers": [
+      "Browser1",
+      "Browser2"
+    ],
+    "nativeBots": [
+      "Evil Zeep",
+      "Claw Finger"
+    ],
+    "browserPeers": 2,
+    "bots": 2,
+    "relay": {
+      "clientPackets": 801,
+      "serverPackets": 2145,
+      "peers": [
+        {
+          "sourceHost": "127.0.0.2",
+          "sourcePort": 34503,
+          "destinationPort": 27910,
+          "clientPackets": 401,
+          "serverPackets": 961
+        },
+        {
+          "sourceHost": "127.0.0.3",
+          "sourcePort": 47652,
+          "destinationPort": 27910,
+          "clientPackets": 273,
+          "serverPackets": 507
+        }
+      ]
+    }
+  },
+  "lifecycle": {
+    "wakeTrigger": "Join Deathmatch",
+    "stateWithPlayers": "running",
+    "idleTimeoutMs": 8000,
+    "stateAfterBothTabsClosed": "sleeping",
+    "peersAfterBothTabsClosed": 0
+  },
+  "clients": [
+    {
+      "name": "Browser1",
+      "initial": {
+        "network": [1, 93, 219],
+        "pose": [1552.06, 600.06, 382.18, 135]
+      },
+      "mouseInput": {
+        "beforeYaw": 135,
+        "afterYaw": 118.28
+      },
+      "sustained": {
+        "network": [1, 398, 934],
+        "pose": [1552.06, 600.06, 382.18, 118.28]
+      }
+    },
+    {
+      "name": "Browser2",
+      "initial": {
+        "network": [1, 26, 34],
+        "pose": [1512.06, -23.93, 566.18, 90]
+      },
+      "mouseInput": {
+        "beforeYaw": 45,
+        "afterYaw": 77.55
+      },
+      "sustained": {
+        "network": [1, 270, 481],
+        "pose": [1328.06, 1208.06, 950.18, 77.55]
+      }
+    }
+  ],
+  "assertions": {
+    "twoDistinctBrowserClients": true,
+    "bothPresentOnNativeRoster": true,
+    "twoServerBots": true,
+    "uniqueLoopbackIdentities": true,
+    "bothReceiveCountersAdvanced": true,
+    "independentMouseLookChangedYaw": true,
+    "frameworkAutoWake": true,
+    "frameworkAutoSleep": true
+  }
+}

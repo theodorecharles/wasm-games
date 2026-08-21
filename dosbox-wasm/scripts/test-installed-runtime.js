@@ -7,7 +7,7 @@ const path = require('node:path');
 
 const siteRoot = path.resolve(process.argv[2] || path.join(__dirname, '../web/dist'));
 const variant = String(process.argv[3] || '');
-const dataRoot = path.resolve(process.argv[4] || '/home/ted/Development/wasm/data/dosbox');
+const dataRoot = path.resolve(process.argv[4] || '/home/ted/wasm-game-data/dosbox');
 const durationMs = Math.max(3000, Number(process.argv[5]) || 12000);
 const dataManifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'wasm-game-data.json'), 'utf8'));
 const policy = dataManifest.variants?.[variant];

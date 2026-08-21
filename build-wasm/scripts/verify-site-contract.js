@@ -8,29 +8,21 @@ const path = require('node:path');
 
 const repo = path.resolve(__dirname, '..');
 const web = path.join(repo, 'web');
-const dist = path.join(repo, 'build-web', 'dist');
+const dist = path.join(repo, '.work', 'build', 'dist');
 const framework = process.env.WASM_FRAMEWORK_DIR
   ? path.resolve(process.env.WASM_FRAMEWORK_DIR)
-  : path.resolve(repo, '../wasm-game-framework');
+  : path.resolve(repo, '../..', 'wasm-game-framework');
 const config = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game.json'), 'utf8'));
 const data = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game-data.json'), 'utf8'));
 const variants = ['blood', 'duke3d'];
-const statusDocs = ['README.md', 'RUNBOOK.md'].map(filename =>
-  fs.readFileSync(path.join(repo, filename), 'utf8'));
 
-assert.equal(JSON.parse(fs.readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.4');
-assert.equal(childProcess.execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), 'c4ad3b9e075f881d32f044299fbfeee703a9169d');
+assert.equal(JSON.parse(fs.readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.6');
+assert.equal(childProcess.execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), 'ebb1ebe35ad8224a9080279a6529414db42d3284');
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wasm-game-framework.js')), true);
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wasm-game-bootstrap.js')), true);
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wolfwasm-shell.js')), false);
 if (fs.existsSync(dist)) {
-  assert.equal(JSON.parse(fs.readFileSync(path.join(dist, 'shared-shell', 'wasm-game-framework.json'), 'utf8')).version, '0.9.4');
-}
-
-for (const contents of statusDocs) {
-  assert.match(contents, /\| Blood \| Still in development \|/);
-  assert.match(contents, /\| Duke Nukem 3D \| Still in development \|/);
-  assert.doesNotMatch(contents, /partially working|mostly working/i);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(dist, 'shared-shell', 'wasm-game-framework.json'), 'utf8')).version, '0.9.6');
 }
 
 for (const forbidden of ['index.html', 'service-worker.js', 'app.webmanifest', 'wasm-game-config.js']) {
@@ -67,7 +59,7 @@ for (const key of variants) {
   assert.equal(variant.controller.mode, 'disabled');
   assert.deepEqual(variant.profiles.map(profile => profile.value), ['classic']);
   assert.equal(variant.defaultProfile, 'classic');
-  assert.match(variant.description, /horizontal-only mouse look/);
+  assert.match(variant.description, /full pointer-lock mouse look/);
   assert.match(variant.pwa.id, /^\/apps\/build\//);
   assert.deepEqual(variant.pwa.icons.map(icon => icon.sizes), ['192x192', '512x512']);
   assert.ok(variant.icon && variant.background);
@@ -94,11 +86,11 @@ for (const file of blood.files) {
   assert.match(file.sha256, /^[a-f0-9]{64}$/);
 }
 assert.deepEqual(blood.files.filter(file => /^tiles\d+\.art$/.test(file.key)).map(file => file.path),
-  Array.from({ length: 18 }, (_, index) => `TILES${String(index).padStart(3, '0')}.ART`));
+  Array.from({ length: 18 }, (_, index) => `blood/TILES${String(index).padStart(3, '0')}.ART`));
 
 const duke = data.variants.duke3d;
 assert.equal(duke.namespace, 'build-duke3d-registered');
-assert.deepEqual(duke.files.map(file => file.path), ['DUKE3D.GRP', 'DUKE.RTS']);
+assert.deepEqual(duke.files.map(file => file.path), ['duke3d/DUKE3D.GRP', 'duke3d/DUKE.RTS']);
 assert.equal(duke.files[0].size, 26524524);
 assert.equal(duke.files[0].magic, 'KenSilverman');
 assert.equal(duke.files[0].sha256, '7c729a8f1f2877869feab30b77a062812cd927b8209452892c1b51d69247babc');
@@ -125,4 +117,4 @@ for (const source of [bloodAdapter, dukeAdapter]) {
   assert.match(source, /preservePaths: true/);
 }
 
-console.log('Verified framework 0.9.4, persistence, disabled controllers, cursor policy, family dispatch, fixed classic profiles, PWA metadata, and exact data contracts.');
+console.log('Verified framework 0.9.6, persistence, disabled controllers, cursor policy, family dispatch, fixed classic profiles, PWA metadata, and exact data contracts.');

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "pinned-reconstruction-with-game-patch",
+  "repositories": [
+    {
+      "name": "opencod2-reconstruction",
+      "repository": "https://github.com/theodorecharles/cod2-wasm.git",
+      "commit": "f70e697476fceeb4f53de677e1c5d5fe12a00b36",
+      "upstream": "https://github.com/opencod2/opencod2.git",
+      "patches": ["patches/browser-foundation.patch"]
+    }
+  ]
+}

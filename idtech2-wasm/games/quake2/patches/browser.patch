@@ -1,0 +1,2085 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7b5392c8..8b350ef3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.31 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
+ 
+ # Print a message that using the Makefiles is recommended.
+ message(NOTICE: " The CMakeLists.txt is unmaintained. Use the Makefile if possible.")
+@@ -72,6 +72,21 @@ option(GLES3_RENDERER "Build the GLES3 renderer" ON)
+ option(SOFT_RENDERER "Build the software renderer" ON)
+ option(XDG_SUPPORT "Use XDG Directories to store user data" ON)
+ 
++if(EMSCRIPTEN)
++	# The browser build is deliberately small and self contained. Emscripten
++	# provides SDL2 and WebGL; native shared modules, cURL and OpenAL are not
++	# available in the first single-process milestone.
++	set(CURL_SUPPORT OFF CACHE BOOL "cURL support" FORCE)
++	set(OPENAL_SUPPORT OFF CACHE BOOL "OpenAL support" FORCE)
++	set(SDL3_SUPPORT OFF CACHE BOOL "Build against SDL 3 instead of SDL2" FORCE)
++	set(GL1_RENDERER OFF CACHE BOOL "Build the GL1 renderer" FORCE)
++	set(GL3_RENDERER OFF CACHE BOOL "Build the GL3 renderer" FORCE)
++	set(GLES1_RENDERER OFF CACHE BOOL "Build the GLES1 renderer" FORCE)
++	set(GLES3_RENDERER ON CACHE BOOL "Build the GLES3 renderer" FORCE)
++	set(SOFT_RENDERER OFF CACHE BOOL "Build the software renderer" FORCE)
++	set(XDG_SUPPORT OFF CACHE BOOL "Use XDG Directories to store user data" FORCE)
++endif()
++
+ set(SYSTEMDIR "" CACHE STRING "Override the system default directory")
+ 
+ # These variables will act as our list of include folders and linker flags.
+@@ -103,6 +118,10 @@ add_definitions(-DYQ2OSTYPE="${YQ2OSTYPE}")
+ 
+ set(cpu ${CMAKE_SYSTEM_PROCESSOR})
+ 
++if(EMSCRIPTEN)
++	set(cpu "wasm32")
++endif()
++
+ # Originally, ${CMAKE_SYSTEM_PROCESSOR} was supposed to contain the *target* CPU, according to CMake's documentation.
+ # As far as I can tell this has always been broken (always returns host CPU) at least on Windows
+ # (see e.g. https://cmake.org/pipermail/cmake-developers/2014-September/011405.html) and wasn't reliable on
+@@ -110,7 +129,9 @@ set(cpu ${CMAKE_SYSTEM_PROCESSOR})
+ # (e.g. x86_64 instead of i686). Instead of fixing this, CMake eventually updated their documentation in 3.20,
+ # now it's officially the same as CMAKE_HOST_SYSTEM_PROCESSOR except when cross-compiling (where it's explicitly set)
+ # So we gotta figure out the actual target CPU type ourselves..
+-if(NOT (CMAKE_SYSTEM_PROCESSOR STREQUAL CMAKE_HOST_SYSTEM_PROCESSOR))
++if(EMSCRIPTEN)
++	# Keep the explicit wasm32 architecture chosen above.
++elseif(NOT (CMAKE_SYSTEM_PROCESSOR STREQUAL CMAKE_HOST_SYSTEM_PROCESSOR))
+ 	# special case: cross-compiling, here CMAKE_SYSTEM_PROCESSOR should be correct, hopefully
+ 	# (just leave cpu at ${CMAKE_SYSTEM_PROCESSOR})
+ elseif(MSVC)
+@@ -186,7 +207,10 @@ endif()
+ # Required libraries to build the different components of the binaries. Find
+ # them and add the include/linker directories and flags (in case the package
+ # manager find it in a weird place).
+-if (SDL3_SUPPORT)
++if(EMSCRIPTEN)
++	# -sUSE_SDL=2 supplies both the headers and the browser-side SDL library.
++	add_compile_options("-sUSE_SDL=2")
++elseif (SDL3_SUPPORT)
+ 	find_package(SDL3 REQUIRED)
+ 	add_definitions(-DUSE_SDL3)
+ else()
+@@ -256,13 +280,15 @@ endif()
+ if(NOT MSVC)
+ 	list(APPEND yquake2LinkerFlags m)
+ endif()
+-list(APPEND yquake2LinkerFlags ${CMAKE_DL_LIBS})
++if(NOT EMSCRIPTEN)
++	list(APPEND yquake2LinkerFlags ${CMAKE_DL_LIBS})
++endif()
+ 
+ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+ 	if(!MSVC)
+ 		list(APPEND yquake2LinkerFlags "-static-libgcc")
+ 	endif()
+-else()
++elseif(NOT EMSCRIPTEN)
+ 	if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Haiku")
+ 		list(APPEND yquake2LinkerFlags "-rdynamic")
+ 	else()
+@@ -274,7 +300,7 @@ else()
+ 	endif()
+ endif()
+ 
+-if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD" AND NOT WIN32)
++if(NOT EMSCRIPTEN AND NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD" AND NOT WIN32)
+ 	list(APPEND yquake2LinkerFlags "-Wl,--no-undefined")
+ endif()
+ 
+@@ -329,6 +355,13 @@ set(Backends-Windows-Header
+ 	${BACKENDS_SRC_DIR}/windows/header/resource.h
+ 	)
+ 
++set(Backends-Web-Source
++	${BACKENDS_SRC_DIR}/web/main.c
++	${BACKENDS_SRC_DIR}/web/network.c
++	${BACKENDS_SRC_DIR}/web/system.c
++	${BACKENDS_SRC_DIR}/web/hunk.c
++	)
++
+ set(REF-Windows-Source
+ 	${BACKENDS_SRC_DIR}/windows/shared/hunk.c
+ 	)
+@@ -338,7 +371,10 @@ set(REF-Unix-Source
+ 	)
+ 
+ # Set the nessesary platform specific source
+-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
++if(EMSCRIPTEN)
++	set(Platform-Specific-Source ${Backends-Web-Source})
++	set(REF-Platform-Specific-Source)
++elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+ 	set(Platform-Specific-Source ${Backends-Windows-Source} ${Backends-Windows-Header})
+ 	set(REF-Platform-Specific-Source ${REF-Windows-Source})
+ else()
+@@ -730,7 +766,85 @@ set(SOFT-Header
+ 
+ # Main Quake 2 executable
+ 
+-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
++if(EMSCRIPTEN)
++	# Native Yamagi loads the game and renderer as shared objects. Browsers
++	# cannot use that dlopen model, so link the original modules into one WASM
++	# program and let the web system backend resolve their API entry points.
++	set(Web-Game-Source ${Game-Source})
++	list(REMOVE_ITEM Web-Game-Source
++		${COMMON_SRC_DIR}/shared/flash.c
++		${COMMON_SRC_DIR}/shared/rand.c
++		${COMMON_SRC_DIR}/shared/shared.c)
++
++	set(Web-GLES3-Source ${GL3-Source})
++	list(REMOVE_ITEM Web-GLES3-Source
++		${COMMON_SRC_DIR}/shared/shared.c
++		${COMMON_SRC_DIR}/md4.c)
++
++	# Keep the compile-time namespaces that shared-object boundaries normally
++	# provide. A few private globals deliberately have the same names in the
++	# engine, game and renderer modules; renaming only those private module
++	# symbols lets the native module APIs remain unchanged in the static WASM
++	# executable.
++	add_library(web_game OBJECT ${Web-Game-Source} ${Game-Header})
++	target_compile_definitions(web_game PRIVATE
++		YQ2_STATIC_MODULES=1
++		maxclients=game_maxclients
++		dedicated=game_dedicated)
++
++	add_library(web_gles3 OBJECT
++		${Web-GLES3-Source}
++		${Glad-GLES3-Source}
++		${GL3-Header}
++		${Glad-GLES3-Header})
++	target_compile_definitions(web_gles3 PRIVATE
++		YQ2_STATIC_MODULES=1
++		YQ2_GL3_GLES3=1
++		YQ2_GL3_GLES=1
++		STB_IMAGE_STATIC=1
++		modes=ref_modes
++		vid_gamma=ref_vid_gamma
++		vid_fullscreen=ref_vid_fullscreen)
++	target_include_directories(web_gles3 PRIVATE
++		${CMAKE_SOURCE_DIR}/src/client/refresh/gl3/glad-gles3/include)
++
++	add_executable(quake2
++		${Client-Source}
++		${Client-SDL-Source}
++		${Client-Header}
++		${Platform-Specific-Source}
++		${Backends-Generic-Source}
++		$<TARGET_OBJECTS:web_game>
++		$<TARGET_OBJECTS:web_gles3>)
++
++	target_compile_definitions(quake2 PRIVATE
++		YQ2_WEB=1)
++	target_link_libraries(quake2 ${yquake2LinkerFlags})
++	target_link_options(quake2 PRIVATE
++		"-sUSE_SDL=2"
++		"-sMIN_WEBGL_VERSION=2"
++		"-sMAX_WEBGL_VERSION=2"
++		"-sFULL_ES3=1"
++		"-sALLOW_MEMORY_GROWTH=1"
++		"-sINITIAL_MEMORY=268435456"
++		"-sMAXIMUM_MEMORY=2147483648"
++		"-sSTACK_SIZE=8388608"
++		"-sFORCE_FILESYSTEM=1"
++		"-sEXIT_RUNTIME=0"
++		"-sMODULARIZE=1"
++		"-sEXPORT_NAME=createQuake2Module"
++		"-sENVIRONMENT=web"
++		"-sEXPORTED_FUNCTIONS=['_main','_malloc','_free']"
++		"-sEXPORTED_RUNTIME_METHODS=['FS','callMain']"
++		"-lidbfs.js"
++		"--pre-js=${CMAKE_SOURCE_DIR}/web/pre.js")
++	set_target_properties(quake2 PROPERTIES
++		SUFFIX ".js"
++		LINK_DEPENDS "${CMAKE_SOURCE_DIR}/web/pre.js"
++		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/release)
++	configure_file(web/game-adapter.js ${CMAKE_BINARY_DIR}/release/game-adapter.js COPYONLY)
++	configure_file(stuff/icon/Quake2.ico ${CMAKE_BINARY_DIR}/release/quake2.ico COPYONLY)
++elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+ 	add_executable(yquake2 WIN32 ${Client-Source} ${Client-SDL-Source} ${Client-Header}
+ 			${Platform-Specific-Source} ${Backends-Generic-Source})
+ 	set_target_properties(yquake2 PROPERTIES
+@@ -768,6 +882,8 @@ else()
+ 	endif()
+ endif()
+ 
++if(NOT EMSCRIPTEN)
++
+ # Quake 2 Dedicated Server
+ add_executable(q2ded ${Server-Source} ${Server-Header} ${Platform-Specific-Source}
+ 		${Backends-Generic-Source})
+@@ -893,3 +1009,5 @@ if(SDL3_SUPPORT)
+ endif()
+ 
+ endif()
++
++endif() # NOT EMSCRIPTEN
+diff --git a/src/backends/generic/misc.c b/src/backends/generic/misc.c
+index d9acea5a..6ded6aba 100644
+--- a/src/backends/generic/misc.c
++++ b/src/backends/generic/misc.c
+@@ -29,7 +29,7 @@
+ 
+ #include "../../common/header/shared.h"
+ 
+-#if defined(__linux) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__sun) || defined(__APPLE__)
++#if defined(__linux) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__sun) || defined(__APPLE__) || defined(__EMSCRIPTEN__)
+ #include <unistd.h> // readlink(), amongst others
+ #endif
+ 
+@@ -133,6 +133,11 @@ static void SetExecutablePath(char* exePath)
+ 		exePath[0] = '\0';
+ 	}
+ 
++#elif defined(__EMSCRIPTEN__)
++
++	// Browser builds have no executable path in the virtual filesystem.
++	exePath[0] = '\0';
++
+ #else
+ 
+ 	// Several platforms (for example OpenBSD) donn't provide a
+diff --git a/src/client/cl_console.c b/src/client/cl_console.c
+index a3fe4c09..f7a9a1fd 100644
+--- a/src/client/cl_console.c
++++ b/src/client/cl_console.c
+@@ -662,7 +662,11 @@ Con_DrawConsole(float frac)
+ 	SCR_AddDirtyPoint(0, 0);
+ 	SCR_AddDirtyPoint(viddef.width - 1, lines - 1);
+ 
++#ifdef YQ2_WEB
++	Com_sprintf(version, sizeof(version), "Quake II");
++#else
+ 	Com_sprintf(version, sizeof(version), "Yamagi Quake II v%s", YQ2VERSION);
++#endif
+ 
+ 	verLen = strlen(version);
+ 
+diff --git a/src/client/cl_main.c b/src/client/cl_main.c
+index 112bb172..89dbeadb 100644
+--- a/src/client/cl_main.c
++++ b/src/client/cl_main.c
+@@ -729,6 +729,9 @@ CL_WriteConfiguration(void)
+ 	fclose(f);
+ 
+ 	Cvar_WriteVariables(path);
++#ifdef YQ2_WEB
++	Q2Web_PersistenceChanged(false);
++#endif
+ }
+ 
+ typedef struct
+diff --git a/src/client/cl_screen.c b/src/client/cl_screen.c
+index 33b0a842..e6367b05 100644
+--- a/src/client/cl_screen.c
++++ b/src/client/cl_screen.c
+@@ -70,7 +70,7 @@ extern cvar_t *crosshair_color_r;
+ extern cvar_t *crosshair_color_g;
+ extern cvar_t *crosshair_color_b;
+ extern cvar_t *cl_showspeed;
+-extern float GetPlayerSpeed(float *, float *);
++extern void GetPlayerSpeed(float *, float *);
+ 
+ static void SCR_TimeRefresh_f(void);
+ static void SCR_Loading_f(void);
+diff --git a/src/client/header/client.h b/src/client/header/client.h
+index b67ba57e..bbfa3b73 100644
+--- a/src/client/header/client.h
++++ b/src/client/header/client.h
+@@ -453,6 +453,7 @@ void CL_RegisterSounds (void);
+ void CL_Quit_f (void);
+ 
+ void CL_Init (void);
++void CL_WriteConfiguration(void);
+ 
+ void CL_FixUpGender(void);
+ void CL_Disconnect (void);
+diff --git a/src/client/input/sdl2.c b/src/client/input/sdl2.c
+index c280a4f4..97194b48 100644
+--- a/src/client/input/sdl2.c
++++ b/src/client/input/sdl2.c
+@@ -35,6 +35,9 @@
+  */
+ 
+ #include <SDL2/SDL.h>
++#ifdef YQ2_WEB
++#include <emscripten/emscripten.h>
++#endif
+ 
+ #include "header/input.h"
+ #include "header/gyro.h"
+@@ -96,6 +99,15 @@ static float mouse_x, mouse_y;
+ static int joystick_left_x, joystick_left_y, joystick_right_x, joystick_right_y;
+ static qboolean mlooking;
+ 
++#ifdef YQ2_WEB
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_ControllerLook(float x, float y)
++{
++	mouse_x += x;
++	mouse_y += y;
++}
++#endif
++
+ // The last time input events were processed.
+ // Used throughout the client.
+ int sys_frame_time;
+diff --git a/src/client/menu/menu.c b/src/client/menu/menu.c
+index 369a92e4..59a46025 100644
+--- a/src/client/menu/menu.c
++++ b/src/client/menu/menu.c
+@@ -75,6 +75,10 @@ static int m_menudepth;
+ 
+ static menupopup_s m_popup;
+ 
++#ifdef __EMSCRIPTEN__
++extern void Q2Web_ArmCaptureIntent(void);
++#endif
++
+ static menuframework_s *
+ M_GetActiveMenu(void)
+ {
+@@ -135,6 +139,9 @@ M_ForceMenuOff(void)
+ 
+ 	m_menudepth = 0;
+ 
++#ifdef __EMSCRIPTEN__
++	Q2Web_ArmCaptureIntent();
++#endif
+ 	cls.key_dest = key_game;
+ 	Key_MarkAllUp();
+ 	Cvar_Set("paused", "0");
+diff --git a/src/client/refresh/files/common.c b/src/client/refresh/files/common.c
+index eba3fd3d..72e22357 100644
+--- a/src/client/refresh/files/common.c
++++ b/src/client/refresh/files/common.c
+@@ -41,6 +41,7 @@ R_Printf(int level, const char* msg, ...)
+ 	va_end(argptr);
+ }
+ 
++#ifndef YQ2_STATIC_MODULES
+ void
+ Sys_Error(const char *error, ...)
+ {
+@@ -84,6 +85,7 @@ Com_Error(int code, const char *fmt, ...)
+ 
+ 	ri.Sys_Error(code, "%s", text);
+ }
++#endif
+ 
+ /* shared variables */
+ refdef_t r_newrefdef;
+diff --git a/src/client/refresh/gl3/gl3_main.c b/src/client/refresh/gl3/gl3_main.c
+index 71a43c1c..3eb14dea 100644
+--- a/src/client/refresh/gl3/gl3_main.c
++++ b/src/client/refresh/gl3/gl3_main.c
+@@ -35,7 +35,9 @@
+ #define DG_DYNARR_IMPLEMENTATION
+ #include "header/DG_dynarr.h"
+ 
+-#ifdef YQ2_GL3_GLES3
++#ifdef __EMSCRIPTEN__
++  #define REF_VERSION "Quake II OpenGL ES3 Renderer"
++#elif defined(YQ2_GL3_GLES3)
+   #define REF_VERSION "Yamagi Quake II OpenGL ES3 Refresher"
+ #else
+   #define REF_VERSION "Yamagi Quake II OpenGL3 Refresher"
+diff --git a/src/client/refresh/gl3/gl3_sdl.c b/src/client/refresh/gl3/gl3_sdl.c
+index 6f667beb..4cdcddf5 100644
+--- a/src/client/refresh/gl3/gl3_sdl.c
++++ b/src/client/refresh/gl3/gl3_sdl.c
+@@ -374,7 +374,13 @@ int GL3_InitContext(void* win)
+ 	}
+ 
+ 	// Enable vsync if requested.
++#ifdef __EMSCRIPTEN__
++	/* SDL maps this call to Emscripten's main-loop timing, but the loop is
++	 * installed only after renderer initialization. Keep r_vsync modified so
++	 * GL3_BeginFrame applies it once the browser loop is live. */
++#else
+ 	GL3_SetVsync();
++#endif
+ 
+ 	// Load GL pointers through GLAD and check context.
+ #ifdef YQ2_GL3_GLES
+@@ -429,7 +435,9 @@ int GL3_InitContext(void* win)
+ 
+ 	// Window title - set here so we can display renderer name in it.
+ 	char title[40] = {0};
+-#ifdef YQ2_GL3_GLES3
++#ifdef __EMSCRIPTEN__
++	snprintf(title, sizeof(title), "Quake II");
++#elif defined(YQ2_GL3_GLES3)
+ 	snprintf(title, sizeof(title), "Yamagi Quake II %s - OpenGL ES 3.0", YQ2VERSION);
+ #else
+ 	snprintf(title, sizeof(title), "Yamagi Quake II %s - OpenGL 3.2", YQ2VERSION);
+diff --git a/src/client/sound/sdl.c b/src/client/sound/sdl.c
+index 43af41b1..c503dea5 100644
+--- a/src/client/sound/sdl.c
++++ b/src/client/sound/sdl.c
+@@ -41,6 +41,9 @@
+ #endif
+ 
+ #include <errno.h>
++#ifdef YQ2_WEB
++#include <emscripten/emscripten.h>
++#endif
+ 
+ /* Local includes */
+ #include "../../client/header/client.h"
+@@ -63,6 +66,23 @@ static int snd_scaletable[32][256];
+ static int snd_vol;
+ static int soundtime;
+ 
++#ifdef YQ2_WEB
++static volatile unsigned int q2web_audio_callbacks;
++static volatile unsigned int q2web_audio_nonzero_callbacks;
++
++EMSCRIPTEN_KEEPALIVE unsigned int
++Q2Web_AudioCallbacks(void)
++{
++	return q2web_audio_callbacks;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int
++Q2Web_AudioNonzeroCallbacks(void)
++{
++	return q2web_audio_nonzero_callbacks;
++}
++#endif
++
+ /* ------------------------------------------------------------------ */
+ 
+ typedef struct {
+@@ -1278,6 +1298,12 @@ SDL_Callback(void *data, Uint8 *stream, int length)
+ 	int length1;
+ 	int length2;
+ 	int pos = (playpos * (backend->samplebits / 8));
++	Uint8 *stream_start = stream;
++	int stream_length = length;
++
++#ifdef YQ2_WEB
++	q2web_audio_callbacks++;
++#endif
+ 
+ 	if (pos >= samplesize)
+ 	{
+@@ -1321,6 +1347,17 @@ SDL_Callback(void *data, Uint8 *stream, int length)
+ 	{
+ 		playpos = 0;
+ 	}
++
++#ifdef YQ2_WEB
++	for (int i = 0; i < stream_length; ++i)
++	{
++		if (stream_start[i] != 0)
++		{
++			q2web_audio_nonzero_callbacks++;
++			break;
++		}
++	}
++#endif
+ }
+ 
+ #ifdef USE_SDL3
+@@ -1362,6 +1399,11 @@ SDL_BackendInit(void)
+ 		return true;
+ 	}
+ 
++#ifdef YQ2_WEB
++	q2web_audio_callbacks = 0;
++	q2web_audio_nonzero_callbacks = 0;
++#endif
++
+ 	int sndbits = (Cvar_Get("sndbits", "16", CVAR_ARCHIVE))->value;
+ 	int sndfreq = (Cvar_Get("s_khz", "44", CVAR_ARCHIVE))->value;
+ 	int sndchans = (Cvar_Get("sndchannels", "2", CVAR_ARCHIVE))->value;
+@@ -1530,6 +1572,11 @@ SDL_BackendInit(void)
+ 		return true;
+ 	}
+ 
++#ifdef YQ2_WEB
++	q2web_audio_callbacks = 0;
++	q2web_audio_nonzero_callbacks = 0;
++#endif
++
+ 	int sndbits = (Cvar_Get("sndbits", "16", CVAR_ARCHIVE))->value;
+ 	int sndfreq = (Cvar_Get("s_khz", "44", CVAR_ARCHIVE))->value;
+ 	int sndchans = (Cvar_Get("sndchannels", "2", CVAR_ARCHIVE))->value;
+diff --git a/src/client/vid/glimp_sdl2.c b/src/client/vid/glimp_sdl2.c
+index 4ae7e0a1..93be163d 100644
+--- a/src/client/vid/glimp_sdl2.c
++++ b/src/client/vid/glimp_sdl2.c
+@@ -99,7 +99,13 @@ CreateSDLWindow(int flags, int w, int h)
+ 	 *  * https://github.com/libsdl-org/SDL/issues/3656 */
+ 	SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "1");
+ 
+-	window = SDL_CreateWindow("Yamagi Quake II", last_position_x, last_position_y, w, h, flags);
++	window = SDL_CreateWindow(
++#ifdef YQ2_WEB
++		"Quake II",
++#else
++		"Yamagi Quake II",
++#endif
++		last_position_x, last_position_y, w, h, flags);
+ 
+ 	if (window)
+ 	{
+@@ -724,6 +730,33 @@ GLimp_ShutdownGraphics(void)
+ 	ShutdownGraphics();
+ }
+ 
++#ifdef YQ2_WEB
++/*
++ * Browser builds link the renderer into the executable instead of loading it
++ * from a shared object. A desktop-style vid_restart therefore frees renderer
++ * state without getting a fresh copy of its globals. Resize the existing SDL
++ * window and WebGL back buffer in place so the loaded map and context remain
++ * valid.
++ */
++qboolean
++GLimp_ResizeWebViewport(int width, int height)
++{
++	extern viddef_t vid;
++
++	if (!initSuccessful || !window || width < 1 || height < 1)
++	{
++		return false;
++	}
++
++	SDL_SetWindowSize(window, width, height);
++	viddef.width = width;
++	viddef.height = height;
++	vid.width = width;
++	vid.height = height;
++	return true;
++}
++#endif
++
+ /*
+  * (Un)grab Input
+  */
+@@ -731,6 +764,10 @@ void
+ GLimp_GrabInput(qboolean grab)
+ {
+ 	static qboolean seen_error = false;
++#ifdef YQ2_WEB
++	extern qboolean q2web_input_captured;
++	grab = grab && q2web_input_captured;
++#endif
+ 	if(window != NULL)
+ 	{
+ 		SDL_SetWindowGrab(window, grab ? SDL_TRUE : SDL_FALSE);
+diff --git a/src/client/vid/header/vid.h b/src/client/vid/header/vid.h
+index 83badcb5..c2a3d0bd 100644
+--- a/src/client/vid/header/vid.h
++++ b/src/client/vid/header/vid.h
+@@ -63,6 +63,9 @@ qboolean GLimp_Init(void);
+ void GLimp_Shutdown(void);
+ qboolean GLimp_InitGraphics(int fullscreen, int *pwidth, int *pheight);
+ void GLimp_ShutdownGraphics(void);
++#ifdef YQ2_WEB
++qboolean GLimp_ResizeWebViewport(int width, int height);
++#endif
+ void GLimp_GrabInput(qboolean grab);
+ float GLimp_GetRefreshRate(void);
+ qboolean GLimp_GetDesktopMode(int *pwidth, int *pheight);
+diff --git a/src/client/vid/vid.c b/src/client/vid/vid.c
+index 793ef38f..a8c95fa2 100644
+--- a/src/client/vid/vid.c
++++ b/src/client/vid/vid.c
+@@ -332,6 +332,10 @@ VID_GetRendererLibPath(const char *renderer, char *path, size_t len)
+ qboolean
+ VID_HasRenderer(const char *renderer)
+ {
++#ifdef __EMSCRIPTEN__
++	/* The GLES3 renderer is linked into the single browser module. */
++	return strcmp(renderer, "gles3") == 0;
++#else
+ 	char reflib_path[MAX_OSPATH] = {0};
+ 	VID_GetRendererLibPath(renderer, reflib_path, sizeof(reflib_path));
+ 
+@@ -341,6 +345,7 @@ VID_HasRenderer(const char *renderer)
+ 	}
+ 
+ 	return false;
++#endif
+ }
+ 
+ /*
+@@ -595,7 +600,13 @@ VID_Init(void)
+ 	// Console variables
+ 	vid_gamma = Cvar_Get("vid_gamma", "1.0", CVAR_ARCHIVE);
+ 	vid_fullscreen = Cvar_Get("vid_fullscreen", "0", CVAR_ARCHIVE);
+-	vid_renderer = Cvar_Get("vid_renderer", "gl3", CVAR_ARCHIVE);
++	vid_renderer = Cvar_Get("vid_renderer",
++#ifdef __EMSCRIPTEN__
++		"gles3",
++#else
++		"gl3",
++#endif
++		CVAR_ARCHIVE);
+ 
+ 	// Commands
+ 	Cmd_AddCommand("vid_restart", VID_Restart_f);
+diff --git a/src/common/frame.c b/src/common/frame.c
+index 8db34929..3f0d222b 100644
+--- a/src/common/frame.c
++++ b/src/common/frame.c
+@@ -27,6 +27,10 @@
+ #include "header/common.h"
+ #include <setjmp.h>
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ cvar_t *developer;
+ cvar_t *modder;
+ cvar_t *timescale;
+@@ -109,6 +113,45 @@ static YQ2_ATTR_INLINE void Sys_CpuPause(void)
+ 
+ static void Qcommon_Frame(int usec);
+ 
++#ifdef __EMSCRIPTEN__
++static long long web_oldtime;
++static unsigned int web_control_guard_frames;
++
++extern void Q2Web_ConfigureControls(void);
++
++static void
++Qcommon_WebFrame(void)
++{
++	long long newtime = Sys_Microseconds();
++	long long delta = newtime - web_oldtime;
++
++	if (delta < 0)
++	{
++		delta = 0;
++	}
++	else if (delta > 250000)
++	{
++		/* A backgrounded tab must not feed a multi-second step to physics. */
++		delta = 250000;
++	}
++
++	curtime = (int)(newtime / 1000ll);
++	Qcommon_Frame((int)delta);
++	/*
++	 * quake2.cfg and default.cfg are executed during the first browser
++	 * frames, after Qcommon_Init() returns.  Keep the browser defaults in
++	 * force through that short bootstrap window so the native defaults
++	 * cannot restore the legacy A/Z pitch bindings over WASD.
++	 */
++	if (web_control_guard_frames < 180)
++	{
++		Q2Web_ConfigureControls();
++		web_control_guard_frames++;
++	}
++	web_oldtime = newtime;
++}
++#endif
++
+ // ----
+ 
+ static void
+@@ -119,7 +162,11 @@ Qcommon_Buildstring(void)
+ 	const char* versionString;
+ 
+ 
++#ifdef YQ2_WEB
++	versionString = va("Quake II WebAssembly v%s", YQ2VERSION);
++#else
+ 	versionString = va("Yamagi Quake II v%s", YQ2VERSION);
++#endif
+ 	verLen = strlen(versionString);
+ 
+ 	printf("\n%s\n", versionString);
+@@ -167,6 +214,10 @@ Qcommon_Buildstring(void)
+ static void
+ Qcommon_Mainloop(void)
+ {
++#ifdef __EMSCRIPTEN__
++	web_oldtime = Sys_Microseconds();
++	emscripten_set_main_loop(Qcommon_WebFrame, 0, 1);
++#else
+ 	long long newtime;
+ 	long long oldtime = Sys_Microseconds();
+ 
+@@ -213,6 +264,7 @@ Qcommon_Mainloop(void)
+ 		Qcommon_Frame(newtime - oldtime);
+ 		oldtime = newtime;
+ 	}
++#endif
+ }
+ 
+ void Qcommon_ExecConfigs(qboolean gameStartUp)
+@@ -244,7 +296,11 @@ static qboolean checkForHelp(int argc, char **argv)
+ 		{
+ 			if (Q_stricmp(arg, helpArgs[h]) == 0)
+ 			{
++#ifdef YQ2_WEB
++				printf("Quake II WebAssembly v%s\n", YQ2VERSION);
++#else
+ 				printf("Yamagi Quake II v%s\n", YQ2VERSION);
++#endif
+ 				printf("Most interesting commandline arguments:\n");
+ 				printf("-h or --help: Show this help\n");
+ 				printf("-cfgdir <path>\n");
+@@ -422,7 +478,11 @@ Qcommon_Init(int argc, char **argv)
+ 	}
+ #endif
+ 
++#ifdef YQ2_WEB
++	Com_Printf("==== Quake II Initialized ====\n\n");
++#else
+ 	Com_Printf("==== Yamagi Quake II Initialized ====\n\n");
++#endif
+ 	Com_Printf("*************************************\n\n");
+ 
+ 	// Call the main loop
+diff --git a/src/common/header/common.h b/src/common/header/common.h
+index 529ff4b0..4fc50d61 100644
+--- a/src/common/header/common.h
++++ b/src/common/header/common.h
+@@ -847,6 +847,10 @@ YQ2_ATTR_NORETURN void Sys_Error(const char *error, ...);
+ YQ2_ATTR_NORETURN void Sys_Quit(void);
+ void Sys_Init(void);
+ char *Sys_GetHomeDir(void);
++#ifdef YQ2_WEB
++void Q2Web_SetHomeDir(const char *path);
++void Q2Web_PersistenceChanged(qboolean immediate);
++#endif
+ void Sys_Remove(const char *path);
+ int Sys_Rename(const char *from, const char *to);
+ void Sys_RemoveDir(const char *path);
+diff --git a/src/game/g_main.c b/src/game/g_main.c
+index 59a62649..f84299da 100644
+--- a/src/game/g_main.c
++++ b/src/game/g_main.c
+@@ -147,6 +147,7 @@ GetGameAPI(const game_import_t *import)
+  * this is only here so the functions
+  * in shared source files can link
+  */
++#ifndef YQ2_STATIC_MODULES
+ void
+ Sys_Error(const char *error, ...)
+ {
+@@ -172,6 +173,7 @@ Com_Printf(const char *msg, ...)
+ 
+ 	gi.dprintf("%s", text);
+ }
++#endif
+ 
+ /* ====================================================================== */
+ 
+diff --git a/src/server/sv_save.c b/src/server/sv_save.c
+index 71323554..ed0a1d39 100644
+--- a/src/server/sv_save.c
++++ b/src/server/sv_save.c
+@@ -343,6 +343,9 @@ SV_WriteServerFile(qboolean autosave)
+ 	ge->WriteGame("game.ssv", autosave);
+ 
+ 	Sys_SetWorkDir(workdir);
++#ifdef YQ2_WEB
++	Q2Web_PersistenceChanged(false);
++#endif
+ }
+ 
+ static void
+@@ -524,5 +527,7 @@ SV_Savegame_f(void)
+ 	SV_CopySaveGame("current", dir);
+ 
+ 	Com_Printf("Done.\n");
++#ifdef YQ2_WEB
++	Q2Web_PersistenceChanged(true);
++#endif
+ }
+-
+diff --git a/src/backends/web/hunk.c b/src/backends/web/hunk.c
+new file mode 100644
+index 00000000..f61e1236
+--- /dev/null
++++ b/src/backends/web/hunk.c
+@@ -0,0 +1,67 @@
++/*
++ * Copyright (C) 1997-2001 Id Software, Inc.
++ * Copyright (C) 2026 quake2-wasm contributors
++ *
++ * GPL-2.0-or-later. Browser replacement for the native mmap hunk.
++ */
++
++#include <stdlib.h>
++
++#include "../../common/header/common.h"
++
++static byte *membase;
++static size_t maxhunksize;
++static size_t curhunksize;
++
++void *
++Hunk_Begin(int maxsize)
++{
++	maxhunksize = (size_t)maxsize + sizeof(size_t) + 32;
++	curhunksize = 0;
++	membase = malloc(maxhunksize);
++
++	if (!membase)
++	{
++		Sys_Error("unable to allocate %d hunk bytes", maxsize);
++	}
++
++	*((size_t *)membase) = 0;
++	return membase + sizeof(size_t);
++}
++
++void *
++Hunk_Alloc(int size)
++{
++	byte *result;
++	size = (size + 31) & ~31;
++
++	if (curhunksize + (size_t)size + sizeof(size_t) > maxhunksize)
++	{
++		Sys_Error("%s: overflow %zu > %zu", __func__,
++			curhunksize + (size_t)size, maxhunksize);
++	}
++
++	result = membase + sizeof(size_t) + curhunksize;
++	curhunksize += (size_t)size;
++	return result;
++}
++
++int
++Hunk_End(void)
++{
++	*((size_t *)membase) = curhunksize + sizeof(size_t);
++	return (int)curhunksize;
++}
++
++void
++Hunk_Free(void *base)
++{
++	if (base)
++	{
++		free(((byte *)base) - sizeof(size_t));
++	}
++
++	membase = NULL;
++	maxhunksize = 0;
++	curhunksize = 0;
++}
+diff --git a/src/backends/web/main.c b/src/backends/web/main.c
+new file mode 100644
+index 00000000..bafa2858
+--- /dev/null
++++ b/src/backends/web/main.c
+@@ -0,0 +1,377 @@
++/*
++ * Copyright (C) 1997-2001 Id Software, Inc.
++ * Copyright (C) 2026 quake2-wasm contributors
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <errno.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/stat.h>
++
++#include <emscripten.h>
++
++#include "../../client/header/client.h"
++#include "../../client/header/keyboard.h"
++#include "../../client/vid/header/vid.h"
++#include "../../common/header/common.h"
++
++qboolean q2web_input_captured = false;
++static qboolean q2web_started = false;
++static qboolean q2web_controls_announced = false;
++static qboolean q2web_capture_intent = false;
++#define Q2WEB_CONTROLLER_KEYS 512
++static byte q2web_controller_keys[Q2WEB_CONTROLLER_KEYS];
++
++EM_JS(void, Q2Web_NotifyPersistence, (int immediate), {
++	if (typeof Module.quake2PersistenceChanged === 'function')
++		Module.quake2PersistenceChanged(Boolean(immediate));
++});
++
++void
++Q2Web_PersistenceChanged(qboolean immediate)
++{
++	Q2Web_NotifyPersistence(immediate ? 1 : 0);
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_WriteConfiguration(void)
++{
++	if (q2web_started)
++	{
++		CL_WriteConfiguration();
++	}
++}
++
++static int
++Q2Web_TranslateControllerKey(int key)
++{
++	if (key > 0 && key < 128)
++	{
++		return key;
++	}
++	switch (key)
++	{
++		case 1001: return K_UPARROW;
++		case 1002: return K_DOWNARROW;
++		case 1003: return K_LEFTARROW;
++		case 1004: return K_RIGHTARROW;
++		case 1010: return K_SHIFT;
++		case 1020: return K_MOUSE1;
++		case 1021: return K_MOUSE2;
++		case 1030: return K_MWHEELDOWN;
++		case 1031: return K_MWHEELUP;
++		default: return 0;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_ControllerKey(int browser_key, int down)
++{
++	int key;
++
++	if (!q2web_started)
++	{
++		return;
++	}
++	key = Q2Web_TranslateControllerKey(browser_key);
++	if (!key || key >= Q2WEB_CONTROLLER_KEYS || q2web_controller_keys[key] == (down ? 1 : 0))
++	{
++		return;
++	}
++	q2web_controller_keys[key] = down ? 1 : 0;
++	Key_Event(key, down ? true : false, true);
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_ControllerReleaseAll(void)
++{
++	int key;
++
++	for (key = 0; key < Q2WEB_CONTROLLER_KEYS; ++key)
++	{
++		if (q2web_controller_keys[key])
++		{
++			Key_Event(key, false, true);
++			q2web_controller_keys[key] = 0;
++		}
++	}
++}
++
++void
++Q2Web_ArmCaptureIntent(void)
++{
++	q2web_capture_intent = true;
++}
++
++void
++Q2Web_ConfigureControls(void)
++{
++	Key_SetBinding('w', "+forward");
++	Key_SetBinding('s', "+back");
++	Key_SetBinding('a', "+moveleft");
++	Key_SetBinding('d', "+moveright");
++	Key_SetBinding(K_SPACE, "+moveup");
++	Key_SetBinding('e', "+use");
++	Key_SetBinding(K_MOUSE1, "+attack");
++	Key_SetBinding(K_MOUSE2, "+moveup");
++	Key_SetBinding(K_MWHEELDOWN, "weapprev");
++	Key_SetBinding(K_MWHEELUP, "weapnext");
++	Key_SetBinding(K_TAB, "+scores");
++	Key_SetBinding(K_SHIFT, "+speed");
++	Key_SetBinding('c', "+movedown");
++	Key_SetBinding('q', "weapnext");
++	Key_SetBinding('z', "");
++	Cvar_Set("sensitivity", "4");
++	Cvar_Set("m_filter", "0");
++	Cvar_Set("horplus", "1");
++	if (!q2web_controls_announced)
++	{
++		Com_Printf("[quake2-wasm] browser controls: WASD, sensitivity 4, mouse look/fire, Space jump, E use\n");
++		q2web_controls_announced = true;
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_SetInputCaptured(int captured)
++{
++	q2web_input_captured = captured ? true : false;
++	if (!q2web_input_captured)
++	{
++		Key_MarkAllUp();
++	}
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_EnsureMenu(void)
++{
++	if (!q2web_started || cls.key_dest != key_game)
++	{
++		return;
++	}
++	Key_Event(K_ESCAPE, true, true);
++	Key_Event(K_ESCAPE, false, true);
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_RuntimeState(void)
++{
++	if (!q2web_started || cls.key_dest == key_console || cls.key_dest == key_message)
++	{
++		q2web_capture_intent = false;
++		return 0; /* menu / text input: host pointer must remain released */
++	}
++	if (cls.key_dest == key_menu)
++	{
++		q2web_capture_intent = false;
++		return cls.state == ca_active ? 2 : 0;
++	}
++	if (cls.state != ca_active || !cl.refresh_prepped)
++	{
++		return 4; /* joining or starting a local game */
++	}
++	if (Cvar_VariableValue("paused") != 0.0f)
++	{
++		q2web_capture_intent = false;
++		return 2;
++	}
++	if (cl.cinematictime > 0 || cl.frame.playerstate.pmove.pm_type == PM_FREEZE)
++	{
++		q2web_capture_intent = false;
++		return 3;
++	}
++	q2web_capture_intent = false;
++	return cls.key_dest == key_game ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_CaptureIntent(void)
++{
++	return q2web_capture_intent && Q2Web_RuntimeState() == 4;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_ControlsMask(void)
++{
++	int mask = 0;
++	if (keybindings['w'] && strcmp(keybindings['w'], "+forward") == 0) mask |= 1;
++	if (keybindings['s'] && strcmp(keybindings['s'], "+back") == 0) mask |= 2;
++	if (keybindings['a'] && strcmp(keybindings['a'], "+moveleft") == 0) mask |= 4;
++	if (keybindings['d'] && strcmp(keybindings['d'], "+moveright") == 0) mask |= 8;
++	if (keybindings['z'] && keybindings['z'][0] == '\0') mask |= 16;
++	if (Cvar_VariableValue("sensitivity") == 4.0f) mask |= 32;
++	if (Cvar_VariableValue("m_filter") == 0.0f) mask |= 64;
++	if (Cvar_VariableValue("horplus") == 1.0f) mask |= 128;
++	return mask;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_RenderWidth(void)
++{
++	return viddef.width;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_RenderHeight(void)
++{
++	return viddef.height;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_ViewWidth(void)
++{
++	return cl.refdef.width;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_ViewHeight(void)
++{
++	return cl.refdef.height;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_FovX100(void)
++{
++	return (int)(cl.refdef.fov_x * 100.0f);
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_FovY100(void)
++{
++	return (int)(cl.refdef.fov_y * 100.0f);
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_Connected(void)
++{
++	return cls.state == ca_active ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_OriginX100(void)
++{
++	return (int)(cl.refdef.vieworg[0] * 100.0f);
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_OriginY100(void)
++{
++	return (int)(cl.refdef.vieworg[1] * 100.0f);
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_OriginZ100(void)
++{
++	return (int)(cl.refdef.vieworg[2] * 100.0f);
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_YawX100(void)
++{
++	return (int)(cl.refdef.viewangles[YAW] * 100.0f);
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_ApplyQuality(int level)
++{
++	if (level < 0)
++	{
++		level = 0;
++	}
++	else if (level > 2)
++	{
++		level = 2;
++	}
++
++	Cvar_SetValue("cl_particles", level > 0);
++	Cvar_SetValue("cl_lights", level > 0);
++	Cvar_SetValue("r_shadows", level > 1);
++	Cvar_SetValue("r_anisotropic", level == 0 ? 2 : (level == 1 ? 8 : 16));
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_ResizeViewport(int width, int height)
++{
++	if (!q2web_started || width < 320 || height < 200 || width > 8192 || height > 8192)
++	{
++		return;
++	}
++	if ((int)Cvar_VariableValue("r_customwidth") == width &&
++		(int)Cvar_VariableValue("r_customheight") == height)
++	{
++		return;
++	}
++	Cvar_SetValue("r_mode", -1);
++	Cvar_SetValue("r_customwidth", width);
++	Cvar_SetValue("r_customheight", height);
++	if (!GLimp_ResizeWebViewport(width, height))
++	{
++		return;
++	}
++	cl.force_refdef = true;
++	Com_Printf("[quake2-wasm] browser viewport: %dx%d\n", width, height);
++}
++
++int
++main(int argc, char **argv)
++{
++	Sys_SetupFPU();
++
++	for (int i = 0; i < argc; ++i)
++	{
++		if (strcmp(argv[i], "-portable") == 0)
++		{
++			is_portable = true;
++		}
++		else if (strcmp(argv[i], "-datadir") == 0)
++		{
++			struct stat sb;
++
++			if (++i >= argc)
++			{
++				fprintf(stderr, "-datadir needs an argument\n");
++				return 1;
++			}
++
++			if (stat(argv[i], &sb) != 0 || !S_ISDIR(sb.st_mode))
++			{
++				fprintf(stderr, "-datadir %s is not a directory: %s\n",
++					argv[i], strerror(errno));
++				return 1;
++			}
++
++			Q_strlcpy(datadir, argv[i], sizeof(datadir));
++		}
++		else if (strcmp(argv[i], "-userdir") == 0)
++		{
++			struct stat sb;
++
++			if (++i >= argc)
++			{
++				fprintf(stderr, "-userdir needs an argument\n");
++				return 1;
++			}
++			if (argv[i][0] != '/' || strstr(argv[i], "..") ||
++				strlen(argv[i]) >= MAX_OSPATH || stat(argv[i], &sb) != 0 || !S_ISDIR(sb.st_mode))
++			{
++				fprintf(stderr, "-userdir %s is not a valid mounted directory\n", argv[i]);
++				return 1;
++			}
++			Q2Web_SetHomeDir(argv[i]);
++		}
++	}
++
++	printf("[quake2-wasm] browser filesystem ready; starting Quake II\n");
++	/* Qcommon_Init installs Emscripten's main loop with
++	 * simulate_infinite_loop=true, so control deliberately never reaches the
++	 * statement after it.  Publish readiness before entering that loop;
++	 * modularized JavaScript cannot call these exports until initialization has
++	 * unwound back to the factory promise. */
++	q2web_started = true;
++	Qcommon_Init(argc, argv);
++	return 0;
++}
+diff --git a/src/backends/web/network.c b/src/backends/web/network.c
+new file mode 100644
+index 00000000..8b271490
+--- /dev/null
++++ b/src/backends/web/network.c
+@@ -0,0 +1,392 @@
++/*
++ * Copyright (C) 1997-2001 Id Software, Inc.
++ * Copyright (C) 2026 quake2-wasm contributors
++ *
++ * GPL-2.0-or-later. Browser multiplayer carries the original Quake II UDP
++ * datagrams unchanged through a framework-managed binary WebSocket relay.
++ */
++
++#include <arpa/inet.h>
++#include <emscripten/emscripten.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "../../common/header/common.h"
++
++#define MAX_LOOPBACK 4
++#define Q2WEB_QUEUE_PACKETS 256
++
++typedef struct
++{
++	byte data[MAX_MSGLEN];
++	int datalen;
++} loopmsg_t;
++
++typedef struct
++{
++	loopmsg_t msgs[MAX_LOOPBACK];
++	int get;
++	int send;
++} loopback_t;
++
++static loopback_t loopbacks[2];
++static loopmsg_t q2web_packets[Q2WEB_QUEUE_PACKETS];
++static int q2web_head;
++static int q2web_tail;
++static int q2web_count;
++static int q2web_received;
++static int q2web_sent;
++static int q2web_open;
++static netadr_t q2web_remote_address;
++netadr_t net_local_adr;
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_NetworkReceive(const byte *data, int length)
++{
++	loopmsg_t *packet;
++
++	if (!data || length <= 0 || length > MAX_MSGLEN)
++	{
++		return;
++	}
++
++	if (q2web_count == Q2WEB_QUEUE_PACKETS)
++	{
++		q2web_head = (q2web_head + 1) % Q2WEB_QUEUE_PACKETS;
++		q2web_count--;
++	}
++
++	packet = &q2web_packets[q2web_tail];
++	packet->datalen = length;
++	memcpy(packet->data, data, length);
++	q2web_tail = (q2web_tail + 1) % Q2WEB_QUEUE_PACKETS;
++	q2web_count++;
++	q2web_received++;
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_NetworkOpened(void)
++{
++	q2web_open = 1;
++}
++
++EMSCRIPTEN_KEEPALIVE void
++Q2Web_NetworkClosed(void)
++{
++	q2web_open = 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_NetworkState(void)
++{
++	return q2web_open;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_NetworkPacketsReceived(void)
++{
++	return q2web_received;
++}
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_NetworkPacketsSent(void)
++{
++	return q2web_sent;
++}
++
++EM_JS(int, Q2Web_OpenSocket, (), {
++	var url = Module.quake2WebSocketUrl || "";
++	if (!url) return 0;
++	if (Module.__quake2WebSocket && Module.__quake2WebSocket.readyState <= 1) {
++		if (Module.__quake2WebSocket.readyState === 1) Module._Q2Web_NetworkOpened();
++		return 1;
++	}
++	var socket = new WebSocket(url);
++	var pending = [];
++	socket.binaryType = 'arraybuffer';
++	Module.__quake2WebSocket = socket;
++	Module.__quake2WebSocketPending = pending;
++	socket.onopen = function () {
++		Module._Q2Web_NetworkOpened();
++		for (var index = 0; index < pending.length; index++) socket.send(pending[index]);
++		pending.length = 0;
++	};
++	socket.onmessage = function (event) {
++		var bytes = new Uint8Array(event.data);
++		if (!bytes.length) return;
++		var pointer = Module._malloc(bytes.length);
++		HEAPU8.set(bytes, pointer);
++		Module._Q2Web_NetworkReceive(pointer, bytes.length);
++		Module._free(pointer);
++	};
++	socket.onclose = function () { Module._Q2Web_NetworkClosed(); };
++	socket.onerror = function () { Module._Q2Web_NetworkClosed(); };
++	return 1;
++});
++
++EM_JS(int, Q2Web_SendDatagram, (const byte *data, int length), {
++	var socket = Module.__quake2WebSocket;
++	if (!socket || socket.readyState > 1) return 0;
++	var packet = HEAPU8.slice(data, data + length);
++	if (socket.readyState === 1) socket.send(packet);
++	else {
++		var pending = Module.__quake2WebSocketPending || (Module.__quake2WebSocketPending = []);
++		if (pending.length >= 256) pending.shift();
++		pending.push(packet);
++	}
++	return length;
++});
++
++EM_JS(void, Q2Web_CloseSocket, (), {
++	var socket = Module.__quake2WebSocket;
++	Module.__quake2WebSocket = null;
++	Module.__quake2WebSocketPending = [];
++	if (socket && socket.readyState <= 1) socket.close(1000, 'Quake II client shutdown');
++});
++
++EMSCRIPTEN_KEEPALIVE int
++Q2Web_NetworkConnect(void)
++{
++	return Q2Web_OpenSocket();
++}
++
++void
++NET_Init(void)
++{
++	memset(loopbacks, 0, sizeof(loopbacks));
++	memset(q2web_packets, 0, sizeof(q2web_packets));
++	memset(&net_local_adr, 0, sizeof(net_local_adr));
++	memset(&q2web_remote_address, 0, sizeof(q2web_remote_address));
++	net_local_adr.type = NA_LOOPBACK;
++	q2web_remote_address.type = NA_IP;
++	q2web_remote_address.ip[0] = 127;
++	q2web_remote_address.ip[3] = 1;
++	q2web_remote_address.port = htons(PORT_SERVER);
++	q2web_head = q2web_tail = q2web_count = 0;
++	q2web_received = q2web_sent = q2web_open = 0;
++	Q2Web_OpenSocket();
++	Com_Printf("[quake2-wasm] network: loopback and managed WebSocket datagrams enabled\n");
++}
++
++void
++NET_Shutdown(void)
++{
++	Q2Web_CloseSocket();
++	q2web_open = 0;
++	q2web_count = 0;
++}
++
++void
++NET_Config(qboolean multiplayer)
++{
++	if (multiplayer)
++	{
++		Q2Web_OpenSocket();
++	}
++}
++
++qboolean
++NET_CompareAdr(netadr_t a, netadr_t b)
++{
++	if (a.type != b.type)
++	{
++		return false;
++	}
++
++	if (a.type == NA_LOOPBACK)
++	{
++		return true;
++	}
++
++	if (a.type == NA_IP)
++	{
++		return memcmp(a.ip, b.ip, 4) == 0 && a.port == b.port;
++	}
++
++	if (a.type == NA_IP6)
++	{
++		return memcmp(a.ip, b.ip, 16) == 0 && a.port == b.port;
++	}
++
++	return false;
++}
++
++qboolean
++NET_CompareBaseAdr(netadr_t a, netadr_t b)
++{
++	if (a.type != b.type)
++	{
++		return false;
++	}
++
++	if (a.type == NA_LOOPBACK)
++	{
++		return true;
++	}
++
++	if (a.type == NA_IP)
++	{
++		return memcmp(a.ip, b.ip, 4) == 0;
++	}
++
++	if (a.type == NA_IP6)
++	{
++		return memcmp(a.ip, b.ip, 16) == 0;
++	}
++
++	return false;
++}
++
++char *
++NET_AdrToString(netadr_t a)
++{
++	static char result[80];
++
++	if (a.type == NA_LOOPBACK)
++	{
++		Com_sprintf(result, sizeof(result), "loopback");
++	}
++	else if (a.type == NA_IP)
++	{
++		Com_sprintf(result, sizeof(result), "%u.%u.%u.%u:%u",
++			a.ip[0], a.ip[1], a.ip[2], a.ip[3], ntohs(a.port));
++	}
++	else
++	{
++		Com_sprintf(result, sizeof(result), "unsupported");
++	}
++
++	return result;
++}
++
++qboolean
++NET_StringToAdr(const char *string, netadr_t *address)
++{
++	const char *colon;
++	unsigned int octets[4];
++	unsigned long port = PORT_SERVER;
++
++	memset(address, 0, sizeof(*address));
++	if (!strcmp(string, "localhost") || !strcmp(string, "loopback"))
++	{
++		address->type = NA_LOOPBACK;
++		return true;
++	}
++
++	if (sscanf(string, "%u.%u.%u.%u", &octets[0], &octets[1], &octets[2], &octets[3]) != 4 ||
++		octets[0] > 255 || octets[1] > 255 || octets[2] > 255 || octets[3] > 255)
++	{
++		return false;
++	}
++
++	colon = strrchr(string, ':');
++	if (colon && colon[1])
++	{
++		port = strtoul(colon + 1, NULL, 10);
++		if (!port || port > 65535)
++		{
++			return false;
++		}
++	}
++
++	address->type = NA_IP;
++	address->ip[0] = (byte)octets[0];
++	address->ip[1] = (byte)octets[1];
++	address->ip[2] = (byte)octets[2];
++	address->ip[3] = (byte)octets[3];
++	address->port = htons((unsigned short)port);
++	q2web_remote_address = *address;
++	return true;
++}
++
++qboolean
++NET_IsLocalAddress(netadr_t address)
++{
++	return address.type == NA_LOOPBACK;
++}
++
++static qboolean
++NET_GetLoopPacket(netsrc_t socket, netadr_t *from, sizebuf_t *message)
++{
++	loopback_t *loop = &loopbacks[socket];
++	int index;
++
++	if (loop->send - loop->get > MAX_LOOPBACK)
++	{
++		loop->get = loop->send - MAX_LOOPBACK;
++	}
++
++	if (loop->get >= loop->send)
++	{
++		return false;
++	}
++
++	index = loop->get & (MAX_LOOPBACK - 1);
++	loop->get++;
++	memcpy(message->data, loop->msgs[index].data, loop->msgs[index].datalen);
++	message->cursize = loop->msgs[index].datalen;
++	*from = net_local_adr;
++	return true;
++}
++
++qboolean
++NET_GetPacket(netsrc_t socket, netadr_t *from, sizebuf_t *message)
++{
++	loopmsg_t *packet;
++
++	if (NET_GetLoopPacket(socket, from, message))
++	{
++		return true;
++	}
++	if (socket != NS_CLIENT || !q2web_count)
++	{
++		return false;
++	}
++
++	packet = &q2web_packets[q2web_head];
++	memcpy(message->data, packet->data, packet->datalen);
++	message->cursize = packet->datalen;
++	*from = q2web_remote_address;
++	q2web_head = (q2web_head + 1) % Q2WEB_QUEUE_PACKETS;
++	q2web_count--;
++	return true;
++}
++
++void
++NET_SendPacket(netsrc_t socket, int length, void *data, netadr_t to)
++{
++	loopback_t *loop;
++	int index;
++
++	if (to.type != NA_LOOPBACK)
++	{
++		if ((to.type == NA_IP || to.type == NA_IP6) && length > 0 && length <= MAX_MSGLEN)
++		{
++			q2web_remote_address = to;
++			if (Q2Web_SendDatagram(data, length) > 0)
++			{
++				q2web_sent++;
++			}
++		}
++		return;
++	}
++
++	loop = &loopbacks[socket ^ 1];
++	index = loop->send & (MAX_LOOPBACK - 1);
++	loop->send++;
++
++	if (length > MAX_MSGLEN)
++	{
++		length = MAX_MSGLEN;
++	}
++
++	memcpy(loop->msgs[index].data, data, length);
++	loop->msgs[index].datalen = length;
++}
++
++void
++NET_Sleep(int msec)
++{
++	(void)msec;
++}
+diff --git a/src/backends/web/system.c b/src/backends/web/system.c
+new file mode 100644
+index 00000000..d6a82f2a
+--- /dev/null
++++ b/src/backends/web/system.c
+@@ -0,0 +1,335 @@
++/*
++ * Copyright (C) 1997-2001 Id Software, Inc.
++ * Copyright (C) 2026 quake2-wasm contributors
++ *
++ * GPL-2.0-or-later. Browser system services for the standalone WASM build.
++ */
++
++#include <dirent.h>
++#include <errno.h>
++#include <stdarg.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++#include <emscripten.h>
++
++#include "../../client/vid/header/ref.h"
++#include "../../common/header/common.h"
++#include "../../common/header/glob.h"
++#include "../../game/header/game.h"
++
++extern game_export_t *GetGameAPI(const game_import_t *import);
++extern refexport_t GetRefAPI(refimport_t import);
++
++qboolean stdin_active = false;
++char cfgdir[MAX_OSPATH] = CFGDIRNAME;
++
++static char findbase[MAX_OSPATH];
++static char findpath[MAX_OSPATH];
++static char findpattern[MAX_OSPATH];
++static DIR *finddir;
++
++void
++setCustomCfgDir(const char *dir)
++{
++	Q_strlcpy(cfgdir, dir, sizeof(cfgdir));
++}
++
++void
++Sys_Error(const char *error, ...)
++{
++	char message[2048];
++	va_list args;
++
++	va_start(args, error);
++	vsnprintf(message, sizeof(message), error, args);
++	va_end(args);
++
++	fprintf(stderr, "[quake2-wasm] fatal: %s\n", message);
++#ifndef DEDICATED_ONLY
++	CL_Shutdown();
++#endif
++	Qcommon_Shutdown();
++	emscripten_cancel_main_loop();
++	exit(1);
++}
++
++void
++Sys_Quit(void)
++{
++#ifndef DEDICATED_ONLY
++	CL_Shutdown();
++#endif
++	Qcommon_Shutdown();
++	emscripten_cancel_main_loop();
++	exit(0);
++	__builtin_unreachable();
++}
++
++void
++Sys_Init(void)
++{
++	Sys_ConsoleOutput("[quake2-wasm] WebAssembly platform initialized\n");
++}
++
++char *
++Sys_ConsoleInput(void)
++{
++	return NULL;
++}
++
++void
++Sys_ConsoleOutput(char *string)
++{
++	fputs(string, stdout);
++}
++
++long long
++Sys_Microseconds(void)
++{
++	static double first = -1.0;
++	double now = emscripten_get_now();
++
++	if (first < 0.0)
++	{
++		first = now - 1.0;
++	}
++
++	return (long long)((now - first) * 1000.0);
++}
++
++int
++Sys_Milliseconds(void)
++{
++	return (int)(Sys_Microseconds() / 1000ll);
++}
++
++void
++Sys_Nanosleep(int nanosec)
++{
++	(void)nanosec;
++}
++
++static char *
++FindNextMatch(void)
++{
++	struct dirent *entry;
++
++	while (finddir && (entry = readdir(finddir)) != NULL)
++	{
++		if ((!*findpattern || glob_match(findpattern, entry->d_name)) &&
++			strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
++		{
++			Com_sprintf(findpath, sizeof(findpath), "%s/%s", findbase, entry->d_name);
++			return findpath;
++		}
++	}
++
++	return NULL;
++}
++
++char *
++Sys_FindFirst(const char *path, unsigned musthave, unsigned canhave)
++{
++	char *slash;
++	(void)musthave;
++	(void)canhave;
++
++	if (finddir)
++	{
++		Sys_Error("Sys_FindFirst without Sys_FindClose");
++	}
++
++	Q_strlcpy(findbase, path, sizeof(findbase));
++	slash = strrchr(findbase, '/');
++	if (slash)
++	{
++		*slash = '\0';
++		Q_strlcpy(findpattern, slash + 1, sizeof(findpattern));
++	}
++	else
++	{
++		Q_strlcpy(findbase, ".", sizeof(findbase));
++		Q_strlcpy(findpattern, path, sizeof(findpattern));
++	}
++
++	if (strcmp(findpattern, "*.*") == 0)
++	{
++		Q_strlcpy(findpattern, "*", sizeof(findpattern));
++	}
++
++	finddir = opendir(findbase);
++	return FindNextMatch();
++}
++
++char *
++Sys_FindNext(unsigned musthave, unsigned canhave)
++{
++	(void)musthave;
++	(void)canhave;
++	return FindNextMatch();
++}
++
++void
++Sys_FindClose(void)
++{
++	if (finddir)
++	{
++		closedir(finddir);
++		finddir = NULL;
++	}
++}
++
++void
++Sys_UnloadGame(void)
++{
++}
++
++void *
++Sys_GetGameAPI(void *parameters)
++{
++	return GetGameAPI((const game_import_t *)parameters);
++}
++
++void
++Sys_Mkdir(const char *path)
++{
++	if (mkdir(path, 0755) != 0 && errno != EEXIST)
++	{
++		Sys_Error("Couldn't create directory %s: %s", path, strerror(errno));
++	}
++}
++
++qboolean
++Sys_IsDir(const char *path)
++{
++	struct stat info;
++	return stat(path, &info) == 0 && S_ISDIR(info.st_mode);
++}
++
++qboolean
++Sys_IsFile(const char *path)
++{
++	struct stat info;
++	return stat(path, &info) == 0 && S_ISREG(info.st_mode);
++}
++
++char *
++Sys_GetHomeDir(void)
++{
++	static char home[MAX_OSPATH] = "/persist";
++	Sys_Mkdir(home);
++	return home;
++}
++
++void
++Q2Web_SetHomeDir(const char *path)
++{
++	char *home = Sys_GetHomeDir();
++	Q_strlcpy(home, path, MAX_OSPATH);
++}
++
++void
++Sys_Remove(const char *path)
++{
++	if (remove(path) != 0 && errno != ENOENT)
++	{
++		Com_Printf("Couldn't remove %s: %s\n", path, strerror(errno));
++	}
++}
++
++int
++Sys_Rename(const char *from, const char *to)
++{
++	return rename(from, to);
++}
++
++void
++Sys_RemoveDir(const char *path)
++{
++	DIR *directory = opendir(path);
++	struct dirent *entry;
++	char child[MAX_OSPATH];
++
++	if (!directory)
++	{
++		return;
++	}
++
++	while ((entry = readdir(directory)) != NULL)
++	{
++		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
++		{
++			continue;
++		}
++		Com_sprintf(child, sizeof(child), "%s/%s", path, entry->d_name);
++		Sys_Remove(child);
++	}
++
++	closedir(directory);
++	rmdir(path);
++}
++
++qboolean
++Sys_Realpath(const char *input, char *output, size_t size)
++{
++	char *resolved = realpath(input, NULL);
++	if (!resolved)
++	{
++		return false;
++	}
++	Q_strlcpy(output, resolved, (int)size);
++	free(resolved);
++	return true;
++}
++
++void *
++Sys_GetProcAddress(void *handle, const char *symbol)
++{
++	(void)handle;
++	if (symbol && strcmp(symbol, "GetRefAPI") == 0)
++	{
++		return (void *)(uintptr_t)&GetRefAPI;
++	}
++	return NULL;
++}
++
++void
++Sys_FreeLibrary(void *handle)
++{
++	(void)handle;
++}
++
++void *
++Sys_LoadLibrary(const char *path, const char *symbol, void **handle)
++{
++	(void)path;
++	*handle = NULL;
++	if (symbol && strcmp(symbol, "GetRefAPI") == 0)
++	{
++		*handle = (void *)1;
++		return (void *)(uintptr_t)&GetRefAPI;
++	}
++
++	Com_Printf("[quake2-wasm] dynamic library request rejected: %s\n",
++		symbol ? symbol : "(no symbol)");
++	return NULL;
++}
++
++void
++Sys_GetWorkDir(char *buffer, size_t length)
++{
++	if (!getcwd(buffer, length))
++	{
++		buffer[0] = '\0';
++	}
++}
++
++qboolean
++Sys_SetWorkDir(char *path)
++{
++	return chdir(path) == 0;
++}
+diff --git a/web/pre.js b/web/pre.js
+new file mode 100644
+index 00000000..d8cd98da
+--- /dev/null
++++ b/web/pre.js
+@@ -0,0 +1,81 @@
++/* Browser filesystem bootstrap for the native-source Quake II build. */
++
++Module.preRun = Module.preRun || [];
++Module.preRun.push(function quake2PrepareFilesystem() {
++  const expansion = ['xatrix', 'rogue'].includes(Module.quake2Expansion)
++    ? Module.quake2Expansion
++    : '';
++  const dependency = 'quake2-owner-data';
++  const expected = new Map([
++    ['pak0.pak', { size: 183997730, mountName: 'pak0.pak' }],
++    ['pak1.pak', { size: 12992754, mountName: 'pak1.pak' }],
++    ['pak2.pak', { size: 45055, mountName: 'pak2.pak' }]
++  ]);
++  if (expansion === 'xatrix') {
++    expected.set('xatrix-pak0.pak', { size: 93310499, mountName: 'pak0.pak' });
++  } else if (expansion === 'rogue') {
++    expected.set('rogue-pak0.pak', { size: 109117652, mountName: 'pak0.pak' });
++  }
++
++  function status(message) {
++    Module.setStatus?.(message);
++    console.info(`[quake2-wasm] ${message}`);
++  }
++
++  async function validatePreparedEntries(dataSet) {
++    const entries = Array.from(dataSet?.entries || []);
++    const byKey = new Map(entries.map(entry => [String(entry.policy?.key || '').toLowerCase(), entry]));
++    if (entries.length !== expected.size) throw new Error('Quake II game-data set must contain exactly three PAKs.');
++
++    for (const [key, rule] of expected) {
++      const entry = byKey.get(key);
++      if (!entry || !(entry.file instanceof Blob) || entry.file.size !== rule.size || entry.mountName !== rule.mountName) {
++        throw new Error(`Rejected prepared Quake II game file: ${key}.`);
++      }
++      const header = new Uint8Array(await entry.file.slice(0, 4).arrayBuffer());
++      if (header.length !== 4 || header[0] !== 0x50 || header[1] !== 0x41 ||
++          header[2] !== 0x43 || header[3] !== 0x4b) {
++        throw new Error(`${key} does not have a valid PACK header.`);
++      }
++    }
++    return entries;
++  }
++
++  addRunDependency(dependency);
++  (async function prepare() {
++    if (!globalThis.WasmGameFramework) throw new Error('Shared wasm-game-framework package is unavailable.');
++    const entries = await validatePreparedEntries(Module.quake2OwnerData);
++
++    const baseEntries = entries.filter(entry => !String(entry.policy?.key || '').includes('-pak0.pak'));
++    const expansionEntries = entries.filter(entry => String(entry.policy?.key || '') === `${expansion}-pak0.pak`);
++    FS.mkdirTree('/data/baseq2');
++    status('Mounting registered Quake II data from this browser…');
++    await WasmGameFramework.mountOwnerFiles(FS, baseEntries, {
++      root: '/data/baseq2',
++      mode: 'memfs',
++      chunkBytes: 16 * 1024 * 1024,
++      onProgress(detail) {
++        if (detail.phase !== 'mounting') return;
++        const percent = detail.total ? Math.floor(detail.copied * 100 / detail.total) : 0;
++        status(`Mounting registered Quake II data… ${percent}%`);
++      }
++    });
++    if (expansion) {
++      FS.mkdirTree(`/data/${expansion}`);
++      await WasmGameFramework.mountOwnerFiles(FS, expansionEntries, {
++        root: `/data/${expansion}`,
++        mode: 'memfs',
++        chunkBytes: 16 * 1024 * 1024
++      });
++      FS.chmod(`/data/${expansion}`, 0o555);
++    }
++    FS.chmod('/data/baseq2', 0o555);
++    FS.chmod('/data', 0o555);
++    status('Starting Quake II…');
++  })().catch(error => {
++    console.error('[quake2-wasm] startup failed', error);
++    Module.quake2AssetFailed = true;
++    Module.onAssetError?.(error);
++    try { abort(error); } catch (_) {}
++  }).finally(() => removeRunDependency(dependency));
++});

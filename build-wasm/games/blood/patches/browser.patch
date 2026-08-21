@@ -1,0 +1,606 @@
+diff --git a/source/blood/src/blood.cpp b/source/blood/src/blood.cpp
+index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e71abdf9c1 100644
+--- a/source/blood/src/blood.cpp
++++ b/source/blood/src/blood.cpp
+@@ -72,6 +72,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "nnexts.h"
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++# include <emscripten.h>
++extern "C" void Build_WasmInputFrame(void);
++
++extern "C" EMSCRIPTEN_KEEPALIVE void NBlood_WasmFlushPersistence(void)
++{
++    CONFIG_WriteSetup(0);
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void NBlood_WasmSetPointerLock(int const locked)
++{
++    mouseGrabInput(locked != 0);
++}
++#endif
++
+ #ifdef _WIN32
+ # include <shellapi.h>
+ # define UPDATEINTERVAL 604800 // 1w
+@@ -90,6 +105,67 @@ int32_t gNoSetup = 0, gCommandSetup = 0;
+ 
+ INPUT_MODE gInputMode;
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" EMSCRIPTEN_KEEPALIVE int NBlood_WasmRuntimeState(void)
++{
++    if (gStartNewGame)
++        return 4;
++    if (!gGameStarted)
++        return 0;
++    if (gInputMode == INPUT_MODE_3)
++        return 3;
++    if (gGameMenuMgr.m_bActive || gPaused)
++        return 2;
++    if (gInputMode != INPUT_MODE_0)
++        return 0;
++    return 1;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int NBlood_WasmCaptureIntent(void)
++{
++    return gStartNewGame != 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int NBlood_WasmCaptureTarget(void)
++{
++    if (!gGameMenuMgr.m_bActive || gGameMenuMgr.pActiveMenu == nullptr)
++        return 0;
++
++    CGameMenu const * const menu = gGameMenuMgr.pActiveMenu;
++    // The five stock difficulty rows start immediately. The Custom submenu's
++    // START GAME row is the sixth item after its title and four sliders.
++    if (menu == &menuDifficulty)
++        return menu->m_nFocus >= 1 && menu->m_nFocus <= 5;
++    if (menu == &menuDifficultyCustom)
++        return menu->m_nFocus == 5;
++    return 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void NBlood_WasmEnsureMenu(void)
++{
++    if (gGameStarted && !gGameMenuMgr.m_bActive)
++    {
++        keyFlushScans();
++        if (gPlayer[myconnectindex].pXSprite->health != 0 ||
++            gGameOptions.nGameType != kGameTypeSinglePlayer)
++            gGameMenuMgr.Push(&menuMainWithSave, -1);
++        else
++            gGameMenuMgr.Push(&menuMain, -1);
++    }
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int NBlood_WasmControlsMask(void)
++{
++    int mask = 0;
++    if (KeyboardKeys[gamefunc_Move_Forward][0] == sc_W) mask |= 1;
++    if (KeyboardKeys[gamefunc_Move_Backward][0] == sc_S) mask |= 2;
++    if (KeyboardKeys[gamefunc_Strafe_Left][0] == sc_A) mask |= 4;
++    if (KeyboardKeys[gamefunc_Strafe_Right][0] == sc_D) mask |= 8;
++    if (gMouseAim) mask |= 16;
++    return mask;
++}
++#endif
++
+ #ifdef USE_QHEAP
+ unsigned int nMaxAlloc = 0x4000000;
+ #endif
+@@ -605,7 +681,13 @@ int16_t startang, startsectnum;
+ 
+ void StartLevel(GAMEOPTIONS *pOpt)
+ {
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Starting level episode=%d map=%d name=%s", pOpt->nEpisode, pOpt->nLevel, pOpt->zLevelName);
++#endif
+     EndLevel();
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: previous level shut down");
++#endif
+     gInput = {};
+     gStartNewGame = 0;
+     ready2send = 0;
+@@ -614,6 +696,9 @@ void StartLevel(GAMEOPTIONS *pOpt)
+     if (gDemo.at0 && gGameStarted)
+         gDemo.Close();
+     netWaitForEveryone(0);
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: initial network barrier complete");
++#endif
+     VanillaModeUpdate();
+     if (pOpt->nGameType == kGameTypeSinglePlayer)
+     {
+@@ -631,6 +716,9 @@ void StartLevel(GAMEOPTIONS *pOpt)
+             if (gDemo.at1 == 0 && !Bstrlen(pOpt->szUserMap))
+                 levelPlayIntroScene(pOpt->nEpisode, pOpt->nLevel);
+         }
++#ifdef __EMSCRIPTEN__
++        LOG_F(INFO, "[NBlood WASM] Level start: single-player options and intro complete");
++#endif
+ 
+         ///////
+         pOpt->weaponsV10x = gWeaponsV10x;
+@@ -675,11 +763,17 @@ void StartLevel(GAMEOPTIONS *pOpt)
+         }
+     }
+     drawLoadingScreen(gStatsPicnum);
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: loading screen presented; loading map %s", pOpt->zLevelName);
++#endif
+     if (dbLoadMap(pOpt->zLevelName,(int*)&startpos.x,(int*)&startpos.y,(int*)&startpos.z,&startang,&startsectnum,(unsigned int*)&pOpt->uMapCRC))
+     {
+         gQuitGame = true;
+         return;
+     }
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: map database loaded");
++#endif
+     char levelName[BMAX_PATH];
+     G_LoadMapHack(levelName, pOpt->zLevelName);
+     wsrand(pOpt->uMapCRC);
+@@ -794,6 +888,9 @@ void StartLevel(GAMEOPTIONS *pOpt)
+     pOpt->uGameFlags &= ~(kGameFlagContinuing|kGameFlagEnding);
+     scrSetDac();
+     PreloadCache();
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: cache preload complete");
++#endif
+     InitMirrors();
+     gFrameClock = 0;
+     trInit();
+@@ -806,6 +903,9 @@ void StartLevel(GAMEOPTIONS *pOpt)
+     if (!gDemo.at1)
+         gGameMenuMgr.Deactivate();
+     levelTryPlayMusicOrNothing(pOpt->nEpisode, pOpt->nLevel);
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: music initialized");
++#endif
+     viewSetMessage("");
+     viewSetErrorMessage("");
+     viewResizeView(gViewSize);
+@@ -814,10 +914,25 @@ void StartLevel(GAMEOPTIONS *pOpt)
+     if (!VanillaMode())
+         viewClearInterpolations();
+     netWaitForEveryone(0);
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level start: final network barrier complete");
++#endif
+     totalclock = 0;
+     gPaused = 0;
+     gGameStarted = 1;
+     ready2send = 1;
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Level loaded and playable: %s", pOpt->zLevelName);
++    EM_ASM({
++        const level = UTF8ToString($0);
++        document.documentElement.dataset.level = level;
++        window.__bloodWasmDiagnostics.level = level;
++        window.__bloodWasmDiagnostics.simulationFrames = 0;
++        window.__bloodWasmDiagnostics.playerPosition = null;
++        document.documentElement.dataset.simulationFrames = '0';
++        delete document.documentElement.dataset.playerPosition;
++    }, pOpt->zLevelName);
++#endif
+ }
+ 
+ void StartNetworkLevel(void)
+@@ -1656,6 +1771,9 @@ int app_main(int argc, char const * const * argv)
+     wm_setapptitle(APPNAME);
+ 
+     LOG_F(INFO, APPNAME " %s", s_buildRev);
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Engine initialization started");
++#endif
+     PrintBuildInfo();
+ 
+     memcpy(&gGameOptions, &gSingleGameOptions, sizeof(GAMEOPTIONS));
+@@ -1682,6 +1800,16 @@ int app_main(int argc, char const * const * argv)
+     int const readSetup =
+ #endif
+     CONFIG_ReadSetup();
++#ifdef __EMSCRIPTEN__
++    // The browser profile is a stable portfolio contract. Apply it after
++    // persisted configuration is read so an older desktop layout cannot
++    // restore arrow-key movement or disable pointer-lock mouselook.
++    CONFIG_SetDefaultKeys(keydefaults);
++    gSetup.usemouse = 1;
++    gMouseAim = 1;
++    gSetup.xdim = 800;
++    gSetup.ydim = 600;
++#endif
+     if (bCustomName)
+         strcpy(szPlayerName, gPName);
+ 
+@@ -1737,6 +1865,9 @@ int app_main(int argc, char const * const * argv)
+ 
+ #ifdef USE_QHEAP
+     Resource::heap = new QHeap(nMaxAlloc);
++#endif
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Loading Blood resources from the virtual filesystem");
+ #endif
+     gSysRes.Init(pUserRFF ? pUserRFF : "BLOOD.RFF");
+     gGuiRes.Init("GUI.RFF");
+@@ -1745,6 +1876,9 @@ int app_main(int argc, char const * const * argv)
+     HookReplaceFunctions();
+ 
+     LOG_F(INFO, "Initializing Build 3D engine");
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Initializing SDL browser renderer");
++#endif
+     scrInit();
+ 
+     LOG_F(INFO, "Creating standard color lookups");
+@@ -1840,6 +1974,9 @@ int app_main(int argc, char const * const * argv)
+     viewResizeView(gViewSize);
+     vsync = videoSetVsync(vsync);
+     LOG_F(INFO, "Initializing sound system");
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Initializing Web Audio through SDL");
++#endif
+     sndInit();
+     sfxInit();
+     gChoke.Init(518, playerHandChoke);
+@@ -1899,8 +2036,27 @@ RESTART:
+     }
+     ready2send = 1;
+     static bool frameJustDrawn;
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Starting browser game loop");
++    emscripten_set_main_loop([]()
++#else
+     while (!gQuitGame)
++#endif
+     {
++#ifdef __EMSCRIPTEN__
++        Build_WasmInputFrame();
++        if (gQuitGame)
++        {
++            LOG_F(INFO, "[NBlood WASM] Browser game loop stopped");
++            EM_ASM({
++                window.__bloodWasmDiagnostics.running = false;
++                window.dispatchEvent(new Event("nblood-exit"));
++            });
++            emscripten_cancel_main_loop();
++            ShutDown();
++            return;
++        }
++#endif
+         bool bDraw;
+         if (gGameStarted)
+         {
+@@ -1936,6 +2092,23 @@ RESTART:
+                                 break;
+                             faketimerhandler();
+                             ProcessFrame();
++#ifdef __EMSCRIPTEN__
++                            if (gMe && gMe->pSprite)
++                            {
++                                EM_ASM({
++                                    const diagnostics = window.__bloodWasmDiagnostics;
++                                    diagnostics.simulationFrames++;
++                                    diagnostics.playerPosition = new Array(4);
++                                    diagnostics.playerPosition[0] = $0;
++                                    diagnostics.playerPosition[1] = $1;
++                                    diagnostics.playerPosition[2] = $2;
++                                    diagnostics.playerPosition[3] = $3;
++                                    document.documentElement.dataset.simulationFrames = String(diagnostics.simulationFrames);
++                                    document.documentElement.dataset.playerPosition = String($0) + ',' + String($1) + ',' + String($2) + ',' + String($3);
++                                }, TrackerCast(gMe->pSprite->x), TrackerCast(gMe->pSprite->y),
++                                   TrackerCast(gMe->pSprite->z), TrackerCast(gMe->pSprite->ang));
++                            }
++#endif
+                         }
+                     } while (totalclock >= gNetFifoClock && ready2send);
+                     gameUpdate = true;
+@@ -1996,7 +2169,11 @@ RESTART:
+                 break;
+             }
+             if (gQuitGame)
++#ifdef __EMSCRIPTEN__
++                return;
++#else
+                 continue;
++#endif
+ 
+             OSD_DispatchQueued();
+ 
+@@ -2044,6 +2221,28 @@ RESTART:
+             default:
+                 break;
+             }
++#ifdef __EMSCRIPTEN__
++            EM_ASM({
++                const diagnostics = window.__bloodWasmDiagnostics;
++                const inputMode = $0;
++                const gameplayInput = Boolean($1);
++                if (diagnostics.inputMode !== inputMode || diagnostics.gameplayInput !== gameplayInput)
++                {
++                    diagnostics.inputMode = inputMode;
++                    diagnostics.gameplayInput = gameplayInput;
++                    document.documentElement.dataset.inputMode = String(inputMode);
++                    document.documentElement.dataset.gameplayInput = String(gameplayInput);
++                }
++            }, gInputMode, gGameStarted && gInputMode == INPUT_MODE_0 && !gGameMenuMgr.m_bActive);
++            static bool wasmMenuWasActive;
++            bool const wasmMenuIsActive = gGameMenuMgr.m_bActive;
++            if (wasmMenuWasActive && !wasmMenuIsActive)
++            {
++                CONFIG_WriteSetup(0);
++                LOG_F(INFO, "[NBlood WASM] Configuration queued for persistent storage");
++            }
++            wasmMenuWasActive = wasmMenuIsActive;
++#endif
+             frameJustDrawn = true;
+             videoNextPage();
+         }
+@@ -2061,6 +2260,9 @@ RESTART:
+         if (gStartNewGame)
+             StartLevel(&gGameOptions);
+     }
++#ifdef __EMSCRIPTEN__
++    , 0, true);
++#endif
+     ready2send = 0;
+     if (gDemo.at0)
+         gDemo.Close();
+diff --git a/source/blood/src/config.cpp b/source/blood/src/config.cpp
+index a3df47445f13808c19b895ddf028943a43dab509..6e2e57582323a1150d1429eb2921a043c9503332 100644
+--- a/source/blood/src/config.cpp
++++ b/source/blood/src/config.cpp
+@@ -249,7 +249,13 @@ void CONFIG_SetDefaults(void)
+ {
+     scripthandle = -1;
+ 
+-#ifdef __ANDROID__
++#ifdef __EMSCRIPTEN__
++    // Keep the classic software renderer at a predictable 4:3 internal
++    // resolution. The shared browser shell contains this buffer without
++    // stretching it or making the game redraw every viewport pixel.
++    gSetup.xdim = 800;
++    gSetup.ydim = 600;
++#elif defined __ANDROID__
+     droidinput.forward_sens = 5.f;
+     droidinput.gameControlsAlpha = 0.5;
+     droidinput.hideStick = 0;
+@@ -308,7 +314,11 @@ void CONFIG_SetDefaults(void)
+ 
+     gSetup.forcesetup       = 1;
+     gSetup.noautoload       = 1;
++#ifdef __EMSCRIPTEN__
++    gSetup.fullscreen       = 0;
++#else
+     gSetup.fullscreen       = 1;
++#endif
+     gSetup.usemouse         = 1;
+ 
+     //ud.config.AmbienceToggle  = 1;
+@@ -328,7 +338,11 @@ void CONFIG_SetDefaults(void)
+     gBrightness = 8;
+     //ud.config.ShowWeapons     = 0;
+     SoundToggle     = 1;
++#ifdef __EMSCRIPTEN__
++    CDAudioToggle = 1;
++#else
+     CDAudioToggle = 0;
++#endif
+     MusicDevice = ASS_AutoDetect;
+     gFMPianoFix = 1;
+     //ud.config.VoiceToggle     = 5;  // bitfield, 1 = local, 2 = dummy, 4 = other players in DM
+diff --git a/source/blood/src/controls.cpp b/source/blood/src/controls.cpp
+index ec38449ea9c91a73244d09db0f361a7cffd678dd..d6621ad590479519e0e45d37355bc87cdcea2ead 100644
+--- a/source/blood/src/controls.cpp
++++ b/source/blood/src/controls.cpp
+@@ -36,6 +36,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "map2d.h"
+ #include "view.h"
+ 
++#ifdef __EMSCRIPTEN__
++# include <emscripten.h>
++#endif
++
+ 
+ int32_t ctrlCheckAllInput(void)
+ {
+@@ -174,6 +178,10 @@ void ctrlGetInput(void)
+ 
+     CONTROL_ProcessBinds();
+ 
++#ifdef __EMSCRIPTEN__
++    // Captured browser movement is modern mouselook on both axes.
++    gMouseAim = 1;
++#else
+     if (gMouseAiming)
+         gMouseAim = 0;
+ 
+@@ -200,6 +208,7 @@ void ctrlGetInput(void)
+     }
+     else if (gMouseAiming)
+         gInput.keyFlags.lookCenter = 1;
++#endif
+ 
+     CONTROL_GetInput(&info);
+ 
+@@ -556,6 +565,23 @@ void ctrlGetInput(void)
+     gInput.strafe = clamp(gInput.strafe + input.strafe, -2048, 2048);
+     gInput.q16turn = fix16_sadd(gInput.q16turn, input.q16turn);
+     gInput.q16mlook = fix16_clamp(fix16_sadd(gInput.q16mlook, input.q16mlook), F16(-127)>>2, F16(127)>>2);
++#ifdef __EMSCRIPTEN__
++    if (input.forward || input.strafe || input.q16turn || input.q16mlook ||
++        gInput.buttonFlags.byte || gInput.keyFlags.word || gInput.useFlags.byte || gInput.newWeapon)
++    {
++        EM_ASM({
++            const diagnostics = window.__bloodWasmDiagnostics;
++            diagnostics.inputSeen = true;
++            diagnostics.lastInput = new Array(4);
++            diagnostics.lastInput[0] = $0;
++            diagnostics.lastInput[1] = $1;
++            diagnostics.lastInput[2] = $2;
++            diagnostics.lastInput[3] = $3;
++            document.documentElement.dataset.inputSeen = 'true';
++            document.documentElement.dataset.lastInput = String($0) + ',' + String($1) + ',' + String($2) + ',' + String($3);
++        }, input.forward, input.strafe, input.q16turn, input.q16mlook);
++    }
++#endif
+     if (gMe && gMe->pXSprite->health != 0 && !gPaused)
+     {
+         CONSTEXPR int upAngle = 289;
+diff --git a/source/blood/src/credits.cpp b/source/blood/src/credits.cpp
+index 60c02499b81c0ed96cef0fb865dbdcf88f97198b..e68601416c6d8c0c53cccbfa9c9ab5c1594e2098 100644
+--- a/source/blood/src/credits.cpp
++++ b/source/blood/src/credits.cpp
+@@ -36,6 +36,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "sound.h"
+ #include "view.h"
+ 
++#ifdef __EMSCRIPTEN__
++# include <emscripten.h>
++#endif
++
++static inline void credYieldBrowser(void)
++{
++#ifdef __EMSCRIPTEN__
++    emscripten_sleep(1);
++#endif
++}
++
+ inline char keyJoyGetScan(void)
+ {
+     char ch = keyGetScan();
+@@ -56,6 +67,7 @@ char Wait(int nTicks)
+     while (totalclock < nTicks)
+     {
+         gameHandleEvents();
++        credYieldBrowser();
+         if (keyJoyGetScan())
+             return FALSE;
+     }
+@@ -69,7 +81,11 @@ char DoFade(char r, char g, char b, int nTicks)
+     totalclock = gFrameClock = 0;
+     do
+     {
+-        while (totalclock < gFrameClock) { gameHandleEvents();};
++        while (totalclock < gFrameClock)
++        {
++            gameHandleEvents();
++            credYieldBrowser();
++        }
+         gFrameClock += 2;
+         scrNextPage();
+         scrFadeAmount(divscale16(ClipHigh((int)totalclock, nTicks), nTicks));
+@@ -86,7 +102,11 @@ char DoUnFade(int nTicks)
+     totalclock = gFrameClock = 0;
+     do
+     {
+-        while (totalclock < gFrameClock) { gameHandleEvents(); };
++        while (totalclock < gFrameClock)
++        {
++            gameHandleEvents();
++            credYieldBrowser();
++        }
+         gFrameClock += 2;
+         scrNextPage();
+         scrFadeAmount(0x10000-divscale16(ClipHigh((int)totalclock, nTicks), nTicks));
+@@ -223,6 +243,13 @@ char credPlaySmk(const char *_pzSMK, const char *_pzWAV, int nWav)
+         Xfree(pzWAV_);
+         return FALSE;
+     }
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Playing Smacker cutscene %s (%d frames at %d fps)", pzSMK, nFrames, nFrameRate);
++    EM_ASM({
++        document.documentElement.dataset.cutscene = UTF8ToString($0);
++        document.documentElement.dataset.cutsceneFrame = "0";
++    }, pzSMK);
++#endif
+ 
+     uint8_t *pFrame = (uint8_t*)Xcalloc(1,nWidth*nHeight);
+     if (!pFrame)
+@@ -292,6 +319,7 @@ char credPlaySmk(const char *_pzSMK, const char *_pzWAV, int nWav)
+     do
+     {
+         gameHandleEvents();
++        credYieldBrowser();
+         if (scale((int)(totalclock-nStartTime), nFrameRate, kTicRate) < nFrame)
+             continue;
+ 
+@@ -311,6 +339,9 @@ char credPlaySmk(const char *_pzSMK, const char *_pzWAV, int nWav)
+ 
+         ctrlClearAllInput();
+         nFrame++;
++#ifdef __EMSCRIPTEN__
++        EM_ASM({ document.documentElement.dataset.cutsceneFrame = String($0); }, nFrame);
++#endif
+         Smacker_GetNextFrame(hSMK);
+     } while(nFrame < nFrames);
+ 
+@@ -330,5 +361,10 @@ char credPlaySmk(const char *_pzSMK, const char *_pzWAV, int nWav)
+     Xfree(pzSMK_);
+     Xfree(pzWAV_);
+ 
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] Smacker cutscene playback finished");
++    EM_ASM({ document.documentElement.dataset.cutsceneComplete = "true"; });
++#endif
++
+     return TRUE;
+ }
+diff --git a/source/blood/src/levels.cpp b/source/blood/src/levels.cpp
+index a9bbff01c3501c9d88fd8a5d26263b9f757d53f7..2722a4e4022c37a36301c1bfebc73a23046611e7 100644
+--- a/source/blood/src/levels.cpp
++++ b/source/blood/src/levels.cpp
+@@ -448,9 +448,23 @@ bool levelTryPlayMusic(int nEpisode, int nLevel, bool bSetLevelSong)
+ {
+     char buffer[BMAX_PATH];
+     if (CDAudioToggle && gEpisodeInfo[nEpisode].levelsInfo[nLevel].SongId > 0)
++    {
+         snprintf(buffer, BMAX_PATH, "blood%02i.ogg", gEpisodeInfo[nEpisode].levelsInfo[nLevel].SongId);
+-    else
+-        strncpy(buffer, gEpisodeInfo[nEpisode].levelsInfo[nLevel].Song, BMAX_PATH);
++        if (!sndPlaySong(buffer, true))
++        {
++#ifdef __EMSCRIPTEN__
++            LOG_F(INFO, "[NBlood WASM] Playing CD-audio replacement %s", buffer);
++#endif
++            if (bSetLevelSong)
++                strncpy(gGameOptions.zLevelSong, buffer, BMAX_PATH);
++            return false;
++        }
++#ifdef __EMSCRIPTEN__
++        LOG_F(WARNING, "[NBlood WASM] CD-audio replacement %s is unavailable; using MIDI", buffer);
++#endif
++    }
++
++    strncpy(buffer, gEpisodeInfo[nEpisode].levelsInfo[nLevel].Song, BMAX_PATH);
+     bool bReturn = !!sndPlaySong(buffer, true);
+     if (!bReturn || bSetLevelSong)
+         strncpy(gGameOptions.zLevelSong, buffer, BMAX_PATH);
+@@ -490,4 +504,3 @@ void LevelsLoadSaveConstruct(void)
+ {
+     myLoadSave = new LevelsLoadSave();
+ }
+-
+diff --git a/source/blood/src/menu.h b/source/blood/src/menu.h
+index d101964d11a4d4b47728c5ea0712df5f03a3a55b..4c55bbb312db5e13f0f5fa2a20fdade9bb41577e 100644
+--- a/source/blood/src/menu.h
++++ b/source/blood/src/menu.h
+@@ -29,6 +29,7 @@ extern CGameMenu menuNetMain;
+ extern CGameMenu menuNetStart;
+ extern CGameMenu menuEpisode;
+ extern CGameMenu menuDifficulty;
++extern CGameMenu menuDifficultyCustom;
+ extern CGameMenu menuOptionsOld;
+ extern CGameMenu menuControls;
+ extern CGameMenu menuMessages;
+@@ -61,4 +62,4 @@ void drawLoadingScreen(int nTile);
+ void SetupMenus(void);
+ void UpdateNetworkMenus(void);
+ void QuickSaveGame(void);
+-void QuickLoadGame(void);
+\ No newline at end of file
++void QuickLoadGame(void);

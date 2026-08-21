@@ -8,6 +8,7 @@
   let telemetryTimer = 0;
   let context = null;
   let captureIntent = false;
+  let unlockedPointer = null;
 
   const browserScanCodes = Object.freeze({
     Escape: 0x01, Digit1: 0x02, Digit2: 0x03, Digit3: 0x04, Digit4: 0x05, Digit5: 0x06,
@@ -95,7 +96,6 @@
     window.clearInterval(telemetryTimer);
     telemetryTimer = window.setInterval(() => {
       const state = nativeState();
-      if (nativeStateCode() === 1) captureIntent = false;
       if (state !== ctx.shell.engineState()) ctx.setEngineState(state);
       if (typeof engine?._Duke_WasmControlsMask === 'function') {
         const mask = engine._Duke_WasmControlsMask();
@@ -194,7 +194,7 @@
         version: policy.version || manifest.version,
         files: policy.files.map(spec => ({
           ...spec,
-          mountName: spec.path,
+          mountName: spec.name,
           validateCached: false,
           validate: async file => {
             ctx.setLoading('Preparing Duke Nukem 3D…');
@@ -280,17 +280,27 @@
     pointerMove(detail) {
       if (!started) return;
       if (detail.captured === true) {
+        unlockedPointer = null;
         engine?._Build_WasmPointerDelta?.(Math.round(detail.movementX || 0), Math.round(detail.movementY || 0));
         return;
       }
-      if (nativeState() === 'gameplay') return;
+      if (nativeState() === 'gameplay') {
+        const next = { x: Math.round(detail.x), y: Math.round(detail.y) };
+        if (unlockedPointer) {
+          engine?._Build_WasmPointerDelta?.(next.x - unlockedPointer.x, next.y - unlockedPointer.y);
+        }
+        unlockedPointer = next;
+        return;
+      }
+      unlockedPointer = null;
       document.documentElement.dataset.buildPointer = `${Math.round(detail.x)},${Math.round(detail.y)}`;
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
     },
-    pointerButton(detail) {
+    pointerButton(detail, event, ctx) {
       if (!started || nativeState() === 'gameplay') return;
       if (detail.button === 0 && detail.pressed && nativeStateCode() === 0 && engine?._Duke_WasmMenuId?.() === 110) {
         captureIntent = true;
+        ctx?.setEngineState?.('loading', { capture: true, event });
       }
       document.documentElement.dataset.buildPointerButton = `${detail.button}:${detail.pressed ? 'down' : 'up'}@${Math.round(detail.x)},${Math.round(detail.y)}`;
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
@@ -306,6 +316,8 @@
     },
     inputCaptureChanged(captured) {
       document.documentElement.dataset.pointerLocked = String(captured);
+      unlockedPointer = null;
+      if (captured) captureIntent = false;
       if (started && typeof engine?._Duke_WasmSetPointerLock === 'function') {
         engine._Duke_WasmSetPointerLock(captured ? 1 : 0);
       }

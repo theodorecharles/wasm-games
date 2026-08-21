@@ -7,9 +7,9 @@ import path from 'node:path';
 const STEAM = process.env.HL2_STEAM_ROOT
   || '/home/ted/.steam/debian-installation/steamapps/common/Half-Life 2';
 const GOTY = process.env.HL2_GOTY_ROOT
-  || '/home/ted/.local/share/source-wasm/hl2-dvd';
+  || '/home/ted/wasm-game-data/source/hl2-dvd';
 const DEST = process.env.HL2_COMBINED_ROOT
-  || '/home/ted/.local/share/source-wasm/hl2-combined';
+  || '/home/ted/wasm-game-data/source/hl2-combined';
 
 const VPK_SIGNATURE = 0x55aa1234;
 const EMBEDDED = 0x7fff;

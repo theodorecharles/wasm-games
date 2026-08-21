@@ -2,7 +2,8 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
+source_dir="${DOSBOX_SOURCE_CHECKOUT:-$repo_dir/.work/source}/vendor/dosbox"
 
 EMSDK_DIR="${EMSDK_DIR:-/home/ted/emsdk}" \
 WASM_FRAMEWORK_DIR="$framework_dir" \
@@ -16,7 +17,7 @@ node "$repo_dir/scripts/test-native-runtime.js" "$repo_dir/web/dist"
 if [[ "${DOSBOX_TEST_INSTALLED_GAMES:-0}" == "1" ]]; then
   for variant in jill1 jill2 jill3 jazz duke1 duke2 gta nfs simcity2000; do
     timeout 45s node "$repo_dir/scripts/test-installed-runtime.js" \
-      "$repo_dir/web/dist" "$variant" "${DOSBOX_DATA_ROOT:-$repo_dir/../data/dosbox}" 20000
+      "$repo_dir/web/dist" "$variant" "${DOSBOX_DATA_ROOT:-/home/ted/wasm-game-data/dosbox}" 20000
   done
 fi
 wasm-validate "$repo_dir/web/dist/dosbox.wasm"
@@ -40,14 +41,14 @@ if find "$repo_dir/web/dist" -type f | grep -Ei "$proprietary_pattern"; then
   printf 'A proprietary DOS game file entered the web build.\n' >&2
   exit 1
 fi
-rg -q 'case SDLK_w: event.key.keysym.sym = SDLK_UP' "$repo_dir/vendor/dosbox/src/gui/sdlmain.cpp"
-rg -Fq 'emscripten_sleep(1)' "$repo_dir/vendor/dosbox/src/dosbox.cpp"
-rg -q 'QueueWasmControllerEvent' "$repo_dir/vendor/dosbox/src/gui/sdlmain.cpp"
-rg -q 'DOSBox_WasmAudioCallbacks' "$repo_dir/vendor/dosbox/src/hardware/mixer.cpp"
+rg -q 'case SDLK_w: event.key.keysym.sym = SDLK_UP' "$source_dir/src/gui/sdlmain.cpp"
+rg -Fq 'emscripten_sleep(1)' "$source_dir/src/dosbox.cpp"
+rg -q 'QueueWasmControllerEvent' "$source_dir/src/gui/sdlmain.cpp"
+rg -q 'DOSBox_WasmAudioCallbacks' "$source_dir/src/hardware/mixer.cpp"
 rg -q 'sASYNCIFY=1' "$repo_dir/scripts/build-web.sh"
 rg -q 'IDBFS' "$repo_dir/web/dist/dosbox.js"
 rg -q 'createDosBoxModule' "$repo_dir/web/dist/dosbox.js"
 
 WASM_FRAMEWORK_DIR="$framework_dir" "$repo_dir/scripts/test-static.sh"
 git -C "$repo_dir" diff --check
-printf 'DOSBox native build, framework 0.9.4, IDBFS, keyboard/mouse, audio/canvas, HTTP, and game-data checks passed.\n'
+printf 'DOSBox native build, framework 0.9.6, IDBFS, keyboard/mouse, audio/canvas, HTTP, and game-data checks passed.\n'

@@ -4,7 +4,8 @@
   "sources": {
     "jolly-good-api": {
       "role": "stable native core ABI for NES, SNES, and PS1",
-      "repository": "https://gitlab.com/jgemu/jg.git",
+      "repository": "https://github.com/theodorecharles/jolly-good-api.git",
+      "upstream": "https://gitlab.com/jgemu/jg.git",
       "ref": "2.0.0",
       "commit": "43af3ed5bf6e4c97da4f564f3ef0626796b352ef",
       "license": "Zlib",
@@ -13,7 +14,8 @@
     },
     "nestopia-jg": {
       "role": "NES and Famicom core",
-      "repository": "https://gitlab.com/jgemu/nestopia.git",
+      "repository": "https://github.com/theodorecharles/nestopia-jg.git",
+      "upstream": "https://gitlab.com/jgemu/nestopia.git",
       "ref": "1.54.0",
       "commit": "5885b3f95064f6f81a7c4bfe062798c003f75995",
       "license": "GPL-2.0-or-later",
@@ -22,7 +24,8 @@
     },
     "bsnes-jg": {
       "role": "SNES and Super Famicom core",
-      "repository": "https://gitlab.com/jgemu/bsnes.git",
+      "repository": "https://github.com/theodorecharles/bsnes-jg.git",
+      "upstream": "https://gitlab.com/jgemu/bsnes.git",
       "ref": "2.1.1",
       "commit": "b2be5a8df827dae1f0bf656c1070b9f6b6bafcbf",
       "license": "GPL-3.0-or-later",
@@ -31,7 +34,8 @@
     },
     "mednafen-jg": {
       "role": "PlayStation core",
-      "repository": "https://gitlab.com/jgemu/mednafen.git",
+      "repository": "https://github.com/theodorecharles/mednafen-jg.git",
+      "upstream": "https://gitlab.com/jgemu/mednafen.git",
       "ref": "1.32.1.2",
       "commit": "0295a9398d5bc111179e3423a40f0c2d805395b0",
       "license": "GPL-2.0-or-later with component licenses",
@@ -40,7 +44,8 @@
     },
     "play": {
       "role": "PlayStation 2 core",
-      "repository": "https://github.com/jpd002/Play-.git",
+      "repository": "https://github.com/theodorecharles/Play-.git",
+      "upstream": "https://github.com/jpd002/Play-.git",
       "ref": "0.77",
       "commit": "fa75cea31a33f5ab7a2008ed0d90dc74353e9cef",
       "license": "BSD-2-Clause",

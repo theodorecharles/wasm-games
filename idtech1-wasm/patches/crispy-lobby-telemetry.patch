@@ -1,0 +1,30 @@
+diff --git a/src/i_browser.c b/src/i_browser.c
+--- a/src/i_browser.c
++++ b/src/i_browser.c
+@@ -16,4 +16,5 @@
+ #include "i_browser.h"
+ 
++#include "net_client.h"
+ #if defined(CRISPY_WASM_GAME_DOOM)
+ #include "doom/doomdef.h"
+@@ -96,5 +97,20 @@ EMSCRIPTEN_KEEPALIVE int I_BrowserAttackDown(void)
+     return players[consoleplayer].attackdown ? 1 : 0;
+ }
+ 
++EMSCRIPTEN_KEEPALIVE int I_BrowserLobbyPlayers(void)
++{
++    return net_client_received_wait_data ? net_client_wait_data.num_players : -1;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserLobbyController(void)
++{
++    return net_client_received_wait_data && net_client_wait_data.is_controller ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserWaitingLaunch(void)
++{
++    return net_waiting_for_launch ? 1 : 0;
++}
++
+ EMSCRIPTEN_KEEPALIVE int I_BrowserNetGame(void)
+ {

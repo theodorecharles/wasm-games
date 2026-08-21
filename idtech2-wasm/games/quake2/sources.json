@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "pinned-with-game-patch",
+  "repositories": [
+    {
+      "name": "yamagi-quake2-source",
+      "repository": "https://github.com/theodorecharles/idtech2-wasm.git",
+      "commit": "69599f5a7b3c543f33a5cec34811f09a98fbeb45",
+      "upstream": "https://github.com/yquake2/yquake2.git",
+      "patches": ["patches/browser.patch"]
+    }
+  ],
+  "runtimeDependencies": [
+    {
+      "name": "3ZB2",
+      "repository": "https://github.com/yquake2/3zb2.git",
+      "commit": "334a1e635b9dc4926bcb7aa37d02b341ee99a96a",
+      "purpose": "Quake II deathmatch server game module and bots"
+    },
+    {
+      "name": "The Reckoning game module",
+      "repository": "https://github.com/yquake2/xatrix.git",
+      "commit": "6b73e1c8d26342cdc64b321afb1b4c17a5bf0cb0",
+      "purpose": "Native Xatrix mission-pack campaign server"
+    },
+    {
+      "name": "Ground Zero game module",
+      "repository": "https://github.com/yquake2/rogue.git",
+      "commit": "f40f35697f177ac7726807898e9d7df32e2d0e3e",
+      "purpose": "Native Rogue mission-pack campaign server"
+    }
+  ]
+}

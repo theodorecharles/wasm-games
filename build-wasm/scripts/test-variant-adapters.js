@@ -2,11 +2,14 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
 const repo = path.resolve(__dirname, '..');
+const sourceRoot = process.env.BUILD_ENGINE_SOURCE_DIR ||
+  execFileSync(path.join(repo, 'scripts/fetch-source'), { encoding: 'utf8' }).trim();
 const manifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 
@@ -202,6 +205,10 @@ async function exercise(variant) {
   adapter.pointerMove({ captured: true, movementX: 17.4, movementY: -8.6 });
   assert.deepEqual(calls.at(-1), ['pointerDelta', 17, -9],
     `${variant} captured gameplay movement must use relative deltas`);
+  adapter.pointerMove({ captured: false, x: 300, y: 220 });
+  adapter.pointerMove({ captured: false, x: 324, y: 207 });
+  assert.deepEqual(calls.at(-1), ['pointerDelta', 24, -13],
+    `${variant} must preserve mouse look when an embedded browser declines pointer lock`);
   adapter.controllerFrame({
     deltaMs: 16,
     actions: { forward: 1, right: 1, lookX: 0.5, lookY: -0.25, attack: 1, jump: 1 }
@@ -212,6 +219,7 @@ async function exercise(variant) {
   assert.ok(controllerCall[1] & 8, 'controller right must map to native D');
   assert.ok(controllerCall[1] & 16, 'controller jump must map to native jump');
   assert.ok(controllerCall[2] > 0, 'right stick must map to native horizontal mouse input');
+  assert.ok(controllerCall[3] < 0, 'right stick must map to native vertical mouselook input');
   assert.equal(controllerCall[4] & 1, 1, 'controller trigger must map to native attack');
   adapter.controllerChanged({ activeIndex: null, selection: 'auto' }, context);
   assert.deepEqual(calls.at(-1), ['controller', 0, 0, 0, 0], 'disconnect must release native controller state');
@@ -233,7 +241,8 @@ async function exercise(variant) {
   assert.deepEqual(calls.at(-1), ['controller', 0, 0, 0, 0], 'disabling in a menu must release native controller state');
   nativeState = 1;
   if (isBlood) {
-    const nativeSource = fs.readFileSync(path.join(repo, 'source/blood/src/blood.cpp'), 'utf8');
+    const nativeSource = fs.readFileSync(path.join(sourceRoot, 'source/blood/src/blood.cpp'), 'utf8');
+    const controlsSource = fs.readFileSync(path.join(sourceRoot, 'source/blood/src/controls.cpp'), 'utf8');
     assert.match(nativeSource, /gInputMode == INPUT_MODE_3[\s\S]*return 3;/,
       'Blood debrief must be an authoritative native state');
     assert.match(nativeSource, /gStartNewGame[\s\S]*return 4;/,
@@ -246,9 +255,11 @@ async function exercise(variant) {
       'Blood capture loss must synchronously open the native pause menu');
     assert.doesNotMatch(nativeSource, /document\.exitPointerLock/,
       'Blood native diagnostics must not compete with framework pointer-lock ownership');
-    assert.match(fs.readFileSync(path.join(repo, 'source/build/src/sdlayer.cpp'), 'utf8'),
+    assert.match(fs.readFileSync(path.join(sourceRoot, 'source/build/src/sdlayer.cpp'), 'utf8'),
       /emscripten_get_pointerlock_status/,
       'Blood relative mouse mode must observe framework-owned pointer lock');
+    assert.match(controlsSource, /#ifdef __EMSCRIPTEN__[\s\S]*gMouseAim = 1;/,
+      'Blood pointer-lock input must keep vertical mouselook enabled');
 
     nativeState = 2;
     timers[0]();
@@ -276,9 +287,11 @@ async function exercise(variant) {
 
     nativeState = 0;
     nativeCaptureTarget = true;
-    adapter.pointerButton({ button: 0, pressed: true, x: 400, y: 300 });
+    const bloodClickEvent = { type: 'pointerdown' };
+    adapter.pointerButton({ button: 0, pressed: true, x: 400, y: 300 }, bloodClickEvent, context);
     assert.equal(adapter.readCaptureIntent(), true,
       'Blood difficulty click must publish trusted capture intent synchronously');
+    assert.deepEqual(stateChanges.at(-1), { state: 'loading', capture: true, event: bloodClickEvent });
     assert.deepEqual(calls.slice(-2), [['pointerMove', 400, 300], ['pointerButton', 0, 1]]);
 
     nativeState = 1;
@@ -299,6 +312,9 @@ async function exercise(variant) {
     assert.equal(calls.filter(call => call[0] === 'menu').length, menuCalls,
       'Escape-triggered capture loss must not inject a second menu action');
   } else {
+    const nativeSource = fs.readFileSync(path.join(sourceRoot, 'source/duke3d/src/game.cpp'), 'utf8');
+    assert.match(nativeSource, /ud\.mouseaiming = 0;\s*g_myAimMode = 1;/,
+      'Duke pointer-lock input must start with vertical mouselook enabled');
     nativeState = 0;
     nativeMenuId = 110;
     const enterEvent = {
@@ -312,7 +328,10 @@ async function exercise(variant) {
 
     nativeState = 1;
     timers[0]();
-    assert.equal(adapter.readCaptureIntent(), false, 'native gameplay must consume Duke capture intent');
+    assert.equal(adapter.readCaptureIntent(), true,
+      'Duke launch intent must survive until the trusted pointer gesture can request pointer lock');
+    adapter.inputCaptureChanged(true);
+    assert.equal(adapter.readCaptureIntent(), false, 'successful pointer lock must consume Duke capture intent');
 
     nativeState = 2;
     const resumeEvent = {
@@ -324,8 +343,10 @@ async function exercise(variant) {
 
     nativeState = 0;
     nativeMenuId = 110;
-    adapter.pointerButton({ button: 0, pressed: true, x: 400, y: 300 });
+    const dukeClickEvent = { type: 'pointerdown' };
+    adapter.pointerButton({ button: 0, pressed: true, x: 400, y: 300 }, dukeClickEvent, context);
     assert.equal(adapter.readCaptureIntent(), true, 'Duke difficulty click must publish trusted capture intent');
+    assert.deepEqual(stateChanges.at(-1), { state: 'loading', capture: true, event: dukeClickEvent });
     assert.deepEqual(calls.slice(-2), [['pointerMove', 400, 300], ['pointerButton', 0, 1]]);
 
     nativeState = 1;

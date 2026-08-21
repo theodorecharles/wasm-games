@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "missing-etlegacy-source-fork",
+  "portRepository": "https://github.com/theodorecharles/wolfet-wasm.git",
+  "repositories": [],
+  "missingForks": [
+    {
+      "repository": "https://github.com/theodorecharles/etlegacy.git",
+      "upstream": "https://github.com/etlegacy/etlegacy.git",
+      "commit": "a44ab4f396370a694109da33df901d85f6fe9626"
+    }
+  ]
+}

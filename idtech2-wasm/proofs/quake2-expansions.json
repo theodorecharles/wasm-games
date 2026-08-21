@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T01:54:56-04:00",
+  "result": "pass",
+  "browser": "Google Chrome",
+  "clientArtifact": {
+    "sourceCommit": "69599f5a7b3c543f33a5cec34811f09a98fbeb45",
+    "quake2.js": {
+      "bytes": 229335,
+      "sha256": "dcbe0c505ade01d16ddf960fdd45eb100e516b80efefd12f3d11e2c2a70ee1a2"
+    },
+    "quake2.wasm": {
+      "bytes": 1577508,
+      "sha256": "f22bada41596f2919f9208f6cfbef548031ca1611ac14ab2d1ffa12cbff89097"
+    }
+  },
+  "expansions": [
+    {
+      "variant": "quake2-xatrix",
+      "title": "Quake II: The Reckoning",
+      "gameDirectory": "xatrix",
+      "gameSourceCommit": "6b73e1c8d26342cdc64b321afb1b4c17a5bf0cb0",
+      "ownerPak": {
+        "bytes": 93310499,
+        "sha256": "a0fb86664204a208cd812798b5152515e8fe07697aaba1e0b48f78e6ef387ef0"
+      },
+      "map": "xswamp",
+      "mapTitle": "The Swamps",
+      "network": [1, 34, 103],
+      "pose": [3211.43, 2414.43, -208.43, 135],
+      "server": {
+        "state": "running",
+        "mode": "campaign",
+        "peers": 1,
+        "clientPackets": 47,
+        "serverPackets": 169
+      },
+      "playable": true
+    },
+    {
+      "variant": "quake2-rogue",
+      "title": "Quake II: Ground Zero",
+      "gameDirectory": "rogue",
+      "gameSourceCommit": "f40f35697f177ac7726807898e9d7df32e2d0e3e",
+      "ownerPak": {
+        "bytes": 109117652,
+        "sha256": "9de07d2722c7667c681319163edfd8dcd58e0640f8a4aa0c5917a9b19d8be02e"
+      },
+      "map": "rbase1",
+      "mapTitle": "Logistics Complex",
+      "network": [1, 32, 80],
+      "pose": [2048.06, 1792.06, 46.18, -180],
+      "server": {
+        "state": "running",
+        "mode": "campaign",
+        "peers": 1,
+        "clientPackets": 44,
+        "serverPackets": 138
+      },
+      "playable": true
+    }
+  ],
+  "assertions": {
+    "theReckoningOwnerPakValidated": true,
+    "theReckoningNativeGameLoaded": true,
+    "theReckoningReachedPlayableMap": true,
+    "groundZeroOwnerPakValidated": true,
+    "groundZeroNativeGameLoaded": true,
+    "groundZeroReachedPlayableMap": true,
+    "managedServerLifecycleUsed": true
+  }
+}

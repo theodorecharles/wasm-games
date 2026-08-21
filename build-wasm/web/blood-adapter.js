@@ -9,6 +9,7 @@
   let lastEscapeAt = 0;
   let context = null;
   let interactionCaptureIntent = false;
+  let unlockedPointer = null;
 
   const browserScanCodes = Object.freeze({
     Escape: 0x01, Digit1: 0x02, Digit2: 0x03, Digit3: 0x04, Digit4: 0x05, Digit5: 0x06,
@@ -131,7 +132,8 @@
     const intro = parameters.get('intro') === '1';
     const demos = parameters.get('demos') === '1';
     const autostart = parameters.get('autostart') === '1';
-    const paths = new Set(data.entries.map(entry => String(entry.policy.path || '').toLowerCase()));
+    const paths = new Set(data.entries.map(entry =>
+      String(entry.mountName || entry.policy.mountName || entry.policy.name || '').toLowerCase()));
     if (campaign === 'cryptic' && !paths.has('cryptic.ini')) {
       throw new Error('Cryptic Passage was requested but its optional data is not installed in this container.');
     }
@@ -150,8 +152,7 @@
     window.clearInterval(telemetryTimer);
     telemetryTimer = window.setInterval(() => {
       const state = nativeState();
-      if (state === 'gameplay') interactionCaptureIntent = false;
-      else if (state === 'menu' && !engine?._NBlood_WasmCaptureTarget?.() && !engine?._NBlood_WasmCaptureIntent?.()) {
+      if (state === 'menu' && !engine?._NBlood_WasmCaptureTarget?.() && !engine?._NBlood_WasmCaptureIntent?.()) {
         interactionCaptureIntent = false;
       }
       if (state !== ctx.shell.engineState()) synchronizeState(ctx, null, false);
@@ -219,8 +220,10 @@
     if (!menu && held('altAttack')) mouse |= 2;
     if (!menu && held('previousWeapon')) mouse |= 16;
     if (!menu && held('nextWeapon')) mouse |= 32;
-    const lookX = menu ? 0 : Math.round(Number(actions.lookX || 0) * Math.max(1, detail.deltaMs || 16));
-    engine._Build_WasmControllerFrame(keys, lookX, 0, mouse);
+    const scale = Math.max(1, detail.deltaMs || 16);
+    const lookX = menu ? 0 : Math.round(Number(actions.lookX || 0) * scale);
+    const lookY = menu ? 0 : Math.round(Number(actions.lookY || 0) * scale);
+    engine._Build_WasmControllerFrame(keys, lookX, lookY, mouse);
   }
 
   function releaseController() {
@@ -243,7 +246,7 @@
         version: policy.version || manifest.version,
         files: policy.files.map(spec => ({
           ...spec,
-          mountName: spec.path,
+          mountName: spec.name,
           validateCached: false,
           validate: async file => {
             ctx.setLoading('Preparing Blood…');
@@ -329,16 +332,26 @@
     pointerMove(detail) {
       if (!started) return;
       if (detail.captured === true) {
+        unlockedPointer = null;
         engine?._Build_WasmPointerDelta?.(Math.round(detail.movementX || 0), Math.round(detail.movementY || 0));
         return;
       }
-      if (nativeState() === 'gameplay') return;
+      if (nativeState() === 'gameplay') {
+        const next = { x: Math.round(detail.x), y: Math.round(detail.y) };
+        if (unlockedPointer) {
+          engine?._Build_WasmPointerDelta?.(next.x - unlockedPointer.x, next.y - unlockedPointer.y);
+        }
+        unlockedPointer = next;
+        return;
+      }
+      unlockedPointer = null;
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
     },
-    pointerButton(detail) {
+    pointerButton(detail, event, ctx) {
       if (!started || nativeState() === 'gameplay') return;
       if (detail.button === 0 && detail.pressed && nativeState() === 'menu' && engine?._NBlood_WasmCaptureTarget?.()) {
         interactionCaptureIntent = true;
+        ctx?.setEngineState?.('loading', { capture: true, event });
       }
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
       engine?._Build_WasmPointerButton?.(detail.button, detail.pressed ? 1 : 0);
@@ -353,6 +366,8 @@
     },
     inputCaptureChanged(captured) {
       document.documentElement.dataset.pointerLocked = String(captured);
+      unlockedPointer = null;
+      if (captured) interactionCaptureIntent = false;
       if (started && typeof engine?._NBlood_WasmSetPointerLock === 'function') {
         engine._NBlood_WasmSetPointerLock(captured ? 1 : 0);
       }

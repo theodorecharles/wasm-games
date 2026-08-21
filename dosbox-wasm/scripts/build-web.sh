@@ -2,14 +2,14 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-source_dir="$repo_dir/vendor/dosbox"
-build_dir="${BUILD_DIR:-$repo_dir/build-web}"
+source_dir="$("$repo_dir/scripts/fetch-source")"
+build_dir="${BUILD_DIR:-$repo_dir/.work/build}"
 dist_dir="$repo_dir/web/dist"
 emsdk_dir="${EMSDK_DIR:-/home/ted/emsdk}"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 jobs="${JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf '8')}"
-required_framework_version="0.9.4"
-required_framework_commit="c4ad3b9e075f881d32f044299fbfeee703a9169d"
+required_framework_version="0.9.6"
+required_framework_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
 
 if [[ ! -f "$emsdk_dir/emsdk_env.sh" ]]; then
   printf 'Emscripten SDK environment not found at %s\n' "$emsdk_dir" >&2

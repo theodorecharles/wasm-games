@@ -1,6 +1,8 @@
 # Public image: patches, adapter, and framework only.
 # The leaked engine tree, steam_legacy depot, and 2014 GOTY ISO are
 # provided at run time by the person who runs the container.
+ARG FRAMEWORK_IMAGE=wasm-game-framework:0.9.6
+FROM ${FRAMEWORK_IMAGE} AS framework
 FROM emscripten/emsdk:4.0.10@sha256:90b757eb11fa9a0e3ce4d2d9f76d932a56018e4accc37b5a28b2783751e60eb7
 
 ARG GAME_VARIANT=hl2
@@ -24,7 +26,7 @@ RUN embuilder build freetype \
        done; \
      fi
 
-COPY vendor/wasm-game-framework/ /opt/wasm-game-framework/
+COPY --from=framework /opt/wasm-game-framework/ /opt/wasm-game-framework/
 # Copy only repository-owned browser assets. Generated source-engine.js/WASM
 # are private build outputs and must be produced inside the image after the
 # user supplies the engine tree; a blanket COPY web/ could capture ignored

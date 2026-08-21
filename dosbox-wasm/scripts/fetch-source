@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+engine_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+checkout_dir="${DOSBOX_SOURCE_CHECKOUT:-${engine_root}/.work/source}"
+source_dir="${checkout_dir}/vendor/dosbox"
+repository="https://github.com/theodorecharles/dosbox-wasm.git"
+commit="8bde9c0d99858cd7bced3887885f6d4cd0a9efd3"
+
+if [[ ! -d "${checkout_dir}/.git" ]]; then
+  mkdir -p "$(dirname "${checkout_dir}")"
+  git clone --filter=blob:none --no-checkout "${repository}" "${checkout_dir}" >&2
+  git -C "${checkout_dir}" checkout --detach "${commit}" >&2
+fi
+
+actual_origin="$(git -C "${checkout_dir}" remote get-url origin)"
+actual_commit="$(git -C "${checkout_dir}" rev-parse HEAD)"
+if [[ "${actual_origin}" != "${repository}" || "${actual_commit}" != "${commit}" ]]; then
+  printf 'Unexpected DOSBox source checkout at %s.\n' "${checkout_dir}" >&2
+  exit 1
+fi
+
+while IFS= read -r patch_name; do
+  [[ -z "${patch_name}" || "${patch_name}" == \#* ]] && continue
+  patch_file="${engine_root}/patches/${patch_name}"
+  if git -C "${checkout_dir}" apply --reverse --check "${patch_file}" 2>/dev/null; then
+    continue
+  fi
+  git -C "${checkout_dir}" apply --check "${patch_file}"
+  git -C "${checkout_dir}" apply "${patch_file}"
+done < "${engine_root}/patches/series"
+
+find "${checkout_dir}" -type f -name '*.md' -delete
+
+test -x "${source_dir}/configure"
+printf '%s\n' "${source_dir}"

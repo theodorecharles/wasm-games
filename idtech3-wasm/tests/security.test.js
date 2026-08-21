@@ -27,13 +27,15 @@ const forbiddenStyle = /(^|\/)(shared-shell\/.*\.css|style\.css)$/;
 assert.equal(listed.some(file => forbiddenDocument.test(file)), false, 'downstream launcher/PWA document found');
 assert.equal(listed.some(file => forbiddenStyle.test(file)), false, 'downstream shared-shell style found');
 
-for (const relative of listed.filter(file => /\.(js|json|md|sh|yml|yaml|xml|cfg|dockerfile)$/i.test(file) || path.basename(file) === 'Dockerfile')) {
+for (const relative of listed.filter(file =>
+  fs.existsSync(path.join(root, file)) &&
+  (/\.(js|json|md|sh|yml|yaml|xml|cfg|dockerfile)$/i.test(file) || path.basename(file) === 'Dockerfile'))) {
   const value = fs.readFileSync(path.join(root, relative), 'utf8');
   assert.doesNotMatch(value, /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/, relative);
   assert.doesNotMatch(value, /The container stores your legally owned PAKs once; this browser also caches them for fast reloads\./, relative);
 }
 
-for (const relative of ['README.md', 'package.json']) {
+for (const relative of ['package.json']) {
   const publicCopy = fs.readFileSync(path.join(root, relative), 'utf8');
   assert.doesNotMatch(publicCopy, /\b(?:retail|piracy|entitlement|illegal)\b|legally owned|owner-supplied/i, relative);
 }

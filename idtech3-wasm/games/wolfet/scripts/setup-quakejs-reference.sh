@@ -4,7 +4,7 @@ set -eu
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 QUAKEJS_DIR="${ETJS_QUAKEJS_DIR:-$ROOT/quakejs}"
-UPSTREAM_URL="https://github.com/inolen/quakejs.git"
+UPSTREAM_URL="https://github.com/theodorecharles/quake3-wasm.git"
 UPSTREAM_REF="977b188e05b239b6c48d7ecda9d04e9ca03f1578"
 
 if [ ! -d "$QUAKEJS_DIR/.git" ]; then

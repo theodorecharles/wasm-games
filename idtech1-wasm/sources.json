@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "name": "crispy-doom",
+      "repository": "https://github.com/theodorecharles/idtech1-wasm.git",
+      "commit": "7775ef82d1e9dfd50eb9d2824acefaeff7247458",
+      "patches": [
+        "patches/crispy-browser.patch"
+      ]
+    },
+    {
+      "name": "dsda-doom",
+      "repository": "https://github.com/kraflab/dsda-doom.git",
+      "commit": "ae7c280cd08047c399283bebcfaeeb3e9ecb8e6d",
+      "upstream": "https://github.com/kraflab/dsda-doom.git",
+      "status": "pinned-upstream",
+      "patches": [
+        "patches/dsda-wasm.patch"
+      ]
+    },
+    {
+      "name": "libtess2",
+      "repository": "https://github.com/memononen/libtess2.git",
+      "commit": "8dbd6483e920311a58c9af10a10beb278efebc36",
+      "upstream": "https://github.com/memononen/libtess2.git",
+      "status": "pinned-upstream",
+      "patches": []
+    },
+    {
+      "name": "zandronum",
+      "repository": "https://github.com/torrsamaho/zandronum.git",
+      "commit": "bdd0f7beb43d9786cc13502395f60aa84d34e28d",
+      "upstream": "https://github.com/torrsamaho/zandronum.git",
+      "status": "pinned-upstream",
+      "patches": [
+        "patches/zandronum-wasm.patch"
+      ]
+    },
+    {
+      "name": "zstd",
+      "repository": "https://github.com/facebook/zstd.git",
+      "commit": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+      "upstream": "https://github.com/facebook/zstd.git",
+      "status": "pinned-upstream",
+      "patches": []
+    }
+  ]
+}

@@ -8,7 +8,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 
-const EXPECTED_VERSION = '0.9.4';
+const EXPECTED_VERSION = '0.9.6';
 
 function freePort() {
   return new Promise((resolve, reject) => {

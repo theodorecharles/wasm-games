@@ -8,7 +8,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const passwordAuth = path.join(root, 'vendor', 'wasm-game-framework', 'server', 'password-auth.js');
+const framework = process.env.WASM_FRAMEWORK_DIR || process.env.WASM_GAME_FRAMEWORK_ROOT || '/home/ted/Development/wasm-game-framework';
+const passwordAuth = path.join(framework, 'server', 'password-auth.js');
 
 function freePort() {
   return new Promise((resolve, reject) => {

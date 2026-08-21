@@ -51,7 +51,7 @@ index 0000000..58b5c9e
 @@ -0,0 +1,27 @@
 +# syntax=docker/dockerfile:1.7
 +
-+ARG FRAMEWORK_IMAGE=wasm-game-framework:0.9.2
++ARG FRAMEWORK_IMAGE=wasm-game-framework:0.9.6
 +FROM ${FRAMEWORK_IMAGE}
 +
 +ARG VCS_REF=unknown
@@ -101,8 +101,8 @@ index 0000000..7c12dec
 +
 +## Canonical browser contract
 +
-+The repository pins `wasm-game-framework` 0.9.2 at public commit
-+`53bc7e6eeef1ae35dcf3b25dea4e3ec0ab46726f`.
++The repository pins `wasm-game-framework` 0.9.6 at public commit
++`ebb1ebe35ad8224a9080279a6529414db42d3284`.
 +
 +Downstream owns only:
 +
@@ -160,7 +160,7 @@ index 0000000..7c12dec
 +
 +The build creates two native-source Emscripten clients (`base` and `roe`) and
 +four framework images (suite, Doom 3 SP, Doom 3 MP, RoE). The suite and locked
-+0.9.2 images pass HTTP bootstrap/metadata, WASM range, and `/data` isolation
++0.9.6 images pass HTTP bootstrap/metadata, WASM range, and `/data` isolation
 +checks.
 +
 +## Verified browser boundary (2026-08-14)
@@ -1553,8 +1553,8 @@ index 0000000..6bda6fa
 +framework_dir="${D3WASM_FRAMEWORK_DIR:-${repo_root}/../wasm-game-framework}"
 +
 +framework_version="$(node -p "require('${framework_dir}/package.json').version")"
-+if [[ "${framework_version}" != "0.9.2" ]]; then
-+	echo "doom3-wasm requires wasm-game-framework 0.9.2, found ${framework_version}." >&2
++if [[ "${framework_version}" != "0.9.6" ]]; then
++	echo "doom3-wasm requires wasm-game-framework 0.9.6, found ${framework_version}." >&2
 +	exit 1
 +fi
 +
@@ -1653,8 +1653,8 @@ index 0000000..1b6567b
 +  const roe = variant === 'roe';
 +  try {
 +    post('status', `Loading ${roe ? 'Resurrection of Evil' : 'Doom 3'} engine…`);
-+    if (persistence.frameworkScript !== '/shared-shell/wasm-game-framework.js' || persistence.frameworkVersion !== '0.9.2') {
-+      throw new Error('Doom 3 requires the exact wasm-game-framework 0.9.2 worker persistence contract.');
++    if (persistence.frameworkScript !== '/shared-shell/wasm-game-framework.js' || persistence.frameworkVersion !== '0.9.6') {
++      throw new Error('Doom 3 requires the exact wasm-game-framework 0.9.6 worker persistence contract.');
 +    }
 +    importScripts(persistence.frameworkScript);
 +    if (self.WasmGameFramework?.version !== persistence.frameworkVersion) {
@@ -1978,7 +1978,7 @@ index 0000000..e7b163f
 +          intervalMs: Number(ctx.config.persistence.intervalMs ?? 5000),
 +          requestDurability: ctx.config.persistence.requestDurability !== false,
 +          frameworkScript: '/shared-shell/wasm-game-framework.js',
-+          frameworkVersion: '0.9.2'
++          frameworkVersion: '0.9.6'
 +        }
 +      }, [offscreen]);
 +    },

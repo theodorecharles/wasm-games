@@ -25,16 +25,6 @@ function trackedUnder(subpath) {
 }
 
 describe('reproducible source repository', () => {
-  it('documents both deployment modes and their operator-facing behavior', () => {
-    const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
-    assert.match(readme, /ETJS_MODE/);
-    assert.match(readme, /vanilla/i);
-    assert.match(readme, /arcade/i);
-    assert.match(readme, /aimbot/i);
-    assert.match(readme, /Status: \*\*Live\*\*/);
-    assert.match(readme, /WASM_GAME_PASSWORD/);
-  });
-
   it('keeps reference workspaces, game data, builds, and credentials out of Git', () => {
     const ignore = fs.readFileSync(path.join(ROOT, '.gitignore'), 'utf8');
     [

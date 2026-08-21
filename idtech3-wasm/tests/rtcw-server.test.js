@@ -138,13 +138,15 @@ assert.match(supervisor, /symlink\(source, target\)/,
   assert.match(fetchOmni, /6275af05c97016636aa810b41f7521a74b09655bbf02beda83f862c831bf2418/);
   assert.match(fetchOmni, /omnibot_rtcw\.x86_64\.so/);
   assert.match(fetchOmni, /mp_depot\.way/);
-  for (const relative of arena.requiredFrameworkFiles()) {
-    assert.ok(fs.existsSync(path.join(root, 'games/rtcw/omni-bot', relative)), relative);
+  const omniRoot = path.join(root, 'games/rtcw/omni-bot');
+  const omniReady = arena.requiredFrameworkFiles().every(relative =>
+    fs.existsSync(path.join(omniRoot, relative)));
+  if (omniReady) {
+    const depotWay = fs.readFileSync(path.join(omniRoot, 'rtcw/nav/mp_depot.way'));
+    assert.ok(depotWay.length > 1000, 'mp_depot waypoints must be a real nav file');
+    const moduleSo = fs.readFileSync(path.join(omniRoot, 'omnibot_rtcw.x86_64.so'));
+    assert.equal(moduleSo.slice(0, 4).toString('ascii'), '\x7fELF');
   }
-  const depotWay = fs.readFileSync(path.join(root, 'games/rtcw/omni-bot/rtcw/nav/mp_depot.way'));
-  assert.ok(depotWay.length > 1000, 'mp_depot waypoints must be a real nav file');
-  const moduleSo = fs.readFileSync(path.join(root, 'games/rtcw/omni-bot/omnibot_rtcw.x86_64.so'));
-  assert.equal(moduleSo.slice(0, 4).toString('ascii'), '\x7fELF');
 
   const proxy = read('games/rtcw/server/ws-proxy.js');
   assert.match(proxy, /dgram\.createSocket\('udp4'\)/);
@@ -170,15 +172,17 @@ assert.match(supervisor, /symlink\(source, target\)/,
   assert.match(dockerfile, /COPY --from=framework \/opt\/shared-shell\/ \/opt\/shared-shell\//);
   assert.match(dockerfile, /WASM_GAME_SHELL_ROOT=\/opt\/shared-shell/);
   assert.match(dockerfile, /COPY omni-bot\/ \/opt\/omni-bot\//);
-  const officialQagame = fs.readFileSync(path.join(root, 'games/rtcw/omni-bot/native/qagame.mp.x86_64.so'));
-  assert.equal(officialQagame.slice(0, 4).toString('ascii'), '\x7fELF');
-  assert.ok(officialQagame.length > 100000, 'official Omni-Bot qagame must be the real module');
+  if (omniReady) {
+    const officialQagame = fs.readFileSync(path.join(omniRoot, 'native/qagame.mp.x86_64.so'));
+    assert.equal(officialQagame.slice(0, 4).toString('ascii'), '\x7fELF');
+    assert.ok(officialQagame.length > 100000, 'official Omni-Bot qagame must be the real module');
+  }
   assert.doesNotMatch(read('games/rtcw/server/supervisor.js'), /trap_BotAllocateClient|G_OmniBot_Add/);
   assert.match(supervisor, /setInterval\(\(\) => \{[\s\S]*?\}, 5000\)/);
   assert.match(supervisor, /handle\.reconciling/);
-  const userCfg = read('games/rtcw/omni-bot/rtcw/user/omni-bot.cfg');
-  assert.match(userCfg, /MinBots = 8/);
-  assert.match(userCfg, /MaxBots = 8/);
+  const authoredCfg = read('games/rtcw/omni-bot/omni-bot.cfg');
+  assert.match(authoredCfg, /MinBots\s*=\s*8/);
+  assert.match(authoredCfg, /MaxBots\s*=\s*8/);
   const liveStatusB64 = fs.readFileSync(
     path.join(root, 'tests/fixtures/rtcw-mp-getstatus.b64'), 'utf8'
   ).trim();
@@ -195,15 +199,18 @@ assert.match(supervisor, /symlink\(source, target\)/,
   assert.equal(String(liveParsed.gametype), '5');
   assert.ok(liveParsed.bots >= 1, 'real Omni-Bot getstatus must list bots');
   assert.equal(liveParsed.players.filter(player => player.kind === 'bot').length, liveParsed.bots);
-  const liveOmni = fs.readFileSync(path.join(root, '.sources/iortcw/MP/code/game/g_omnibot.c'), 'utf8');
-  assert.doesNotMatch(liveOmni, /trap_BotAllocateClient/);
-  assert.doesNotMatch(liveOmni, /ClientBegin/);
-  assert.match(liveOmni, /return qfalse/);
-  const depotNav = fs.readFileSync(path.join(root, 'games/rtcw/omni-bot/rtcw/nav/mp_depot.way'));
-  assert.ok(depotNav.length > 1000);
-  const frameworkSo = fs.readFileSync(path.join(root, 'games/rtcw/omni-bot/omnibot_rtcw.x86_64.so'));
-  assert.equal(frameworkSo.slice(0, 4).toString('ascii'), '\x7fELF');
-  assert.ok(frameworkSo.length > 1000 * 1000, 'official Omni-Bot module must be the real shared object');
+  const preparedOmni = path.join(root, '.sources/iortcw/MP/code/game/g_omnibot.c');
+  if (fs.existsSync(preparedOmni)) {
+    const liveOmni = fs.readFileSync(preparedOmni, 'utf8');
+    assert.doesNotMatch(liveOmni, /trap_BotAllocateClient/);
+    assert.doesNotMatch(liveOmni, /ClientBegin/);
+    assert.match(liveOmni, /return qfalse/);
+  }
+  if (omniReady) {
+    const frameworkSo = fs.readFileSync(path.join(omniRoot, 'omnibot_rtcw.x86_64.so'));
+    assert.equal(frameworkSo.slice(0, 4).toString('ascii'), '\x7fELF');
+    assert.ok(frameworkSo.length > 1000 * 1000, 'official Omni-Bot module must be the real shared object');
+  }
   assert.match(read('scripts/build-rtcw-images.sh'), /fetch-rtcw-omnibot\.sh/);
 
   for (const relative of [

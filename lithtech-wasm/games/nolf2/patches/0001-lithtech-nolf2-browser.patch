@@ -1,0 +1,3901 @@
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/BaseScreen.cpp b/NOLF2/ClientShellDLL/ClientShellShared/BaseScreen.cpp
+index 5f93f4d5c9c98694302b96eaa3c639c5b790d6a7..b418bde7769c9422b864ef3aa25744add6a70553 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/BaseScreen.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/BaseScreen.cpp
+@@ -1578,8 +1578,12 @@ void CBaseScreen::OnFocus(LTBOOL bFocus)
+ 		
+ 		ForceMouseUpdate();
+ 		UpdateHelpText();
++#ifdef __LINUX
++		/* 3D menu models/LTB still crash the host. 2D controls only. */
++#else
+ 		m_pScreenMgr->GetTransitionFXMgr()->EnterScreen(m_nScreenID);
+ 		CreateInterfaceSFX();
++#endif
+ 		m_bHaveFocus = LTTRUE;
+ 		m_bVisited = LTTRUE; //set this last
+ 	}
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/CheatMgr.h b/NOLF2/ClientShellDLL/ClientShellShared/CheatMgr.h
+index 3f6bbf75d7808c544afc2f88ed77cc190ec81297..c268034f0134cefd1cac4cf2ea144356bb3654de 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/CheatMgr.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/CheatMgr.h
+@@ -29,7 +29,13 @@ class CCheatMgr
+ 		void	Init();
+ 
+         LTBOOL  Check( CParsedMsg &cMsg );
+-        LTBOOL  Check( const char* pMsg ) { return (pMsg && pMsg[0] ? Check(CParsedMsg(1, (const char * const *)&pMsg)) : LTFALSE); }
++        LTBOOL  Check( const char* pMsg )
++		{
++			if (!pMsg || !pMsg[0]) return LTFALSE;
++			const char *const args[1] = { pMsg };
++			CParsedMsg msg(1, args);
++			return Check(msg);
++		}
+         void	ClearCheater() { m_bPlayerCheated = LTFALSE; }
+         LTBOOL	IsCheater() { return m_bPlayerCheated; }
+ 
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ClientFXDB.cpp b/NOLF2/ClientShellDLL/ClientShellShared/ClientFXDB.cpp
+index b54460ce0e9138b9aebd1772130808a11447894b..4c481026b7082670c1949f8227a5f246e8c69827 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ClientFXDB.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ClientFXDB.cpp
+@@ -149,8 +149,8 @@ bool CClientFXDB::Init(ILTClient* pLTClient)
+ 	
+ 	// Obtain a snapshot of our ClientFX directory
+ 	FileEntry *pFiles = pLTClient->GetFileList("ClientFX");
+-	if( !pFiles ) 
+-		return false;
++	if( !pFiles )
++		return true;
+ 
+ 	FileEntry *pEntry = pFiles;
+ 	while( pEntry )
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ClientMultiplayerMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/ClientMultiplayerMgr.cpp
+index efa9758f336fd97964a85cbbc4cfdce7ccadb35f..e176eb133a68609e9fb589455bc9ba1b89bf923d 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ClientMultiplayerMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ClientMultiplayerMgr.cpp
+@@ -23,6 +23,7 @@
+ #include "ProfileMgr.h"
+ #include "WeaponMgr.h"
+ #include "CRC32.h"
++#include <stdio.h>
+ 
+ #pragma message( "FIXFIX:  Should really be called ClientConnectionMgr." )
+ 
+@@ -1004,6 +1005,8 @@ bool ClientMultiplayerMgr::StartServerAsHost( )
+ 
+ bool ClientMultiplayerMgr::StartServerAsSinglePlayer( )
+ {
++	fprintf(stderr, "ClientMultiplayerMgr::StartServerAsSinglePlayer type=%d\n",
++		(int)m_StartGameRequest.m_Type);
+ 	// Check if we're already connected to a server.
+   	if( g_pLTClient->IsConnected( ))
+ 	{
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.cpp b/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.cpp
+index 0408c754fd4fa924b4fd8df3b1998c6b7e55d98e..f98e8f06fa9c80faeddb4c0dc383bc7f140e798a 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.cpp
+@@ -608,7 +608,7 @@ LTVector GetContouringNormal( LTVector &vPos, LTVector &vDims, LTVector &vForwar
+ //
+ // ----------------------------------------------------------------------- //
+ 
+-void GetContouringInfo( LTVector &vForward, LTVector &vNormal, 
++void GetContouringInfo( const LTVector &vForward, const LTVector &vNormal,
+ 					   float &fOutAmount, float &fOutPitchPercent, float &fOutRollPercent )
+ {
+ 	LTVector	vPlaneF = (vNormal.y >= 1.0f) ? vForward : vNormal;
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.h b/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.h
+index 022a1e3fcaf98837f9cb9c690783d56038d4fd08..5b37825da10a2fb748f71d1c7c951e572a643572 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ClientUtilities.h
+@@ -94,7 +94,7 @@ inline LTBOOL GetAttachmentSocketTransform(HOBJECT hObj, char* pSocketName,
+ }
+ 
+ struct WEAPON;
+-enum PlayerSoundId;
++#include "ClientServerShared.h"
+ 
+ void PlayWeaponSound(WEAPON const *pWeapon, const LTVector &vPos, PlayerSoundId eSoundId,
+ 					 LTBOOL bLocal=LTFALSE);
+@@ -123,6 +123,6 @@ bool GetIntersectionUnderPoint( LTVector &vInPt, HOBJECT *pFilterList, LTVector
+ LTVector GetContouringNormal( LTVector &vPos, LTVector &vDims, LTVector &vForward, LTVector &vRight, HOBJECT *pFilterList );
+ 
+ // Get the pitch amount and percents to apply for pitch and roll based on the forward direction and plane normal.
+-void GetContouringInfo( LTVector &vForward, LTVector &vNormal, float &fOutAmount, float &fOutPitchPercent, float &fOutRollPercent );
++void GetContouringInfo( const LTVector &vForward, const LTVector &vNormal, float &fOutAmount, float &fOutPitchPercent, float &fOutRollPercent );
+ 
+ #endif // __CLIENT_UTILITIES_H__
+\ No newline at end of file
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ClientWeapon.h b/NOLF2/ClientShellDLL/ClientShellShared/ClientWeapon.h
+index 8c210cceddd92b7b2521fa7a6854e8de3b0a8836..c0354c238a1685f7ac7a8f6447c05e75ada1a5cd 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ClientWeapon.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ClientWeapon.h
+@@ -23,7 +23,7 @@
+ 
+ // forward definitions to reduce header dependancies
+ struct CLIENTFX_LINK;
+-enum SurfaceType;
++#include "SurfaceDefs.h"
+ 
+ //
+ // Defines
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ClientWeaponBase.h b/NOLF2/ClientShellDLL/ClientShellShared/ClientWeaponBase.h
+index 7cd90d976f32d8d3c5c467fc6ffb77fd152b4e52..7be1982f6c2365d33aba1a2707939e2089a0f313 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ClientWeaponBase.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ClientWeaponBase.h
+@@ -56,7 +56,7 @@ public:
+ 	// This pure virtual destructor maintains this class
+ 	// as an abstract class.  It should not be instantiated,
+ 	// but all public functions can have default behaviours.
+-	virtual       ~IClientWeaponBase() = 0 {}
++	virtual       ~IClientWeaponBase() {}
+ 	IClientWeaponBase() {}
+ 
+ 	// handle messages
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.cpp
+index 7d77e07e72cfc3cd073d3e6e6b8f5f57ede4f940..4e91379ed9ffd52794208a1c2a01cc8156f6d56a 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.cpp
+@@ -419,7 +419,7 @@ bool CDamageFXMgr::IsFOVAffected()
+ //
+ // ----------------------------------------------------------------------- //
+ 
+-void CDamageFXMgr::SetDamageFXTintColor( LTVector &vCol, bool bForce )
++void CDamageFXMgr::SetDamageFXTintColor( const LTVector &vCol, bool bForce )
+ {
+ 	if( m_bTintColorChanged )
+ 	{
+@@ -445,7 +445,7 @@ void CDamageFXMgr::SetDamageFXTintColor( LTVector &vCol, bool bForce )
+ //
+ // ----------------------------------------------------------------------- //
+ 
+-void CDamageFXMgr::SetDamageFXLightScale( LTVector &vCol, bool bForce )
++void CDamageFXMgr::SetDamageFXLightScale( const LTVector &vCol, bool bForce )
+ {
+ 	//if the color is just bright white, don't set it
+ 	if(vCol.NearlyEquals(LTVector(1.0f, 1.0f, 1.0f), 0.01f))
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.h b/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.h
+index 28330ea78c5f723b8f7c6e56cf10014f1d1202ea..6f7ca96fb8bc7fc2be7bac6d02716402a51491b5 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/DamageFXMgr.h
+@@ -188,8 +188,8 @@ class CDamageFXMgr : public CGameButeMgr
+ 		bool		AllowWeapons( ) const { return ( m_nDisableWeaponCounts == 0 ); }
+ 		bool		IsFOVAffected();
+ 
+-		void		SetDamageFXTintColor( LTVector &vCol, bool bForce );
+-		void		SetDamageFXLightScale( LTVector &vCol, bool bForce );
++		void		SetDamageFXTintColor( const LTVector &vCol, bool bForce );
++		void		SetDamageFXLightScale( const LTVector &vCol, bool bForce );
+ 		void		SetDamageFXMovementAndInput( bool bMove, bool bInput, bool bAlloWeapons );
+ 		
+ 		void		Update();
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/DoomsdayPieceFX.h b/NOLF2/ClientShellDLL/ClientShellShared/DoomsdayPieceFX.h
+index 321fb9df540172e00cd211041220ab07ca0d971f..5752f6b31759befcc01bb2a1631a094eed924c84 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/DoomsdayPieceFX.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/DoomsdayPieceFX.h
+@@ -12,6 +12,7 @@
+ #define __DOOMSDAYPIECE_FX_H__
+ 
+ #include "SpecialFX.h"
++#include "TeamMgr.h"
+ 
+ struct DOOMSDAYPIECECREATESTRUCT : public SFXCREATESTRUCT
+ {
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/FullScreenTint.cpp b/NOLF2/ClientShellDLL/ClientShellShared/FullScreenTint.cpp
+index 7c767d78a6b7b0a2e2372a88cd1c20912fd38997..5ca49c241b700da78edda75893814bda05dee80b 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/FullScreenTint.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/FullScreenTint.cpp
+@@ -12,6 +12,7 @@
+ 
+ #include "stdafx.h"
+ #include "FullScreenTint.h"
++#include "InterfaceMgr.h"
+ 
+ // ----------------------------------------------------------------------- //
+ //
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/GadgetDisabler.cpp b/NOLF2/ClientShellDLL/ClientShellShared/GadgetDisabler.cpp
+index c5cac337fdfe1780b3a9702468815660c65e785b..24076aed18636cdbc663b4c2a6b08ec0272d56c8 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/GadgetDisabler.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/GadgetDisabler.cpp
+@@ -24,6 +24,7 @@
+ 	#include "InterfaceMgr.h"
+ 	#include "PopupMgr.h"
+ 	#include "TargetMgr.h"
++	#include "GameClientShell.h"
+ 	
+ extern VarTrack g_vtProgressBarScaleToSkills;
+ 
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/GadgetTargetFX.h b/NOLF2/ClientShellDLL/ClientShellShared/GadgetTargetFX.h
+index 6eea1818db59a0ded9a0941d6a7775670a2518ff..d8e38df8563cc95a66f6dfa8e6d52a88202ba367 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/GadgetTargetFX.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/GadgetTargetFX.h
+@@ -13,6 +13,7 @@
+ 
+ #include "SpecialFX.h"
+ #include "GadgetTargetTypes.h"
++#include "TeamMgr.h"
+ 
+ struct GADGETTARGETCREATESTRUCT : public SFXCREATESTRUCT
+ {
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/GameClientShell.cpp b/NOLF2/ClientShellDLL/ClientShellShared/GameClientShell.cpp
+index a7038a12314b59af099fcbf260b5571102a2f67d..252fae8ffd239d9bf052fe7014982ab59e4b6ddd 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/GameClientShell.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/GameClientShell.cpp
+@@ -1256,7 +1256,11 @@ uint32 CGameClientShell::OnEngineInitialized(RMode *pMode, LTGUID *pAppGuid)
+ 	}
+ 	else
+ 	{
++#ifdef __LINUX
++		GetInterfaceMgr( )->SwitchToScreen(SCREEN_ID_MAIN);
++#else
+ 		GetInterfaceMgr( )->ChangeState(GS_SPLASHSCREEN);
++#endif
+ 	}
+ 
+ #ifdef _TO2DEMO
+@@ -5025,4 +5029,52 @@ void CGameClientShell::SetGameType(GameType eGameType)
+ 		
+ 	}
+ 	m_eGameType = eGameType;
+-}
+\ No newline at end of file
++}
++
++#ifdef __LINUX
++#include "MissionMgr.h"
++
++extern "C" {
++
++void lithtech_OnMouseMove(int x, int y)
++{
++	if (g_pInterfaceMgr)
++		g_pInterfaceMgr->OnMouseMove(x, y);
++}
++
++void lithtech_OnLButtonDown(int x, int y)
++{
++	fprintf(stderr, "lithtech mouse down %d,%d\n", x, y);
++	if (g_pInterfaceMgr)
++		g_pInterfaceMgr->OnLButtonDown(x, y);
++}
++
++void lithtech_OnLButtonUp(int x, int y)
++{
++	fprintf(stderr, "lithtech mouse up %d,%d\n", x, y);
++	if (g_pInterfaceMgr)
++		g_pInterfaceMgr->OnLButtonUp(x, y);
++}
++
++void lithtech_OnRButtonDown(int x, int y)
++{
++	if (g_pInterfaceMgr)
++		g_pInterfaceMgr->OnRButtonDown(x, y);
++}
++
++void lithtech_OnRButtonUp(int x, int y)
++{
++	if (g_pInterfaceMgr)
++		g_pInterfaceMgr->OnRButtonUp(x, y);
++}
++
++int lithtech_AutoStartGame(void)
++{
++	if (!g_pMissionMgr || !g_pInterfaceMgr)
++		return 0;
++	fprintf(stderr, "lithtech_AutoStartGame: StartGameNew\n");
++	return g_pMissionMgr->StartGameNew() ? 1 : 0;
++}
++
++}
++#endif
+\ No newline at end of file
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/GameSettings.cpp b/NOLF2/ClientShellDLL/ClientShellShared/GameSettings.cpp
+index 7125fb329755f07aec1b6986ad1c6e9fbc19c70e..92f8ffbd0dfba901bd1b916b4bcc74055d7ff109 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/GameSettings.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/GameSettings.cpp
+@@ -172,13 +172,13 @@ void CGameSettings::ImplementMouseSensitivity()
+ 		{
+ 			if (ptr->m_ObjectType == CONTROLTYPE_XAXIS)
+ 			{
+-				SAFE_STRCPY(strXAxis, "##x-axis");
++				SAFE_STRCPY(strXAxis, "x-axis");
+                 bFoundXAxis = LTTRUE;
+ 			}
+ 
+ 			if (ptr->m_ObjectType == CONTROLTYPE_YAXIS)
+ 			{
+-				SAFE_STRCPY(strYAxis, "##y-axis");
++				SAFE_STRCPY(strYAxis, "y-axis");
+                 bFoundYAxis = LTTRUE;
+ 			}
+ 
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/GlobalClientMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/GlobalClientMgr.cpp
+index f698ac3c96bda649d0006910ff8d073380a7d32c..2a3e8a252fa1ec375cc4c30e2e82bb389480fd2f 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/GlobalClientMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/GlobalClientMgr.cpp
+@@ -20,6 +20,7 @@
+ #include "RadarTypeMgr.h"
+ #include "ActivateTypeMgr.h"
+ #include "TriggerTypeMgr.h"
++#include "GameClientShell.h"
+ 
+ // ----------------------------------------------------------------------- //
+ //
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/HitBox.cpp b/NOLF2/ClientShellDLL/ClientShellShared/HitBox.cpp
+index 91510ac1acfa90ccbcfc8975c31af758d8ef9258..c473fc4c1232cc9c50edead9b2cedf9595d9bd14 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/HitBox.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/HitBox.cpp
+@@ -16,6 +16,7 @@
+ 
+ 	#include "stdafx.h"
+ 	#include "HitBox.h"
++	#include "VarTrack.h"
+ 
+ //
+ // Defines...
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/InterfaceMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/InterfaceMgr.cpp
+index 88b05295c76f0041c14f35adb7f91261b9ee0abb..90620e61d9a362db47538abb9884437ab1336e2d 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/InterfaceMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/InterfaceMgr.cpp
+@@ -47,7 +47,7 @@ CInterfaceMgr*  g_pInterfaceMgr = LTNULL;
+ #define MAX_INTERFACE_LIGHTS	5
+ #define INVALID_ANI			((HMODELANIM)-1)
+ 
+-static enum MovieOrderEnum 
++enum MovieOrderEnum
+ {
+ 	eSierra,
+ 	eFox,
+@@ -928,10 +928,14 @@ LTBOOL CInterfaceMgr::Update()
+ 			g_pLTClient->EndOptimized2D();
+ 			g_pLTClient->End3D(END3D_CANDRAWCONSOLE);
+ 		}
++#ifndef __LINUX
+ 		m_CursorMgr.Update();
++#endif
+ 	}
+ 
++#ifndef __LINUX
+ 	m_ScreenSpriteMgr.Update();
++#endif
+ 
+ 	return bHandled;
+ }
+@@ -977,6 +981,30 @@ void CInterfaceMgr::UpdateScreenState()
+ 	WriteConsoleInt("FogEnable", 0);
+ 
+ 
++#ifdef __LINUX
++	g_pLTClient->Start3D();
++	g_pLTClient->StartOptimized2D();
++	{
++		static HSURFACE hMenuBack = LTNULL;
++		if (!hMenuBack)
++			hMenuBack = g_pLTClient->CreateSurfaceFromBitmap("Interface\\Menu\\Art\\splash.pcx");
++		if (hMenuBack) {
++			uint32 dw = 640, dh = 480, sw = 0, sh = 0;
++			HSURFACE hScreen = g_pLTClient->GetScreenSurface();
++			g_pLTClient->GetSurfaceDims(hScreen, &dw, &dh);
++			g_pLTClient->GetSurfaceDims(hMenuBack, &sw, &sh);
++			LTRect dst, src;
++			dst.Init(0, 0, (int)dw, (int)dh);
++			src.Init(0, 0, (int)sw, (int)sh);
++			g_pLTClient->ScaleSurfaceToSurface(hScreen, hMenuBack, &dst, &src);
++		}
++	}
++	m_InterfaceResMgr.DrawScreen();
++	/* Preload uses UpdateInterfaceSFX() to call FinishStartGame(). */
++	GetScreenMgr( )->UpdateInterfaceSFX();
++	g_pLTClient->EndOptimized2D();
++	g_pLTClient->End3D(END3D_CANDRAWCONSOLE);
++#else
+ 	if (!GetScreenMgr( )->UpdateInterfaceSFX())
+ 		m_bSuppressNextFlip = true;
+ 	else
+@@ -991,6 +1019,7 @@ void CInterfaceMgr::UpdateScreenState()
+ 		g_pLTClient->EndOptimized2D();
+ 		g_pLTClient->End3D(END3D_CANDRAWCONSOLE);
+ 	}
++#endif
+ }
+ 
+ // ----------------------------------------------------------------------- //
+@@ -1309,6 +1338,10 @@ void CInterfaceMgr::UpdateSplashScreenState()
+ 
+ void CInterfaceMgr::EndSplashScreen()
+ {
++#ifdef __LINUX
++	SwitchToScreen(SCREEN_ID_MAIN);
++	return;
++#endif
+ 	// If the user didn't start a join from the command line, proceed
+ 	// like normal to the movies.
+ 	if( !GetCommandLineJoin( ))
+@@ -3229,8 +3262,9 @@ LTBOOL CInterfaceMgr::PreScreenState(GameState eCurState)
+ 	g_pGameClientShell->GetLightScaleMgr()->Disable();
+ 	g_pGameClientShell->GetScreenTintMgr()->ClearAll();
+ 
+-
++#ifndef __LINUX
+ 	CreateInterfaceBackground();
++#endif
+ 
+     SetHUDRenderLevel(kHUDRenderNone);
+ 	ClearScreenAlways();
+@@ -3253,14 +3287,18 @@ LTBOOL CInterfaceMgr::PreScreenState(GameState eCurState)
+ 	}
+ 	else
+ 	{
++#ifdef __LINUX
++		AbortScreenFade();
++#else
+ 		ForceScreenFadeIn(g_vtScreenFadeInTime.GetFloat());
++#endif
+ 	}
+ 
+ 	m_bEnteredScreenState = true;
+ 	
+-	// Initialize the music...
+-
++#ifndef __LINUX
+ 	SetupMusic();
++#endif
+ 
+     return LTTRUE;
+ }
+@@ -3279,7 +3317,9 @@ LTBOOL CInterfaceMgr::PostScreenState(GameState eNewState)
+ {
+     if (eNewState == GS_SCREEN) return LTFALSE;
+ 
++	fprintf(stderr, "PostScreenState: leaving GS_SCREEN -> %d\n", (int)eNewState);
+ 	GetScreenMgr( )->ExitScreens();
++	fprintf(stderr, "PostScreenState: ExitScreens done\n");
+ 
+ 	if (eNewState != GS_LOADINGLEVEL && eNewState != GS_DEMOSCREEN)
+ 	{
+@@ -3291,8 +3331,11 @@ LTBOOL CInterfaceMgr::PostScreenState(GameState eNewState)
+     ClearScreenAlways(LTFALSE);
+ 	AddToClearScreenCount();
+ 
+-
++#ifdef __LINUX
++	fprintf(stderr, "PostScreenState: skip RemoveAllInterfaceSFX\n");
++#else
+ 	RemoveAllInterfaceSFX();
++#endif
+ 
+ 	//see what state we need to restore the HUD into (in case we go into the menus
+ 	//while we are dead)
+@@ -3319,6 +3362,7 @@ LTBOOL CInterfaceMgr::PostScreenState(GameState eNewState)
+ 	// Match the pause from PreScreeState...
+ 
+     g_pGameClientShell->PauseGame( LTFALSE );
++	fprintf(stderr, "PostScreenState: done\n");
+ 
+     return LTTRUE;
+ }
+@@ -3572,6 +3616,14 @@ LTBOOL CInterfaceMgr::PreLoadingLevelState(GameState eCurState)
+ {
+     if (eCurState == GS_LOADINGLEVEL) return LTFALSE;
+ 
++	fprintf(stderr, "PreLoadingLevelState from %d\n", (int)eCurState);
++
++#ifdef __LINUX
++	/* Loading screen thread + 3D FX + sound volume still crash the host. */
++	m_bUseInterfaceCamera = LTTRUE;
++	fprintf(stderr, "PreLoadingLevelState: linux skip LoadingScreen/sound\n");
++	return LTTRUE;
++#else
+ 	// Disable light scaling when not in the playing state...
+ 	g_pGameClientShell->GetLightScaleMgr()->ClearAllLightScales();
+ 
+@@ -3594,6 +3646,7 @@ LTBOOL CInterfaceMgr::PreLoadingLevelState(GameState eCurState)
+ 	((ILTClientSoundMgr*)g_pLTClient->SoundMgr())->SetVolume(0);
+ 
+     return LTTRUE;
++#endif
+ }
+ 
+ // ----------------------------------------------------------------------- //
+@@ -3697,7 +3750,11 @@ LTBOOL CInterfaceMgr::PreSplashScreenState(GameState eCurState)
+ 
+ 	// Create the splash screen...
+     g_hSplash = g_pLTClient->CreateSurfaceFromBitmap(IM_SPLASH_SCREEN);
+-    if (!g_hSplash) return LTFALSE;
++    if (!g_hSplash) {
++		fprintf(stderr, "PreSplashScreenState: failed to load %s\n", IM_SPLASH_SCREEN);
++		return LTFALSE;
++	}
++	fprintf(stderr, "PreSplashScreenState: loaded splash %s\n", IM_SPLASH_SCREEN);
+ 
+     g_pLTClient->ClearScreen(LTNULL, CLEARSCREEN_SCREEN | CLEARSCREEN_RENDER, 0 );
+ 
+@@ -3984,7 +4041,11 @@ LTBOOL CInterfaceMgr::ChangeState(GameState eNewState)
+ 		m_eGameState = eNewState;
+ 
+ 		// Since the state changed, update the cursor
++#ifdef __LINUX
++		fprintf(stderr, "ChangeState: now %d (skip cursor)\n", (int)eNewState);
++#else
+ 		UpdateCursorState();
++#endif
+ 
+ //	    g_pLTClient->ClearInput();
+ 		m_eLastGameState = eCurState;
+@@ -5579,6 +5640,11 @@ void CInterfaceMgr::UpdateInterfaceSFX()
+ /******************************************************************/
+ void CInterfaceMgr::RequestInterfaceSound(InterfaceSound eIS)
+ {
++#ifdef __LINUX
++	/* Menu UI sounds still trip the 32-bit sample userdata crash. */
++	(void)eIS;
++	return;
++#endif
+ 	if (m_eNextSound <= eIS)
+ 	{
+ //		ClearInterfaceSound();
+@@ -5650,7 +5716,10 @@ HLTSOUND CInterfaceMgr::UpdateInterfaceSound()
+ void CInterfaceMgr::NextMovie(bool bEndMovies /*=false*/)
+ {
+ 	ILTVideoMgr* pVideoMgr = g_pLTClient->VideoMgr();
+-	if (!pVideoMgr) return;
++	if (!pVideoMgr) {
++		SwitchToScreen(SCREEN_ID_MAIN);
++		return;
++	}
+ 
+ 	if (!(GetAdvancedOptions() & AO_MOVIES) || g_vtDisableMovies.GetFloat())
+ 	{
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/MissionMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/MissionMgr.cpp
+index 8c47fe525805a99a3de8a270be1f381b4d63deae..c272272d8367ecab526be29871e8f7315960474c 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/MissionMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/MissionMgr.cpp
+@@ -22,6 +22,7 @@
+ #include "ClientMultiplayerMgr.h"
+ #include "ProfileMgr.h"
+ #include "ScreenPreload.h"
++#include <stdio.h>
+ 
+ extern VarTrack g_vtScreenFadeInTime;
+ 
+@@ -108,6 +109,7 @@ void CMissionMgr::Term()
+ // ----------------------------------------------------------------------- //
+ bool CMissionMgr::StartGameNew( )
+ {
++	fprintf(stderr, "MissionMgr::StartGameNew\n");
+ 	// Default to use the first mission.
+ 	int nFirstMission = 0;
+ 
+@@ -133,7 +135,11 @@ bool CMissionMgr::StartGameNew( )
+ 	// Get the level name for the first mission/level.
+ 	char const* pszLevelFilename = GetLevelFromMission( nFirstMission, 0 );
+ 	if( !pszLevelFilename )
++	{
++		fprintf(stderr, "MissionMgr::StartGameNew: no level for mission %d\n", nFirstMission);
+ 		return false;
++	}
++	fprintf(stderr, "MissionMgr::StartGameNew level='%s'\n", pszLevelFilename);
+ 
+ 	// Start from the first level.
+ 	if( !StartGameFromLevel( pszLevelFilename ))
+@@ -209,10 +215,13 @@ bool CMissionMgr::StartPerformanceLevel()
+ bool CMissionMgr::FinishStartGameFromLevel()
+ {
+ 	m_eStartGameState = eStartGameStarted;
++	fprintf(stderr, "MissionMgr::FinishStartGameFromLevel world='%s'\n",
++		GetCurrentWorldName() ? GetCurrentWorldName() : "(null)");
+ 
+ 	// Make sure we have a server started.
+ 	if( !g_pClientMultiplayerMgr->StartClientServer( ))
+ 	{
++		fprintf(stderr, "MissionMgr: StartClientServer failed\n");
+ 		g_pInterfaceMgr->LoadFailed( );
+ 		return false;
+ 	}
+@@ -750,12 +759,21 @@ bool CMissionMgr::FinishExitLevel( )
+ 
+ bool CMissionMgr::FinishStartGame( )
+ {
+-	g_pInterfaceMgr->ChangeState(GS_LOADINGLEVEL);
+-	
+-	g_pChatMsgs->ClearHistory();
+-	g_pRewardMsgs->ClearHistory();
+-	g_pPickupMsgs->ClearHistory();
+-	g_pTransmission->Hide();
++	fprintf(stderr, "MissionMgr::FinishStartGame state=%d world='%s'\n",
++		(int)m_eStartGameState, GetCurrentWorldName() ? GetCurrentWorldName() : "(null)");
++	if (!g_pInterfaceMgr->ChangeState(GS_LOADINGLEVEL))
++	{
++		fprintf(stderr, "MissionMgr::FinishStartGame: ChangeState(GS_LOADINGLEVEL) failed\n");
++		g_pInterfaceMgr->LoadFailed( );
++		return false;
++	}
++	fprintf(stderr, "MissionMgr::FinishStartGame: now GS_LOADINGLEVEL\n");
++
++	if (g_pChatMsgs) g_pChatMsgs->ClearHistory();
++	if (g_pRewardMsgs) g_pRewardMsgs->ClearHistory();
++	if (g_pPickupMsgs) g_pPickupMsgs->ClearHistory();
++	if (g_pTransmission) g_pTransmission->Hide();
++	fprintf(stderr, "MissionMgr::FinishStartGame: hud cleared, starting server\n");
+ 	
+ 	switch (m_eStartGameState)
+ 	{
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/PlayerCamera.cpp b/NOLF2/ClientShellDLL/ClientShellShared/PlayerCamera.cpp
+index dd8275ee5218d153658031e35970cf87cf8f4eee..9b195b4fdc87d8a5c973fe3046c07cc822a94f84 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/PlayerCamera.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/PlayerCamera.cpp
+@@ -838,6 +838,11 @@ void CPlayerCamera::GoFirstPerson()
+ 
+ bool CPlayerCamera::CreateCameraCollisionObject()
+ {
++#ifdef __LINUX
++	// LTB load is still LP64-unsafe; splash/menu do not need the clip dummy.
++	m_hCollisionObject = LTNULL;
++	return true;
++#endif
+ 	if( !g_pLTClient )
+ 		return false;
+ 
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/PolygridBuffer.h b/NOLF2/ClientShellDLL/ClientShellShared/PolygridBuffer.h
+index f7bbe17a4ae36af0ce6415c8ec710ce666506d76..298ce57087762e19605ac1667afa94dd32764e52 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/PolygridBuffer.h
++++ b/NOLF2/ClientShellDLL/ClientShellShared/PolygridBuffer.h
+@@ -26,7 +26,7 @@ public:
+ 	}
+ 
+ 	//copy constructor
+-	CPolyGridBuffer(const CPolyGridBuffer<typename T>& rhs) :
++	CPolyGridBuffer(const CPolyGridBuffer<T>& rhs) :
+ 		m_pData(NULL), m_nWidth(0), m_nHeight(0), m_bOwnBuffer(false)
+ 	{
+ 		*this = rhs;
+@@ -85,7 +85,7 @@ public:
+ 	}
+ 
+ 	//assignement operator
+-	CPolyGridBuffer<typename T>& operator=(const CPolyGridBuffer<typename T>& rhs)
++	CPolyGridBuffer<T>& operator=(const CPolyGridBuffer<T>& rhs)
+ 	{
+ 		if(Resize(rhs.GetWidth(), rhs.GetHeight()))
+ 		{
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ProfileMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/ProfileMgr.cpp
+index 81d281df6943a93b504bb4276f1a3d0b97cc3b79..3378749b60f1cfeace45ac3dda1cee47d5d73281 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ProfileMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ProfileMgr.cpp
+@@ -293,6 +293,28 @@ static bool CreatePlayerGuid( char* pszPlayerGuid, int nSize )
+ 	return true;
+ }
+ 
++#ifdef __LINUX
++static bool ParseButeFromRez(CButeMgr &bute, const char *pszPath)
++{
++	if (!g_pLTClient || !pszPath || !pszPath[0])
++		return false;
++	ILTStream *pStream = LTNULL;
++	if (g_pLTClient->OpenFile((char *)pszPath, &pStream) != LT_OK || !pStream)
++		return false;
++	unsigned long uLen = pStream->GetLen();
++	if (!uLen) {
++		pStream->Release();
++		return false;
++	}
++	char *pData = new char[uLen];
++	pStream->Read(pData, uLen);
++	pStream->Release();
++	bool bOk = bute.Parse(pData, uLen);
++	delete[] pData;
++	return bOk;
++}
++#endif
++
+ LTBOOL CUserProfile::Init(const std::string& profileName, LTBOOL bCreate)
+ {
+ 	std::string fn = GetProfileFile( profileName.c_str( ));
+@@ -317,6 +339,13 @@ LTBOOL CUserProfile::Init(const std::string& profileName, LTBOOL bCreate)
+ 		bRet = m_buteMgr.Parse(fn.c_str());
+ 	}
+ 
++#ifdef __LINUX
++	if (!bRet)
++		bRet = ParseButeFromRez(m_buteMgr, fn.c_str()) ? LTTRUE : LTFALSE;
++	fprintf(stderr, "CUserProfile::Init name='%s' create=%d fn='%s' disk/rez=%d\n",
++		profileName.c_str(), (int)bCreate, fn.c_str(), (int)bRet);
++#endif
++
+ 	// Handle case where we had a previous profile file.
+ 	if (bRet)
+ 	{
+@@ -344,6 +373,17 @@ LTBOOL CUserProfile::Init(const std::string& profileName, LTBOOL bCreate)
+ 			bRet = m_buteMgr.Parse(dfn.c_str());
+ 		}
+ 
++#ifdef __LINUX
++		if (!bRet)
++			bRet = ParseButeFromRez(m_buteMgr, dfn.c_str()) ? LTTRUE : LTFALSE;
++		// No shipped default.prf in the retail rez trees; start from an empty bute.
++		if (!bRet) {
++			static const char kEmptyPrf[] = "[Version]\nVersionNumber = 0\n";
++			bRet = m_buteMgr.Parse((void *)kEmptyPrf, (unsigned long)sizeof(kEmptyPrf) - 1) ? LTTRUE : LTFALSE;
++			fprintf(stderr, "CUserProfile::Init empty default.prf parse=%d\n", (int)bRet);
++		}
++#endif
++
+ 		if (!bRet) 
+ 			return LTFALSE;
+ 	}
+@@ -866,8 +906,8 @@ void CUserProfile::ApplyBindings()
+ 					LoadString(pWheelDown->nAction,downStr,sizeof(downStr));
+ 				}
+ 
+-				g_pLTClient->AddBinding(strDeviceName[d],"##z-axis",upStr,0.10f,255.0f);
+-				g_pLTClient->AddBinding(strDeviceName[d],"##z-axis",downStr,-0.10f,-255.0f);
++				g_pLTClient->AddBinding(strDeviceName[d],"z-axis",upStr,0.10f,255.0f);
++				g_pLTClient->AddBinding(strDeviceName[d],"z-axis",downStr,-0.10f,-255.0f);
+ 			}
+ 
+ 		}
+@@ -1535,6 +1575,10 @@ LTBOOL CProfileMgr::Init()
+ 
+ 
+ 	LoadString(IDS_PLAYER,szDefProfileName,sizeof(szDefProfileName));
++#ifdef __LINUX
++	if (!szDefProfileName[0])
++		LTStrCpy(szDefProfileName, "Player", sizeof(szDefProfileName));
++#endif
+ 
+ 
+ 
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ScreenMgr.cpp b/NOLF2/ClientShellDLL/ClientShellShared/ScreenMgr.cpp
+index d464ff05abaeca638262d8c79c25ac8bafcffe5b..543cbf62e7da2ae6beecad69dd29cc891fc86fcc 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ScreenMgr.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ScreenMgr.cpp
+@@ -18,6 +18,7 @@
+ //screens
+ #include "BaseScreen.h"
+ #include "GameClientShell.h"
++#include <stdio.h>
+ extern CGameClientShell* g_pGameClientShell;
+ 
+ 
+@@ -223,6 +224,7 @@ void CScreenMgr::SwitchToScreen(CBaseScreen *pNewScreen)
+ 	m_eLastScreenID = m_eCurrentScreenID;
+ 
+ 	m_eCurrentScreenID = (eScreenID)m_pCurrentScreen->GetScreenID();
++	fprintf(stderr, "ScreenMgr: switch to screen %d\n", (int)m_eCurrentScreenID);
+ 
+ 	// If the new screen hasn't been built yet... better build it!
+ 	if (!m_pCurrentScreen->IsBuilt())
+diff --git a/NOLF2/ClientShellDLL/ClientShellShared/ScreenPreload.cpp b/NOLF2/ClientShellDLL/ClientShellShared/ScreenPreload.cpp
+index dbe1f467ab7546028e9ec1317661ef82baaebf41..bce9e42741001e400af321a262c2d0a6ae183445 100644
+--- a/NOLF2/ClientShellDLL/ClientShellShared/ScreenPreload.cpp
++++ b/NOLF2/ClientShellDLL/ClientShellShared/ScreenPreload.cpp
+@@ -18,6 +18,7 @@
+ #include "ClientMultiplayerMgr.h"
+ #include "MissionMgr.h"
+ #include "iserverdir.h"
++#include <stdio.h>
+ 
+ extern bool g_bLAN;
+ 
+@@ -73,6 +74,25 @@ void CScreenPreload::Escape()
+ 
+ bool CScreenPreload::UpdateInterfaceSFX()
+ {
++#ifdef __LINUX
++	/* 3D preload FX / LTB still crash. Jump straight into the start-game path. */
++	fprintf(stderr, "ScreenPreload: linux skip FX FinishStartGame waiting=%d\n",
++		(int)m_bWaitingToExit);
++	bool bOk = true;
++	if (m_bWaitingToExit)
++		bOk = g_pMissionMgr->FinishExitLevel( );
++	else
++		bOk = g_pMissionMgr->FinishStartGame( );
++	if (!bOk)
++	{
++		fprintf(stderr, "ScreenPreload: FinishStartGame/Exit failed\n");
++		if (IsMultiplayerGame())
++			g_pInterfaceMgr->ConnectionFailed(g_pClientMultiplayerMgr->GetLastConnectionResult());
++		else
++			g_pInterfaceMgr->LoadFailed();
++	}
++	return false;
++#endif
+ 	if( m_bFirstUpdate )
+ 	{
+ 		m_bFirstUpdate = false;
+diff --git a/NOLF2/ClientShellDLL/TO2/ScreenFailure.cpp b/NOLF2/ClientShellDLL/TO2/ScreenFailure.cpp
+index 3e5c35eae387d67f201565735fb55e61450359c4..c02cb3b58603a14e63c6cea753187cf448d95863 100644
+--- a/NOLF2/ClientShellDLL/TO2/ScreenFailure.cpp
++++ b/NOLF2/ClientShellDLL/TO2/ScreenFailure.cpp
+@@ -51,7 +51,7 @@ CScreenFailure::~CScreenFailure()
+ // Build the screen
+ LTBOOL CScreenFailure::Build()
+ {
+-	CreateTitle(NULL);
++	CreateTitle(static_cast<char*>(0));
+ 
+ 	if (g_pLayoutMgr->HasCustomValue(SCREEN_ID_FAILURE,"FailStringRect"))
+ 	{
+diff --git a/NOLF2/ClientShellDLL/TO2/ScreenMain.cpp b/NOLF2/ClientShellDLL/TO2/ScreenMain.cpp
+index 0789eaf4e55848ceb22a7103a51721117031d212..ba0b1d24676c6e397cbe4ecdc1f0e355408547b0 100644
+--- a/NOLF2/ClientShellDLL/TO2/ScreenMain.cpp
++++ b/NOLF2/ClientShellDLL/TO2/ScreenMain.cpp
+@@ -23,6 +23,7 @@
+ #include "ClientMultiplayerMgr.h"
+ #include "ResShared.h"
+ #include "ScreenMulti.h"
++#include <stdio.h>
+ 
+ namespace
+ {
+@@ -208,6 +209,7 @@ uint32 CScreenMain::OnCommand(uint32 dwCommand, uint32 dwParam1, uint32 dwParam2
+ 	{
+ 	case CMD_SINGLE_PLAYER:
+ 		{
++			fprintf(stderr, "ScreenMain: Single player -> SCREEN_ID_SINGLE\n");
+ 			m_pScreenMgr->SetCurrentScreen(SCREEN_ID_SINGLE);
+ 			break;
+ 		}
+diff --git a/NOLF2/ClientShellDLL/TO2/ScreenSingle.cpp b/NOLF2/ClientShellDLL/TO2/ScreenSingle.cpp
+index 35e48f8d9f05ced264ffc059e840958a5710e96a..a387b593176c77910fa8387163982531d449aee2 100644
+--- a/NOLF2/ClientShellDLL/TO2/ScreenSingle.cpp
++++ b/NOLF2/ClientShellDLL/TO2/ScreenSingle.cpp
+@@ -20,6 +20,7 @@
+ #include "ClientButeMgr.h"
+ #include "ClientMultiplayerMgr.h"
+ #include "clientres.h"
++#include <stdio.h>
+ 
+ 
+ #ifdef _FINAL
+@@ -239,6 +240,7 @@ uint32 CScreenSingle::OnCommand(uint32 dwCommand, uint32 dwParam1, uint32 dwPara
+ 		}
+ 	case CMD_NEW_GAME:
+ 		{
++			fprintf(stderr, "ScreenSingle: New Game (pick difficulty)\n");
+ 
+ #ifndef _REMOVE_CUSTOM_LEVELS
+ 			m_pCustom->Show(LTFALSE);
+@@ -282,24 +284,28 @@ uint32 CScreenSingle::OnCommand(uint32 dwCommand, uint32 dwParam1, uint32 dwPara
+ 
+ 	case CMD_EASY:
+ 		{
++			fprintf(stderr, "ScreenSingle: New game Easy\n");
+ 			g_pGameClientShell->SetDifficulty(GD_EASY);
+ 			g_pMissionMgr->StartGameNew( );
+ 			break;
+ 		}
+ 	case CMD_MEDIUM:
+ 		{
++			fprintf(stderr, "ScreenSingle: New game Medium\n");
+ 			g_pGameClientShell->SetDifficulty(GD_NORMAL);
+ 			g_pMissionMgr->StartGameNew( );
+ 			break;
+ 		}
+ 	case CMD_HARD:
+ 		{
++			fprintf(stderr, "ScreenSingle: New game Hard\n");
+ 			g_pGameClientShell->SetDifficulty(GD_HARD);
+ 			g_pMissionMgr->StartGameNew( );
+ 			break;
+ 		}
+ 	case CMD_INSANE:
+ 		{
++			fprintf(stderr, "ScreenSingle: New game Insane\n");
+ 			g_pGameClientShell->SetDifficulty(GD_VERYHARD);
+ 			g_pMissionMgr->StartGameNew( );
+ 			break;
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AI.cpp b/NOLF2/ObjectDLL/ObjectShared/AI.cpp
+index 41b3dba0924fcccbd9b79888fa4c1b263d70ffd9..37cd5d67104f010cdce34e4e1cb9754cc38055a4 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AI.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/AI.cpp
+@@ -5928,6 +5928,12 @@ void CAI::SetAITemplate(const char* pszName )
+ 	AIASSERT( m_pAITemplate == NULL, m_hObject, "AITemplate already set." );
+ 	AIASSERT( pszName != NULL, m_hObject, "Setting AITemplate to NULL template." );
+ 
++	if (!g_pAIButeMgr)
++	{
++		fprintf(stderr, "CAI::SetAITemplate: g_pAIButeMgr is NULL (name='%s')\n",
++			pszName ? pszName : "(null)");
++		return;
++	}
+ 	int nTemplate = g_pAIButeMgr->GetTemplateIDByName( pszName );
+ 	AIASSERT( nTemplate >= 0 && nTemplate < g_pAIButeMgr->GetNumTemplates(), m_hObject, "Template out of bounds" );
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AI.h b/NOLF2/ObjectDLL/ObjectShared/AI.h
+index 6f5bf4e2acc318a7c1e9d811325f9e890572eefe..1645243661e8e8817ae955029882f5f0124a887c 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AI.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AI.h
+@@ -28,9 +28,9 @@ class CAttachmentsPlugin;
+ 
+ struct CHARCREATESTRUCT;
+ 
+-enum  EnumAIStateType;
+-enum  EnumTrackedNodeGroup;
+-enum  EnumAnimProp;
++enum EnumAIStateType : int;
++enum EnumTrackedNodeGroup : int;
++enum EnumAnimProp : int;
+ 
+ struct DroppedWeapon
+ {
+@@ -55,8 +55,7 @@ enum EnumAIAwareness
+ 	kAware_Alert,		// AIVolume SenseMasks disabled, wide FOV, searches. 
+ };
+ 
+-enum EnumAIWeaponType
+-{
++enum EnumAIWeaponType : int {
+ 	kAIWeap_Invalid = 0,
+ 	kAIWeap_Ranged,
+ 	kAIWeap_Melee,
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIBrain.h b/NOLF2/ObjectDLL/ObjectShared/AIBrain.h
+index 7dabab19bb0e706cdb869806a21a1739489efe85..acd5e102f775d6b0ef057b146ce296637366fe34 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIBrain.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIBrain.h
+@@ -10,8 +10,8 @@
+ 
+ class CAIHuman;
+ class CCharacter;
+-enum Direction;
+-enum EnumAIWeaponType;
++enum Direction : int;
++enum EnumAIWeaponType : int;
+ 
+ enum DodgeStatus
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.cpp b/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.cpp
+index 6919d2c3ea4b195e850a03a92aa5f1f04ecff346..31323ac2cc2e9c7bf7c32f62592bd706e34dad29 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.cpp
+@@ -10,6 +10,7 @@
+ #include "AIVolume.h"
+ #include "AIUtils.h"
+ #include <time.h>
++#include <stdio.h>
+ 
+ extern CWeaponMgr* g_pWeaponMgr;
+ 
+@@ -72,9 +73,11 @@ LTBOOL CAIButeMgr::Init(const char* szAttributeFile)
+     if (g_pAIButeMgr || !szAttributeFile) return LTFALSE;
+     if (!Parse(szAttributeFile))
+ 	{
++		fprintf(stderr, "CAIButeMgr::Init: failed to parse '%s'\n", szAttributeFile);
+ 		AIASSERT1( 0, NULL, "CAIGoalButeMgr::Init: Failed to parse %s", szAttributeFile );
+ 		return LTFALSE;
+ 	}
++	fprintf(stderr, "CAIButeMgr::Init: parsed '%s'\n", szAttributeFile);
+ 
+ 	// Initialize console variable here, because this is a centralized
+ 	// location for AI that will only get run once.
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.h b/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.h
+index 5db2611dbb5c5a2d45343c3e44ad35ae8810d923..6687831a4d9a1879a31944f1cacd54b99f144a73 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIButeMgr.h
+@@ -19,8 +19,8 @@
+ 
+ // Forward declarations.
+ class CAIButeMgr;
+-enum  EnumAISenseType;
+-enum  EnumAIStimulusType;
++enum EnumAISenseType : int;
++enum EnumAIStimulusType : int;
+ 
+ 
+ // Globals/statics
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIClassFactory.h b/NOLF2/ObjectDLL/ObjectShared/AIClassFactory.h
+index 84e2c00e18ecae9099bdaabc9d2d06625ff686b5..22573532e2e5a22a0bf0a85d64d56b19393eac54 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIClassFactory.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIClassFactory.h
+@@ -70,8 +70,8 @@ struct CAIClassDesc
+ #ifndef _DEBUG
+ 
+ #define DEFINE_AI_FACTORY_CLASS(class_name)														\
+-	unsigned long class_name##::k##class_name##Type;											\
+-	static void* CreateAIClassInstance##class_name##( void* pPlacement )						\
++	unsigned long class_name::k##class_name##Type;											\
++	static void* CreateAIClassInstance##class_name( void* pPlacement )						\
+ 	{																							\
+ 		/* Check if the caller wants to put the object into a pre-allocated memory */			\
+ 		if( pPlacement )																		\
+@@ -79,24 +79,24 @@ struct CAIClassDesc
+ 			void* pResult = new( pPlacement ) class_name;										\
+ 			return pResult;																		\
+ 		}																						\
+-		uint8* pData = debug_newa(uint8, sizeof(##class_name##));								\
++		uint8* pData = debug_newa(uint8, sizeof(class_name));								\
+ 		void* pResult = new ( pData ) class_name;												\
+ 		return pResult;																			\
+ 	}																							\
+-	static void DeleteAIClassInstance##class_name##( void* pInstance )							\
++	static void DeleteAIClassInstance##class_name( void* pInstance )							\
+ 	{																							\
+ 		/* Explicitly call the destructor of on the instance. */								\
+-		(( class_name##* )pInstance )->~##class_name##( );										\
++		(( class_name* )pInstance )->~class_name( );										\
+ 	}																							\
+-	static CAIClassDesc sAIClassDesc##class_name##(##class_name##::k##class_name##Type,			\
+-		CreateAIClassInstance##class_name##, DeleteAIClassInstance##class_name##);				\
+-	CAIClassAbstract* AIFactoryCreate##class_name##() { return AI_FACTORY_NEW(##class_name##); }
++	static CAIClassDesc sAIClassDesc##class_name(class_name::k##class_name##Type,			\
++		CreateAIClassInstance##class_name, DeleteAIClassInstance##class_name);				\
++	CAIClassAbstract* AIFactoryCreate##class_name() { return AI_FACTORY_NEW(class_name); }
+ 
+ #else // _DEBUG
+ 
+ #define DEFINE_AI_FACTORY_CLASS(class_name)														\
+-	unsigned long class_name##::k##class_name##Type;											\
+-	static void* CreateAIClassInstance##class_name##( void* pPlacement )						\
++	unsigned long class_name::k##class_name##Type;											\
++	static void* CreateAIClassInstance##class_name( void* pPlacement )						\
+ 	{																							\
+ 		/* Check if the caller wants to put the object into a pre-allocated memory */			\
+ 		if( pPlacement )																		\
+@@ -104,17 +104,17 @@ struct CAIClassDesc
+ 			void* pResult = new( pPlacement ) class_name;										\
+ 			return pResult;																		\
+ 		}																						\
+-		return debug_new(##class_name##);														\
++		return debug_new(class_name);														\
+ 	}																							\
+-	static void DeleteAIClassInstance##class_name##( void* pInstance )							\
++	static void DeleteAIClassInstance##class_name( void* pInstance )							\
+ 	{																							\
+ 		/* Explicitly call the destructor of on the instance. */								\
+-		(( class_name##* )pInstance )->~##class_name##( );										\
++		(( class_name* )pInstance )->~class_name( );										\
+ 		memset( pInstance, 0xEA, sizeof( class_name ));											\
+ 	}																							\
+-	static CAIClassDesc sAIClassDesc##class_name##(##class_name##::k##class_name##Type,			\
+-		CreateAIClassInstance##class_name##, DeleteAIClassInstance##class_name##);				\
+-	CAIClassAbstract* AIFactoryCreate##class_name##() { return AI_FACTORY_NEW(##class_name##); }
++	static CAIClassDesc sAIClassDesc##class_name(class_name::k##class_name##Type,			\
++		CreateAIClassInstance##class_name, DeleteAIClassInstance##class_name);				\
++	CAIClassAbstract* AIFactoryCreate##class_name() { return AI_FACTORY_NEW(class_name); }
+ 
+ #endif // _DEBUG
+ 
+@@ -123,7 +123,7 @@ struct CAIClassDesc
+ //
+ // MACRO: Create/Destroy classes.
+ //
+-#define AI_FACTORY_NEW(class_name) (class_name##*)g_pAIClassFactory->NewClass(##class_name##::k##class_name##Type);
++#define AI_FACTORY_NEW(class_name) (class_name*)g_pAIClassFactory->NewClass(class_name::k##class_name##Type);
+ 
+ #define AI_FACTORY_DELETE(class_name)														\
+ 	if( !g_pAIClassFactory )																\
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIDataTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AIDataTypeEnums.h
+index 970fd68ab6736541e36fb405c807ad516717a05e..06827e0695a0248c3298e20d9627e7cf77caf653 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIDataTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIDataTypeEnums.h
+@@ -19,7 +19,7 @@
+ #endif
+  
+ #if AIDATA_TYPE_AS_ENUM
+-	#define ADD_AIDATA_TYPE(label) kAIData_##label##,
++	#define ADD_AIDATA_TYPE(label) kAIData_##label,
+ #elif AIDATA_TYPE_AS_STRING
+ 	#define ADD_AIDATA_TYPE(label) #label,
+ #else
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstract.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstract.h
+index 64cc40c287162088c39381865b40bf4803de953b..8c97117ba251809549260f3c9062f7df92e8d6a9 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstract.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstract.h
+@@ -25,14 +25,13 @@ struct AISenseRecord;
+ struct UnblockNode;
+ struct BlockNode;
+ struct DamageStruct;
+-enum   EnumAISoundType;
++enum EnumAISoundType : int;
+ 
+ 
+ //
+ // ENUM: Types of goals.
+ //
+-enum EnumAIGoalType
+-{
++enum EnumAIGoalType : int {
+ 	kGoal_InvalidType= -1,
+ 	#define GOAL_TYPE_AS_ENUM 1
+ 	#include "AIGoalTypeEnums.h"
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstractStimulated.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstractStimulated.h
+index 9529df7f64bdc9a582ccc92b224791d67afebc57..4938ef786491e74b396e82150e3dc2aad43f9b29 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstractStimulated.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalAbstractStimulated.h
+@@ -17,7 +17,7 @@
+ #include "RelationChangeObserver.h"
+ 
+ // Forward declarations.
+-enum  EnumAISenseType;
++enum EnumAISenseType : int;
+ 
+ 
+ // For constructor.  warning C4355: 'this' : used in base member initializer list
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalAttack.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalAttack.h
+index 473a8ff3bd6175cec62b8583bfbaa8cebc95eeb3..62a5d9f3dc2f8e74ec53990b50bcb754deca6ffb 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalAttack.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalAttack.h
+@@ -18,7 +18,7 @@
+ 
+ // Forward Declarations.
+ 
+-enum EnumAIWeaponType;
++enum EnumAIWeaponType : int;
+ 
+ 
+ class CAIGoalAttack : public CAIGoalAbstractStimulated
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.cpp b/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.cpp
+index 6489c453b6bdbb40e14e68b5847e0ad77819cc9d..3f8f117dd5e50ab8bc05d6e664cef26d36b1f25a 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.cpp
+@@ -441,8 +441,9 @@ void CAIGoalButeMgr::ReadGoalTemplate(uint32 iTemplate)
+ 	Template.fUpdateRate			= (LTFLOAT)CButeTools::GetValidatedDouble(m_buteMgr, s_aTagName, "UpdateRate");
+ 	Template.bDeleteOnDeactivation	= CButeTools::GetValidatedBool(m_buteMgr, s_aTagName, "DeleteWhenDone", LTFALSE);
+ 	Template.fChanceToActivate		= (LTFLOAT)CButeTools::GetValidatedDouble(m_buteMgr, s_aTagName, "ChanceToActivate", 1.f);
+-	Template.fFrequencyMin			= (LTFLOAT)CButeTools::GetValidatedRange(m_buteMgr, s_aTagName, "Frequency", CARange(0.f, 0.f)).GetMin();
+-	Template.fFrequencyMax			= (LTFLOAT)CButeTools::GetValidatedRange(m_buteMgr, s_aTagName, "Frequency", CARange(0.f, 0.f)).GetMax();
++	CARange rngFrequency(0.f, 0.f);
++	Template.fFrequencyMin			= (LTFLOAT)CButeTools::GetValidatedRange(m_buteMgr, s_aTagName, "Frequency", rngFrequency).GetMin();
++	Template.fFrequencyMax			= (LTFLOAT)CButeTools::GetValidatedRange(m_buteMgr, s_aTagName, "Frequency", rngFrequency).GetMax();
+ 	Template.nDamagePriority		= CButeTools::GetValidatedInt(m_buteMgr, s_aTagName, "DamagePriority", 0);
+ 
+ 	// Get SenseTriggers. (SenseTypes are bitflags)
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.h
+index c067c24f8baf40a40260cc53751c63a23c4f55b7..b511fab7a7aa40322795fe1c5aa4f940fa797e4c 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalButeMgr.h
+@@ -20,9 +20,9 @@
+ class  CAIGoalButeMgr;
+ struct AIGBM_GoalSet;
+ struct AIGBM_SmartObjectTemplate;
+-enum EnumAIGoalType;
+-enum EnumAINodeType;
+-enum EnumAIStateType;
++enum EnumAIGoalType : int;
++enum EnumAINodeType : int;
++enum EnumAIStateType : int;
+ 
+ // Globals.
+ extern CAIGoalButeMgr* g_pAIGoalButeMgr;
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalChase.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalChase.h
+index b74f1fc0e217e5d6b5114df50553ac5eb1d308c7..6dd01b2779d1ac3504c2d0eeeed1267026197316 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalChase.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalChase.h
+@@ -14,7 +14,7 @@
+ 
+ #include "AIGoalAbstractSearch.h"
+ 
+-enum  EnumAIStateStatus;
++enum EnumAIStateStatus : int;
+ class AIVolumeJunction;
+ 
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalGetBackup.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalGetBackup.h
+index de7888925b8e8819d9e33f930d087c8a37fe048d..a0982adcb54cb423dc9f78f0eb2f24e01d2e830e 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalGetBackup.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalGetBackup.h
+@@ -16,7 +16,7 @@
+ 
+ // Forward declarations.
+ class AINode;
+-enum  EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ class CAIGoalGetBackup : public CAIGoalAbstractSearch
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalGuard.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalGuard.h
+index 4abdbe32551b75247723d34658bb01438bb31b81..954c151acf40122eeac351c68badb9bde5239f4b 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalGuard.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalGuard.h
+@@ -17,7 +17,7 @@
+ 
+ // Forward Declarations.
+ class AINodeGuard;
+-enum  EnumAINodeType;
++enum EnumAINodeType : int;
+ 
+ class CAIGoalGuard : public CAIGoalAbstractTargeted
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalInvestigate.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalInvestigate.h
+index a90f8a541eb59dc20cb7f9bc28f066e81a78df6f..42e0b81cf5c20f66bd1bbedd4053e23d1130c345 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalInvestigate.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalInvestigate.h
+@@ -17,10 +17,10 @@
+ 
+ // Forward declarations.
+ class AINodeUseObject;
+-enum  EnumAISoundType;
+-enum  EnumAIStimulusID;
+-enum  EnumAITargetMatchID;
+-enum  EnumAIStimulusType;
++enum EnumAISoundType : int;
++enum EnumAIStimulusID : int;
++enum EnumAITargetMatchID : int;
++enum EnumAIStimulusType : int;
+ 
+ typedef std::multimap< EnumAITargetMatchID, EnumAISenseType > AI_INVESTIGATION_MEMORY_MAP;
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalPatrol.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalPatrol.h
+index 30ea9973715a31f4fa7c3ae9c91309a18fe3617f..60fdbe393e9eee9038b2cc4d96e23c3e7e8e60ca 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalPatrol.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalPatrol.h
+@@ -17,7 +17,7 @@
+ 
+ // Forward Declarations.
+ class AINodePatrol;
+-enum  EnumAnimProp;
++enum EnumAnimProp : int;
+ 
+ 
+ class CAIGoalPatrol : public CAIGoalAbstract
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalRespondToAlarm.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalRespondToAlarm.h
+index 3a1918e796d236e15a803c714ae5adc768b844ce..0b9e331d7a08c235353e12286b0aa9e8c3f5deec 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalRespondToAlarm.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalRespondToAlarm.h
+@@ -14,7 +14,7 @@
+ 
+ #include "AIGoalAbstractSearch.h"
+ 
+-enum EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ class CAIGoalRespondToAlarm : public CAIGoalAbstractSearch
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalSpecialDamage.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalSpecialDamage.h
+index 6f8e66b30c97ac80186030d1b3a96e8ac61b276a..c89c5cc5fa278a0f434b0405b82eda97f0692771 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalSpecialDamage.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalSpecialDamage.h
+@@ -15,8 +15,8 @@
+ #include "AIGoalAbstractSearch.h"
+ #include "AnimationMgr.h"
+ 
+-enum DamageType;
+-enum EnumAIStimulusID;
++enum DamageType : int;
++enum EnumAIStimulusID : int;
+ 
+ class CAIGoalSpecialDamage : public CAIGoalAbstractSearch
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalTalk.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalTalk.h
+index 57c59aaee39b1f7e74cd2106924a08430997630b..38abb8b27dde43afa50ad08640f47c6eda5b40af 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalTalk.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalTalk.h
+@@ -16,7 +16,7 @@
+ 
+ // Forward Declarations.
+ 
+-enum EnumAnimProp;
++enum EnumAnimProp : int;
+ 
+ 
+ class CAIGoalTalk : public CAIGoalGuard
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIGoalTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AIGoalTypeEnums.h
+index bbcf7b275bac29c2c425fc58ac73fb055bed81ac..2eeb6fe47fe1eeaa011af0d393d6a7602d42615d 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIGoalTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIGoalTypeEnums.h
+@@ -19,11 +19,11 @@
+ #endif
+  
+ #if GOAL_TYPE_AS_ENUM
+-	#define ADD_GOAL_TYPE(label) kGoal_##label##,
++	#define ADD_GOAL_TYPE(label) kGoal_##label,
+ #elif GOAL_TYPE_AS_STRING
+ 	#define ADD_GOAL_TYPE(label) #label,
+ #elif GOAL_TYPE_AS_SWITCH
+-	#define ADD_GOAL_TYPE(label) case kGoal_##label##: extern CAIClassAbstract* AIFactoryCreateCAIGoal##label##(); return (CAIGoalAbstract*)AIFactoryCreateCAIGoal##label##();
++	#define ADD_GOAL_TYPE(label) case kGoal_##label: extern CAIClassAbstract* AIFactoryCreateCAIGoal##label(); return (CAIGoalAbstract*)AIFactoryCreateCAIGoal##label();
+ #else
+ 	#error	To use this include file, first define either GOAL_TYPE_AS_ENUM or GOAL_TYPE_AS_STRING, to include the goals as enums, or string constants.
+ #endif
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIHumanState.h b/NOLF2/ObjectDLL/ObjectShared/AIHumanState.h
+index 8fe787cc9a7a14b3e608fe73e5d6dff42e2695e9..d3b284cffeda42bf1b417301af14b9883084a2b3 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIHumanState.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIHumanState.h
+@@ -27,9 +27,9 @@ class AINodeTail;
+ class AINodePatrol;
+ class AINodeAssassinate;
+ class CAIHumanStrategyToggleLights;
+-enum  EnumAISoundType;
+-enum  EnumAIStimulusID;
+-enum  EnumTrackedNodeGroup;
++enum EnumAISoundType : int;
++enum EnumAIStimulusID : int;
++enum EnumTrackedNodeGroup : int;
+ 
+ class CAIHumanState : public CAIState
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIHumanStrategy.cpp b/NOLF2/ObjectDLL/ObjectShared/AIHumanStrategy.cpp
+index a4f7cbc6e7bfa9aedf471cb814b5f602416a1ca6..24e874e20e1ea692866c5c06d0e28f2c4a9bc99b 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIHumanStrategy.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/AIHumanStrategy.cpp
+@@ -4617,8 +4617,10 @@ void CAIHumanStrategyShootBurst::Aim()
+ 		{
+ 			// Make sure our loop sound is killed when switching to aim
+ 
+-			m_eState == eStateFiring ? pWeapon->PlayAnimation( pWeapon->GetPostFireAni(), true, false, true ) :
+-									   pWeapon->KillLoopSound();
++			if( m_eState == eStateFiring )
++				pWeapon->PlayAnimation( pWeapon->GetPostFireAni(), true, false, true );
++			else
++				pWeapon->KillLoopSound();
+ 		}
+ 	}
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AINode.h b/NOLF2/ObjectDLL/ObjectShared/AINode.h
+index 695a6495a955cd605462e2b64e022bfbc54b96bd..8f7b3002411dee3efabdb2250151d5300a9d3694 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AINode.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AINode.h
+@@ -10,9 +10,9 @@
+ #include "DebugLineSystem.h"
+ 
+ // Forward declarations.
+-enum EnumAISoundType;
+-enum EnumAINodeType;
+-enum EnumAIStateType;
++enum EnumAISoundType : int;
++enum EnumAINodeType : int;
++enum EnumAIStateType : int;
+ 
+ class AIVolume;
+ class CAIHuman;
+@@ -22,8 +22,7 @@ LINKTO_MODULE( AINode );
+ //
+ // ENUM: Types of AI nodes.
+ //
+-enum EnumAINodeType
+-{
++enum EnumAINodeType : int {
+ 	kNode_InvalidType = -1,
+ 
+ 	#define AINODE_TYPE_AS_ENUM 1
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AINodeDisturbance.h b/NOLF2/ObjectDLL/ObjectShared/AINodeDisturbance.h
+index df000c612a72db4c9a8e79fe498a3a93f4d2162f..541b90e8f75744bbb88befc9e206b34df32dc588 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AINodeDisturbance.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AINodeDisturbance.h
+@@ -18,7 +18,7 @@ LINKTO_MODULE( AINodeDisturbance );
+ 
+ // Forward declarations.
+ 
+-enum EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ 
+ class AINodeDisturbance : public AINode
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AINodeTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AINodeTypeEnums.h
+index c82c7cd8a8d622886a9368c1af5e70b217986a1a..97c7f0c58eded65df5ff0a79d4b2b0a579aa64a5 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AINodeTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AINodeTypeEnums.h
+@@ -19,7 +19,7 @@
+ #endif
+  
+ #if AINODE_TYPE_AS_ENUM
+-	#define ADD_AINODE_TYPE(label) kNode_##label##,
++	#define ADD_AINODE_TYPE(label) kNode_##label,
+ #elif AINODE_TYPE_AS_STRING
+ 	#define ADD_AINODE_TYPE(label) #label,
+ #else
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AISenseRecorderAbstract.h b/NOLF2/ObjectDLL/ObjectShared/AISenseRecorderAbstract.h
+index 27140b3246a498179d86fb2e44f1746ae2dc32bb..3b594ce0be93a9d6f7d44b043a845b7041a99e71 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AISenseRecorderAbstract.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AISenseRecorderAbstract.h
+@@ -17,15 +17,14 @@
+ 
+ class CAIStimulusRecord;
+ class CAISenseRecorderAbstract;
+-enum  EnumAIStimulusID;
+-enum  EnumAITargetMatchID;
++enum EnumAIStimulusID : int;
++enum EnumAITargetMatchID : int;
+ 
+ 
+ //
+ // ENUM: Types of senses exclusive bitflags.
+ //
+-enum EnumAISenseType
+-{
++enum EnumAISenseType : int {
+ 	kSense_InvalidType	= 0,
+ 	kSense_None			= 0,
+ 
+@@ -33,7 +32,7 @@ enum EnumAISenseType
+ 	#include "AISenseTypeEnums.h"
+ 	#undef SENSE_TYPE_AS_ENUM
+ 
+-	kSense_All			= 0xffffffff,
++	kSense_All			= -1,
+ };
+ 
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AISenseTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AISenseTypeEnums.h
+index fd3f1ac6e0a61aa8c2ae2e7c8e6f9b1c651989e7..c2c21ac0f320baf2c47281c96e84c4f673dbfa4f 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AISenseTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AISenseTypeEnums.h
+@@ -20,7 +20,7 @@
+ #endif
+  
+ #if SENSE_TYPE_AS_ENUM
+-	#define ADD_SENSE_TYPE(label, val) kSense_##label## = (1 << val),
++	#define ADD_SENSE_TYPE(label, val) kSense_##label = (1 << val),
+ 	#define SET_NUM_SENSE_TYPES(val) kSense_Count = val,
+ #elif SENSE_TYPE_AS_STRING
+ 	#define ADD_SENSE_TYPE(label, val) #label,
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AISensing.h b/NOLF2/ObjectDLL/ObjectShared/AISensing.h
+index 2e540044ab8982cc33ce990101f58d3a0664cf76..3bbd04cfa6a17963351f8dd87d33269e9e88c292 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AISensing.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AISensing.h
+@@ -16,8 +16,8 @@
+ 
+ class	CAIStimulusRecord;
+ struct	AISenseRecord;
+-enum	EnumAISenseType;
+-enum    EnumAIStimulusID;
++enum EnumAISenseType : int;
++enum EnumAIStimulusID : int;
+ class   RelationSet;
+ 
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AISoundTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AISoundTypeEnums.h
+index 3e97627d8a7f8f0306c0a6eec2d8cb4fca14d714..01d07d6a828ad2b8d8b6198d31fc598b132423fb 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AISoundTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AISoundTypeEnums.h
+@@ -19,7 +19,7 @@
+ #endif
+  
+ #if AISOUND_TYPE_AS_ENUM
+-	#define ADD_AISOUND_TYPE(label) kAIS_##label##,
++	#define ADD_AISOUND_TYPE(label) kAIS_##label,
+ #elif AISOUND_TYPE_AS_STRING
+ 	#define ADD_AISOUND_TYPE(label) #label,
+ #else
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AISounds.cpp b/NOLF2/ObjectDLL/ObjectShared/AISounds.cpp
+index 71d358724202270dc0b47d5d2be4d2adf9a611df..3a3e45169d2b8aef4095465ea913286d582e90f1 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AISounds.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/AISounds.cpp
+@@ -16,7 +16,7 @@
+ #include "ServerUtilities.h"
+ #include "iltserver.h"
+ #include "SoundMgr.h"
+-#include "..\shared\VersionMgr.h"
++#include "VersionMgr.h"
+ #include "ServerSoundMgr.h"
+ 
+ // Return buffer
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AISounds.h b/NOLF2/ObjectDLL/ObjectShared/AISounds.h
+index 28ffce96ffc7878c511916b9e2e1595c55fd429b..9b32dc9fb2bb4e48ef8b6ea72f281699f9b0ee23 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AISounds.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AISounds.h
+@@ -12,8 +12,7 @@ class CAI;
+ //
+ // ENUM: Types of AI sounds.
+ //
+-enum EnumAISoundType
+-{
++enum EnumAISoundType : int {
+ 	kAIS_InvalidType = -1,
+ 
+ 	#define AISOUND_TYPE_AS_ENUM 1
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIState.h b/NOLF2/ObjectDLL/ObjectShared/AIState.h
+index 7d2f363a8e11d56cb90ec56ec84526c4d66bf940..db84ff8c03dff892ff926052c70e18f18b02f3dd 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIState.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIState.h
+@@ -18,8 +18,7 @@ class CParsedMsg;
+ //
+ // ENUM: Types of states.
+ //
+-enum EnumAIStateType
+-{
++enum EnumAIStateType : int {
+ 	#define STATE_TYPE_AS_ENUM 1
+ 	#include "AIStateTypeEnums.h"
+ 	#undef STATE_TYPE_AS_ENUM
+@@ -40,8 +39,7 @@ static const char* s_aszStateTypes[] =
+ //
+ // ENUM: State Status.
+ //
+-enum EnumAIStateStatus
+-{
++enum EnumAIStateStatus : int {
+ 	kSStat_Invalid,
+ 	kSStat_Asleep,
+ 	kSStat_Attacking,
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIStateTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AIStateTypeEnums.h
+index d658e5131d06f78d11187756eb8e16ecc4964d56..aded7640f1a031706892f7ab211685b6d53287b3 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIStateTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIStateTypeEnums.h
+@@ -23,7 +23,7 @@
+ #endif
+  
+ #if STATE_TYPE_AS_ENUM
+-	#define ADD_STATE_TYPE(aitype,label) kState_##aitype##label##,
++	#define ADD_STATE_TYPE(aitype,label) kState_##aitype##label,
+ 	#define ADD_STATE_HUMAN(label) ADD_STATE_TYPE(Human,label)
+ 	#define ADD_STATE_BODY(label) ADD_STATE_TYPE(Body,label)
+ 	#define ADD_STATE_PROP(label) ADD_STATE_TYPE(Prop,label)
+@@ -35,13 +35,13 @@
+ 	#define ADD_STATE_PROP(label) ADD_STATE_TYPE(Prop,label)
+ 	#define ADD_STATE_SMARTOBJ(label) ADD_STATE_TYPE(SmartObject,label)
+ #elif STATE_TYPE_AS_SWITCH_HUMAN
+-	#define ADD_STATE_TYPE(aitype,label) case kState_##aitype##label##: extern CAIClassAbstract* AIFactoryCreateCAI##aitype##State##label##(); return (CAI##aitype##State*)AIFactoryCreateCAI##aitype##State##label##();
++	#define ADD_STATE_TYPE(aitype,label) case kState_##aitype##label: extern CAIClassAbstract* AIFactoryCreateCAI##aitype##State##label(); return (CAI##aitype##State*)AIFactoryCreateCAI##aitype##State##label();
+ 	#define ADD_STATE_HUMAN(label) ADD_STATE_TYPE(Human,label)
+ 	#define ADD_STATE_BODY(label)
+ 	#define ADD_STATE_PROP(label)
+ 	#define ADD_STATE_SMARTOBJ(label)
+ #elif STATE_TYPE_AS_SWITCH_BODY
+-	#define ADD_STATE_TYPE(aitype,label) case kState_##aitype##label##: extern CAIClassAbstract* AIFactoryCreateC##aitype##State##label##(); return (C##aitype##State*)AIFactoryCreateC##aitype##State##label##();
++	#define ADD_STATE_TYPE(aitype,label) case kState_##aitype##label: extern CAIClassAbstract* AIFactoryCreateC##aitype##State##label(); return (C##aitype##State*)AIFactoryCreateC##aitype##State##label();
+ 	#define ADD_STATE_HUMAN(label)
+ 	#define ADD_STATE_BODY(label) ADD_STATE_TYPE(Body,label)
+ 	#define ADD_STATE_PROP(label)
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIStimulusMgr.h b/NOLF2/ObjectDLL/ObjectShared/AIStimulusMgr.h
+index f4c4910943e849400604e680aa6b4fc4fcac99a9..a553b79438c6b3e5a2a1303b30640a6627871103 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIStimulusMgr.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIStimulusMgr.h
+@@ -35,8 +35,7 @@ extern CAIStimulusMgr *g_pAIStimulusMgr;
+ //
+ // ENUM: Types of stimulus exclusive bitflags.
+ //
+-enum EnumAIStimulusType
+-{
++enum EnumAIStimulusType : int {
+ 	kStim_InvalidType = 0,
+ 
+ 	#define STIMULUS_TYPE_AS_ENUM 1
+@@ -44,14 +43,12 @@ enum EnumAIStimulusType
+ 	#undef STIMULUS_TYPE_AS_ENUM
+ };
+ 
+-enum EnumAIStimulusID
+-{
++enum EnumAIStimulusID : int {
+ 	kStimID_Invalid = -1,
+ 	kStimID_Unset = 0,
+ };
+ 
+-enum EnumAITargetMatchID
+-{
++enum EnumAITargetMatchID : int {
+ 	kTMID_Invalid = -1,
+ };
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIStimulusTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AIStimulusTypeEnums.h
+index a7fbd0b7ecf157a32d35a583648b39585f2046e8..929ffab966e5b007bf4634d1e46cf60af863d2d2 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIStimulusTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIStimulusTypeEnums.h
+@@ -20,7 +20,7 @@
+ #endif
+  
+ #if STIMULUS_TYPE_AS_ENUM
+-	#define ADD_STIMULUS_TYPE(label, val) kStim_##label## = (1 << val),
++	#define ADD_STIMULUS_TYPE(label, val) kStim_##label = (1 << val),
+ 	#define SET_NUM_STIMULUS_TYPES(val) kStim_Count = val,
+ #elif STIMULUS_TYPE_AS_STRING
+ 	#define ADD_STIMULUS_TYPE(label, val) #label,
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIStrategyTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AIStrategyTypeEnums.h
+index 4550337e996c19c752993afc34c7a28f28e55b27..0fecc9f1853c457b76adf92be94698a15835ec64 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIStrategyTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIStrategyTypeEnums.h
+@@ -19,11 +19,11 @@
+ #endif
+  
+ #if STRATEGY_TYPE_AS_ENUM
+-	#define ADD_STRATEGY_TYPE(aitype,label) kStrat_##aitype##label##,
++	#define ADD_STRATEGY_TYPE(aitype,label) kStrat_##aitype##label,
+ #elif STRATEGY_TYPE_AS_STRING
+ 	#define ADD_STRATEGY_TYPE(aitype,label) #aitype#label,
+ #elif STRATEGY_TYPE_AS_SWITCH
+-	#define ADD_STRATEGY_TYPE(aitype,label) case kStrat_##aitype##label##: extern CAIClassAbstract* AIFactoryCreateCAI##aitype##Strategy##label##(); return (CAI##aitype##Strategy*)AIFactoryCreateCAI##aitype##Strategy##label##();
++	#define ADD_STRATEGY_TYPE(aitype,label) case kStrat_##aitype##label: extern CAIClassAbstract* AIFactoryCreateCAI##aitype##Strategy##label(); return (CAI##aitype##Strategy*)AIFactoryCreateCAI##aitype##Strategy##label();
+ #else
+ 	#error	To use this include file, first define either STRATEGY_TYPE_AS_ENUM or STRATEGY_TYPE_AS_STRING, to include the Strategies as enums, or string constants.
+ #endif
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIUtils.h b/NOLF2/ObjectDLL/ObjectShared/AIUtils.h
+index 4731a6c6bf96746140b6b482cf32a96933efb194..98b14ce1176d3249089790902a93e07ab784a001 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIUtils.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIUtils.h
+@@ -105,8 +105,7 @@ LTBOOL IsAIVolume( ILTBaseClass* pObject );
+ 
+ // Enums
+ 
+-enum Direction
+-{
++enum Direction : int {
+ 	eDirectionRight,
+ 	eDirectionLeft,
+ 	eDirectionForward,
+@@ -165,6 +164,6 @@ extern const char c_szKeyFX[];
+ 	if( g_vtAIConsoleVar.GetFloat() > 0.0f ) { \
+ 		ObjectCPrint args; }
+ 
+-#define ADD_ATTACHMENT(pos, attachment) ADD_STRINGPROP_FLAG(##pos##,	attachment,			PF_GROUP6|PF_STATICLIST)
++#define ADD_ATTACHMENT(pos, attachment) ADD_STRINGPROP_FLAG(pos,	attachment,			PF_GROUP6|PF_STATICLIST)
+ 
+ #endif
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIVolume.h b/NOLF2/ObjectDLL/ObjectShared/AIVolume.h
+index b0de59d547a9c2ce9676d3ec01a2e58c1c25e5a5..13dff55e435135994161444bdcc779e45f920b2a 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIVolume.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIVolume.h
+@@ -28,7 +28,7 @@ class AIVolume;
+ class AINode;
+ class AINodeSearch;
+ class CAI;
+-enum  EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ 
+ class AISpatialNeighbor;
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AIVolumeTypeEnums.h b/NOLF2/ObjectDLL/ObjectShared/AIVolumeTypeEnums.h
+index 8f6e24a76be13a66ac7d74d5762625e4e08e03e8..2eb5603db84fc17a29ab858836f4f4085d573518 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AIVolumeTypeEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AIVolumeTypeEnums.h
+@@ -24,7 +24,7 @@
+ #endif
+  
+ #if VOLUME_TYPE_AS_ENUM
+-	#define ADD_VOLUME_TYPE(label, val) kVolumeType_##label## = (1 << val),
++	#define ADD_VOLUME_TYPE(label, val) kVolumeType_##label = (1 << val),
+ 	#define SET_NUM_VOLUME_TYPES(val) kVolumeType_Count = val,
+ #elif VOLUME_TYPE_AS_STRING
+ 	#define ADD_VOLUME_TYPE(label, val) #label,
+diff --git a/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.cpp b/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.cpp
+index b90e5c25128e5684301caf4511d41aa794ffdae7..55957f86189e47cd7130dc9524778443a542f1ad 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.cpp
+@@ -1766,7 +1766,7 @@ LTBOOL ActiveWorldModel::CalcAngle( LTFLOAT &fAngle, LTFLOAT fInitial, LTFLOAT f
+ //
+ // ----------------------------------------------------------------------- //
+ 
+-LTBOOL ActiveWorldModel::CalculateNewPosRot( LTVector &vOutPos, LTRotation &rOutRot, LTVector &vFinalPos, LTFLOAT fTotalTime, LTFLOAT fPercent, LTBOOL bTestCollision )
++LTBOOL ActiveWorldModel::CalculateNewPosRot( LTVector &vOutPos, LTRotation &rOutRot, LTVector const &vFinalPos, LTFLOAT fTotalTime, LTFLOAT fPercent, LTBOOL bTestCollision )
+ {
+ 	LTRotation	rRotation( m_fPitch, m_fYaw, m_fRoll );
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.h b/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.h
+index b09b8fc55ec89f56119ab7a8462ee2a5ab29293f..86efb76f8797e5957cf5a5525cdb9d9e2a8aea34 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.h
++++ b/NOLF2/ObjectDLL/ObjectShared/ActiveWorldModel.h
+@@ -17,7 +17,7 @@
+ // Forward Declarations...
+ //
+ 
+-enum EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ //
+ // Includes...
+@@ -211,7 +211,7 @@ class ActiveWorldModel : public WorldModel
+ 		void	ChangeDir( );
+ 
+ 		LTFLOAT	GetWaveformValue( LTFLOAT fSpeed, LTFLOAT fPercent );
+-		LTBOOL	CalculateNewPosRot( LTVector &vOutPos, LTRotation &rOutRot, LTVector &vFinalPos, LTFLOAT fTotalTime, LTFLOAT fPercent, LTBOOL bTestCollision = LTFALSE );
++		LTBOOL	CalculateNewPosRot( LTVector &vOutPos, LTRotation &rOutRot, LTVector const &vFinalPos, LTFLOAT fTotalTime, LTFLOAT fPercent, LTBOOL bTestCollision = LTFALSE );
+ 
+ 		// Sound methods...
+ 	
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AmmoBox.cpp b/NOLF2/ObjectDLL/ObjectShared/AmmoBox.cpp
+index a5f693ea84028118387e503f8e962166b40ac340..41332186ac51b041022c1c4721af18b2c26ef5b7 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AmmoBox.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/AmmoBox.cpp
+@@ -35,8 +35,8 @@ static const char s_szDefaultSkin[]		= "Props\\Skins\\PuAmmoBox.dtx";
+ 		
+  
+ #define ADD_AMMO_PROP(num) \
+-		ADD_STRINGPROP_FLAG(AmmoType##num##, UNUSED_STRING, PF_STATICLIST)\
+-		ADD_LONGINTPROP(AmmoCount##num##, 0)
++		ADD_STRINGPROP_FLAG(AmmoType##num, UNUSED_STRING, PF_STATICLIST)\
++		ADD_LONGINTPROP(AmmoCount##num, 0)
+ 
+ LINKFROM_MODULE( AmmoBox );
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimationMovement.h b/NOLF2/ObjectDLL/ObjectShared/AnimationMovement.h
+index ffa1da154be32ae36ec48e87b9287a9542a8428a..4e4870ada33a51651cb310a0f51099e5fc9ce11f 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimationMovement.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimationMovement.h
+@@ -16,7 +16,7 @@
+ //
+ // ENUM: Animation Movements.
+ //
+-enum EnumAnimMovement {
++enum EnumAnimMovement : int {
+ 	kAM_Invalid = -1,
+ 	#define ANIM_MOVEMENT_AS_ENUM 1
+ 	#include "AnimationMovementEnums.h"
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimationMovementEnums.h b/NOLF2/ObjectDLL/ObjectShared/AnimationMovementEnums.h
+index 5673fae0660ab77465c00cb0658a921b1c7a1b71..9c5c40e40b86221e8f6172c32485184a3cb2134c 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimationMovementEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimationMovementEnums.h
+@@ -19,7 +19,7 @@
+ #endif
+  
+ #if ANIM_MOVEMENT_AS_ENUM
+-	#define ADD_ANIM_MOVEMENT(label) kAM_##label##,
++	#define ADD_ANIM_MOVEMENT(label) kAM_##label,
+ #elif ANIM_MOVEMENT_AS_STRING
+ 	#define ADD_ANIM_MOVEMENT(label) #label,
+ #else
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimationParser.h b/NOLF2/ObjectDLL/ObjectShared/AnimationParser.h
+index fba4ba9c006c1846973a7003666978ed957f8fa7..040a9c224e5a04a941c7dd42e69d500e73baf655 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimationParser.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimationParser.h
+@@ -10,7 +10,7 @@
+ 
+ // Forward declarations.
+ class CAnimationMgr;
+-enum  EnumAnimMovement;
++enum EnumAnimMovement : int;
+ 	
+ 
+ namespace Animation
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimationProp.h b/NOLF2/ObjectDLL/ObjectShared/AnimationProp.h
+index 07e940a4b270a3853609101f8c69c8401360b096..762c2c589d3a4b1ab625306d394d635648bd4d44 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimationProp.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimationProp.h
+@@ -27,7 +27,7 @@ enum EnumAnimPropGroup {
+ //
+ // ENUM: Animation Properties.
+ //
+-enum EnumAnimProp {
++enum EnumAnimProp : int {
+ 	kAP_Invalid = -1,
+ 	#define ANIM_PROP_AS_ENUM 1
+ 	#include "AnimationPropEnums.h"
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimationPropEnums.h b/NOLF2/ObjectDLL/ObjectShared/AnimationPropEnums.h
+index c43e5dea741284da6f0c77b99f90c7a6d40a51c9..223b8b328b9600565e113ff56e09e22337c016b0 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimationPropEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimationPropEnums.h
+@@ -19,7 +19,7 @@
+ #endif
+  
+ #if ANIM_PROP_AS_ENUM
+-	#define ADD_ANIM_PROP(label) kAP_##label##,
++	#define ADD_ANIM_PROP(label) kAP_##label,
+ #elif ANIM_PROP_AS_STRING
+ 	#define ADD_ANIM_PROP(label) #label,
+ #else
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimationPropGroupEnums.h b/NOLF2/ObjectDLL/ObjectShared/AnimationPropGroupEnums.h
+index 9022c28aa3762db4eac8d11114a3736cd7b4c3bf..fc6ba98e87d869e6958cbd45c3ad60565e63cff7 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimationPropGroupEnums.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimationPropGroupEnums.h
+@@ -19,7 +19,7 @@
+ #endif
+  
+ #if ANIM_PROP_GROUP_AS_ENUM
+-	#define ADD_ANIM_PROP_GROUP(label) kAPG_##label##,
++	#define ADD_ANIM_PROP_GROUP(label) kAPG_##label,
+ #elif ANIM_PROP_GROUP_AS_STRING
+ 	#define ADD_ANIM_PROP_GROUP(label) #label,
+ #else
+diff --git a/NOLF2/ObjectDLL/ObjectShared/AnimatorPlayer.h b/NOLF2/ObjectDLL/ObjectShared/AnimatorPlayer.h
+index b32c763a359aac44b96b99224fb7a6847c062a53..45e80dc9f28f070ffe802f732c032f5e4f95ddac 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/AnimatorPlayer.h
++++ b/NOLF2/ObjectDLL/ObjectShared/AnimatorPlayer.h
+@@ -177,8 +177,7 @@ class CAnimatorPlayer : public CAnimator
+ 			kNumMovements
+ 		};
+ 
+-		enum Direction
+-		{
++		enum Direction : int {
+ 			eNone			= 0,
+ 			eForward		,
+ 			eBackward		,
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Body.h b/NOLF2/ObjectDLL/ObjectShared/Body.h
+index 47c2855b6bfb64ba2d35b2873d9a932351ad8593..4c77163cf11c360d69ff6c819b283674acdeb6d4 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Body.h
++++ b/NOLF2/ObjectDLL/ObjectShared/Body.h
+@@ -13,7 +13,7 @@
+ #ifndef __BODY_PROP_H__
+ #define __BODY_PROP_H__
+ 
+-enum  EnumAIStateType;
++enum EnumAIStateType : int;
+ class CAttachments;
+ class CBodyState;
+ class CSearchable;
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Character.cpp b/NOLF2/ObjectDLL/ObjectShared/Character.cpp
+index 4c40452084b41cf83443ff02923b51972304cc6a..57288556989d784d6e1f7e3e4999b50cbb1d3e94 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Character.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/Character.cpp
+@@ -3663,7 +3663,8 @@ void CCharacter::StartDeath()
+             LTVector vPos;
+ 			g_pLTServer->GetObjectPos(m_hObject, &vPos);
+ 
+-			SpawnItem(buf, vPos, LTRotation());
++			LTRotation rSpawn;
++			SpawnItem(buf, vPos, rSpawn);
+ 		}
+ 	}
+ }
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Character.h b/NOLF2/ObjectDLL/ObjectShared/Character.h
+index 7fa30f5100a9aa48cc5f8e258fd816e1e79f7ba7..c512cf5d26f856b1760cb9e94becc25089040e4a 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Character.h
++++ b/NOLF2/ObjectDLL/ObjectShared/Character.h
+@@ -49,9 +49,9 @@ class RelationSet;
+ class CObjectRelationMgr;
+ class CSearchable;
+ 
+-enum  EnumAIStateType;
+-enum  EnumAIStimulusID;
+-enum CharacterClass;
++enum EnumAIStateType : int;
++enum EnumAIStimulusID : int;
++enum CharacterClass : int;
+ 
+ struct CHARCREATESTRUCT;
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/ClientWeaponSFX.cpp b/NOLF2/ObjectDLL/ObjectShared/ClientWeaponSFX.cpp
+index f62d6a3d266a04131bba10727d70baa5adad37b5..3b5c0ae074a907781f8f3a8dfd0aea69807b27ed 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/ClientWeaponSFX.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/ClientWeaponSFX.cpp
+@@ -58,7 +58,10 @@ void CreateClientWeaponFX(CLIENTWEAPONFX & theStruct)
+ 				{
+ 					if (WFX_MARK & pAmmo->pImpactFX->nFlags)
+ 					{
+-                        CreateServerMark((CLIENTWEAPONFX)theStruct);
++						{
++							CLIENTWEAPONFX markFX = theStruct;
++							CreateServerMark(markFX);
++						}
+ 					}
+ 				}
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/CommandMgr.h b/NOLF2/ObjectDLL/ObjectShared/CommandMgr.h
+index ea4a2714fd0649f0adef2a2998ed06ba4c4c5655..d37c180d5eebdfbaf04032b4465013494c14636c 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/CommandMgr.h
++++ b/NOLF2/ObjectDLL/ObjectShared/CommandMgr.h
+@@ -447,7 +447,7 @@ typedef std::vector<CMDMGR_CLASS_DESC*> CMDMGR_CLASS_DESC_VECTOR;
+ 
+ #define CMDMGR_END_REGISTER_CLASS_FLAGS( class_name, parent_class, flags ) \
+ 	}; \
+-	static CMDMGR_CLASS_DESC _CmdMgrClassDesc##class_name##(#class_name, \
++	static CMDMGR_CLASS_DESC _CmdMgrClassDesc##class_name(#class_name, \
+ 															#parent_class, \
+ 															sizeof(_##class_name##_Msgs_) / sizeof(MSG_PRECHECK), \
+ 															&_##class_name##_Msgs_[0], \
+diff --git a/NOLF2/ObjectDLL/ObjectShared/CommandObject.cpp b/NOLF2/ObjectDLL/ObjectShared/CommandObject.cpp
+index daaf62e2715fbf7f0318947cc799e08b38ef1ee4..9b1a89c00d230b1a2d73c56e8068e8c564f27dc3 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/CommandObject.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/CommandObject.cpp
+@@ -29,16 +29,16 @@ LINKFROM_MODULE( CommandObject );
+ 	#define EVNTED_BASE_STRING	"Event"
+ 
+ 	#define ADD_COMMAND_EDITOR_TRACK( base_string, track, flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E0, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E1, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E2, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E3, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E4, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E5, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E6, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E7, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E8, "", flags ) \
+-				ADD_STRINGPROP_FLAG( ##base_string##T##track##E9, "", flags )
++				ADD_STRINGPROP_FLAG( base_string##T##track##E0, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E1, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E2, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E3, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E4, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E5, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E6, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E7, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E8, "", flags ) \
++				ADD_STRINGPROP_FLAG( base_string##T##track##E9, "", flags )
+ 
+ 	#define ADD_EVENT_EDITOR_INFO( tracks, objects_per_track, base_string, flags ) \
+ 				ADD_STRINGPROP_FLAG( EventDialogInfo, #tracks" "#objects_per_track" "#base_string, flags ) \
+diff --git a/NOLF2/ObjectDLL/ObjectShared/DEditColors.h b/NOLF2/ObjectDLL/ObjectShared/DEditColors.h
+index 6aaf4fd505f99249f4e23463adb872c1c32958f4..bd9a3f8bc1c43e4520141baf17229199cdad6b3e 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/DEditColors.h
++++ b/NOLF2/ObjectDLL/ObjectShared/DEditColors.h
+@@ -14,10 +14,10 @@
+ //          the actual .cpp after BEGIN_CLASS
+ //
+ #define DEFINE_DEDIT_COLOR(class_name, r, g, b) \
+-	static LTVector GetDeditColor##class_name##() { return LTVector(r, g, b); }
++	static LTVector GetDeditColor##class_name() { return LTVector(r, g, b); }
+ 
+ #define ADD_DEDIT_COLOR(class_name) \
+-	ADD_COLORPROP_FLAG(Color, GetDeditColor##class_name##().x, GetDeditColor##class_name##().y, GetDeditColor##class_name##().z, PT_COLOR|PF_HIDDEN)
++	ADD_COLORPROP_FLAG(Color, GetDeditColor##class_name().x, GetDeditColor##class_name().y, GetDeditColor##class_name().z, PT_COLOR|PF_HIDDEN)
+ 
+ 
+ //
+diff --git a/NOLF2/ObjectDLL/ObjectShared/DestructibleModel.h b/NOLF2/ObjectDLL/ObjectShared/DestructibleModel.h
+index 3f4bb5012d2534651c92cadbb84c69af92c82814..3e3cab317281de883a9936ba0a3535c988b562f1 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/DestructibleModel.h
++++ b/NOLF2/ObjectDLL/ObjectShared/DestructibleModel.h
+@@ -20,7 +20,7 @@
+ #define DEFAULT_DWMA_MASS			2000.0f
+ 
+ class CFXButeMgrPlugin;
+-enum EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ 
+ // Use ADD_DESTRUCTIBLE_WORLD_MODEL_AGGREGATE() in your class definition
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Dialogue.cpp b/NOLF2/ObjectDLL/ObjectShared/Dialogue.cpp
+index 975b7840947df73d0728cb85d008b2b8769ff2d4..1ccb56b56275fb210bc2c2fc17a0b32bf794e5bd 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Dialogue.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/Dialogue.cpp
+@@ -34,9 +34,9 @@ LINKFROM_MODULE( Dialogue );
+ //
+ 
+ 	#define ADD_DIALOGUE_PROP(num, group) \
+-		ADD_REALPROP_FLAG(Delay##num##, 0.0f, group)\
+-		ADD_STRINGPROP_FLAG(Dialogue##num##, 0, group)\
+-		ADD_STRINGPROP_FLAG(StartDialogueCommand##num##, "", group | PF_NOTIFYCHANGE)
++		ADD_REALPROP_FLAG(Delay##num, 0.0f, group)\
++		ADD_STRINGPROP_FLAG(Dialogue##num, 0, group)\
++		ADD_STRINGPROP_FLAG(StartDialogueCommand##num, "", group | PF_NOTIFYCHANGE)
+ 		
+ 
+ BEGIN_CLASS( Dialogue )
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Explosion.cpp b/NOLF2/ObjectDLL/ObjectShared/Explosion.cpp
+index 9a7d011e647113fa9ed968eb553edbc3355a2dd9..20d7b08684fa6fdd476dd0cc6c59b20e4a2ffef5 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Explosion.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/Explosion.cpp
+@@ -347,7 +347,7 @@ void Explosion::AreaDamageObject(HOBJECT hObj)
+ {
+ 	if (!hObj) return;
+ 
+-	HOBJECT hDamager = m_hFiredFrom ? m_hFiredFrom : m_hObject;
++	HOBJECT hDamager = m_hFiredFrom ? (HOBJECT)m_hFiredFrom : m_hObject;
+ 
+     LTVector vObjPos;
+ 	g_pLTServer->GetObjectPos(hObj, &vObjPos);
+@@ -431,7 +431,7 @@ void Explosion::ProgDamageObject(HOBJECT hObj)
+ {
+ 	if (!hObj) return;
+ 
+-	HOBJECT hDamager = m_hFiredFrom ? m_hFiredFrom : m_hObject;
++	HOBJECT hDamager = m_hFiredFrom ? (HOBJECT)m_hFiredFrom : m_hObject;
+ 
+     LTVector vObjPos;
+ 	g_pLTServer->GetObjectPos(hObj, &vObjPos);
+diff --git a/NOLF2/ObjectDLL/ObjectShared/GadgetTarget.cpp b/NOLF2/ObjectDLL/ObjectShared/GadgetTarget.cpp
+index cf0c1ebc0c3623812258e94b3fe652a441175e50..34d65289990b5be5c4ac9614280a16cb43f1f274 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/GadgetTarget.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/GadgetTarget.cpp
+@@ -82,7 +82,7 @@ BEGIN_CLASS( GadgetTarget )
+ 	ADD_REALPROP_FLAG( MaxTime, 0.0f, 0 )
+ 	ADD_STRINGPROP_FLAG( Command, "", PF_NOTIFYCHANGE )
+ 	ADD_STRINGPROP_FLAG( PowerOffCommand, "", PF_NOTIFYCHANGE )
+-    ADD_BOOLPROP_FLAG( StartOn, LTTRUE, 0, )
++    ADD_BOOLPROP_FLAG( StartOn, LTTRUE, 0 )
+ 	ADD_STRINGPROP_FLAG( Team, "NoTeam", PF_STATICLIST )
+ 
+ END_CLASS_DEFAULT_FLAGS_PLUGIN( GadgetTarget, Prop, NULL, NULL, 0, CGadgetTargetPlugin )
+diff --git a/NOLF2/ObjectDLL/ObjectShared/IHitBoxUser.h b/NOLF2/ObjectDLL/ObjectShared/IHitBoxUser.h
+index ebd3e73f1bcf8d55fb450f0ede2af3be85777781..171dc6071571b04758ca8bf794cd30674308f979 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/IHitBoxUser.h
++++ b/NOLF2/ObjectDLL/ObjectShared/IHitBoxUser.h
+@@ -21,8 +21,8 @@
+ 
+ class CAttachments;
+ class CAnimator;
+-enum ModelNode;
+-enum ModelSkeleton;
++enum ModelNode : int;
++enum ModelSkeleton : int;
+ 
+ //----------------------------------------------------------------------------
+ //              
+diff --git a/NOLF2/ObjectDLL/ObjectShared/KeyItem.cpp b/NOLF2/ObjectDLL/ObjectShared/KeyItem.cpp
+index 74a17a430cee57e2945b9f8c355240ea78db56e4..6f0c760a6135080c00747b4d8270c6ec3b404cc6 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/KeyItem.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/KeyItem.cpp
+@@ -38,27 +38,27 @@ static char *s_szActivate = "ACTIVATE";
+ 
+ 
+ #define ADD_KEYITEM_CONTROL_OBJECTS( base_name, flags ) \
+-		PROP_DEFINEGROUP( ##base_name##s, flags ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##0, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##1, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##2, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##3, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##4, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##5, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##6, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##7, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##8, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##9, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##10, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##11, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##12, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##13, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##14, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##15, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##16, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##17, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##18, "", flags | PF_OBJECTLINK ) \
+-			ADD_STRINGPROP_FLAG( ##base_name##19, "", flags | PF_OBJECTLINK )
++		PROP_DEFINEGROUP( base_name##s, flags ) \
++			ADD_STRINGPROP_FLAG( base_name##0, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##1, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##2, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##3, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##4, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##5, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##6, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##7, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##8, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##9, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##10, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##11, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##12, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##13, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##14, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##15, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##16, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##17, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##18, "", flags | PF_OBJECTLINK ) \
++			ADD_STRINGPROP_FLAG( base_name##19, "", flags | PF_OBJECTLINK )
+ 
+ #pragma force_active on
+ BEGIN_CLASS(KeyItem)
+diff --git a/NOLF2/ObjectDLL/ObjectShared/LiteObjectMgr.cpp b/NOLF2/ObjectDLL/ObjectShared/LiteObjectMgr.cpp
+index 576fba2da019af16b612d25484fc0b825a351ec9..fc280edc41bbfc1c1b8ab1bdb4e48570d09f1fc6 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/LiteObjectMgr.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/LiteObjectMgr.cpp
+@@ -195,8 +195,11 @@ void CLiteObjectMgr::Clear()
+ 	m_aNameMap.clear();
+ 
+ 	// Clear the initial update list
+-	m_aInitialUpdateObjects.swap(TObjectList());
+-	m_aInitialUpdateObjectsLoad.swap(TObjectList());
++	{
++		TObjectList emptyA, emptyB;
++		m_aInitialUpdateObjects.swap(emptyA);
++		m_aInitialUpdateObjectsLoad.swap(emptyB);
++	}
+ 
+ 	// You're clean, now
+ 	SetDirty(eDirty_All, false);
+@@ -375,7 +378,7 @@ void CLiteObjectMgr::PreStartWorld(bool bSwitchingWorlds)
+ 	else
+ 	{
+ 		m_aDeleteObjects.insert(m_aDeleteObjects.end(), m_aActiveObjects.begin(), m_aActiveObjects.end());
+-		m_aActiveObjects.swap(TObjectList());
++		{ TObjectList empty; m_aActiveObjects.swap(empty); }
+ 	}
+ 	m_nNumActiveObjects = 0;
+ 
+@@ -384,7 +387,7 @@ void CLiteObjectMgr::PreStartWorld(bool bSwitchingWorlds)
+ 	else
+ 	{
+ 		m_aDeleteObjects.insert(m_aDeleteObjects.end(), m_aInactiveObjects.begin(), m_aInactiveObjects.end());
+-		m_aInactiveObjects.swap(TObjectList());
++		{ TObjectList empty; m_aInactiveObjects.swap(empty); }
+ 	}
+ 	m_nNumInactiveObjects = 0;
+ 
+@@ -392,7 +395,7 @@ void CLiteObjectMgr::PreStartWorld(bool bSwitchingWorlds)
+ 	m_aNameMap.clear();
+ 
+ 	// Clear the initial update list
+-	m_aInitialUpdateObjects.swap(TObjectList());
++	{ TObjectList empty; m_aInitialUpdateObjects.swap(empty); }
+ 
+ 	// You're clean, now
+ 	SetDirty(eDirty_All, false);
+@@ -528,7 +531,7 @@ void CLiteObjectMgr::RemoveObjectList(TObjectList &aList)
+ 		}
+ 	}
+ 	// Forget...
+-	aList.swap(TObjectList());
++	{ TObjectList empty; aList.swap(empty); }
+ }
+ 
+ GameBaseLite *CLiteObjectMgr::LoadObjectInfo(ILTMessage_Read *pMsg, uint32 nSerializeID)
+@@ -591,7 +594,7 @@ void CLiteObjectMgr::HandlePendingInitialUpdates()
+ 			(*iCurObj)->InitialUpdate(INITIALUPDATE_SAVEGAME);
+ 	}
+ 	// Clear the list
+-	m_aInitialUpdateObjectsLoad.swap(TObjectList());
++	{ TObjectList empty; m_aInitialUpdateObjectsLoad.swap(empty); }
+ 	// Send initial updates to all the objects that are waiting for one
+ 	iCurObj = m_aInitialUpdateObjects.begin();
+ 	for (; iCurObj != m_aInitialUpdateObjects.end(); ++iCurObj)
+@@ -600,7 +603,7 @@ void CLiteObjectMgr::HandlePendingInitialUpdates()
+ 			(*iCurObj)->InitialUpdate(INITIALUPDATE_NORMAL);
+ 	}
+ 	// Clear the list
+-	m_aInitialUpdateObjects.swap(TObjectList());
++	{ TObjectList empty; m_aInitialUpdateObjects.swap(empty); }
+ }
+ 
+ void CLiteObjectMgr::HandlePendingDeletes()
+diff --git a/NOLF2/ObjectDLL/ObjectShared/ObjectTemplateMgr.h b/NOLF2/ObjectDLL/ObjectShared/ObjectTemplateMgr.h
+index b126c8781866eea47b7e4dc33c209f9525d8ff74..fa8193a6da3de33bce060b524bd91dce189f590d 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/ObjectTemplateMgr.h
++++ b/NOLF2/ObjectDLL/ObjectShared/ObjectTemplateMgr.h
+@@ -101,7 +101,7 @@ protected:
+ 	{
+ 		size_t operator()(const std::string &sName) const {
+ 			uint32 nHash = 0;
+-			const char *pName = sName.begin();
++			const char *pName = sName.c_str();
+ 			for (; *pName; ++pName)
+ 				nHash = 13 * nHash + (toupper(*pName) - '@');
+ 			return nHash;
+diff --git a/NOLF2/ObjectDLL/ObjectShared/PlayerObj.h b/NOLF2/ObjectDLL/ObjectShared/PlayerObj.h
+index aa2512545024001663a8ac746a583157eb2655fc..019f7b807c82238960f972d1f2aacf8c3c86ae88 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/PlayerObj.h
++++ b/NOLF2/ObjectDLL/ObjectShared/PlayerObj.h
+@@ -38,7 +38,7 @@ class TeleportPoint;
+ class PlayerLure;
+ class CAI;
+ struct WeaponFireInfo;
+-enum  EnumAIStimulusID;
++enum EnumAIStimulusID : int;
+ 
+ 
+ struct ObjectiveMsgInfo
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Projectile.cpp b/NOLF2/ObjectDLL/ObjectShared/Projectile.cpp
+index 8154221f900b7b8ed3edacc537b436557010b1ac..a3b310ed6bb75dc425eadddf569bbdba1de1933f 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Projectile.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/Projectile.cpp
+@@ -1097,7 +1097,7 @@ void CProjectile::Detonate(HOBJECT hObj)
+ 	// Handle impact damage...
+ 	if (hObj)
+ 	{
+-		HOBJECT hDamager = m_hFiredFrom ? m_hFiredFrom : m_hObject;
++		HOBJECT hDamager = m_hFiredFrom ? (HOBJECT)m_hFiredFrom : m_hObject;
+ 
+ 		ImpactDamageObject(hDamager, hObj);
+ 	}
+diff --git a/NOLF2/ObjectDLL/ObjectShared/ProjectileTypes.h b/NOLF2/ObjectDLL/ObjectShared/ProjectileTypes.h
+index 15debb152be09ce6b4235654b285197dcce5451a..4d5b56134b4d6440db9c4d2cd3d74bfdd423c355 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/ProjectileTypes.h
++++ b/NOLF2/ObjectDLL/ObjectShared/ProjectileTypes.h
+@@ -23,8 +23,8 @@ struct BEARTRAPCLASSDATA;
+ struct BANANACLASSDATA;
+ struct SPEARCLASSDATA;
+ 
+-enum ContainerCode;
+-enum EnumAIStimulusID;
++enum ContainerCode : int;
++enum EnumAIStimulusID : int;
+ 
+ LINKTO_MODULE( ProjectileTypes );
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/RelationButeMgr.cpp b/NOLF2/ObjectDLL/ObjectShared/RelationButeMgr.cpp
+index 63b6e76361e26d030bdfde84b56721c1c12c91e1..a85af8d4d614db2de9cd5a572726585f42eef9b4 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/RelationButeMgr.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/RelationButeMgr.cpp
+@@ -870,7 +870,7 @@ int CRelationUser::Save(ILTMessage_Write *pMsg)
+ 	// Save each of the Active Relationships
+ 	std::for_each( m_Momentos.begin(),
+ 		m_Momentos.end(),
+-		std::bind2nd( std::mem_fun1(&RelationMomento::Save), pMsg ));
++		std::bind2nd( std::mem_fun(&RelationMomento::Save), pMsg ));
+ 
+ 	SAVE_TIME( m_flTimeRelationsLast );
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/RelationChangeObserver.h b/NOLF2/ObjectDLL/ObjectShared/RelationChangeObserver.h
+index bb41a0e47c919cc085575b4b231991bd8cae4fb2..095c0cc7136483011b5115d7afba785fe649a21a 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/RelationChangeObserver.h
++++ b/NOLF2/ObjectDLL/ObjectShared/RelationChangeObserver.h
+@@ -15,7 +15,7 @@
+ //----------------------------------------------------------------------------
+ 
+ #ifndef __RELATIONCHANGEOBSERVER_H__
+-#define __RELATIONCHANGEOBSERVER_H
++#define __RELATIONCHANGEOBSERVER_H__
+ 
+ #if _MSC_VER >= 1000
+ #pragma once
+diff --git a/NOLF2/ObjectDLL/ObjectShared/RelationMgr.cpp b/NOLF2/ObjectDLL/ObjectShared/RelationMgr.cpp
+index 3bad2bc1fc351461730174f8f33505c3e1e310e5..f210d94b0ee01a4c36a532c854bf52e9365fda14 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/RelationMgr.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/RelationMgr.cpp
+@@ -103,7 +103,7 @@ void CRelationMgr::Save(ILTMessage_Write *pMsg)
+ 	SAVE_INT( m_listCollectives.size() );
+ 	std::for_each( m_listCollectives.begin(),
+ 		m_listCollectives.end(),
+-		std::bind2nd( std::mem_fun1(&CCollectiveRelationMgr::Save), pMsg ));
++		std::bind2nd( std::mem_fun(&CCollectiveRelationMgr::Save), pMsg ));
+ }
+ void CRelationMgr::Load(ILTMessage_Read *pMsg)
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Scanner.h b/NOLF2/ObjectDLL/ObjectShared/Scanner.h
+index a94ba946ebfa6c7c7b1ffe65fde102236f3af4eb..5146376d31f32944273519ec9bdb892a524f58bd 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Scanner.h
++++ b/NOLF2/ObjectDLL/ObjectShared/Scanner.h
+@@ -25,7 +25,7 @@ class CObjectRelationMgr;
+ class RelationData;
+ class RelationSet;
+ class CAIStimulusRecord;
+-enum  EnumAISenseType;
++enum EnumAISenseType : int;
+ 
+ LINKTO_MODULE( Scanner );
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/ServerUtilities.cpp b/NOLF2/ObjectDLL/ObjectShared/ServerUtilities.cpp
+index de28d2cf0f902e3cd748195dcfb48eff15ee2106..df9c8f7bbdb45535ded63e1804017966e03d28a7 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/ServerUtilities.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/ServerUtilities.cpp
+@@ -1378,6 +1378,8 @@ GenericProp g_gp;
+ // Check if in multiplayer game.
+ bool IsMultiplayerGame()
+ {
++    if (!g_pGameServerShell)
++        return false;
+     return !!(g_pGameServerShell->GetGameType() != eGameTypeSingle);
+ }
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/Sprinkles.cpp b/NOLF2/ObjectDLL/ObjectShared/Sprinkles.cpp
+index a97e8ef3fe6f58e58c14de080c1ba5297c42a07a..b265180071569b1a2482101e09803ad0501743d4 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/Sprinkles.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/Sprinkles.cpp
+@@ -7,15 +7,15 @@ LINKFROM_MODULE( Sprinkles );
+ 
+ 
+ #define ADD_SPRINKLE_PROP(num, defFilename) \
+-	ADD_STRINGPROP_FLAG(Filename##num##, defFilename, PF_FILENAME)\
+-	ADD_STRINGPROP_FLAG(SkinName##num##, "", PF_FILENAME)\
+-	ADD_LONGINTPROP(Count##num##, 16)\
+-	ADD_REALPROP(Speed##num##, 50.0f)\
+-	ADD_REALPROP(Size##num##, 10.0f)\
+-	ADD_REALPROP_FLAG(SpawnRadius##num##, 500.0f, PF_RADIUS)\
+-	ADD_COLORPROP(ColorMin##num##, 255.0f, 255.0f, 255.0f)\
+-	ADD_COLORPROP(ColorMax##num##, 255.0f, 255.0f, 255.0f)\
+-	ADD_VECTORPROP_VAL(AnglesVel##num##, 1.0f, 1.0f, 1.0f)
++	ADD_STRINGPROP_FLAG(Filename##num, defFilename, PF_FILENAME)\
++	ADD_STRINGPROP_FLAG(SkinName##num, "", PF_FILENAME)\
++	ADD_LONGINTPROP(Count##num, 16)\
++	ADD_REALPROP(Speed##num, 50.0f)\
++	ADD_REALPROP(Size##num, 10.0f)\
++	ADD_REALPROP_FLAG(SpawnRadius##num, 500.0f, PF_RADIUS)\
++	ADD_COLORPROP(ColorMin##num, 255.0f, 255.0f, 255.0f)\
++	ADD_COLORPROP(ColorMax##num, 255.0f, 255.0f, 255.0f)\
++	ADD_VECTORPROP_VAL(AnglesVel##num, 1.0f, 1.0f, 1.0f)
+ 
+ 
+ 
+diff --git a/NOLF2/ObjectDLL/ObjectShared/VolumeBrush.h b/NOLF2/ObjectDLL/ObjectShared/VolumeBrush.h
+index e5050cddfe09bcce4240a2f19421d0d5fb26d88b..98367232db6ea014d1cb42919030436b48c8feaf 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/VolumeBrush.h
++++ b/NOLF2/ObjectDLL/ObjectShared/VolumeBrush.h
+@@ -18,13 +18,13 @@ LINKTO_MODULE( VolumeBrush );
+ #include "GameBase.h"
+ #include "ContainerCodes.h"
+ #include "DamageTypes.h"
+-#include "..\shared\SoundFilterMgr.h"
++#include "SoundFilterMgr.h"
+ #include "SharedMovement.h"
+ 
+ 
+ class CSoundFilterMgrPlugin;
+ class CSurfaceMgrPlugin;
+-enum SurfaceType;
++enum SurfaceType : int;
+ 
+ class VolumeBrush : public GameBase
+ {
+diff --git a/NOLF2/ObjectDLL/ObjectShared/WorldModel.cpp b/NOLF2/ObjectDLL/ObjectShared/WorldModel.cpp
+index 1111403cc838dbfb7b7721ceae6c76aaa589ffa7..c31d29082b3fbdbcfaf86e208538935c49c02f74 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/WorldModel.cpp
++++ b/NOLF2/ObjectDLL/ObjectShared/WorldModel.cpp
+@@ -1280,7 +1280,8 @@ bool WorldModel::CreateServerMark(CLIENTWEAPONFX & theStruct)
+ 		// Since this mark is already attached to us, remove the attachment
+ 		DetachObject( pMoveMark->m_hObject );
+ 
+-		if( !AttachServerMark( *pMoveMark, (CLIENTWEAPONFX)theStruct))
++		CLIENTWEAPONFX markFX = theStruct;
++		if( !AttachServerMark( *pMoveMark, markFX))
+ 		{
+ 			g_pLTServer->RemoveObject( pMoveMark->m_hObject );
+ 			RemoveMarkFromList( pMoveMark->m_hObject );
+@@ -1330,7 +1331,8 @@ bool WorldModel::CreateServerMark(CLIENTWEAPONFX & theStruct)
+         g_pLTServer->ScaleObject(pMark->m_hObject, &vScale);
+ 	}
+ 
+-	if( !AttachServerMark( *pMark, (CLIENTWEAPONFX)theStruct))
++	CLIENTWEAPONFX attachFX = theStruct;
++	if( !AttachServerMark( *pMark, attachFX))
+ 	{
+ 		g_pLTServer->RemoveObject( pMark->m_hObject );
+ 		pMark = NULL;
+diff --git a/NOLF2/ObjectDLL/ObjectShared/WorldProperties.h b/NOLF2/ObjectDLL/ObjectShared/WorldProperties.h
+index 99f592297ddc2da4836642b9d23c6f9c4b9e650b..08dbbdd47fc622515be0fe96938a049c20018e8b 100644
+--- a/NOLF2/ObjectDLL/ObjectShared/WorldProperties.h
++++ b/NOLF2/ObjectDLL/ObjectShared/WorldProperties.h
+@@ -14,7 +14,7 @@
+ #define _WORLD_PROPERTIES_H_
+ 
+ #include "ltengineobjects.h"
+-#include "..\shared\SoundFilterMgr.h"
++#include "SoundFilterMgr.h"
+ #include "GameBase.h"
+ 
+ LINKTO_MODULE( WorldProperties );
+diff --git a/NOLF2/Shared/AttachButeMgr.cpp b/NOLF2/Shared/AttachButeMgr.cpp
+index 7267f8c27a6c6073da8b384308c7e26ac45b5362..86835c02140d2c48432e84efb129a0e2ee6fec4d 100644
+--- a/NOLF2/Shared/AttachButeMgr.cpp
++++ b/NOLF2/Shared/AttachButeMgr.cpp
+@@ -477,5 +477,6 @@ LTVector CAttachButeMgr::GetPVAttachmentScale( int nPVAttachmentID )
+ 	}
+ 		
+ 	sprintf( s_aTagName, "%s%d", ABM_PVATTACHMENT, nPVAttachmentID );
+-	return m_buteMgr.GetVector( s_aTagName, ABM_PVATTACHMENT_SCALE, CAVector( 0, 0, 0));
++	CAVector vDefault( 0, 0, 0);
++	return m_buteMgr.GetVector( s_aTagName, ABM_PVATTACHMENT_SCALE, vDefault);
+ }
+\ No newline at end of file
+diff --git a/NOLF2/Shared/BankedList_impl.h b/NOLF2/Shared/BankedList_impl.h
+index 0c212da1d9e0ce01d4ca6eba01c84864919fe51b..554aff0c0f54f747e8586babb02a925ccabed849 100644
+--- a/NOLF2/Shared/BankedList_impl.h
++++ b/NOLF2/Shared/BankedList_impl.h
+@@ -23,8 +23,8 @@ private:
+     friend class t_Parent;
+     friend class t_Parent::t_Iter;
+ #else
+-    friend t_Parent;
+-    friend t_Parent::t_Iter;
++    friend class CBankedList<T>;
++    friend class CBankedListIter<T>;
+ #endif
+ 
+ 	// Is this bank currently full?
+diff --git a/NOLF2/Shared/BaseFx.h b/NOLF2/Shared/BaseFx.h
+index f58db7d68d7757949125787d6c28008e94bd1467..7a8e1fd3e32571943d85e90c5ef1d376d8a5663a 100644
+--- a/NOLF2/Shared/BaseFx.h
++++ b/NOLF2/Shared/BaseFx.h
+@@ -182,7 +182,7 @@
+ 												memset(this, 0, sizeof(CLIENTFX_CREATESTRUCT));
+ 											}
+ 
+-											CLIENTFX_CREATESTRUCT(const char *sName, uint32 dwFlags, LTVector &vPos)
++											CLIENTFX_CREATESTRUCT(const char *sName, uint32 dwFlags, const LTVector &vPos)
+ 											{
+ 												memset(this, 0, sizeof(CLIENTFX_CREATESTRUCT));
+ 
+diff --git a/NOLF2/Shared/CharacterAlignment.cpp b/NOLF2/Shared/CharacterAlignment.cpp
+index 8339f1947c268c1c16223815d7d9121766178469..dfcc9d9f7451e4a7f65cdce2b845c73a2a87ab2b 100644
+--- a/NOLF2/Shared/CharacterAlignment.cpp
++++ b/NOLF2/Shared/CharacterAlignment.cpp
+@@ -302,7 +302,7 @@ int RelationTraits::CIDValue::LookupID( const std::string& Value)
+ 	if ( it == sm_mapValueToID.end() )
+ 	{
+ 		sm_nID++;
+-		sm_mapValueToID.insert( std::make_pair< std::string,int>( Value, sm_nID ) );
++		sm_mapValueToID.insert( std::make_pair( Value, sm_nID ) );
+ 		return sm_nID;
+ 	}
+ 	else
+diff --git a/NOLF2/Shared/CharacterAlignment.h b/NOLF2/Shared/CharacterAlignment.h
+index 36ea40c763eec47d14baace1041725d9acaa6f10..5ce55c4872fd314324ed6201e6d23bdd8f0babbb 100644
+--- a/NOLF2/Shared/CharacterAlignment.h
++++ b/NOLF2/Shared/CharacterAlignment.h
+@@ -21,7 +21,7 @@
+ // TODO: May want to convert CharacterAlignment to Jeffs macro expansion?
+ enum CharacterAlignment { LIKE=0, TOLERATE, HATE, UNDETERMINED, INVALID };
+ enum CharacterSide { CS_ENEMY = 0, CS_FRIEND, CS_NEUTRAL };
+-enum CharacterClass   	{ UNKNOWN=0, GOOD, BAD, NEUTRAL };
++enum CharacterClass : int { UNKNOWN=0, GOOD, BAD, NEUTRAL };
+ 
+ class RelationData;
+ class RelationSet;
+diff --git a/NOLF2/Shared/ClientServerShared.cpp b/NOLF2/Shared/ClientServerShared.cpp
+index 82a2e3f11f443b9c778429c552df1d9ecdb285b3..a1d21274b6aeec22f6529f8ffc14706cdd52e8a4 100644
+--- a/NOLF2/Shared/ClientServerShared.cpp
++++ b/NOLF2/Shared/ClientServerShared.cpp
+@@ -16,6 +16,7 @@
+ 
+ #ifdef _CLIENTBUILD
+ 	#include "ClientUtilities.h"
++	#include "GameClientShell.h"
+ #endif //_CLIENTBUILD
+ 
+ 
+@@ -94,9 +95,13 @@ void SetObjectRenderStyle(HOBJECT hObj, uint8 nRenderStyleNum, char* szRenderSty
+ GameType GetGameType( )
+ {
+ #ifdef _CLIENTBUILD
+-	return g_pGameClientShell->GetGameType();
++	if (g_pGameClientShell)
++		return g_pGameClientShell->GetGameType();
++	return eGameTypeSingle;
+ #else // _CLIENTBUILD
+-	return g_pGameServerShell->GetGameType();
++	if (g_pGameServerShell)
++		return g_pGameServerShell->GetGameType();
++	return eGameTypeSingle;
+ #endif // _CLIENTBUILD
+ }
+ 
+diff --git a/NOLF2/Shared/ContainerCodes.h b/NOLF2/Shared/ContainerCodes.h
+index dc02a06a7baf751c869c93cae4260415c908d253..d081ab8d13654bccda63faa3c9fbf635f830bbd1 100644
+--- a/NOLF2/Shared/ContainerCodes.h
++++ b/NOLF2/Shared/ContainerCodes.h
+@@ -25,8 +25,7 @@
+ 
+ // [KLS 6/28/02] - Make sure you update the CC_XXX_FLAGs below if you add
+ // a new container code!!!!
+-enum ContainerCode 
+-{
++enum ContainerCode : int {
+ 	CC_NO_CONTAINER=0,
+ 	CC_WATER=1,
+ 	CC_CORROSIVE_FLUID=2,
+diff --git a/NOLF2/Shared/DamageTypes.h b/NOLF2/Shared/DamageTypes.h
+index bedac7050ce5acfe4363b6282a2c5e3735ca24a4..a50bcf26ff639d2864c92c61f9097b4b323fcfaf 100644
+--- a/NOLF2/Shared/DamageTypes.h
++++ b/NOLF2/Shared/DamageTypes.h
+@@ -27,8 +27,7 @@ extern DTINFO DTInfoArray[];
+ // IMPORTANT NOTE:  If you add a new DamageType, make sure you update
+ // the DTInfoArray in DamageTypes.cpp!!!
+ 
+-enum DamageType
+-{
++enum DamageType : int {
+ 	DT_INVALID = -1,
+ #define INCLUDE_AS_ENUM
+ #include "DamageTypesEnum.h"
+diff --git a/NOLF2/Shared/Factory.h b/NOLF2/Shared/Factory.h
+index d9ca932218da8942b04d25ed157e3759b463235a..043555138c8c808f1a12b0210f0c8f6305679c40 100644
+--- a/NOLF2/Shared/Factory.h
++++ b/NOLF2/Shared/Factory.h
+@@ -12,13 +12,13 @@
+ #define __FACTORY_H__
+ 
+ #define FACTORY_NEW(fact)\
+-	CFactory<##fact##>::Create();
++	CFactory<fact>::Create();
+ 
+ #define FACTORY_DELETE(fact)\
+ 	fact->Destroy();
+ 
+ #define DEFINE_FACTORY_CLASS(fact)\
+-	public CFactory<##fact##>
++	public CFactory<fact>
+ 
+ #define	DEFINE_ABSTRACT_FACTORY_METHODS(fact) \
+ 	public:\
+@@ -31,14 +31,14 @@
+ 	public:\
+ 	virtual void Constructor();\
+ 	virtual void Destructor();\
+-	virtual void Destroy() { CFactory<##fact##>::Destroy((##fact##*)this); }\
++	virtual void Destroy() { CFactory<fact>::Destroy((fact*)this); }\
+ 	private:
+ 
+ #define IMPLEMENT_FACTORY(fact, size)\
+-	CFactory<##fact##>::CCleaner CFactory<##fact##>::s_Cleaner;\
+-	int CFactory<##fact##>::s_cTYPE;\
+-	int CFactory<##fact##>::s_iCursor;\
+-	##fact##** CFactory<##fact##>::s_aPTYPE = CFactory<##fact##>::Initialize(size);
++	CFactory<fact>::CCleaner CFactory<fact>::s_Cleaner;\
++	int CFactory<fact>::s_cTYPE;\
++	int CFactory<fact>::s_iCursor;\
++	fact** CFactory<fact>::s_aPTYPE = CFactory<fact>::Initialize(size);
+ 
+ template<class TYPE> class CFactory
+ {
+diff --git a/NOLF2/Shared/GameButeMgr.cpp b/NOLF2/Shared/GameButeMgr.cpp
+index a64513d2a95b2a7a011a5020d613bc34f35283c1..1ad66f89d9a5f1d59e2f52fa352f98afe34743aa 100644
+--- a/NOLF2/Shared/GameButeMgr.cpp
++++ b/NOLF2/Shared/GameButeMgr.cpp
+@@ -17,6 +17,10 @@
+ 
+ void GBM_DisplayError(const char* szMsg)
+ {
++	if (szMsg)
++		fprintf(stderr, "ButeMgr: %s\n", szMsg);
++	return;
++
+     LTFLOAT fVal = 0.0f;
+ 
+ #ifdef __PSX2
+@@ -38,10 +42,11 @@ void GBM_DisplayError(const char* szMsg)
+ 
+     if (!g_pLTClient) return;
+ 
+-    HCONSOLEVAR hVar = g_pLTClient->GetConsoleVar("DebugLevel");
+-	if(hVar)
++    if (g_pLTClient->GetConsoleVar)
+ 	{
+-        fVal = g_pLTClient->GetVarValueFloat(hVar);
++		HCONSOLEVAR hVar = g_pLTClient->GetConsoleVar("DebugLevel");
++		if(hVar)
++			fVal = g_pLTClient->GetVarValueFloat(hVar);
+ 	}
+ #else
+ 
+diff --git a/NOLF2/Shared/GlobalMgr.cpp b/NOLF2/Shared/GlobalMgr.cpp
+index cd649284c4ecdcc8d1137f1d7c4310fa4698fac9..0eea657263cc681bf2bfc0a4a0b188d868bb5a6f 100644
+--- a/NOLF2/Shared/GlobalMgr.cpp
++++ b/NOLF2/Shared/GlobalMgr.cpp
+@@ -16,6 +16,7 @@
+ #include "ModelButeMgr.h"
+ #include "FXButeMgr.h"
+ #include "UberAssert.h"
++#include <stdio.h>
+ 
+ 
+ //----------------------------------------------------------------------------
+@@ -60,6 +61,15 @@ CGlobalMgr::CGlobalMgr()
+ 
+ LTBOOL CGlobalMgr::Init()
+ {
++#ifdef __LINUX
++	/* Client and server share one process. The client already inited
++	   the shared bute singletons; re-init would fail and skip AI butes. */
++	if (g_pDebrisMgr)
++	{
++		fprintf(stderr, "CGlobalMgr::Init: shared butes already live, reuse\n");
++		return LTTRUE;
++	}
++#endif
+     if (!m_DebrisMgr.Init())
+ 	{
+ 		ShutdownWithError("DebrisMgr", DEBRISMGR_DEFAULT_FILE);
+diff --git a/NOLF2/Shared/ModelButeMgr.h b/NOLF2/Shared/ModelButeMgr.h
+index 3e33d08319b93d3e93451b37d5ae30aa27ad72e5..bd4e892ac95f2e20aeb1404938e6b6a219c62c01 100644
+--- a/NOLF2/Shared/ModelButeMgr.h
++++ b/NOLF2/Shared/ModelButeMgr.h
+@@ -16,7 +16,7 @@
+ #include "GameButeMgr.h"
+ #include "ClientServerShared.h"
+ #include "SurfaceDefs.h"
+-#include "..\shared\ButeListReader.h"
++#include "ButeListReader.h"
+ #include "DebugNew.h"
+ 
+ // Defines
+@@ -42,13 +42,11 @@ enum ModelId
+ 	eModelIdInvalid = 0xFF,
+ };
+ 
+-enum ModelSkeleton
+-{
++enum ModelSkeleton : int {
+ 	eModelSkeletonInvalid = 0xFF,
+ };
+ 
+-enum ModelNode
+-{
++enum ModelNode : int {
+ 	eModelNodeInvalid = 0xFF,
+ };
+ 
+diff --git a/NOLF2/Shared/RelationTraitTypeEnums.h b/NOLF2/Shared/RelationTraitTypeEnums.h
+index 57e279bd5913a0d00fcc583737f74f02075eb2de..822db5f0a7615e8941abc586cea7968e4bca84df 100644
+--- a/NOLF2/Shared/RelationTraitTypeEnums.h
++++ b/NOLF2/Shared/RelationTraitTypeEnums.h
+@@ -20,7 +20,7 @@
+ #endif
+  
+ #if TRAIT_TYPE_AS_ENUM
+-	#define ADD_TRAIT_TYPE(label, val) kTrait_##label## = val,
++	#define ADD_TRAIT_TYPE(label, val) kTrait_##label = val,
+ 	#define SET_NUM_TRAIT_TYPES(val) kTrait_Count = val,
+ #elif TRAIT_TYPE_AS_STRING
+ 	#define ADD_TRAIT_TYPE(label, val) #label,
+diff --git a/NOLF2/Shared/SoundMgr.cpp b/NOLF2/Shared/SoundMgr.cpp
+index 417f497750a773f1d1979ad1b1e62afcea99c610..387d4feae1e8d3423c1c9f13ba9945e40af2bcff 100644
+--- a/NOLF2/Shared/SoundMgr.cpp
++++ b/NOLF2/Shared/SoundMgr.cpp
+@@ -439,7 +439,7 @@ HLTSOUND CGameSoundMgr::PlaySoundFromObject(HOBJECT hObject, char const* pName,
+ //
+ // ----------------------------------------------------------------------- //
+ 
+-HLTSOUND CGameSoundMgr::PlaySoundFromPos(LTVector & vPos, char const* pName, LTFLOAT fORadius,
++HLTSOUND CGameSoundMgr::PlaySoundFromPos(const LTVector & vPos, char const* pName, LTFLOAT fORadius,
+                                      SoundPriority ePriority, uint32 dwFlags,
+ 									 uint8 nVolume, float fPitchShift, LTFLOAT fIRadius, uint8 nSoundClass )
+ {
+diff --git a/NOLF2/Shared/SoundMgr.h b/NOLF2/Shared/SoundMgr.h
+index 3b2f28c794b0d5228b8017cb0807dbe1fe07fb2f..1798069a9d406c5b0d28b477873354e07ac74f75 100644
+--- a/NOLF2/Shared/SoundMgr.h
++++ b/NOLF2/Shared/SoundMgr.h
+@@ -30,7 +30,7 @@ class CGameSoundMgr : public CGameButeMgr
+         HLTSOUND    PlaySoundFromObject(HOBJECT hObject, char const* pName, LTFLOAT fORadius=-1.0f, SoundPriority ePriority=SOUNDPRIORITY_MISC_LOW,
+ 										uint32 dwFlags=0, uint8 nVolume=SMGR_DEFAULT_VOLUME, float fPitchShift=1.0f, LTFLOAT fIRadius=-1.0f, uint8 nSoundClass = 0 );
+ 
+-        HLTSOUND    PlaySoundFromPos(LTVector & vPos, char const* pName, LTFLOAT fORadius=-1.0f, SoundPriority ePriority=SOUNDPRIORITY_MISC_LOW,
++        HLTSOUND    PlaySoundFromPos(const LTVector & vPos, char const* pName, LTFLOAT fORadius=-1.0f, SoundPriority ePriority=SOUNDPRIORITY_MISC_LOW,
+ 									uint32 dwFlags=0, uint8 nVolume=SMGR_DEFAULT_VOLUME, float fPitchShift=1.0f, LTFLOAT fIRadius=-1.0f, uint8 nSoundClass = 0 );
+ 
+ 		void		GetRandomSoundFilename(const char* pTag, const char* pAttributeBase, char *pBuf, uint16 nBufLen);
+diff --git a/NOLF2/Shared/SurfaceDefs.h b/NOLF2/Shared/SurfaceDefs.h
+index e9b42892c7eb402d255ae1338fae3b5c2682c3c1..0c2cf14643e0db429257b519a1b4e1a5b9b8d696 100644
+--- a/NOLF2/Shared/SurfaceDefs.h
++++ b/NOLF2/Shared/SurfaceDefs.h
+@@ -15,8 +15,7 @@
+ 
+ // Special pre-defined surface types...
+ 
+-enum SurfaceType
+-{
++enum SurfaceType : int {
+ 	ST_UNKNOWN				= 0,	// Unknown value
+ 	ST_AIR					= 1,	// Not a surface, but not the sky either
+ 	ST_FLESH				= 2,	// Human flesh
+diff --git a/NOLF2/Shared/TrackedNodeContext.h b/NOLF2/Shared/TrackedNodeContext.h
+index b497759287b556095345435f1a8b07e04265ed2b..bd8c33c70532477231abdb6702282cca616c632e 100644
+--- a/NOLF2/Shared/TrackedNodeContext.h
++++ b/NOLF2/Shared/TrackedNodeContext.h
+@@ -2,11 +2,11 @@
+ #define __TRACKEDNODECONTEXT_H__
+ 
+ #include "TrackedNodeMgr.h"
++#include "ModelButeMgr.h"
+ 
+ // Groups of tracking nodes exist for different purposes.
+ 
+-enum EnumTrackedNodeGroup
+-{
++enum EnumTrackedNodeGroup : int {
+ 	kTrack_None = -1,
+ 	kTrack_LookAt,
+ 	kTrack_AimAt,
+diff --git a/NOLF2/Shared/WeaponMgr.cpp b/NOLF2/Shared/WeaponMgr.cpp
+index 1dd2aa681dbf6e1c224ca8d92f38595ebe7772d2..d3b11d3f0a5573444021eaccd5b95c4c359ca7be 100644
+--- a/NOLF2/Shared/WeaponMgr.cpp
++++ b/NOLF2/Shared/WeaponMgr.cpp
+@@ -574,6 +574,8 @@ LTBOOL CWeaponMgr::Init(const char* szAttributeFile)
+ 		return LTFALSE;
+ 	}
+ 
++	fprintf(stderr, "WeaponMgr: loaded %d ammo types\n", m_nNumAmmos);
++
+ 
+ 	// Read in the properties for each weapon into the temp list...
+ 
+@@ -1666,27 +1668,38 @@ void WEAPON::InitMembers( CButeMgr &buteMgr, char *aTagName )
+ 				else
+ 				{
+ #ifdef _CLIENTBUILD
+-					g_pLTClient->CPrint("Error in %s: cannot load ammo %s",s_AttributeFile,szStr);
++					if (g_pLTClient)
++						g_pLTClient->CPrint("Error in %s: cannot load ammo %s",s_AttributeFile,szStr);
+ #endif
++					fprintf(stderr, "WEAPON: cannot load ammo '%s' for %s\n",
++						szStr, aTagName ? aTagName : "?");
+ 				}
+ 			}
+ 		}
+ 
+ 		if (n < nNumAmmoIds)
+ 		{
+-			int		*tmpAmmoIds = debug_newa( int, n );
+-			for (int i = 0; i < n; ++i)
++			if (n > 0)
+ 			{
+-				tmpAmmoIds[i] = aAmmoIds[i];
++				int		*tmpAmmoIds = debug_newa( int, n );
++				for (int i = 0; i < n; ++i)
++				{
++					tmpAmmoIds[i] = aAmmoIds[i];
++				}
++				debug_deletea( aAmmoIds );
++				aAmmoIds = tmpAmmoIds;
++			}
++			else
++			{
++				debug_deletea( aAmmoIds );
++				aAmmoIds = LTNULL;
+ 			}
+-
+-			debug_deletea( aAmmoIds );
+-			aAmmoIds = tmpAmmoIds;
+ 			nNumAmmoIds = n;
+ 
+ 		}
+ 
+-		nDefaultAmmoId = aAmmoIds[0];
++		if (aAmmoIds && nNumAmmoIds > 0)
++			nDefaultAmmoId = aAmmoIds[0];
+ 	}
+ 	
+ 
+@@ -1741,14 +1754,21 @@ void WEAPON::InitMembers( CButeMgr &buteMgr, char *aTagName )
+ 
+ 		if (n < nNumModIds)
+ 		{
+-			int		*tmpModIds = debug_newa( int, n );
+-			for (int i = 0; i < n; ++i)
++			if (n > 0)
+ 			{
+-				tmpModIds[i] = aModIds[i];
++				int		*tmpModIds = debug_newa( int, n );
++				for (int i = 0; i < n; ++i)
++				{
++					tmpModIds[i] = aModIds[i];
++				}
++				debug_deletea( aModIds );
++				aModIds = tmpModIds;
++			}
++			else
++			{
++				debug_deletea( aModIds );
++				aModIds = LTNULL;
+ 			}
+-
+-			debug_deletea( aModIds );
+-			aModIds = tmpModIds;
+ 			nNumModIds = n;
+ 
+ 		}
+diff --git a/NOLF2/Shared/WeaponMgr.h b/NOLF2/Shared/WeaponMgr.h
+index 95933b7cc2c0be580bab510b9eed9c3c4b50ec37..99884cf9d7a611e6839b383b04e8d15f49f990c0 100644
+--- a/NOLF2/Shared/WeaponMgr.h
++++ b/NOLF2/Shared/WeaponMgr.h
+@@ -95,7 +95,7 @@ inline char* GetString( CButeMgr & buteMgr, const char* szTagName, const char* s
+ 	// NOTE: the caller of this function is responsible
+ 	// for this memory
+ 	szResult = debug_newa(char, strlen(szTemp) + 1);
+-	SAFE_STRCPY( szResult, szTemp );
++	strcpy( szResult, szTemp );
+ 
+ 	return szResult;
+ }
+diff --git a/NOLF2/Shared/unistd.h b/NOLF2/Shared/unistd.h
+index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..f9951e853085bcdfeb67321cd4b086eb97caa57b 100644
+--- a/NOLF2/Shared/unistd.h
++++ b/NOLF2/Shared/unistd.h
+@@ -0,0 +1,2 @@
++/* Empty placeholder used to shadow POSIX <unistd.h> on -I Shared. */
++#include_next <unistd.h>
+diff --git a/libs/ButeMgr/butemgr.cpp b/libs/ButeMgr/butemgr.cpp
+index d7f19e893d9109e45c1857819a782875da60ea07..d4793e3f08e21d27d6890e012559dfd92bc9369b 100644
+--- a/libs/ButeMgr/butemgr.cpp
++++ b/libs/ButeMgr/butemgr.cpp
+@@ -623,7 +623,9 @@ void CButeMgr::DisplayMessage(const char* szMsg, ...)
+ 	va_start(v, szMsg);
+ 	char aMsgBuffer[2048];
+ 	_vsnprintf(aMsgBuffer, sizeof(aMsgBuffer), szMsg, v);
+-	m_sErrorString.Format("ButeMgr (%s, %d):  %s", m_sAttributeFilename, m_lineNumber, aMsgBuffer);
++	m_sErrorString.Format("ButeMgr (%s, %d):  %s",
++		m_sAttributeFilename.GetBuffer() ? m_sAttributeFilename.GetBuffer() : "",
++		m_lineNumber, aMsgBuffer);
+ 
+ //	TRACE("%s\n", (m_sErrorString.GetBuffer(0)));
+ 	if (m_pDisplayFunc)
+@@ -1204,12 +1206,22 @@ bool CButeMgr::Save(const char* szNewFileName)
+ 		if (szNewFileName)
+ #if _MSC_VER >= 1300
+ 			m_cryptMgr.Encrypt(*m_pSaveData, std::ofstream(szNewFileName, std::ios_base::binary));
++#elif defined(__LINUX)
++		{
++			ofstream osCrypt(szNewFileName, ios::binary);
++			m_cryptMgr.Encrypt(*m_pSaveData, osCrypt);
++		}
+ #else
+ 			m_cryptMgr.Encrypt(*m_pSaveData, ofstream(szNewFileName, ios::binary));
+ #endif // VC7
+ 		else
+ #if _MSC_VER >= 1300
+ 			m_cryptMgr.Encrypt(*m_pSaveData, std::ofstream(m_sAttributeFilename, std::ios_base::binary));
++#elif defined(__LINUX)
++		{
++			ofstream osCrypt(m_sAttributeFilename, ios::binary);
++			m_cryptMgr.Encrypt(*m_pSaveData, osCrypt);
++		}
+ #else
+ 			m_cryptMgr.Encrypt(*m_pSaveData, ofstream(m_sAttributeFilename, ios::binary));
+ #endif // VC7
+@@ -1362,11 +1374,16 @@ CButeMgr::SymTypes CButeMgr::GetType(const char* szTagName, const char* szAttNam
+ ////////////////////////////////////////////////////////////////////////
+ CString const& CButeMgr::AddString( char const* pszString )
+ {
++#ifdef __LINUX
++	m_stringHolder.push_back( CString( pszString ? pszString : "" ) );
++	return m_stringHolder.back();
++#else
+ 	// Add the string to the string holder.
+ 	std::pair< StringHolder::const_iterator, bool > pr = m_stringHolder.insert( CString( pszString ) );
+ 
+ 	// pr.first is a pointer to a CString.  So, dereferance and return the CString.
+ 	return *pr.first;
++#endif
+ }
+ 
+ 
+@@ -1971,8 +1988,11 @@ const char *CButeMgr::GetString(const char* szTagName, const char* szAttName, co
+ 	CSymTabItem* pItem;
+ 	if (pItem = FindSymTabItem(szTagName, szAttName))
+ 	{
+-		if (pItem->SymType == StringType)
+-			return *(pItem->data.s);
++		if (pItem->SymType == StringType && pItem->data.s)
++		{
++			const char *p = *(pItem->data.s);
++			return p ? p : "";
++		}
+ 		else
+ 			DisplayMessage("Type mismatch - [%s]:%s", szTagName, szAttName);
+ 	}
+@@ -2052,7 +2072,9 @@ CRect& CButeMgr::GetRect(const char* szTagName, const char* szAttName, CRect& de
+ 			DisplayMessage("Type mismatch - [%s]:%s", szTagName, szAttName);
+ 	}
+ 	m_bSuccess = false;
+-	return defVal;
++	static CRect s_defVal(0, 0, 0, 0);
++	s_defVal = defVal;
++	return s_defVal;
+ }
+ 
+ 
+@@ -2101,7 +2123,9 @@ CPoint& CButeMgr::GetPoint(const char* szTagName, const char* szAttName, CPoint&
+ 			DisplayMessage("Type mismatch - [%s]:%s", szTagName, szAttName);
+ 	}
+ 	m_bSuccess = false;
+-	return defVal;
++	static CPoint s_defVal(0, 0);
++	s_defVal = defVal;
++	return s_defVal;
+ }
+ 
+ 
+@@ -2144,13 +2168,15 @@ CAVector& CButeMgr::GetVector(const char* szTagName, const char* szAttName, CAVe
+ 	CSymTabItem* pItem;
+ 	if (pItem = FindSymTabItem(szTagName, szAttName))
+ 	{
+-		if (pItem->SymType == VectorType)
++		if (pItem->SymType == VectorType && pItem->data.v)
+ 			return *(pItem->data.v);
+ 		else
+ 			DisplayMessage("Type mismatch - [%s]:%s", szTagName, szAttName);
+ 	}
+ 	m_bSuccess = false;
+-	return defVal;
++	static CAVector s_defVal(0, 0, 0);
++	s_defVal = defVal;
++	return s_defVal;
+ }
+ 
+ 
+@@ -2194,13 +2220,15 @@ CARange& CButeMgr::GetRange(const char* szTagName, const char* szAttName, CARang
+ 	CSymTabItem* pItem;
+ 	if (pItem = FindSymTabItem(szTagName, szAttName))
+ 	{
+-		if (pItem->SymType == RangeType)
++		if (pItem->SymType == RangeType && pItem->data.range)
+ 			return *(pItem->data.range);
+ 		else
+ 			DisplayMessage("Type mismatch - [%s]:%s", szTagName, szAttName);
+ 	}
+ 	m_bSuccess = false;
+-	return defVal;
++	static CARange s_defVal(0, 0);
++	s_defVal = defVal;
++	return s_defVal;
+ }
+ 
+ 
+diff --git a/libs/ButeMgr/butemgr.h b/libs/ButeMgr/butemgr.h
+index 89166c053aacff5eea50c0166cead336bc3cdfb3..4950ffb077a5ab9c43e0dbf00ad9205a388573ab 100644
+--- a/libs/ButeMgr/butemgr.h
++++ b/libs/ButeMgr/butemgr.h
+@@ -20,6 +20,7 @@
+ 
+ #include <map>
+ #include <set>
++#include <list>
+ #include <functional>
+ #include <hash_set>
+ #include <hash_map>
+@@ -289,6 +290,11 @@ public:
+ 	void SetPoint(const char* szTagName, const char* szAttName, const CPoint& val);
+ 
+ 	CAVector& GetVector(const char* szTagName, const char* szAttName, CAVector& defVal);
++	CAVector GetVector(const char* szTagName, const char* szAttName, const CAVector& defVal)
++	{
++		CAVector tmp(defVal);
++		return GetVector(szTagName, szAttName, tmp);
++	}
+ 	CAVector& GetVector(const char* szTagName, const char* szAttName);
+ 	void SetVector(const char* szTagName, const char* szAttName, const CAVector& val);
+ 
+@@ -359,9 +365,10 @@ private:
+ 	// Used to define map of strings to TableOfItems.
+ 	typedef stdext::hash_map< char const*, TableOfItems*, ButeMgrHashCompare > TableOfTags;
+ #else
+-	// Used to define dictionary of strings.
+-	// This must be case sensitive!
+-	typedef std::hash_set< CString, std::hash< char const* >, equal_str > StringHolder;
++	// hash_set<CString> rehashes and moves elements, which invalidates
++	// CString* keys stored in the attribute tables. Keep interned
++	// strings in a node-based list so pointers stay valid.
++	typedef std::list< CString > StringHolder;
+ 
+ 	// Used to define map of strings to CSymTabItems.
+ 	typedef std::hash_map< char const*, CSymTabItem*, hash_str_nocase, equal_str_nocase > TableOfItems;
+diff --git a/libs/MFCStub/mfcs_misc.h b/libs/MFCStub/mfcs_misc.h
+index 930a45f9933f2e64297fa900a46b74c84194a9d0..50a04ae9ac00bce7e334441e1eaef732d8fc82ab 100644
+--- a/libs/MFCStub/mfcs_misc.h
++++ b/libs/MFCStub/mfcs_misc.h
+@@ -21,7 +21,7 @@ inline void MFCStubTrace(const char *pFormat, ...)
+ #ifdef _DEBUG
+ #define TRACE MFCStubTrace
+ #else
+-#define TRACE (void)0
++#define TRACE 1 ? (void)0 : MFCStubTrace
+ #endif
+ 
+ #define DEBUG_NEW new
+diff --git a/libs/MFCStub/mfcs_point.h b/libs/MFCStub/mfcs_point.h
+index 5942af85870d0986467153811c25b722b8f92fa8..843e4f0e50be722bb4dc8002f2a9a053e29a151e 100644
+--- a/libs/MFCStub/mfcs_point.h
++++ b/libs/MFCStub/mfcs_point.h
+@@ -3,7 +3,7 @@
+ #ifndef __MFCS_POINT_H__
+ #define __MFCS_POINT_H__
+ 
+-#include "..\mfcstub\mfcs_types.h"
++#include "mfcs_types.h" // Linux: was "..\mfcstub\mfcs_types.h"
+ 
+ #ifndef _WINDOWS_
+ 	// Make sure POINT is defined...
+diff --git a/libs/MFCStub/mfcs_rect.h b/libs/MFCStub/mfcs_rect.h
+index 68c05795317a88f77104c346703121fa703ce144..7ac32adbcbb793e3ef1938b956db7d734438f95c 100644
+--- a/libs/MFCStub/mfcs_rect.h
++++ b/libs/MFCStub/mfcs_rect.h
+@@ -3,8 +3,8 @@
+ #ifndef __MFCS_RECT_H__
+ #define __MFCS_RECT_H__
+ 
+-#include "..\mfcstub\mfcs_types.h"
+-#include "..\mfcstub\mfcs_point.h"
++#include "mfcs_types.h" // Linux: was "..\mfcstub\mfcs_types.h"
++#include "mfcs_point.h" // Linux: was "..\mfcstub\mfcs_point.h"
+ 
+ #ifndef _WINDOWS_
+ 	// Make sure RECT is defined...
+diff --git a/libs/MFCStub/mfcs_string.cpp b/libs/MFCStub/mfcs_string.cpp
+index 472ae08f9d4d43e42cd480f89c84d0d7cba78771..4a7b2ee850e0eb2d9f4b165760a371c0a083d212 100644
+--- a/libs/MFCStub/mfcs_string.cpp
++++ b/libs/MFCStub/mfcs_string.cpp
+@@ -47,7 +47,12 @@ void CString::FormatV(LPCTSTR pFormat, va_list args)
+ 	if (!pFormat)
+ 		return;
+ 
++#ifdef __LINUX
++	va_list argListSave;
++	va_copy(argListSave, args);
++#else
+ 	va_list argListSave = args;
++#endif
+ 
+ 	// make a guess at the maximum length of the resulting string
+ 	int nMaxLen = 0;
+@@ -389,9 +394,9 @@ LTBOOL CString::ExpandBuffer(uint32 minLength)
+ 		// Copy the old string
+ 		if (GetLength())
+ 			memcpy(GetBuffer(), pOldBuffer, oldLength);
+-		// Delete the old buffer
++		// Delete the old buffer (allocated with new char[])
+ 		pOldBuffer -= sizeof(CStringData);
+-		delete pOldBuffer;
++		delete[] pOldBuffer;
+ 	}
+ 
+ 	// Make sure the string is terminated
+@@ -431,11 +436,11 @@ LTBOOL CString::ShrinkBuffer(uint32 maxLength)
+ 	else // Set the data structure to empty
+ 		m_pBuffer = NULL;
+ 
+-	// Delete the old buffer
++	// Delete the old buffer (allocated with new char[])
+ 	if (pOldBuffer)
+ 	{
+ 		pOldBuffer -= sizeof(CStringData);
+-		delete pOldBuffer;
++		delete[] pOldBuffer;
+ 	}
+ 
+ 	return TRUE;
+diff --git a/libs/MFCStub/mfcs_string.h b/libs/MFCStub/mfcs_string.h
+index d2f199944bb929e070ad3bf431d538bb98d77938..58d62a8176c409e33771c5191963ab220e06cd8e 100644
+--- a/libs/MFCStub/mfcs_string.h
++++ b/libs/MFCStub/mfcs_string.h
+@@ -3,7 +3,7 @@
+ #ifndef __MFCS_STRING_H__
+ #define __MFCS_STRING_H__
+ 
+-#include "..\mfcstub\mfcs_types.h"
++#include "mfcs_types.h" // Linux: was "..\mfcstub\mfcs_types.h"
+ 
+ #include <stdarg.h> // for va_list
+ 
+diff --git a/libs/ServerDir/IServerDir.h b/libs/ServerDir/IServerDir.h
+index a311b480a1976f03a0c68ba8e21c0c797c6b9463..a741bc3772102ae1633c9d7f9327332066bd43ff 100644
+--- a/libs/ServerDir/IServerDir.h
++++ b/libs/ServerDir/IServerDir.h
+@@ -213,8 +213,6 @@ public:
+ 	// Is this request in request list?
+ 	virtual bool IsRequestPending(ERequest ePendingRequest) const = 0;
+ 
+-	// A list of servers
+-	typedef std::vector<std::string> TPeerList;
+ 	// Returns the most recently successful request
+ 	virtual ERequest GetLastSuccessfulRequest() const = 0;
+ 	// Returns the most recently failed request
+diff --git a/libs/lith/lithtypes.h b/libs/lith/lithtypes.h
+index cd92e6e9c11dde301a0ad6eae6a5507bef26889c..fd3895e650b441a78a308ed3b346408bbafef608 100644
+--- a/libs/lith/lithtypes.h
++++ b/libs/lith/lithtypes.h
+@@ -42,7 +42,7 @@ typedef signed short int    INT16;
+ 
+ // 32 bit
+ #ifndef DWORD
+-typedef unsigned long int   DWORD;
++typedef unsigned int   DWORD;
+ #endif
+ 
+ #ifndef UINT32
+diff --git a/libs/rezmgr/rezmgr.cpp b/libs/rezmgr/rezmgr.cpp
+index 8dc8f00a3959e072d72c52147e6d329481f41112..429af2e754e1efe14a56a8d106df681886f0a55c 100644
+--- a/libs/rezmgr/rezmgr.cpp
++++ b/libs/rezmgr/rezmgr.cpp
+@@ -30,7 +30,43 @@ const unsigned int _MAX_FNAME = 256;
+ const unsigned int _MAX_EXT = 256;
+ void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext)
+ {
+-  ASSERT(FALSE && "no splitpath implementation on Linux");
++  if (drive) drive[0] = '\0';
++  if (dir) dir[0] = '\0';
++  if (fname) fname[0] = '\0';
++  if (ext) ext[0] = '\0';
++  if (!path) return;
++
++  const char *slash = strrchr(path, '/');
++  const char *bslash = strrchr(path, '\\');
++  if (bslash && (!slash || bslash > slash)) slash = bslash;
++
++  const char *base = path;
++  if (slash) {
++    if (dir) {
++      size_t n = (size_t)(slash - path + 1);
++      if (n > _MAX_DIR) n = _MAX_DIR;
++      memcpy(dir, path, n);
++      dir[n] = '\0';
++    }
++    base = slash + 1;
++  }
++
++  const char *dot = strrchr(base, '.');
++  if (dot && dot != base) {
++    if (fname) {
++      size_t n = (size_t)(dot - base);
++      if (n > _MAX_FNAME) n = _MAX_FNAME;
++      memcpy(fname, base, n);
++      fname[n] = '\0';
++    }
++    if (ext) {
++      strncpy(ext, dot, _MAX_EXT);
++      ext[_MAX_EXT] = '\0';
++    }
++  } else if (fname) {
++    strncpy(fname, base, _MAX_FNAME);
++    fname[_MAX_FNAME] = '\0';
++  }
+ }
+ 
+ struct _finddata_t {
+@@ -42,7 +78,10 @@ struct _finddata_t {
+ 	char name[260];
+ };
+ 
+-enum { _S_IFDIR, _A_SUBDIR };
++/* Do not shadow sys/stat.h _S_IFDIR — that made IsDirectory() always true. */
++#ifndef _A_SUBDIR
++#define _A_SUBDIR 0x10
++#endif
+ long _findfirst(char* filespec, _finddata_t* fileinfo) { return -1; }
+ int _findnext(long handle, _finddata_t* fileinfo) { return -1; }
+ int _findclose(long handle) { return -1; } 
+@@ -745,6 +784,7 @@ CRezDir* CRezDir::GetFirstSubDir() {
+ //---------------------------------------------------------------------------------------------------
+ CRezDir* CRezDir::GetNextSubDir(CRezDir* pRezDir) {
+   ASSERT(pRezDir != NULL);
++  if (pRezDir == NULL) return NULL;
+   CRezDirHash* pHash = pRezDir->m_heDir.Next();
+   if (pHash == NULL) return NULL;
+   ASSERT(pHash->GetRezDir() != NULL);
+@@ -2269,9 +2309,12 @@ BOOL CRezMgr::IsDirectory(const char* sFileName) {
+    // Check if statistics are valid 
+    if( result != 0 ) return FALSE;
+ 
+-   // is this a directory
++#ifdef _WIN32
+    if ((buf.st_mode & _S_IFDIR) == _S_IFDIR) return TRUE;
+-   else return FALSE;
++#else
++   if (S_ISDIR(buf.st_mode)) return TRUE;
++#endif
++   return FALSE;
+ }
+ 
+ 
+diff --git a/libs/rezmgr/rezmgr.h b/libs/rezmgr/rezmgr.h
+index 33cdd155121e35ecd9a069d58baa96cefce48cb2..8926775a1d05766dbb0c400b967c07409e96aacd 100644
+--- a/libs/rezmgr/rezmgr.h
++++ b/libs/rezmgr/rezmgr.h
+@@ -16,7 +16,7 @@
+ // defines
+ 
+ #ifndef DWORD
+-typedef unsigned long int	DWORD;
++typedef unsigned int	DWORD;
+ #endif
+ 
+ #define RezMgrUserTitleSize     60
+diff --git a/runtime/client/src/client_filemgr.cpp b/runtime/client/src/client_filemgr.cpp
+index ed2c4c1ac71d63bcfe481a0f6bd15de1d53cd82e..8bddbbc071a03666f27d03c9cbd643ca0bf965b2 100644
+--- a/runtime/client/src/client_filemgr.cpp
++++ b/runtime/client/src/client_filemgr.cpp
+@@ -1,4 +1,5 @@
+ #include "bdefs.h"
++#include "client_filemgr.h"
+ 
+ #include "sysfile.h"
+ #include "ftclient.h"
+diff --git a/runtime/client/src/clientde_impl.cpp b/runtime/client/src/clientde_impl.cpp
+index 29fd6aeb89c81a59ffaff2458d88ae4b8dff6123..74b5028029c1f9ff407d4ac217437e56e50980b0 100644
+--- a/runtime/client/src/clientde_impl.cpp
++++ b/runtime/client/src/clientde_impl.cpp
+@@ -1,4 +1,5 @@
+ #include "bdefs.h"
++#include "soundmgr.h"
+ 
+ #include "iltphysics.h"
+ #include "de_objects.h"
+diff --git a/runtime/client/src/clientmgr.cpp b/runtime/client/src/clientmgr.cpp
+index 62d3b8d856587796fed584fec7c4e152e18c9592..d9acc4f96e93d753bd0e9df42faf8aa4d6cdc6c3 100644
+--- a/runtime/client/src/clientmgr.cpp
++++ b/runtime/client/src/clientmgr.cpp
+@@ -54,6 +54,7 @@
+ #include "iltdrawprim.h"
+ 
+ #include "dtxmgr.h"
++#include <stdio.h>
+ 
+ //------------------------------------------------------------------
+ //------------------------------------------------------------------
+@@ -471,6 +472,9 @@ LTRESULT CClientMgr::StartShell(StartGameRequest *pRequest)
+     CBaseDriver *pDriver;
+     char *pWorldName, playbackWorldName[256];
+ 
++    fprintf(stderr, "CClientMgr::StartShell type=%d world='%s'\n",
++        (int)pRequest->m_Type, pRequest->m_WorldName ? pRequest->m_WorldName : "");
++
+ 
+     // Kill the old server connection if there is one.
+     EndShell();
+@@ -802,8 +806,7 @@ LTRESULT CClientMgr::Update()
+         VEC_SET(m_GlobalLightScale, 1, 1, 1);
+ 	}
+ 
+-    // Update framerate (don't want to update it if the client's not active).
+-    if (dsi_IsClientActive())
++    // Always advance time so UI fades/timers keep working if focus is lost.
+ 	{
+ 		m_nCurUpdateTimeMS	= time_GetMSTime();
+ 		m_nFrameTimeMS		= m_nCurUpdateTimeMS - m_nLastUpdateTimeMS;
+@@ -1105,6 +1108,9 @@ LTRESULT CClientMgr::PlaySound(PlaySoundInfo *pPlaySoundInfo, FileRef *pFile, fl
+ 
+ void CClientMgr::UpdateAllSounds()
+ {
++#ifdef __LINUX
++	return;
++#endif
+ 	CountAdder cntAdd(&g_Ticks_Sound);
+ 
+     if (!GetClientILTSoundMgrImpl()->IsValid() || !GetClientILTSoundMgrImpl()->IsEnabled())
+diff --git a/runtime/client/src/clientshell.cpp b/runtime/client/src/clientshell.cpp
+index 47ab6612b11d9997633b8aaeead3c22755d7f16e..5ce36353269fff527e564be804775ecb73953170 100644
+--- a/runtime/client/src/clientshell.cpp
++++ b/runtime/client/src/clientshell.cpp
+@@ -12,6 +12,7 @@
+ 
+ // Includes....
+ #include "bdefs.h"
++#include "soundmgr.h"
+ 
+ #include "clientshell.h"
+ #include "de_world.h"
+@@ -32,6 +33,7 @@
+ #include "ltobjectcreate.h"
+ 
+ #include "client_ticks.h"
++#include <stdio.h>
+ 
+ 
+ //------------------------------------------------------------------
+@@ -283,9 +285,14 @@ LTRESULT CClientShell::StartupLocal(StartGameRequest *pRequest,
+     // This can be false if you just want to serv a game, so it should be a parameter.
+     bSelfConnect = true;
+ 
++    fprintf(stderr, "CClientShell::StartupLocal host=%d\n", (int)bHost);
++
+     // Setup a server mugger.
+     if ((dResult = CreateServerMgr()) != LT_OK)
++    {
++        fprintf(stderr, "StartupLocal: CreateServerMgr failed %d\n", (int)dResult);
+         return dResult;
++    }
+ 
+ 
+     // Give it the game info data.
+@@ -306,8 +313,10 @@ LTRESULT CClientShell::StartupLocal(StartGameRequest *pRequest,
+ 	if( !g_pServerMgr->LoadBinaries( ))
+ 	{
+ 		g_pServerMgr->GetErrorString(errorString, 256);
++		fprintf(stderr, "StartupLocal: LoadBinaries failed: %s\n", errorString);
+ 		RETURN_ERROR_PARAM(1, CClientShell::StartupLocal, LT_SERVERERROR, errorString);
+ 	}
++	fprintf(stderr, "StartupLocal: server mgr up, binaries loaded\n");
+ 
+     if (!g_pServerMgr->Listen("local", "LithTech Session"))
+     {
+diff --git a/runtime/client/src/cnet.cpp b/runtime/client/src/cnet.cpp
+index 4b136933d8f32a303113d0d6e0209fb9cc57a356..d18e3df4d3fc7e7e174ac7c54e6004bfef9f3b5c 100644
+--- a/runtime/client/src/cnet.cpp
++++ b/runtime/client/src/cnet.cpp
+@@ -12,6 +12,7 @@
+ 
+ // Includes....
+ #include "bdefs.h"
++#include "soundmgr.h"
+ #include "clientmgr.h"
+ #include "consolecommands.h"
+ 
+diff --git a/runtime/client/src/consolecommands.cpp b/runtime/client/src/consolecommands.cpp
+index 0dc607f477934bffbbff2b6f63e69f17d07230bc..a39d77af2e74e7db12193297bb1fafd8549113ca 100644
+--- a/runtime/client/src/consolecommands.cpp
++++ b/runtime/client/src/consolecommands.cpp
+@@ -653,7 +653,7 @@ static void con_ReadHistory(int argc, char *argv[])
+ 	while ( !feof( fInput ) )
+ 	{
+ 		// Read a line from the file
+-		if ( fgets( aBuffer, MAX_CONSOLE_TEXTLEN, fInput ) > 0 )
++		if ( fgets( aBuffer, MAX_CONSOLE_TEXTLEN, fInput ) != NULL )
+ 		{
+ 			int iLength = strlen( aBuffer );
+ 			// Remove trailing newlines
+diff --git a/runtime/client/src/shellnet.cpp b/runtime/client/src/shellnet.cpp
+index d181555d1419b17b2aa49ea654e26af001c7cabc..b5fabb96bc20d7df8108478f03c06d627a7f258d 100644
+--- a/runtime/client/src/shellnet.cpp
++++ b/runtime/client/src/shellnet.cpp
+@@ -33,6 +33,8 @@
+ #include "ltmessage_client.h"
+ 
+ #include "misctools.h"
++#include "soundmgr.h"
++#include "soundinstance.h"
+ 
+ //------------------------------------------------------------------
+ //------------------------------------------------------------------
+diff --git a/runtime/client/src/sprite.cpp b/runtime/client/src/sprite.cpp
+index 6e63674c84b5b5cef736aa9d53739cfa0747830f..b7815141258c4605d89e5bfca2cb753793296112 100644
+--- a/runtime/client/src/sprite.cpp
++++ b/runtime/client/src/sprite.cpp
+@@ -11,6 +11,7 @@
+ #include "clientmgr.h"
+ #include "sysfile.h"
+ #include "de_objects.h"
++#include "client_filemgr.h"
+ 
+ 
+ 
+diff --git a/runtime/client/src/sys/win/winclientde_impl.cpp b/runtime/client/src/sys/win/winclientde_impl.cpp
+index ecc3d8fd0f3b382fb21fdd84677c69b57f26dcc6..041ab7d775e1b0fc6d28b2d05e795f046506282d 100644
+--- a/runtime/client/src/sys/win/winclientde_impl.cpp
++++ b/runtime/client/src/sys/win/winclientde_impl.cpp
+@@ -1309,10 +1309,16 @@ static HSURFACE cis_CreateSurfaceFromBitmap(char *pBitmapName)
+ 	HSURFACE hRet;
+ 
+ 	
+-	if(!cis_LoadPcx(pBitmapName, &bitmap))
++	if(!cis_LoadPcx(pBitmapName, &bitmap)) {
++		fprintf(stderr, "CreateSurfaceFromBitmap: load failed '%s'\n",
++			pBitmapName ? pBitmapName : "(null)");
+ 		return LTNULL;
++	}
+ 
+ 	hRet = cis_CreateSurfaceFromPcx(&bitmap);
++	fprintf(stderr, "CreateSurfaceFromBitmap: '%s' %ux%u -> %p\n",
++		pBitmapName ? pBitmapName : "(null)",
++		bitmap.m_Width, bitmap.m_Height, (void *)hRet);
+ 	return hRet;
+ }
+ 
+@@ -1671,7 +1677,13 @@ static LTRESULT cis_GetEngineHook(char *pName, void **pData)
+ 	}
+ 	else if(stricmp(pName, "cres_hinstance")==0)
+ 	{
++#ifdef __LINUX
++		if (pData)
++			*pData = (void *)(uintptr_t)1;
++		return LT_OK;
++#else
+ 		return bm_GetInstanceHandle(g_pClientMgr->m_hClientResourceModule, pData);
++#endif
+ 	}
+ 	else if(stricmp(pName, "cresl_hinstance")==0)
+ 	{
+diff --git a/runtime/client/src/sys/win/winconsole_impl.cpp b/runtime/client/src/sys/win/winconsole_impl.cpp
+index fce3dffe69744942ef9cf64a572891466ce105a7..a0b5d248088982ddf32e6ac3eb1216f2e1751017 100644
+--- a/runtime/client/src/sys/win/winconsole_impl.cpp
++++ b/runtime/client/src/sys/win/winconsole_impl.cpp
+@@ -1119,6 +1119,7 @@ void CConsole::Draw() {
+ 	//	if ((!m_pFontBitmapData) || (!m_pStruct)) return;
+ 	if (!m_pStruct) return;
+ 
++#ifdef _WIN32
+ 	// Preserve current viewport
+ 	D3DVIEWPORT9 oldViewportData;
+     PD3DDEVICE->GetViewport(&oldViewportData);
+@@ -1131,6 +1132,7 @@ void CConsole::Draw() {
+ 	viewportData.MinZ	= 0;
+ 	viewportData.MaxZ	= 1.0f;
+ 	HRESULT hResult = D3D_CALL(PD3DDEVICE->SetViewport(&viewportData));
++#endif
+ 
+ 	// Check the console variables
+ 	CheckVariables();
+@@ -1162,6 +1164,7 @@ void CConsole::Draw() {
+ 		BorderedRectangle( m_BackColor, m_BorderColor, cRect );
+ 	}
+ 
++#ifdef _WIN32
+ 	// Grab the current filter states.
+ 	bool bValidFilterStates = true;
+ 	DWORD nMinFilter, nMagFilter, nMipFilter;
+@@ -1178,6 +1181,7 @@ void CConsole::Draw() {
+ 		PD3DDEVICE->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+ 		PD3DDEVICE->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+ 	}
++#endif
+ 
+ 	// Draw all the text.
+ 	DrawTextLines( m_nTextLines );
+@@ -1185,6 +1189,7 @@ void CConsole::Draw() {
+ 	// Draw the command box.
+ 	GetCommandBox()->Draw();
+ 
++#ifdef _WIN32
+ 	// Restore the previous filter states.
+ 	if( bValidFilterStates )
+ 	{
+@@ -1195,6 +1200,7 @@ void CConsole::Draw() {
+ 
+ 	// Restore previous viewport
+     PD3DDEVICE->SetViewport(&oldViewportData);
++#endif
+ 
+ #endif // !DE_HEADLESS_CLIENT
+ }
+@@ -1359,6 +1365,7 @@ void CConsole::DrawSmall(int nLines)
+ #ifndef DE_HEADLESS_CLIENT
+ 	//	if (!m_pFontBitmapData) return;
+ 
++#ifdef _WIN32
+ 	// Preserve current viewport
+ 	D3DVIEWPORT9 oldViewportData;
+     PD3DDEVICE->GetViewport(&oldViewportData);
+@@ -1388,10 +1395,12 @@ void CConsole::DrawSmall(int nLines)
+ 		PD3DDEVICE->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+ 		PD3DDEVICE->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+ 	}
++#endif
+ 
+ 	// Draw the text.
+ 	DrawTextLines( nLines, true );
+ 
++#ifdef _WIN32
+ 	// Restore the previous filter states.
+ 	if( bValidFilterStates )
+ 	{
+@@ -1402,6 +1411,7 @@ void CConsole::DrawSmall(int nLines)
+ 
+ 	//Restore previous viewport
+     PD3DDEVICE->SetViewport(&oldViewportData);
++#endif
+ 
+ #endif // !DE_HEADLESS_CLIENT
+ }
+diff --git a/runtime/client/src/texturestring.cpp b/runtime/client/src/texturestring.cpp
+index 930782cb5c008d475129037e3ebf488fc53e444d..e89b17ead7d44e08de867c42d5e43454a04c7523 100644
+--- a/runtime/client/src/texturestring.cpp
++++ b/runtime/client/src/texturestring.cpp
+@@ -2,6 +2,8 @@
+ #include "texturestring.h"
+ #include "texturestringimage.h"
+ #include "memblockallocator.h"
++#include <cwctype>
++#include <new>
+ 
+ //----------------------------------------------------------------------------------------
+ // Defines
+diff --git a/runtime/client/src/volumeeffect.cpp b/runtime/client/src/volumeeffect.cpp
+index da36e893b69c0fe8c37de9a2c6b98cbfcfaae3f5..e7797a9145568e07019462d67e587bda87d16e9d 100644
+--- a/runtime/client/src/volumeeffect.cpp
++++ b/runtime/client/src/volumeeffect.cpp
+@@ -11,6 +11,7 @@
+ // ----------------------------------------------------------------------- //
+ 
+ #include "bdefs.h"
++#include "client_filemgr.h"
+ #include "clientmgr.h"
+ #include "volumeeffect.h"
+ 
+diff --git a/runtime/client/src/world_client_bsp.cpp b/runtime/client/src/world_client_bsp.cpp
+index 682ab3c77b000e8ebef43103f727cd292f969964..655ad3a2057de40faf1a079256371b2b0112540a 100644
+--- a/runtime/client/src/world_client_bsp.cpp
++++ b/runtime/client/src/world_client_bsp.cpp
+@@ -62,12 +62,12 @@ private:
+ bool CClientLightGroup::Load(ILTStream *pStream)
+ {
+ 	uint16 nLength;
+-	*pStream >> (uint16)nLength;
++	*pStream >> nLength;
+ 	m_nID = 0;
+ 	for (; nLength; --nLength)
+ 	{
+ 		uint8 nNextChar;
+-		*pStream >> (uint8)nNextChar;
++		*pStream >> nNextChar;
+ 		m_nID *= 31;
+ 		m_nID += (uint32)nNextChar;
+ 	}
+@@ -371,7 +371,7 @@ bool CWorldClientBSP::LoadRenderData(ILTStream *pStream)
+ 	world_bsp_shared->LightTable().ClearLightGroups();
+ 
+ 	uint32 nNumLightGroups;
+-	*pStream >> (uint32)nNumLightGroups;
++	*pStream >> nNumLightGroups;
+ 	LT_MEM_TRACK_ALLOC(m_aLightGroups.reserve(nNumLightGroups), LT_MEM_TYPE_WORLD);
+ 	CClientLightGroup LightGroup;
+ 	for (; nNumLightGroups; --nNumLightGroups)
+diff --git a/runtime/kernel/io/src/sys/linux/linuxfile.h b/runtime/kernel/io/src/sys/linux/linuxfile.h
+index 555a7cf562b543fd48d6362abf6749cd2f2976b1..886861dd1c85866bd21349007751065891e8e4d2 100644
+--- a/runtime/kernel/io/src/sys/linux/linuxfile.h
++++ b/runtime/kernel/io/src/sys/linux/linuxfile.h
+@@ -41,8 +41,8 @@
+ 	{
+ 		int				m_Type;			// Is this a directory or file?
+ 		char			m_Name[256];
+-		unsigned long	m_Date;			// File date/time identifier.
+-		unsigned long	m_Size;			// File size.
++		uint32			m_Date;			// File date/time identifier.
++		uint32			m_Size;			// File size.
+ 		void			*m_pInternal;
+ 	};
+ 
+@@ -84,7 +84,7 @@
+ 	// name is the full name (like e:\dedit\textures\8bit\tex1.dtx).
+ 	// (The file you specify doesn't have to exist..)
+ 	// Returns 0 if the file tree is a rezfile (in which case it doesn't make sense).
+-	int df_GetFullFilename(HLTFileTree hTree, char *pName, char *pOutName, int maxLen);
++	int df_GetFullFilename(HLTFileTree *hTree, char *pName, char *pOutName, int maxLen);
+ 
+ 
+ 	// Sets up a DStream for you to read from the file.  The DStream that it
+@@ -112,6 +112,9 @@
+ 	// returns 1 if successful 0 if an error occured
+ 	int df_Save(ILTStream *hFile, const char* pName);
+ 
++	// Raw file info for streamed sounds (full path, byte offset, size).
++	int df_GetRawInfo(HLTFileTree *hTree, const char *pName, char* sFileName, unsigned int nMaxFileName, uint32* nPos, uint32* nSize);
++
+ #endif  // __DE_FILE_ACCESS_H__
+ 
+ 
+diff --git a/runtime/kernel/io/src/sys/win/de_file.cpp b/runtime/kernel/io/src/sys/win/de_file.cpp
+index 2096f0e8b55bb8c85783e9411c98a6739aa75328..402ce21abfd2962dbe28047cd14fc13e139555de 100644
+--- a/runtime/kernel/io/src/sys/win/de_file.cpp
++++ b/runtime/kernel/io/src/sys/win/de_file.cpp
+@@ -721,6 +721,11 @@ int df_FindNext(HLTFileTree *hTree, const char *pDirName, LTFindInfo *pInfo)
+ 			// otherwise we are searching for sub directories
+ 			else
+ 			{
++				if (!pFindData->m_pCurDir || !pFindData->m_pCurSubDir)
++				{
++					pInfo->m_pInternal = LTNULL;
++					return 0;
++				}
+ 				pFindData->m_pCurSubDir = pFindData->m_pCurDir->GetNextSubDir(pFindData->m_pCurSubDir);
+ 				if (pFindData->m_pCurSubDir == LTNULL)
+ 				{
+diff --git a/runtime/kernel/mem/src/sys/linux/de_memory.cpp b/runtime/kernel/mem/src/sys/linux/de_memory.cpp
+index 8e25c6f980aa7fa43b0754d1ec9abc80db643a92..62372f73fe7370d99a3f90b10db826e72f789646 100644
+--- a/runtime/kernel/mem/src/sys/linux/de_memory.cpp
++++ b/runtime/kernel/mem/src/sys/linux/de_memory.cpp
+@@ -32,7 +32,7 @@ uint32 g_PD_Free=0;
+ // Hook Stdlith's base allocators.
+ void* DefStdlithAlloc(uint32 size)
+ {
+-	return dalloc(size);
++	return dalloc((size_t)size);
+ }
+ 
+ void DefStdlithFree(void *ptr)
+@@ -114,7 +114,7 @@ uint32 dm_GetNumAllocations()
+ 
+ 
+ 
+-void* dalloc(uint32 size)
++void* dalloc(size_t size)
+ {
+ 
+ 	if(size == 0)
+@@ -160,7 +160,7 @@ void* dalloc(uint32 size)
+ }
+ 
+ 
+-void* dalloc_z(uint32 size)
++void* dalloc_z(size_t size)
+ {
+ 	void *ret;
+ 
+diff --git a/runtime/kernel/net/src/sys/win/udpdriver.cpp b/runtime/kernel/net/src/sys/win/udpdriver.cpp
+index 123d3c682bd36fe6ebf79bf5ec86ed982885274b..9ceb1f856ab8bc8d193bf89ff64ed0a9347e1e64 100644
+--- a/runtime/kernel/net/src/sys/win/udpdriver.cpp
++++ b/runtime/kernel/net/src/sys/win/udpdriver.cpp
+@@ -15,7 +15,7 @@
+ #endif
+ 
+ #ifndef DE_SERVER_COMPILE
+-#include "ConsoleCommands.h"
++#include "consolecommands.h"
+ #endif // DE_SERVER_COMPILE
+ 
+ #ifdef _WIN32
+diff --git a/runtime/kernel/src/sys/linux/timemgr.cpp b/runtime/kernel/src/sys/linux/timemgr.cpp
+index 802b7cc74bbcfc51865dc007382a65779d3cbd4e..9a8c3debf44ae54cc7cbcbcaa2809438a60ad691 100644
+--- a/runtime/kernel/src/sys/linux/timemgr.cpp
++++ b/runtime/kernel/src/sys/linux/timemgr.cpp
+@@ -19,9 +19,4 @@ float time_GetTime()
+     return (float)(curTimeval.tv_sec - startSeconds + curTimeval.tv_usec * 0.000001f);
+ }
+ 
+-uint32 timeGetTime()
+-{
+-	timeval curTimeval;
+-	gettimeofday(&curTimeval, NULL);
+-	return (curTimeval.tv_sec * 1000) + (curTimeval.tv_usec / 1000);
+-}
++/* timeGetTime is provided by port/compat/windows.h */
+diff --git a/runtime/kernel/src/sys/win/lt_cursor_impl.cpp b/runtime/kernel/src/sys/win/lt_cursor_impl.cpp
+index 14dcc270820b644c91bf947fbccb7ca5af2d9858..2db0cf12b35612686e2e66c6a5f6afb7f613c44c 100644
+--- a/runtime/kernel/src/sys/win/lt_cursor_impl.cpp
++++ b/runtime/kernel/src/sys/win/lt_cursor_impl.cpp
+@@ -194,6 +194,16 @@ LTRESULT CLTCursor::LoadCursorBitmapResource(const char *pName, HLTCURSOR &hCurs
+     HCURSOR hWinCursor;
+     HLTCURSOR hNew;
+ 
++#ifdef __LINUX
++    (void)pName;
++    LT_MEM_TRACK_ALLOC(hNew = new CLTCursorInst(), LT_MEM_TYPE_MISC);
++    if (!hNew)
++        return LT_ERROR;
++    hNew->SetData((void *)(uintptr_t)1);
++    hCursor = hNew;
++    return LT_OK;
++#endif
++
+     if ((dRes = ilt_client->GetEngineHook("cres_hinstance",(void **)&hInst)) != LT_OK)
+         return dRes;
+ 
+diff --git a/runtime/model/src/sys/d3d/d3d_model_load.cpp b/runtime/model/src/sys/d3d/d3d_model_load.cpp
+index c728e526700f741b70886d2bc2515621015aee16..564bd7f211fe46bdf7c622805b6e2fb39bfd2409 100644
+--- a/runtime/model/src/sys/d3d/d3d_model_load.cpp
++++ b/runtime/model/src/sys/d3d/d3d_model_load.cpp
+@@ -10,9 +10,7 @@
+ #include "conparse.h"
+ #include "ltb.h"
+ 
+-#ifndef __LINUX
+ #include "render.h"
+-#endif
+ 
+ // ------------------------------------------------------------------------
+ // D3D specific object creation routine.
+diff --git a/runtime/server/src/classmgr.cpp b/runtime/server/src/classmgr.cpp
+index 8c71b6b78e192457e11765ab57a847c9b9b3a03e..e8f753eaa06ca88a3aa7b0433fe531c1ad725e57 100644
+--- a/runtime/server/src/classmgr.cpp
++++ b/runtime/server/src/classmgr.cpp
+@@ -8,6 +8,7 @@
+ #include "bindmgr.h"
+ #include "dhashtable.h"
+ #include "ltobjectcreate.h"
++#include <stdio.h>
+ 
+ 
+ //------------------------------------------------------------------
+@@ -819,11 +820,14 @@ LTRESULT LoadServerBinaries(CClassMgr *pClassMgr)
+ 
+     //Load the server module.
+     if ((dResult = dsi_LoadServerObjects(pClassMgr)) != LT_OK) {
++        fprintf(stderr, "LoadServerBinaries: dsi_LoadServerObjects failed %d\n", (int)dResult);
+         return dResult;
+     }
++    fprintf(stderr, "LoadServerBinaries: object dll loaded, init server shell\n");
+ 
+     //tell the server shell to do initialization.
+     if ((dResult = i_server_shell->OnServerInitialized()) != LT_OK) {
++        fprintf(stderr, "LoadServerBinaries: OnServerInitialized failed %d\n", (int)dResult);
+         return dResult;
+     }
+ 
+diff --git a/runtime/shared/src/dtxmgr.cpp b/runtime/shared/src/dtxmgr.cpp
+index 47ca09a362f97b92f1590659aa6ddfa1774bd9a5..882550256dddbecdf553011506698d70ec386af0 100644
+--- a/runtime/shared/src/dtxmgr.cpp
++++ b/runtime/shared/src/dtxmgr.cpp
+@@ -385,6 +385,10 @@ LTRESULT dtx_Create(ILTStream *pStream, TextureData **ppOut, uint32& nBaseWidth,
+ 	memcpy(&pRet->m_Header, &hdr, sizeof(DtxHeader));
+ 
+ 	// Read in mipmap data (and convert it to our DDFormat).
++	bool bSkipImageData = false;
++	uint32 y;
++	uint32 size;
++	TextureMipData *pMip = NULL;
+ 	for (uint32 iMipmap=0; iMipmap < hdr.m_nMipmaps; iMipmap++) 
+ 	{
+ 		pMip = &pRet->m_Mips[iMipmap];
+diff --git a/runtime/shared/src/geomroutines.h b/runtime/shared/src/geomroutines.h
+index 1d3484ba10fdc850934a8ca8a584173461655eb2..48e5f9724c8a14304316dce625064185364eb368 100644
+--- a/runtime/shared/src/geomroutines.h
++++ b/runtime/shared/src/geomroutines.h
+@@ -306,7 +306,7 @@ T* g_IntersectRay( T *pRoot, TVector3<F> &pt, TVector3<F> &dir, F &t, TVector3<F
+ 	return LTNULL;
+ }
+ 
+-#ifndef _MSC_VER
++#if !defined(_MSC_VER) && !defined(__LINUX)
+ #define PVector LTVector
+ #define PReal float
+ #include "node.h"
+diff --git a/runtime/shared/src/sys/win/dstreamopenqueuemgr.h b/runtime/shared/src/sys/win/dstreamopenqueuemgr.h
+index 1a41ba5ed19a15966101611cde49d7c44385aa5e..4820bfc1a8d3918453f7af0e0a6dcec132fb0d3b 100644
+--- a/runtime/shared/src/sys/win/dstreamopenqueuemgr.h
++++ b/runtime/shared/src/sys/win/dstreamopenqueuemgr.h
+@@ -23,6 +23,9 @@
+ #ifndef __CLIENTMGR_H__
+ #include "clientmgr.h"
+ #endif
++#ifndef __CLIENT_FILEMGR_H__
++#include "client_filemgr.h"
++#endif
+ 
+ #ifndef __CLIENTDE_IMPL_H__
+ #include "clientde_impl.h"
+diff --git a/runtime/world/src/fullintersectline.cpp b/runtime/world/src/fullintersectline.cpp
+index 2472d17a9a27d721cf86a31d4f99902f21cf0904..b38d85f39c9b18264fb4ab027af191fc934cb263 100644
+--- a/runtime/world/src/fullintersectline.cpp
++++ b/runtime/world/src/fullintersectline.cpp
+@@ -134,7 +134,7 @@ inline bool UseThisObject(LTObject* pServerObj,
+ 	return true;
+ }
+ 
+-inline bool i_BoundingBoxTest(const LTVector& Point1, const LTVector& Point2, const LTObject *pServerObj, 
++bool i_BoundingBoxTest(const LTVector& Point1, const LTVector& Point2, const LTObject *pServerObj,
+     LTVector *pIntersectPt, LTPlane *pIntersectPlane)
+ {
+     float t;
+diff --git a/sdk/inc/ltbasedefs.h b/sdk/inc/ltbasedefs.h
+index e98044f2dd02136fe299d40af31fcb7a711d317f..80d6aeba1cee7ff574c3d088b47c18d5b52cbc58 100644
+--- a/sdk/inc/ltbasedefs.h
++++ b/sdk/inc/ltbasedefs.h
+@@ -10,6 +10,7 @@
+ #include <string.h>
+ #define __STRING_H__
+ #endif
++#include <wchar.h>
+ 
+ #ifndef __STDARG_H__
+ #include <stdarg.h>
+@@ -33,6 +34,27 @@
+ #include "ltcodes.h"
+ #endif
+ 
++/* Templates in physics/vector.h call LTMIN/LTMAX; two-phase lookup
++   requires those names before the physics headers are included. */
++#ifndef INLINE_FN
++#define INLINE_FN __inline
++#endif
++#ifndef LT_MATH_HELPERS_DEFINED
++#define LT_MATH_HELPERS_DEFINED
++template<class T, class TB>
++INLINE_FN T LTDIFF(T a, TB b) { return ((a < (T)b) ? ((T)b - a) : (a - (T)b)); }
++template<class T, class TB>
++INLINE_FN T LTMIN(T a, TB b) { return ((a < (T)b) ? a : (T)b); }
++template<class T, class TB>
++INLINE_FN T LTMAX(T a, TB b) { return ((a > (T)b) ? a : (T)b); }
++template<class T>
++INLINE_FN T LTABS(T a) { return ((a >= 0) ? a : -a); }
++template<class T, class TB, class TC>
++INLINE_FN T LTCLAMP(T a, TB min, TC max) { return ((a < (T)min) ? (T)min : ((a > (T)max) ? (T)max : a)); }
++template<class T, class TMAX, class TINTERP>
++INLINE_FN T LTLERP(T min, TMAX max, TINTERP t) { return (min + (((T)max - min) * t)); }
++#endif
++
+ #ifndef __COORDINATE_FRAME_H__
+ #include "coordinate_frame.h"
+ #endif
+@@ -57,12 +79,19 @@
+ 	#define MODULE_IMPORT
+ 	#define _MAX_PATH 256
+ 	#include <ctype.h>
++	#include <strings.h>
++#ifdef stricmp
++#undef stricmp
++#endif
++#ifndef LT_HAS_STRICMP
++#define LT_HAS_STRICMP
+ 	inline int stricmp(const char* string1, const char* string2)
+ 	{ return strcasecmp(string1, string2); }
++#endif
+ 	inline char* strupr(char* s)
+ 	{ while (*s) { *s = toupper(*s); ++s; } return s; }
+ 	inline int notSupportedLinux ()
+-	{  ASSERT( false && "Not supported on Linux" ); }
++	{  ASSERT( false && "Not supported on Linux" ); return 0; }
+ 
+ #endif
+ 
+@@ -88,14 +117,12 @@ inline uint32 LTStrLen(const char* pszStr1)
+ 	return 0;
+ }
+ 
+-#ifndef __LINUX
+ inline uint32 LTStrLen(const wchar_t* pszStr1)
+ {
+ 	if(pszStr1)
+ 		return (uint32)wcslen(pszStr1);
+ 	return 0;
+ }
+-#endif
+ 
+ /*!
+ Called to determine if the provided string is empty. This will assume that NULL strings are 
+@@ -106,12 +133,10 @@ inline bool LTStrEmpty(const char* pszStr)
+ 	return !pszStr || (pszStr[0] == '\0');
+ }
+ 
+-#ifndef __LINUX
+ inline bool LTStrEmpty(const wchar_t* pszStr)
+ {
+ 	return !pszStr || (pszStr[0] == (wchar_t)'\0');
+ }
+-#endif
+ 
+ 
+ /*!
+@@ -119,7 +144,7 @@ If the dest buffer is a static buffer, use LTStrCpy; otherwise, do
+ a normal string copy.
+ */
+ #define SAFE_STRCPY(dest, src) {\
+-    if (sizeof(dest) > 4)\
++    if (sizeof(dest) > sizeof(void*))\
+     {\
+         LTStrCpy(dest, src, sizeof(dest));\
+     }\
+@@ -157,7 +182,6 @@ inline void LTStrCpy(char *pDest, const char *pSrc, uint32 nBufferChars)
+ 
+ 
+ 
+-#ifndef __LINUX
+ inline void LTStrCpy(wchar_t *pDest, const wchar_t *pSrc, uint32 nBufferChars) 
+ {
+ 
+@@ -184,7 +208,6 @@ inline void LTStrCpy(wchar_t *pDest, const wchar_t *pSrc, uint32 nBufferChars)
+ 	wcsncpy(pDest, pSrc, nBufferChars - 1);
+ 	pDest[nBufferChars - 1] = '\0';
+ }
+-#endif
+ 
+ 
+ /*!
+@@ -214,7 +237,6 @@ inline char* LTStrDup(const char* pszString)
+ 	return pRV;
+ }
+ 
+-#ifndef __LINUX
+ inline wchar_t* LTStrDup(const wchar_t* pszString)
+ {
+ 	//handle a null input
+@@ -236,7 +258,6 @@ inline wchar_t* LTStrDup(const wchar_t* pszString)
+ 
+ 	return pRV;
+ }
+-#endif
+ 
+ /*!
+ Safe substring copy (strncpy doesn't always null terminate, but this does).
+@@ -283,7 +304,6 @@ inline void LTStrCat(char *pDest, const char *pSrc, size_t destBytes)
+ 	pDest[destLen + catLen] = '\0';
+ }
+ 
+-#ifndef __LINUX
+ inline void LTStrCat(wchar_t *pDest, const wchar_t *pSrc, uint32 nBufferChars) 
+ {
+ 
+@@ -310,7 +330,6 @@ inline void LTStrCat(wchar_t *pDest, const wchar_t *pSrc, uint32 nBufferChars)
+ 	wcsncat(pDest, pSrc, catLen);
+ 	pDest[destLen + catLen] = '\0';
+ }
+-#endif
+ 
+ 
+ /*!
+@@ -355,7 +374,6 @@ inline int32 LTStrCmp(const char* pszStr1, const char* pszStr2)
+ 	return strcmp(pszStr1, pszStr2);
+ }
+ 
+-#ifndef __LINUX
+ inline int32 LTStrCmp(const wchar_t* pszStr1, const wchar_t* pszStr2)
+ {
+ #ifndef _FINAL
+@@ -370,7 +388,6 @@ inline int32 LTStrCmp(const wchar_t* pszStr1, const wchar_t* pszStr2)
+ 
+ 	return wcscmp(pszStr1, pszStr2);
+ }
+-#endif
+ 
+ /*!
+ Case sensitive string equality comparison
+@@ -380,12 +397,10 @@ inline bool LTStrEquals(const char* pszStr1, const char* pszStr2)
+ 	return (LTStrCmp(pszStr1, pszStr2) == 0);
+ }
+ 
+-#ifndef __LINUX
+ inline bool LTStrEquals(const wchar_t* pszStr1, const wchar_t* pszStr2)
+ {
+ 	return (LTStrCmp(pszStr1, pszStr2) == 0);
+ }
+-#endif
+ 
+ 
+ /*!
+@@ -2139,8 +2154,12 @@ Maximum number of sky objects.
+ #define MATH_ONE_OVER_128	0.0078125f
+ 
+ 
++#ifndef INLINE_FN
+ #define INLINE_FN __inline
++#endif
+ 
++#ifndef LT_MATH_HELPERS_DEFINED
++#define LT_MATH_HELPERS_DEFINED
+ template<class T, class TB>
+ INLINE_FN T LTDIFF(T a, TB b) { return ((a < (T)b) ? ((T)b - a) : (a - (T)b)); }
+ template<class T, class TB>
+@@ -2153,6 +2172,7 @@ template<class T, class TB, class TC>
+ INLINE_FN T LTCLAMP(T a, TB min, TC max) { return ((a < (T)min) ? (T)min : ((a > (T)max) ? (T)max : a)); }
+ template<class T, class TMAX, class TINTERP>
+ INLINE_FN T LTLERP(T min, TMAX max, TINTERP t) { return (min + (((T)max - min) * t)); }
++#endif
+ 
+ /*!
+ Vertex shader definition
+diff --git a/sdk/inc/ltrect.h b/sdk/inc/ltrect.h
+index 0728dad51f0218312747be6fe6fa5ca658ec9fc5..40956c06eea8aa0f9312fad7e42b6ea14f3f7f55 100644
+--- a/sdk/inc/ltrect.h
++++ b/sdk/inc/ltrect.h
+@@ -45,7 +45,7 @@ Used for:   2D Rendering.
+ 
+ 
+ 
+-#ifndef __LINUX
++#if 1
+ // Provides the definition for the utility class LTRect that represents a
+ // templatized 2d AABB. Each extent is stored in a 2d vector to allow easier
+ // operation on individual components. Most utility function assume that
+diff --git a/sdk/inc/memblockallocator.h b/sdk/inc/memblockallocator.h
+index afd9e6f038834cf51a155cad1b511ae6798ccbf2..d807872d356c233b6cec3e4d0b8629254cbb6c46 100644
+--- a/sdk/inc/memblockallocator.h
++++ b/sdk/inc/memblockallocator.h
+@@ -10,6 +10,8 @@
+ #ifndef __MEMBLOCKALLOCATOR_H__
+ #define __MEMBLOCKALLOCATOR_H__
+ 
++#include <new>
++
+ //--------------------------------------------------------------------------
+ // Memory Alignment
+ 

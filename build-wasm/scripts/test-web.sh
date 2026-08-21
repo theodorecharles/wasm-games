@@ -2,10 +2,14 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-dist_dir="$repo_dir/build-web/dist"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+source_dir="$("$repo_dir/scripts/fetch-source")"
+dist_dir="$repo_dir/.work/build/dist"
+workspace_dir="$(cd "$repo_dir/../.." && pwd)"
+framework_dir="${WASM_FRAMEWORK_DIR:-$workspace_dir/wasm-game-framework}"
 
-"$repo_dir/build-web.sh"
+if [[ "${BUILD_WASM_SKIP_BUILD:-0}" != "1" ]]; then
+    "$repo_dir/build-web.sh"
+fi
 
 for required in blood.js blood.wasm blood.data duke3d.js duke3d.wasm \
     blood.ico duke3d.ico blood-192.png blood-512.png duke3d-192.png duke3d-512.png \
@@ -46,30 +50,30 @@ cmp "$framework_dir/dist/wasm-game-framework.js" "$dist_dir/shared-shell/wasm-ga
 cmp "$framework_dir/dist/wasm-game-framework.css" "$dist_dir/shared-shell/wasm-game-framework.css"
 cmp "$framework_dir/dist/wasm-game-bootstrap.js" "$dist_dir/shared-shell/wasm-game-bootstrap.js"
 
-for marker in CONFIG_SetDefaultKeys 'gSetup.xdim = 800' 'gMouseAim = 0' \
+for marker in CONFIG_SetDefaultKeys 'gSetup.xdim = 800' 'gMouseAim = 1' \
     NBlood_WasmRuntimeState NBlood_WasmCaptureIntent NBlood_WasmEnsureMenu NBlood_WasmSetPointerLock NBlood_WasmControlsMask; do
-    rg -Fq "$marker" "$repo_dir/source/blood/src" || { printf 'Missing Blood native seam: %s\n' "$marker" >&2; exit 1; }
+    rg -Fq "$marker" "$source_dir/source/blood/src" || { printf 'Missing Blood native seam: %s\n' "$marker" >&2; exit 1; }
 done
 for marker in 'emscripten_set_main_loop(Duke_WasmFrame' Duke_WasmEnterFrontend Duke_WasmDrawFrontend \
     'does not return until a game starts' 'ud.setup.xdim = 800' 'ud.setup.ydim = 600' \
     'ud.setup.bpp = 8' 'ud.mouseaiming = 0' Duke_WasmRuntimeState Duke_WasmEnsureMenu \
     Duke_WasmSetPointerLock Duke_WasmControlsMask Duke_WasmMenuId Duke_WasmMenuEntry; do
-    rg -Fq "$marker" "$repo_dir/source/duke3d/src/game.cpp" || { printf 'Missing Duke native seam: %s\n' "$marker" >&2; exit 1; }
+    rg -Fq "$marker" "$source_dir/source/duke3d/src/game.cpp" || { printf 'Missing Duke native seam: %s\n' "$marker" >&2; exit 1; }
 done
 rg -Uq '#ifdef __EMSCRIPTEN__\n[[:space:]]*// The desktop path blocks here until the difficulty voice finishes\.' \
-    "$repo_dir/source/duke3d/src/premap.cpp" || {
+    "$source_dir/source/duke3d/src/premap.cpp" || {
     printf 'Duke browser New Game must not synchronously wait for Web Audio completion.\n' >&2
     exit 1
 }
 for marker in 'Browser input callbacks cannot run while this native frame owns' \
     'Let Web Audio finish asynchronously after this frame yields'; do
-    rg -Fq "$marker" "$repo_dir/source/duke3d/src/screens.cpp" || {
+    rg -Fq "$marker" "$source_dir/source/duke3d/src/screens.cpp" || {
         printf 'Missing Duke browser modal-wait guard: %s\n' "$marker" >&2
         exit 1
     }
 done
 for marker in SDL_GL_CONTEXT_PROFILE_ES 'SDL_GL_CONTEXT_MAJOR_VERSION, 3' 'SDL_GL_CONTEXT_MINOR_VERSION, 0'; do
-    rg -Fq "$marker" "$repo_dir/source/build/src/sdlayer.cpp" || {
+    rg -Fq "$marker" "$source_dir/source/build/src/sdlayer.cpp" || {
         printf 'Missing WebGL 2 context contract: %s\n' "$marker" >&2
         exit 1
     }
@@ -84,13 +88,15 @@ for generated in "$dist_dir/blood.js" "$dist_dir/duke3d.js"; do
         rg -Fq "$marker" "$generated" || { printf 'Native browser seam is not exported: %s (%s)\n' "$generated" "$marker" >&2; exit 1; }
     done
 done
-rg -Fq 'Build_WasmControllerFrame' "$repo_dir/source/build/src/baselayer.cpp"
+rg -Fq 'Build_WasmControllerFrame' "$source_dir/source/build/src/baselayer.cpp"
+rg -Fq 'Browser adapters inject framework-normalized relative deltas directly.' "$source_dir/source/build/src/baselayer.cpp"
 for marker in _Duke_WasmRuntimeState _Duke_WasmEnsureMenu _Duke_WasmSetPointerLock _Duke_WasmControlsMask \
     _Duke_WasmMenuId _Duke_WasmMenuEntry; do
     rg -Fq "$marker" "$dist_dir/duke3d.js" || { printf 'Duke native hook is not exported: %s\n' "$marker" >&2; exit 1; }
 done
-rg -Fq '#define DUKE13_CRC  (int32_t)0xBBC9CE44' "$repo_dir/source/duke3d/src/grpscan.h"
-rg -Fq 'DUKE13_CRC,  26524524' "$repo_dir/source/duke3d/src/grpscan.cpp"
+rg -Fq 'dataset.dukePlayerView' "$source_dir/source/duke3d/src/game.cpp"
+rg -Fq '#define DUKE13_CRC  (int32_t)0xBBC9CE44' "$source_dir/source/duke3d/src/grpscan.h"
+rg -Fq 'DUKE13_CRC,  26524524' "$source_dir/source/duke3d/src/grpscan.cpp"
 for adapter in "$dist_dir/adapters/blood.js" "$dist_dir/adapters/duke3d.js"; do
     for marker in 'ctx.framework.createOwnerDataSet' 'ctx.dataClient.load' \
         'ctx.framework.mountOwnerFiles' 'ctx.persistence.attach' 'controllerFrame(detail)' \
@@ -109,7 +115,7 @@ if find "$dist_dir" -type f \( -iname '*.rff' -o -iname '*.art' -o -iname '*.grp
     printf 'Game data was found under the public document root.\n' >&2
     exit 1
 fi
-if rg -n '/home/ted/|/local-data/' "$dist_dir" "$repo_dir/web" "$repo_dir/build-web.sh"; then
+if rg -n '/home/ted/|/local-data/' "$dist_dir" "$repo_dir/web"; then
     printf 'Generated site contains a workstation path or obsolete data loader.\n' >&2
     exit 1
 fi

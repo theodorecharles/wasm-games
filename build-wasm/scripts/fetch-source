@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+engine_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source_dir="${BUILD_ENGINE_SOURCE_DIR:-${engine_root}/.work/source}"
+repository="https://github.com/theodorecharles/build-wasm.git"
+commit="f8639031546ccea8964c2d63c9d09944c8a4a67c"
+
+if [[ ! -d "${source_dir}/.git" ]]; then
+  mkdir -p "$(dirname "${source_dir}")"
+  git clone --filter=blob:none --no-checkout "${repository}" "${source_dir}" >&2
+  git -C "${source_dir}" checkout --detach "${commit}" >&2
+fi
+
+actual_origin="$(git -C "${source_dir}" remote get-url origin)"
+actual_commit="$(git -C "${source_dir}" rev-parse HEAD)"
+if [[ "${actual_origin}" != "${repository}" || "${actual_commit}" != "${commit}" ]]; then
+  printf 'Unexpected BUILD source checkout at %s.\n' "${source_dir}" >&2
+  exit 1
+fi
+
+series_files=(
+  "${engine_root}/patches/series"
+  "${engine_root}/games/blood/patches/series"
+  "${engine_root}/games/duke3d/patches/series"
+)
+for series_file in "${series_files[@]}"; do
+  patch_root="$(dirname "${series_file}")"
+  while IFS= read -r patch_name; do
+    [[ -z "${patch_name}" || "${patch_name}" == \#* ]] && continue
+    patch_file="${patch_root}/${patch_name}"
+    if git -C "${source_dir}" apply --reverse --check "${patch_file}" 2>/dev/null; then
+      continue
+    fi
+    git -C "${source_dir}" apply --check "${patch_file}"
+    git -C "${source_dir}" apply "${patch_file}"
+  done < "${series_file}"
+done
+
+# Generated source checkouts contain code only; upstream Markdown stays out of
+# this workspace even though the checkout itself is ignored by Git.
+find "${source_dir}" -type f -name '*.md' -delete
+
+printf '%s\n' "${source_dir}"

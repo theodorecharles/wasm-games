@@ -13,7 +13,11 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
-get_filename_component(REPO_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+set(IDTECH1_SOURCE_DIR "" CACHE PATH "Patched Crispy Doom source checkout")
+if(NOT IDTECH1_SOURCE_DIR)
+    message(FATAL_ERROR "IDTECH1_SOURCE_DIR must point to the patched Crispy Doom checkout")
+endif()
+get_filename_component(REPO_ROOT "${IDTECH1_SOURCE_DIR}" ABSOLUTE)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated")
 configure_file(
     "${CMAKE_CURRENT_LIST_DIR}/config.h.in"
@@ -26,7 +30,8 @@ set(COMMON_SOURCES
     "${REPO_ROOT}/src/i_system.c"
     "${REPO_ROOT}/src/m_argv.c"
     "${REPO_ROOT}/src/m_misc.c"
-    "${REPO_ROOT}/src/i_browser.c")
+    "${REPO_ROOT}/src/i_browser.c"
+    "${CMAKE_CURRENT_LIST_DIR}/net_websockets.c")
 
 set(GAME_COMMON_NAMES
     a11y aes_prng d_event d_iwad d_loop d_mode deh_str gusconf i_cdmus
@@ -78,6 +83,7 @@ function(add_crispy_web_target game use_deh export_name)
     add_executable(${target} ${sources})
     target_include_directories(${target} PRIVATE
         "${CMAKE_BINARY_DIR}/generated"
+        "${CMAKE_CURRENT_LIST_DIR}"
         "${REPO_ROOT}/src"
         "${REPO_ROOT}/src/${game}"
         "${REPO_ROOT}/opl"
@@ -94,6 +100,9 @@ function(add_crispy_web_target game use_deh export_name)
         "SHELL:-sEXPORTED_RUNTIME_METHODS=['FS','callMain']"
         "SHELL:-sFORCE_FILESYSTEM=1"
         "SHELL:-lidbfs.js"
+        "SHELL:-lwebsocket.js"
+        "SHELL:-sASYNCIFY=1"
+        "SHELL:-sASYNCIFY_STACK_SIZE=65536"
         "SHELL:-sALLOW_MEMORY_GROWTH=1"
         "SHELL:-sINITIAL_MEMORY=134217728"
         "SHELL:-sSTACK_SIZE=5242880"

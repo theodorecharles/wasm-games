@@ -1,0 +1,1243 @@
+diff --git a/emscripten/deps.js b/emscripten/deps.js
+index e7a3732fff436dcee210ee5dfd6e141f3a258568..19ba714a99d0d888d195d23f56e0e1e79090ed20 100644
+--- a/emscripten/deps.js
++++ b/emscripten/deps.js
+@@ -8,252 +8,12 @@
+  *****************************************************************************/
+ 
+ var EmscriptenDeps = {
+-    $SAVE: {
+-        filehandle: null,
+-
+-        readFileData: (isTrackDesign) => {
+-            const filePath = isTrackDesign ? "/save.park.td6" : "/save.park";
+-            let data;
+-            try {
+-                data = FS.readFile(filePath);
+-                FS.unlink(filePath);
+-            } catch(e) {};
+-            return data;
+-        }
+-    },
+-    EmscriptenSaveGame: async (isTrackDesign, isAutosave, type) => {
+-        isTrackDesign = isTrackDesign === 1;
+-        isAutosave = isAutosave === 1;
+-        const data = SAVE.readFileData(isTrackDesign);
+-        try {
+-            if (window.showSaveFilePicker) {
+-                if (SAVE.filehandle === null) {
+-                    SAVE.filehandle = null;
+-                    const file = await showSaveFilePicker({
+-                        id: "OpenRCT2-" + type,
+-                        types: [
+-                            {
+-                                description: isTrackDesign ? "Track Design File" : "Park File",
+-                                accept: {
+-                                    "application/octet-stream": [
+-                                        isTrackDesign ? ".td6" : ".park"
+-                                    ]
+-                                }
+-                            }
+-                        ]
+-                    });
+-                    if (!file) throw new Error("Could not get a file as RW!");
+-                    SAVE.filehandle = file;
+-                }
+-                const writable = await SAVE.filehandle.createWritable();
+-                await writable.write(data);
+-                await writable.close();
+-                return;
+-            }
+-        } catch(e) {
+-            // Don't return - fallback to the old save dialog.
+-            console.warn("Failed to use showSaveFilePicker with error message:", e);
+-
+-            // User requested abort -- return here.
+-            if (e.name === "AbortError") {
+-                return;
+-            }
+-        }
+-        if (!isAutosave) {
+-            const blob = new Blob([data]);
+-            const a = document.createElement("a");
+-            a.href = URL.createObjectURL(blob);
+-            a.download = "download.park";
+-            a.click();
+-            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+-        }
+-    },
+-    EmscriptenResetAutosave: () => {
+-        SAVE.filehandle = null;
+-    },
+-    EmscriptenLoadGame: async (type) => {
+-        try {
+-            if (window.showOpenFilePicker) {
+-                const [file] = await showOpenFilePicker({
+-                    id: "OpenRCT2-" + type,
+-                    types: [
+-                        {
+-                            description: "Park File",
+-                            accept: {
+-                                "application/octet-stream": [
+-                                    ".park"
+-                                ]
+-                            }
+-                        },
+-                        {
+-                            description: "Track Design File",
+-                            accept: {
+-                                "application/octet-stream": [
+-                                    ".td6"
+-                                ]
+-                            }
+-                        }
+-                    ],
+-                    multiple: false
+-                });
+-                if (!file) throw new Error("Could not get a file as RW!");
+-                SAVE.filehandle = file;
+-                const fileInstance = await SAVE.filehandle.getFile();
+-                const name = SAVE.filehandle.name;
+-                const data = await fileInstance.arrayBuffer();
+-                FS.writeFile(name, new Uint8Array(data));
+-                _LoadGameCallback(stringToNewUTF8(name), type);
+-                FS.unlink(name);
+-                return;
+-            }
+-        } catch(e) {
+-            // Don't return - fallback to the old save dialog.
+-            console.warn("Failed to use showOpenFilePicker with error message:", e);
+-
+-            // User requested abort -- return here.
+-            if (e.name === "AbortError") {
+-                return;
+-            }
+-        }
+-        const input = document.createElement("input");
+-        input.type = "file";
+-        input.addEventListener("change", async () => {
+-            const file = input.files[0];
+-            if (!file) return;
+-            const name = file.name;
+-            const data = await file.arrayBuffer();
+-            FS.writeFile(name, new Uint8Array(data));
+-            _LoadGameCallback(stringToNewUTF8(name), type);
+-            FS.unlink(name);
+-        });
+-        input.click();
+-    },
+-    ExportPersistentData: () => {
+-        if (!window.JSZip) {
+-            alert("JSZip library not found. Aborting");
+-            return;
+-        }
+-        const zipFolder = (folder) => {
+-            let zip = new JSZip();
+-            const processFolder = (name) => {
+-                let contents;
+-                try {
+-                    contents = Module.FS.readdir(name);
+-                } catch(e) {
+-                    return;
+-                }
+-                contents.forEach((entry) => {
+-                    if ([".", ".."].includes(entry)) return;
+-                    try {
+-                        Module.FS.readFile(name + entry);
+-                        processFile(name + entry);
+-                    } catch(e) {
+-                        processFolder(name + entry + "/");
+-                    }
+-                })
+-            }
+-            const processFile = (name) => {
+-                zip.file(name, Module.FS.readFile(name));
+-            }
+-            processFolder(folder);
+-            return zip;
++    EmscriptenPersistData: (immediate) => {
++        if (typeof Module.wasmGamePersistenceChanged === "function") {
++            Module.wasmGamePersistenceChanged(immediate === 1);
++        } else if (typeof postMessage === "function") {
++            postMessage({ openrct2PersistenceDirty: { immediate: immediate === 1 } });
+         }
+-        const zip = zipFolder("/persistent/");
+-        zip.generateAsync({type: "blob"}).then(blob => {
+-            const a = document.createElement("a");
+-
+-            a.href = URL.createObjectURL(blob);
+-            a.download = "OpenRCT2-emscripten.zip";
+-            a.click();
+-            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+-        })
+-    },
+-    ImportPersistentData: () => {
+-        if (!window.JSZip) {
+-            alert("JSZip library not found. Aborting");
+-            return;
+-        }
+-        const clearDatabase = async(dir) => {
+-            await new Promise(res => Module.FS.syncfs(false, res));
+-            const processFolder = (path) => {
+-                let contents;
+-                try {
+-                    contents = Module.FS.readdir(path);
+-                } catch(e) {
+-                    return;
+-                }
+-                contents.forEach((entry) => {
+-                    if ([".", ".."].includes(entry)) return;
+-                    try {
+-                        Module.FS.readFile(path + entry);
+-                        Module.FS.unlink(path + entry);
+-                    } catch(e) {
+-                        processFolder(path + entry + "/");
+-                    }
+-                })
+-                if (path === dir) return;
+-                try {
+-                    Module.FS.rmdir(path, {recursive: true});
+-                } catch(e) {
+-                    console.log("Could not remove:", path);
+-                }
+-            }
+-            processFolder(dir);
+-            await new Promise(res => Module.FS.syncfs(false, res));
+-        };
+-        const input = document.createElement("input");
+-        input.type = "file";
+-        input.accept = ".zip";
+-        input.addEventListener("change", async (e) => {
+-            if (!confirm("Are you sure? This will wipe all current data.")) return;
+-            let zip = new JSZip();
+-            try {
+-                zip = await zip.loadAsync(e.target.files[0]);
+-            } catch(e) {
+-                alert("Not a zip file!");
+-                return;
+-            }
+-            await clearDatabase("/persistent/");
+-            for (const k in zip.files) {
+-                const entry = zip.files[k];
+-                if (entry.dir) {
+-                    try {
+-                        Module.FS.mkdir("/"+k);
+-                    } catch(e) {}
+-                } else {
+-                    Module.FS.writeFile("/"+k, await entry.async("uint8array"));
+-                }
+-            }
+-            console.log("Database restored");
+-        })
+-        input.click();
+-    },
+-    SelectFilesToUpload: () => {
+-        const input = document.createElement("input");
+-        input.type = "file";
+-        input.multiple = true;
+-        input.accept = ".park, .sv4, .sv6";
+-        input.addEventListener("change", async (e) => {
+-            console.log(input);
+-            if (!input.files || input.files.length === 0) return;
+-            let success = 0;
+-            for (let i=0; i<input.files.length; i++) {
+-                const file = input.files[i];
+-                const name = file.name;
+-                const ab = await file.arrayBuffer();
+-                const byteArray = new Uint8Array(ab);
+-                const outputDirectory = "/persistent/save/uploads/";
+-                try {
+-                    FS.mkdir(outputDirectory);
+-                } catch(e) {};
+-                try {
+-                    FS.writeFile(outputDirectory + name, byteArray);
+-                    success++;
+-                } catch(e) {};
+-            }
+-            alert("Successfully uploaded " + success + " files");
+-        });
+-        input.click();
+     },
+     GetLocaleCurrencyCode: () => {
+         // There is no way to get this directly from javascript! Assume based off of user country
+@@ -264,5 +24,4 @@ var EmscriptenDeps = {
+     }
+ };
+ 
+-autoAddDeps(EmscriptenDeps, '$SAVE');
+ addToLibrary(EmscriptenDeps);
+diff --git a/src/openrct2-ui/CursorRepository.cpp b/src/openrct2-ui/CursorRepository.cpp
+index ef71e517b90078933be1b17797e81a5a6abe40c2..c6f36f269443d2c54410f80823014e05501dd844 100644
+--- a/src/openrct2-ui/CursorRepository.cpp
++++ b/src/openrct2-ui/CursorRepository.cpp
+@@ -39,12 +39,19 @@ CursorID CursorRepository::GetCurrentCursor()
+ 
+ void CursorRepository::SetCurrentCursor(CursorID cursorId)
+ {
++#ifdef __EMSCRIPTEN__
++    // The framework-owned HTML canvas supplies the browser cursor. SDL's
++    // Emscripten cursor implementation requires document/style APIs that are
++    // intentionally absent from the dedicated runtime worker.
++    _currentCursor = cursorId;
++#else
+     if (_currentCursor != cursorId)
+     {
+         SDL_Cursor* cursor = _scaledCursors.at(_currentCursorScale).GetScaledCursor(cursorId);
+         SDL_SetCursor(cursor);
+         _currentCursor = cursorId;
+     }
++#endif
+ }
+ 
+ static bool GetBit(const uint8_t data[], size_t x, size_t y, size_t width) noexcept
+@@ -111,7 +118,9 @@ void CursorRepository::SetCursorScale(uint8_t cursorScale)
+     if (cursorScale > 0.0)
+     {
+         _currentCursorScale = cursorScale;
++#ifndef __EMSCRIPTEN__
+         GenerateScaledCursorSetHolder(_currentCursorScale);
++#endif
+     }
+ }
+ 
+diff --git a/src/openrct2-ui/Ui.cpp b/src/openrct2-ui/Ui.cpp
+index 706e93a0a83bd3ec48301b1df0233d06739c7f19..6e974ab686e88a391ccc229591afa7a6429ffc64 100644
+--- a/src/openrct2-ui/Ui.cpp
++++ b/src/openrct2-ui/Ui.cpp
+@@ -51,7 +51,8 @@ int main(int argc, const char** argv)
+ #ifdef __EMSCRIPTEN__
+     MAIN_THREAD_EM_ASM({
+         specialHTMLTargets["!canvas"] = Module.canvas;
+-        Module.canvas.addEventListener("contextmenu", function(e) { e.preventDefault(); });
++        if (typeof Module.canvas.addEventListener === 'function')
++            Module.canvas.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+     });
+ #endif
+     int32_t rc = EXIT_SUCCESS;
+diff --git a/src/openrct2-ui/UiContext.cpp b/src/openrct2-ui/UiContext.cpp
+index bc26958eeaf9819fe0737a8a61fe0ea7dbd96586..7b0aac0fe96a62b8390dab3f8ae2a2e1c573c5f4 100644
+--- a/src/openrct2-ui/UiContext.cpp
++++ b/src/openrct2-ui/UiContext.cpp
+@@ -122,9 +122,14 @@ public:
+         , _shortcutManager(env)
+     {
+         LogSDLVersion();
+-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
++#ifdef __EMSCRIPTEN__
++        const uint32_t sdlFlags = SDL_INIT_VIDEO;
++#else
++        const uint32_t sdlFlags = SDL_INIT_VIDEO | SDL_INIT_JOYSTICK;
++#endif
++        if (SDL_Init(sdlFlags) < 0)
+         {
+-            SDLException::Throw("SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)");
++            SDLException::Throw("SDL_Init(video/input)");
+         }
+         _cursorRepository.LoadCursors();
+         _shortcutManager.loadUserBindings();
+@@ -215,14 +220,9 @@ public:
+             // TODO try another display mode rather than just exiting the game
+         }
+ #else
+-        if (mode == FullscreenMode::fullscreen)
+-        {
+-            emscripten_request_fullscreen("!canvas", false);
+-        }
+-        else if (mode == FullscreenMode::windowed)
+-        {
+-            emscripten_exit_fullscreen();
+-        }
++        // The shared browser shell owns fullscreen. Calling the HTML5
++        // fullscreen API from the dedicated runtime worker has no DOM target.
++        (void)mode;
+ #endif // __EMSCRIPTEN__
+     }
+ 
+@@ -287,14 +287,26 @@ public:
+ 
+     ScreenCoordsXY GetCursorPosition() override
+     {
++#ifdef __EMSCRIPTEN__
++        // Browser input is delivered through the framework's worker-safe
++        // native seam. SDL_GetMouseState() only reflects DOM listeners, which
++        // are intentionally absent in the application worker, so use the
++        // cursor state updated by that seam.
++        return _cursorState.position;
++#else
+         ScreenCoordsXY cursorPosition;
+         SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
+         return cursorPosition;
++#endif
+     }
+ 
+     void SetCursorPosition(const ScreenCoordsXY& cursorPosition) override
+     {
++#ifdef __EMSCRIPTEN__
++        _cursorState.position = cursorPosition;
++#else
+         SDL_WarpMouseInWindow(nullptr, cursorPosition.x, cursorPosition.y);
++#endif
+     }
+ 
+     void SetCursorTrap(bool value) override
+@@ -789,10 +801,6 @@ private:
+     void CreateWindow(const ScreenCoordsXY& windowPos)
+     {
+ #ifdef __EMSCRIPTEN__
+-        MAIN_THREAD_EM_ASM({
+-            Module.canvas.width = window.innerWidth;
+-            Module.canvas.height = window.innerHeight;
+-        });
+         int32_t width = 0;
+         int32_t height = 0;
+         emscripten_get_canvas_element_size("!canvas", &width, &height);
+@@ -879,6 +887,17 @@ private:
+ 
+     void UpdateFullscreenResolutions()
+     {
++#ifdef __EMSCRIPTEN__
++        int32_t width = 0;
++        int32_t height = 0;
++        SDL_GetWindowSize(_window, &width, &height);
++        width = std::max(1, width);
++        height = std::max(1, height);
++        _fsResolutions = { { width, height } };
++        Config::Get().general.fullscreenWidth = width;
++        Config::Get().general.fullscreenHeight = height;
++        return;
++#else
+         // Query number of display modes
+         int32_t displayIndex = SDL_GetWindowDisplayIndex(_window);
+         int32_t numDisplayModes = SDL_GetNumDisplayModes(displayIndex);
+@@ -925,6 +944,7 @@ private:
+         }
+ 
+         _fsResolutions = resolutions;
++#endif
+     }
+ 
+     Resolution GetClosestResolution(int32_t inWidth, int32_t inHeight)
+diff --git a/src/openrct2-ui/WasmGameFramework.cpp b/src/openrct2-ui/WasmGameFramework.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..f262d63271f49dff7fdc9cd3859deb139d83c528
+--- /dev/null
++++ b/src/openrct2-ui/WasmGameFramework.cpp
+@@ -0,0 +1,224 @@
++/*****************************************************************************
++ * Copyright (c) 2014-2026 OpenRCT2 developers
++ *
++ * For a complete list of all authors, please refer to contributors.md
++ * Interested in contributing? Visit https://github.com/OpenRCT2/OpenRCT2
++ *
++ * OpenRCT2 is licensed under the GNU General Public License version 3.
++ *****************************************************************************/
++
++#ifdef __EMSCRIPTEN__
++
++    #include <SDL.h>
++    #include <algorithm>
++    #include <cmath>
++    #include <emscripten.h>
++    #include <emscripten/html5.h>
++    #include <openrct2/Context.h>
++    #include <openrct2/Game.h>
++    #include <openrct2/OpenRCT2.h>
++    #include <openrct2/config/Config.h>
++    #include <openrct2/drawing/IDrawingEngine.h>
++    #include <openrct2/drawing/RenderTarget.h>
++    #include <openrct2/scenes/SceneManager.h>
++    #include <openrct2/ui/UiContext.h>
++    #include <openrct2-ui/input/MouseInput.h>
++
++namespace
++{
++    double _pointerX = 0;
++    double _pointerY = 0;
++
++    void ClampPointer()
++    {
++        // The runtime owns an OffscreenCanvas in a dedicated worker, so DOM
++        // selector APIs cannot resolve #canvas and report 0x0. Clamp against
++        // OpenRCT2's authoritative native viewport instead.
++        const int32_t width = std::max(1, OpenRCT2::ContextGetWidth());
++        const int32_t height = std::max(1, OpenRCT2::ContextGetHeight());
++        _pointerX = std::clamp(_pointerX, 0.0, static_cast<double>(width - 1));
++        _pointerY = std::clamp(_pointerY, 0.0, static_cast<double>(height - 1));
++    }
++} // namespace
++
++extern "C" {
++
++int32_t OpenRCT2Wasm_RuntimeState();
++uint32_t OpenRCT2Wasm_DrawCount();
++uint32_t OpenRCT2Wasm_FramebufferVariation();
++int32_t OpenRCT2Wasm_CursorX();
++int32_t OpenRCT2Wasm_CursorY();
++int32_t OpenRCT2Wasm_ContextWidth();
++int32_t OpenRCT2Wasm_ContextHeight();
++double OpenRCT2Wasm_WindowScale();
++void OpenRCT2Wasm_Resize(int32_t width, int32_t height);
++void OpenRCT2Wasm_PointerMove(double x, double y);
++void OpenRCT2Wasm_PointerButton(int32_t button, int32_t pressed, double x, double y);
++void OpenRCT2Wasm_PointerWheel(double deltaX, double deltaY);
++void OpenRCT2Wasm_Key(int32_t scancode, int32_t pressed, int32_t modifiers);
++void OpenRCT2Wasm_TextInput(const char* text);
++
++EMSCRIPTEN_KEEPALIVE int32_t OpenRCT2Wasm_RuntimeState()
++{
++    if (gCurrentDrawCount == 0)
++        return 0;
++    if (auto* context = OpenRCT2::GetContext(); context != nullptr)
++    {
++        if (auto* scenes = context->GetSceneManager(); scenes != nullptr)
++        {
++            auto* active = scenes->getActiveScene();
++            if (active == scenes->getPreloaderScene() || active == scenes->getIntroScene())
++                return 0;
++        }
++    }
++    if (gLegacyScene == LegacyScene::titleSequence)
++        return 1;
++    if (gLegacyScene == LegacyScene::playing && GameIsPaused())
++        return 3;
++    return 2;
++}
++
++EMSCRIPTEN_KEEPALIVE uint32_t OpenRCT2Wasm_DrawCount()
++{
++    return gCurrentDrawCount;
++}
++
++EMSCRIPTEN_KEEPALIVE uint32_t OpenRCT2Wasm_FramebufferVariation()
++{
++    auto* context = OpenRCT2::GetContext();
++    auto* engine = context == nullptr ? nullptr : context->GetDrawingEngine();
++    auto* target = engine == nullptr ? nullptr : engine->getRT();
++    if (target == nullptr || target->bits == nullptr || target->width <= 0 || target->height <= 0)
++        return 0;
++
++    const auto first = target->bits[0];
++    const uint64_t pixels = static_cast<uint64_t>(target->width) * target->height;
++    const uint64_t samples = std::min<uint64_t>(pixels, 4096);
++    uint32_t different = 0;
++    for (uint64_t i = 0; i < samples; i++)
++    {
++        const uint64_t linear = (i * pixels) / samples;
++        const auto y = static_cast<int32_t>(linear / target->width);
++        const auto x = static_cast<int32_t>(linear % target->width);
++        if (target->bits[y * target->LineStride() + x] != first)
++            different++;
++    }
++    return different;
++}
++
++EMSCRIPTEN_KEEPALIVE int32_t OpenRCT2Wasm_CursorX()
++{
++    return OpenRCT2::ContextGetCursorPosition().x;
++}
++
++EMSCRIPTEN_KEEPALIVE int32_t OpenRCT2Wasm_CursorY()
++{
++    return OpenRCT2::ContextGetCursorPosition().y;
++}
++
++EMSCRIPTEN_KEEPALIVE int32_t OpenRCT2Wasm_ContextWidth()
++{
++    return OpenRCT2::ContextGetWidth();
++}
++
++EMSCRIPTEN_KEEPALIVE int32_t OpenRCT2Wasm_ContextHeight()
++{
++    return OpenRCT2::ContextGetHeight();
++}
++
++EMSCRIPTEN_KEEPALIVE double OpenRCT2Wasm_WindowScale()
++{
++    return OpenRCT2::Config::Get().general.windowScale;
++}
++
++EMSCRIPTEN_KEEPALIVE void OpenRCT2Wasm_Resize(int32_t width, int32_t height)
++{
++    if (width < 1 || height < 1)
++        return;
++
++    _pointerX = width / 2.0;
++    _pointerY = height / 2.0;
++
++    SDL_Event event{};
++    event.type = SDL_WINDOWEVENT;
++    event.window.event = SDL_WINDOWEVENT_RESIZED;
++    event.window.data1 = width;
++    event.window.data2 = height;
++    SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void OpenRCT2Wasm_PointerMove(double x, double y)
++{
++    _pointerX = std::isfinite(x) ? x : _pointerX;
++    _pointerY = std::isfinite(y) ? y : _pointerY;
++    ClampPointer();
++
++    if (auto* context = OpenRCT2::GetContext(); context != nullptr)
++    {
++        context->GetUiContext().SetCursorPosition(
++            { static_cast<int32_t>(std::lround(_pointerX)), static_cast<int32_t>(std::lround(_pointerY)) });
++    }
++
++}
++
++EMSCRIPTEN_KEEPALIVE void OpenRCT2Wasm_PointerButton(int32_t button, int32_t pressed, double x, double y)
++{
++    OpenRCT2Wasm_PointerMove(x, y);
++    const ScreenCoordsXY position = {
++        static_cast<int32_t>(std::lround(_pointerX)), static_cast<int32_t>(std::lround(_pointerY))
++    };
++
++    // The browser runtime lives in a dedicated application worker. SDL's DOM
++    // mouse bookkeeping is intentionally absent there, and queuing SDL mouse
++    // events loses the authoritative cursor/release state before OpenRCT2's
++    // input tick consumes it. Feed the engine's bounded native queue directly
++    // so hover, press, release and dragging all share the same coordinates.
++    if (button == 0)
++    {
++        OpenRCT2::StoreMouseInput(
++            pressed ? OpenRCT2::MouseState::leftPress : OpenRCT2::MouseState::leftRelease, position);
++    }
++    else if (button == 2)
++    {
++        OpenRCT2::StoreMouseInput(
++            pressed ? OpenRCT2::MouseState::rightPress : OpenRCT2::MouseState::rightRelease, position);
++    }
++}
++
++EMSCRIPTEN_KEEPALIVE void OpenRCT2Wasm_PointerWheel(double deltaX, double deltaY)
++{
++    SDL_Event event{};
++    event.type = SDL_MOUSEWHEEL;
++    event.wheel.x = static_cast<int32_t>(std::clamp(-deltaX, -3.0, 3.0));
++    event.wheel.y = static_cast<int32_t>(std::clamp(-deltaY, -3.0, 3.0));
++    SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void OpenRCT2Wasm_Key(int32_t scancode, int32_t pressed, int32_t modifiers)
++{
++    if (scancode <= SDL_SCANCODE_UNKNOWN || scancode >= SDL_NUM_SCANCODES)
++        return;
++
++    SDL_Event event{};
++    event.type = pressed ? SDL_KEYDOWN : SDL_KEYUP;
++    event.key.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++    event.key.repeat = 0;
++    event.key.keysym.scancode = static_cast<SDL_Scancode>(scancode);
++    event.key.keysym.sym = SDL_GetKeyFromScancode(event.key.keysym.scancode);
++    event.key.keysym.mod = static_cast<SDL_Keymod>(modifiers);
++    SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void OpenRCT2Wasm_TextInput(const char* text)
++{
++    if (text == nullptr || text[0] == '\0')
++        return;
++
++    SDL_Event event{};
++    event.type = SDL_TEXTINPUT;
++    SDL_strlcpy(event.text.text, text, sizeof(event.text.text));
++    SDL_PushEvent(&event);
++}
++}
++
++#endif
+diff --git a/src/openrct2-ui/drawing/engines/HardwareDisplayDrawingEngine.cpp b/src/openrct2-ui/drawing/engines/HardwareDisplayDrawingEngine.cpp
+index c032c4a931f5ad6e92d558188fd9441c03372808..84a14b75bb3b9c900e477b1d3c632b8bb9446e1d 100644
+--- a/src/openrct2-ui/drawing/engines/HardwareDisplayDrawingEngine.cpp
++++ b/src/openrct2-ui/drawing/engines/HardwareDisplayDrawingEngine.cpp
+@@ -16,6 +16,7 @@
+ #include <openrct2/Game.h>
+ #include <openrct2/config/Config.h>
+ #include <openrct2/core/Guard.hpp>
++#include <openrct2/drawing/Drawing.h>
+ #include <openrct2/drawing/IDrawingEngine.h>
+ #include <openrct2/drawing/LightFX.h>
+ #include <openrct2/drawing/X8DrawingEngine.h>
+@@ -24,6 +25,10 @@
+ #include <openrct2/ui/UiContext.h>
+ #include <vector>
+ 
++#ifdef __EMSCRIPTEN__
++    #include <emscripten.h>
++#endif
++
+ using namespace OpenRCT2;
+ using namespace OpenRCT2::Drawing;
+ using namespace OpenRCT2::Ui;
+@@ -47,6 +52,10 @@ private:
+ 
+     std::vector<uint32_t> _dirtyVisualsTime;
+ 
++#ifdef __EMSCRIPTEN__
++    std::vector<uint32_t> _browserPixels;
++#endif
++
+     bool smoothNN = false;
+ 
+ public:
+@@ -73,7 +82,17 @@ public:
+ 
+     void Initialise() override
+     {
++#ifdef __EMSCRIPTEN__
++        // The runtime owns a real OffscreenCanvas in a dedicated application
++        // worker. SDL's accelerated renderer can be created there while still
++        // presenting an empty default framebuffer in current browsers. The
++        // software renderer copies OpenRCT2's indexed surface directly to the
++        // transferred canvas and avoids that split presentation path.
++        _sdlRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_SOFTWARE);
++#else
+         _sdlRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | (_useVsync ? SDL_RENDERER_PRESENTVSYNC : 0));
++#endif
++        Guard::Assert(_sdlRenderer != nullptr, "Failed to create SDL renderer: %s", SDL_GetError());
+     }
+ 
+     void SetVSync(bool vsync) override
+@@ -175,6 +194,11 @@ public:
+         _screenTextureFormat = SDL_AllocFormat(format);
+ 
+         X8DrawingEngine::Resize(width, height);
++        // The palette can be loaded before a resize recreates the browser
++        // presentation texture. Rebuild the native-format lookup every time
++        // the texture format changes so an otherwise healthy indexed frame
++        // cannot be presented as solid black.
++        SetPalette(gPalette);
+     }
+ 
+     void SetPalette(const GamePalette& palette) override
+@@ -233,6 +257,10 @@ protected:
+ private:
+     void Display()
+     {
++#ifdef __EMSCRIPTEN__
++        PresentBrowserCanvas();
++        return;
++#endif
+         auto* viewport = WindowGetViewport(WindowGetMain());
+ 
+         if (Config::Get().general.enableLightFx && viewport != nullptr)
+@@ -272,6 +300,56 @@ private:
+         SDL_RenderPresent(_sdlRenderer);
+     }
+ 
++#ifdef __EMSCRIPTEN__
++    void PresentBrowserCanvas()
++    {
++        const auto pixelCount = static_cast<size_t>(_width) * _height;
++        _browserPixels.resize(pixelCount);
++        for (uint32_t y = 0; y < _height; y++)
++        {
++            const auto* src = _bits + (static_cast<size_t>(y) * _pitch);
++            auto* dst = _browserPixels.data() + (static_cast<size_t>(y) * _width);
++            for (uint32_t x = 0; x < _width; x++)
++            {
++                const auto& colour = gPalette[EnumValue(src[x])];
++                dst[x] = static_cast<uint32_t>(colour.red) | (static_cast<uint32_t>(colour.green) << 8)
++                    | (static_cast<uint32_t>(colour.blue) << 16) | 0xFF000000u;
++            }
++        }
++
++        EM_ASM(
++            {
++                const canvas = Module['canvas'];
++                if (!canvas)
++                    return;
++                const width = $1;
++                const height = $2;
++                let presentation = Module['openrct2BrowserPresentation'];
++                if (!presentation || presentation.canvas !== canvas)
++                {
++                    presentation = Module['openrct2BrowserPresentation'] = {};
++                    presentation.canvas = canvas;
++                    presentation.context = canvas.getContext('2d');
++                    presentation.image = null;
++                    presentation.width = 0;
++                    presentation.height = 0;
++                }
++                if (!presentation.context)
++                    return;
++                if (!presentation.image || presentation.width !== width || presentation.height !== height)
++                {
++                    presentation.image = presentation.context.createImageData(width, height);
++                    presentation.width = width;
++                    presentation.height = height;
++                }
++                const bytes = width * height * 4;
++                presentation.image.data.set(HEAPU8.subarray($0, $0 + bytes));
++                presentation.context.putImageData(presentation.image, 0, 0);
++            },
++            _browserPixels.data(), _width, _height);
++    }
++#endif
++
+     void CopyBitsToTexture(SDL_Texture* texture, PaletteIndex* src, int32_t width, int32_t height, const uint32_t* palette)
+     {
+         void* pixels;
+diff --git a/src/openrct2-ui/input/ShortcutManager.cpp b/src/openrct2-ui/input/ShortcutManager.cpp
+index 5347e9a742a4754c7b9919a828121ea7d0b0a744..51f8db7cbedfbcdbd50a1b1536cb3d4be26f716b 100644
+--- a/src/openrct2-ui/input/ShortcutManager.cpp
++++ b/src/openrct2-ui/input/ShortcutManager.cpp
+@@ -23,6 +23,10 @@
+ #include <openrct2/core/String.hpp>
+ #include <openrct2/ui/WindowManager.h>
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" void EmscriptenPersistData(bool immediate);
++#endif
++
+ using namespace OpenRCT2::Ui;
+ 
+ std::string_view RegisteredShortcut::getTopLevelGroup() const
+@@ -354,6 +358,9 @@ void ShortcutManager::saveUserBindings(const fs::path& path)
+     }
+ 
+     Json::WriteToFile(path.u8string(), root);
++#ifdef __EMSCRIPTEN__
++    EmscriptenPersistData(true);
++#endif
+ }
+ 
+ std::string_view ShortcutManager::getLegacyShortcutId(size_t index)
+diff --git a/src/openrct2-ui/interface/FileBrowser.cpp b/src/openrct2-ui/interface/FileBrowser.cpp
+index 442be2981910775a47f76bbe0e7ee9313b575ca8..7cf31880fee118a44f6eb58c87eb0f9600715d1b 100644
+--- a/src/openrct2-ui/interface/FileBrowser.cpp
++++ b/src/openrct2-ui/interface/FileBrowser.cpp
+@@ -34,10 +34,7 @@
+ #include <openrct2/windows/Intent.h>
+ 
+ #ifdef __EMSCRIPTEN__
+-extern "C" {
+-extern void EmscriptenLoadGame(LoadSaveType type);
+-extern void EmscriptenSaveGame(bool isTrackDesign, bool isAutosave, LoadSaveType type);
+-}
++extern "C" void EmscriptenPersistData(bool immediate);
+ #endif
+ 
+ namespace OpenRCT2::Ui::FileBrowser
+@@ -45,23 +42,17 @@ namespace OpenRCT2::Ui::FileBrowser
+     static LoadSaveCallback _loadSaveCallback;
+     static bool _loadSaveCallbackIsJs = false;
+ 
+-    WindowBase* OpenPreferred(
+-        LoadSaveAction action, LoadSaveType type, u8string defaultPath, LoadSaveCallback callback, bool isJsCallback,
+-        TrackDesign* trackDesign)
++    static void NotifyPersistenceChanged()
+     {
+ #ifdef __EMSCRIPTEN__
+-        if (action == LoadSaveAction::save)
+-        {
+-            Select("/save.park", action, type, trackDesign);
+-            EmscriptenSaveGame(type == LoadSaveType::track, false, type);
+-        }
+-        else
+-        {
+-            EmscriptenLoadGame(type);
+-        }
+-        return nullptr;
++        EmscriptenPersistData(true);
+ #endif
++    }
+ 
++    WindowBase* OpenPreferred(
++        LoadSaveAction action, LoadSaveType type, u8string defaultPath, LoadSaveCallback callback, bool isJsCallback,
++        TrackDesign* trackDesign)
++    {
+         auto hasFilePicker = GetContext()->GetUiContext().HasFilePicker();
+         auto& config = Config::Get().general;
+ 
+@@ -333,6 +324,7 @@ namespace OpenRCT2::Ui::FileBrowser
+ 
+                         if (success)
+                         {
++                            NotifyPersistenceChanged();
+                             windowMgr->CloseByClass(WindowClass::loadsave);
+                             InvokeCallback(ModalResult::ok, pathBuffer);
+ 
+@@ -375,6 +367,7 @@ namespace OpenRCT2::Ui::FileBrowser
+                         SetAndSaveConfigPath(Config::Get().general.lastSaveGameDirectory, pathBuffer);
+                         if (ScenarioSave(gameState, pathBuffer, Config::Get().general.savePluginData ? 1 : 0))
+                         {
++                            NotifyPersistenceChanged();
+                             gScenarioSavePath = pathBuffer;
+                             gCurrentLoadedPath = pathBuffer;
+                             gIsAutosaveLoaded = false;
+@@ -398,6 +391,7 @@ namespace OpenRCT2::Ui::FileBrowser
+                         gameState.scenarioFileName = std::string(String::toStringView(pathBuffer, std::size(pathBuffer)));
+                         if (ScenarioSave(gameState, pathBuffer, Config::Get().general.savePluginData ? 3 : 2))
+                         {
++                            NotifyPersistenceChanged();
+                             gCurrentLoadedPath = pathBuffer;
+                             windowMgr->CloseByClass(WindowClass::loadsave);
+                             GfxInvalidateScreen();
+@@ -422,6 +416,7 @@ namespace OpenRCT2::Ui::FileBrowser
+ 
+                         if (success)
+                         {
++                            NotifyPersistenceChanged();
+                             windowMgr->CloseByClass(WindowClass::loadsave);
+                             InvokeCallback(ModalResult::ok, pathBuffer);
+ 
+@@ -450,6 +445,7 @@ namespace OpenRCT2::Ui::FileBrowser
+ 
+                         if (success)
+                         {
++                            NotifyPersistenceChanged();
+                             windowMgr->CloseByClass(WindowClass::loadsave);
+                             Windows::WindowRideMeasurementsDesignCancel();
+                             InvokeCallback(ModalResult::ok, path);
+@@ -555,10 +551,3 @@ namespace OpenRCT2::Ui::FileBrowser
+         return ContextOpenCommonFileDialog(desc);
+     }
+ } // namespace OpenRCT2::Ui::FileBrowser
+-
+-#ifdef __EMSCRIPTEN__
+-extern "C" void LoadGameCallback(const char* path, LoadSaveType action)
+-{
+-    OpenRCT2::Ui::FileBrowser::Select(path, LoadSaveAction::load, action, nullptr);
+-}
+-#endif
+diff --git a/src/openrct2-ui/interface/FileBrowser.h b/src/openrct2-ui/interface/FileBrowser.h
+index 874a79151215e2b3210e85b25ad16ec19f2fe7fc..7db1e1a46ee74fd2af92aaffa7e323d7c5983eec 100644
+--- a/src/openrct2-ui/interface/FileBrowser.h
++++ b/src/openrct2-ui/interface/FileBrowser.h
+@@ -69,7 +69,3 @@ namespace OpenRCT2::Ui::FileBrowser
+         LoadSaveAction action, LoadSaveType type, u8string defaultPath, LoadSaveCallback callback, bool isJsCallback,
+         TrackDesign* trackDesign);
+ } // namespace OpenRCT2::Ui::FileBrowser
+-
+-#ifdef __EMSCRIPTEN__
+-extern "C" void LoadGameCallback(const char* path, LoadSaveType action);
+-#endif
+diff --git a/src/openrct2-ui/windows/Options.cpp b/src/openrct2-ui/windows/Options.cpp
+index 7020aace701012f3fb34ae206b5776e8585d6dac..ad91020de22e12192dd10c3c552a58d2eddc8d18 100644
+--- a/src/openrct2-ui/windows/Options.cpp
++++ b/src/openrct2-ui/windows/Options.cpp
+@@ -55,14 +55,6 @@
+ #include <openrct2/ui/UiContext.h>
+ #include <openrct2/ui/WindowManager.h>
+ 
+-#ifdef __EMSCRIPTEN__
+-    #include <emscripten.h>
+-extern "C" {
+-extern void ExportPersistentData();
+-extern void ImportPersistentData();
+-}
+-#endif
+-
+ using namespace OpenRCT2;
+ using namespace OpenRCT2::Audio;
+ using namespace OpenRCT2::Drawing;
+@@ -256,10 +248,6 @@ namespace OpenRCT2::Ui::Windows
+         WIDX_GROUP_ADVANCED,
+         WIDX_DEBUGGING_TOOLS,
+         WIDX_STAY_CONNECTED_AFTER_DESYNC,
+-#ifdef __EMSCRIPTEN__
+-        WIDX_EXPORT_EMSCRIPTEN_DATA,
+-        WIDX_IMPORT_EMSCRIPTEN_DATA,
+-#endif
+         WIDX_ASSET_PACKS,
+     };
+ 
+@@ -465,10 +453,6 @@ namespace OpenRCT2::Ui::Windows
+         makeWidget        ({  5, kAdvancedStart +  0}, {300, 97}, WidgetType::groupbox,     WindowColour::secondary, STR_GROUP_ADVANCED                                                                      ),
+         makeWidget        ({ 10, kAdvancedStart + 16}, {295, 12}, WidgetType::checkbox,     WindowColour::tertiary,  STR_ENABLE_DEBUGGING_TOOLS,                STR_ENABLE_DEBUGGING_TOOLS_TIP               ), // Enable debugging tools
+         makeWidget        ({ 10, kAdvancedStart + 30}, {295, 12}, WidgetType::checkbox,     WindowColour::tertiary,  STR_STAY_CONNECTED_AFTER_DESYNC,           STR_STAY_CONNECTED_AFTER_DESYNC_TIP          ), // Do not disconnect after the client desynchronises with the server
+-#ifdef __EMSCRIPTEN__
+-        makeWidget        ({ 10, kAdvancedStart + 46}, {135, 14}, WidgetType::button,       WindowColour::secondary, STR_EXPORT_EMSCRIPTEN,                     kStringIdNone                                ), // Emscripten data export
+-        makeWidget        ({150, kAdvancedStart + 46}, {150, 14}, WidgetType::button,       WindowColour::secondary, STR_IMPORT_EMSCRIPTEN,                     kStringIdNone                                ), // Emscripten data import
+-#endif
+         makeWidget        ({150, kAdvancedStart + 64}, {150, 14}, WidgetType::button,       WindowColour::secondary, STR_EDIT_ASSET_PACKS_BUTTON,               kStringIdNone                                )  // Asset packs
+     );
+ 
+@@ -2091,14 +2075,6 @@ namespace OpenRCT2::Ui::Windows
+                 case WIDX_ASSET_PACKS:
+                     ContextOpenWindow(WindowClass::assetPacks);
+                     break;
+-#ifdef __EMSCRIPTEN__
+-                case WIDX_EXPORT_EMSCRIPTEN_DATA:
+-                    ExportPersistentData();
+-                    break;
+-                case WIDX_IMPORT_EMSCRIPTEN_DATA:
+-                    ImportPersistentData();
+-                    break;
+-#endif
+             }
+         }
+ 
+diff --git a/src/openrct2-ui/windows/TopToolbar.cpp b/src/openrct2-ui/windows/TopToolbar.cpp
+index 65a63ca986baf92400473aac3f2d576f247f031c..e32e612e233c61e56001ef92128072aeb15d7661 100644
+--- a/src/openrct2-ui/windows/TopToolbar.cpp
++++ b/src/openrct2-ui/windows/TopToolbar.cpp
+@@ -51,13 +51,6 @@
+ #include <openrct2/world/Scenery.h>
+ #include <string>
+ 
+-#ifdef __EMSCRIPTEN__
+-    #include <emscripten.h>
+-extern "C" {
+-extern void EmscriptenLoadGame();
+-}
+-#endif
+-
+ using namespace OpenRCT2::Numerics;
+ 
+ namespace OpenRCT2::Ui::Windows
+diff --git a/src/openrct2/Context.cpp b/src/openrct2/Context.cpp
+index 61625dacb90702d8fdfd59603ea5ecfa65f29cc7..242498eb6c97af407a0836ff83f993fa74d33fe9 100644
+--- a/src/openrct2/Context.cpp
++++ b/src/openrct2/Context.cpp
+@@ -352,6 +352,18 @@ namespace OpenRCT2
+ 
+             CrashInit();
+ 
++#ifdef __EMSCRIPTEN__
++            // The browser package is launched as a game, not as an OpenRCT2
++            // desktop update surface. Record the current version for config
++            // compatibility but never cover the title/game UI with the
++            // changelog window on first launch or after an image update.
++            gOpenRCT2ShowChangelog = false;
++            if (!String::equals(Config::Get().general.lastRunVersion, kOpenRCT2Version))
++            {
++                Config::Get().general.lastRunVersion = kOpenRCT2Version;
++                Config::Save();
++            }
++#else
+             if (String::equals(Config::Get().general.lastRunVersion, kOpenRCT2Version))
+             {
+                 gOpenRCT2ShowChangelog = false;
+@@ -362,6 +374,7 @@ namespace OpenRCT2
+                 Config::Get().general.lastRunVersion = kOpenRCT2Version;
+                 Config::Save();
+             }
++#endif
+ 
+             try
+             {
+diff --git a/src/openrct2/Game.cpp b/src/openrct2/Game.cpp
+index 014761ab6c3197214ce22460414efffefb9bf1a3..9cf5d347962dd0d99a5de3128c4740442dc6f2ed 100644
+--- a/src/openrct2/Game.cpp
++++ b/src/openrct2/Game.cpp
+@@ -57,8 +57,7 @@
+ 
+ #ifdef __EMSCRIPTEN__
+ extern "C" {
+-extern void EmscriptenSaveGame(bool isTrackDesign, bool isAutosave, LoadSaveType type);
+-extern void EmscriptenResetAutosave();
++extern void EmscriptenPersistData(bool immediate);
+ }
+ #endif
+ 
+@@ -447,14 +446,8 @@ void SaveGame()
+ {
+     if (!gFirstTimeSaving && !gIsAutosaveLoaded)
+     {
+-#ifndef __EMSCRIPTEN__
+         const auto savePath = Path::WithExtension(gScenarioSavePath, ".park");
+         SaveGameWithName(savePath);
+-#else
+-        const auto savePath = Path::WithExtension("save", ".park");
+-        SaveGameWithName(savePath);
+-        EmscriptenSaveGame(false, false, LoadSaveType::park);
+-#endif
+     }
+     else
+     {
+@@ -503,6 +496,9 @@ void SaveGameWithName(u8string_view name)
+         gCurrentLoadedPath = name;
+         gIsAutosaveLoaded = false;
+         gScreenAge = 0;
++#ifdef __EMSCRIPTEN__
++        EmscriptenPersistData(true);
++#endif
+     }
+ }
+ 
+@@ -520,14 +516,10 @@ std::unique_ptr<Intent> CreateSaveGameAsIntent()
+ 
+ void SaveGameAs()
+ {
+-#ifdef __EMSCRIPTEN__
+-    EmscriptenResetAutosave();
+-#endif
+     auto intent = CreateSaveGameAsIntent();
+     ContextOpenIntent(intent.get());
+ }
+ 
+-#ifndef __EMSCRIPTEN__
+ static void LimitAutosaveCount(const size_t numberOfFilesToKeep, bool processLandscapeFolder)
+ {
+     size_t autosavesCount = 0;
+@@ -628,15 +620,11 @@ void GameAutosave()
+ 
+     if (!ScenarioSave(gameState, path, saveFlags))
+         Console::Error::WriteLine("Could not autosave the scenario. Is the save folder writeable?");
++#ifdef __EMSCRIPTEN__
++    else
++        EmscriptenPersistData(false);
++#endif
+ }
+-#else
+-void GameAutosave()
+-{
+-    const auto savePath = Path::WithExtension("save", ".park");
+-    SaveGameWithName(savePath);
+-    EmscriptenSaveGame(false, true, LoadSaveType::park);
+-}
+-#endif // __EMSCRIPTEN__
+ 
+ static void GameLoadOrQuitNoSavePromptCallback(ModalResult result, const utf8* path)
+ {
+@@ -667,9 +655,6 @@ static void NewGameWindowCallback(const utf8* path)
+     GetContext()->LoadParkFromFile(path, false, true);
+     GameLoadScripts();
+     GameNotifyMapChanged();
+-#ifdef __EMSCRIPTEN__
+-    EmscriptenResetAutosave();
+-#endif
+ }
+ 
+ /**
+@@ -714,10 +699,6 @@ void GameLoadOrQuitNoSavePrompt()
+             gFirstTimeSaving = true;
+             GameNotifyMapChange();
+             GameUnloadScripts();
+-#ifdef __EMSCRIPTEN__
+-            EmscriptenResetAutosave();
+-#endif
+-
+             auto* sceneMgr = GetContext()->GetSceneManager();
+             sceneMgr->setActiveScene(sceneMgr->getTitleScene());
+             break;
+diff --git a/src/openrct2/config/Config.cpp b/src/openrct2/config/Config.cpp
+index 14fd45c34601bf4f7e4d1556f4860a3c8f343345..456ed5131042de3d8553a51f0ffd30e16e0bd83a 100644
+--- a/src/openrct2/config/Config.cpp
++++ b/src/openrct2/config/Config.cpp
+@@ -37,6 +37,10 @@
+ #include "IniReader.hpp"
+ #include "IniWriter.hpp"
+ 
++#ifdef __EMSCRIPTEN__
++    #include <emscripten.h>
++#endif
++
+ using namespace OpenRCT2;
+ using namespace OpenRCT2::Ui;
+ 
+@@ -400,6 +404,13 @@ namespace OpenRCT2::Config
+             model->consoleSmallFont = reader->GetBoolean("console_small_font", false);
+             model->currentThemePreset = reader->GetString("current_theme", "*RCT2");
+             model->currentTitleSequencePreset = reader->GetString("current_title_sequence", "*OPENRCT2");
++#ifdef __EMSCRIPTEN__
++            // The compact browser package pairs the engine with the original
++            // RCT2 installation tree. Use that self-contained title sequence;
++            // the OpenRCT2 showcase sequence references optional community
++            // objects that are not guaranteed to be present.
++            model->currentTitleSequencePreset = "*RCT2";
++#endif
+             model->randomTitleSequence = reader->GetBoolean("random_title_sequence", false);
+             model->objectSelectionFilterFlags = reader->GetInt32("object_selection_filter_flags", 0x3FFF);
+             model->scenarioSelectLastTab = reader->GetInt32("scenarioselect_last_tab", 0);
+@@ -897,7 +908,19 @@ namespace OpenRCT2::Config
+     bool Save()
+     {
+         auto path = GetDefaultPath();
+-        return SaveToPath(path);
++        const bool saved = SaveToPath(path);
++#ifdef __EMSCRIPTEN__
++        if (saved)
++        {
++            EM_ASM({
++                if (typeof Module.wasmGamePersistenceChanged === 'function')
++                    Module.wasmGamePersistenceChanged(false);
++                else if (typeof postMessage === 'function')
++                    postMessage({ openrct2PersistenceDirty: { immediate: false } });
++            });
++        }
++#endif
++        return saved;
+     }
+ 
+     bool FindOrBrowseInstallDirectory()
+diff --git a/src/openrct2/core/Imaging.cpp b/src/openrct2/core/Imaging.cpp
+index 9625937e872df0b451764cd892a22430eb97ef30..f04df7dbdd8a6de52fabea7b57d5082f56e7f734 100644
+--- a/src/openrct2/core/Imaging.cpp
++++ b/src/openrct2/core/Imaging.cpp
+@@ -25,9 +25,7 @@
+ #include <unordered_map>
+ 
+ #ifdef __EMSCRIPTEN__
+-    #include <emscripten.h>
+-    #include <iostream>
+-    #include <sstream>
++extern "C" void EmscriptenPersistData(bool immediate);
+ #endif
+ 
+ namespace OpenRCT2::Imaging
+@@ -338,26 +336,11 @@ namespace OpenRCT2::Imaging
+                 break;
+             case ImageFormat::png:
+             {
+-#ifndef __EMSCRIPTEN__
+                 std::ofstream fs(fs::u8path(path), std::ios::binary);
+                 WritePng(fs, image);
+-#else
+-                std::ostringstream stream(std::ios::binary);
+-                WritePng(stream, image);
+-                std::string dataStr = stream.str();
+-                void* data = reinterpret_cast<void*>(dataStr.data());
+-                MAIN_THREAD_EM_ASM(
+-                    {
+-                        const a = document.createElement("a");
+-                        // Blob requires the data must not be shared
+-                        const data = new Uint8Array(HEAPU8.subarray($0, $0 + $1));
+-                        a.href = URL.createObjectURL(new Blob([data]));
+-                        a.download = UTF8ToString($2).split("/").pop();
+-                        a.click();
+-                        setTimeout(function(){ URL.revokeObjectURL(a.href) }, 1000);
+-                    },
+-                    data, dataStr.size(), std::string(path).c_str());
+-                free(data);
++#ifdef __EMSCRIPTEN__
++                fs.close();
++                EmscriptenPersistData(true);
+ #endif
+                 break;
+             }
+diff --git a/src/openrct2/object/ObjectManager.cpp b/src/openrct2/object/ObjectManager.cpp
+index 10bc2b3fdbd4ca63483dc46cc3ae731484984fbe..72b733ff017971b2b668916f3c185a090e9f674d 100644
+--- a/src/openrct2/object/ObjectManager.cpp
++++ b/src/openrct2/object/ObjectManager.cpp
+@@ -649,6 +649,19 @@ namespace OpenRCT2
+                     ReportProgress(processed, numRequired);
+             };
+ 
++            // WORKERFS and IDBFS syscalls from an Emscripten pthread are
++            // synchronously proxied to the application worker. Blocking that
++            // worker in JobPool::Join while object jobs open files therefore
++            // creates a circular wait. Browser object loading stays on the
++            // application worker; the native threaded path remains unchanged
++            // everywhere else.
++#ifdef __EMSCRIPTEN__
++            for (auto* object : objectsToLoad)
++            {
++                loadSingleObject(object);
++                completionFn();
++            }
++#else
+             // Dispatch loading the objects
+             JobPool jobs{};
+             for (auto* object : objectsToLoad)
+@@ -658,6 +671,7 @@ namespace OpenRCT2
+ 
+             // Wait until all jobs are fully completed
+             jobs.Join();
++#endif
+ 
+             // Assign the loaded objects to the required objects
+             for (auto& requiredObject : requiredObjects)

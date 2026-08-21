@@ -5,7 +5,7 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-$(cd "${repo_dir}/../wasm-game-framework" && pwd)}"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 registry="${DOCKER_REGISTRY:-ghcr.io/theodorecharles}"
 tag="${DOCKER_TAG:-latest}"
 required_framework_version="0.9.6"

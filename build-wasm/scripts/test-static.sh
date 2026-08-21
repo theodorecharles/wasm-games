@@ -2,7 +2,9 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+workspace_dir="$(cd "$repo_dir/../.." && pwd)"
+framework_dir="${WASM_FRAMEWORK_DIR:-$workspace_dir/wasm-game-framework}"
+dist_dir="$repo_dir/.work/build/dist"
 data_dir="$(mktemp -d -t build-wasm-static-data.XXXXXX)"
 log_file="$(mktemp -t build-wasm-static-server.XXXXXX.log)"
 port="${BUILD_WASM_TEST_PORT:-4184}"
@@ -16,8 +18,8 @@ trap cleanup EXIT
 
 node "$repo_dir/scripts/verify-site-contract.js"
 node "$repo_dir/scripts/test-variant-adapters.js"
-node "$framework_dir/scripts/check-game-package.js" "$repo_dir/build-web/dist"
-WASM_GAME_SITE_ROOT="$repo_dir/build-web/dist" \
+node "$framework_dir/scripts/check-game-package.js" "$dist_dir"
+WASM_GAME_SITE_ROOT="$dist_dir" \
 WASM_GAME_SHELL_ROOT="$framework_dir/dist" \
 WASM_GAME_DATA_ROOT="$data_dir" \
 WASM_GAME_HTTP_PORT="$port" \
@@ -37,7 +39,7 @@ curl -fsS "$base/app.webmanifest?variant=blood" | rg -Fq '/blood-512.png'
 curl -fsS "$base/app.webmanifest?variant=duke3d" | rg -Fq '/duke3d-512.png'
 curl -sSI "$base/favicon.ico?variant=blood" | rg -Fiq 'location: /blood.ico'
 curl -sSI "$base/favicon.ico?variant=duke3d" | rg -Fiq 'location: /duke3d.ico'
-curl -fsS "$base/service-worker.js" | rg -Fq 'wasm-game-shell-0.9.4'
+curl -fsS "$base/service-worker.js" | rg -Fq 'wasm-game-shell-0.9.6'
 curl -fsS "$base/game-data/status?variant=blood" | rg -Fq '"ready":false'
 curl -fsS "$base/game-data/status?variant=duke3d" | rg -Fq '"ready":false'
 test "$(curl -sS -o /dev/null -w '%{http_code}' "$base/game-data/files/blood.rff?variant=blood")" = "409"

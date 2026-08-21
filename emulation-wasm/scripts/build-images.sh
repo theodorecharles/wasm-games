@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-${repo_dir}/../wasm-game-framework}"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 namespace="${DOCKER_NAMESPACE:-}"
 tag="${DOCKER_TAG:-dev}"
 required_version="$(node -p "require('${repo_dir}/framework-lock.json').version")"

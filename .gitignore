@@ -5,6 +5,10 @@
 
 # Dependencies
 node_modules/
+/wasm-game-framework/
+/wasm-game-lab/
+/jill-wasm/
+**/.work/
 
 # Build output / artifacts
 build/
@@ -18,9 +22,9 @@ artifacts/
 *.a
 *.o
 
-# Built web bundles (regenerated from src/)
-**/web/game-adapter.js
+# Generated site bundles
 public/
+/goldsource-wasm/web/assets/
 
 # Game data — copyrighted, provisioned at runtime via volume mount.
 # Never commit these.

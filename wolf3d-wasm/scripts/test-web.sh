@@ -2,8 +2,9 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-dist_dir="$repo_dir/build-web/dist"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+source_dir="$("$repo_dir/scripts/fetch-source")"
+dist_dir="$repo_dir/.work/dist"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 
 "$repo_dir/build-web.sh"
 
@@ -28,7 +29,7 @@ if find "$dist_dir" -maxdepth 1 -type f \( -iname '*.wl6' -o -iname '*.sod' -o -
 fi
 
 for marker in WolfWasm_BrowserRuntimeState WolfWasm_BrowserSetInputCaptured WolfWasm_BrowserOpenMenu; do
-    if ! grep -Fq "$marker" "$repo_dir"/*.cpp; then
+    if ! grep -Fq "$marker" "$source_dir"/*.cpp; then
         printf 'Wolf3D native browser seam is missing: %s\n' "$marker" >&2
         exit 1
     fi
@@ -51,7 +52,7 @@ if(Object.keys(c.variants).join(",")!=="wolf3d,spear"||Object.keys(m.variants).j
 for(const key of ["wolf3d","spear"]){
   if(!c.variants[key].pwa||c.variants[key].pwa.icons.length!==2||m.variants[key].files.length!==8||m.variants[key].files.some(f=>!f.sha256))process.exit(1);
 }
-if(p.package!=="@wasm-game-framework/browser"||p.version!=="0.9.4"||!p.bootstrapSha256)process.exit(1);
+if(p.package!=="@wasm-game-framework/browser"||p.version!=="0.9.6"||!p.bootstrapSha256)process.exit(1);
 ' "$dist_dir/wasm-game.json" "$dist_dir/wasm-game-data.json" "$dist_dir/wasm-game-framework.json"
 
 node --check "$dist_dir/wolf3d.js"
@@ -71,4 +72,4 @@ if cmp -s "$dist_dir/wolf3d.wasm" "$dist_dir/spear.wasm"; then
     printf 'Wolfenstein 3D and Spear of Destiny unexpectedly produced the same native module.\n' >&2
     exit 1
 fi
-printf 'Static Wolf4SDL web build passed both native variants, framework 0.9.4, audio, and game-data boundary checks.\n'
+printf 'Static Wolf4SDL web build passed both native variants, framework 0.9.6, audio, and game-data boundary checks.\n'

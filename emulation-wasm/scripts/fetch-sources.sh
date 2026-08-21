@@ -37,6 +37,7 @@ while IFS=$'\t' read -r name repository ref commit submodules; do
   fi
   actual_commit="$(git -C "${destination}" rev-parse HEAD)"
   [[ "${actual_commit}" == "${commit}" ]]
+  find "${destination}" -type f -name '*.md' -delete
   printf 'checked out %s %s (%s)\n' "${name}" "${ref}" "${commit}"
 done
 

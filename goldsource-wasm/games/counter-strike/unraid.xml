@@ -20,7 +20,7 @@
   <DateInstalled/>
   <DonateText/>
   <DonateLink/>
-  <Requires>You must supply your own legally-owned Half-Life and Counter-Strike game data. Place valve-owner.pk3, valve-liblist.gam, cstrike-owner.pk3 and cstrike-liblist.gam under the Game Data path in a goldsource/ subfolder. Multiplayer additionally needs the WebRTC bridge + listen-server host companion (see goldsource-wasm/engine/artifacts/runtime).</Requires>
+  <Requires>You must supply your own legally-owned Half-Life and Counter-Strike game data. Place valve-owner.pk3, valve-liblist.gam, cstrike-owner.pk3 and cstrike-liblist.gam under the Game Data path in a goldsource/ subfolder. Multiplayer additionally needs the pinned WebRTC bridge + dedicated host companion in goldsource-wasm/runtime/counter-strike.</Requires>
   <Config Name="Web UI" Target="8088" Default="8020" Mode="tcp" Description="Container Port: 8088" Type="Port" Display="always" Required="true" Mask="false">8020</Config>
   <Config Name="Game Data" Target="/data" Default="/mnt/user/appdata/wasm-games" Mode="rw" Description="Container Path: /data — holds goldsource/ with the owner .pk3 archives" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/wasm-games</Config>
 </Container>

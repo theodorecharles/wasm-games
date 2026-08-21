@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T02:28:32-04:00",
+  "result": "pass",
+  "browser": "Google Chrome",
+  "route": "http://localhost:4187/",
+  "sourceCommit": "f8639031546ccea8964c2d63c9d09944c8a4a67c",
+  "games": [
+    {
+      "id": "blood",
+      "map": "E1M1",
+      "artifacts": {
+        "blood.js": {
+          "bytes": 204556,
+          "sha256": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c"
+        },
+        "blood.wasm": {
+          "bytes": 3765015,
+          "sha256": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab"
+        }
+      },
+      "before": {
+        "playerPosition": [-14976, 33280, -29360, 0],
+        "pointerDeltaEvents": 0,
+        "simulationFrames": 527
+      },
+      "input": {
+        "pointerDelta": [306, -149],
+        "nativeInput": [0, 0, 12273664, 1494016]
+      },
+      "after": {
+        "playerPosition": [-14976, 33280, -29360, 1522],
+        "pointerDeltaEvents": 1,
+        "simulationFrames": 648
+      },
+      "controlsMask": 31
+    },
+    {
+      "id": "duke3d",
+      "map": "L.A. Meltdown",
+      "artifacts": {
+        "duke3d.js": {
+          "bytes": 197904,
+          "sha256": "d8bcef5d1648914e8831fa76e2d9434fb96aa17d8f5b2d99c47c41e53748ae7e"
+        },
+        "duke3d.wasm": {
+          "bytes": 3621027,
+          "sha256": "8d73c76e7d0c0ead21aa4c8ea14e17325631d133dea70960a4edbdf4081f4131"
+        }
+      },
+      "before": {
+        "playerView": [-31243, 7160, -157296, 422, 100],
+        "pointerDeltaEvents": 0
+      },
+      "input": {
+        "pointerDelta": [302, -153]
+      },
+      "after": {
+        "playerView": [-31243, 7160, -158314, 607, 138],
+        "pointerDeltaEvents": 1
+      },
+      "controlsMask": 31
+    }
+  ],
+  "assertions": {
+    "bloodReachedPlayableMap": true,
+    "bloodHorizontalTurnChanged": true,
+    "bloodVerticalLookInputNonzero": true,
+    "dukeReachedPlayableMap": true,
+    "dukeHorizontalTurnChanged": true,
+    "dukeVerticalLookChanged": true,
+    "nativeRelativeDeltasConsumedWithoutPointerLock": true,
+    "fullMouseAndKeyboardBindingsValid": true
+  }
+}

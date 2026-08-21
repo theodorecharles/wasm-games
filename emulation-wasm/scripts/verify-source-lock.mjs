@@ -15,7 +15,7 @@ if (Object.keys(lock.sources).length !== required.size) throw new Error('source 
 
 for (const [name, spec] of Object.entries(lock.sources)) {
   if (!required.delete(name)) throw new Error(`unexpected source lock: ${name}`);
-  if (!/^https:\/\/(?:gitlab\.com|github\.com)\/.+\.git$/.test(spec.repository)) throw new Error(`${name}: repository must be a primary HTTPS Git origin`);
+  if (!/^https:\/\/github\.com\/theodorecharles\/.+\.git$/.test(spec.repository)) throw new Error(`${name}: repository must be a Ted-owned HTTPS Git origin`);
   if (!/^[0-9a-f]{40}$/.test(spec.commit)) throw new Error(`${name}: commit must be a full SHA-1`);
   if (!/^\d+(?:\.\d+){1,3}$/.test(spec.ref)) throw new Error(`${name}: ref must be an immutable release tag`);
   if (!spec.license || !spec.licenseFile || !Array.isArray(spec.buildUse) || !spec.buildUse.length) throw new Error(`${name}: incomplete provenance`);

@@ -10,14 +10,14 @@ const repo = path.resolve(__dirname, '..');
 const web = path.join(repo, 'web');
 const framework = process.env.WASM_FRAMEWORK_DIR
   ? path.resolve(process.env.WASM_FRAMEWORK_DIR)
-  : path.resolve(repo, '../wasm-game-framework');
+  : '/home/ted/Development/wasm-game-framework';
 const config = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game.json'), 'utf8'));
 const data = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game-data.json'), 'utf8'));
 const expected = ['doom', 'doom2', 'tnt', 'plutonia', 'heretic', 'hexen', 'chex'];
 assert.equal(config.menuCursor, 'none');
-const frameworkCommit = 'c4ad3b9e075f881d32f044299fbfeee703a9169d';
+const frameworkCommit = 'ebb1ebe35ad8224a9080279a6529414db42d3284';
 
-assert.equal(JSON.parse(fs.readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.4');
+assert.equal(JSON.parse(fs.readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.6');
 assert.equal(childProcess.execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), frameworkCommit);
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wasm-game-framework.js')), true);
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wasm-game-bootstrap.js')), true);
@@ -87,4 +87,4 @@ for (const key of ['doom', 'doom2', 'tnt', 'plutonia', 'heretic', 'hexen', 'chex
 const adapterSource = fs.readFileSync(path.join(web, 'game-adapter.js'), 'utf8');
 assert.equal(adapterSource.includes('sha256Hex'), false, 'the adapter must not implement file-format validation');
 assert.equal(adapterSource.includes('failed exact SHA-256 verification'), false);
-console.log('Verified generic framework 0.9.4 site/PWA/validator contract for 7 id Tech 1 variants.');
+console.log('Verified generic framework 0.9.6 site/PWA/validator contract for 7 id Tech 1 variants.');

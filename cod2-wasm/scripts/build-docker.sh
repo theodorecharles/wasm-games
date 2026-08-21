@@ -2,11 +2,11 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_source_dir="${COD2_WASM_FRAMEWORK_DIR:-${repo_root}/../wasm-game-framework}"
+framework_source_dir="${COD2_WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 repository="${COD2_WASM_IMAGE_REPO:-local/cod2-wasm}"
 tag="${COD2_WASM_IMAGE_TAG:-dev}"
-framework_image="${COD2_WASM_FRAMEWORK_IMAGE:-wasm-game-framework:0.9.2}"
-expected_commit="53bc7e6eeef1ae35dcf3b25dea4e3ec0ab46726f"
+framework_image="${COD2_WASM_FRAMEWORK_IMAGE:-wasm-game-framework:0.9.6}"
+expected_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
 revision="$(git -C "${repo_root}" rev-parse --verify HEAD 2>/dev/null || printf local)"
 
 "${repo_root}/scripts/build-web.sh"
@@ -19,7 +19,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-test "$(node -p "require('${framework_dir}/package.json').version")" = "0.9.2"
+test "$(node -p "require('${framework_dir}/package.json').version")" = "0.9.6"
 test "$(git -C "${framework_dir}" rev-parse HEAD)" = "${expected_commit}"
 "${framework_dir}/scripts/build-base-image.sh" "${framework_image}"
 
@@ -29,7 +29,7 @@ docker build --build-arg "FRAMEWORK_IMAGE=${framework_image}" --build-arg GAME_V
   --build-arg "VCS_REF=${revision}" -t "${repository}:cod2-mp-${tag}" "${repo_root}"
 
 for image in "${repository}:${tag}" "${repository}:cod2-mp-${tag}"; do
-  test "$(docker run --rm --entrypoint node "${image}" -p "require('/opt/wasm-game-framework/package.json').version")" = "0.9.2"
+  test "$(docker run --rm --entrypoint node "${image}" -p "require('/opt/wasm-game-framework/package.json').version")" = "0.9.6"
   docker run --rm --entrypoint sh "${image}" -c \
     "test -f /opt/game-site/cod2_core_probe.wasm && \
      test -f /opt/game-site/wasm-game.json && \

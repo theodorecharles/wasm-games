@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const web = path.resolve(process.argv[2] || path.join(__dirname, '../web/dist'));
+const web = path.resolve(process.argv[2] || path.join(__dirname, '../web'));
 const source = fs.readFileSync(path.join(web, 'game-adapter.js'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game-data.json'), 'utf8'));

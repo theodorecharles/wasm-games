@@ -2,11 +2,12 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+workspace_dir="$(cd "$repo_dir/../.." && pwd)"
+framework_dir="${WASM_FRAMEWORK_DIR:-$workspace_dir/wasm-game-framework}"
 namespace="${DOCKER_NAMESPACE:-}"
 tag="${DOCKER_TAG:-dev}"
-required_framework_version="0.9.4"
-required_framework_commit="c4ad3b9e075f881d32f044299fbfeee703a9169d"
+required_framework_version="0.9.6"
+required_framework_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
 framework_version="$(node -p "require('${framework_dir}/package.json').version")"
 framework_commit="$(git -C "$framework_dir" rev-parse HEAD)"
 
@@ -30,7 +31,7 @@ build() {
     local name="$1"
     local variant="$2"
     local image_ref="${namespace}${name}:${tag}"
-    "$framework_dir/scripts/build-static-image.sh" "$repo_dir/build-web/dist" "$image_ref" "$variant"
+    "$framework_dir/scripts/build-static-image.sh" "$repo_dir/.work/build/dist" "$image_ref" "$variant"
     local installed_variant
     installed_variant="$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$image_ref" | awk -F= '$1=="WASM_GAME_VARIANT"{print $2}')"
     [[ "$installed_variant" == "$variant" ]]

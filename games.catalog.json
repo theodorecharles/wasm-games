@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "dataRoot": "/home/ted/wasm-game-data",
+  "sourcePolicy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "engines": [
+    {
+      "id": "build-wasm",
+      "sourceStatus": "pinned-with-engine-and-game-patches",
+      "games": [
+        { "id": "blood", "title": "Blood", "dataPath": "blood", "runtimeStatus": "working-browser-proven-mouselook", "sources": ["https://github.com/theodorecharles/build-wasm.git"] },
+        { "id": "duke3d", "title": "Duke Nukem 3D", "dataPath": "duke3d", "runtimeStatus": "working-browser-proven-mouselook", "sources": ["https://github.com/theodorecharles/build-wasm.git"] }
+      ]
+    },
+    {
+      "id": "cod2-wasm",
+      "sourceStatus": "pinned-reconstruction-with-game-patch",
+      "games": [
+        { "id": "cod2-mp", "title": "Call of Duty 2 Multiplayer", "dataPath": "cod2", "runtimeStatus": "broken", "sources": ["https://github.com/theodorecharles/cod2-wasm.git"] }
+      ]
+    },
+    {
+      "id": "dosbox-wasm",
+      "sourceStatus": "pinned-port-snapshot-with-engine-patch",
+      "games": [
+        { "id": "jill1", "title": "Jill of the Jungle", "dataPath": "dosbox/jill1", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "jill2", "title": "Jill Goes Underground", "dataPath": "dosbox/jill2", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "jill3", "title": "Jill Saves the Prince", "dataPath": "dosbox/jill3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "jazz", "title": "Jazz Jackrabbit", "dataPath": "dosbox/jazz", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "duke1", "title": "Duke Nukem", "dataPath": "dosbox/duke1", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "duke2", "title": "Duke Nukem II", "dataPath": "dosbox/duke2", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "gta", "title": "Grand Theft Auto DOS Demo", "dataPath": "dosbox/gta", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "nfs", "title": "The Need for Speed", "dataPath": "dosbox/nfs", "runtimeStatus": "broken", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "simcity2000", "title": "SimCity 2000", "dataPath": "dosbox/simcity2000", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] }
+      ]
+    },
+    {
+      "id": "emulation-wasm",
+      "sourceStatus": "missing-github-mirrors",
+      "games": [
+        { "id": "nes", "title": "Nintendo Entertainment System", "dataPath": "emulation/nes", "runtimeStatus": "untested-redesign", "sources": [] },
+        { "id": "snes", "title": "Super Nintendo Entertainment System", "dataPath": "emulation/snes", "runtimeStatus": "untested-redesign", "sources": [] },
+        { "id": "ps1", "title": "PlayStation", "dataPath": "emulation/ps1", "runtimeStatus": "untested-bios-blocked", "sources": [] },
+        { "id": "ps2", "title": "PlayStation 2", "dataPath": "emulation/ps2", "runtimeStatus": "untested-bios-blocked", "sources": [] }
+      ]
+    },
+    {
+      "id": "goldsource-wasm",
+      "sourceStatus": "pinned-reproducible-sources",
+      "games": [
+        { "id": "half-life", "title": "Half-Life", "dataPath": "goldsource", "runtimeStatus": "working-browser-proven", "sources": ["https://github.com/theodorecharles/webxash3d-fwgs.git", "https://github.com/theodorecharles/xash3d-fwgs.git", "https://github.com/theodorecharles/hlsdk-portable.git"] },
+        { "id": "blue-shift", "title": "Half-Life: Blue Shift", "dataPath": "goldsource", "runtimeStatus": "working-browser-proven", "sources": ["https://github.com/theodorecharles/webxash3d-fwgs.git", "https://github.com/theodorecharles/xash3d-fwgs.git", "https://github.com/theodorecharles/hlsdk-portable.git"] },
+        { "id": "opposing-force", "title": "Half-Life: Opposing Force", "dataPath": "goldsource", "runtimeStatus": "working-browser-proven", "sources": ["https://github.com/theodorecharles/webxash3d-fwgs.git", "https://github.com/theodorecharles/xash3d-fwgs.git", "https://github.com/theodorecharles/hlsdk-portable.git"] },
+        { "id": "counter-strike", "title": "Counter-Strike 1.6", "dataPath": "goldsource", "runtimeStatus": "working-browser-proven-bots", "sources": ["https://github.com/theodorecharles/webxash3d-fwgs.git", "https://github.com/theodorecharles/xash3d-fwgs.git", "https://github.com/theodorecharles/cs16-client.git", "https://github.com/theodorecharles/mainui_cpp.git"] }
+      ]
+    },
+    {
+      "id": "idtech1-wasm",
+      "sourceStatus": "pinned-reproducible-sources",
+      "games": [
+        { "id": "doom", "title": "Doom / Ultimate Doom", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] },
+        { "id": "doom2", "title": "Doom II", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] },
+        { "id": "tnt", "title": "Final Doom: TNT", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] },
+        { "id": "plutonia", "title": "Final Doom: Plutonia", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] },
+        { "id": "heretic", "title": "Heretic", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] },
+        { "id": "hexen", "title": "Hexen", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] },
+        { "id": "chex", "title": "Chex Quest", "dataPath": "crispy", "runtimeStatus": "working-browser-proven-multiplayer", "sources": [] }
+      ]
+    },
+    {
+      "id": "idtech2-wasm",
+      "sourceStatus": "pinned-reproducible-sources",
+      "games": [
+        { "id": "quake", "title": "Quake", "dataPath": "quake1", "runtimeStatus": "working-browser-proven-multiplayer-bots", "sources": ["https://github.com/theodorecharles/idtech2-wasm.git"] },
+        { "id": "quake2", "title": "Quake II", "dataPath": "quake2", "runtimeStatus": "working-browser-proven-multiplayer-bots", "sources": ["https://github.com/theodorecharles/idtech2-wasm.git"] },
+        { "id": "quake2-xatrix", "title": "Quake II: The Reckoning", "dataPath": "quake2", "runtimeStatus": "working-browser-proven", "sources": ["https://github.com/theodorecharles/idtech2-wasm.git"] },
+        { "id": "quake2-rogue", "title": "Quake II: Ground Zero", "dataPath": "quake2", "runtimeStatus": "working-browser-proven", "sources": ["https://github.com/theodorecharles/idtech2-wasm.git"] }
+      ]
+    },
+    {
+      "id": "idtech3-wasm",
+      "sourceStatus": "partial-missing-etlegacy-fork",
+      "games": [
+        { "id": "quake3", "title": "Quake III Arena", "dataPath": "quake3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/quake3-wasm.git", "https://github.com/theodorecharles/quake3-wasm-ioq3.git"] },
+        { "id": "rtcw-sp", "title": "Return to Castle Wolfenstein", "dataPath": "rtcw", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/rtcw-wasm.git"] },
+        { "id": "rtcw-mp", "title": "Return to Castle Wolfenstein Multiplayer", "dataPath": "rtcw", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/rtcw-wasm.git"] },
+        { "id": "wolfet", "title": "Wolfenstein: Enemy Territory", "dataPath": "wolfet", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/wolfet-wasm.git"] }
+      ]
+    },
+    {
+      "id": "idtech4-wasm",
+      "sourceStatus": "partial-missing-openq4-game-and-prey-forks",
+      "games": [
+        { "id": "doom3", "title": "Doom 3", "dataPath": "doom3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/doom3-wasm.git"] },
+        { "id": "doom3-mp", "title": "Doom 3 Multiplayer", "dataPath": "doom3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/doom3-wasm.git"] },
+        { "id": "roe", "title": "Doom 3: Resurrection of Evil", "dataPath": "doom3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/doom3-wasm.git"] },
+        { "id": "quake4", "title": "Quake 4", "dataPath": "quake4", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/quake4-wasm.git"] },
+        { "id": "quake4-mp", "title": "Quake 4 Multiplayer", "dataPath": "quake4", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/quake4-wasm.git"] },
+        { "id": "prey", "title": "Prey (2006)", "dataPath": "prey", "runtimeStatus": "retest", "sources": [] }
+      ]
+    },
+    {
+      "id": "lithtech-wasm",
+      "sourceStatus": "missing-canonical-forks",
+      "games": [
+        { "id": "nolf", "title": "No One Lives Forever", "dataPath": "nolf", "runtimeStatus": "retest", "sources": [] },
+        { "id": "nolf2", "title": "No One Lives Forever 2", "dataPath": "nolf2", "runtimeStatus": "retest", "sources": [] }
+      ]
+    },
+    {
+      "id": "midtown-wasm",
+      "sourceStatus": "pinned-port-repositories-needing-patch-extraction",
+      "games": [
+        { "id": "midtown-madness", "title": "Midtown Madness", "dataPath": "midtown/midtown-madness", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/midtown-madness1-wasm.git"] },
+        { "id": "midtown-madness-2", "title": "Midtown Madness 2", "dataPath": "midtown/midtown-madness-2", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/midtown-madness2-wasm.git"] }
+      ]
+    },
+    {
+      "id": "openrct2-wasm",
+      "sourceStatus": "pinned-with-engine-patch",
+      "games": [
+        { "id": "openrct2", "title": "OpenRCT2", "dataPath": "openrct2", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/openrct2-wasm.git"] }
+      ]
+    },
+    {
+      "id": "openut-wasm",
+      "sourceStatus": "missing-surrealengine-fork",
+      "games": [
+        { "id": "unreal-tournament", "title": "Unreal Tournament", "dataPath": "openut", "runtimeStatus": "retest", "sources": [] }
+      ]
+    },
+    {
+      "id": "source-wasm",
+      "sourceStatus": "missing-canonical-engine-fork",
+      "games": [
+        { "id": "half-life-2", "title": "Half-Life 2", "dataPath": "source", "runtimeStatus": "still-in-development-missing-engine-runtime", "sources": [] },
+        { "id": "portal", "title": "Portal", "dataPath": "source", "runtimeStatus": "still-in-development-missing-engine-runtime", "sources": [] }
+      ]
+    },
+    {
+      "id": "wolf3d-wasm",
+      "sourceStatus": "mixed-source-repo-needs-clean-fork",
+      "games": [
+        { "id": "wolfenstein-3d", "title": "Wolfenstein 3D", "dataPath": "wolf3d", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/wolf3d-wasm.git"] },
+        { "id": "spear-of-destiny", "title": "Spear of Destiny", "dataPath": "wolf3d/spear", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/wolf3d-wasm.git"] }
+      ]
+    }
+  ]
+}

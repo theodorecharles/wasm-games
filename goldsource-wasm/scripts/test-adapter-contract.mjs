@@ -12,10 +12,11 @@ const config = JSON.parse(readFileSync(path.join(repo, 'web/wasm-game.json'), 'u
 const dataManifest = JSON.parse(readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 const variants = ['half-life', 'blue-shift', 'opposing-force', 'counter-strike'];
 const nativePatch = readFileSync(path.join(repo, 'patches/xash-framework-contract.patch'), 'utf8');
+const menuPatch = readFileSync(path.join(repo, 'patches/xash-no-quit.patch'), 'utf8');
 
 for (const symbol of [
-  'WasmGame_RuntimeState', 'WasmGame_CaptureIntent', 'WasmGame_PlayerNameStatus',
-  'WasmGame_SetInputCaptured', 'WasmGame_PointerMove',
+  'WasmGame_RuntimeState', 'WasmGame_CaptureIntent', 'WasmGame_PlayerNameStatus', 'WasmGame_Resize',
+  'WasmGame_SetInputCaptured', 'WasmGame_PointerMove', 'WasmGame_PointerDelta',
   'WasmGame_ControllerAction', 'WasmGame_ControllerMouse'
 ]) {
   assert.match(nativePatch, new RegExp(symbol), `native patch must export ${symbol}`);
@@ -30,6 +31,10 @@ assert.match(nativePatch, /Key_Event\( key, pressed \? true : false \)/,
   'controller buttons must enter Xash native key input');
 assert.match(nativePatch, /SDL_GetRelativeMouseState[\s\S]*wasm_controller_mouse_x/,
   'controller look must enter Xash native relative-mouse input');
+assert.match(menuPatch, /^-\s*AddItem\( customGame \);/m,
+  'browser menu patch must remove Custom game');
+assert.match(menuPatch, /^-\s*AddItem\( minimizeBtn \);/m,
+  'browser menu patch must remove the meaningless minimize control');
 assert.doesNotMatch(source, /createPersistentFs/,
   'the adapter must use framework-managed persistence');
 
@@ -53,6 +58,7 @@ for (const variant of variants) {
 async function exerciseVariant(variant) {
   const listeners = new Map();
   const instances = [];
+  const sockets = [];
   const stateHistory = [];
   const stateTransitions = [];
   const loading = [];
@@ -68,11 +74,16 @@ async function exerciseVariant(variant) {
   let serverName = '';
   const nativeCaptureSignals = [];
   const nativePointerMoves = [];
+  const nativePointerDeltas = [];
+  const nativeResizes = [];
   const controllerActions = [];
   const controllerMouse = [];
   const persistenceRoots = [];
   const symlinks = [];
   let dirtied = 0;
+  let preMainCommands = -1;
+  let preMainResizes = -1;
+  let preMainCommandAccepted = true;
 
   class MockNet {
     constructor() { this.incoming = { enqueue() {} }; }
@@ -100,6 +111,14 @@ async function exerciseVariant(variant) {
               nativePointerMoves.push(Array.from(args));
               return null;
             }
+            if (name === 'WasmGame_PointerDelta') {
+              nativePointerDeltas.push(Array.from(args));
+              return null;
+            }
+            if (name === 'WasmGame_Resize') {
+              nativeResizes.push(Array.from(args));
+              return null;
+            }
             if (name === 'WasmGame_ControllerAction') {
               controllerActions.push(Array.from(args));
               return null;
@@ -125,8 +144,14 @@ async function exerciseVariant(variant) {
       };
       instances.push(this);
     }
-    async init() { this.initialized = true; }
-    main() { lifecycle.push('main'); this.running = true; }
+    // The real wrapper reports `running` after WASM initialization, before
+    // native main initializes Xash's command pool.
+    async init() { this.initialized = true; this.running = true; }
+    main() {
+      lifecycle.push('main');
+      this.running = true;
+      this.em.Module.calledRun = true;
+    }
     Cmd_ExecuteString(command) {
       this.commands.push(command);
       const match = command.match(/^name "(.*)"$/);
@@ -140,11 +165,13 @@ async function exerciseVariant(variant) {
     constructor(endpoint) {
       this.endpoint = String(endpoint);
       this.readyState = MockSocket.OPEN;
+      this.messages = [];
+      sockets.push(this);
       queueMicrotask(() => this.onmessage?.({
-        data: JSON.stringify({ event: 'offer', data: { type: 'offer', sdp: 'test' } })
+        data: JSON.stringify(['v1:offer', { type: 'offer', sdp: 'test' }])
       }));
     }
-    send(message) { this.lastMessage = message; }
+    send(message) { this.messages.push(JSON.parse(message)); }
   }
 
   class MockPeer {
@@ -211,6 +238,8 @@ async function exerciseVariant(variant) {
     extrasUrl: '/artifacts/extras.pk3',
     hlClientUrl: '/artifacts/hl-client.wasm',
     hlServerUrl: '/artifacts/hl-server.wasm',
+    opforClientUrl: '/artifacts/opfor-client.wasm',
+    opforServerUrl: '/artifacts/opfor-server.wasm',
     csMenuUrl: '/artifacts/cs-menu.wasm',
     csClientUrl: '/artifacts/cs-client.wasm',
     csServerUrl: '/artifacts/cs-server.wasm',
@@ -228,10 +257,15 @@ async function exerciseVariant(variant) {
   const adapter = sandbox.WasmGameAdapter;
   assert.ok(adapter);
 
+  const canvasListeners = new Map();
   const context = {
     variant,
     config: config.variants[variant],
-    elements: { canvas: { width: 1280, height: 720 } },
+    elements: { canvas: {
+      width: 1280,
+      height: 720,
+      addEventListener(type, listener, capture) { canvasListeners.set(type, { listener, capture }); }
+    } },
     preferences: { values: () => ({ playerName: 'Test; "Player"', targetFps: 90 }) },
     framework: {
       requireCapabilities: () => ({ supported: true, missing: [] }),
@@ -247,6 +281,11 @@ async function exerciseVariant(variant) {
     persistence: {
       root: `/persistent/goldsource/${variant}`,
       async attach(_FS, options) {
+        adapter.preferencesChanged({ playerName: 'Too Early', targetFps: 60 }, context);
+        adapter.resize({ bufferWidth: 900, bufferHeight: 500 });
+        preMainCommandAccepted = adapter.executeCommand('god');
+        preMainCommands = instances[0].commands.length;
+        preMainResizes = nativeResizes.length;
         lifecycle.push('persistence');
         persistenceRoots.push(options.root);
         return {
@@ -274,11 +313,19 @@ async function exerciseVariant(variant) {
   };
 
   await adapter.init(context);
+  assert.equal(canvasListeners.get('mousemove')?.capture, true,
+    `${variant} must suppress SDL's duplicate raw mouse path before native startup`);
   await adapter.start(context);
   assert.equal(instances.length, 1);
   const engine = instances[0];
   assert.equal(engine.initialized, true);
   assert.equal(engine.running, true);
+  assert.equal(preMainCommands, 0,
+    `${variant} must not execute console commands before native main initializes cmd_pool`);
+  assert.equal(preMainResizes, 0,
+    `${variant} must not enter native resize code before native main is ready`);
+  assert.equal(preMainCommandAccepted, false,
+    `${variant} must reject external commands until native main is ready`);
   assert.deepEqual(lifecycle, ['persistence', 'main'],
     `${variant} must restore persistence before native main`);
   assert.deepEqual(persistenceRoots, [`/persistent/goldsource/${variant}`]);
@@ -310,18 +357,48 @@ async function exerciseVariant(variant) {
     ['-width', '1280', '-height', '720']);
   assert.deepEqual(args.slice(args.indexOf('-rodir'), args.indexOf('-rodir') + 2), ['-rodir', '/rodir']);
   if (expectedGame) assert.deepEqual(args.slice(args.indexOf('-game'), args.indexOf('-game') + 2), ['-game', expectedGame]);
+  if (variant === 'counter-strike') {
+    assert.equal(args.includes('+sv_cheats'), false, 'multiplayer must not enable cheats');
+  } else {
+    assert.deepEqual(args.slice(args.indexOf('+sv_cheats'), args.indexOf('+sv_cheats') + 2), ['+sv_cheats', '1'],
+      `${variant} must enable cheats for the local single-player server`);
+  }
   assert.deepEqual(args.slice(args.indexOf('+name'), args.indexOf('+name') + 2), ['+name', 'Test Player']);
+  if (variant === 'opposing-force') {
+    assert.equal(engine.options.libraries.client, '/artifacts/opfor-client.wasm',
+      'Opposing Force must use its expansion-specific client DLL');
+    assert.equal(engine.options.libraries.server, '/artifacts/hl-server.wasm',
+      'Opposing Force must keep Xash\'s mandatory generic server slot on the base module');
+    assert.deepEqual(Array.from(engine.options.dynamicLibraries), ['dlls/opfor_emscripten_wasm32.wasm'],
+      'Opposing Force must preload its server DLL under the Gearbox liblist name');
+    assert.equal(engine.options.filesMap['dlls/opfor_emscripten_wasm32.wasm'], '/artifacts/opfor-server.wasm',
+      'the Gearbox liblist lookup must resolve to the Opposing Force server DLL');
+  }
   if (variant === 'counter-strike') {
     assert.equal(engine.options.networked, true);
+    assert.equal(engine.options.renderer, 'gles3compat',
+      'Counter-Strike must use the visible WebGL2 renderer instead of the broken software blit loop');
+    assert.equal(engine.options.filesMap['/persistent/goldsource/counter-strike/filesystem_stdio.wasm'],
+      '/artifacts/filesystem.wasm',
+      'the CS DLL dependency must resolve through the persisted /rwdir symlink without a startup error');
     assert.ok(engine instanceof MockXash);
+    assert.deepEqual(Array.from(sockets[0].messages.at(-1)), [
+      'v1:answer', { type: 'answer', sdp: 'test' }
+    ], 'Counter-Strike must answer the versioned signaling protocol used by the dedicated host');
   }
 
   adapter.preferencesChanged({ playerName: 'Test; "Player"', targetFps: 90 });
   for (const command of [
     'bind w +forward', 'bind s +back', 'bind a +moveleft', 'bind d +moveright',
-    'bind MOUSE1 +attack', '+mlook', 'lookstrafe 0', 'lookspring 0', 'm_filter 0',
+    'bind CTRL +duck', 'bind r +reload', 'bind b buy', 'bind m chooseteam',
+    'bind 1 slot1', 'bind 2 slot2', 'bind 0 slot10',
+    'bind MWHEELUP invprev', 'bind MWHEELDOWN invnext',
+    'bind MOUSE1 +attack', 'bind MOUSE2 +attack2',
+    '+mlook', 'lookstrafe 0', 'lookspring 0', 'm_filter 0',
     'name "Test Player"', 'fps_max 90'
   ]) assert.ok(engine.commands.includes(command), `${variant} did not apply ${command}`);
+  assert.equal(engine.commands.includes('sv_cheats 1'), variant !== 'counter-strike',
+    `${variant} cheat policy must match its single-player/multiplayer role`);
 
   nativeState = 4;
   assert.equal(adapter.readEngineState(context), 'loading');
@@ -333,6 +410,11 @@ async function exerciseVariant(variant) {
   assert.equal(nativeCaptureSignals.at(-1), 1);
   assert.equal(adapter.readEngineState(context), 'gameplay');
   assert.equal(context.audioResumed, true);
+  adapter.pointerMove({ captured: true, movementX: 17.4, movementY: -8.6 });
+  assert.deepEqual(nativePointerDeltas.at(-1), [17, -9],
+    `${variant} captured framework deltas must reach native Xash relative input`);
+  assert.equal(nativePointerMoves.length, 0,
+    `${variant} captured movement must never be interpreted as menu coordinates`);
   if (context.config.identity !== false) {
     assert.equal(sandbox.document.documentElement.dataset.goldsourceIdentity, 'server',
       `${variant} must verify the active server/scoreboard player name`);
@@ -382,6 +464,14 @@ async function exerciseVariant(variant) {
   assert.deepEqual(stateTransitions.at(-1), { state: 'gameplay', capture: true, event: tabEvent });
 
   nativeState = 0;
+  const consoleEvent = { key: '`', code: 'Backquote' };
+  for (const callback of listeners.get('keyup') || []) callback(consoleEvent);
+  nativeState = 1;
+  await Promise.resolve();
+  assert.deepEqual(stateTransitions.at(-1), { state: 'gameplay', capture: true, event: consoleEvent },
+    `${variant} closing the console must recapture input from the console-key gesture`);
+
+  nativeState = 0;
   const pointerEvent = { type: 'pointerup', button: 0 };
   adapter.pointerMove({ x: 321.4, y: 210.6 });
   adapter.pointerButton({ x: 455.2, y: 312.7, pressed: false }, pointerEvent);
@@ -391,6 +481,13 @@ async function exerciseVariant(variant) {
   assert.equal(adapter.readEngineState(context), 'gameplay');
   assert.deepEqual(stateTransitions.at(-1), { state: 'gameplay', capture: true, event: pointerEvent },
     `${variant} delayed gameplay must capture from the initiating pointer gesture`);
+  const resumeToggles = engine.commands.filter(command => command === 'togglemenu').length;
+  adapter.captureLost({}, context);
+  assert.equal(engine.commands.filter(command => command === 'togglemenu').length, resumeToggles,
+    `${variant} stale capture loss during Resume must not reopen the menu`);
+  await Promise.resolve();
+  assert.deepEqual(stateTransitions.at(-1), { state: 'gameplay', capture: true, event: pointerEvent },
+    `${variant} stale Resume unlock must retry the initiating capture gesture`);
 
   nativeState = 1;
   adapter.inputCaptureChanged(true, context);
@@ -407,8 +504,8 @@ async function exerciseVariant(variant) {
     bufferWidth: 1000, bufferHeight: 600
   };
   assert.equal(adapter.resize(resize), resize);
-  assert.ok(engine.commands.includes('vid_setmode 1000 600'),
-    `${variant} must synchronize the native GL viewport to the framework backbuffer`);
+  assert.deepEqual(nativeResizes.at(-1), [1000, 600],
+    `${variant} must synchronize native render/menu dimensions to the framework backbuffer`);
   now += 100;
   for (const callback of listeners.get('keydown') || []) callback({ key: 'Escape' });
   const togglesBefore = engine.commands.filter(command => command === 'togglemenu').length;

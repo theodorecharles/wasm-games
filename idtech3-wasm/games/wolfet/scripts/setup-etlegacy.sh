@@ -4,7 +4,7 @@ set -eu
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ETLEGACY_DIR="${ETJS_ETLEGACY_DIR:-$ROOT/etlegacy}"
-UPSTREAM_URL="https://github.com/etlegacy/etlegacy.git"
+UPSTREAM_URL="https://github.com/theodorecharles/etlegacy.git"
 UPSTREAM_REF="a44ab4f396370a694109da33df901d85f6fe9626"
 ETJS_PATCH="$ROOT/patches/etlegacy-wasm.patch"
 ETJS_MODES_PATCH="$ROOT/patches/etlegacy-modes.patch"
@@ -12,6 +12,11 @@ ETJS_ETH32_PATCH="$ROOT/patches/etlegacy-eth32nix.patch"
 ETJS_SLOT_PATCH="$ROOT/patches/etlegacy-human-slot.patch"
 ETJS_UI_PATCH="$ROOT/patches/etlegacy-etjs-ui.patch"
 ETH32_SRC="$ROOT/eth32nix"
+
+cleanup_upstream_markdown() {
+  [ ! -d "$ETLEGACY_DIR" ] || find "$ETLEGACY_DIR" -type f -name '*.md' -delete
+}
+trap cleanup_upstream_markdown EXIT
 
 if ! command -v git >/dev/null 2>&1; then
   echo "git is required" >&2

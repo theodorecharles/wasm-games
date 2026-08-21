@@ -2,7 +2,7 @@
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)"
-FRAMEWORK_DIR="${WASM_GAME_FRAMEWORK_DIR:-$(dirname "$ROOT")/wasm-game-framework}"
+FRAMEWORK_DIR="${WASM_GAME_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 VERSION="$(node -p "require('$ROOT/sources.lock.json').framework.version")"
 COMMIT="$(node -p "require('$ROOT/sources.lock.json').framework.commit")"
 
@@ -17,7 +17,7 @@ test "$(node -p "require('$FRAMEWORK_DIR/package.json').version")" = "$VERSION" 
 git -C "$FRAMEWORK_DIR" cat-file -e "$COMMIT^{commit}"
 
 # Later documentation-only commits are harmless; every package/runtime input
-# must remain byte-identical to the locked public v0.9.4 release.
+# must remain byte-identical to the locked public v0.9.6 release.
 for path in package.json package-lock.json dist docker server scripts; do
   git -C "$FRAMEWORK_DIR" diff --quiet "$COMMIT" -- "$path" || {
     echo "framework $path differs from locked commit $COMMIT" >&2

@@ -393,7 +393,7 @@ diff --git a/prboom2/src/d_main.c b/prboom2/src/d_main.c
 index 818b17da..84cbab84 100644
 --- a/prboom2/src/d_main.c
 +++ b/prboom2/src/d_main.c
-@@ -109,6 +109,81 @@
+@@ -109,6 +109,86 @@
  #include "dsda/utility.h"
  #include "dsda/wad_stats.h"
  #include "dsda/zipfile.h"
@@ -420,6 +420,11 @@ index 818b17da..84cbab84 100644
 +EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserPlayerAngle(void)
 +{
 +  return players[consoleplayer].mo ? players[consoleplayer].mo->angle : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserAttackDown(void)
++{
++  return players[consoleplayer].attackdown ? 1 : 0;
 +}
 +
 +EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserViewPitch(void)

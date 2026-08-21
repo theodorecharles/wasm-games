@@ -1,0 +1,2264 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 01961814d8fa26184a4a95cac92ff4f76a363c57..f500b0d114567cdeaa665f0cac0e3885cbc069ef 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.15)
+ project(SurrealEngine)
+ 
+ add_subdirectory(Thirdparty/openmpt)
+-add_subdirectory(SurrealGPU)
++if(NOT EMSCRIPTEN)
++	add_subdirectory(SurrealGPU)
++endif()
+ add_subdirectory(SurrealWidgets)
+ 
+ if (WIN32)
+@@ -879,12 +881,20 @@ set(THIRDPARTY_WIN32_SOURCES
+ set(THIRDPARTY_UNIX_SOURCES
+ )
+ 
+-set(SURREALCOMMON_LIBS
+-	surrealgpu
+-	surrealwidgets
+-	SurrealVideo
+-	openmpt
+-)
++if(EMSCRIPTEN)
++	set(SURREALCOMMON_LIBS
++		surrealwidgets
++		SurrealVideo
++		openmpt
++	)
++else()
++	set(SURREALCOMMON_LIBS
++		surrealgpu
++		surrealwidgets
++		SurrealVideo
++		openmpt
++	)
++endif()
+ 
+ set(SURREALCOMMON_WIN32_LIBS
+ 	OpenAL
+@@ -1059,6 +1069,18 @@ elseif(APPLE)
+ 	set(SURREALCOMMON_LIBS ${SURREALCOMMON_LIBS} ${SURREALCOMMON_UNIX_LIBS} ${CMAKE_DL_LIBS})
+ 	add_definitions(-DUNIX -D_UNIX)
+ 	add_link_options(-pthread)
++elseif(EMSCRIPTEN)
++	list(FILTER SURREALCOMMON_SOURCES EXCLUDE REGEX "RenderDevice/Vulkan/")
++	list(FILTER SURREALCOMMON_SOURCES EXCLUDE REGEX "RenderDevice/OpenGL/")
++	if(NOT OPENUT_WASM_DIR)
++		set(OPENUT_WASM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../wasm")
++	endif()
++	list(APPEND SURREALCOMMON_SOURCES
++		${OPENUT_WASM_DIR}/WebGLRenderDevice.cpp
++		${OPENUT_WASM_DIR}/openut_exports.cpp
++	)
++	set(THIRDPARTY_SOURCES ${THIRDPARTY_SOURCES} ${THIRDPARTY_UNIX_SOURCES})
++	add_definitions(-DUNIX -D_UNIX)
+ else()
+ 	set(SURREALCOMMON_SOURCES ${SURREALCOMMON_SOURCES})
+ 	set(SURREALCOMMON_LIBS ${SURREALCOMMON_LIBS} ${SURREALCOMMON_UNIX_LIBS} ${CMAKE_DL_LIBS} -lasound)
+@@ -1076,7 +1098,11 @@ if(MSVC)
+ 	set_source_files_properties(${SURREALVIDEO_SOURCES} PROPERTIES COMPILE_FLAGS "/wd4244 /wd4267 /wd4005 /wd4018 /wd4101 /wd4146 /wd4334 -D_CRT_SECURE_NO_WARNINGS /experimental:c11atomics")
+ endif()
+ 
+-add_library(SurrealVideo SHARED ${SURREALVIDEO_SOURCES})
++if(EMSCRIPTEN)
++	add_library(SurrealVideo STATIC ${SURREALVIDEO_SOURCES})
++else()
++	add_library(SurrealVideo SHARED ${SURREALVIDEO_SOURCES})
++endif()
+ target_include_directories(SurrealVideo PRIVATE SurrealVideo)
+ set_target_properties(SurrealVideo PROPERTIES CXX_STANDARD 20)
+ set_target_properties(SurrealVideo PROPERTIES C_STANDARD 17)
+@@ -1088,6 +1114,39 @@ target_precompile_headers(SurrealCommon PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CMAK
+ add_executable(SurrealEngine WIN32 MACOSX_BUNDLE ${SURREALENGINE_SOURCES})
+ target_link_libraries(SurrealEngine SurrealCommon ${SURREALCOMMON_LIBS})
+ set_target_properties(SurrealEngine PROPERTIES CXX_STANDARD 20)
++if(EMSCRIPTEN)
++	if(NOT OPENUT_WASM_DIR)
++		set(OPENUT_WASM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../wasm")
++	endif()
++	target_include_directories(SurrealCommon PRIVATE ${OPENUT_WASM_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/SurrealEngine)
++	target_compile_options(SurrealCommon PRIVATE "SHELL:-sUSE_SDL=2" -fexceptions)
++	target_compile_options(SurrealEngine PRIVATE "SHELL:-sUSE_SDL=2" -fexceptions)
++	target_compile_options(SurrealVideo PRIVATE -fexceptions)
++	target_compile_options(openmpt PRIVATE -fexceptions)
++	target_compile_options(surrealwidgets PRIVATE -fexceptions)
++	target_link_options(SurrealEngine PRIVATE
++		"SHELL:-sUSE_SDL=2"
++		"SHELL:-sUSE_WEBGL2=1"
++		"SHELL:-sMIN_WEBGL_VERSION=2"
++		"SHELL:-sMAX_WEBGL_VERSION=2"
++		"SHELL:-sFULL_ES3=1"
++		"SHELL:-sALLOW_MEMORY_GROWTH=1"
++		"SHELL:-sINITIAL_MEMORY=268435456"
++		"SHELL:-sSTACK_SIZE=2097152"
++		"SHELL:-sFORCE_FILESYSTEM=1"
++		-lidbfs.js
++		"SHELL:-sNO_EXIT_RUNTIME=1"
++		"SHELL:-sMODULARIZE=1"
++		"SHELL:-sEXPORT_NAME=OPENUT"
++		"SHELL:-sINVOKE_RUN=0"
++		"SHELL:-sENVIRONMENT=web,worker"
++		"SHELL:-sDISABLE_EXCEPTION_CATCHING=0"
++		"SHELL:-sEXPORTED_FUNCTIONS=['_main','_Openut_RuntimeState','_Openut_CaptureIntent','_Openut_OpenMenu','_Openut_Resume','_Openut_SetPaused','_Openut_SetResolution','_Openut_PointerMove','_Openut_PointerButton','_Openut_SetInputCaptured','_Openut_ControllerMove','_Openut_ControllerLook','_Openut_ControllerButton','_Openut_SetPlayerName']"
++		"SHELL:-sEXPORTED_RUNTIME_METHODS=['FS','callMain','ccall','cwrap','UTF8ToString','setCanvasSize']"
++		--preload-file "${CMAKE_CURRENT_SOURCE_DIR}/SurrealEngine.pk3@/SurrealEngine.pk3"
++	)
++	set_target_properties(SurrealEngine PROPERTIES OUTPUT_NAME openut)
++endif()
+ 
+ add_executable(SurrealEditor WIN32 MACOSX_BUNDLE ${SURREALEDITOR_SOURCES})
+ target_link_libraries(SurrealEditor SurrealCommon ${SURREALCOMMON_LIBS})
+diff --git a/SurrealEngine/Audio/AudioDevice.cpp b/SurrealEngine/Audio/AudioDevice.cpp
+index 03e82566fa475a0b3886b45135bde517764cacad..8ffde30f18e64dccf901a512f4576bc2e5cbb97b 100644
+--- a/SurrealEngine/Audio/AudioDevice.cpp
++++ b/SurrealEngine/Audio/AudioDevice.cpp
+@@ -13,9 +13,45 @@
+ #include <queue>
+ #include <thread>
+ #include <chrono>
++#include <algorithm>
++#ifndef __EMSCRIPTEN__
+ #include <AL/al.h>
+ #include <AL/alc.h>
+ #include <AL/alext.h>
++#endif
++
++#ifdef __EMSCRIPTEN__
++
++class NullAudioDevice : public AudioDevice
++{
++public:
++	NullAudioDevice(int, int numVoices, int, int)
++	{
++		channels = std::max(1, numVoices);
++	}
++
++	void AddSound(USound*) override {}
++	void RemoveSound(USound*) override {}
++	bool IsPlaying(int) override { return false; }
++	int GetTotalChannels() override { return channels; }
++	void PlaySound(int, USound*, vec3&, float, float, float) override {}
++	void PlayMusic(std::unique_ptr<AudioSource>) override {}
++	void UpdateSound(int, USound*, vec3&, float, float, float) override {}
++	void StopSound(int) override {}
++	void SetMusicVolume(float) override {}
++	void SetSoundVolume(float) override {}
++	void Update() override {}
++
++private:
++	int channels = 1;
++};
++
++std::unique_ptr<AudioDevice> AudioDevice::Create(int frequency, int numVoices, int musicBufferCount, int musicBufferSize)
++{
++	return std::make_unique<NullAudioDevice>(frequency, numVoices, musicBufferCount, musicBufferSize);
++}
++
++#else
+ 
+ #define UU_PER_METER 43
+ 
+@@ -688,3 +724,5 @@ std::unique_ptr<AudioDevice> AudioDevice::Create(int frequency, int numVoices, i
+ {
+ 	return std::make_unique<OpenALAudioDevice>(frequency, numVoices, musicBufferCount, musicBufferSize);
+ }
++
++#endif
+diff --git a/SurrealEngine/Engine.cpp b/SurrealEngine/Engine.cpp
+index 34ee518185581a8b0355fc20593f32382d8e9258..b7a9edcab698471f310fffa99cf1076846be469a 100644
+--- a/SurrealEngine/Engine.cpp
++++ b/SurrealEngine/Engine.cpp
+@@ -20,6 +20,7 @@
+ #include "Packages/Engine/UCanvas.h"
+ #include "Packages/Engine/Actors/UActor.h"
+ #include "Packages/Engine/Actors/Pawn/UPlayerPawn.h"
++#include "Packages/Engine/Actors/NavigationPoint/UPlayerStart.h"
+ #include "Packages/Engine/Actors/Info/ULevelInfo.h"
+ #include "Packages/Engine/Actors/Info/UGameInfo.h"
+ #include "Packages/Engine/Actors/Info/UZoneInfo.h"
+@@ -61,6 +62,15 @@
+ #include "Utils/Convert.h"
+ #include <chrono>
+ #include <set>
++#include <iostream>
++#include <vector>
++#include <cmath>
++#include "Math/rotator.h"
++#include "Math/coords.h"
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#include <emscripten/html5.h>
++#endif
+ 
+ Engine* engine = nullptr;
+ 
+@@ -147,94 +157,413 @@ void Engine::Run()
+ 	else
+ 		LoadMap(UnrealURL(GetDefaultURL(packages->GetIniValue("system", "URL", "LocalMap")), LaunchInfo.url));
+ 
+-	LoginPlayer();
++	auto tryLogin = [&](const char* label) -> bool {
++		try
++		{
++			LoginPlayer();
++			std::cout << "LoginPlayer ok (" << label << ")" << std::endl;
++			return true;
++		}
++		catch (const std::exception& e)
++		{
++			std::cout << "LoginPlayer failed (" << label << "): " << e.what() << std::endl;
++			LogMessage(std::string("LoginPlayer failed (") + label + "): " + e.what());
++			return false;
++		}
++	};
+ 
+-	auto objprop = GC::Alloc<UObjectProperty>(NameString(), nullptr, ObjectFlags::NoFlags);
+-	auto vecprop = GC::Alloc<UStructProperty>(NameString(), nullptr, ObjectFlags::NoFlags);
+-	auto rotprop = GC::Alloc<UStructProperty>(NameString(), nullptr, ObjectFlags::NoFlags);
++	if (!tryLogin("default"))
++	{
++		bool loggedIn = false;
++		for (const char* clsName : { "Botpack.TMale2", "Botpack.TMale1", "Botpack.CHSpectator", "Engine.Spectator" })
++		{
++			if (LevelInfo)
++				LevelInfo->URL.AddOrReplaceOption(std::string("Class=") + clsName);
++			if (tryLogin(clsName))
++			{
++				loggedIn = true;
++				break;
++			}
++		}
++		if (!loggedIn)
++			LogMessage("Continuing without a logged-in pawn");
++	}
+ 
+-	bool firstCall = true;
++	if (viewport && !viewport->Actor() && Level)
++	{
++		struct StartInfo { UPlayerStart* start; vec3 loc; Rotator rot; };
++		std::vector<StartInfo> starts;
++		for (UActor* actor : Level->Actors)
++		{
++			auto* start = UObject::TryCast<UPlayerStart>(actor);
++			if (!start)
++				continue;
++			try
++			{
++				StartInfo info;
++				info.start = start;
++				info.loc = start->Location();
++				info.rot = start->Rotation();
++				starts.push_back(info);
++			}
++			catch (const std::exception&)
++			{
++			}
++		}
+ 
+-	float currentZoneTimeDilation = 1.0f; // Unreal 227 allows zones to specify their own time dilations
++		StartInfo walkway {};
++		if (!starts.empty())
++		{
++			walkway = starts[0];
++			float bestWalk = 1.0e12f;
++			for (const StartInfo& info : starts)
++			{
++				std::cout << "PlayerStart " << info.loc.x << "," << info.loc.y << "," << info.loc.z
++					<< " yaw=" << info.rot.Yaw << " pitch=" << info.rot.Pitch << std::endl;
++				// Prefer an upper walkway / room spawn, not the water basin.
++				const float score = (info.loc.z < -400.0f) ? (-info.loc.z) : (200.0f - info.loc.z * 0.05f);
++				if (score < bestWalk)
++				{
++					bestWalk = score;
++					walkway = info;
++				}
++			}
++		}
+ 
++		UPlayerPawn* pawn = nullptr;
++		const char* classNames[] = {
++			"Botpack.TMale2", "Botpack.TMale1", "Botpack.CHSpectator",
++			"Engine.PlayerPawn", "Engine.Spectator"
++		};
++		for (const char* className : classNames)
++		{
++			UClass* cls = packages->FindClass(className);
++			if (!cls)
++				continue;
++			UActor* spawned = nullptr;
++			try
++			{
++				if (GameInfo)
++					spawned = GameInfo->Spawn(cls, {}, {}, walkway.start ? walkway.loc : vec3(0.0f), walkway.rot);
++			}
++			catch (const std::exception& e)
++			{
++				std::cout << "Spawn " << className << " threw: " << e.what() << std::endl;
++				spawned = nullptr;
++			}
++			if (!spawned)
++			{
++				try
++				{
++					static int pawnSerial = 0;
++					NameString objName = std::string("LocalPawn") + std::to_string(pawnSerial++);
++					spawned = UObject::Cast<UActor>(LevelPackage->NewObject(objName, cls, ObjectFlags::Transient, true));
++					if (spawned)
++					{
++						spawned->XLevel() = Level;
++						spawned->Level() = LevelInfo;
++						try { spawned->Location() = walkway.loc; spawned->OldLocation() = walkway.loc; spawned->Rotation() = walkway.rot; }
++						catch (const std::exception&) {}
++						try { spawned->Region().Zone = LevelInfo; } catch (const std::exception&) {}
++						spawned->Index = (int)Level->Actors.size();
++						Level->Actors.push_back(spawned);
++						try { Level->Collision.AddToCollision(spawned); } catch (const std::exception&) {}
++					}
++				}
++				catch (const std::exception& e)
++				{
++					std::cout << "NewObject " << className << " threw: " << e.what() << std::endl;
++				}
++			}
++			pawn = UObject::TryCast<UPlayerPawn>(spawned);
++			if (pawn)
++			{
++				try { pawn->Physics() = PHYS_None; } catch (const std::exception&) {}
++				try { pawn->bCollideWorld() = false; } catch (const std::exception&) {}
++				try { pawn->Location() = walkway.loc; pawn->OldLocation() = walkway.loc; pawn->Rotation() = walkway.rot; }
++				catch (const std::exception&) {}
++				std::cout << "Spawned local pawn " << className
++					<< " at " << walkway.loc.x << "," << walkway.loc.y << "," << walkway.loc.z << std::endl;
++				break;
++			}
++		}
++
++		if (pawn)
++		{
++			viewport->Actor() = pawn;
++			pawn->Player() = viewport;
++			try { if (console) console->bNoDrawWorld() = false; } catch (const std::exception&) {}
++			try { CallEvent(pawn, EventName::Possess); } catch (const std::exception& e) {
++				std::cout << "Possess threw: " << e.what() << std::endl;
++			}
++			CameraActor = pawn;
++			try { CameraLocation = walkway.loc; CameraRotation = walkway.rot; }
++			catch (const std::exception&) {}
++			// Stand above the walkway and look down the room so 256uu tiles read as panels.
++			CameraLocation.z += 180.0f;
++			CameraRotation.Pitch = -7000;
++			CameraFovAngle = 90.0f;
++			FallbackCameraActive = true;
++			FallbackCameraLocation = CameraLocation;
++			FallbackCameraRotation = CameraRotation;
++			try { if (render) render->OnMapLoaded(); } catch (const std::exception&) {}
++		}
++		else if (walkway.start)
++		{
++			CameraActor = walkway.start;
++			CameraLocation = walkway.loc;
++			CameraLocation.z += 39.0f;
++			CameraRotation = walkway.rot;
++			CameraFovAngle = 90.0f;
++			FallbackCameraActive = true;
++			FallbackCameraLocation = CameraLocation;
++			FallbackCameraRotation = CameraRotation;
++			std::cout << "Using fallback camera at "
++				<< CameraLocation.x << "," << CameraLocation.y << "," << CameraLocation.z
++				<< " yaw=" << CameraRotation.Yaw << std::endl;
++		}
++	}
++
++	viewObjProp = GC::Alloc<UObjectProperty>(NameString(), nullptr, ObjectFlags::NoFlags);
++	viewVecProp = GC::Alloc<UStructProperty>(NameString(), nullptr, ObjectFlags::NoFlags);
++	viewRotProp = GC::Alloc<UStructProperty>(NameString(), nullptr, ObjectFlags::NoFlags);
++
++#ifdef __EMSCRIPTEN__
++	emscripten_set_main_loop([]() {
++		if (!engine || engine->quit)
++			return;
++		try
++		{
++			engine->TickFrame();
++		}
++		catch (const std::exception& e)
++		{
++			std::cout << "TickFrame exception: " << e.what() << std::endl;
++			if (!engine->window)
++				engine->quit = true;
++		}
++	}, 0, 0);
++	return;
++#else
+ 	while (!quit)
+ 	{
+-		// Main game loop should consist of these 4 steps:
+-		// Tick everything
+-		// Render the scene
+-		// Check if there is a request to save the game: save the game if that's the case
+-		// Check if there is a new map to load (next level, saved game etc.): load it if that's the case
++		TickFrame();
++	}
++#endif
++
++	LogMessage("Shutting down...");
++	window->UnlockCursor();
++
++	LogMessage("Saving configurations...");
++	if (packages->MissingSESystemIni())
++	{
++		// Add the missing Subsystem entries
++		client->SaveConfig();
++		audiodev->SaveConfig();
++		renderdev->SaveConfig();
++	}
++	packages->SetIniValue("System", "Engine.SurrealWindowSystem", "WindowSystem", windowingSystemName);
++	packages->SaveAllIniFiles();
+ 
+-		// Tick everything
+-		if (LaunchInfo.IsUnreal1_227())
+-			currentZoneTimeDilation = viewport->Actor()->PlayerReplicationInfo()->PlayerZone()->ZoneTimeDilation();
++	LogMessage("Closing window...");
++	CloseWindow();
++}
++
++void Engine::TickFrame()
++{
++	if (quit)
++		return;
++
++	float currentZoneTimeDilation = 1.0f;
++	if (LaunchInfo.IsUnreal1_227() && viewport && viewport->Actor() && viewport->Actor()->PlayerReplicationInfo() && viewport->Actor()->PlayerReplicationInfo()->PlayerZone())
++		currentZoneTimeDilation = viewport->Actor()->PlayerReplicationInfo()->PlayerZone()->ZoneTimeDilation();
++
++		if (!LevelInfo || !Level || !viewport || !render)
++			return;
+ 
+ 		float realTimeElapsed = CalcTimeElapsed();
+-		float entryLevelElapsed = EntryLevel ? realTimeElapsed * clamp(EntryLevelInfo->TimeDilation() * currentZoneTimeDilation, 0.0025f, 25.0f) : 0.0f;
+-		float levelElapsed = realTimeElapsed * clamp(LevelInfo->TimeDilation() * currentZoneTimeDilation, 0.0025f, 25.0f);
++		float entryLevelElapsed = 0.0f;
++		float levelElapsed = realTimeElapsed;
++		try
++		{
++			entryLevelElapsed = EntryLevel ? realTimeElapsed * clamp(EntryLevelInfo->TimeDilation() * currentZoneTimeDilation, 0.0025f, 25.0f) : 0.0f;
++			levelElapsed = realTimeElapsed * clamp(LevelInfo->TimeDilation() * currentZoneTimeDilation, 0.0025f, 25.0f);
++		}
++		catch (const std::exception&)
++		{
++			levelElapsed = realTimeElapsed;
++		}
+ 
+ 		TotalTime += realTimeElapsed;
+ 
+-		if (EntryLevel)
+-			EntryLevelInfo->TimeSeconds() += entryLevelElapsed;
+-		LevelInfo->TimeSeconds() += levelElapsed;
+-		Logger::Get()->SetTimeSeconds(LevelInfo->TimeSeconds());
+-
+-		// Update the time fields
+-		std::time_t now = std::time(nullptr);
+-		std::tm* timedesc = std::localtime(&now);
++		try
++		{
++			if (EntryLevel)
++				EntryLevelInfo->TimeSeconds() += entryLevelElapsed;
++			LevelInfo->TimeSeconds() += levelElapsed;
++			Logger::Get()->SetTimeSeconds(LevelInfo->TimeSeconds());
++		}
++		catch (const std::exception&)
++		{
++		}
+ 
+-		LevelInfo->Year() = timedesc->tm_year;
+-		LevelInfo->Month() = timedesc->tm_mon;
+-		LevelInfo->Day() = timedesc->tm_mday;
+-		LevelInfo->DayOfWeek() = timedesc->tm_wday;
+-		LevelInfo->Hour() = timedesc->tm_hour;
+-		LevelInfo->Minute() = timedesc->tm_min;
+-		LevelInfo->Second() = timedesc->tm_sec;
+-		LevelInfo->Millisecond() = 0; // No timedesc equivalent for LevelInfo->Millisecond()
++		try
++		{
++			std::time_t now = std::time(nullptr);
++			std::tm* timedesc = std::localtime(&now);
++			if (timedesc)
++			{
++				LevelInfo->Year() = timedesc->tm_year;
++				LevelInfo->Month() = timedesc->tm_mon;
++				LevelInfo->Day() = timedesc->tm_mday;
++				LevelInfo->DayOfWeek() = timedesc->tm_wday;
++				LevelInfo->Hour() = timedesc->tm_hour;
++				LevelInfo->Minute() = timedesc->tm_min;
++				LevelInfo->Second() = timedesc->tm_sec;
++				LevelInfo->Millisecond() = 0;
++			}
++		}
++		catch (const std::exception&)
++		{
++		}
+ 
+-		UpdateInput(realTimeElapsed);
++		try { UpdateInput(realTimeElapsed); } catch (const std::exception&) {}
+ 
+-		SetPause(!LevelInfo->Pauser().empty());
++		try
++		{
++			SetPause(!LevelInfo->Pauser().empty());
++		}
++		catch (const std::exception&)
++		{
++			SetPause(false);
++		}
+ 
+-		// Do NOT pause this Tick event otherwise some messages will stay on screen forever.
+-		CallEvent(console, EventName::Tick, { ExpressionValue::FloatValue(levelElapsed) });
++		try
++		{
++			if (viewport && viewport->Actor())
++				CallEvent(console, EventName::Tick, { ExpressionValue::FloatValue(levelElapsed) });
++		}
++		catch (const std::exception&)
++		{
++		}
+ 
+ 		// To do: set these to true if the frame rate is too low
+-		if (LaunchInfo.ue1Version >= 436)
++		try
++		{
++			if (LaunchInfo.ue1Version >= 436)
++			{
++				LevelInfo->bDropDetail() = false;
++				LevelInfo->bAggressiveLOD() = false;
++			}
++		}
++		catch (const std::exception&)
+ 		{
+-			LevelInfo->bDropDetail() = false;
+-			LevelInfo->bAggressiveLOD() = false;
+ 		}
+ 
+-		if (EntryLevel)
+-			EntryLevel->Tick(entryLevelElapsed, m_GamePaused);
+-		Level->Tick(levelElapsed, m_GamePaused);
++		try
++		{
++			if (EntryLevel)
++				EntryLevel->Tick(entryLevelElapsed, m_GamePaused);
++			Level->Tick(levelElapsed, m_GamePaused);
++		}
++		catch (const std::exception&)
++		{
++		}
+ 
+ 		if (dxRootWindow)
+ 			dxRootWindow->Tick(levelElapsed); // Should this maybe be realTimeElapsed?
+ 
+ 		// To do: improve CallEvent so parameter passing isn't this painful
+-		UFunction* funcPlayerCalcView = viewport->Actor() ? FindEventFunction(viewport->Actor(), "PlayerCalcView") : nullptr;
+-		if (funcPlayerCalcView)
++		try
++		{
++			UFunction* funcPlayerCalcView = viewport->Actor() ? FindEventFunction(viewport->Actor(), "PlayerCalcView") : nullptr;
++			if (funcPlayerCalcView)
++			{
++				viewVecProp->Struct = UObject::Cast<UStructProperty>(funcPlayerCalcView->Properties[1])->Struct;
++				viewRotProp->Struct = UObject::Cast<UStructProperty>(funcPlayerCalcView->Properties[2])->Struct;
++				CameraActor = viewport->Actor();
++				CameraLocation = viewport->Actor()->Location();
++				CameraRotation = viewport->Actor()->Rotation();
++				CameraFovAngle = viewport->Actor()->FovAngle();
++				CallEvent(viewport->Actor(), EventName::PlayerCalcView, {
++					ExpressionValue::Variable(&CameraActor, viewObjProp),
++					ExpressionValue::Variable(&CameraLocation, viewVecProp),
++					ExpressionValue::Variable(&CameraRotation, viewRotProp)
++					});
++			}
++			else if (viewport->Actor() && !FallbackCameraActive)
++			{
++				CameraActor = viewport->Actor();
++				CameraLocation = viewport->Actor()->Location();
++				CameraRotation = viewport->Actor()->Rotation();
++				try { CameraFovAngle = viewport->Actor()->FovAngle(); } catch (const std::exception&) { CameraFovAngle = 90.0f; }
++				try { CameraLocation.z += viewport->Actor()->EyeHeight(); }
++				catch (const std::exception&) { CameraLocation.z += 39.0f; }
++			}
++		}
++		catch (const std::exception&)
++		{
++			if (viewport && viewport->Actor() && !FallbackCameraActive)
++			{
++				try
++				{
++					CameraActor = viewport->Actor();
++					CameraLocation = viewport->Actor()->Location();
++					CameraRotation = viewport->Actor()->Rotation();
++					CameraLocation.z += 39.0f;
++				}
++				catch (const std::exception&) {}
++			}
++		}
++
++		if (viewport && viewport->Actor() && !FallbackCameraActive)
+ 		{
+-			vecprop->Struct = UObject::Cast<UStructProperty>(funcPlayerCalcView->Properties[1])->Struct;
+-			rotprop->Struct = UObject::Cast<UStructProperty>(funcPlayerCalcView->Properties[2])->Struct;
+-			CameraActor = viewport->Actor();
+-			CameraLocation = viewport->Actor()->Location();
+-			CameraRotation = viewport->Actor()->Rotation();
+-			CameraFovAngle = viewport->Actor()->FovAngle();
+-			CallEvent(viewport->Actor(), EventName::PlayerCalcView, {
+-				ExpressionValue::Variable(&CameraActor, objprop),
+-				ExpressionValue::Variable(&CameraLocation, vecprop),
+-				ExpressionValue::Variable(&CameraRotation, rotprop)
+-				});
++			try
++			{
++				const vec3 feet = viewport->Actor()->Location();
++				if (CameraLocation.z < feet.z + 24.0f)
++					CameraLocation.z = feet.z + 39.0f;
++				if (std::abs(CameraRotation.Pitch) < 800)
++					CameraRotation.Pitch = -1800;
++			}
++			catch (const std::exception&) {}
+ 		}
+ 
+-		UpdateAudio();
++		if (FallbackCameraActive)
++		{
++			vec3 axisX, axisY, axisZ;
++			Coords::Rotation(FallbackCameraRotation).GetAxes(axisX, axisY, axisZ);
++			const float speed = 520.0f * std::max(levelElapsed, 0.0f);
++			FallbackCameraLocation += axisX * (speed * float(FallbackMoveForward));
++			FallbackCameraLocation += axisY * (speed * float(FallbackMoveRight));
++			FallbackCameraLocation += axisZ * (speed * float(FallbackMoveUp));
++			CameraLocation = FallbackCameraLocation;
++			CameraRotation = FallbackCameraRotation;
++		}
+ 
+-		viewport->SetViewportRect(0, 0, engine->window->GetPixelWidth(), engine->window->GetPixelHeight());
+-		render->DrawGame(levelElapsed);
++		try { UpdateAudio(); } catch (const std::exception&) {}
++
++		int viewW = engine->window->GetPixelWidth();
++		int viewH = engine->window->GetPixelHeight();
++#ifdef __EMSCRIPTEN__
++		int canvasW = 0;
++		int canvasH = 0;
++		if (emscripten_get_canvas_element_size("#canvas", &canvasW, &canvasH) == EMSCRIPTEN_RESULT_SUCCESS
++			&& canvasW >= 2 && canvasH >= 2)
++		{
++			viewW = canvasW;
++			viewH = canvasH;
++		}
++#endif
++		viewport->SetViewportRect(0, 0, viewW, viewH);
++		try
++		{
++			render->DrawGame(levelElapsed);
++		}
++		catch (const std::exception& e)
++		{
++			std::cout << "DrawGame exception: " << e.what() << std::endl;
++		}
+ 
+ 		// Save the game if there is a request for it
+ 		if (SaveGameInfo.SaveGameSlot != DONT_SAVE_GAME)
+@@ -246,7 +575,11 @@ void Engine::Run()
+ 		}
+ 
+ 		// Check if there is a new map to load
+-		if (!LevelInfo->NextURL().empty())
++		try
++		{
++		std::string nextUrl;
++		try { nextUrl = LevelInfo->NextURL(); } catch (const std::exception&) { nextUrl.clear(); }
++		if (!nextUrl.empty())
+ 		{
+ 			LevelInfo->NextSwitchCountdown() -= levelElapsed;
+ 			if (LevelInfo->NextSwitchCountdown() <= 0.0f)
+@@ -303,24 +636,10 @@ void Engine::Run()
+ 			LoadMap(url, CreateTravelInfo(ClientTravelInfo.TransferItems));
+ 			LoginPlayer();
+ 		}
+-	}
+-
+-	LogMessage("Shutting down...");
+-	window->UnlockCursor();
+-
+-	LogMessage("Saving configurations...");
+-	if (packages->MissingSESystemIni())
+-	{
+-		// Add the missing Subsystem entries
+-		client->SaveConfig();
+-		audiodev->SaveConfig();
+-		renderdev->SaveConfig();
+-	}
+-	packages->SetIniValue("System", "Engine.SurrealWindowSystem", "WindowSystem", windowingSystemName);
+-	packages->SaveAllIniFiles();
+-
+-	LogMessage("Closing window...");
+-	CloseWindow();
++		}
++		catch (const std::exception&)
++		{
++		}
+ }
+ 
+ void Engine::PlayAVI(const Array<std::string>& args)
+@@ -941,6 +1260,10 @@ void Engine::LoginPlayer()
+ 	if (playerPawnClass.empty())
+ 		playerPawnClass = packages->GetIniValue("system", "URL", "Class");
+ 	UClass* pawnClass = packages->FindClass(playerPawnClass);
++	std::cout << "LoginPlayer class=" << playerPawnClass
++		<< " found=" << (pawnClass ? 1 : 0)
++		<< " game=" << (LevelInfo && LevelInfo->Game() ? LevelInfo->Game()->Name.ToString() : "?")
++		<< std::endl;
+ 
+ 	// Perform PreLogin check (used for early rejection in network games)
+ 	CallEvent(LevelInfo->Game(), EventName::PreLogin, {
+@@ -953,14 +1276,29 @@ void Engine::LoginPlayer()
+ 
+ 	// Create viewport pawn
+ 	size_t numActors = Level->Actors.size();
+-	UPlayerPawn* pawn = UObject::Cast<UPlayerPawn>(CallEvent(LevelInfo->Game(), EventName::Login, {
+-		ExpressionValue::StringValue(portal),
+-		ExpressionValue::StringValue(options),
+-		ExpressionValue::Variable(&error, stringProp),
+-		ExpressionValue::ObjectValue(pawnClass)
+-		}).ToObject());
++	UObject* loginObj = nullptr;
++	try
++	{
++		loginObj = CallEvent(LevelInfo->Game(), EventName::Login, {
++			ExpressionValue::StringValue(portal),
++			ExpressionValue::StringValue(options),
++			ExpressionValue::Variable(&error, stringProp),
++			ExpressionValue::ObjectValue(pawnClass)
++			}).ToObject();
++	}
++	catch (const std::exception& e)
++	{
++		Exception::Throw(std::string("GameInfo login threw: ") + e.what());
++	}
++	UPlayerPawn* pawn = UObject::TryCast<UPlayerPawn>(loginObj);
+ 	if (!pawn || !error.empty())
++	{
++		std::cout << "Login returned "
++			<< (loginObj ? loginObj->Name.ToString() : std::string("null"))
++			<< " class=" << playerPawnClass
++			<< " error='" << error << "'" << std::endl;
+ 		Exception::Throw("GameInfo login failed: " + error);
++	}
+ 	bool actorActuallySpawned = Level->Actors.size() != numActors;
+ 
+ 	pawn->LoadProperties();
+@@ -1519,10 +1857,9 @@ void Engine::LoadKeybindings()
+ 
+ void Engine::UpdateInput(float timeElapsed)
+ {
++	TickWindow();
+ 	if (timeElapsed <= 0.0f)
+ 		return;
+-
+-	TickWindow();
+ 	if (tickDebugger)
+ 		tickDebugger();
+ 
+@@ -1551,6 +1888,18 @@ void Engine::OpenWindow()
+ 
+ 	int width = client->StartupFullscreen ? client->FullscreenViewportX : client->WindowedViewportX;
+ 	int height = client->StartupFullscreen ? client->FullscreenViewportY : client->WindowedViewportY;
++#ifdef __EMSCRIPTEN__
++	int canvasW = 0;
++	int canvasH = 0;
++	if (emscripten_get_canvas_element_size("#canvas", &canvasW, &canvasH) == EMSCRIPTEN_RESULT_SUCCESS)
++	{
++		if (canvasW >= 2 && canvasH >= 2)
++		{
++			width = canvasW;
++			height = canvasH;
++		}
++	}
++#endif
+ 	bool fullscreen = client->StartupFullscreen;
+ 
+ 	std::string versionString = !LaunchInfo.gameVersionString.empty() ? " (v" + LaunchInfo.gameVersionString + ")" : "";
+@@ -1572,7 +1921,7 @@ void Engine::CloseWindow()
+ 
+ void Engine::TickWindow()
+ {
+-	if (window && engine->LaunchInfo.ue1Version > 219)
++	if (window && engine->LaunchInfo.ue1Version > 219 && viewport && viewport->Actor())
+ 	{
+ 		if (viewport->bShowWindowsMouse() && viewport->bWindowsMouseAvailable())
+ 			window->UnlockCursor();
+@@ -1580,11 +1929,29 @@ void Engine::TickWindow()
+ 			window->LockCursor();
+ 	}
+ 
++	GameWindow::ProcessEvents();
++
++	if (!viewport || !viewport->Actor())
++	{
++		if (FallbackCameraActive && (MouseMoveX != 0 || MouseMoveY != 0))
++		{
++			FallbackCameraRotation.Yaw += MouseMoveX * 80;
++			int pitch = FallbackCameraRotation.Pitch - MouseMoveY * 80;
++			if (pitch > 16000)
++				pitch = 16000;
++			if (pitch < -16000)
++				pitch = -16000;
++			FallbackCameraRotation.Pitch = pitch;
++			CameraRotation = FallbackCameraRotation;
++		}
++		MouseMoveX = 0;
++		MouseMoveY = 0;
++		return;
++	}
++
+ 	InputEvent(IK_MouseX, IST_Axis, 0);
+ 	InputEvent(IK_MouseY, IST_Axis, 0);
+ 
+-	GameWindow::ProcessEvents();
+-
+ 	if (MouseMoveX != 0 || MouseMoveY != 0)
+ 	{
+ 		int dx = MouseMoveX;
+@@ -1627,6 +1994,9 @@ void Engine::OnWindowMouseDown(const Point& pos, EInputKey key)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowMouseDown(pos, key))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++		return;
++
+ 	InputEvent(key, IST_Press);
+ }
+ 
+@@ -1635,6 +2005,9 @@ void Engine::OnWindowMouseDoubleclick(const Point& pos, EInputKey key)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowMouseDoubleclick(pos, key))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++		return;
++
+ 	// Double click event sequence is: mouse down, up, doubleclick, up
+ 	// Since we don't have double click events in the UE1 event system, the second click
+ 	// should be treated as a normal mouse down event.
+@@ -1649,6 +2022,9 @@ void Engine::OnWindowMouseUp(const Point& pos, EInputKey key)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowMouseUp(pos, key))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++		return;
++
+ 	InputEvent(key, IST_Release);
+ }
+ 
+@@ -1660,6 +2036,19 @@ void Engine::OnWindowMouseWheel(const Point& pos, EInputKey key)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowMouseWheel(pos, key))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++	{
++		if (FallbackCameraActive)
++		{
++			vec3 axisX, axisY, axisZ;
++			Coords::Rotation(FallbackCameraRotation).GetAxes(axisX, axisY, axisZ);
++			const float step = (key == IK_MouseWheelUp) ? 80.0f : -80.0f;
++			FallbackCameraLocation += axisX * step;
++			CameraLocation = FallbackCameraLocation;
++		}
++		return;
++	}
++
+ 	InputEvent(key, IST_Press);
+ 	InputEvent(key, IST_Release);
+ }
+@@ -1676,6 +2065,49 @@ void Engine::OnWindowRawMouseMove(int dx, int dy)
+ 	MouseMoveY += dy;
+ }
+ 
++static void SetFallbackAxis(int& axis, int direction, bool pressed)
++{
++	if (pressed)
++		axis = direction;
++	else if (axis == direction)
++		axis = 0;
++}
++
++static bool ApplyFallbackCameraKey(Engine* current, EInputKey key, bool pressed)
++{
++	if (!current || !current->FallbackCameraActive)
++		return false;
++	switch (key)
++	{
++	case IK_W:
++	case IK_Up:
++		SetFallbackAxis(current->FallbackMoveForward, 1, pressed);
++		return true;
++	case IK_S:
++	case IK_Down:
++		SetFallbackAxis(current->FallbackMoveForward, -1, pressed);
++		return true;
++	case IK_D:
++	case IK_Right:
++		SetFallbackAxis(current->FallbackMoveRight, 1, pressed);
++		return true;
++	case IK_A:
++	case IK_Left:
++		SetFallbackAxis(current->FallbackMoveRight, -1, pressed);
++		return true;
++	case IK_Space:
++	case IK_E:
++		SetFallbackAxis(current->FallbackMoveUp, 1, pressed);
++		return true;
++	case IK_C:
++	case IK_Q:
++		SetFallbackAxis(current->FallbackMoveUp, -1, pressed);
++		return true;
++	default:
++		return true;
++	}
++}
++
+ void Engine::OnWindowKeyChar(std::string chars)
+ {
+ 	if (playingAvi)
+@@ -1684,6 +2116,9 @@ void Engine::OnWindowKeyChar(std::string chars)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowKeyChar(chars))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++		return;
++
+ 	Key(chars);
+ }
+ 
+@@ -1699,6 +2134,12 @@ void Engine::OnWindowKeyDown(EInputKey key)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowKeyDown(key))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++	{
++		ApplyFallbackCameraKey(this, key, true);
++		return;
++	}
++
+ 	InputEvent(key, IST_Press);
+ }
+ 
+@@ -1710,6 +2151,12 @@ void Engine::OnWindowKeyUp(EInputKey key)
+ 	if (engine->dxRootWindow && engine->dxRootWindow->OnWindowKeyUp(key))
+ 		return;
+ 
++	if (!viewport || !viewport->Actor())
++	{
++		ApplyFallbackCameraKey(this, key, false);
++		return;
++	}
++
+ 	InputEvent(key, IST_Release);
+ }
+ 
+@@ -1769,6 +2216,8 @@ void Engine::InputEvent(EInputKey key, EInputType type, int delta)
+ {
+ 	if (Frame::RunState != FrameRunState::Running || playingAvi)
+ 		return;
++	if (!viewport || !viewport->Actor())
++		return;
+ 
+ 	bool handled = CallEvent(console, EventName::KeyEvent, { ExpressionValue::ByteValue(key), ExpressionValue::ByteValue(type), ExpressionValue::FloatValue((float)delta) }).ToBool();
+ 	
+diff --git a/SurrealEngine/Engine.h b/SurrealEngine/Engine.h
+index fe3d273f5a15199a1f38d225c642983373316db5..191f1b016be5bd95e9e6558bfa5e90912ba9ba74 100644
+--- a/SurrealEngine/Engine.h
++++ b/SurrealEngine/Engine.h
+@@ -71,6 +71,8 @@ public:
+ 	~Engine();
+ 
+ 	void Run();
++	void TickFrame();
++	bool isGamePaused() const { return m_GamePaused; }
+ 	void ClientTravel(const std::string& URL, ETravelType travelType, bool transferItems);
+ 	UnrealURL GetDefaultURL(const std::string& map);
+ 	void LoadEntryMap();
+@@ -188,6 +190,12 @@ public:
+ 	vec3 CameraLocation = vec3(0.0f);
+ 	Rotator CameraRotation = Rotator(0,0,0);
+ 	float CameraFovAngle = 95.0f;
++	bool FallbackCameraActive = false;
++	vec3 FallbackCameraLocation = vec3(0.0f);
++	Rotator FallbackCameraRotation = Rotator(0, 0, 0);
++	int FallbackMoveForward = 0;
++	int FallbackMoveRight = 0;
++	int FallbackMoveUp = 0;
+ 
+ 	std::string windowingSystemName;
+ 
+@@ -233,6 +241,9 @@ private:
+ 
+ 	bool m_EditorMode = false; // Set this to true to allow rendering of invisible polys.
+ 	bool m_GamePaused = false;
++	class UObjectProperty* viewObjProp = nullptr;
++	class UStructProperty* viewVecProp = nullptr;
++	class UStructProperty* viewRotProp = nullptr;
+ 
+ 	bool m_DrawDebugDXWindowHierarchy = false; // If set to true, engine will show the Deus Ex window hierarchy
+ 
+diff --git a/SurrealEngine/GameApp.cpp b/SurrealEngine/GameApp.cpp
+index af92e8503fb0bae6ee07fb0b5487088486ad5897..698a3057dc5fa10b6c8b8842a9d0bd095cab3038 100644
+--- a/SurrealEngine/GameApp.cpp
++++ b/SurrealEngine/GameApp.cpp
+@@ -14,17 +14,47 @@
+ #include <surrealwidgets/core/theme.h>
+ #include <surrealwidgets/window/window.h>
+ #include <iostream>
++#include <cstdlib>
+ 
+ int GameApp::main(Array<std::string> args)
+ {
++#ifdef __EMSCRIPTEN__
++	setenv("HOME", "/save", 0);
++	setenv("ZWIDGET_DISPLAY_BACKEND", "SDL2", 1);
++#endif
++
++	Array<std::string> normalized;
++	for (size_t i = 0; i < args.size(); i += 1)
++	{
++		if ((args[i] == "--game" || args[i] == "--home" || args[i] == "--name") && i + 1 < args.size())
++		{
++			if (args[i] == "--game")
++				normalized.push_back(args[i + 1]);
++			else if (args[i] == "--home")
++			{
++#ifdef __EMSCRIPTEN__
++				setenv("HOME", args[i + 1].c_str(), 1);
++#endif
++			}
++			i += 1;
++			continue;
++		}
++		normalized.push_back(args[i]);
++	}
++
++	std::cout << "SurrealEngine: creating display backend" << std::endl;
+ 	auto backend = DisplayBackend::TryCreateBackend();
++	if (!backend)
++		throw std::runtime_error("No display backend is available");
+ 	DisplayBackend::Set(std::move(backend));
++	std::cout << "SurrealEngine: loading widget resources" << std::endl;
+ 	InitWidgetResources();
+ 	WidgetTheme::SetTheme(std::make_unique<DarkWidgetTheme>());
++	std::cout << "SurrealEngine: widget resources ready" << std::endl;
+ 
+ 	try
+ 	{
+-		CommandLine cmd(args);
++		CommandLine cmd(normalized);
+ 		commandline = &cmd;
+ 
+ 		if (ErrorWindow::CheckCrashReporter())
+@@ -36,17 +66,52 @@ int GameApp::main(Array<std::string> args)
+ 			return 0;
+ 		}
+ 
+-		int selectedGameIndex = LauncherWindow::ExecModal();
+-		if (selectedGameIndex >= 0)
++#ifdef __EMSCRIPTEN__
++		std::cout << "SurrealEngine: scanning mounted game folders" << std::endl;
++		GameFolderSelection::UpdateList();
++		std::cout << "SurrealEngine: found " << GameFolderSelection::Games.size() << " game(s)" << std::endl;
++		if (GameFolderSelection::Games.empty())
++			Exception::Throw("No Unreal Tournament installation was found at the mounted game path.");
++		GameLaunchInfo info = GameFolderSelection::GetLaunchInfo(0);
++		if (info.ue1Version == 0 && info.gameVersion > 0)
++			info.ue1Version = info.gameVersion;
++		std::cout << "SurrealEngine: launching " << info.gameName << " v" << info.gameVersionString
++			<< " from " << info.gameRootFolder << std::endl;
++		static Engine* live = new Engine(info);
++		std::cout << "SurrealEngine: engine constructed, entering run loop" << std::endl;
++		live->Run();
++		return 0;
++#else
++		GameFolderSelection::UpdateList();
++		const bool launchFromCli = !GameFolderSelection::Games.empty()
++			&& (!commandline->GetItems().empty() || commandline->HasArg("-u", "--url") || commandline->HasArg("-n", "--noentrymap"));
++		if (launchFromCli)
+ 		{
+-			GameLaunchInfo info = GameFolderSelection::GetLaunchInfo(selectedGameIndex);
++			GameLaunchInfo info = GameFolderSelection::GetLaunchInfo(0);
++			std::cout << "SurrealEngine: launching " << info.gameName << " v" << info.gameVersionString
++				<< " from " << info.gameRootFolder << std::endl;
+ 			Engine engine(info);
+ 			engine.Run();
+ 		}
++		else
++		{
++			int selectedGameIndex = LauncherWindow::ExecModal();
++			if (selectedGameIndex >= 0)
++			{
++				GameLaunchInfo info = GameFolderSelection::GetLaunchInfo(selectedGameIndex);
++				Engine engine(info);
++				engine.Run();
++			}
++		}
++#endif
+ 	}
+ 	catch (const std::exception& e)
+ 	{
++#ifdef __EMSCRIPTEN__
++		std::cout << e.what() << std::endl;
++#else
+ 		ErrorWindow::ExecModal(e.what(), Logger::Get()->GetLog());
++#endif
+ 	}
+ 
+ 	DeinitWidgetResources();
+diff --git a/SurrealEngine/GameWindow.cpp b/SurrealEngine/GameWindow.cpp
+index 878f7f016f94e739bc7173de53f62ec3170652b9..cbe2b93739df0bbb8c48b24813e5d26b6306f733 100644
+--- a/SurrealEngine/GameWindow.cpp
++++ b/SurrealEngine/GameWindow.cpp
+@@ -3,9 +3,11 @@
+ #include "GameWindow.h"
+ #include "LauncherSettings.h"
+ #include "RenderDevice/RenderDevice.h"
++#ifndef __EMSCRIPTEN__
+ #include <surrealgpu/vulkansurface.h>
+ #include <surrealgpu/vulkancompatibledevice.h>
+ #include <surrealgpu/vulkanbuilders.h>
++#endif
+ 
+ GameWindow::GameWindow(GameWindowHost* windowHost, RenderAPI renderAPI) : Widget(nullptr, WidgetType::Window, renderAPI), windowHost(windowHost)
+ {
+@@ -157,11 +159,19 @@ std::unique_ptr<GameWindow> GameWindow::Create(GameWindowHost* windowHost)
+ 	RenderAPI api;
+ 	switch (LauncherSettings::Get().RenderDevice.Type)
+ 	{
++#ifdef __EMSCRIPTEN__
++	default:
++	case RenderDeviceType::Vulkan:
++	case RenderDeviceType::D3D11:
++	case RenderDeviceType::D3D12:
++	case RenderDeviceType::OpenGL: api = RenderAPI::OpenGL; break;
++#else
+ 	default:
+ 	case RenderDeviceType::Vulkan: api = RenderAPI::Vulkan; break;
+ 	case RenderDeviceType::D3D11: api = RenderAPI::D3D11; break;
+ 	case RenderDeviceType::D3D12: api = RenderAPI::D3D12; break;
+ 	case RenderDeviceType::OpenGL: api = RenderAPI::OpenGL; break;
++#endif
+ 	}
+ 	return std::make_unique<GameWindow>(windowHost, api);
+ }
+diff --git a/SurrealEngine/LauncherSettings.cpp b/SurrealEngine/LauncherSettings.cpp
+index eb422f5d9bbe8057c11da880d645e77b3e3d28d4..d1b2cabd8e7702171056ca1e5c22cb1c76ba6a01 100644
+--- a/SurrealEngine/LauncherSettings.cpp
++++ b/SurrealEngine/LauncherSettings.cpp
+@@ -70,6 +70,14 @@ LauncherSettings::LauncherSettings()
+ 	catch (...)
+ 	{
+ 	}
++
++#ifdef __EMSCRIPTEN__
++	RenderDevice.Type = RenderDeviceType::OpenGL;
++	RenderDevice.Antialias = AntialiasMode::Off;
++	RenderDevice.Bloom = false;
++	RenderDevice.Hdr = false;
++	RenderDevice.UseDebugLayer = false;
++#endif
+ }
+ 
+ void LauncherSettings::Save()
+diff --git a/SurrealEngine/Packages/Core/UObject.cpp b/SurrealEngine/Packages/Core/UObject.cpp
+index 2b855f333f1e3d6f2282327c8f5ecdeeebea781c..205c7ec4edab4786eeac661171f5e40aadcd7fcb 100644
+--- a/SurrealEngine/Packages/Core/UObject.cpp
++++ b/SurrealEngine/Packages/Core/UObject.cpp
+@@ -13,6 +13,7 @@
+ #include "Engine.h"
+ #include "Utils/Exception.h"
+ #include "Utils/AlignedAlloc.h"
++#include <iostream>
+ 
+ UObject::UObject(NameString name, UClass* cls, ObjectFlags flags) : Name(name), Class(cls), Flags(flags)
+ {
+@@ -691,11 +692,33 @@ void PropertyDataBlock::Load(ObjectStream* stream)
+ 			continue;
+ 		}
+ 
++		if (name == "Palette")
++		{
++			static int palLoadLog = 0;
++			if (palLoadLog < 12)
++			{
++				std::cout << "load Palette class=" << (Class ? Class->Name.ToString() : "?")
++					<< " found=" << (prop ? "yes" : "no")
++					<< " type=" << int(header.type)
++					<< " size=" << header.size
++					<< " props=" << (Class ? int(Class->Properties.size()) : -1)
++					<< std::endl;
++				palLoadLog += 1;
++			}
++		}
++
+ 		if (!prop)
+ 		{
+ #if 0
+ 			Exception::Throw("Unknown property " + name);
+ #else
++			static int skipLog = 0;
++			if (skipLog < 20)
++			{
++				std::cout << "Skipping unknown property " << name.ToString()
++					<< " class=" << (Class ? Class->Name.ToString() : "?") << std::endl;
++				skipLog += 1;
++			}
+ 			LogMessage("Skipping unknown property " + name.ToString());
+ 			if (header.type != UPT_Bool)
+ 				stream->Skip(header.size);
+@@ -710,6 +733,17 @@ void PropertyDataBlock::Load(ObjectStream* stream)
+ 
+ 		prop->Flags |= ObjectFlags::TagExp;
+ 		prop->LoadValue(static_cast<uint8_t*>(data) + header.arrayIndex * prop->ElementPitch(), stream, header);
++		if (name == "Palette")
++		{
++			static int palValLog = 0;
++			if (palValLog < 8)
++			{
++				UObject* loaded = *reinterpret_cast<UObject**>(static_cast<uint8_t*>(data) + header.arrayIndex * prop->ElementPitch());
++				std::cout << "  palette value=" << (loaded ? loaded->Name.ToString() : "NULL")
++					<< " offset=" << prop->DataOffset.DataOffset << std::endl;
++				palValLog += 1;
++			}
++		}
+ 	}
+ }
+ 
+diff --git a/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.cpp b/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.cpp
+index a0da894128d8b51647a3c9a17182f1bca4c6a801..b81e7e650b8e64c359cc57166eec144849c901e3 100644
+--- a/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.cpp
++++ b/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.cpp
+@@ -1,6 +1,8 @@
+ 
+ #include "Precomp.h"
+ #include "UTexture.h"
++#include "Packages/Engine/Resources/UPalette.h"
++#include <iostream>
+ 
+ void UTexture::Load(ObjectStream* stream)
+ {
+@@ -40,14 +42,22 @@ void UTexture::Load(ObjectStream* stream)
+ 			mipmap.VBits = stream->ReadUInt8();
+ 		}
+ 
+-		UsedFormat = (TextureFormat)GetByte("CompFormat");
++		try { UsedFormat = (TextureFormat)GetByte("CompFormat"); }
++		catch (const std::exception&) { UsedFormat = TextureFormat::P8; }
+ 		UsedMipmaps = CompressedMipmaps;
+ 	}
+ 	else
+ 	{
+-		UsedFormat = (TextureFormat)GetByte("Format");
++		try { UsedFormat = (TextureFormat)GetByte("Format"); }
++		catch (const std::exception&) { UsedFormat = TextureFormat::P8; }
+ 		UsedMipmaps = UncompressedMipmaps;
+ 	}
++
++	try { LoadedPalette = Palette(); } catch (const std::exception&) { LoadedPalette = nullptr; }
++	if (LoadedPalette)
++	{
++		try { LoadedPalette->LoadNow(); } catch (const std::exception&) {}
++	}
+ }
+ 
+ void UTexture::Save(PackageStreamWriter* stream)
+diff --git a/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.h b/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.h
+index 8aa200823906e4cb19758ff660a513995dfd05cb..1d9e9ab7a0b3d23fb672bc8fdb73252248e1997d 100644
+--- a/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.h
++++ b/SurrealEngine/Packages/Engine/Resources/Textures/UTexture.h
+@@ -31,6 +31,7 @@ public:
+ 	Array<UnrealMipmap> UsedMipmaps, UncompressedMipmaps, CompressedMipmaps;
+ 	bool TextureModified = false;
+ 	int RealtimeChangeCount = 0;
++	UPalette* LoadedPalette = nullptr;
+ 
+ 	int FrameCounter = -1;
+ 
+diff --git a/SurrealEngine/Render/RenderCanvas.cpp b/SurrealEngine/Render/RenderCanvas.cpp
+index 4add09231e9087eaf2872cedc5c88b33c66fa551..97670c455a1ed41188da7d8a5553924d69eaaf2b 100644
+--- a/SurrealEngine/Render/RenderCanvas.cpp
++++ b/SurrealEngine/Render/RenderCanvas.cpp
+@@ -70,9 +70,11 @@ void RenderSubsystem::ResetCanvas()
+ void RenderSubsystem::PreRender()
+ {
+ 	Device->SetSceneNode(&Canvas.Frame);
+-	CallEvent(engine->console, EventName::PreRender, { ExpressionValue::ObjectValue(engine->canvas) });
+-	if (engine->viewport->Actor())
++	if (engine->viewport && engine->viewport->Actor())
++	{
++		CallEvent(engine->console, EventName::PreRender, { ExpressionValue::ObjectValue(engine->canvas) });
+ 		CallEvent(engine->viewport->Actor(), EventName::PreRender, { ExpressionValue::ObjectValue(engine->canvas) });
++	}
+ }
+ 
+ void RenderSubsystem::RenderOverlays()
+@@ -99,9 +101,11 @@ void RenderSubsystem::RenderOverlays()
+ void RenderSubsystem::PostRender()
+ {
+ 	Device->SetSceneNode(&Canvas.Frame);
+-	if (engine->viewport->Actor())
++	if (engine->viewport && engine->viewport->Actor())
++	{
+ 		CallEvent(engine->viewport->Actor(), EventName::PostRender, { ExpressionValue::ObjectValue(engine->canvas) });
+-	CallEvent(engine->console, EventName::PostRender, { ExpressionValue::ObjectValue(engine->canvas) });
++		CallEvent(engine->console, EventName::PostRender, { ExpressionValue::ObjectValue(engine->canvas) });
++	}
+ 	DrawTimedemoStats();
+ 	
+ 	if (ShowCollisionDebug)
+@@ -179,8 +183,16 @@ void RenderSubsystem::DrawTile(UTexture* Tex, float x, float y, float XL, float
+ 	texinfo.NumMips = (int)Tex->UsedMipmaps.size();
+ 	texinfo.USize = Tex->USize();
+ 	texinfo.VSize = Tex->VSize();
+-	if (Tex->Palette())
+-		texinfo.Palette = (TextureColor*)Tex->Palette()->Colors.data();
++	try
++	{
++		if (UPalette* palette = Tex->Palette())
++		{
++			palette->LoadNow();
++			if (palette->Colors.size() >= 256)
++				texinfo.Palette = (TextureColor*)palette->Colors.data();
++		}
++	}
++	catch (const std::exception&) {}
+ 
+ 	if (Tex->bMasked())
+ 		flags |= PF_Masked;
+@@ -204,8 +216,16 @@ void RenderSubsystem::DrawTileClipped(UTexture* Tex, float orgX, float orgY, flo
+ 	texinfo.NumMips = (int)Tex->UsedMipmaps.size();
+ 	texinfo.USize = Tex->USize();
+ 	texinfo.VSize = Tex->VSize();
+-	if (Tex->Palette())
+-		texinfo.Palette = (TextureColor*)Tex->Palette()->Colors.data();
++	try
++	{
++		if (UPalette* palette = Tex->Palette())
++		{
++			palette->LoadNow();
++			if (palette->Colors.size() >= 256)
++				texinfo.Palette = (TextureColor*)palette->Colors.data();
++		}
++	}
++	catch (const std::exception&) {}
+ 
+ 	if (Tex->bMasked())
+ 		flags |= PF_Masked;
+diff --git a/SurrealEngine/Render/RenderScene.cpp b/SurrealEngine/Render/RenderScene.cpp
+index 0d0b3ba3bb8d39746ab43f65fb9ecc0995445c6b..0be72ee9156a55f7fb58fd89f8f4bece4f71d55a 100644
+--- a/SurrealEngine/Render/RenderScene.cpp
++++ b/SurrealEngine/Render/RenderScene.cpp
+@@ -9,26 +9,30 @@
+ #include "Packages/Engine/Actors/Pawn/UPawn.h"
+ #include "Packages/Extension/Windows/UViewportWindow.h"
+ #include "Packages/Extension/Windows/TabGroup/URootWindow.h"
++#include <iostream>
+ 
+ void RenderSubsystem::DrawScene()
+ {
+ 	if (!engine->Level)
+ 		return;
+ 
+-	engine->Level->Light.BeginFrame();
++	try { engine->Level->Light.BeginFrame(); } catch (const std::exception&) {}
+ 	TextureFrameCounter++;
+ 
+ 	// Make sure all actors are at the right location in the BSP
+ 	for (UActor* actor : engine->Level->Actors)
+ 	{
+-		if (actor)
+-			actor->UpdateBspInfo();
++		if (!actor)
++			continue;
++		try { actor->UpdateBspInfo(); } catch (const std::exception&) {}
+ 	}
+ 
+ 	mat4 worldToView = Coords::ViewToRenderDev().ToMatrix() * Coords::Rotation(engine->CameraRotation).Inverse().ToMatrix() * Coords::Location(engine->CameraLocation).ToMatrix();
+-	MainFrame.Process(engine->CameraLocation, worldToView, Coords::Rotation(engine->CameraRotation));
+-	MainFrame.Draw();
+-	MainFrame.DrawCoronas();
++	try { MainFrame.Process(engine->CameraLocation, worldToView, Coords::Rotation(engine->CameraRotation)); }
++	catch (const std::exception& e) { std::cout << "VisibleFrame.Process: " << e.what() << std::endl; return; }
++	try { MainFrame.Draw(); }
++	catch (const std::exception& e) { std::cout << "VisibleFrame.Draw: " << e.what() << std::endl; }
++	try { MainFrame.DrawCoronas(); } catch (const std::exception&) {}
+ }
+ 
+ void RenderSubsystem::DrawViewport(UViewportWindow* viewport)
+diff --git a/SurrealEngine/Render/RenderSubsystem.cpp b/SurrealEngine/Render/RenderSubsystem.cpp
+index f3fcef6dc8cef7c02b7d51afd9a472584079afd4..ab72ef5bf2540f5126d480a6f22eac093e5604bc 100644
+--- a/SurrealEngine/Render/RenderSubsystem.cpp
++++ b/SurrealEngine/Render/RenderSubsystem.cpp
+@@ -8,10 +8,13 @@
+ #include "Packages/Engine/UViewport.h"
+ #include "Packages/Engine/Actors/Pawn/UPlayerPawn.h"
+ #include "Packages/Engine/Resources/UPalette.h"
++#include "Package/Package.h"
+ #include "Packages/Engine/Resources/Level/UModel.h"
+ #include "Packages/Engine/Resources/Level/UPolys.h"
+ #include "VM/ScriptCall.h"
+ #include "Engine.h"
++#include <iostream>
++#include <cmath>
+ 
+ RenderSubsystem::RenderSubsystem(RenderDevice* renderdevice) : Device(renderdevice)
+ {
+@@ -21,7 +24,7 @@ void RenderSubsystem::DrawGame(float levelTimeElapsed)
+ {
+ 	LevelTimeElapsed = levelTimeElapsed;
+ 	AutoUV += levelTimeElapsed * 64.0f;
+-	engine->Level->Light.Tick(levelTimeElapsed);
++	try { engine->Level->Light.Tick(levelTimeElapsed); } catch (const std::exception&) {}
+ 
+ 	Stats.Frames = 0;
+ 	Stats.Surfaces = 0;
+@@ -34,26 +37,51 @@ void RenderSubsystem::DrawGame(float levelTimeElapsed)
+ 	UPlayerPawn* player = UObject::TryCast<UPlayerPawn>(engine->CameraActor);
+ 	if (player)
+ 	{
+-		flashScale = player->FlashScale();
+-		flashFog = player->FlashFog();
++		try
++		{
++			flashScale = player->FlashScale();
++			flashFog = player->FlashFog();
++		}
++		catch (const std::exception&)
++		{
++		}
+ 	}
+ 
+-	Device->Brightness = engine->client->Brightness;
++	try { Device->Brightness = engine->client->Brightness; } catch (const std::exception&) {}
+ 	Device->Lock(vec4(flashScale, 1.0f), vec4(flashFog, 1.0f), vec4(0.0f), nullptr, nullptr);
+ 
+ 	ResetCanvas();
+-	PreRender();
++	try { PreRender(); } catch (const std::exception&) {}
+ 
+-	if (engine->LaunchInfo.ue1Version <= 219 || engine->console->bNoDrawWorld() == false)
++	bool drawWorld = true;
++	try
++	{
++		const bool hasPawn = engine->viewport && engine->viewport->Actor();
++		bool hideWorld = false;
++		try { hideWorld = hasPawn && engine->console && engine->console->bNoDrawWorld(); }
++		catch (const std::exception&) { hideWorld = false; }
++#ifdef __EMSCRIPTEN__
++		// A half-initialized pawn leaves WindowConsole.bNoDrawWorld at its
++		// default (true), which would skip the entire BSP. Always draw the
++		// world in the browser unless we have a real menu later.
++		hideWorld = false;
++#endif
++		drawWorld = !hideWorld;
++	}
++	catch (const std::exception&)
+ 	{
+-		DrawScene();
+-		RenderOverlays();
++		drawWorld = true;
++	}
++	if (drawWorld)
++	{
++		try { DrawScene(); } catch (const std::exception& e) { std::cout << "DrawScene: " << e.what() << std::endl; }
++		try { RenderOverlays(); } catch (const std::exception&) {}
+ 		if (engine->LaunchInfo.IsDeusEx())
+ 			PostRenderFlash();
+ 		Device->EndFlash();
+ 	}
+ 
+-	PostRender();
++	try { PostRender(); } catch (const std::exception&) {}
+ 
+ 	Device->Unlock(true);
+ }
+@@ -99,7 +127,7 @@ void RenderSubsystem::UpdateTexture(UTexture* tex)
+ {
+ 	if (tex && tex->FrameCounter != TextureFrameCounter)
+ 	{
+-		tex->Update(LevelTimeElapsed);
++		try { tex->Update(LevelTimeElapsed); } catch (const std::exception&) {}
+ 		tex->FrameCounter = TextureFrameCounter;
+ 	}
+ }
+@@ -132,15 +160,42 @@ void RenderSubsystem::UpdateTextureInfo(TextureInfo& info, UTexture* texture)
+ 	if (!info.Texture)
+ 		return;
+ 
+-	info.UScale = texture->DrawScale();
+-	info.VScale = texture->DrawScale();
++	// Texture.DrawScale is often unread/garbage on WASM (property offset)
++	// and turns a 256px tile into television static. Native Vulkan looks
++	// correct with a world scale of 1; keep that here.
++	info.UScale = 1.0f;
++	info.VScale = 1.0f;
+ 	info.Format = texture->UsedFormat;
+ 	info.Mips = texture->UsedMipmaps.data();
+ 	info.NumMips = (int)texture->UsedMipmaps.size();
+-	info.USize = texture->USize();
+-	info.VSize = texture->VSize();
+-	if (texture->Palette())
+-		info.Palette = (TextureColor*)texture->Palette()->Colors.data();
++	try
++	{
++		info.USize = texture->USize();
++		info.VSize = texture->VSize();
++	}
++	catch (const std::exception&)
++	{
++		info.USize = 0;
++		info.VSize = 0;
++	}
++	if (info.USize < 2 && info.NumMips > 0)
++		info.USize = info.Mips[0].Width;
++	if (info.VSize < 2 && info.NumMips > 0)
++		info.VSize = info.Mips[0].Height;
++	info.Palette = nullptr;
++	UPalette* palette = nullptr;
++	try { palette = texture->Palette(); } catch (const std::exception&) {}
++	if (!palette)
++	{
++		try { palette = UObject::TryCast<UPalette>(texture->GetUObject("Palette")); }
++		catch (const std::exception&) {}
++	}
++	if (palette)
++	{
++		try { palette->LoadNow(); } catch (const std::exception&) {}
++		if (palette->Colors.size() >= 256)
++			info.Palette = reinterpret_cast<TextureColor*>(palette->Colors.data());
++	}
+ 
+ 	info.bRealtimeChanged = texture->TextureModified;
+ 	if (texture->TextureModified)
+diff --git a/SurrealEngine/Render/VisibleFrame.cpp b/SurrealEngine/Render/VisibleFrame.cpp
+index 818aa65d6947fc144b7bb7aaf3fecedf07731743..a7161eeb29b75ecc72c7ed1d4aa92884c0e172ec 100644
+--- a/SurrealEngine/Render/VisibleFrame.cpp
++++ b/SurrealEngine/Render/VisibleFrame.cpp
+@@ -10,6 +10,7 @@
+ #include "Packages/Engine/Actors/Info/USkyZoneInfo.h"
+ #include "Packages/Engine/Actors/Info/ULevelInfo.h"
+ #include "Packages/Extension/Windows/TabGroup/URootWindow.h"
++#include <iostream>
+ 
+ void VisibleFrame::Process(const vec3& location, const mat4& worldToView, const Coords& viewRotation, bool mirrorFlag, int portalDepth, const Array<PortalSpan>& portalSpans, const vec4& portalPlane)
+ {
+@@ -97,7 +98,7 @@ void VisibleFrame::SetupSceneFrame(const mat4& worldToView)
+ 	float RProjZ = (float)std::tan(radians(Frame.FovAngle) * 0.5f);
+ 	float RFX2 = 2.0f * RProjZ / Frame.FX;
+ 	float RFY2 = 2.0f * RProjZ * Aspect / Frame.FY;
+-	Frame.Projection = mat4::frustum(-RProjZ, RProjZ, -Aspect * RProjZ, Aspect * RProjZ, 1.0f, 32768.0f, handedness::left, clipzrange::zero_positive_w);
++	Frame.Projection = mat4::frustum(-RProjZ, RProjZ, -Aspect * RProjZ, Aspect * RProjZ, 1.0f, 32768.0f, handedness::left, clipzrange::negative_positive_w);
+ }
+ 
+ void VisibleFrame::ProcessNode(BspNode* node)
+@@ -281,8 +282,15 @@ void VisibleFrame::ProcessNodeSurface(BspNode* node, bool front)
+ 		}
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	// The software clipper's projection does not match WebGL clip space, so it
++	// kept only a few water polygons and rejected the rest of Deck16.
++	(void)points;
++	(void)numverts;
++#else
+ 	if (!Clipper.CheckSurface(points, numverts, (PolyFlags & PF_NoOcclude) == 0))
+ 		return;
++#endif
+ 
+ 	/*if (PolyFlags & PF_Portal)
+ 	{
+@@ -292,6 +300,8 @@ void VisibleFrame::ProcessNodeSurface(BspNode* node, bool front)
+ 
+ 	if (PolyFlags & PF_Invisible)
+ 		return;
++	if (PolyFlags & PF_FakeBackdrop)
++		return;
+ 
+ 	if ((PolyFlags & (PF_Translucent | PF_Modulated)) == 0 && (PolyFlags & PF_Occlude) != PF_Occlude)
+ 	{
+@@ -340,11 +350,20 @@ int VisibleFrame::FindZoneAt(const vec4& location, BspNode* node, BspNode* nodes
+ 
+ void VisibleFrame::Draw()
+ {
+-	DrawPortals();
+-	DrawOpaqueNodes();
+-	DrawOpaqueActors();
+-	SortTranslucent();
+-	DrawTranslucent();
++	static int drawLog = 0;
++	if (drawLog < 3)
++	{
++		std::cout << "VisibleFrame opaque=" << OpaqueNodes.size()
++			<< " actors=" << Actors.size()
++			<< " trans=" << Translucents.size()
++			<< " portals=" << Portals.size() << std::endl;
++		drawLog += 1;
++	}
++	try { DrawPortals(); } catch (const std::exception& e) { std::cout << "DrawPortals: " << e.what() << std::endl; }
++	try { DrawOpaqueNodes(); } catch (const std::exception& e) { std::cout << "DrawOpaqueNodes: " << e.what() << std::endl; }
++	try { DrawOpaqueActors(); } catch (const std::exception& e) { std::cout << "DrawOpaqueActors: " << e.what() << std::endl; }
++	try { SortTranslucent(); } catch (const std::exception&) {}
++	try { DrawTranslucent(); } catch (const std::exception& e) { std::cout << "DrawTranslucent: " << e.what() << std::endl; }
+ }
+ 
+ void VisibleFrame::DrawCoronas()
+@@ -362,14 +381,18 @@ void VisibleFrame::DrawOpaqueNodes()
+ {
+ 	Device->SetSceneNode(&Frame);
+ 	for (VisibleNode& node : OpaqueNodes)
+-		node.Draw(this);
++	{
++		try { node.Draw(this); } catch (const std::exception&) {}
++	}
+ }
+ 
+ void VisibleFrame::DrawOpaqueActors()
+ {
+ 	Device->SetSceneNode(&Frame);
+ 	for (VisibleActor& actor : Actors)
+-		actor.DrawOpaque(this);
++	{
++		try { actor.DrawOpaque(this); } catch (const std::exception&) {}
++	}
+ }
+ 
+ void VisibleFrame::DrawTranslucent()
+diff --git a/SurrealEngine/Render/VisibleNode.cpp b/SurrealEngine/Render/VisibleNode.cpp
+index 1a5674821cef134191109f52740c6f95f5d631fa..1ad923cd5dd4b01205cc5c9c214f06d4d1f595a8 100644
+--- a/SurrealEngine/Render/VisibleNode.cpp
++++ b/SurrealEngine/Render/VisibleNode.cpp
+@@ -18,38 +18,75 @@ void VisibleNode::Draw(VisibleFrame* frame)
+ 	const vec3& VVec = model->Vectors[surface.vTextureV];
+ 	const vec3& Base = model->Points[surface.pBase];
+ 
+-	engine->render->UpdateTexture(surface.Material);
++	try { engine->render->UpdateTexture(surface.Material); } catch (const std::exception&) {}
+ 
+ 	auto zoneActor = engine->GetZoneActor(Front ? Node->Zone1 : Node->Zone0);
+ 
+ 	// If no ZoneInfo is found, use the values from LevelInfo instead.
+-	float ZoneUPanSpeed = zoneActor->TexUPanSpeed();
+-	float ZoneVPanSpeed = zoneActor->TexVPanSpeed();
++	float ZoneUPanSpeed = 1.0f;
++	float ZoneVPanSpeed = 1.0f;
++	if (zoneActor)
++	{
++		try
++		{
++			ZoneUPanSpeed = zoneActor->TexUPanSpeed();
++			ZoneVPanSpeed = zoneActor->TexVPanSpeed();
++		}
++		catch (const std::exception&)
++		{
++		}
++	}
+ 
+-	UTexture* tex;
+-	if (surface.Material)
+-		tex = surface.Material->GetAnimTexture();
+-	else
+-		tex = engine->LevelInfo->DefaultTexture();
++	UTexture* tex = nullptr;
++	try
++	{
++		if (surface.Material)
++			tex = surface.Material->GetAnimTexture();
++	}
++	catch (const std::exception&)
++	{
++		tex = surface.Material;
++	}
++	if (!tex)
++	{
++		try { tex = engine->LevelInfo->DefaultTexture(); } catch (const std::exception&) {}
++	}
++	if (tex)
++	{
++		try { tex->LoadNow(); } catch (const std::exception&) {}
++	}
+ 
+ 	TextureInfo texture;
+-	engine->render->UpdateTexture(tex);
++	try { engine->render->UpdateTexture(tex); } catch (const std::exception&) {}
+ 	engine->render->UpdateTextureInfo(texture, surface, tex, ZoneUPanSpeed, ZoneVPanSpeed);
+ 
+ 	TextureInfo detailtex;
+-	if (surface.Material && surface.Material->DetailTexture())
++	TextureInfo macrotex;
++	try
+ 	{
+-		tex = surface.Material->DetailTexture()->GetAnimTexture();
+-		engine->render->UpdateTexture(tex);
+-		engine->render->UpdateTextureInfo(detailtex, surface, tex, ZoneUPanSpeed, ZoneVPanSpeed);
++		if (surface.Material && surface.Material->DetailTexture())
++		{
++			UTexture* detail = surface.Material->DetailTexture()->GetAnimTexture();
++			try { detail->LoadNow(); } catch (const std::exception&) {}
++			try { engine->render->UpdateTexture(detail); } catch (const std::exception&) {}
++			engine->render->UpdateTextureInfo(detailtex, surface, detail, ZoneUPanSpeed, ZoneVPanSpeed);
++		}
+ 	}
+-
+-	TextureInfo macrotex;
+-	if (surface.Material && surface.Material->MacroTexture())
++	catch (const std::exception&)
++	{
++	}
++	try
++	{
++		if (surface.Material && surface.Material->MacroTexture())
++		{
++			UTexture* macro = surface.Material->MacroTexture()->GetAnimTexture();
++			try { macro->LoadNow(); } catch (const std::exception&) {}
++			try { engine->render->UpdateTexture(macro); } catch (const std::exception&) {}
++			engine->render->UpdateTextureInfo(macrotex, surface, macro, ZoneUPanSpeed, ZoneVPanSpeed);
++		}
++	}
++	catch (const std::exception&)
+ 	{
+-		tex = surface.Material->MacroTexture()->GetAnimTexture();
+-		engine->render->UpdateTexture(tex);
+-		engine->render->UpdateTextureInfo(macrotex, surface, tex, ZoneUPanSpeed, ZoneVPanSpeed);
+ 	}
+ 
+ 	int numverts = Node->NumVertices;
+@@ -75,15 +112,22 @@ void VisibleNode::Draw(VisibleFrame* frame)
+ 	TextureInfo fogmap;
+ 	if ((PolyFlags & PF_Unlit) == 0)
+ 	{
+-		lightmap = engine->Level->Light.GetLevelLightmap(surface, zoneActor, model);
+-		fogmap = engine->Level->Light.GetLevelFogmap(surface, engine->CameraActor->Region().Zone, model);
++		try { lightmap = engine->Level->Light.GetLevelLightmap(surface, zoneActor, model); } catch (const std::exception&) {}
++		try
++		{
++			if (engine->CameraActor)
++				fogmap = engine->Level->Light.GetLevelFogmap(surface, engine->CameraActor->Region().Zone, model);
++		}
++		catch (const std::exception&)
++		{
++		}
+ 	}
+ 
+ 	SurfaceInfo surfaceinfo;
+ 	surfaceinfo.PolyFlags = PolyFlags;
+ 	surfaceinfo.Texture = &texture;
+-	surfaceinfo.MacroTexture = surface.Material && surface.Material->MacroTexture() ? &macrotex : nullptr;
+-	surfaceinfo.DetailTexture = surface.Material && surface.Material->DetailTexture() ? &detailtex : nullptr;
++	surfaceinfo.MacroTexture = macrotex.NumMips ? &macrotex : nullptr;
++	surfaceinfo.DetailTexture = detailtex.NumMips ? &detailtex : nullptr;
+ 	surfaceinfo.LightMap = lightmap.NumMips != 0 ? &lightmap : nullptr;
+ 	surfaceinfo.FogMap = fogmap.NumMips != 0 ? &fogmap : nullptr;
+ 
+diff --git a/SurrealEngine/RenderDevice/RenderDevice.cpp b/SurrealEngine/RenderDevice/RenderDevice.cpp
+index e73270f5af3ac16d95af77c43d73fc883e2fef63..d3136e91b594c863d305e025e3346b4a5525e8f3 100644
+--- a/SurrealEngine/RenderDevice/RenderDevice.cpp
++++ b/SurrealEngine/RenderDevice/RenderDevice.cpp
+@@ -2,11 +2,15 @@
+ #include "Precomp.h"
+ #include "RenderDevice.h"
+ #include "LauncherSettings.h"
++#ifndef __EMSCRIPTEN__
+ #include "Vulkan/VulkanRenderDevice.h"
+ #include "OpenGL/GLRenderDevice.h"
+ #ifdef WIN32
+ #include "D3D11/D3D11RenderDevice.h"
+ #endif
++#else
++#include "WebGLRenderDevice.h"
++#endif
+ #include "Packages/Engine/Resources/Level/ULevel.h"
+ #include "Packages/Engine/Resources/Level/UModel.h"
+ #include <surrealwidgets/core/colorf.h>
+@@ -29,6 +33,10 @@ RenderDevice::RenderDevice()
+ 
+ std::unique_ptr<RenderDevice> RenderDevice::Create(Widget* viewport, RenderAPI renderAPI)
+ {
++#ifdef __EMSCRIPTEN__
++	(void)renderAPI;
++	return std::make_unique<WebGLRenderDevice>(viewport);
++#else
+ 	if (renderAPI == RenderAPI::Vulkan)
+ 	{
+ 		return std::make_unique<VulkanRenderDevice>(viewport);
+@@ -47,6 +55,7 @@ std::unique_ptr<RenderDevice> RenderDevice::Create(Widget* viewport, RenderAPI r
+ 	{
+ 		Exception::Throw("Render API not available on this platform");
+ 	}
++#endif
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+diff --git a/SurrealEngine/UE1GameDatabase.cpp b/SurrealEngine/UE1GameDatabase.cpp
+index 085ecde247ae0c0c3a82b0dcf229e6eb2fd7f705..cba2fb3ad5595f294d0316583d74929c5ea3dfe9 100644
+--- a/SurrealEngine/UE1GameDatabase.cpp
++++ b/SurrealEngine/UE1GameDatabase.cpp
+@@ -13,6 +13,17 @@ std::pair<KnownUE1Games, std::string> FindUE1GameInPath(const std::string& ue1_g
+ 		return std::make_pair(KnownUE1Games::UE1_GAME_NOT_FOUND, "");
+ 
+ 	const auto UE1GameSystemPath = fs::path(ue1_game_root_folder_path) / "System";
++#ifdef __EMSCRIPTEN__
++	const auto hasPackage = [&](const char* name)
++	{
++		return fs::exists(UE1GameSystemPath / name);
++	};
++	if (hasPackage("Core.u") && hasPackage("Engine.u") &&
++		(hasPackage("UnrealTournament.u") || hasPackage("Botpack.u") || hasPackage("BotPack.u")))
++	{
++		return std::make_pair(KnownUE1Games::UT99_436, "UnrealTournament.exe");
++	}
++#endif
+ 	const auto UE1GameSystem64Path = fs::path(ue1_game_root_folder_path) / "System64";
+ 
+ 	for (auto& executable_name : knownUE1ExecutableNames)
+@@ -39,6 +50,18 @@ std::pair<KnownUE1Games, std::string> FindUE1GameInPath(const std::string& ue1_g
+ 		return std::make_pair(it->second, executable_name);
+ 	}
+ 
++#ifndef __EMSCRIPTEN__
++	const auto hasPackageFallback = [&](const char* name)
++	{
++		return fs::exists(UE1GameSystemPath / name);
++	};
++	if (hasPackageFallback("Core.u") && hasPackageFallback("Engine.u") &&
++		(hasPackageFallback("UnrealTournament.u") || hasPackageFallback("Botpack.u") || hasPackageFallback("BotPack.u")))
++	{
++		return std::make_pair(KnownUE1Games::UT99_436, "UnrealTournament.exe");
++	}
++#endif
++
+ 	// We got nothing here
+ 	return std::make_pair(KnownUE1Games::UE1_GAME_NOT_FOUND, "");
+ }
+\ No newline at end of file
+diff --git a/SurrealEngine/UI/WidgetResourceData.cpp b/SurrealEngine/UI/WidgetResourceData.cpp
+index b900d5809ff4c5acc8b28ce4fbd6d576bdeb52d4..d501ca8080e0bd12417bcc50523082c2f1949f52 100644
+--- a/SurrealEngine/UI/WidgetResourceData.cpp
++++ b/SurrealEngine/UI/WidgetResourceData.cpp
+@@ -12,8 +12,17 @@ class ResourceLoaderPK3 : public ResourceLoader
+ public:
+ 	ResourceLoaderPK3()
+ 	{
++#ifdef __EMSCRIPTEN__
++		mz_bool result = mz_zip_reader_init_file(&widgetResources, "/SurrealEngine.pk3", 0);
++		if (!result)
++		{
++			const auto altPk3 = (fs::path{ OS::executable_path() } / "SurrealEngine.pk3").string();
++			result = mz_zip_reader_init_file(&widgetResources, altPk3.c_str(), 0);
++		}
++#else
+ 		const auto pk3PathStr = (fs::path{ OS::executable_path() } / "SurrealEngine.pk3").string();
+ 		mz_bool result = mz_zip_reader_init_file(&widgetResources, pk3PathStr.c_str(), 0);
++#endif
+ #ifndef WIN32
+ 		// On Linux, SurrealEngine.pk3 can additionally be put in some other folders given below.
+ 		if (!result)
+@@ -21,7 +30,7 @@ public:
+ 		if (!result)
+ 		{
+ 			char* home = std::getenv("HOME");
+-			std::string directory = fs::path(home) / ".local/share/surrealengine";
++			std::string directory = home ? (fs::path(home) / ".local/share/surrealengine").string() : std::string();
+ 			char* xdg_data_home = std::getenv("XDG_DATA_HOME");
+ 			if (xdg_data_home != nullptr) {
+ 				directory = fs::path(xdg_data_home) / "surrealengine";
+diff --git a/SurrealEngine/Utils/Exception.cpp b/SurrealEngine/Utils/Exception.cpp
+index 18cf3ca7ab328a09c41fb1a7ef62124cf4f33244..48cf694472ac95eef903f175ff4334ee95b6679b 100644
+--- a/SurrealEngine/Utils/Exception.cpp
++++ b/SurrealEngine/Utils/Exception.cpp
+@@ -35,18 +35,16 @@ struct InitDbgHelp
+ 	bool bHasSymbols;
+ };
+ 
+-#elif defined __linux__
++#elif defined(__linux__) || defined(__EMSCRIPTEN__)
+ 
++#if !defined(__EMSCRIPTEN__)
+ #include <execinfo.h>
++#endif
+ #include <cxxabi.h>
+ #include <cstring>
+ #include <cstdlib>
+ #include <memory>
+ 
+-#else
+-
+-#error "Exception.cpp: Unsupported Target"
+-
+ #endif
+ 
+ std::mutex Exception::mutex;
+diff --git a/SurrealEngine/Utils/File.cpp b/SurrealEngine/Utils/File.cpp
+index 7520ab0505c52b338360f79c5fddad0c86894b1f..f1483d2dc000106b992e043b6d8dcb538cb701f8 100644
+--- a/SurrealEngine/Utils/File.cpp
++++ b/SurrealEngine/Utils/File.cpp
+@@ -369,6 +369,12 @@ void Directory::create(const std::string& dirname)
+ 
+ fs::path Directory::localAppData()
+ {
++#ifdef __EMSCRIPTEN__
++	const char* homeDir = getenv("HOME");
++	if (homeDir && homeDir[0])
++		return fs::path(homeDir);
++	return fs::path("/save");
++#else
+ 	// We're trying to find "~/.config" here
+ 	const char* homeDir = getenv("HOME");
+ 
+@@ -376,6 +382,7 @@ fs::path Directory::localAppData()
+ 		throw std::runtime_error("HOME environment variable is not set... somehow.");
+ 
+ 	return fs::path(homeDir) / ".config";
++#endif
+ }
+ 
+ #endif
+@@ -415,6 +422,9 @@ std::string OS::executable_path()
+ 	#define PROC_EXE_PATH "/proc/self/exe"
+ 	#endif
+ 
++#ifdef __EMSCRIPTEN__
++	return std::string("/");
++#endif
+ 	char exe_file[PATH_MAX];
+ 	int size;
+ 	struct stat sb;
+diff --git a/SurrealEngine/Video/VideoPlayer.cpp b/SurrealEngine/Video/VideoPlayer.cpp
+index 608663e868bb41b8e37e1b9486d108b5adfd8f64..81e5f2fc4e2138144724d4be78ad040886dc95d7 100644
+--- a/SurrealEngine/Video/VideoPlayer.cpp
++++ b/SurrealEngine/Video/VideoPlayer.cpp
+@@ -37,7 +37,7 @@ public:
+ 
+ 	size_t ReadSamples(float* output, size_t samples) override
+ 	{
+-		size_t count = std::min(pos + samples, Data.size()) - pos;
++		size_t count = std::min<size_t>(pos + samples, Data.size()) - pos;
+ 		int16_t* d = Data.data() + pos;
+ 		for (size_t i = 0; i < count; i++)
+ 		{
+diff --git a/SurrealWidgets/CMakeLists.txt b/SurrealWidgets/CMakeLists.txt
+index 092ca6aac36294b6693fd3ec79775e19a4ca799a..1b8cb579b88e9d016ae3e21e8cf3883b20e34c5a 100644
+--- a/SurrealWidgets/CMakeLists.txt
++++ b/SurrealWidgets/CMakeLists.txt
+@@ -347,6 +347,12 @@ elseif(HAIKU)
+ 	set(SURREALWIDGETS_LIBS ${CMAKE_DL_LIBS})
+ 	set(SURREALWIDGETS_DEFINES -DUNIX -D_UNIX)
+ 	set(SURREALWIDGETS_LINK_OPTIONS -pthread)
++elseif(EMSCRIPTEN)
++	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_UNIX_SOURCES})
++	set(SURREALWIDGETS_LIBS)
++	set(SURREALWIDGETS_DEFINES -DUNIX -D_UNIX)
++	set(SURREALWIDGETS_LINK_OPTIONS)
++	set(SURREALWIDGETS_COMPILE_OPTIONS ${SURREALWIDGETS_COMPILE_OPTIONS} "SHELL:-sUSE_SDL=2")
+ else()
+ 	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_UNIX_SOURCES})
+ 	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_X11_SOURCES})
+@@ -379,6 +385,11 @@ if(SDL3_FOUND)
+ 	set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_SDL3)
+ endif()
+ 
++if(EMSCRIPTEN)
++	set(SDL3_FOUND FALSE)
++	set(SDL2_FOUND TRUE)
++endif()
++
+ if(SDL2_FOUND AND NOT SDL3_FOUND)
+ 	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_SDL2_SOURCES})
+ 	set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_SDL2)
+diff --git a/SurrealWidgets/src/core/resourcedata_unix.cpp b/SurrealWidgets/src/core/resourcedata_unix.cpp
+index 03e659ea6adfa79f87931e62577121ad4f0bd034..d9c6914f7afbd55453f9366beae8898437b33f6a 100644
+--- a/SurrealWidgets/src/core/resourcedata_unix.cpp
++++ b/SurrealWidgets/src/core/resourcedata_unix.cpp
+@@ -4,8 +4,10 @@
+ #include <vector>
+ #include <string>
+ #include <cmath>
++#ifndef __EMSCRIPTEN__
+ #include <gio/gio.h>
+ #include <fontconfig/fontconfig.h>
++#endif
+ 
+ static std::vector<uint8_t> ReadAllBytes(const std::string& filename)
+ {
+@@ -23,6 +25,7 @@ static std::vector<uint8_t> ReadAllBytes(const std::string& filename)
+ 	return buffer;
+ }
+ 
++#ifndef __EMSCRIPTEN__
+ static std::vector<SingleFontData> GetGtkUIFont(const std::string& propertyName)
+ {
+ 	// Ask GTK what the UI font is:
+@@ -64,15 +67,24 @@ static std::vector<SingleFontData> GetGtkUIFont(const std::string& propertyName)
+ 	fontdata.fontdata = ReadAllBytes(filename);
+ 	return { std::move(fontdata) };
+ }
++#endif
+ 
+ std::vector<SingleFontData> ResourceData::LoadSystemFont()
+ {
++#ifdef __EMSCRIPTEN__
++	return {};
++#else
+ 	return GetGtkUIFont("font-name");
++#endif
+ }
+ 
+ std::vector<SingleFontData> ResourceData::LoadMonospaceSystemFont()
+ {
++#ifdef __EMSCRIPTEN__
++	return {};
++#else
+ 	return GetGtkUIFont("monospace-font-name");
++#endif
+ }
+ 
+ double ResourceData::GetSystemFontSize()
+diff --git a/SurrealWidgets/src/window/sdl2/sdl2_display_backend.cpp b/SurrealWidgets/src/window/sdl2/sdl2_display_backend.cpp
+index 5627153d9601ea76e5871395ebf8b9a13d8b5bfe..8ad2c62abc7277d8ebfda3232de40adb8a44583c 100644
+--- a/SurrealWidgets/src/window/sdl2/sdl2_display_backend.cpp
++++ b/SurrealWidgets/src/window/sdl2/sdl2_display_backend.cpp
+@@ -23,7 +23,7 @@ SDL2DisplayBackend::SDL2DisplayBackend()
+ 	SDL2DisplayWindow::PaintEventNumber = SDL_RegisterEvents(1);
+ 
+ 	// SDL2 doesn't have proper native hidpi support for Linux. Cheat a bit here by asking X11 ourselves.
+-#if !defined(WIN32) && !defined(__APPLE__)
++#if !defined(WIN32) && !defined(__APPLE__) && !defined(__EMSCRIPTEN__)
+ 	const char* driver = SDL_GetCurrentVideoDriver();
+ 	if (driver && strcmp(driver, "x11") == 0)
+ 	{
+diff --git a/SurrealWidgets/src/window/sdl2/sdl2_display_window.cpp b/SurrealWidgets/src/window/sdl2/sdl2_display_window.cpp
+index 7929d9a072aad46802fd098f9c4384c8932a9a3a..4b67e35d434b7c1d50e5f16503a0a39f2cac51a7 100644
+--- a/SurrealWidgets/src/window/sdl2/sdl2_display_window.cpp
++++ b/SurrealWidgets/src/window/sdl2/sdl2_display_window.cpp
+@@ -2,7 +2,11 @@
+ #include <stdexcept>
+ #include <vector>
+ #include <string>
++#ifndef __EMSCRIPTEN__
+ #include <SDL2/SDL_vulkan.h>
++#else
++#include <emscripten/html5.h>
++#endif
+ 
+ Uint32 SDL2DisplayWindow::PaintEventNumber = 0xffffffff;
+ bool SDL2DisplayWindow::ExitRunLoop;
+@@ -10,11 +14,30 @@ std::unordered_map<int, SDL2DisplayWindow*> SDL2DisplayWindow::WindowList;
+ 
+ SDL2DisplayWindow::SDL2DisplayWindow(DisplayWindowHost* windowHost, WidgetType type, SDL2DisplayWindow* owner, RenderAPI renderAPI, double uiscale) : WindowHost(windowHost), UIScale(uiscale)
+ {
+-	unsigned int flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_ALLOW_HIGHDPI*/;
++	unsigned int flags = SDL_WINDOW_HIDDEN;
++#ifndef __EMSCRIPTEN__
++	flags |= SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_ALLOW_HIGHDPI*/;
++#endif
+ 	if (renderAPI == RenderAPI::Vulkan)
+ 		flags |= SDL_WINDOW_VULKAN;
+ 	else if (renderAPI == RenderAPI::OpenGL)
++	{
+ 		flags |= SDL_WINDOW_OPENGL;
++#ifdef __EMSCRIPTEN__
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
++#else
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
++		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
++#endif
++		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
++		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
++#ifdef __EMSCRIPTEN__
++		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
++#endif
++	}
+ #if defined(__APPLE__)
+ 	else if (renderAPI == RenderAPI::Metal)
+ 		flags |= SDL_WINDOW_METAL;
+@@ -24,7 +47,25 @@ SDL2DisplayWindow::SDL2DisplayWindow(DisplayWindowHost* windowHost, WidgetType t
+ 
+ 	if (renderAPI == RenderAPI::Vulkan || renderAPI == RenderAPI::OpenGL || renderAPI == RenderAPI::Metal)
+ 	{
+-		Handle.window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 200, flags);
++		int startW = 320;
++		int startH = 200;
++#ifdef __EMSCRIPTEN__
++		int canvasW = 0;
++		int canvasH = 0;
++		if (emscripten_get_canvas_element_size("#canvas", &canvasW, &canvasH) == EMSCRIPTEN_RESULT_SUCCESS
++			&& canvasW >= 2 && canvasH >= 2)
++		{
++			startW = canvasW;
++			startH = canvasH;
++		}
++		else
++		{
++			startW = 640;
++			startH = 480;
++			emscripten_set_canvas_element_size("#canvas", startW, startH);
++		}
++#endif
++		Handle.window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, startW, startH, flags);
+ 		if (!Handle.window)
+ 			throw std::runtime_error(std::string("Unable to create SDL window:") + SDL_GetError());
+ 	}
+@@ -50,6 +91,11 @@ SDL2DisplayWindow::~SDL2DisplayWindow()
+ 		BackBufferTexture = nullptr;
+ 	}
+ 
++	if (GlContext)
++	{
++		SDL_GL_DeleteContext(GlContext);
++		GlContext = nullptr;
++	}
+ 	if (RendererHandle)
+ 		SDL_DestroyRenderer(RendererHandle);
+ 	SDL_DestroyWindow(Handle.window);
+@@ -59,6 +105,9 @@ SDL2DisplayWindow::~SDL2DisplayWindow()
+ 
+ std::vector<std::string> SDL2DisplayWindow::GetVulkanInstanceExtensions()
+ {
++#ifdef __EMSCRIPTEN__
++	return {};
++#else
+ 	unsigned int extCount = 0;
+ 	SDL_Vulkan_GetInstanceExtensions(Handle.window, &extCount, nullptr);
+ 	std::vector<const char*> extNames(extCount);
+@@ -69,14 +118,46 @@ std::vector<std::string> SDL2DisplayWindow::GetVulkanInstanceExtensions()
+ 	for (const char* ext : extNames)
+ 		result.emplace_back(ext);
+ 	return result;
++#endif
+ }
+ 
+ VkSurfaceKHR SDL2DisplayWindow::CreateVulkanSurface(VkInstance instance)
+ {
++#ifdef __EMSCRIPTEN__
++	(void)instance;
++	return {};
++#else
+ 	VkSurfaceKHR surfaceHandle = {};
+ 	if (SDL_Vulkan_CreateSurface(Handle.window, instance, &surfaceHandle) != SDL_TRUE)
+ 		throw std::runtime_error("Could not create vulkan surface");
+ 	return surfaceHandle;
++#endif
++}
++
++void SDL2DisplayWindow::CreateGLContext()
++{
++	if (GlContext)
++		return;
++	GlContext = SDL_GL_CreateContext(Handle.window);
++	if (!GlContext)
++		throw std::runtime_error(std::string("Unable to create SDL GL context:") + SDL_GetError());
++}
++
++void SDL2DisplayWindow::MakeGLContextCurrent()
++{
++	if (GlContext)
++		SDL_GL_MakeCurrent(Handle.window, GlContext);
++}
++
++bool SDL2DisplayWindow::SetGLSwapInterval(int interval)
++{
++	return SDL_GL_SetSwapInterval(interval) == 0;
++}
++
++void SDL2DisplayWindow::SwapGLBuffers()
++{
++	if (Handle.window)
++		SDL_GL_SwapWindow(Handle.window);
+ }
+ 
+ void SDL2DisplayWindow::SetWindowTitle(const std::string& text)
+@@ -92,8 +173,12 @@ void SDL2DisplayWindow::SetWindowIcon(const std::vector<std::shared_ptr<Image>>&
+ 
+ void SDL2DisplayWindow::SetClientFrame(const Rect& box)
+ {
+-	// Is there a way to set both in one call?
+-
++#ifdef __EMSCRIPTEN__
++	// SDL_SetWindowSize maps to emscripten_set_canvas_element_size, which
++	// changes canvas.width/height and destroys the live WebGL context.
++	(void)box;
++	return;
++#else
+ 	double uiscale = GetDpiScale();
+ 	int x = (int)std::round(box.x * uiscale);
+ 	int y = (int)std::round(box.y * uiscale);
+@@ -102,6 +187,7 @@ void SDL2DisplayWindow::SetClientFrame(const Rect& box)
+ 
+ 	SDL_SetWindowSize(Handle.window, w, h);
+ 	SDL_SetWindowPosition(Handle.window, x, y);
++#endif
+ }
+ 
+ void SDL2DisplayWindow::Show()
+@@ -112,8 +198,12 @@ void SDL2DisplayWindow::Show()
+ void SDL2DisplayWindow::ShowFullscreen()
+ {
+ 	SDL_ShowWindow(Handle.window);
++#ifdef __EMSCRIPTEN__
++	isFullscreen = true;
++#else
+ 	SDL_SetWindowFullscreen(Handle.window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+ 	isFullscreen = true;
++#endif
+ }
+ 
+ void SDL2DisplayWindow::ShowMaximized()
+@@ -169,7 +259,9 @@ void SDL2DisplayWindow::LockCursor()
+ {
+ 	if (!CursorLocked)
+ 	{
++#ifndef __EMSCRIPTEN__
+ 		SDL_SetRelativeMouseMode(SDL_TRUE);
++#endif
+ 		CursorLocked = true;
+ 	}
+ }
+@@ -178,7 +270,9 @@ void SDL2DisplayWindow::UnlockCursor()
+ {
+ 	if (CursorLocked)
+ 	{
++#ifndef __EMSCRIPTEN__
+ 		SDL_SetRelativeMouseMode(SDL_FALSE);
++#endif
+ 		CursorLocked = false;
+ 	}
+ }
+diff --git a/SurrealWidgets/src/window/sdl2/sdl2_display_window.h b/SurrealWidgets/src/window/sdl2/sdl2_display_window.h
+index 047e4877b155844ef11dcc4b018b4b691a6ba114..a040ac3b343dd097c2dabcb90edb6024b820bc26 100644
+--- a/SurrealWidgets/src/window/sdl2/sdl2_display_window.h
++++ b/SurrealWidgets/src/window/sdl2/sdl2_display_window.h
+@@ -55,6 +55,10 @@ public:
+ 
+ 	std::vector<std::string> GetVulkanInstanceExtensions() override;
+ 	VkSurfaceKHR CreateVulkanSurface(VkInstance instance) override;
++	void CreateGLContext() override;
++	void MakeGLContextCurrent() override;
++	bool SetGLSwapInterval(int interval) override;
++	void SwapGLBuffers() override;
+ 
+ 	static void DispatchEvent(const SDL_Event& event);
+ 	static SDL2DisplayWindow* FindEventWindow(const SDL_Event& event);
+@@ -95,6 +99,7 @@ public:
+ 
+ 	DisplayWindowHost* WindowHost = nullptr;
+ 	SDLNativeHandle Handle;
++	SDL_GLContext GlContext = nullptr;
+ 	SDL_Renderer* RendererHandle = nullptr;
+ 	SDL_Texture* BackBufferTexture = nullptr;
+ 	int BackBufferWidth = 0;

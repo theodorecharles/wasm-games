@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly framework_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
+readonly framework_version="0.9.6"
+game_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+engine_root="$(cd "${game_root}/../.." && pwd)"
+source_root="$("${game_root}/scripts/fetch-source")"
+build_root="${source_root}/build-framework"
+framework_root="${WASM_GAME_FRAMEWORK_ROOT:-/home/ted/Development/wasm-game-framework}"
+site_root="${engine_root}/.work/site"
+
+if [[ "$(git -C "$framework_root" rev-parse HEAD)" != "$framework_commit" ]]; then
+    printf 'wasm-game-framework must be pinned at %s.\n' "$framework_commit" >&2
+    exit 1
+fi
+if [[ "$(node -p "require('$framework_root/package.json').version")" != "$framework_version" ]]; then
+    printf 'wasm-game-framework package must be version %s.\n' "$framework_version" >&2
+    exit 1
+fi
+for artifact in openrct2.js openrct2.wasm openrct2.data; do
+    if [[ ! -s "$build_root/$artifact" ]]; then
+        printf 'Missing framework runtime artifact: build-framework/%s\n' "$artifact" >&2
+        exit 1
+    fi
+done
+
+rm -rf -- "$site_root"
+mkdir -p "$site_root/runtime"
+cp -a "$game_root/web/." "$site_root/"
+install -m 0644 "$build_root/openrct2.js" "$site_root/runtime/openrct2.js"
+install -m 0644 "$build_root/openrct2.wasm" "$site_root/runtime/openrct2.wasm"
+install -m 0644 "$build_root/openrct2.data" "$site_root/runtime/openrct2.data"
+install -m 0644 "$source_root/resources/logo/icon.ico" "$site_root/openrct2.ico"
+convert "$source_root/resources/logo/icon_x512.png" -resize 192x192 \
+    +set date:create +set date:modify -define png:exclude-chunks=date,time \
+    "$site_root/openrct2-192.png"
+install -m 0644 "$source_root/resources/logo/icon_x512.png" "$site_root/openrct2-512.png"
+"$framework_root/scripts/install-browser-package.sh" "$site_root" copy
+node "$framework_root/scripts/check-game-package.js" "$site_root"
+
+printf 'Staged OpenRCT2 framework package at %s\n' "$site_root"

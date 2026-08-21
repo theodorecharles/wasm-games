@@ -4,8 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-web.mjs",
-    "test": "node scripts/verify-site-contract.mjs && node scripts/test-adapter-contract.mjs && node ${WASM_FRAMEWORK_DIR:-../wasm-game-framework}/scripts/check-game-package.js web"
+    "build:native": "bash scripts/build-xash-framework.sh && bash scripts/build-opfor-framework.sh && bash scripts/build-cs-menu.sh",
+    "build:web": "node scripts/build-web.mjs",
+    "build": "npm run build:native && npm run build:web",
+    "test:campaign-intros": "node scripts/test-campaign-intros-browser.mjs",
+    "test:cs-bots": "node scripts/test-cs-bots-runtime.mjs",
+    "test": "node scripts/verify-site-contract.mjs && node scripts/test-adapter-contract.mjs && node scripts/test-cs-host-contract.mjs && node ${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}/scripts/check-game-package.js web"
   },
   "dependencies": {
     "cs16-client": "0.1.2",

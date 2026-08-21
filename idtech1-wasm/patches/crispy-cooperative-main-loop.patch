@@ -1,0 +1,203 @@
+diff --git a/src/doom/d_main.c b/src/doom/d_main.c
+index 2092987d..f9203442 100644
+--- a/src/doom/d_main.c
++++ b/src/doom/d_main.c
+@@ -61,6 +61,9 @@
+ #include "i_timer.h"
+ #include "i_video.h"
+ 
++#ifdef CRISPY_WASM
++#include "i_browser.h"
++#endif
+ #include "g_game.h"
+ #include "a11y.h" // [crispy] A11Y
+ 
+@@ -608,7 +611,9 @@ void D_DoomLoop (void)
+     I_InitGraphics();
+     EnableLoadingDisk();
+ 
++#ifndef CRISPY_WASM
+     TryRunTics();
++#endif
+ 
+     V_RestoreBuffer();
+     R_ExecuteSetViewSize();
+@@ -621,10 +624,14 @@ void D_DoomLoop (void)
+         wipegamestate = gamestate;
+     }
+ 
++#ifdef CRISPY_WASM
++    I_BrowserSetMainLoop(D_RunFrame);
++#else
+     while (1)
+     {
+         D_RunFrame();
+     }
++#endif
+ }
+ 
+ 
+diff --git a/src/heretic/d_main.c b/src/heretic/d_main.c
+index 694d791c..b5039b0b 100644
+--- a/src/heretic/d_main.c
++++ b/src/heretic/d_main.c
+@@ -48,6 +48,9 @@
+ #include "v_video.h"
+ #include "am_map.h"
+ #include "v_trans.h" // [crispy] dp_translation
++#ifdef CRISPY_WASM
++#include "i_browser.h"
++#endif
+ 
+ #include "heretic_icon.c"
+ 
+@@ -375,6 +378,27 @@ boolean D_GrabMouseCallback(void)
+     return (gamestate == GS_LEVEL) && !demoplayback && !advancedemo;
+ }
+ 
++static void D_RunFrame(void)
++{
++    static int oldgametic;
++
++    I_StartFrame();
++    TryRunTics();
++
++    if (oldgametic < gametic)
++    {
++        S_UpdateSounds(players[consoleplayer].mo);
++        oldgametic = gametic;
++    }
++    D_Display();
++
++    if (crispy->post_rendering_hook)
++    {
++        crispy->post_rendering_hook();
++        crispy->post_rendering_hook = NULL;
++    }
++}
++
+ //---------------------------------------------------------------------------
+ //
+ // PROC D_DoomLoop
+@@ -424,33 +448,14 @@ void D_DoomLoop(void)
+ 
+     main_loop_started = true;
+ 
++#ifdef CRISPY_WASM
++    I_BrowserSetMainLoop(D_RunFrame);
++#else
+     while (1)
+     {
+-        static int oldgametic;
+-        // Frame syncronous IO operations
+-        I_StartFrame();
+-
+-        // Process one or more tics
+-        // Will run at least one tic
+-        TryRunTics();
+-
+-        if (oldgametic < gametic)
+-        {
+-            // Move positional sounds
+-            S_UpdateSounds(players[consoleplayer].mo);
+-            oldgametic = gametic;
+-        }
+-        D_Display();
+-
+-        // [crispy] post-rendering function pointer to apply config changes
+-        // that affect rendering and that are better applied after the current
+-        // frame has finished rendering
+-        if (crispy->post_rendering_hook)
+-        {
+-            crispy->post_rendering_hook();
+-            crispy->post_rendering_hook = NULL;
+-        }
++        D_RunFrame();
+     }
++#endif
+ }
+ 
+ /*
+diff --git a/src/hexen/h2_main.c b/src/hexen/h2_main.c
+index 2b4ee677..bac6505f 100644
+--- a/src/hexen/h2_main.c
++++ b/src/hexen/h2_main.c
+@@ -46,6 +46,9 @@
+ #include "w_main.h"
+ #include "am_map.h"
+ 
++#ifdef CRISPY_WASM
++#include "i_browser.h"
++#endif
+ #include "hexen_icon.c"
+ 
+ // MACROS ------------------------------------------------------------------
+@@ -995,6 +998,28 @@ static void WarpCheck(void)
+     }
+ }
+ 
++static void H2_RunFrame(void)
++{
++    static int oldgametic;
++
++    I_StartFrame();
++    TryRunTics();
++
++    if (oldgametic < gametic)
++    {
++        S_UpdateSounds(players[displayplayer].mo);
++        oldgametic = gametic;
++    }
++
++    DrawAndBlit();
++
++    if (crispy->post_rendering_hook)
++    {
++        crispy->post_rendering_hook();
++        crispy->post_rendering_hook = NULL;
++    }
++}
++
+ //==========================================================================
+ //
+ // H2_GameLoop
+@@ -1042,34 +1067,14 @@ void H2_GameLoop(void)
+     I_RegisterWindowIcon(hexen_icon_data, hexen_icon_w, hexen_icon_h);
+     I_InitGraphics();
+ 
++#ifdef CRISPY_WASM
++    I_BrowserSetMainLoop(H2_RunFrame);
++#else
+     while (1)
+     {
+-        static int oldgametic;
+-        // Frame syncronous IO operations
+-        I_StartFrame();
+-
+-        // Process one or more tics
+-        // Will run at least one tic
+-        TryRunTics();
+-
+-        if (oldgametic < gametic)
+-        {
+-            // Move positional sounds
+-            S_UpdateSounds(players[displayplayer].mo);
+-            oldgametic = gametic;
+-        }
+-
+-        DrawAndBlit();
+-
+-        // [crispy] post-rendering function pointer to apply config changes
+-        // that affect rendering and that are better applied after the current
+-        // frame has finished rendering
+-        if (crispy->post_rendering_hook)
+-        {
+-            crispy->post_rendering_hook();
+-            crispy->post_rendering_hook = NULL;
+-        }
++        H2_RunFrame();
+     }
++#endif
+ }
+ 
+ //==========================================================================

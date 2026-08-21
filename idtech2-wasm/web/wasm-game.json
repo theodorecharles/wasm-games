@@ -132,6 +132,126 @@
         "accent-strong": "#f2b16b",
         "border": "#724827"
       }
+    },
+    "quake2-xatrix": {
+      "title": "Quake II: The Reckoning",
+      "menuCursor": "browser",
+      "kicker": "id Tech 2 · official mission pack",
+      "engine": "Yamagi Quake II + Xatrix game source",
+      "description": "The Reckoning expansion on the native Quake II client and managed Xatrix game server.",
+      "loadingTitle": "Starting The Reckoning…",
+      "icon": "/quake2.ico",
+      "iconPixelated": false,
+      "background": "/quake2-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "pwa": {
+        "id": "/apps/idtech2/quake2-xatrix",
+        "name": "Quake II: The Reckoning",
+        "shortName": "The Reckoning",
+        "description": "The Reckoning in the id Tech 2 WASM suite.",
+        "themeColor": "#8c6a36",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/quake2-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/quake2-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "dynamic",
+      "nativeManaged": true,
+      "syncBackbuffer": false,
+      "controller": { "mode": "disabled" },
+      "persistence": {
+        "root": "/persistent/idtech2/{variant}",
+        "debounceMs": 750,
+        "intervalMs": 5000,
+        "requestDurability": true
+      },
+      "resizeTransition": "immediate",
+      "canvasWidth": 1280,
+      "canvasHeight": 720,
+      "pixelated": false,
+      "maxDpr": 1,
+      "graphics": true,
+      "advanced": true,
+      "fps": true,
+      "dynamicQuality": true,
+      "profiles": [
+        { "value": "medium", "label": "Medium" },
+        { "value": "high", "label": "High" },
+        { "value": "ultra", "label": "Ultra" }
+      ],
+      "defaultProfile": "high",
+      "fpsTargets": [30, 60, 120],
+      "defaultFps": 60,
+      "defaultDynamicQuality": true,
+      "defaultPlayerName": "Ranger",
+      "provisioningText": "Select the three baseq2 PAKs and The Reckoning xatrix/pak0.pak. Matching files are cached after exact validation.",
+      "theme": {
+        "accent": "#8c6a36",
+        "accent-strong": "#e1b76e",
+        "border": "#5e4828"
+      }
+    },
+    "quake2-rogue": {
+      "title": "Quake II: Ground Zero",
+      "menuCursor": "browser",
+      "kicker": "id Tech 2 · official mission pack",
+      "engine": "Yamagi Quake II + Rogue game source",
+      "description": "Ground Zero expansion on the native Quake II client and managed Rogue game server.",
+      "loadingTitle": "Starting Ground Zero…",
+      "icon": "/quake2.ico",
+      "iconPixelated": false,
+      "background": "/quake2-512.png",
+      "backgroundPosition": "center",
+      "backgroundSize": "contain",
+      "pwa": {
+        "id": "/apps/idtech2/quake2-rogue",
+        "name": "Quake II: Ground Zero",
+        "shortName": "Ground Zero",
+        "description": "Ground Zero in the id Tech 2 WASM suite.",
+        "themeColor": "#5d6877",
+        "backgroundColor": "#000000",
+        "icons": [
+          { "src": "/quake2-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+          { "src": "/quake2-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+        ]
+      },
+      "displayMode": "dynamic",
+      "nativeManaged": true,
+      "syncBackbuffer": false,
+      "controller": { "mode": "disabled" },
+      "persistence": {
+        "root": "/persistent/idtech2/{variant}",
+        "debounceMs": 750,
+        "intervalMs": 5000,
+        "requestDurability": true
+      },
+      "resizeTransition": "immediate",
+      "canvasWidth": 1280,
+      "canvasHeight": 720,
+      "pixelated": false,
+      "maxDpr": 1,
+      "graphics": true,
+      "advanced": true,
+      "fps": true,
+      "dynamicQuality": true,
+      "profiles": [
+        { "value": "medium", "label": "Medium" },
+        { "value": "high", "label": "High" },
+        { "value": "ultra", "label": "Ultra" }
+      ],
+      "defaultProfile": "high",
+      "fpsTargets": [30, 60, 120],
+      "defaultFps": 60,
+      "defaultDynamicQuality": true,
+      "defaultPlayerName": "Ranger",
+      "provisioningText": "Select the three baseq2 PAKs and Ground Zero rogue/pak0.pak. Matching files are cached after exact validation.",
+      "theme": {
+        "accent": "#5d6877",
+        "accent-strong": "#aebccd",
+        "border": "#3d4652"
+      }
     }
   }
 }

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+engine_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source_dir="${COD2_WASM_SOURCE_DIR:-${engine_root}/.work/source}"
+repository="https://github.com/theodorecharles/cod2-wasm.git"
+commit="f70e697476fceeb4f53de677e1c5d5fe12a00b36"
+series_file="${engine_root}/games/cod2-mp/patches/series"
+
+if [[ ! -d "${source_dir}/.git" ]]; then
+  mkdir -p "$(dirname "${source_dir}")"
+  git clone --filter=blob:none --no-checkout "${repository}" "${source_dir}" >&2
+  git -C "${source_dir}" checkout --detach "${commit}" >&2
+fi
+
+actual_origin="$(git -C "${source_dir}" remote get-url origin)"
+actual_commit="$(git -C "${source_dir}" rev-parse HEAD)"
+if [[ "${actual_origin}" != "${repository}" || "${actual_commit}" != "${commit}" ]]; then
+  printf 'Unexpected CoD2 source checkout at %s.\n' "${source_dir}" >&2
+  exit 1
+fi
+
+while IFS= read -r patch_name; do
+  [[ -z "${patch_name}" || "${patch_name}" == \#* ]] && continue
+  patch_file="${engine_root}/games/cod2-mp/patches/${patch_name}"
+  if git -C "${source_dir}" apply --reverse --check "${patch_file}" 2>/dev/null; then
+    continue
+  fi
+  git -C "${source_dir}" apply --check "${patch_file}"
+  git -C "${source_dir}" apply "${patch_file}"
+done < "${series_file}"
+
+find "${source_dir}" -type f -name '*.md' -delete
+
+printf '%s\n' "${source_dir}"

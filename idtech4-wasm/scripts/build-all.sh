@@ -9,8 +9,8 @@ meson="$("${repo_root}/scripts/ensure-build-tools.sh")"
 
 "${repo_root}/scripts/apply-patches.sh"
 
-test "$(node -p "require('${framework_dir}/package.json').version")" = "0.9.2"
-test "$(git -C "${framework_dir}" rev-parse HEAD)" = "53bc7e6eeef1ae35dcf3b25dea4e3ec0ab46726f"
+test "$(node -p "require('${framework_dir}/package.json').version")" = "0.9.6"
+test "$(git -C "${framework_dir}" rev-parse HEAD)" = "ebb1ebe35ad8224a9080279a6529414db42d3284"
 
 D3WASM_FRAMEWORK_DIR="${framework_dir}" JOBS="${jobs}" \
   "${work_root}/dhewm3/scripts/build-web.sh"

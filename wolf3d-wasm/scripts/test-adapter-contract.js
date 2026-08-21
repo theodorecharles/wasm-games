@@ -19,8 +19,9 @@ if (!process.env.WOLF4SDL_TEST_VARIANT) {
 }
 
 const repo = path.resolve(__dirname, '..');
+const source = execFileSync(path.join(repo, 'scripts/fetch-source'), { encoding: 'utf8' }).trim();
 const testVariant = process.env.WOLF4SDL_TEST_VARIANT;
-const makefile = fs.readFileSync(path.join(repo, 'Makefile'), 'utf8');
+const makefile = fs.readFileSync(path.join(source, 'Makefile'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 assert.equal(config.menuCursor, 'none');
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
@@ -153,40 +154,40 @@ const context = {
   assert.equal(selectedDataManifest.files.length, 8);
   assert.ok(selectedDataManifest.files.every(file => file.sha256));
 
-  const playSource = fs.readFileSync(path.join(repo, 'wl_play.cpp'), 'utf8');
+  const playSource = fs.readFileSync(path.join(source, 'wl_play.cpp'), 'utf8');
   assert.match(playSource, /dirscan\[4\] = \{ sc_UpArrow, sc_RightArrow, sc_DownArrow, sc_LeftArrow \}/);
   assert.match(playSource,
     /WOLF4SDL_WEB[\s\S]*Keyboard\[sc_W\][\s\S]*Keyboard\[sc_A\][\s\S]*bt_strafeleft/,
     'browser WASD must move/strafe independently of the original turning bindings');
-  assert.match(fs.readFileSync(path.join(repo, 'wl_main.cpp'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(source, 'wl_main.cpp'), 'utf8'),
     /WOLF4SDL_WEB[\s\S]*dirscan\[di_north\] = sc_UpArrow[\s\S]*dirscan\[di_west\] = sc_LeftArrow/,
     'persisted browser configs must not restore the old double-bound WASD directions');
-  assert.match(fs.readFileSync(path.join(repo, 'wl_menu.cpp'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(source, 'wl_menu.cpp'), 'utf8'),
     /#ifndef WOLF4SDL_WEB[\s\S]*mouseenabled && IN_IsInputGrabbed\(\)/,
     'browser menus must ignore mouse motion entirely');
   assert.match(playSource, /ex_completed[\s\S]*ex_secretlevel[\s\S]*ex_victorious \? 3 : 1/);
-  assert.match(fs.readFileSync(path.join(repo, 'Makefile'), 'utf8'), /_WolfWasm_BrowserControlsMask/);
-  assert.match(fs.readFileSync(path.join(repo, 'Makefile'), 'utf8'), /_WolfWasm_BrowserCaptureIntent/);
-  assert.match(fs.readFileSync(path.join(repo, 'Makefile'), 'utf8'), /_WolfWasm_BrowserControllerMouse/);
+  assert.match(fs.readFileSync(path.join(source, 'Makefile'), 'utf8'), /_WolfWasm_BrowserControlsMask/);
+  assert.match(fs.readFileSync(path.join(source, 'Makefile'), 'utf8'), /_WolfWasm_BrowserCaptureIntent/);
+  assert.match(fs.readFileSync(path.join(source, 'Makefile'), 'utf8'), /_WolfWasm_BrowserControllerMouse/);
   assert.match(makefile, /_WolfWasm_BrowserPreparedDigiSounds/);
-  const mainSource = fs.readFileSync(path.join(repo, 'wl_main.cpp'), 'utf8');
+  const mainSource = fs.readFileSync(path.join(source, 'wl_main.cpp'), 'utf8');
   assert.match(mainSource,
     /DigiChannel\[map\[1\]\] = map\[2\];\s*SD_PrepareSound\(map\[1\]\);/,
     'every mapped digitized effect must be prepared for the browser mixer');
   assert.doesNotMatch(mainSource, /#ifndef WOLF4SDL_WEB\s*SD_PrepareSound/,
     'the browser build must not skip digitized sound preparation');
-  assert.match(fs.readFileSync(path.join(repo, 'id_in.cpp'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(source, 'id_in.cpp'), 'utf8'),
     /WolfWasm_BrowserControllerKey[\s\S]*Keyboard\[keycode\]/,
     'controller keys must use Wolf4SDL native keyboard state');
-  assert.match(fs.readFileSync(path.join(repo, 'wl_main.cpp'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(source, 'wl_main.cpp'), 'utf8'),
     /--datadir[\s\S]*chdir\(datadir\)[\s\S]*CheckForEpisodes/,
     'the native worker must enter the mounted owner-data directory before discovery');
-  const menuSource = fs.readFileSync(path.join(repo, 'wl_menu.cpp'), 'utf8');
+  const menuSource = fs.readFileSync(path.join(source, 'wl_menu.cpp'), 'utf8');
   assert.match(menuSource, /startgame \|\| loadedgame[\s\S]*WolfWasmRuntimeState = 5/,
     'New Game and Load must synchronously publish native loading intent');
   assert.match(menuSource, /WolfWasmRuntimeState = ingame \? 4 : 1/,
     'menu entry must distinguish the paused and main-menu states');
-  assert.match(fs.readFileSync(path.join(repo, 'id_in.cpp'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(source, 'id_in.cpp'), 'utf8'),
     /WolfWasmRuntimeState = 4;[\s\S]*LastScan = sc_Escape/,
     'capture loss must synchronously publish the native paused transition');
 

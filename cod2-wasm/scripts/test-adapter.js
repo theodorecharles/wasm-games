@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const site = path.resolve(process.argv[2] || path.join(__dirname, '../out/cod2-wasm-core/site'));
+const site = path.resolve(process.argv[2] || path.join(__dirname, '../site'));
 const source = fs.readFileSync(path.join(site, 'game-adapter.js'), 'utf8');
 const dataManifest = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game-data.json'), 'utf8'));
 const drawn = [];

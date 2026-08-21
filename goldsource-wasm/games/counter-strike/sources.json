@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "pinned-npm-source-build-migration-pending",
+  "repositories": [
+    {
+      "name": "webxash3d-package-workspace",
+      "repository": "https://github.com/theodorecharles/webxash3d-fwgs.git",
+      "commit": "a2db71daaf606b215f019da161c939c20780e0a1",
+      "upstream": "https://github.com/yohimik/webxash3d-fwgs.git"
+    },
+    {
+      "name": "xash3d-engine",
+      "repository": "https://github.com/theodorecharles/xash3d-fwgs.git",
+      "commit": "f85aa0c8f7d46c27191132b44d872c8e331308de",
+      "upstream": "https://github.com/FWGS/xash3d-fwgs.git"
+    },
+    {
+      "name": "cs16-client-package-source",
+      "repository": "https://github.com/theodorecharles/cs16-client.git",
+      "commit": "2490c5e9b66928e86df191ec1cdd802b6357a71c",
+      "upstream": "https://github.com/yohimik/cs16-client.git"
+    },
+    {
+      "name": "cs16-client-menu-source",
+      "repository": "https://github.com/theodorecharles/cs16-client.git",
+      "commit": "d6ff2a863cf38d17f3610114d32bc3bd77ff3afa",
+      "upstream": "https://github.com/yohimik/cs16-client.git"
+    },
+    {
+      "name": "mainui-cpp",
+      "repository": "https://github.com/theodorecharles/mainui_cpp.git",
+      "commit": "024efda8f2078ba27767ce1140d4c6394beeb0f5",
+      "upstream": "https://github.com/Velaron/mainui_cpp.git"
+    }
+  ]
+}

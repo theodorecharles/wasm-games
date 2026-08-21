@@ -9,9 +9,10 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const repoDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const frameworkDir = path.resolve(process.env.WASM_FRAMEWORK_DIR || '/home/ted/Development/wasm-game-framework');
 const require = createRequire(import.meta.url);
-const { normalizeManifestCollection } = require('../../wasm-game-framework/server/provisioning.js');
-const { createMediaLibraryStore } = require('../../wasm-game-framework/server/media-library.js');
+const { normalizeManifestCollection } = require(path.join(frameworkDir, 'server/provisioning.js'));
+const { createMediaLibraryStore } = require(path.join(frameworkDir, 'server/media-library.js'));
 const manifests = normalizeManifestCollection(JSON.parse(fs.readFileSync(path.join(repoDir, 'web/wasm-game-data.json'))));
 
 async function install(store, files) {

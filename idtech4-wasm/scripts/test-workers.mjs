@@ -22,7 +22,7 @@ async function settleUntil(predicate) {
 for (const fixture of fixtures) {
   const source = fs.readFileSync(path.join(site, fixture.worker), 'utf8');
   assert.doesNotMatch(source, /FS\.mount\(IDBFS|FS\.syncfs\(/,
-    `${fixture.worker} must delegate IDBFS lifecycle to framework 0.9.2`);
+    `${fixture.worker} must delegate IDBFS lifecycle to framework 0.9.6`);
   assert.match(source, /noInitialRun:\s*true/,
     `${fixture.worker} must prevent native main before persistence restoration`);
   if (fixture.worker === 'q4-worker.js') {
@@ -67,7 +67,7 @@ for (const fixture of fixtures) {
     order.push(`import:${url}`);
     if (url === '/shared-shell/wasm-game-framework.js') {
       sandbox.WasmGameFramework = {
-        version: '0.9.2',
+        version: '0.9.6',
         createPersistenceManager(options) {
           managerOptions = options;
           return {
@@ -116,7 +116,7 @@ for (const fixture of fixtures) {
       intervalMs: 5000,
       requestDurability: true,
       frameworkScript: '/shared-shell/wasm-game-framework.js',
-      frameworkVersion: '0.9.2'
+      frameworkVersion: '0.9.6'
     }
   } });
   await settleUntil(() => order.includes('native-main'));

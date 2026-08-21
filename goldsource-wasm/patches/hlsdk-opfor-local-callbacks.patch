@@ -1,0 +1,127 @@
+diff --git a/dlls/basemonster.h b/dlls/basemonster.h
+index 92ab896..f02b7d5 100644
+--- a/dlls/basemonster.h
++++ b/dlls/basemonster.h
+@@ -138,7 +138,7 @@ public:
+ 
+ 	// stuff written for new state machine
+ 	virtual void MonsterThink( void );
+-	void EXPORT CallMonsterThink( void ) { this->MonsterThink(); }
++	void EXPORT CallMonsterThink( void );
+ 	virtual int IRelationship( CBaseEntity *pTarget );
+ 	virtual void MonsterInit( void );
+ 	virtual void MonsterInitDead( void );	// Call after animation/pose is set up
+diff --git a/dlls/cbase.cpp b/dlls/cbase.cpp
+index 72abd1f..5348630 100644
+--- a/dlls/cbase.cpp
++++ b/dlls/cbase.cpp
+@@ -783,3 +783,8 @@ CBaseEntity *CBaseEntity::CreateNoSpawn( const char *szName, const Vector &vecOr
+ 	pEntity->pev->angles = vecAngles;
+ 	return pEntity;
+ }
++
++void CBaseEntity::SUB_CallUseToggle( void )
++{
++	this->Use( this, this, USE_TOGGLE, 0 );
++}
+diff --git a/dlls/cbase.h b/dlls/cbase.h
+index 5713f4e..e1c9fab 100644
+--- a/dlls/cbase.h
++++ b/dlls/cbase.h
+@@ -281,5 +281,5 @@ public:
+ 	void EXPORT SUB_DoNothing( void );
+ 	void EXPORT SUB_StartFadeOut ( void );
+ 	void EXPORT SUB_FadeOut( void );
+-	void EXPORT SUB_CallUseToggle( void ) { this->Use( this, this, USE_TOGGLE, 0 ); }
++	void EXPORT SUB_CallUseToggle( void );
+ 	int ShouldToggle( USE_TYPE useType, BOOL currentState );
+diff --git a/dlls/gearbox/geneworm.cpp b/dlls/gearbox/geneworm.cpp
+index e4c6402..161146a 100644
+--- a/dlls/gearbox/geneworm.cpp
++++ b/dlls/gearbox/geneworm.cpp
+@@ -255,7 +255,7 @@ public:
+ 	virtual int Restore(CRestore &restore);
+ 	static CGeneWormSpawn *LaunchSpawn(Vector origin, Vector aim, float speed, edict_t *pOwner);
+ 
+-	void EXPORT SpawnTouch(CBaseEntity *pOther) { }
++	void EXPORT SpawnTouch(CBaseEntity *pOther);
+ 	void EXPORT SpawnThink();
+ 
+ 	static TYPEDESCRIPTION m_SaveData[];
+@@ -266,6 +266,10 @@ public:
+ 
+ LINK_ENTITY_TO_CLASS(env_genewormspawn, CGeneWormSpawn)
+ 
++void CGeneWormSpawn::SpawnTouch(CBaseEntity *pOther)
++{
++}
++
+ TYPEDESCRIPTION CGeneWormSpawn::m_SaveData[] =
+ {
+ 	DEFINE_FIELD(CGeneWormSpawn, m_flBirthTime, FIELD_TIME),
+diff --git a/dlls/monsters.cpp b/dlls/monsters.cpp
+index 887471a..3be8eaa 100644
+--- a/dlls/monsters.cpp
++++ b/dlls/monsters.cpp
+@@ -3459,3 +3459,8 @@ void CBaseMonster::GlowShellUpdate( void )
+ 			GlowShellOff();
+ 	}
+ }
++
++void CBaseMonster::CallMonsterThink( void )
++{
++	this->MonsterThink();
++}
+diff --git a/dlls/plats.cpp b/dlls/plats.cpp
+index cfc9d42..47fcae5 100644
+--- a/dlls/plats.cpp
++++ b/dlls/plats.cpp
+@@ -218,9 +218,9 @@ public:
+ 
+ 	void EXPORT PlatUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
+ 
+-	void EXPORT CallGoDown( void ) { GoDown(); }
+-	void EXPORT CallHitTop( void  ) { HitTop(); }
+-	void EXPORT CallHitBottom( void ) { HitBottom(); }
++	void EXPORT CallGoDown( void );
++	void EXPORT CallHitTop( void );
++	void EXPORT CallHitBottom( void );
+ 
+ 	virtual void GoUp( void );
+ 	virtual void GoDown( void );
+@@ -230,6 +230,10 @@ public:
+ 
+ LINK_ENTITY_TO_CLASS( func_plat, CFuncPlat )
+ 
++void CFuncPlat::CallGoDown( void ) { GoDown(); }
++void CFuncPlat::CallHitTop( void ) { HitTop(); }
++void CFuncPlat::CallHitBottom( void ) { HitBottom(); }
++
+ // UNDONE: Need to save this!!! It needs class & linkage
+ class CPlatTrigger : public CBaseEntity
+ {
+diff --git a/dlls/turret.cpp b/dlls/turret.cpp
+index 86bc7a5..7cd7ddb 100644
+--- a/dlls/turret.cpp
++++ b/dlls/turret.cpp
+@@ -73,8 +73,8 @@ public:
+ 	void EXPORT AutoSearchThink(void);
+ 	void EXPORT TurretDeath(void);
+ 
+-	virtual void EXPORT SpinDownCall(void) { m_iSpin = 0; }
+-	virtual void EXPORT SpinUpCall(void) { m_iSpin = 1; }
++	virtual void EXPORT SpinDownCall(void);
++	virtual void EXPORT SpinUpCall(void);
+ 
+ 	// void SpinDown( void );
+ 	// float EXPORT SpinDownCall( void ) { return SpinDown(); }
+@@ -133,6 +133,9 @@ public:
+ 	float m_flSpinUpTime;	// Amount of time until the barrel should spin down when searching
+ };
+ 
++void CBaseTurret::SpinDownCall(void) { m_iSpin = 0; }
++void CBaseTurret::SpinUpCall(void) { m_iSpin = 1; }
++
+ TYPEDESCRIPTION	CBaseTurret::m_SaveData[] =
+ {
+ 	DEFINE_FIELD( CBaseTurret, m_flMaxSpin, FIELD_FLOAT ),

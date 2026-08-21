@@ -1,0 +1,37 @@
+diff --git a/src/i_browser.c b/src/i_browser.c
+index 47d7c58a..9d9ed849 100644
+--- a/src/i_browser.c
++++ b/src/i_browser.c
+@@ -94,7 +94,32 @@ EMSCRIPTEN_KEEPALIVE int I_BrowserAttackDown(void)
+ {
+     return players[consoleplayer].attackdown ? 1 : 0;
+ }
+ 
++EMSCRIPTEN_KEEPALIVE int I_BrowserNetGame(void)
++{
++    return netgame ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerCount(void)
++{
++    int count = 0;
++    int i;
++
++    for (i = 0; i < MAXPLAYERS; ++i)
++    {
++        if (playeringame[i])
++        {
++            ++count;
++        }
++    }
++    return count;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserConsolePlayer(void)
++{
++    return consoleplayer;
++}
++
+ EMSCRIPTEN_KEEPALIVE void I_BrowserSetInputCaptured(int captured)
+ {
+     SDL_SetRelativeMouseMode(captured ? SDL_TRUE : SDL_FALSE);

@@ -7,6 +7,12 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const repo = path.resolve(__dirname, '..');
+const quakeSource = process.env.IDTECH2_Q1_SOURCE_DIR
+  ? path.resolve(process.env.IDTECH2_Q1_SOURCE_DIR)
+  : path.join(repo, '.work/source/quake');
+const quake2Source = process.env.IDTECH2_Q2_SOURCE_DIR
+  ? path.resolve(process.env.IDTECH2_Q2_SOURCE_DIR)
+  : path.join(repo, '.work/source/quake2');
 const manifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 
@@ -155,8 +161,8 @@ async function exerciseQuake() {
     script.onload();
     harness.sandbox.Module.onRuntimeInitialized();
   };
-  vm.runInNewContext(fs.readFileSync(path.join(repo, 'web/quake-adapter.js'), 'utf8'), harness.sandbox,
-    { filename: 'web/quake-adapter.js' });
+  vm.runInNewContext(fs.readFileSync(path.join(repo, 'games/quake/web/game-adapter.js'), 'utf8'), harness.sandbox,
+    { filename: 'games/quake/web/game-adapter.js' });
   const adapter = harness.sandbox.WasmGameAdapter;
   await adapter.init(harness.context);
   assert.equal(harness.context.elements.canvas.id, 'canvas',
@@ -283,8 +289,8 @@ async function exerciseQuake2() {
     harness.sandbox.createQuake2Module = async options => { moduleOptions = options; return engine; };
     script.onload();
   };
-  vm.runInNewContext(fs.readFileSync(path.join(repo, 'engines/quake2/web/game-adapter.js'), 'utf8'), harness.sandbox,
-    { filename: 'engines/quake2/web/game-adapter.js' });
+  vm.runInNewContext(fs.readFileSync(path.join(repo, 'games/quake2/web/game-adapter.js'), 'utf8'), harness.sandbox,
+    { filename: 'games/quake2/web/game-adapter.js' });
   const adapter = harness.sandbox.WasmGameAdapter;
   await adapter.init(harness.context);
   assert.equal(harness.context.elements.canvas.id, 'canvas',
@@ -349,7 +355,7 @@ async function exerciseQuake2() {
 (async () => {
   assert.equal(manifest.fullscreen, true);
   assert.equal(manifest.identity, true);
-  for (const variant of ['quake', 'quake2']) {
+  for (const variant of ['quake', 'quake2', 'quake2-xatrix', 'quake2-rogue']) {
     assert.equal(manifest.variants[variant].pwa.icons.length, 2);
     assert.ok(manifest.variants[variant].icon);
     assert.equal(manifest.variants[variant].controller.mode, 'disabled');
@@ -363,55 +369,57 @@ async function exerciseQuake2() {
   assert.equal(manifest.variants.quake2.displayMode, 'dynamic');
   assert.equal(manifest.variants.quake2.menuCursor, 'browser');
   assert.equal(manifest.variants.quake2.resizeTransition, 'immediate');
-  assert.match(fs.readFileSync(path.join(repo, 'WinQuake/sys_emscripten.c'), 'utf8'), /cl\.intermission[\s\S]*return 3;/);
-  const quakeSource = fs.readFileSync(path.join(repo, 'WinQuake/sys_emscripten.c'), 'utf8');
-  assert.match(quakeSource, /scr_disabled_for_loading[\s\S]*return 4;/,
+  assert.equal(manifest.variants['quake2-xatrix'].displayMode, 'dynamic');
+  assert.equal(manifest.variants['quake2-rogue'].displayMode, 'dynamic');
+  assert.match(fs.readFileSync(path.join(quakeSource, 'WinQuake/sys_emscripten.c'), 'utf8'), /cl\.intermission[\s\S]*return 3;/);
+  const quakeSystemSource = fs.readFileSync(path.join(quakeSource, 'WinQuake/sys_emscripten.c'), 'utf8');
+  assert.match(quakeSystemSource, /scr_disabled_for_loading[\s\S]*return 4;/,
     'Quake must distinguish native loading from controllable gameplay');
-  assert.match(quakeSource, /cls\.demoplayback[\s\S]*browser_capture_intent = false;[\s\S]*return 0;/,
+  assert.match(quakeSystemSource, /cls\.demoplayback[\s\S]*browser_capture_intent = false;[\s\S]*return 0;/,
     'Quake attract demos must not claim controllable gameplay or capture input');
-  assert.match(quakeSource, /if \(browser_capture_intent && cls\.demoplayback\)[\s\S]*return 4;[\s\S]*if \(cls\.demoplayback\)/,
+  assert.match(quakeSystemSource, /if \(browser_capture_intent && cls\.demoplayback\)[\s\S]*return 4;[\s\S]*if \(cls\.demoplayback\)/,
     'trusted New Game intent must win over stale attract-demo state until the next native frame');
-  assert.match(quakeSource, /Q1_BrowserArmCaptureIntent[\s\S]*browser_capture_intent && Q1_BrowserRuntimeState\(\) == 4/,
+  assert.match(quakeSystemSource, /Q1_BrowserArmCaptureIntent[\s\S]*browser_capture_intent && Q1_BrowserRuntimeState\(\) == 4/,
     'Quake New Game/Load must expose native capture intent');
-  assert.match(quakeSource, /Q1_BrowserDispatchMenuKey[\s\S]*M_Keydown\(K_ENTER\)/,
+  assert.match(quakeSystemSource, /Q1_BrowserDispatchMenuKey[\s\S]*M_Keydown\(K_ENTER\)/,
     'Quake must process trusted Enter synchronously before browser activation expires');
-  assert.match(quakeSource, /wasm_browser_defaults_version[\s\S]*sensitivity", "8"/,
+  assert.match(quakeSystemSource, /wasm_browser_defaults_version[\s\S]*sensitivity", "8"/,
     'Quake must migrate once to fast WASD/mouselook defaults without overwriting later user config');
-  assert.match(fs.readFileSync(path.join(repo, 'WinQuake/keys.c'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(quakeSource, 'WinQuake/keys.c'), 'utf8'),
     /if \(\*keybindings\[i\]\)[\s\S]*fprintf \(f, "unbind/,
     'Quake config must retain explicitly unbound legacy look keys across reloads');
-  assert.match(fs.readFileSync(path.join(repo, 'WinQuake/vid_emscripten.c'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(quakeSource, 'WinQuake/vid_emscripten.c'), 'utf8'),
     /Q1_BrowserResize[\s\S]*MAXWIDTH[\s\S]*MAXHEIGHT[\s\S]*VID_ResizeBuffers/,
     'modernized Quake must resize its native software framebuffer within original renderer bounds');
-  assert.match(fs.readFileSync(path.join(repo, 'WinQuake/vid_emscripten.c'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(quakeSource, 'WinQuake/vid_emscripten.c'), 'utf8'),
     /vid\.aspect = Sys_BrowserModernized\(\)[\s\S]*\? 1\.0f/,
     'modernized Quake must use square pixels instead of forcing a 4:3 projection into wide buffers');
-  assert.match(quakeSource, /Q1_BrowserControllerKey[\s\S]*Q1_BrowserControllerReleaseAll/,
+  assert.match(quakeSystemSource, /Q1_BrowserControllerKey[\s\S]*Q1_BrowserControllerReleaseAll/,
     'Quake controller mapping and targeted release must enter native input');
-  assert.match(fs.readFileSync(path.join(repo, 'WinQuake/common.c'), 'utf8'), /-userdir[\s\S]*COM_AddGameDirectory \(userdir\)/,
+  assert.match(fs.readFileSync(path.join(quakeSource, 'WinQuake/common.c'), 'utf8'), /-userdir[\s\S]*COM_AddGameDirectory \(userdir\)/,
     'Quake persistent directory must be the highest-priority writable search path');
-  assert.match(fs.readFileSync(path.join(repo, 'WinQuake/menu.c'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(quakeSource, 'WinQuake/menu.c'), 'utf8'),
     /Q1_BrowserArmCaptureIntent \(\);[\s\S]*map start/,
     'Quake must arm capture from the native New Game action');
-  const demoSource = fs.readFileSync(path.join(repo, 'WinQuake/cl_main.c'), 'utf8');
+  const demoSource = fs.readFileSync(path.join(quakeSource, 'WinQuake/cl_main.c'), 'utf8');
   assert.match(demoSource, /cls\.demonum >= MAX_DEMOS \|\| !cls\.demos\[cls\.demonum\]\[0\]/,
     'Quake must bounds-check the attract-demo index before dereferencing it');
-  assert.doesNotMatch(fs.readFileSync(path.join(repo, 'WinQuake/vid_emscripten.c'), 'utf8'),
+  assert.doesNotMatch(fs.readFileSync(path.join(quakeSource, 'WinQuake/vid_emscripten.c'), 'utf8'),
     /SDL_CreateWindow\([\s\S]*?SDL_WINDOW_RESIZABLE/,
     'fixed-resolution Quake must not let hidden-canvas CSS collapse its SDL window to zero');
-  const quake2Source = fs.readFileSync(path.join(repo, 'engines/quake2/src/backends/web/main.c'), 'utf8');
-  assert.match(quake2Source, /PM_FREEZE[\s\S]*return 3;/);
-  assert.match(quake2Source, /Q2Web_ArmCaptureIntent[\s\S]*q2web_capture_intent && Q2Web_RuntimeState\(\) == 4/,
+  const quake2SystemSource = fs.readFileSync(path.join(quake2Source, 'src/backends/web/main.c'), 'utf8');
+  assert.match(quake2SystemSource, /PM_FREEZE[\s\S]*return 3;/);
+  assert.match(quake2SystemSource, /Q2Web_ArmCaptureIntent[\s\S]*q2web_capture_intent && Q2Web_RuntimeState\(\) == 4/,
     'Quake II JOIN/New Game must expose native capture intent');
-  assert.match(quake2Source, /Q2Web_ControllerKey[\s\S]*Q2Web_ControllerReleaseAll/,
+  assert.match(quake2SystemSource, /Q2Web_ControllerKey[\s\S]*Q2Web_ControllerReleaseAll/,
     'Quake II controller mapping and targeted release must enter native input');
-  assert.match(quake2Source, /q2web_started = true;\s*Qcommon_Init\(argc, argv\);/,
+  assert.match(quake2SystemSource, /q2web_started = true;\s*Qcommon_Init\(argc, argv\);/,
     'Quake II must enable browser exports before its simulated infinite main loop');
-  assert.match(quake2Source, /GLimp_ResizeWebViewport\(width, height\)/,
+  assert.match(quake2SystemSource, /GLimp_ResizeWebViewport\(width, height\)/,
     'Quake II must resize the live browser window without unloading its statically linked renderer');
-  assert.doesNotMatch(quake2Source.match(/Q2Web_ResizeViewport[\s\S]*?\n}/)?.[0] || '', /vid_restart/,
+  assert.doesNotMatch(quake2SystemSource.match(/Q2Web_ResizeViewport[\s\S]*?\n}/)?.[0] || '', /vid_restart/,
     'Quake II browser viewport changes must not use the shared-library restart path');
-  assert.match(fs.readFileSync(path.join(repo, 'engines/quake2/src/client/menu/menu.c'), 'utf8'),
+  assert.match(fs.readFileSync(path.join(quake2Source, 'src/client/menu/menu.c'), 'utf8'),
     /Q2Web_ArmCaptureIntent\(\);[\s\S]*cls\.key_dest = key_game/,
     'Quake II must arm capture at the native menu-to-game transition');
   await exerciseQuake();

@@ -1,4 +1,4 @@
-ARG FRAMEWORK_IMAGE=wasm-game-framework:0.9.4
+ARG FRAMEWORK_IMAGE=wasm-game-framework:0.9.6
 FROM ${FRAMEWORK_IMAGE}
 
 COPY game-site/ /opt/game-site/
@@ -8,7 +8,7 @@ COPY q3-framework/lifecycle.js /opt/q3-framework/lifecycle.js
 
 RUN cd /opt/q3-server && npm install --omit=dev --ignore-scripts && \
     mkdir -p /opt/q3-runtime-root/runtime && \
-    node -e "if (require('/opt/wasm-game-framework/package.json').version !== '0.9.4') process.exit(1)"
+    node -e "if (require('/opt/wasm-game-framework/package.json').version !== '0.9.6') process.exit(1)"
 
 ENV WASM_GAME_VARIANT=quake3 \
     WASM_GAME_HTTP_PORT=8088 \

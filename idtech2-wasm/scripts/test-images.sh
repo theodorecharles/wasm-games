@@ -31,6 +31,8 @@ smoke() {
     [[ -n "$host_port" ]]
     local base="http://127.0.0.1:$host_port"
     curl -fsS "$base/" | grep -Fq '/shared-shell/wasm-game-framework.js'
+    curl -fsS "$base/health" | grep -Fq '"state":"sleeping"'
+    curl -fsS "$base/status" | grep -Fq '"peers":0'
     curl -fsS "$base/wasm-game-config.js" | grep -Fq "WASM_GAME_VARIANT = \"$expected_variant\""
     curl -fsS "$base/app.webmanifest?variant=$query_variant" | grep -Fq "$manifest_icon"
     curl -fsS "$base/game-data/status?variant=$query_variant" | grep -Fq '"ready":false'
@@ -44,3 +46,5 @@ smoke() {
 smoke idtech2-wasm suite /quake-512.png
 smoke quake1-wasm quake /quake-512.png
 smoke quake2-wasm quake2 /quake2-512.png
+smoke quake2-xatrix-wasm quake2-xatrix /quake2-512.png
+smoke quake2-rogue-wasm quake2-rogue /quake2-512.png

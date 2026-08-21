@@ -1,0 +1,1123 @@
+diff --git a/Makefile b/Makefile
+index 4804636aca01bbfe47171b7000afb61aefad2da3..4e608218bc0980b8824781257ba44654148a4442 100644
+--- a/Makefile
++++ b/Makefile
+@@ -6,6 +6,32 @@ BINARY    ?= wolf3d
+ PREFIX    ?= /usr/local
+ MANPREFIX ?= $(PREFIX)
+ 
++WEB ?= 0
++WEB_VARIANT ?= wolf3d
++
++ifeq ($(WEB),1)
++    CFLAGS += -DWOLF4SDL_WEB
++    ifeq ($(WEB_VARIANT),spear)
++        CFLAGS += -DSPEAR
++    else ifneq ($(WEB_VARIANT),wolf3d)
++        $(error Unsupported WEB_VARIANT '$(WEB_VARIANT)'; expected wolf3d or spear)
++    endif
++    CFLAGS += -pthread
++    CXXFLAGS += -Wno-c++11-narrowing
++    CFLAGS_SDL ?= -s USE_SDL=1
++    LDFLAGS_SDL ?= -s USE_SDL=1
++    LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
++    LDFLAGS += -pthread
++    LDFLAGS += -s PROXY_TO_PTHREAD=1
++    LDFLAGS += -s PTHREAD_POOL_SIZE=1
++    LDFLAGS += -s FORCE_FILESYSTEM=1
++    LDFLAGS += -lidbfs.js
++    LDFLAGS += -s INVOKE_RUN=0
++    LDFLAGS += -s EXIT_RUNTIME=0
++    LDFLAGS += -s EXPORTED_FUNCTIONS=_main,_WolfWasm_BrowserRuntimeState,_WolfWasm_BrowserCaptureIntent,_WolfWasm_BrowserControlsMask,_WolfWasm_BrowserSetInputCaptured,_WolfWasm_BrowserOpenMenu,_WolfWasm_BrowserControllerKey,_WolfWasm_BrowserControllerMouse,_WolfWasm_BrowserControllerButtons,_WolfWasm_BrowserPreparedDigiSounds,_WolfWasm_BrowserDigiStarts,_WolfWasm_BrowserActiveDigiChannels
++    LDFLAGS += -s EXPORTED_RUNTIME_METHODS=FS,callMain
++endif
++
+ INSTALL         ?= install
+ INSTALL_PROGRAM ?= $(INSTALL) -m 555 -s
+ INSTALL_MAN     ?= $(INSTALL) -m 444
+@@ -40,7 +66,9 @@ CCFLAGS += -Wsequence-point
+ CXXFLAGS += $(CFLAGS)
+ 
+ LDFLAGS += $(LDFLAGS_SDL)
++ifeq ($(WEB),0)
+ LDFLAGS += -lSDL_mixer
++endif
+ ifneq (,$(findstring MINGW,$(shell uname -s)))
+ LDFLAGS += -static-libgcc
+ endif
+diff --git a/id_in.cpp b/id_in.cpp
+index 95f6d6e7fd46a7e55320d3765063a920d39a2630..07f234b6110d3b1aecbbed26b958d76ca54ceda3 100644
+--- a/id_in.cpp
++++ b/id_in.cpp
+@@ -62,6 +62,54 @@ static int JoyNumHats;
+ 
+ static bool GrabInput = false;
+ static bool NeedRestore = false;
++#ifdef WOLF4SDL_WEB
++static int WebMouseDeltaX = 0;
++static int WebMouseDeltaY = 0;
++static int WebControllerButtons = 0;
++#include <emscripten/emscripten.h>
++
++extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserSetInputCaptured(int captured)
++{
++    GrabInput = captured != 0;
++    if (!GrabInput)
++    {
++        WebMouseDeltaX = 0;
++        WebMouseDeltaY = 0;
++    }
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserOpenMenu()
++{
++    if (WolfWasmRuntimeState == 2)
++    {
++        WolfWasmRuntimeState = 4;
++        LastScan = sc_Escape;
++        Keyboard[sc_Escape] = true;
++    }
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserControllerKey(int keycode, int pressed)
++{
++    if (keycode <= sc_None || keycode >= SDLK_LAST)
++        return;
++    Keyboard[keycode] = pressed != 0;
++    if (pressed)
++        LastScan = keycode;
++    else if (LastScan == keycode)
++        LastScan = sc_None;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserControllerMouse(int dx, int dy)
++{
++    WebMouseDeltaX += dx;
++    WebMouseDeltaY += dy;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserControllerButtons(int mask)
++{
++    WebControllerButtons = mask & 7;
++}
++#endif
+ 
+ /*
+ =============================================================================
+@@ -134,7 +182,11 @@ INL_GetMouseButtons(void)
+     if(middlePressed) buttons |= 1 << 2;
+     if(rightPressed) buttons |= 1 << 1;
+ 
++#ifdef WOLF4SDL_WEB
++    return buttons | WebControllerButtons;
++#else
+     return buttons;
++#endif
+ }
+ 
+ ///////////////////////////////////////////////////////////////////////////
+@@ -344,8 +396,16 @@ static void processEvent(SDL_Event *event)
+                 }
+                 else NeedRestore = true;
+             }
++            break;
+         }
+ 
++#ifdef WOLF4SDL_WEB
++        case SDL_MOUSEMOTION:
++            WebMouseDeltaX += event->motion.xrel;
++            WebMouseDeltaY += event->motion.yrel;
++            break;
++#endif
++
+ #if defined(GP2X)
+         case SDL_JOYBUTTONDOWN:
+             GP2X_ButtonDown(event->jbutton.button);
+@@ -358,10 +418,29 @@ static void processEvent(SDL_Event *event)
+     }
+ }
+ 
++void IN_GetMouseDelta(int *dx, int *dy)
++{
++#ifdef WOLF4SDL_WEB
++    *dx = WebMouseDeltaX;
++    *dy = WebMouseDeltaY;
++    WebMouseDeltaX = 0;
++    WebMouseDeltaY = 0;
++#else
++    int x, y;
++    SDL_GetMouseState(&x, &y);
++    *dx = x - screenWidth / 2;
++    *dy = y - screenHeight / 2;
++#endif
++}
++
+ void IN_WaitAndProcessEvents()
+ {
+     SDL_Event event;
++#ifdef WOLF4SDL_WEB
++    if(!SDL_PollEvent(&event)) return;
++#else
+     if(!SDL_WaitEvent(&event)) return;
++#endif
+     do
+     {
+         processEvent(&event);
+@@ -406,7 +485,9 @@ IN_Startup(void)
+         }
+     }
+ 
++#ifndef WOLF4SDL_WEB
+     SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
++#endif
+ 
+     if(fullscreen || forcegrabmouse)
+     {
+diff --git a/id_in.h b/id_in.h
+index cb3767075fe72205c6c2b11a721afd4093a376fe..ce7468e0abffab233e69d25ffe28f663f1aa4909 100644
+--- a/id_in.h
++++ b/id_in.h
+@@ -167,6 +167,7 @@ extern	const char *IN_GetScanName(ScanCode);
+ 
+ void    IN_WaitAndProcessEvents();
+ void    IN_ProcessEvents();
++void    IN_GetMouseDelta(int *dx, int *dy);
+ 
+ int     IN_MouseButtons (void);
+ 
+diff --git a/id_sd.cpp b/id_sd.cpp
+index fc118f9fe6de6c6e62b2981ec633004c15270dba..167a2abfb908281fee7c6fa7e9eda688a6db5d34 100644
+--- a/id_sd.cpp
++++ b/id_sd.cpp
+@@ -28,7 +28,13 @@
+ //
+ 
+ #include "wl_def.h"
++#ifdef WOLF4SDL_WEB
++#include <emscripten/em_asm.h>
++#include <emscripten/emscripten.h>
++#include "web/sdl_mixer_stub.h"
++#else
+ #include <SDL_mixer.h>
++#endif
+ #if defined(GP2X_940)
+ #include "gp2x/fmopl.h"
+ #else
+@@ -97,6 +103,10 @@ static  int                     RightPosition;
+         word                    NumDigi;
+ static  digiinfo               *DigiList;
+ static  boolean                 DigiPlaying;
++#ifdef WOLF4SDL_WEB
++static  int                     WolfWebPreparedDigiSounds;
++static  int                     WolfWebDigiStarts;
++#endif
+ 
+ //      PC Sound variables
+ static  volatile byte           pcLastSample;
+@@ -608,6 +618,10 @@ void SD_PrepareSound(int which)
+ {
+     if(DigiList == NULL)
+         Quit("SD_PrepareSound(%i): DigiList not initialized!\n", which);
++    if(which < 0 || which >= NumDigi)
++        Quit("SD_PrepareSound(%i): bad sound number!\n", which);
++    if(SoundChunks[which] != NULL)
++        return;
+ 
+     int page = DigiList[which].startpage;
+     int size = DigiList[which].length;
+@@ -644,10 +658,34 @@ void SD_PrepareSound(int which)
+     }
+     SoundBuffers[which] = wavebuffer;
+ 
++#ifdef WOLF4SDL_WEB
++    SoundChunks[which] = WolfWebMixLoadPCM16Mono(newsamples, destsamples);
++#else
+     SoundChunks[which] = Mix_LoadWAV_RW(SDL_RWFromMem(wavebuffer,
+         sizeof(headchunk) + sizeof(wavechunk) + destsamples * 2), 1);
++#endif
++#ifdef WOLF4SDL_WEB
++    if (SoundChunks[which]) ++WolfWebPreparedDigiSounds;
++#endif
+ }
+ 
++#ifdef WOLF4SDL_WEB
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserPreparedDigiSounds(void)
++{
++    return WolfWebPreparedDigiSounds;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserDigiStarts(void)
++{
++    return WolfWebDigiStarts;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserActiveDigiChannels(void)
++{
++    return WolfWebMixActiveChannels();
++}
++#endif
++
+ int SD_PlayDigitized(word which,int leftpos,int rightpos)
+ {
+     if (!DigiMode)
+@@ -673,6 +711,9 @@ int SD_PlayDigitized(word which,int leftpos,int rightpos)
+         printf("Unable to play sound: %s\n", Mix_GetError());
+         return 0;
+     }
++#ifdef WOLF4SDL_WEB
++    ++WolfWebDigiStarts;
++#endif
+ 
+     return channel;
+ }
+@@ -1122,6 +1163,21 @@ SD_Startup(void)
+         printf("Unable to open audio: %s\n", Mix_GetError());
+         return;
+     }
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] SDL PCM/OPL audio mixer opened at %d Hz\n", param_samplerate);
++    MAIN_THREAD_ASYNC_EM_ASM({
++        const context = typeof SDL !== 'undefined' ? SDL.audioContext : null;
++        const publishState = () => {
++            document.documentElement.dataset.wolfAudio = context ? context.state : 'opened';
++        };
++        publishState();
++        if (context && context.state === 'suspended') {
++            const resume = () => context.resume().then(publishState, publishState);
++            document.addEventListener('pointerdown', resume, { once: true, capture: true });
++            document.addEventListener('keydown', resume, { once: true, capture: true });
++        }
++    });
++#endif
+ 
+     Mix_ReserveChannels(2);  // reserve player and boss weapon channels
+     Mix_GroupChannels(2, MIX_CHANNELS-1, 1); // group remaining channels
+@@ -1179,6 +1235,8 @@ SD_Shutdown(void)
+ 
+     free(DigiList);
+ 
++    Mix_CloseAudio();
++
+     SD_Started = false;
+ }
+ 
+diff --git a/id_vh.cpp b/id_vh.cpp
+index 6497ac7bf64b6e1b6d8bae072a3c34165e83669d..227cde83f52ca02e08038cf55a7ae2aae9ff5b69 100644
+--- a/id_vh.cpp
++++ b/id_vh.cpp
+@@ -118,7 +118,46 @@ void VW_MeasurePropString (const char *string, word *width, word *height)
+ 
+ void VH_UpdateScreen()
+ {
++#ifdef WOLF4SDL_WEB
++	if(screen == NULL || screenBuffer == NULL)
++		return;
++
++	if(screen->format->BytesPerPixel != 1 || screenBuffer->format->BytesPerPixel != 1)
++		Quit("VH_UpdateScreen: expected indexed browser surfaces, got %u/%u bits",
++		     (unsigned)screenBuffer->format->BitsPerPixel,
++		     (unsigned)screen->format->BitsPerPixel);
++
++	const bool sourceLocked = SDL_MUSTLOCK(screenBuffer);
++	if(sourceLocked && SDL_LockSurface(screenBuffer) < 0)
++		Quit("VH_UpdateScreen: could not lock source surface: %s", SDL_GetError());
++	// Emscripten's SDL 1 compatibility layer presents a software surface whose
++	// unlock operation is the actual canvas upload. SDL_MUSTLOCK is false for
++	// that surface, and SDL_Flip is intentionally a no-op, so always pair a
++	// lock/unlock around browser framebuffer writes.
++	if(SDL_LockSurface(screen) < 0)
++	{
++		if(sourceLocked)
++			SDL_UnlockSurface(screenBuffer);
++		Quit("VH_UpdateScreen: could not lock browser surface: %s", SDL_GetError());
++	}
++
++	const unsigned copyWidth = (unsigned)screenBuffer->w < (unsigned)screen->w
++	                         ? (unsigned)screenBuffer->w : (unsigned)screen->w;
++	const unsigned copyHeight = (unsigned)screenBuffer->h < (unsigned)screen->h
++	                          ? (unsigned)screenBuffer->h : (unsigned)screen->h;
++	for(unsigned y = 0; y < copyHeight; ++y)
++	{
++		const Uint8 *src = (const Uint8 *)screenBuffer->pixels + y * screenBuffer->pitch;
++		Uint8 *dst = (Uint8 *)screen->pixels + y * screen->pitch;
++		memcpy(dst, src, copyWidth);
++	}
++
++	SDL_UnlockSurface(screen);
++	if(sourceLocked)
++		SDL_UnlockSurface(screenBuffer);
++#else
+ 	SDL_BlitSurface(screenBuffer, NULL, screen, NULL);
++#endif
+ 	SDL_Flip(screen);
+ }
+ 
+@@ -244,7 +283,11 @@ void LoadLatchMem (void)
+ //
+ // tile 8s
+ //
+-    surf = SDL_CreateRGBSurface(SDL_HWSURFACE, 8*8,
++    surf = SDL_CreateRGBSurface(SDL_HWSURFACE
++#ifdef WOLF4SDL_WEB
++        | SDL_HWPALETTE
++#endif
++        , 8*8,
+         ((NUMTILE8 + 7) / 8) * 8, 8, 0, 0, 0, 0);
+     if(surf == NULL)
+     {
+@@ -275,7 +318,11 @@ void LoadLatchMem (void)
+ 	{
+ 		width = pictable[i-STARTPICS].width;
+ 		height = pictable[i-STARTPICS].height;
+-		surf = SDL_CreateRGBSurface(SDL_HWSURFACE, width, height, 8, 0, 0, 0, 0);
++		surf = SDL_CreateRGBSurface(SDL_HWSURFACE
++#ifdef WOLF4SDL_WEB
++            | SDL_HWPALETTE
++#endif
++            , width, height, 8, 0, 0, 0, 0);
+         if(surf == NULL)
+         {
+             Quit("Unable to create surface for picture!");
+diff --git a/id_vl.cpp b/id_vl.cpp
+index 1e3e3d9379450110be75cb52145e53a0658001c2..4e3b65071b7daf4df4183b73fb02843a199a5c93 100644
+--- a/id_vl.cpp
++++ b/id_vl.cpp
+@@ -96,6 +96,10 @@ void	VL_Shutdown (void)
+ 
+ void	VL_SetVGAPlaneMode (void)
+ {
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] creating the SDL video surface\n");
++    fflush(stdout);
++#endif
+ #ifdef SPEAR
+     SDL_WM_SetCaption("Spear of Destiny", NULL);
+ #else
+@@ -104,14 +108,30 @@ void	VL_SetVGAPlaneMode (void)
+ 
+     if(screenBits == -1)
+     {
++#ifdef WOLF4SDL_WEB
++        // The original renderer is genuinely palette-indexed. Emscripten's
++        // SDL1 shim keys its surface layout from SDL_HWPALETTE (rather than
++        // the requested depth), so keep the browser presentation surface
++        // indexed as well and let the shim expand it into canvas RGBA.
++        screenBits = 8;
++#else
+         const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo();
+         screenBits = vidInfo->vfmt->BitsPerPixel;
++#endif
+     }
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] video mode %dx%dx%d\n", screenWidth, screenHeight, screenBits);
++    fflush(stdout);
++#endif
+ 
+     screen = SDL_SetVideoMode(screenWidth, screenHeight, screenBits,
+           (usedoublebuffering ? SDL_HWSURFACE | SDL_DOUBLEBUF : 0)
+         | (screenBits == 8 ? SDL_HWPALETTE : 0)
+         | (fullscreen ? SDL_FULLSCREEN : 0));
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] SDL video surface call returned\n");
++    fflush(stdout);
++#endif
+     if(!screen)
+     {
+         printf("Unable to set %ix%ix%i video mode: %s\n", screenWidth,
+@@ -125,7 +145,11 @@ void	VL_SetVGAPlaneMode (void)
+     SDL_SetColors(screen, gamepal, 0, 256);
+     memcpy(curpal, gamepal, sizeof(SDL_Color) * 256);
+ 
+-    screenBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, screenWidth,
++    screenBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE
++#ifdef WOLF4SDL_WEB
++        | SDL_HWPALETTE
++#endif
++        , screenWidth,
+         screenHeight, 8, 0, 0, 0, 0);
+     if(!screenBuffer)
+     {
+@@ -147,6 +171,10 @@ void	VL_SetVGAPlaneMode (void)
+     CHECKMALLOCRESULT(pixelangle);
+     wallheight = (int *) malloc(screenWidth * sizeof(int));
+     CHECKMALLOCRESULT(wallheight);
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] SDL video surface is ready\n");
++    fflush(stdout);
++#endif
+ }
+ 
+ /*
+diff --git a/id_vl.h b/id_vl.h
+index 55b7b84f977dd813044e8b29239421d9ad7f1f8a..835b43fffe6fdb48e2e59c6f95d78dbb25103669 100644
+--- a/id_vl.h
++++ b/id_vl.h
+@@ -21,6 +21,7 @@ extern	boolean  screenfaded;
+ extern	unsigned bordercolor;
+ 
+ extern SDL_Color gamepal[256];
++extern SDL_Color curpal[256];
+ 
+ //===========================================================================
+ 
+diff --git a/web/sdl_mixer_stub.h b/web/sdl_mixer_stub.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b18bf9694cdb37dbd9e6c8093f9554e9c1d16f7
+--- /dev/null
++++ b/web/sdl_mixer_stub.h
+@@ -0,0 +1,275 @@
++#ifndef WOLF4SDL_WEB_SDL_MIXER_STUB_H
++#define WOLF4SDL_WEB_SDL_MIXER_STUB_H
++
++/* Minimal SDL1 mixer for the browser target. Wolf4SDL only needs PCM
++ * channels, stereo panning, and one OPL music hook. */
++
++#include <SDL.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include <string.h>
++
++#define MIX_CHANNELS 32
++#define MIX_MAX_VOLUME 128
++
++typedef struct Mix_Chunk
++{
++    Uint8 *abuf;
++    Uint32 alen;
++    Uint8 volume;
++} Mix_Chunk;
++
++typedef struct
++{
++    Mix_Chunk *chunk;
++    Uint32 position;
++    Uint8 left;
++    Uint8 right;
++    int group;
++    Uint32 serial;
++} WolfWebMixChannel;
++
++static WolfWebMixChannel wolf_web_channels[MIX_CHANNELS];
++static void (*wolf_web_music_hook)(void *, Uint8 *, int);
++static void *wolf_web_music_data;
++static void (*wolf_web_finished_hook)(int);
++static Uint32 wolf_web_serial;
++static int wolf_web_reserved;
++static int wolf_web_audio_open;
++static const char *wolf_web_mix_error = "no mixer error";
++
++static inline Sint16 WolfWebClampSample(int sample)
++{
++    if (sample > 32767) return 32767;
++    if (sample < -32768) return -32768;
++    return (Sint16) sample;
++}
++
++static void WolfWebMixAudio(void *, Uint8 *stream, int len)
++{
++    Sint16 *output = (Sint16 *)(void *) stream;
++    int sample_count = len / (int) sizeof(Sint16);
++
++    memset(stream, 0, (size_t) len);
++    if (wolf_web_music_hook)
++        wolf_web_music_hook(wolf_web_music_data, stream, len);
++
++    for (int channel = 0; channel < MIX_CHANNELS; ++channel)
++    {
++        WolfWebMixChannel *voice = &wolf_web_channels[channel];
++        if (!voice->chunk) continue;
++
++        const Sint16 *source = (const Sint16 *)(const void *) voice->chunk->abuf;
++        Uint32 source_samples = voice->chunk->alen / sizeof(Sint16);
++        int mixed = 0;
++        while (mixed < sample_count && voice->position < source_samples)
++        {
++            int pan = (mixed & 1) ? voice->right : voice->left;
++            int value = source[voice->position++];
++            value = value * pan * voice->chunk->volume / (255 * MIX_MAX_VOLUME);
++            output[mixed] = WolfWebClampSample((int) output[mixed] + value);
++            ++mixed;
++        }
++
++        if (voice->position >= source_samples)
++        {
++            voice->chunk = NULL;
++            voice->position = 0;
++            if (wolf_web_finished_hook) wolf_web_finished_hook(channel);
++        }
++    }
++}
++
++static inline int Mix_OpenAudio(int frequency, Uint16 format, int channels, int chunksize)
++{
++    SDL_AudioSpec desired;
++    SDL_AudioSpec obtained;
++
++    if (format != AUDIO_S16SYS || channels != 2)
++    {
++        wolf_web_mix_error = "browser mixer requires signed 16-bit stereo";
++        return -1;
++    }
++    if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0)
++    {
++        wolf_web_mix_error = SDL_GetError();
++        return -1;
++    }
++
++    memset(&desired, 0, sizeof(desired));
++    desired.freq = frequency;
++    desired.format = AUDIO_S16SYS;
++    desired.channels = 2;
++    desired.samples = (Uint16) chunksize;
++    desired.callback = WolfWebMixAudio;
++
++    if (SDL_OpenAudio(&desired, &obtained) != 0)
++    {
++        wolf_web_mix_error = SDL_GetError();
++        return -1;
++    }
++    if (obtained.format != desired.format || obtained.channels != 2)
++    {
++        wolf_web_mix_error = "browser returned an unsupported audio format";
++        SDL_CloseAudio();
++        return -1;
++    }
++
++    memset(wolf_web_channels, 0, sizeof(wolf_web_channels));
++    for (int i = 0; i < MIX_CHANNELS; ++i)
++    {
++        wolf_web_channels[i].left = 255;
++        wolf_web_channels[i].right = 255;
++        wolf_web_channels[i].group = -1;
++    }
++    wolf_web_audio_open = 1;
++    SDL_PauseAudio(0);
++    return 0;
++}
++
++static inline const char *Mix_GetError(void) { return wolf_web_mix_error; }
++
++static inline void Mix_CloseAudio(void)
++{
++    if (!wolf_web_audio_open) return;
++    SDL_CloseAudio();
++    SDL_QuitSubSystem(SDL_INIT_AUDIO);
++    wolf_web_audio_open = 0;
++}
++
++static inline void Mix_ReserveChannels(int count)
++{
++    wolf_web_reserved = count < 0 ? 0 : (count > MIX_CHANNELS ? MIX_CHANNELS : count);
++}
++
++static inline int Mix_GroupChannels(int from, int to, int tag)
++{
++    if (from < 0) from = 0;
++    if (to >= MIX_CHANNELS) to = MIX_CHANNELS - 1;
++    if (from > to) return 0;
++    for (int i = from; i <= to; ++i) wolf_web_channels[i].group = tag;
++    return to - from + 1;
++}
++
++static inline int Mix_GroupAvailable(int tag)
++{
++    for (int i = wolf_web_reserved; i < MIX_CHANNELS; ++i)
++        if (wolf_web_channels[i].group == tag && !wolf_web_channels[i].chunk) return i;
++    return -1;
++}
++
++static inline int Mix_GroupOldest(int tag)
++{
++    int found = -1;
++    Uint32 oldest = UINT32_MAX;
++    for (int i = wolf_web_reserved; i < MIX_CHANNELS; ++i)
++    {
++        if (wolf_web_channels[i].group == tag && wolf_web_channels[i].chunk
++            && wolf_web_channels[i].serial < oldest)
++        {
++            found = i;
++            oldest = wolf_web_channels[i].serial;
++        }
++    }
++    return found;
++}
++
++static inline int Mix_HaltChannel(int channel)
++{
++    SDL_LockAudio();
++    int first = channel < 0 ? 0 : channel;
++    int last = channel < 0 ? MIX_CHANNELS - 1 : channel;
++    if (first < 0 || last >= MIX_CHANNELS)
++    {
++        SDL_UnlockAudio();
++        return -1;
++    }
++    for (int i = first; i <= last; ++i)
++    {
++        wolf_web_channels[i].chunk = NULL;
++        wolf_web_channels[i].position = 0;
++    }
++    SDL_UnlockAudio();
++    return 0;
++}
++
++static inline int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
++{
++    if (channel < 0 || channel >= MIX_CHANNELS) return 0;
++    SDL_LockAudio();
++    wolf_web_channels[channel].left = left;
++    wolf_web_channels[channel].right = right;
++    SDL_UnlockAudio();
++    return 1;
++}
++
++static inline void Mix_ChannelFinished(void (*callback)(int))
++{
++    wolf_web_finished_hook = callback;
++}
++
++static inline void Mix_HookMusic(void (*callback)(void *, Uint8 *, int), void *data)
++{
++    SDL_LockAudio();
++    wolf_web_music_hook = callback;
++    wolf_web_music_data = data;
++    SDL_UnlockAudio();
++}
++
++static inline Mix_Chunk *WolfWebMixLoadPCM16Mono(const Sint16 *samples, Uint32 frames)
++{
++    Mix_Chunk *chunk = NULL;
++
++    chunk = (Mix_Chunk *) malloc(sizeof(*chunk));
++    if (chunk)
++    {
++        Sint16 *stereo = (Sint16 *) malloc((size_t) frames * 2 * sizeof(Sint16));
++        if (!stereo)
++        {
++            free(chunk);
++            chunk = NULL;
++        }
++        else
++        {
++            for (Uint32 i = 0; i < frames; ++i)
++                stereo[i * 2] = stereo[i * 2 + 1] = samples[i];
++            chunk->abuf = (Uint8 *)(void *) stereo;
++            chunk->alen = frames * 2 * sizeof(Sint16);
++            chunk->volume = MIX_MAX_VOLUME;
++        }
++    }
++    if (!chunk) wolf_web_mix_error = "out of memory preparing browser sound";
++    return chunk;
++}
++
++static inline void Mix_FreeChunk(Mix_Chunk *chunk)
++{
++    if (!chunk) return;
++    free(chunk->abuf);
++    free(chunk);
++}
++
++static inline int Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops)
++{
++    if (!chunk || loops != 0) return -1;
++    if (channel < 0) channel = Mix_GroupAvailable(1);
++    if (channel < 0 || channel >= MIX_CHANNELS) return -1;
++    SDL_LockAudio();
++    wolf_web_channels[channel].chunk = chunk;
++    wolf_web_channels[channel].position = 0;
++    wolf_web_channels[channel].serial = ++wolf_web_serial;
++    SDL_UnlockAudio();
++    return channel;
++}
++
++static inline int WolfWebMixActiveChannels(void)
++{
++    int active = 0;
++    SDL_LockAudio();
++    for (int channel = 0; channel < MIX_CHANNELS; ++channel)
++        if (wolf_web_channels[channel].chunk) ++active;
++    SDL_UnlockAudio();
++    return active;
++}
++
++#endif
+diff --git a/wl_def.h b/wl_def.h
+index 292c2425a42fd0592ebf1f5820d6016551016644..a79487c7c9eeb6537a75e1ac72c08981c73b9c54 100644
+--- a/wl_def.h
++++ b/wl_def.h
+@@ -915,6 +915,9 @@ extern  int      shootdelta;
+ extern  unsigned screenofs;
+ 
+ extern  boolean  startgame;
++#ifdef WOLF4SDL_WEB
++extern volatile int WolfWasmRuntimeState;
++#endif
+ extern  char     str[80];
+ extern  char     configdir[256];
+ extern  char     configname[13];
+diff --git a/wl_main.cpp b/wl_main.cpp
+index 60b51922ddf076a23fbbe2964eb66391502bd487..a251c96680d821525d0da5242df45133fb3d475d 100644
+--- a/wl_main.cpp
++++ b/wl_main.cpp
+@@ -72,8 +72,33 @@ void    Quit (const char *error,...);
+ boolean startgame;
+ boolean loadedgame;
+ int     mouseadjustment;
++#ifdef WOLF4SDL_WEB
++#include <emscripten/emscripten.h>
++volatile int WolfWasmRuntimeState = 0;
++
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserRuntimeState()
++{
++    return WolfWasmRuntimeState;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserCaptureIntent()
++{
++    return WolfWasmRuntimeState == 5;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserControlsMask()
++{
++    int mask = 0;
++    // WASD is a fixed browser-only layer in PollKeyboardMove. The persisted
++    // dirscan table remains available for the original arrow-key turning.
++    mask |= 1 | 2 | 4 | 8;
++    if (mouseenabled) mask |= 16;
++    return mask;
++}
++#endif
+ 
+ char    configdir[256] = "";
++char    datadir[256] = "";
+ char    configname[13] = "config.";
+ 
+ //
+@@ -236,6 +261,16 @@ noconfig:
+         mouseadjustment=5;
+     }
+ 
++#ifdef WOLF4SDL_WEB
++    // Older browser configs briefly persisted WASD in dirscan, which caused
++    // A/D to turn as well as strafe. Keep the classic turning bindings stable
++    // and let the dedicated browser WASD layer own movement.
++    dirscan[di_north] = sc_UpArrow;
++    dirscan[di_east] = sc_RightArrow;
++    dirscan[di_south] = sc_DownArrow;
++    dirscan[di_west] = sc_LeftArrow;
++#endif
++
+     SD_SetMusicMode (sm);
+     SD_SetSoundMode (sd);
+     SD_SetDigiDevice (sds);
+@@ -1208,6 +1243,10 @@ static void InitGame()
+ #endif
+ 
+     // initialize SDL
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] initializing SDL on the engine worker\n");
++    fflush(stdout);
++#endif
+ #if defined _WIN32
+     putenv("SDL_VIDEODRIVER=directx");
+ #endif
+@@ -1216,6 +1255,10 @@ static void InitGame()
+         printf("Unable to init SDL: %s\n", SDL_GetError());
+         exit(1);
+     }
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] SDL initialized\n");
++    fflush(stdout);
++#endif
+     atexit(SDL_Quit);
+ 
+     int numJoysticks = SDL_NumJoysticks();
+@@ -1233,6 +1276,10 @@ static void InitGame()
+ #endif
+ 
+     SignonScreen ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] sign-on surface prepared\n");
++    fflush(stdout);
++#endif
+ 
+ #if defined _WIN32
+     if(!fullscreen)
+@@ -1250,13 +1297,41 @@ static void InitGame()
+     }
+ #endif
+ 	VW_UpdateScreen();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] first frame presented\n");
++    fflush(stdout);
++#endif
+ 
+     VH_Startup ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] video resources initialized\n");
++    fflush(stdout);
++#endif
+     IN_Startup ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] input initialized\n");
++    fflush(stdout);
++#endif
+     PM_Startup ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] page manager initialized\n");
++    fflush(stdout);
++#endif
+     SD_Startup ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] sound stub initialized\n");
++    fflush(stdout);
++#endif
+     CA_Startup ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] cache manager initialized\n");
++    fflush(stdout);
++#endif
+     US_Startup ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] user interface initialized\n");
++    fflush(stdout);
++#endif
+ 
+     // TODO: Will any memory checking be needed someday??
+ #ifdef NOTYET
+@@ -1282,10 +1357,22 @@ static void InitGame()
+ // build some tables
+ //
+     InitDigiMap ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] digital sound map initialized\n");
++    fflush(stdout);
++#endif
+ 
+     ReadConfig ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] configuration loaded\n");
++    fflush(stdout);
++#endif
+ 
+     SetupSaveGames();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] save slots scanned\n");
++    fflush(stdout);
++#endif
+ 
+ //
+ // HOLDING DOWN 'M' KEY?
+@@ -1305,6 +1392,10 @@ static void InitGame()
+ // draw intro screen stuff
+ //
+     IntroScreen ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] intro diagnostics drawn\n");
++    fflush(stdout);
++#endif
+ 
+ #ifdef _arch_dreamcast
+     //TODO: VMU Selection Screen
+@@ -1318,6 +1409,10 @@ static void InitGame()
+     CA_CacheGrChunk(STATUSBARPIC);
+ 
+     LoadLatchMem ();
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] menu graphics loaded\n");
++    fflush(stdout);
++#endif
+     BuildTables ();          // trig tables
+     SetupWalls ();
+ 
+@@ -1872,6 +1967,20 @@ void CheckParameters(int argc, char *argv[])
+                 }
+             }
+         }
++        else IFARG("--datadir")
++        {
++            if(++i >= argc)
++            {
++                printf("The datadir option is missing the dir argument!\n");
++                hasError = true;
++            }
++            else if(strlen(argv[i]) >= sizeof(datadir))
++            {
++                printf("The data directory is too long!\n");
++                hasError = true;
++            }
++            else strcpy(datadir, argv[i]);
++        }
+         else IFARG("--goodtimes")
+             param_goodtimes = true;
+         else IFARG("--ignorenumchunks")
+@@ -1916,6 +2025,7 @@ void CheckParameters(int argc, char *argv[])
+             " --ignorenumchunks      Ignores the number of chunks in VGAHEAD.*\n"
+             "                        (may be useful for some broken mods)\n"
+             " --configdir <dir>      Directory where config file and save games are stored\n"
++            " --datadir <dir>        Directory containing the registered game data\n"
+ #if defined(_arch_dreamcast) || defined(_WIN32)
+             "                        (default: current directory)\n"
+ #else
+@@ -1945,16 +2055,43 @@ void CheckParameters(int argc, char *argv[])
+ 
+ int main (int argc, char *argv[])
+ {
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] native main entered\n");
++    fflush(stdout);
++#endif
+ #if defined(_arch_dreamcast)
+     DC_Init();
+ #else
+     CheckParameters(argc, argv);
+ #endif
+ 
++    if(datadir[0] && chdir(datadir) != 0)
++    {
++        printf("Could not change to data directory %s\n", datadir);
++        return 1;
++    }
++
++#ifdef WOLF4SDL_WEB
++    // A browser launch already has an explicit Play gesture. Skip the DOS-era
++    // sign-on acknowledgement and attract-page waits so the real menu appears
++    // immediately and the worker never waits on an invisible pre-menu key.
++    param_nowait = true;
++#endif
++
+     CheckForEpisodes();
+ 
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] registered data detected\n");
++    fflush(stdout);
++#endif
++
+     InitGame();
+ 
++#ifdef WOLF4SDL_WEB
++    printf("[Wolf4SDL WASM] engine initialized; entering the original demo/menu loop\n");
++    fflush(stdout);
++#endif
++
+     DemoLoop();
+ 
+     Quit("Demo loop exited???");
+diff --git a/wl_menu.cpp b/wl_menu.cpp
+index b52b1b70b06e0f86cb21777c0974dc558d95e74b..582b0294b89efcfb02123c8e0090f8f905989628 100644
+--- a/wl_menu.cpp
++++ b/wl_menu.cpp
+@@ -396,6 +396,10 @@ US_ControlPanel (ScanCode scancode)
+ {
+     int which;
+ 
++#ifdef WOLF4SDL_WEB
++    WolfWasmRuntimeState = ingame ? 4 : 1;
++#endif
++
+ #ifdef _arch_dreamcast
+     DC_StatusClearLCD();
+ #endif
+@@ -575,6 +579,12 @@ US_ControlPanel (ScanCode scancode)
+ #ifdef SPEAR
+     UnCacheLump (OPTIONS_LUMP_START, OPTIONS_LUMP_END);
+ #endif
++#ifdef WOLF4SDL_WEB
++    if (startgame || loadedgame)
++        WolfWasmRuntimeState = 5;
++    else if (ingame)
++        WolfWasmRuntimeState = 2;
++#endif
+ }
+ 
+ void EnableEndGameMenuItem()
+@@ -3617,6 +3627,7 @@ ReadAnyControl (ControlInfo * ci)
+ 
+     IN_ReadControl (0, ci);
+ 
++#ifndef WOLF4SDL_WEB
+     if (mouseenabled && IN_IsInputGrabbed())
+     {
+         int mousex, mousey, buttons;
+@@ -3661,6 +3672,7 @@ ReadAnyControl (ControlInfo * ci)
+             mouseactive = 1;
+         }
+     }
++#endif
+ 
+     if (joystickenabled && !mouseactive)
+     {
+diff --git a/wl_play.cpp b/wl_play.cpp
+index 8cddd9cd876061e32b2653ba5e10507c2980470f..c7c8aca8162285099a681952fff684e498323267 100644
+--- a/wl_play.cpp
++++ b/wl_play.cpp
+@@ -211,7 +211,7 @@ int songs[] = {
+     XFUNKIE_MUS,
+     XDEATH_MUS,
+     XGETYOU_MUS,                // DON'T KNOW
+-    ULTIMATE_MUS,               // Trans Gr”sse
++    ULTIMATE_MUS,               // Trans Groesse
+ 
+     DUNGEON_MUS,
+     GOINGAFT_MUS,
+@@ -317,6 +317,20 @@ void PollKeyboardMove (void)
+ {
+     int delta = buttonstate[bt_run] ? RUNMOVE * tics : BASEMOVE * tics;
+ 
++#ifdef WOLF4SDL_WEB
++    // Modern browser movement while preserving the original arrow keys for
++    // turning. Do not also bind WASD through dirscan: that made W/S apply
++    // movement twice and A/D both strafe and turn.
++    if (Keyboard[sc_W])
++        controly -= delta;
++    if (Keyboard[sc_S])
++        controly += delta;
++    if (Keyboard[sc_A])
++        buttonstate[bt_strafeleft] = true;
++    if (Keyboard[sc_D])
++        buttonstate[bt_straferight] = true;
++#endif
++
+     if (Keyboard[dirscan[di_north]])
+         controly -= delta;
+     if (Keyboard[dirscan[di_south]])
+@@ -340,6 +354,12 @@ void PollMouseMove (void)
+ {
+     int mousexmove, mouseymove;
+ 
++#ifdef WOLF4SDL_WEB
++    IN_GetMouseDelta(&mousexmove, &mouseymove);
++    controlx += mousexmove * 10 / (13 - mouseadjustment);
++    (void) mouseymove; // Wolf3D has no vertical view axis.
++    return;
++#else
+     SDL_GetMouseState(&mousexmove, &mouseymove);
+     if(IN_IsInputGrabbed())
+         IN_CenterMouse();
+@@ -349,6 +369,7 @@ void PollMouseMove (void)
+ 
+     controlx += mousexmove * 10 / (13 - mouseadjustment);
+     controly += mouseymove * 20 / (13 - mouseadjustment);
++#endif
+ }
+ 
+ 
+@@ -1261,6 +1282,9 @@ int32_t funnyticount;
+ 
+ void PlayLoop (void)
+ {
++#ifdef WOLF4SDL_WEB
++    WolfWasmRuntimeState = 2;
++#endif
+ #if defined(USE_FEATUREFLAGS) && defined(USE_CLOUDSKY)
+     if(GetFeatureFlags() & FF_CLOUDSKY)
+         InitSky();
+@@ -1350,4 +1374,8 @@ void PlayLoop (void)
+ 
+     if (playstate != ex_died)
+         FinishPaletteShifts ();
++#ifdef WOLF4SDL_WEB
++    WolfWasmRuntimeState =
++        playstate == ex_completed || playstate == ex_secretlevel || playstate == ex_victorious ? 3 : 1;
++#endif
+ }

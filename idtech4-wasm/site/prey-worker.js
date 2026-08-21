@@ -22,8 +22,8 @@ async function launch(message) {
   const { canvas, entries = [], width, height, playerName, engineArguments = [], persistence = {} } = message;
   try {
     post('status', 'Loading Prey engine…');
-    if (persistence.frameworkScript !== '/shared-shell/wasm-game-framework.js' || persistence.frameworkVersion !== '0.9.2') {
-      throw new Error('Prey requires the exact wasm-game-framework 0.9.2 worker persistence contract.');
+    if (persistence.frameworkScript !== '/shared-shell/wasm-game-framework.js' || persistence.frameworkVersion !== '0.9.6') {
+      throw new Error('Prey requires the exact wasm-game-framework 0.9.6 worker persistence contract.');
     }
     importScripts(persistence.frameworkScript);
     if (self.WasmGameFramework?.version !== persistence.frameworkVersion) {

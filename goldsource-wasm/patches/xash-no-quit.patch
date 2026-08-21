@@ -31,22 +31,21 @@ index 7194e29..093de3a 100644
  		}
  		return true;
  	}
-@@ -291,15 +292,14 @@ void CMenuMain::_Init( void )
+@@ -291,15 +292,10 @@ void CMenuMain::_Init( void )
  
  	AddItem( configuration );
  	AddItem( saveRestore );
 -	AddItem( multiPlayer );
  
- 	if ( bCustomGame )
- 		AddItem( customGame );
+-	if ( bCustomGame )
+-		AddItem( customGame );
  
 -	AddItem( previews );
 -	AddItem( quit );
-+	// Browser build: single-player only, closing the tab is the only way
-+	// out, and the previews link is dead in a browser — those three items
-+	// (multiPlayer, previews, quit, quitButton) are not added.
- 	AddItem( minimizeBtn );
+-	AddItem( minimizeBtn );
 -	AddItem( quitButton );
++	// Browser build: single-player only. Custom-game switching, previews,
++	// process/window controls, and multiplayer do not apply to this package.
  }
  
  /*

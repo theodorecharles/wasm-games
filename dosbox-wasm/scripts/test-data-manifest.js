@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const site = path.resolve(process.argv[2] || path.join(__dirname, '../web/dist'));
+const site = path.resolve(process.argv[2] || path.join(__dirname, '../web'));
 const root = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game-data.json'), 'utf8'));
 const variants = root.variants;
 

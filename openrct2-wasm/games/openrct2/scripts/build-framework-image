@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly framework_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
+readonly framework_version="0.9.6"
+game_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+engine_root="$(cd "${game_root}/../.." && pwd)"
+framework_root="${WASM_GAME_FRAMEWORK_ROOT:-/home/ted/Development/wasm-game-framework}"
+framework_image="wasm-game-framework:0.9.6"
+site_image="openrct2-wasm:site-0.9.6"
+output_image="${1:-openrct2-wasm:dev}"
+
+"$game_root/scripts/stage-framework-site"
+if [[ "$(git -C "$framework_root" rev-parse HEAD)" != "$framework_commit" ]]; then
+    printf 'wasm-game-framework must be pinned at %s.\n' "$framework_commit" >&2
+    exit 1
+fi
+"$framework_root/scripts/build-base-image.sh" "$framework_image"
+actual_framework_hashes="$(docker run --rm --entrypoint sha256sum "$framework_image" \
+    /opt/wasm-game-framework/dist/wasm-game-framework.js \
+    /opt/wasm-game-framework/dist/wasm-game-bootstrap.js \
+    /opt/wasm-game-framework/package.json \
+    /opt/wasm-game-framework/server/media-library.js | cut -d' ' -f1)"
+expected_framework_hashes="$(sha256sum \
+    "$framework_root/dist/wasm-game-framework.js" \
+    "$framework_root/dist/wasm-game-bootstrap.js" \
+    "$framework_root/package.json" \
+    "$framework_root/server/media-library.js" | cut -d' ' -f1)"
+if [[ "$actual_framework_hashes" != "$expected_framework_hashes" ]]; then
+    printf '%s does not match the browser/server package from %s.\n' "$framework_image" "$framework_commit" >&2
+    exit 1
+fi
+
+WASM_GAME_FRAMEWORK_IMAGE="$framework_image" \
+    "$framework_root/scripts/build-static-image.sh" \
+    "$engine_root/.work/site" "$site_image" openrct2
+
+docker build --file "$game_root/Dockerfile" \
+    --build-arg "BASE_IMAGE=$site_image" --tag "$output_image" "$game_root"
+
+docker image inspect "$output_image" --format '{{.Id}}'

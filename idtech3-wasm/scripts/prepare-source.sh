@@ -101,3 +101,5 @@ case "$TARGET" in
   all) prepare_quake3; prepare_rtcw ;;
   *) echo "usage: $0 quake3|rtcw|all" >&2; exit 2 ;;
 esac
+
+find "$SOURCE_ROOT" -type f -name '*.md' -delete

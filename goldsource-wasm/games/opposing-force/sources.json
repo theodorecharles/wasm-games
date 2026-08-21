@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "pinned-source-build",
+  "repositories": [
+    {
+      "name": "webxash3d-package-workspace",
+      "repository": "https://github.com/theodorecharles/webxash3d-fwgs.git",
+      "commit": "a2db71daaf606b215f019da161c939c20780e0a1",
+      "upstream": "https://github.com/yohimik/webxash3d-fwgs.git"
+    },
+    {
+      "name": "xash3d-engine",
+      "repository": "https://github.com/theodorecharles/xash3d-fwgs.git",
+      "commit": "f85aa0c8f7d46c27191132b44d872c8e331308de",
+      "upstream": "https://github.com/FWGS/xash3d-fwgs.git"
+    },
+    {
+      "name": "hlsdk-portable",
+      "repository": "https://github.com/theodorecharles/hlsdk-portable.git",
+      "commit": "613eb55d5bcd257219c881297d1d43c1da4a7445",
+      "upstream": "https://github.com/FWGS/hlsdk-portable.git"
+    }
+  ]
+}

@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-build_dir="${BUILD_WASM_BUILD_DIR:-$repo_dir/build-web}"
+engine_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source_dir="$("${engine_dir}/scripts/fetch-source")"
+build_dir="${BUILD_WASM_BUILD_DIR:-$engine_dir/.work/build}"
 dist_dir="$build_dir/dist"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+workspace_dir="$(cd "$engine_dir/../.." && pwd)"
+framework_dir="${WASM_FRAMEWORK_DIR:-$workspace_dir/wasm-game-framework}"
 jobs="${BUILD_WASM_JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf '2')}"
-required_framework_version="0.9.4"
-required_framework_commit="c4ad3b9"
+required_framework_version="0.9.6"
+required_framework_commit="ebb1ebe"
 
 if ! command -v emcc >/dev/null 2>&1; then
     emsdk_dir="${EMSDK_DIR:-${EMSDK:-}}"
@@ -91,30 +93,30 @@ make_options=(
     CFLAGS=-sUSE_SDL=2
 )
 
-blood_link_flags=("${base_link_flags[@]}" --preload-file "$repo_dir/nblood.pk3@/game/nblood.pk3")
+blood_link_flags=("${base_link_flags[@]}" --preload-file "$source_dir/nblood.pk3@/game/nblood.pk3")
 printf '[Build WASM] Building native NBlood classic target.\n'
-make -C "$repo_dir" "${make_options[@]}" blood \
-    obj="${build_dir#$repo_dir/}/obj-blood" \
-    blood_game="${dist_dir#$repo_dir/}/blood" \
+make -C "$source_dir" "${make_options[@]}" blood \
+    obj="$build_dir/obj-blood" \
+    blood_game="$dist_dir/blood" \
     LDFLAGS="${blood_link_flags[*]}"
 
 printf '[Build WASM] Building native EDuke32 classic target.\n'
-make -C "$repo_dir" "${make_options[@]}" duke3d \
-    obj="${build_dir#$repo_dir/}/obj-duke3d" \
-    duke3d_game="${dist_dir#$repo_dir/}/duke3d" \
+make -C "$source_dir" "${make_options[@]}" duke3d \
+    obj="$build_dir/obj-duke3d" \
+    duke3d_game="$dist_dir/duke3d" \
     LDFLAGS="${base_link_flags[*]}"
 
-cmake -E copy_if_different "$repo_dir/web/game-adapter.js" "$dist_dir/game-adapter.js"
-cmake -E copy_if_different "$repo_dir/web/blood-adapter.js" "$dist_dir/adapters/blood.js"
-cmake -E copy_if_different "$repo_dir/web/duke3d-adapter.js" "$dist_dir/adapters/duke3d.js"
-cmake -E copy_if_different "$repo_dir/web/wasm-game.json" "$dist_dir/wasm-game.json"
-cmake -E copy_if_different "$repo_dir/web/wasm-game-data.json" "$dist_dir/wasm-game-data.json"
-cmake -E copy_if_different "$repo_dir/source/blood/rsrc/game_icon.ico" "$dist_dir/blood.ico"
-cmake -E copy_if_different "$repo_dir/source/duke3d/rsrc/game_icon.ico" "$dist_dir/duke3d.ico"
-magick "$repo_dir/source/blood/rsrc/game_icon.ico[10]" -resize 192x192 "$dist_dir/blood-192.png"
-magick "$repo_dir/source/blood/rsrc/game_icon.ico[10]" -resize 512x512 "$dist_dir/blood-512.png"
-magick "$repo_dir/source/duke3d/rsrc/game_icon.ico[10]" -resize 192x192 "$dist_dir/duke3d-192.png"
-magick "$repo_dir/source/duke3d/rsrc/game_icon.ico[10]" -resize 512x512 "$dist_dir/duke3d-512.png"
+cmake -E copy_if_different "$engine_dir/web/game-adapter.js" "$dist_dir/game-adapter.js"
+cmake -E copy_if_different "$engine_dir/web/blood-adapter.js" "$dist_dir/adapters/blood.js"
+cmake -E copy_if_different "$engine_dir/web/duke3d-adapter.js" "$dist_dir/adapters/duke3d.js"
+cmake -E copy_if_different "$engine_dir/web/wasm-game.json" "$dist_dir/wasm-game.json"
+cmake -E copy_if_different "$engine_dir/web/wasm-game-data.json" "$dist_dir/wasm-game-data.json"
+cmake -E copy_if_different "$source_dir/source/blood/rsrc/game_icon.ico" "$dist_dir/blood.ico"
+cmake -E copy_if_different "$source_dir/source/duke3d/rsrc/game_icon.ico" "$dist_dir/duke3d.ico"
+magick "$source_dir/source/blood/rsrc/game_icon.ico[10]" -resize 192x192 "$dist_dir/blood-192.png"
+magick "$source_dir/source/blood/rsrc/game_icon.ico[10]" -resize 512x512 "$dist_dir/blood-512.png"
+magick "$source_dir/source/duke3d/rsrc/game_icon.ico[10]" -resize 192x192 "$dist_dir/duke3d-192.png"
+magick "$source_dir/source/duke3d/rsrc/game_icon.ico[10]" -resize 512x512 "$dist_dir/duke3d-512.png"
 
 "$framework_dir/scripts/install-browser-package.sh" "$dist_dir/shared-shell" copy
 node "$framework_dir/scripts/check-game-package.js" "$dist_dir"

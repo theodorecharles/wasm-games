@@ -1,0 +1,948 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5e86bbb..bbd8fb8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -261,12 +261,12 @@ if ( NOT NO_SOUND )
+ 	add_subdirectory( rnnoise )
+ endif ( NOT NO_SOUND )
+ 
+-if( NOT WIN32 AND NOT APPLE )
++if( NOT WIN32 AND NOT APPLE AND NOT NO_SOUND )
+ 	# [BB] We don't need output_sdl (only used for sound), if we are just building the server.
+ 	if ( NOT SERVERONLY )
+ 		add_subdirectory( output_sdl )
+ 	endif ( NOT SERVERONLY )
+-endif( NOT WIN32 AND NOT APPLE )
++endif( NOT WIN32 AND NOT APPLE AND NOT NO_SOUND )
+ 
+ if( NOT CMAKE_CROSSCOMPILING )
+ 	export(TARGETS ${CROSS_EXPORTS} FILE "${CMAKE_BINARY_DIR}/ImportExecutables.cmake" )
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 65c675c..f75fa86 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -681,10 +681,13 @@ else ( NOT NO_SOUND )
+ 	include_directories( "${ZLIB_INCLUDE_DIR}" "${BZIP2_INCLUDE_DIR}" "${LZMA_INCLUDE_DIR}" "${JPEG_INCLUDE_DIR}" "${GME_INCLUDE_DIR}" )
+ endif ( NOT NO_SOUND )
+ 
+-# [BB] We need OpenSSL for csrp.
++# [BB] We need OpenSSL for csrp. Browser builds do not expose remote account
++# login and compile a fail-closed SRP stub instead.
++if( NOT EMSCRIPTEN )
+ FIND_PACKAGE ( OpenSSL REQUIRED )
+ include_directories( ${OPENSSL_INCLUDE_DIR} )
+ set ( ZDOOM_LIBS ${ZDOOM_LIBS} ${OPENSSL_LIBRARIES} )
++endif( NOT EMSCRIPTEN )
+ if( WIN32 )
+ 	set ( ZDOOM_LIBS ${ZDOOM_LIBS} crypt32 )
+ endif ( WIN32 )
+@@ -1475,6 +1478,27 @@ endif(${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+ 
+ # [BB] Added GeoIP, huffman & sqlite
+ target_link_libraries( zdoom ${ZDOOM_LIBS} gdtoa dumb lzma GeoIP sqlite3 )
++if( EMSCRIPTEN )
++	target_compile_options( zdoom PRIVATE -fexceptions )
++	target_link_options( zdoom PRIVATE
++		"SHELL:-fexceptions"
++		"SHELL:-sASYNCIFY=1"
++		"SHELL:-sMODULARIZE=1"
++		"SHELL:-sEXPORT_NAME=createZandronum"
++		"SHELL:-sENVIRONMENT=web"
++		"SHELL:-sALLOW_MEMORY_GROWTH=1"
++		"SHELL:-sINITIAL_MEMORY=268435456"
++		"SHELL:-sSTACK_SIZE=8388608"
++		"SHELL:-sNO_EXIT_RUNTIME=1"
++		"SHELL:-sDISABLE_EXCEPTION_CATCHING=0"
++		"SHELL:-sFORCE_FILESYSTEM=1"
++		"SHELL:-sINVOKE_RUN=0"
++		"SHELL:-sEXPORTED_RUNTIME_METHODS=['FS','callMain']"
++		"SHELL:-sEXPORTED_FUNCTIONS=['_main']"
++		"SHELL:-lwebsocket.js"
++		"SHELL:-lidbfs.js"
++	)
++endif( EMSCRIPTEN )
+ include_directories( .
+ 	g_doom
+ 	g_heretic
+diff --git a/src/__autostart.cpp b/src/__autostart.cpp
+index ed9db38..8891552 100644
+--- a/src/__autostart.cpp
++++ b/src/__autostart.cpp
+@@ -88,11 +88,11 @@ void *YRegHead = 0;
+ 
+ #include "doomtype.h"
+ 
+-void *ARegHead __attribute__((section(SECTION_AREG))) = 0;
+-void *CRegHead __attribute__((section(SECTION_CREG))) = 0;
+-void *GRegHead __attribute__((section(SECTION_GREG))) = 0;
+-void *MRegHead __attribute__((section(SECTION_MREG))) = 0;
+-void *YRegHead __attribute__((section(SECTION_YREG))) = 0;
++void *ARegHead __attribute__((section(SECTION_AREG),used)) = 0;
++void *CRegHead __attribute__((section(SECTION_CREG),used)) = 0;
++void *GRegHead __attribute__((section(SECTION_GREG),used)) = 0;
++void *MRegHead __attribute__((section(SECTION_MREG),used)) = 0;
++void *YRegHead __attribute__((section(SECTION_YREG),used)) = 0;
+ 
+ #else
+ 
+diff --git a/src/autosegs.h b/src/autosegs.h
+index f0546c5..6ad5eb4 100644
+--- a/src/autosegs.h
++++ b/src/autosegs.h
+@@ -58,11 +58,30 @@ extern REGINFO MRegTail;
+ extern REGINFO YRegHead;
+ extern REGINFO YRegTail;
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" {
++	extern REGINFO __start_areg[], __stop_areg[];
++	extern REGINFO __start_creg[], __stop_creg[];
++	extern REGINFO __start_greg[], __stop_greg[];
++	extern REGINFO __start_mreg[], __stop_mreg[];
++	extern REGINFO __start_yreg[], __stop_yreg[];
++}
++#endif
++
+ class FAutoSegIterator
+ {
+ 	public:
+ 		FAutoSegIterator(REGINFO &head, REGINFO &tail)
+ 		{
++#ifdef __EMSCRIPTEN__
++			if ( &head == &ARegHead ) { Head = __start_areg; Tail = __stop_areg; }
++			else if ( &head == &CRegHead ) { Head = __start_creg; Tail = __stop_creg; }
++			else if ( &head == &GRegHead ) { Head = __start_greg; Tail = __stop_greg; }
++			else if ( &head == &MRegHead ) { Head = __start_mreg; Tail = __stop_mreg; }
++			else { Head = __start_yreg; Tail = __stop_yreg; }
++			Probe = Head;
++			BeforeFirst = true;
++#else
+ 			// Weirdness. Mingw's linker puts these together backwards.
+ 			if (&head <= &tail)
+ 			{
+@@ -75,28 +94,45 @@ class FAutoSegIterator
+ 				Tail = &head;
+ 			}
+ 			Probe = Head;
++#endif
+ 		}
+ 		REGINFO operator*() const
+ 		{
++#ifdef __EMSCRIPTEN__
++			return !BeforeFirst && Probe < Tail ? *Probe : 0;
++#else
+ 			return *Probe;
++#endif
+ 		}
+ 		FAutoSegIterator &operator++()
+ 		{
++#ifdef __EMSCRIPTEN__
++			if ( BeforeFirst ) BeforeFirst = false;
++			else if ( Probe < Tail ) ++Probe;
++			while ( Probe < Tail && *Probe == 0 ) ++Probe;
++#else
+ 			do
+ 			{
+ 				++Probe;
+ 			} while (*Probe == 0 && Probe < Tail);
++#endif
+ 			return *this;
+ 		}
+ 		void Reset()
+ 		{
+ 			Probe = Head;
++#ifdef __EMSCRIPTEN__
++			BeforeFirst = true;
++#endif
+ 		}
+ 
+ 	protected:
+ 		REGINFO *Probe;
+ 		REGINFO *Head;
+ 		REGINFO *Tail;
++#ifdef __EMSCRIPTEN__
++		bool BeforeFirst;
++#endif
+ };
+ 
+ #endif
+diff --git a/src/cmdlib.cpp b/src/cmdlib.cpp
+index a912e95..82f1d34 100644
+--- a/src/cmdlib.cpp
++++ b/src/cmdlib.cpp
+@@ -7,7 +7,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <pwd.h>
+-#if !defined(__sun)
++#if !defined(__sun) && !defined(__EMSCRIPTEN__)
+ #include <fts.h>
+ #endif
+ #endif
+@@ -980,7 +980,7 @@ void ScanDirectory(TArray<FFileList> &list, const char *dirpath)
+ 	}
+ }
+ 
+-#elif defined(__sun) || defined(__linux__)
++#elif defined(__sun) || defined(__linux__) || defined(__EMSCRIPTEN__)
+ 
+ //==========================================================================
+ //
+diff --git a/src/d_main.cpp b/src/d_main.cpp
+index b5fea27..6cb2a29 100644
+--- a/src/d_main.cpp
++++ b/src/d_main.cpp
+@@ -36,6 +36,10 @@
+ #include <sys/stat.h>
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ #ifdef HAVE_FPU_CONTROL
+ #include <fpu_control.h>
+ #endif
+@@ -159,6 +163,63 @@ void DrawHUD();
+ 
+ extern player_t *Player;
+ 
++#ifdef __EMSCRIPTEN__
++static unsigned int g_BrowserFrameCount = 0;
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserRuntimeState( void )
++{
++	return gamestate == GS_LEVEL ? 1 : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserFrameCount( void )
++{
++	return g_BrowserFrameCount;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerX( void )
++{
++	return players[consoleplayer].mo ? players[consoleplayer].mo->x : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerY( void )
++{
++	return players[consoleplayer].mo ? players[consoleplayer].mo->y : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserPlayerAngle( void )
++{
++	return players[consoleplayer].mo ? players[consoleplayer].mo->angle : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserViewPitch( void )
++{
++	return players[consoleplayer].mo ? static_cast<unsigned int>( players[consoleplayer].mo->pitch ) : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserAttackDown( void )
++{
++	return ( players[consoleplayer].cmd.ucmd.buttons & BT_ATTACK ) != 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserNetGame( void )
++{
++	return NETWORK_GetState( ) == NETSTATE_CLIENT ? 1 : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerCount( void )
++{
++	int count = 0;
++	for ( int i = 0; i < MAXPLAYERS; ++i )
++		if ( playeringame[i] ) ++count;
++	return count;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserConsolePlayer( void )
++{
++	return consoleplayer;
++}
++#endif
++
+ // MACROS ------------------------------------------------------------------
+ 
+ // TYPES -------------------------------------------------------------------
+@@ -1375,6 +1436,10 @@ void D_DoomLoop ()
+ 			}
+ 			D_ErrorCleanup ();
+ 		}
++#ifdef __EMSCRIPTEN__
++		++g_BrowserFrameCount;
++		emscripten_sleep( 0 );
++#endif
+ 	}
+ }
+ 
+@@ -3425,5 +3490,3 @@ void FStartupScreen::NetProgress(int) {}
+ void FStartupScreen::NetMessage(char const *,...) {}
+ void FStartupScreen::NetDone(void) {}
+ bool FStartupScreen::NetLoop(bool (*)(void *),void *) { return false; }
+-
+-
+diff --git a/src/dobject.h b/src/dobject.h
+index db7e5d4..8c4f109 100644
+--- a/src/dobject.h
++++ b/src/dobject.h
+@@ -174,7 +174,7 @@ private: \
+ #	pragma data_seg()
+ #	define _DECLARE_TI(cls) __declspec(allocate(".creg$u")) ClassReg *cls::RegistrationInfoPtr = &cls::RegistrationInfo;
+ #else
+-#	define _DECLARE_TI(cls) ClassReg *cls::RegistrationInfoPtr __attribute__((section(SECTION_CREG))) = &cls::RegistrationInfo;
++#	define _DECLARE_TI(cls) ClassReg *cls::RegistrationInfoPtr __attribute__((section(SECTION_CREG),used)) = &cls::RegistrationInfo;
+ #endif
+ 
+ #define _IMP_PCLASS(cls,ptrs,create) \
+diff --git a/src/g_level.h b/src/g_level.h
+index 5428135..8e2995c 100644
+--- a/src/g_level.h
++++ b/src/g_level.h
+@@ -54,7 +54,7 @@ class FScanner;
+ #define GCC_YSEG
+ #else
+ #define MSVC_YSEG
+-#define GCC_YSEG __attribute__((section(SECTION_YREG)))
++#define GCC_YSEG __attribute__((section(SECTION_YREG),used))
+ #endif
+ 
+ struct FIntermissionDescriptor;
+diff --git a/src/g_mapinfo.cpp b/src/g_mapinfo.cpp
+index 27d7692..43438a6 100644
+--- a/src/g_mapinfo.cpp
++++ b/src/g_mapinfo.cpp
+@@ -2080,4 +2080,3 @@ void G_ParseMapInfo (const char *basemapinfo)
+ 		I_FatalError ("You cannot use clearskills in a MAPINFO if you do not define any new skills after it.");
+ 	}
+ }
+-
+diff --git a/src/m_specialpaths.cpp b/src/m_specialpaths.cpp
+index c0f3fea..0b7590a 100644
+--- a/src/m_specialpaths.cpp
++++ b/src/m_specialpaths.cpp
+@@ -471,6 +471,11 @@ FString M_GetSavegamesPath()
+ 
+ FString GetUserFile (const char *file)
+ {
++#ifdef __EMSCRIPTEN__
++	FString browserPath = "/persistent/";
++	browserPath += file;
++	return browserPath;
++#else
+ 	FString path;
+ 	struct stat info;
+ 
+@@ -527,6 +532,7 @@ FString GetUserFile (const char *file)
+ 	}
+ 	path += file;
+ 	return path;
++#endif
+ }
+ 
+ //===========================================================================
+diff --git a/src/network.cpp b/src/network.cpp
+index 31f7f0e..195082d 100644
+--- a/src/network.cpp
++++ b/src/network.cpp
+@@ -72,6 +72,10 @@
+ #include <zstd.h>
+ #include "../GeoIP/GeoIP.h"
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten/websocket.h>
++#endif
++
+ #include "c_console.h"
+ #include "c_dispatch.h"
+ #include "cl_demo.h"
+@@ -221,6 +225,69 @@ static unsigned g_zstdDictId = 0;
+ static ZSTD_CDict *g_zstdCdict = nullptr;
+ static ZSTD_DDict *g_zstdDdict = nullptr;
+ 
++#ifdef __EMSCRIPTEN__
++static EMSCRIPTEN_WEBSOCKET_T g_BrowserWebSocket = 0;
++static bool g_BrowserWebSocketOpen = false;
++static std::vector<std::vector<unsigned char> > g_BrowserPackets;
++static size_t g_BrowserPacketBytes = 0;
++
++static EM_BOOL network_BrowserWebSocketOpen( int, const EmscriptenWebSocketOpenEvent *, void * )
++{
++	g_BrowserWebSocketOpen = true;
++	Printf( "Browser UDP relay connected.\n" );
++	return EM_TRUE;
++}
++
++static EM_BOOL network_BrowserWebSocketClose( int, const EmscriptenWebSocketCloseEvent *, void * )
++{
++	g_BrowserWebSocketOpen = false;
++	Printf( "Browser UDP relay disconnected.\n" );
++	return EM_TRUE;
++}
++
++static EM_BOOL network_BrowserWebSocketError( int, const EmscriptenWebSocketErrorEvent *, void * )
++{
++	g_BrowserWebSocketOpen = false;
++	Printf( TEXTCOLOR_RED "Browser UDP relay failed.\n" );
++	return EM_TRUE;
++}
++
++static EM_BOOL network_BrowserWebSocketMessage( int, const EmscriptenWebSocketMessageEvent *event, void * )
++{
++	if ( event->isText || event->numBytes == 0 || event->numBytes > sizeof( g_ucHuffmanBuffer ) )
++		return EM_TRUE;
++	if ( g_BrowserPackets.size( ) >= 256 || g_BrowserPacketBytes + event->numBytes > 16 * 1024 * 1024 )
++		return EM_TRUE;
++	g_BrowserPackets.push_back( std::vector<unsigned char>( event->data, event->data + event->numBytes ) );
++	g_BrowserPacketBytes += event->numBytes;
++	return EM_TRUE;
++}
++
++static void network_BrowserOpenWebSocket( void )
++{
++	const char *url = Args->CheckValue( "-wss" );
++	if ( url == NULL || !emscripten_websocket_is_supported( ) )
++	{
++		Printf( TEXTCOLOR_RED "A browser WebSocket relay URL is required for multiplayer.\n" );
++		return;
++	}
++	EmscriptenWebSocketCreateAttributes attributes;
++	emscripten_websocket_init_create_attributes( &attributes );
++	attributes.url = url;
++	attributes.createOnMainThread = EM_TRUE;
++	g_BrowserWebSocket = emscripten_websocket_new( &attributes );
++	if ( g_BrowserWebSocket <= 0 )
++	{
++		Printf( TEXTCOLOR_RED "Could not create the browser UDP relay WebSocket.\n" );
++		return;
++	}
++	emscripten_websocket_set_onopen_callback( g_BrowserWebSocket, NULL, network_BrowserWebSocketOpen );
++	emscripten_websocket_set_onclose_callback( g_BrowserWebSocket, NULL, network_BrowserWebSocketClose );
++	emscripten_websocket_set_onerror_callback( g_BrowserWebSocket, NULL, network_BrowserWebSocketError );
++	emscripten_websocket_set_onmessage_callback( g_BrowserWebSocket, NULL, network_BrowserWebSocketMessage );
++}
++#endif
++
+ // [SB] Hashes for Freedoom lumps that must be detected for Doom network compatibility.
+ static const std::vector<std::string> g_FreedoomPlayPalHashes = {
+ 	"2e01ae6258f2a0fdad32125537efe1af", // Freedoom PLAYPAL hash
+@@ -311,6 +378,16 @@ void NETWORK_Construct( USHORT usPort, bool bAllocateLANSocket )
+ 
+ 	if ( !restart )
+ 	{
++#ifdef __EMSCRIPTEN__
++		g_usLocalPort = usPort;
++		g_NetworkSocket = 1;
++		g_LANSocket = INVALID_SOCKET;
++		g_bLANSocketInvalid = true;
++		g_LocalAddress.LoadFromString( "127.0.0.1" );
++		g_LocalAddress.usPort = htons( g_usLocalPort );
++		network_BrowserOpenWebSocket( );
++		Printf( "Browser UDP relay initializing.\n" );
++#else
+ #ifdef __WIN32__
+ 		// [BB] Linux doesn't know WSADATA, so this may not be moved outside the ifdef.
+ 		WSADATA			WSAData;
+@@ -413,6 +490,7 @@ void NETWORK_Construct( USHORT usPort, bool bAllocateLANSocket )
+ 
+ 		// Print out our local IP address.
+ 		Printf( "IP address %s\n", g_LocalAddress.ToString() );
++#endif
+ 	}
+ 
+ 	// Init our read buffer.
+@@ -776,6 +854,17 @@ void NETWORK_Construct( USHORT usPort, bool bAllocateLANSocket )
+ //
+ void NETWORK_Destruct( void )
+ {
++#ifdef __EMSCRIPTEN__
++	if ( g_BrowserWebSocket > 0 )
++	{
++		emscripten_websocket_close( g_BrowserWebSocket, 1000, "client shutdown" );
++		emscripten_websocket_delete( g_BrowserWebSocket );
++	}
++	g_BrowserWebSocket = 0;
++	g_BrowserWebSocketOpen = false;
++	g_BrowserPackets.clear( );
++	g_BrowserPacketBytes = 0;
++#endif
+ 	// Free the network message buffer.
+ 	g_NetworkMessage.Free();
+ 
+@@ -848,11 +937,15 @@ int NETWORK_GetPackets( void )
+ //
+ int NETWORK_GetLANPackets( void )
+ {
++#ifdef __EMSCRIPTEN__
++	return 0;
++#else
+ 	// [BB] If we know that there is a problem with the socket don't try to use it.
+ 	if ( g_bLANSocketInvalid )
+ 		return 0;
+ 
+ 	return network_ReadPacketsFromSocket( g_LANSocket );
++#endif
+ }
+ 
+ //*****************************************************************************
+@@ -876,8 +969,10 @@ void NETWORK_LaunchPacket( NETBUFFER_s *buffer, NETADDRESS_s address, bool useZS
+ 		return;
+ 
+ 	// Convert the IP address to a socket address.
++#ifndef __EMSCRIPTEN__
+ 	struct sockaddr_in socketAddress;
+ 	address.ToSocketAddress( reinterpret_cast<sockaddr &>( socketAddress ));
++#endif
+ 
+ 	bool didUseZstd = false; // [SB]
+ 
+@@ -919,7 +1014,15 @@ void NETWORK_LaunchPacket( NETBUFFER_s *buffer, NETADDRESS_s address, bool useZS
+ 		numBytesOut = buffer->ulCurrentSize;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	if ( !g_BrowserWebSocketOpen )
++		return;
++	const EMSCRIPTEN_RESULT sendResult = emscripten_websocket_send_binary(
++		g_BrowserWebSocket, g_ucHuffmanBuffer, static_cast<uint32_t>( numBytesOut ) );
++	numBytes = sendResult == EMSCRIPTEN_RESULT_SUCCESS ? numBytesOut : -1;
++#else
+ 	numBytes = sendto( g_NetworkSocket, reinterpret_cast<const char *>( g_ucHuffmanBuffer ), numBytesOut, 0, reinterpret_cast<sockaddr *>( &socketAddress ), sizeof( socketAddress ));
++#endif
+ 
+ 	// If sendto returns -1, there was an error.
+ 	if ( numBytes == -1 )
+@@ -1806,13 +1909,23 @@ static SOCKET network_AllocateSocket( void )
+ //
+ static int network_ReadPacketsFromSocket( SOCKET &socket )
+ {
++#ifndef __EMSCRIPTEN__
+ 	sockaddr socketFrom;
+ 	int socketFromLength = sizeof( socketFrom );
++#endif
+ 	int numDecodedBytes = g_NetworkMessage.ulMaxSize;
+ 	int numBytes = 0;
+ 	bool usedZstd = false; // [SB] for statistics
+ 
+-#ifdef WIN32
++#ifdef __EMSCRIPTEN__
++	if ( g_BrowserPackets.empty( ) )
++		return 0;
++	const std::vector<unsigned char> packet = g_BrowserPackets.front( );
++	g_BrowserPackets.erase( g_BrowserPackets.begin( ) );
++	g_BrowserPacketBytes -= packet.size( );
++	numBytes = static_cast<int>( packet.size( ) );
++	memcpy( g_ucHuffmanBuffer, packet.data( ), packet.size( ) );
++#elif defined(WIN32)
+ 	numBytes = recvfrom( socket, reinterpret_cast<char *>( g_ucHuffmanBuffer ), sizeof( g_ucHuffmanBuffer ), 0, &socketFrom, &socketFromLength );
+ #else
+ 	numBytes = recvfrom( socket, reinterpret_cast<char *>( g_ucHuffmanBuffer ), sizeof( g_ucHuffmanBuffer ), 0, &socketFrom, reinterpret_cast<socklen_t *>( &socketFromLength ));
+@@ -1850,7 +1963,11 @@ static int network_ReadPacketsFromSocket( SOCKET &socket )
+ 		return 0;
+ 
+ 	// Store the IP address of the sender.
++#ifdef __EMSCRIPTEN__
++	g_AddressFrom = CLIENT_GetServerAddress( );
++#else
+ 	g_AddressFrom.LoadFromSocketAddress( socketFrom );
++#endif
+ 
+ 	// Decode the huffman-encoded message we received.
+ 	// [BB] Communication with the auth server is not Huffman-encoded.
+diff --git a/src/network/srp.cpp b/src/network/srp.cpp
+index d2f83f6..a1b64da 100644
+--- a/src/network/srp.cpp
++++ b/src/network/srp.cpp
+@@ -26,6 +26,58 @@
+  * SOFTWARE.
+  *
+  */
++#ifdef __EMSCRIPTEN__
++
++#include <stdlib.h>
++#include "srp.h"
++
++struct SRPVerifier {};
++struct SRPUser {};
++
++void srp_random_seed( const unsigned char *, int ) {}
++void srp_create_salted_verification_key( SRP_HashAlgorithm, SRP_NGType,
++    const char *, const unsigned char *, int, const unsigned char **bytes_s,
++    int *len_s, const unsigned char **bytes_v, int *len_v, const char *, const char * )
++{
++    if ( bytes_s ) *bytes_s = NULL;
++    if ( len_s ) *len_s = 0;
++    if ( bytes_v ) *bytes_v = NULL;
++    if ( len_v ) *len_v = 0;
++}
++SRPVerifier *srp_verifier_new( SRP_HashAlgorithm, SRP_NGType, const char *,
++    const unsigned char *, int, const unsigned char *, int, const unsigned char *, int,
++    const unsigned char **bytes_B, int *len_B, const char *, const char *, int )
++{
++    if ( bytes_B ) *bytes_B = NULL;
++    if ( len_B ) *len_B = 0;
++    return NULL;
++}
++void srp_verifier_delete( SRPVerifier * ) {}
++int srp_verifier_is_authenticated( SRPVerifier * ) { return 0; }
++const char *srp_verifier_get_username( SRPVerifier * ) { return ""; }
++const unsigned char *srp_verifier_get_session_key( SRPVerifier *, int *length )
++{ if ( length ) *length = 0; return NULL; }
++int srp_verifier_get_session_key_length( SRPVerifier * ) { return 0; }
++void srp_verifier_verify_session( SRPVerifier *, const unsigned char *, const unsigned char **hamk )
++{ if ( hamk ) *hamk = NULL; }
++SRPUser *srp_user_new( SRP_HashAlgorithm, SRP_NGType, const char *,
++    const unsigned char *, int, const char *, const char *, int ) { return NULL; }
++void srp_user_delete( SRPUser * ) {}
++int srp_user_is_authenticated( SRPUser * ) { return 0; }
++const char *srp_user_get_username( SRPUser * ) { return ""; }
++const unsigned char *srp_user_get_session_key( SRPUser *, int *length )
++{ if ( length ) *length = 0; return NULL; }
++int srp_user_get_session_key_length( SRPUser * ) { return 0; }
++void srp_user_start_authentication( SRPUser *, const char **username,
++    const unsigned char **bytes_A, int *len_A )
++{ if ( username ) *username = ""; if ( bytes_A ) *bytes_A = NULL; if ( len_A ) *len_A = 0; }
++void srp_user_process_challenge( SRPUser *, const unsigned char *, int,
++    const unsigned char *, int, const unsigned char **bytes_M, int *len_M )
++{ if ( bytes_M ) *bytes_M = NULL; if ( len_M ) *len_M = 0; }
++void srp_user_verify_session( SRPUser *, const unsigned char * ) {}
++
++#else
++
+ #ifdef WIN32
+ // [BB] windows.h needs to be included before Wincrypt.h can be included.
+ # include <windows.h>
+@@ -897,3 +949,5 @@ void srp_user_verify_session( struct SRPUser * usr, const unsigned char * bytes_
+     if ( memcmp( usr->H_AMK, bytes_HAMK, hash_length(usr->hash_alg) ) == 0 )
+         usr->authenticated = 1;
+ }
++
++#endif
+diff --git a/src/resourcefiles/file_directory.cpp b/src/resourcefiles/file_directory.cpp
+index 4d20728..8b788e1 100644
+--- a/src/resourcefiles/file_directory.cpp
++++ b/src/resourcefiles/file_directory.cpp
+@@ -41,7 +41,7 @@
+ #define stat _stat
+ #else
+ #include <dirent.h>
+-#ifndef __sun
++#if !defined(__sun) && !defined(__EMSCRIPTEN__)
+ #include <fts.h>
+ #endif
+ #endif
+@@ -198,7 +198,7 @@ int FDirectory::AddDirectory(const char *dirpath)
+ 	return count;
+ }
+ 
+-#elif defined(__sun) || defined(__APPLE__)
++#elif defined(__sun) || defined(__APPLE__) || defined(__EMSCRIPTEN__)
+ 
+ int FDirectory::AddDirectory(const char *dirpath)
+ {
+@@ -372,4 +372,3 @@ FResourceFile *CheckDir(const char *filename, FileReader *file, bool quiet)
+ 	delete rf;
+ 	return NULL;
+ }
+-
+diff --git a/src/sdl/hardware.cpp b/src/sdl/hardware.cpp
+index 47f5410..57d11c9 100644
+--- a/src/sdl/hardware.cpp
++++ b/src/sdl/hardware.cpp
+@@ -255,7 +255,7 @@ void I_ClosestResolution (int *width, int *height, int bits)
+ EXTERN_CVAR(Int, vid_maxfps);
+ EXTERN_CVAR(Bool, cl_capfps);
+ 
+-#ifndef __APPLE__
++#if !defined(__APPLE__) && !defined(__EMSCRIPTEN__)
+ Semaphore FPSLimitSemaphore;
+ 
+ static void FPSLimitNotify(sigval val)
+diff --git a/src/sdl/hardware.h b/src/sdl/hardware.h
+index 618941f..8336dfb 100644
+--- a/src/sdl/hardware.h
++++ b/src/sdl/hardware.h
+@@ -38,7 +38,12 @@
+ #include "v_video.h"
+ 
+ // Semaphores
+-#ifdef __APPLE__
++#ifdef __EMSCRIPTEN__
++typedef int Semaphore;
++#define SEMAPHORE_WAIT(sem) do { (void)(sem); } while (0);
++#define SEMAPHORE_SIGNAL(sem) do { (void)(sem); } while (0);
++#define SEMAPHORE_INIT(sem, shared, value) do { (void)(shared); (sem) = (value); } while (0);
++#elif defined(__APPLE__)
+ #include <mach/mach_init.h>
+ #include <mach/semaphore.h>
+ #include <mach/task.h>
+diff --git a/src/sdl/i_input.cpp b/src/sdl/i_input.cpp
+index 5384a50..ee0a2e0 100644
+--- a/src/sdl/i_input.cpp
++++ b/src/sdl/i_input.cpp
+@@ -20,6 +20,23 @@
+ // [BB] New #includes.
+ #include "chat.h"
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++
++extern "C" Uint8 SDL_GetRelativeMouseState( int *x, int *y )
++{
++	if ( x ) *x = 0;
++	if ( y ) *y = 0;
++	return SDL_GetMouseState( NULL, NULL );
++}
++
++extern "C" void SDL_GetKeyRepeat( int *delay, int *interval )
++{
++	if ( delay ) *delay = 0;
++	if ( interval ) *interval = 0;
++}
++#endif
++
+ static void I_CheckGUICapture ();
+ static void I_CheckNativeMouse ();
+ 
+@@ -509,3 +526,50 @@ void I_StartFrame ()
+ 
+ 	I_ProcessJoysticks();
+ }
++
++#ifdef __EMSCRIPTEN__
++static SDLKey I_BrowserSDLKey( int keycode )
++{
++	switch ( keycode )
++	{
++	case 1073742049: return SDLK_LSHIFT;
++	case 1073741903: return SDLK_RIGHT;
++	case 1073741904: return SDLK_LEFT;
++	case 1073741905: return SDLK_DOWN;
++	case 1073741906: return SDLK_UP;
++	default: return static_cast<SDLKey>( keycode );
++	}
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserControllerKey( int keycode, int pressed )
++{
++	SDL_Event event;
++	memset( &event, 0, sizeof( event ) );
++	event.type = pressed ? SDL_KEYDOWN : SDL_KEYUP;
++	event.key.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++	event.key.keysym.sym = I_BrowserSDLKey( keycode );
++	MessagePump( event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserControllerMouse( int dx, int dy )
++{
++	if ( dx || dy ) PostMouseMove( dx * 3, -dy * 2 );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserControllerButton( int button, int pressed )
++{
++	SDL_Event event;
++	memset( &event, 0, sizeof( event ) );
++	event.type = pressed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
++	event.button.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++	event.button.button = static_cast<Uint8>( button );
++	MessagePump( event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserControllerWheel( int y )
++{
++	if ( y == 0 ) return;
++	I_BrowserControllerButton( y > 0 ? 4 : 5, 1 );
++	I_BrowserControllerButton( y > 0 ? 4 : 5, 0 );
++}
++#endif
+diff --git a/src/sdl/i_system.cpp b/src/sdl/i_system.cpp
+index bca8189..25381a3 100644
+--- a/src/sdl/i_system.cpp
++++ b/src/sdl/i_system.cpp
+@@ -281,6 +281,12 @@ void I_HandleAlarm (int sig)
+ //
+ void I_SelectTimer()
+ {
++#ifdef __EMSCRIPTEN__
++	I_GetTime = I_GetTimePolled;
++	I_FreezeTime = I_FreezeTimePolled;
++	I_WaitForTic = I_WaitForTicPolled;
++	return;
++#else
+ 	SEMAPHORE_INIT(timerWait, 0, 0)
+ #ifndef __sun
+ 	signal(SIGALRM, I_HandleAlarm);
+@@ -307,6 +313,7 @@ void I_SelectTimer()
+ 		I_FreezeTime = I_FreezeTimeSignaled;
+ 		I_WaitForTic = I_WaitForTicSignaled;
+ 	}
++#endif
+ }
+ 
+ // Returns the fractional amount of a tic passed since the most recent tic
+diff --git a/src/sdl/i_system.h b/src/sdl/i_system.h
+index f0d3999..f3ddff1 100644
+--- a/src/sdl/i_system.h
++++ b/src/sdl/i_system.h
+@@ -152,6 +152,7 @@ int I_FindAttr (findstate_t *fileinfo);
+ #define FA_DIREC	8
+ #define FA_ARCH		16
+ 
++#ifndef __EMSCRIPTEN__
+ static inline char *strlwr(char *str)
+ {
+ 	char *ptr = str;
+@@ -162,5 +163,6 @@ static inline char *strlwr(char *str)
+ 	}
+ 	return str;
+ }
++#endif
+ 
+ #endif
+diff --git a/src/sdl/sdlvideo.cpp b/src/sdl/sdlvideo.cpp
+index 8e6d640..7f3409c 100644
+--- a/src/sdl/sdlvideo.cpp
++++ b/src/sdl/sdlvideo.cpp
+@@ -14,6 +14,9 @@
+ #include "r_swrenderer.h"
+ 
+ #include <SDL.h>
++#ifdef __EMSCRIPTEN__
++#include <emscripten/emscripten.h>
++#endif
+ 
+ // MACROS ------------------------------------------------------------------
+ 
+@@ -328,6 +331,13 @@ SDLFB::SDLFB (int width, int height, bool fullscreen)
+ 	UpdatePending = false;
+ 	NotPaletted = false;
+ 	FlashAmount = 0;
++#ifdef __EMSCRIPTEN__
++	EM_ASM({
++		SDL.defaults.copyOnLock = false;
++		SDL.defaults.discardOnLock = true;
++		SDL.defaults.opaqueFrontBuffer = false;
++	});
++#endif
+ 	Screen = SDL_SetVideoMode (width, height, vid_displaybits,
+ 		(vid_asyncblit ? SDL_ASYNCBLIT : 0)|SDL_HWSURFACE|SDL_HWPALETTE|SDL_DOUBLEBUF|SDL_ANYFORMAT|
+ 		(fullscreen ? SDL_FULLSCREEN : 0));
+@@ -339,6 +349,12 @@ SDLFB::SDLFB (int width, int height, bool fullscreen)
+ 	{
+ 		GammaTable[0][i] = GammaTable[1][i] = GammaTable[2][i] = i;
+ 	}
++#ifdef __EMSCRIPTEN__
++	// Emscripten's SDL1 shim intentionally reports no native SDL_Palette for
++	// an SDL_HWPALETTE surface. SDL_SetPalette still installs the JavaScript
++	// palette used when SDL_Flip expands the indexed framebuffer.
++	NotPaletted = false;
++#else
+ 	if (Screen->format->palette == NULL)
+ 	{
+ 		NotPaletted = true;
+@@ -347,6 +363,7 @@ SDLFB::SDLFB (int width, int height, bool fullscreen)
+ 			Screen->format->Gmask,
+ 			Screen->format->Bmask);
+ 	}
++#endif
+ 	memcpy (SourcePalette, GPalette.BaseColors, sizeof(PalEntry)*256);
+ 	UpdateColors ();
+ }
+@@ -402,7 +419,7 @@ void SDLFB::Update ()
+ 
+ 	DrawRateStuff ();
+ 
+-#ifndef __APPLE__
++#if !defined(__APPLE__) && !defined(__EMSCRIPTEN__)
+ 	if(vid_maxfps && !cl_capfps)
+ 	{
+ 		SEMAPHORE_WAIT(FPSLimitSemaphore)
+diff --git a/src/sound/music_midi_timidity.cpp b/src/sound/music_midi_timidity.cpp
+index 6337df4..ba89ec4 100644
+--- a/src/sound/music_midi_timidity.cpp
++++ b/src/sound/music_midi_timidity.cpp
+@@ -8,7 +8,9 @@
+ 
+ #include <sys/types.h>
+ #include <sys/wait.h>
++#ifndef __EMSCRIPTEN__
+ #include <wordexp.h>
++#endif
+ #include <signal.h>
+ 
+ int ChildQuit;
+@@ -418,6 +420,8 @@ bool TimidityPPMIDIDevice::LaunchTimidity ()
+ 		LocalFree (msgBuf);
+ 	}
+ 	return false;
++#elif defined(__EMSCRIPTEN__)
++	return false;
+ #else
+ 	if (WavePipe[0] != -1 && WavePipe[1] == -1 && Stream != NULL)
+ 	{
+diff --git a/src/thingdef/thingdef.h b/src/thingdef/thingdef.h
+index 0d04ce2..bf44cfa 100644
+--- a/src/thingdef/thingdef.h
++++ b/src/thingdef/thingdef.h
+@@ -266,11 +266,11 @@ enum EDefinitionType
+ #define GCC_MSEG
+ #else
+ #define MSVC_ASEG
+-#define GCC_ASEG __attribute__((section(SECTION_AREG)))
++#define GCC_ASEG __attribute__((section(SECTION_AREG),used))
+ #define MSVC_PSEG
+-#define GCC_PSEG __attribute__((section(SECTION_GREG)))
++#define GCC_PSEG __attribute__((section(SECTION_GREG),used))
+ #define MSVC_MSEG
+-#define GCC_MSEG __attribute__((section(SECTION_MREG)))
++#define GCC_MSEG __attribute__((section(SECTION_MREG),used))
+ #endif
+ 
+ 
+diff --git a/src/zzautozend.cpp b/src/zzautozend.cpp
+index 6d7acfd..c71a602 100644
+--- a/src/zzautozend.cpp
++++ b/src/zzautozend.cpp
+@@ -60,11 +60,11 @@ void *YRegTail = 0;
+ 
+ #include "doomtype.h"
+ 
+-void *ARegTail __attribute__((section(SECTION_AREG))) = 0;
+-void *CRegTail __attribute__((section(SECTION_CREG))) = 0;
+-void *GRegTail __attribute__((section(SECTION_GREG))) = 0;
+-void *MRegTail __attribute__((section(SECTION_MREG))) = 0;
+-void *YRegTail __attribute__((section(SECTION_YREG))) = 0;
++void *ARegTail __attribute__((section(SECTION_AREG),used)) = 0;
++void *CRegTail __attribute__((section(SECTION_CREG),used)) = 0;
++void *GRegTail __attribute__((section(SECTION_GREG),used)) = 0;
++void *MRegTail __attribute__((section(SECTION_MREG),used)) = 0;
++void *YRegTail __attribute__((section(SECTION_YREG),used)) = 0;
+ 
+ #else
+ 
+diff --git a/tools/lemon/CMakeLists.txt b/tools/lemon/CMakeLists.txt
+index 8fc99ac..b4669e2 100644
+--- a/tools/lemon/CMakeLists.txt
++++ b/tools/lemon/CMakeLists.txt
+@@ -5,8 +5,10 @@ if( NOT CMAKE_CROSSCOMPILING )
+ 	set( CROSS_EXPORTS ${CROSS_EXPORTS} lemon PARENT_SCOPE )
+ endif( NOT CMAKE_CROSSCOMPILING )
+ 
+-# Lemon wants lempar.c in its directory
+-if( NOT NO_GENERATOR_EXPRESSIONS )
++# Lemon wants lempar.c in its directory. Imported host tools cannot have
++# post-build commands in a cross build.
++if( CMAKE_CROSSCOMPILING )
++elseif( NOT NO_GENERATOR_EXPRESSIONS )
+ add_custom_command( TARGET lemon
+ 	POST_BUILD
+ 	COMMAND echo $<TARGET_FILE_DIR:lemon>
+@@ -15,4 +17,4 @@ else( NOT NO_GENERATOR_EXPRESSIONS )
+ add_custom_command( TARGET lemon
+ 	POST_BUILD
+ 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/lempar.c ${CMAKE_CURRENT_BINARY_DIR} )
+-endif( NOT NO_GENERATOR_EXPRESSIONS )
+\ No newline at end of file
++endif()

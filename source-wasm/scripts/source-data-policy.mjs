@@ -5,9 +5,9 @@ import path from 'node:path';
 export const HL2_STEAM_ROOT = process.env.HL2_STEAM_ROOT
   || '/home/ted/.steam/debian-installation/steamapps/common/Half-Life 2';
 export const HL2_GOTY_ROOT = process.env.HL2_GOTY_ROOT
-  || '/home/ted/.local/share/source-wasm/hl2-dvd';
+  || '/home/ted/wasm-game-data/source/hl2-dvd';
 export const HL2_COMBINED_ROOT = process.env.HL2_COMBINED_ROOT
-  || '/home/ted/.local/share/source-wasm/hl2-combined';
+  || '/home/ted/wasm-game-data/source/hl2-combined';
 export const PORTAL_STEAM_ROOT = process.env.PORTAL_STEAM_ROOT
   || '/home/ted/.steam/debian-installation/steamapps/common/Portal';
 

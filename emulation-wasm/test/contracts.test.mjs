@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { controllerProfileFor, controllerProfiles } from '../adapters/controller-profiles.mjs';
 
 const repoDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const frameworkDir = path.resolve(process.env.WASM_FRAMEWORK_DIR || '/home/ted/Development/wasm-game-framework');
 const readJson = file => JSON.parse(fs.readFileSync(path.join(repoDir, file), 'utf8'));
 const require = createRequire(import.meta.url);
 
@@ -67,7 +68,7 @@ test('downstream owns no framework document artifacts', () => {
 });
 
 test('framework 0.9 normalizes the active fixed-plus-media suite fail closed', () => {
-  const { normalizeManifestCollection } = require('../../wasm-game-framework/server/provisioning.js');
+  const { normalizeManifestCollection } = require(path.join(frameworkDir, 'server/provisioning.js'));
   const manifests = normalizeManifestCollection(readJson('web/wasm-game-data.json'));
   assert.deepEqual([...manifests.keys()], ['nes', 'snes', 'ps1', 'ps2']);
   assert.equal(manifests.get('nes').files.length, 0);
@@ -150,11 +151,10 @@ test('native browser host links the framework persistence backend', () => {
   assert.match(host, /firmware_root/);
 });
 
-test('normal launcher and README copy avoid storage boilerplate', () => {
+test('normal launcher copy avoids storage boilerplate', () => {
   const manifest = readJson('web/wasm-game.json');
   const normal = [manifest.description, ...Object.values(manifest.variants).flatMap(value => [value.description, value.pwa.description])].join('\n');
   assert.doesNotMatch(normal, /\b(?:legal(?:ly)?|illegal|piracy|owner[- ]?(?:supplied|provided)|game data|cached?|uploaded?)\b/i);
-  assert.doesNotMatch(fs.readFileSync(path.join(repoDir, 'README.md'), 'utf8'), /\b(?:legal(?:ly)?|illegal|piracy)\b/i);
 });
 
 test('source lock and shell scripts validate', () => {
@@ -196,7 +196,7 @@ test('framework lock names the tested 0.9.6 release exactly', () => {
   assert.equal(lock.version, '0.9.6');
   assert.equal(lock.status, 'released');
   assert.match(lock.commit, /^[0-9a-f]{40}$/);
-  assert.equal(lock.commit, 'ad0226db55a2925bb250c6e31ca6786bd0dc73bd');
+  assert.equal(lock.commit, 'ebb1ebe35ad8224a9080279a6529414db42d3284');
   assert.ok(lock.requiredContracts.includes('variant-scoped-persistence'));
   assert.ok(lock.requiredContracts.includes('launch-card-controller-connection'));
   assert.ok(lock.requiredContracts.includes('media-library-provisioning'));

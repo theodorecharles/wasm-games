@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "policy": "Browser and managed-server sources are pinned to immutable commits with upstream provenance.",
+  "status": "pinned-reproducible-sources",
+  "repositories": [
+    {
+      "name": "yamagi-quake2-source",
+      "repository": "https://github.com/theodorecharles/idtech2-wasm.git",
+      "commit": "69599f5a7b3c543f33a5cec34811f09a98fbeb45",
+      "upstream": "https://github.com/yquake2/yquake2.git",
+      "patches": ["../quake2/patches/browser.patch"]
+    }
+  ],
+  "runtimeDependencies": [
+    {
+      "name": "The Reckoning game module",
+      "repository": "https://github.com/yquake2/xatrix.git",
+      "commit": "6b73e1c8d26342cdc64b321afb1b4c17a5bf0cb0"
+    }
+  ]
+}

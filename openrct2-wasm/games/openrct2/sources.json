@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "pinned-with-monorepo-patch",
+  "repositories": [
+    {
+      "name": "openrct2",
+      "repository": "https://github.com/theodorecharles/openrct2-wasm.git",
+      "commit": "4a7ee146caab8888eb31e56a33c0559db89b17bd",
+      "upstream": "https://github.com/OpenRCT2/OpenRCT2.git",
+      "patches": [
+        "patches/browser.patch"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+diff --git a/src/d_loop.c b/src/d_loop.c
+index 0f3e5c1e..81feaac4 100644
+--- a/src/d_loop.c
++++ b/src/d_loop.c
+@@ -31,7 +31,10 @@
+ #include "net_query.h"
+ #include "net_server.h"
+ #include "net_sdl.h"
+ #include "net_loop.h"
++#ifdef CRISPY_WASM
++#include "net_websockets.h"
++#endif
+ 
+ #include "crispy.h"
+ 
+@@ -450,8 +453,12 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
+     {
+         NET_SV_Init();
+         NET_SV_AddModule(&net_loop_server_module);
++#ifdef CRISPY_WASM
++        NET_SV_AddModule(&net_websockets_module);
++#else
+         NET_SV_AddModule(&net_sdl_module);
+         NET_SV_RegisterWithMaster();
++#endif
+ 
+         net_loop_client_module.InitClient();
+         addr = net_loop_client_module.ResolveAddress(NULL);
+@@ -491,8 +499,13 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
+ 
+         if (i > 0)
+         {
++#ifdef CRISPY_WASM
++            net_websockets_module.InitClient();
++            addr = net_websockets_module.ResolveAddress(myargv[i+1]);
++#else
+             net_sdl_module.InitClient();
+             addr = net_sdl_module.ResolveAddress(myargv[i+1]);
++#endif
+             NET_ReferenceAddress(addr);
+ 
+             if (addr == NULL)

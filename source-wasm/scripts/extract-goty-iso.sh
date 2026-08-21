@@ -6,11 +6,11 @@
 set -euo pipefail
 
 iso="${HL2_GOTY_ISO:-${1:-}}"
-dest="${HL2_GOTY_ROOT:-/home/ted/.local/share/source-wasm/hl2-dvd}"
+dest="${HL2_GOTY_ROOT:-/home/ted/wasm-game-data/source/hl2-dvd}"
 
 if [[ -z "${iso}" ]]; then
   for candidate in \
-    "/home/ted/Desktop/Half-Life 2 Collectors Edition (2153).iso" \
+    "/home/ted/wasm-game-data/source/iso/Half-Life 2 Collectors Edition (2153).iso" \
     /inputs/iso/*.iso \
     /inputs/iso
   do

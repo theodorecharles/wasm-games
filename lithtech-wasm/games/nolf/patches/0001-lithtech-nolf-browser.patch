@@ -1,0 +1,68 @@
+diff --git a/libs/rezmgr/rezmgr.cpp b/libs/rezmgr/rezmgr.cpp
+index 8dc8f00a3959e072d72c52147e6d329481f41112..abb59a673e20cb95e600121ffc8c1b3d93013ebd 100644
+--- a/libs/rezmgr/rezmgr.cpp
++++ b/libs/rezmgr/rezmgr.cpp
+@@ -30,7 +30,44 @@ const unsigned int _MAX_FNAME = 256;
+ const unsigned int _MAX_EXT = 256;
+ void _splitpath(const char* path, char* drive, char* dir, char* fname, char* ext)
+ {
+-  ASSERT(FALSE && "no splitpath implementation on Linux");
++  if (drive) drive[0] = '\0';
++  if (dir) dir[0] = '\0';
++  if (fname) fname[0] = '\0';
++  if (ext) ext[0] = '\0';
++  if (!path) return;
++
++  const char* name = path;
++  for (const char* p = path; *p; ++p) {
++    if (*p == '/' || *p == '\\') name = p + 1;
++  }
++
++  if (dir && name != path) {
++    unsigned int n = static_cast<unsigned int>(name - path);
++    if (n > _MAX_DIR) n = _MAX_DIR;
++    memcpy(dir, path, n);
++    dir[n] = '\0';
++  }
++
++  const char* dot = 0;
++  for (const char* p = name; *p; ++p) {
++    if (*p == '.') dot = p;
++  }
++
++  if (dot) {
++    unsigned int n = static_cast<unsigned int>(dot - name);
++    if (n > _MAX_FNAME) n = _MAX_FNAME;
++    if (fname) {
++      memcpy(fname, name, n);
++      fname[n] = '\0';
++    }
++    if (ext) {
++      strncpy(ext, dot, _MAX_EXT);
++      ext[_MAX_EXT] = '\0';
++    }
++  } else if (fname) {
++    strncpy(fname, name, _MAX_FNAME);
++    fname[_MAX_FNAME] = '\0';
++  }
+ }
+ 
+ struct _finddata_t {
+@@ -42,7 +79,16 @@ struct _finddata_t {
+ 	char name[260];
+ };
+ 
+-enum { _S_IFDIR, _A_SUBDIR };
++#ifndef _S_IFDIR
++#ifdef S_IFDIR
++#define _S_IFDIR S_IFDIR
++#else
++#define _S_IFDIR 0040000
++#endif
++#endif
++#ifndef _A_SUBDIR
++#define _A_SUBDIR 0x10
++#endif
+ long _findfirst(char* filespec, _finddata_t* fileinfo) { return -1; }
+ int _findnext(long handle, _finddata_t* fileinfo) { return -1; }
+ int _findclose(long handle) { return -1; } 

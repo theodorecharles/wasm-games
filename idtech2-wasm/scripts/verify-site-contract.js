@@ -11,14 +11,13 @@ const web = path.join(repo, 'web');
 const dist = path.join(web, 'dist');
 const framework = process.env.WASM_FRAMEWORK_DIR
   ? path.resolve(process.env.WASM_FRAMEWORK_DIR)
-  : path.resolve(repo, '../wasm-game-framework');
+  : path.resolve(repo, '../..', 'wasm-game-framework');
 const config = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game.json'), 'utf8'));
 const data = JSON.parse(fs.readFileSync(path.join(web, 'wasm-game-data.json'), 'utf8'));
-const variants = ['quake', 'quake2'];
-const quake2Runbook = fs.readFileSync(path.join(repo, 'engines/quake2/RUNBOOK.md'), 'utf8');
+const variants = ['quake', 'quake2', 'quake2-xatrix', 'quake2-rogue'];
 
-assert.equal(JSON.parse(fs.readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.4');
-assert.equal(childProcess.execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), 'c4ad3b9e075f881d32f044299fbfeee703a9169d');
+assert.equal(JSON.parse(fs.readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.6');
+assert.equal(childProcess.execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), 'ebb1ebe35ad8224a9080279a6529414db42d3284');
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wasm-game-framework.js')), true);
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wasm-game-bootstrap.js')), true);
 assert.equal(fs.existsSync(path.join(framework, 'dist', 'wolfwasm-shell.js')), false);
@@ -37,10 +36,6 @@ assert.equal(config.fullscreen, true);
 assert.equal(config.defaultFullscreen, false);
 assert.equal(config.pointerLock, true);
 assert.equal(data.namespace, 'idtech2-family');
-assert.doesNotMatch(quake2Runbook, /\|\s*(?:Passed(?: with gesture caveat)?|Partial|Not implemented)\s*\|/i,
-  'public milestone status labels must use only Live or Still in development');
-assert.equal((quake2Runbook.match(/\| Still in development \|/g) || []).length, 10,
-  'every Quake II milestone must use the portfolio status vocabulary');
 
 const quake = config.variants.quake;
 assert.equal(quake.displayMode, '4:3');
@@ -64,6 +59,13 @@ assert.deepEqual(quake2.fpsTargets, [30, 60, 120]);
 assert.equal(quake2.dynamicQuality, true);
 assert.equal(quake.menuCursor, 'none');
 assert.equal(quake2.menuCursor, 'browser');
+for (const key of ['quake2-xatrix', 'quake2-rogue']) {
+  const expansion = config.variants[key];
+  assert.equal(expansion.displayMode, 'dynamic');
+  assert.equal(expansion.nativeManaged, true);
+  assert.equal(expansion.menuCursor, 'browser');
+  assert.deepEqual(expansion.profiles.map(profile => profile.value), ['medium', 'high', 'ultra']);
+}
 
 function pngSize(filename) {
   const bytes = fs.readFileSync(filename);
@@ -93,14 +95,20 @@ for (const key of variants) {
     assert.match(file.sha256, /^[a-f0-9]{64}$/);
   }
 }
-assert.deepEqual(data.variants.quake.files.map(file => file.path), ['id1/pak0.pak', 'id1/pak1.pak']);
-assert.deepEqual(data.variants.quake2.files.map(file => file.path), ['pak0.pak', 'pak1.pak', 'pak2.pak']);
+assert.deepEqual(data.variants.quake.files.map(file => file.path), ['quake1/id1/pak0.pak', 'quake1/id1/pak1.pak']);
+assert.deepEqual(data.variants.quake2.files.map(file => file.path), ['quake2/pak0.pak', 'quake2/pak1.pak', 'quake2/pak2.pak']);
+assert.deepEqual(data.variants['quake2-xatrix'].files.map(file => file.path),
+  ['quake2/pak0.pak', 'quake2/pak1.pak', 'quake2/pak2.pak', 'quake2/xatrix/pak0.pak']);
+assert.deepEqual(data.variants['quake2-rogue'].files.map(file => file.path),
+  ['quake2/pak0.pak', 'quake2/pak1.pak', 'quake2/pak2.pak', 'quake2/rogue/pak0.pak']);
 
 const familyAdapter = fs.readFileSync(path.join(web, 'game-adapter.js'), 'utf8');
-const quakeAdapter = fs.readFileSync(path.join(web, 'quake-adapter.js'), 'utf8');
-const quake2Adapter = fs.readFileSync(path.join(repo, 'engines/quake2/web/game-adapter.js'), 'utf8');
+const quakeAdapter = fs.readFileSync(path.join(repo, 'games/quake/web/game-adapter.js'), 'utf8');
+const quake2Adapter = fs.readFileSync(path.join(repo, 'games/quake2/web/game-adapter.js'), 'utf8');
 assert.match(familyAdapter, /quake: '\/adapters\/quake\.js'/);
-assert.match(familyAdapter, /quake2: '\/adapters\/quake2\.js'/);
+assert.match(familyAdapter, /quake2: '\/adapters\/quake2\.js\?v=[^']+'/);
+assert.match(familyAdapter, /'quake2-xatrix': '\/adapters\/quake2\.js\?v=[^']+'/);
+assert.match(familyAdapter, /'quake2-rogue': '\/adapters\/quake2\.js\?v=[^']+'/);
 for (const source of [familyAdapter, quakeAdapter, quake2Adapter]) {
   assert.equal(source.includes('WolfWasmShell'), false);
   assert.match(source, /globalThis\.WasmGameAdapter/);
@@ -113,4 +121,4 @@ for (const source of [quakeAdapter, quake2Adapter]) {
   assert.match(source, /controllerChanged/);
 }
 
-console.log('Verified framework 0.9.4, family dispatch, disabled-controller policy, PWA/display policy, and exact game-data contracts.');
+console.log('Verified framework 0.9.6, four-variant dispatch, disabled-controller policy, PWA/display policy, and exact game-data contracts.');

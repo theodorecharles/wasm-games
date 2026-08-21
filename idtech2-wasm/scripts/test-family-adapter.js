@@ -66,8 +66,10 @@ async function exercise(variant, expectedScript) {
 
 (async () => {
   await exercise('quake', '/adapters/quake.js');
-  await exercise('quake2', '/adapters/quake2.js');
-  console.log('Verified family adapter dispatch and native hook delegation for both variants.');
+  await exercise('quake2', '/adapters/quake2.js?v=20260821-expansions5');
+  await exercise('quake2-xatrix', '/adapters/quake2.js?v=20260821-expansions5');
+  await exercise('quake2-rogue', '/adapters/quake2.js?v=20260821-expansions5');
+  console.log('Verified family adapter dispatch and native hook delegation for all four variants.');
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

@@ -14,6 +14,7 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cs16_repo="${CS16_CLIENT_REPO:-https://github.com/theodorecharles/cs16-client}"
 mainui_repo="${MAINUI_CPP_REPO:-https://github.com/theodorecharles/mainui_cpp}"
 cs16_commit="${CS16_CLIENT_COMMIT:-d6ff2a863cf38d17f3610114d32bc3bd77ff3afa}"
+mainui_commit="${MAINUI_CPP_COMMIT:-024efda8f2078ba27767ce1140d4c6394beeb0f5}"
 menu_patch="${CS_MENU_PATCH:-${repo_dir}/games/counter-strike/patches/cs16/main-menu.patch}"
 output="${CS_MENU_OUTPUT:-${repo_dir}/native/cs-menu-framework.wasm}"
 
@@ -22,11 +23,13 @@ cleanup() { rm -rf -- "${build_context}"; }
 trap cleanup EXIT
 
 git clone --depth 1 "${cs16_repo}" "${build_context}/src" >/dev/null 2>&1
-git -C "${build_context}/src" fetch --depth 1 origin "${cs16_commit}" >/dev/null 2>&1 || true
-git -C "${build_context}/src" checkout --quiet "${cs16_commit}" 2>/dev/null || \
-  echo "WARNING: pinned commit ${cs16_commit} unavailable; using default HEAD" >&2
+git -C "${build_context}/src" fetch --depth 1 origin "${cs16_commit}"
+git -C "${build_context}/src" checkout --quiet --detach "${cs16_commit}"
+test "$(git -C "${build_context}/src" rev-parse HEAD)" = "${cs16_commit}"
 git -C "${build_context}/src" config submodule.3rdparty/mainui_cpp.url "${mainui_repo}"
 git -C "${build_context}/src" submodule update --init --recursive 3rdparty/mainui_cpp >/dev/null 2>&1
+test "$(git -C "${build_context}/src/3rdparty/mainui_cpp" remote get-url origin)" = "${mainui_repo}"
+test "$(git -C "${build_context}/src/3rdparty/mainui_cpp" rev-parse HEAD)" = "${mainui_commit}"
 git -C "${build_context}/src/3rdparty/mainui_cpp" apply --check "${menu_patch}"
 git -C "${build_context}/src/3rdparty/mainui_cpp" apply "${menu_patch}"
 

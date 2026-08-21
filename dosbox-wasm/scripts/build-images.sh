@@ -2,9 +2,9 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
-required_version="0.9.4"
-required_commit="c4ad3b9e075f881d32f044299fbfeee703a9169d"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
+required_version="0.9.6"
+required_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
 running_container=''
 
 cleanup() {
@@ -26,7 +26,7 @@ smoke_image() {
     .persistence.root == "/persistent/dosbox/{variant}" and
     (if $variant == "suite" then .variants | length == 9 else .variants[$variant] != null end)
   ' >/dev/null
-  curl -fsS "http://127.0.0.1:$port/service-worker.js" | grep -Fq 'wasm-game-shell-0.9.4'
+  curl -fsS "http://127.0.0.1:$port/service-worker.js" | grep -Fq 'wasm-game-shell-0.9.6'
   docker stop -t 1 "$running_container" >/dev/null
   running_container=''
 }

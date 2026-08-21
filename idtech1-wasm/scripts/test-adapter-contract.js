@@ -5,16 +5,21 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { execFileSync } = require('node:child_process');
 
 const repo = path.resolve(__dirname, '..');
+const crispySource = execFileSync(path.join(repo, 'scripts', 'fetch-crispy-source.sh'), {
+  encoding: 'utf8'
+}).trim();
 const source = fs.readFileSync(path.join(repo, 'web/game-adapter.js'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 const modernVariants = new Set(['doom', 'doom2', 'tnt', 'plutonia', 'heretic', 'hexen', 'chex']);
-const browserVideoSource = fs.readFileSync(path.join(repo, 'src/i_video.c'), 'utf8');
-const browserSeamSource = fs.readFileSync(path.join(repo, 'src/i_browser.c'), 'utf8');
+const browserVideoSource = fs.readFileSync(path.join(crispySource, 'src/i_video.c'), 'utf8');
+const browserSeamSource = fs.readFileSync(path.join(crispySource, 'src/i_browser.c'), 'utf8');
 const classicBuildSource = fs.readFileSync(path.join(repo, 'wasm/CMakeLists.txt'), 'utf8');
 const dsdaPatch = fs.readFileSync(path.join(repo, 'patches/dsda-wasm.patch'), 'utf8');
+const zandronumPatch = fs.readFileSync(path.join(repo, 'patches/zandronum-wasm.patch'), 'utf8');
 
 assert.match(classicBuildSource, /-lidbfs\.js/,
   'classic Emscripten builds must expose IDBFS to framework persistence');
@@ -55,6 +60,18 @@ assert.match(dsdaPatch, /TryRunTics[\s\S]*event loop[\s\S]*outer browser frame/,
   'modern interpolation must yield each frame to the browser instead of blocking at 35 Hz');
 assert.match(dsdaPatch, /#ifndef __EMSCRIPTEN__[\s\S]*is released under[\s\S]*ABSOLUTELY NO WARRANTY/,
   'modern browser startup must keep the native licensing banner out of the visible loading console');
+assert.match(zandronumPatch, /emscripten_websocket_send_binary/,
+  'Modernized multiplayer must send native Zandronum datagrams over its browser relay');
+assert.match(zandronumPatch, /I_BrowserControllerKey[\s\S]*MessagePump/,
+  'Modernized multiplayer keyboard input must enter Zandronum native SDL events');
+assert.match(zandronumPatch, /I_BrowserControllerMouse[\s\S]*PostMouseMove/,
+  'Modernized multiplayer mouse-look must enter Zandronum native SDL events');
+assert.match(zandronumPatch, /SDL\.defaults\.discardOnLock = true/,
+  'Zandronum must use the supported indexed SDL browser framebuffer path');
+assert.match(zandronumPatch, /__start_yreg[\s\S]*__stop_yreg/,
+  'Zandronum must retain its static actor and MAPINFO registries in WebAssembly');
+assert.match(source, /modernDeathmatch = modern && deathmatch[\s\S]*modernDeathmatch \? 'zandronum\.js'/,
+  'Modernized Join Deathmatch must select Zandronum instead of the single-player DSDA engine');
 assert.doesNotMatch(source, /createPersistentFs/,
   'the adapter must use framework-managed persistence');
 
@@ -122,7 +139,8 @@ async function exercise(variant, requestedProfile, options = {}) {
     _I_BrowserPlayerX: () => 2,
     _I_BrowserPlayerY: () => 3,
     _I_BrowserPlayerAngle: () => 4,
-    _I_BrowserViewPitch: () => 5
+    _I_BrowserViewPitch: () => 5,
+    _I_BrowserAttackDown: () => 1
   };
   const canvas = { id: 'game-canvas', addEventListener() {}, focus() {} };
   const elements = {
@@ -306,6 +324,8 @@ async function exercise(variant, requestedProfile, options = {}) {
   nativeState = 1;
   intervals.at(-1)();
   assert.equal(shellState, 'gameplay', `${variant} publishes native gameplay`);
+  assert.equal(sandbox.document.documentElement.dataset.doomAttackDown, '1',
+    `${variant} publishes native attack-button state for end-to-end input verification`);
   nativeState = 3;
   intervals.at(-1)();
   assert.equal(shellState, 'debrief', `${variant} releases capture for debrief`);

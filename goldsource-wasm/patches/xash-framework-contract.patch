@@ -13,7 +13,7 @@ index 1cc40aed..30a685f7 100644
  #define MAX_CMD_BUFFER        8000
  #define CL_CONNECTION_TIMEOUT 15.0f
  #define CL_CONNECTION_RETRIES 5
-@@ -104,6 +108,74 @@ client_t		cl;
+@@ -104,6 +108,86 @@ client_t		cl;
  client_static_t	cls;
  clgame_static_t	clgame;
  
@@ -21,6 +21,7 @@ index 1cc40aed..30a685f7 100644
 +int WasmGame_RuntimeState( void );
 +int WasmGame_CaptureIntent( void );
 +int WasmGame_PlayerNameStatus( const char *expected );
++void WasmGame_Resize( int width, int height );
 +
 +/* Browser-framework state contract. Keep this seam synchronous and derived
 + * only from authoritative client/menu/load state. */
@@ -62,6 +63,17 @@ index 1cc40aed..30a685f7 100644
 +EMSCRIPTEN_KEEPALIVE int WasmGame_CaptureIntent( void )
 +{
 +	return WasmGame_RuntimeState() == 4;
++}
++
++/* The framework already resized the canvas backing store. Update Xash's
++ * authoritative render size directly; SDL_SetWindowSize is a desktop window
++ * operation and does not reliably refresh a browser WebGL drawable. */
++EMSCRIPTEN_KEEPALIVE void WasmGame_Resize( int width, int height )
++{
++	if( width < 320 || height < 240 )
++		return;
++
++	R_SaveVideoMode( width, height, width, height, false );
 +}
 +
 +/* 0: mismatch, 1: pending/local userinfo matches, 2: the active server's
@@ -231,13 +243,20 @@ index 44839159..82a5adc0 100644
 +#endif
 +
  #include "common.h"
-@@ -37,2 +40,14 @@ static struct
+@@ -37,2 +40,21 @@ static struct
 -
 +#if XASH_EMSCRIPTEN
++EMSCRIPTEN_KEEPALIVE void WasmGame_PointerDelta( int dx, int dy );
 +EMSCRIPTEN_KEEPALIVE void WasmGame_ControllerMouse( int dx, int dy );
 +
 +static int wasm_controller_mouse_x;
 +static int wasm_controller_mouse_y;
++
++EMSCRIPTEN_KEEPALIVE void WasmGame_PointerDelta( int dx, int dy )
++{
++	wasm_controller_mouse_x += dx;
++	wasm_controller_mouse_y += dy;
++}
 +
 +EMSCRIPTEN_KEEPALIVE void WasmGame_ControllerMouse( int dx, int dy )
 +{
@@ -247,7 +266,7 @@ index 44839159..82a5adc0 100644
 +#endif
 +
  /*
-@@ -73,6 +88,11 @@ void Platform_MouseMove( float *x, float *y )
+@@ -73,6 +95,11 @@ void Platform_MouseMove( float *x, float *y )
  {
 -	int m_x, m_y;
 -	SDL_GetRelativeMouseState( &m_x, &m_y );

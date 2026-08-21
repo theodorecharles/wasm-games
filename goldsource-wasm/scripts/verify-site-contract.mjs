@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const web = path.join(repo, 'web');
-const framework = path.resolve(process.env.WASM_FRAMEWORK_DIR || path.join(repo, '../wasm-game-framework'));
+const framework = path.resolve(process.env.WASM_FRAMEWORK_DIR || '/home/ted/Development/wasm-game-framework');
 const config = JSON.parse(readFileSync(path.join(web, 'wasm-game.json'), 'utf8'));
 const data = JSON.parse(readFileSync(path.join(web, 'wasm-game-data.json'), 'utf8'));
 const expected = ['half-life', 'blue-shift', 'opposing-force', 'counter-strike'];
@@ -57,6 +57,13 @@ assert.ok(data.variants['opposing-force'].files.some(file => file.key === 'gearb
 assert.ok(data.variants['opposing-force'].files.some(file => file.key === 'gearbox-liblist'));
 assert.ok(data.variants['counter-strike'].files.some(file => file.key === 'cstrike'));
 assert.ok(data.variants['counter-strike'].files.some(file => file.key === 'cstrike-liblist'));
+const csHostStart = readFileSync(path.join(repo, 'runtime/counter-strike/start.sh'), 'utf8');
+assert.match(csHostStart, /yohimik\/cs-web-server@sha256:[a-f0-9]{64}/,
+  'Counter-Strike multiplayer host image must be immutable');
+assert.match(csHostStart, /CS_BRIDGE_PORT:-4190/,
+  'Counter-Strike host default must match the adapter bridge fallback');
+assert.ok(existsSync(path.join(repo, 'runtime/counter-strike/stop.sh')),
+  'Counter-Strike multiplayer host needs a targeted stop command');
 
 const adapter = path.join(web, 'game-adapter.js');
 assert.ok(existsSync(adapter) && statSync(adapter).size > 1000, 'built adapter is missing');

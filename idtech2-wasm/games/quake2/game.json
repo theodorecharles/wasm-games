@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "quake2",
+  "title": "Quake II",
+  "engine": "idtech2-wasm",
+  "runtimeStatus": "working-browser-proven-multiplayer-bots",
+  "expansions": [
+    {
+      "id": "quake2-xatrix",
+      "title": "Quake II: The Reckoning",
+      "runtimeStatus": "working-browser-proven"
+    },
+    {
+      "id": "quake2-rogue",
+      "title": "Quake II: Ground Zero",
+      "runtimeStatus": "working-browser-proven"
+    }
+  ],
+  "data": {
+    "hostRoot": "/home/ted/wasm-game-data",
+    "relativePath": "quake2",
+    "containerPath": "/data"
+  }
+}

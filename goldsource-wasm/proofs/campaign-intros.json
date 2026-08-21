@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-21T04:37:19.041Z",
+  "browser": {
+    "product": "Chrome/151.0.7922.169",
+    "debuggerUrl": "ws://127.0.0.1:9225/devtools/browser/1d5c54d3-f961-4f94-b6df-f57889fba2df"
+  },
+  "gameBase": "http://127.0.0.1:4300",
+  "acceleratedFrameTime": 0.1,
+  "passed": 3,
+  "failed": 0,
+  "results": [
+    {
+      "variant": "half-life",
+      "initialMap": "c0a0",
+      "terminalMap": "c0a0e",
+      "state": "gameplay",
+      "transitions": [
+        {
+          "map": "c0a0",
+          "elapsedMs": 2169
+        },
+        {
+          "map": "c0a0a",
+          "elapsedMs": 9218
+        },
+        {
+          "map": "c0a0b",
+          "elapsedMs": 27798
+        },
+        {
+          "map": "c0a0c",
+          "elapsedMs": 55158
+        },
+        {
+          "map": "c0a0d",
+          "elapsedMs": 81109
+        },
+        {
+          "map": "c0a0e",
+          "elapsedMs": 90180
+        }
+      ],
+      "fatalErrors": []
+    },
+    {
+      "variant": "blue-shift",
+      "initialMap": "ba_tram1",
+      "terminalMap": "ba_tram3",
+      "state": "gameplay",
+      "transitions": [
+        {
+          "map": "ba_tram1",
+          "elapsedMs": 21971
+        },
+        {
+          "map": "ba_tram2",
+          "elapsedMs": 55397
+        },
+        {
+          "map": "ba_tram3",
+          "elapsedMs": 81239
+        }
+      ],
+      "fatalErrors": []
+    },
+    {
+      "variant": "opposing-force",
+      "initialMap": "of0a0",
+      "terminalMap": "of1a1",
+      "state": "gameplay",
+      "transitions": [
+        {
+          "map": "of0a0",
+          "elapsedMs": 17131
+        },
+        {
+          "map": "of1a1",
+          "elapsedMs": 68852
+        }
+      ],
+      "fatalErrors": []
+    }
+  ]
+}

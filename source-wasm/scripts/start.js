@@ -9,8 +9,9 @@ const { spawn, spawnSync } = require('node:child_process');
 
 const root = path.resolve(__dirname, '..');
 const frameworkRoot = process.env.WASM_GAME_FRAMEWORK_ROOT
-  || (fs.existsSync(path.join(root, 'vendor', 'wasm-game-framework'))
-    ? path.join(root, 'vendor', 'wasm-game-framework')
+  || process.env.WASM_FRAMEWORK_DIR
+  || (fs.existsSync('/home/ted/Development/wasm-game-framework')
+    ? '/home/ted/Development/wasm-game-framework'
     : '/opt/wasm-game-framework');
 const passwordAuthPath = path.join(frameworkRoot, 'server', 'password-auth.js');
 if (!fs.existsSync(passwordAuthPath)) {
@@ -21,11 +22,11 @@ const steamRoot = process.env.HL2_STEAM_ROOT
   || '/home/ted/.steam/debian-installation/steamapps/common/Half-Life 2';
 const portalRoot = process.env.PORTAL_STEAM_ROOT
   || '/home/ted/.steam/debian-installation/steamapps/common/Portal';
-const combinedRoot = process.env.HL2_COMBINED_ROOT || '/home/ted/.local/share/source-wasm/hl2-combined';
-const gotyRoot = process.env.HL2_GOTY_ROOT || '/home/ted/.local/share/source-wasm/hl2-dvd';
+const combinedRoot = process.env.HL2_COMBINED_ROOT || '/home/ted/wasm-game-data/source/hl2-combined';
+const gotyRoot = process.env.HL2_GOTY_ROOT || '/home/ted/wasm-game-data/source/hl2-dvd';
 process.env.WASM_GAME_SITE_ROOT = process.env.WASM_GAME_SITE_ROOT || path.join(root, 'web');
 process.env.WASM_GAME_SHELL_ROOT = process.env.WASM_GAME_SHELL_ROOT
-  || path.join(root, 'vendor', 'wasm-game-framework', 'dist');
+  || path.join(frameworkRoot, 'dist');
 process.env.WASM_GAME_DATA_ROOT = process.env.WASM_GAME_DATA_ROOT
   || process.env.HL2_OWNER_ROOT
   || (fs.existsSync(path.join(combinedRoot, 'hl2', 'gameinfo.txt')) ? combinedRoot : '')

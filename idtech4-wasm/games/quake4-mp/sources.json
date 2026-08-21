@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "missing-openq4-game-fork",
+  "repositories": [
+    {
+      "repository": "https://github.com/theodorecharles/quake4-wasm.git",
+      "commit": "f3d23f767dbcca5dab4cc1e5a029343ad4d0ddf2",
+      "upstream": "https://github.com/themuffinator/openQ4.git"
+    }
+  ],
+  "missingForks": [
+    {
+      "repository": "https://github.com/theodorecharles/openQ4-game.git",
+      "upstream": "https://github.com/themuffinator/openQ4-game.git",
+      "commit": "0c9c121ff337b1c6df129ecedcfe569e7c50c332"
+    }
+  ]
+}

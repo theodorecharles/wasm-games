@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T01:26:24-04:00",
+  "result": "pass",
+  "browser": "Google Chrome",
+  "route": "http://localhost:4382/?game=quake",
+  "engine": {
+    "name": "WinQuake WebAssembly",
+    "sourceCommit": "0023db327bc1db00068284b70e1db45857aeee35",
+    "artifacts": {
+      "quake1.js": {
+        "bytes": 242217,
+        "sha256": "5f1493ea4fbef74c0e294d214e276c2e2e9237e24da50079a38c5157da72eb2b"
+      },
+      "quake1.wasm": {
+        "bytes": 1494330,
+        "sha256": "d0b0e8fd41f8d4eb95825360a650306e60afd8ae2ff260014044235196010db5"
+      }
+    }
+  },
+  "server": {
+    "game": "Quake",
+    "map": "dm2",
+    "mod": "FrikBotNex",
+    "modCommit": "deeae8b7eaa5d63572d1065eddddce7ea299d7ac",
+    "state": "running",
+    "nativePlayers": [
+      "Browser1",
+      "Browser2"
+    ],
+    "browserPeers": 2,
+    "bots": 2,
+    "relay": {
+      "clientPackets": 15225,
+      "serverPackets": 4992,
+      "peers": [
+        {
+          "sourceHost": "127.0.0.2",
+          "sourcePort": 37108,
+          "destinationPort": 52197,
+          "clientPackets": 7969,
+          "serverPackets": 2595,
+          "controlTransfers": 1
+        },
+        {
+          "sourceHost": "127.0.0.3",
+          "sourcePort": 59419,
+          "destinationPort": 54961,
+          "clientPackets": 7256,
+          "serverPackets": 2397,
+          "controlTransfers": 1
+        }
+      ]
+    }
+  },
+  "lifecycle": {
+    "wakeTrigger": "Join Deathmatch",
+    "stateWithPlayers": "running",
+    "idleTimeoutMs": 8000,
+    "stateAfterBothTabsClosed": "sleeping",
+    "peersAfterBothTabsClosed": 0
+  },
+  "clients": [
+    {
+      "name": "Browser1",
+      "initial": {
+        "network": [1, 1188, 395],
+        "pose": [2619, -448, 32, 180]
+      },
+      "mouseInput": {
+        "beforeYaw": 180,
+        "afterYaw": 158.87
+      },
+      "sustained": {
+        "network": [1, 5375, 1755],
+        "pose": [2619, -448, 32, 158.87]
+      }
+    },
+    {
+      "name": "Browser2",
+      "initial": {
+        "network": [1, 587, 198],
+        "pose": [2174.52, -2187.83, 84, 90]
+      },
+      "mouseInput": {
+        "beforeYaw": 90,
+        "afterYaw": 68.87
+      },
+      "sustained": {
+        "network": [1, 4760, 1558],
+        "pose": [2173.12, -2199.37, 84, 68.87]
+      }
+    }
+  ],
+  "assertions": {
+    "twoDistinctBrowserClients": true,
+    "bothPresentOnNativeRoster": true,
+    "twoServerBots": true,
+    "uniqueLoopbackIdentities": true,
+    "uniqueAcceptedGamePorts": true,
+    "bothReceiveCountersAdvanced": true,
+    "independentMouseLookChangedYaw": true,
+    "survivedPreviousDisconnectWindow": true,
+    "frameworkAutoWake": true,
+    "frameworkAutoSleep": true
+  }
+}

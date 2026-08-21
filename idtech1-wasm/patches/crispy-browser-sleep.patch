@@ -1,0 +1,29 @@
+diff --git a/textscreen/txt_sdl.c b/textscreen/txt_sdl.c
+index fd57bc37..f9e4fa4d 100644
+--- a/textscreen/txt_sdl.c
++++ b/textscreen/txt_sdl.c
+@@ -15,6 +15,10 @@
+ 
+ #include "SDL.h"
+ 
++#ifdef CRISPY_WASM
++#include <emscripten.h>
++#endif
++
+ #include <ctype.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -845,6 +849,13 @@ static int ScreenHasBlinkingChars(void)
+ 
+ void TXT_Sleep(int timeout)
+ {
++#ifdef CRISPY_WASM
++    // SDL_Delay busy-waits on the browser's main thread. Yield through
++    // Asyncify so WebSocket callbacks and the framework UI keep running.
++    emscripten_sleep(timeout > 0 ? timeout : 10);
++    return;
++#endif
++
+     unsigned int start_time;
+ 
+     if (TXT_ScreenHasBlinkingChars())

@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+engine_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 port="${1:-8007}"
 variant="${2:-suite}"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
-data_root="${BUILD_WASM_DATA_ROOT:-$repo_dir/build-web/container-data}"
-required_framework_version="0.9.4"
-required_framework_commit="c4ad3b9"
+workspace_dir="$(cd "$engine_dir/../.." && pwd)"
+framework_dir="${WASM_FRAMEWORK_DIR:-$workspace_dir/wasm-game-framework}"
+data_root="${BUILD_WASM_DATA_ROOT:-/home/ted/wasm-game-data}"
+required_framework_version="0.9.6"
+required_framework_commit="ebb1ebe"
 
-if [[ ! -f "$repo_dir/build-web/dist/wasm-game.json" ]]; then
+if [[ ! -f "$engine_dir/.work/build/dist/wasm-game.json" ]]; then
     printf 'No browser build found. Run ./build-web.sh first.\n' >&2
     exit 1
 fi
@@ -30,7 +31,7 @@ mkdir -p "$data_root"
 printf '[Build WASM] Serving %s launcher at http://127.0.0.1:%s/\n' "$variant" "$port"
 printf '[Build WASM] Persistent private owner-data root: %s\n' "$data_root"
 exec env \
-    WASM_GAME_SITE_ROOT="$repo_dir/build-web/dist" \
+    WASM_GAME_SITE_ROOT="$engine_dir/.work/build/dist" \
     WASM_GAME_SHELL_ROOT="$framework_dir/dist" \
     WASM_GAME_DATA_ROOT="$data_root" \
     WASM_GAME_HTTP_PORT="$port" \

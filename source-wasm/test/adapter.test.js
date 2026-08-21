@@ -259,7 +259,7 @@ const context = {
           return;
         }
         const match = /^bytes=(\d+)-(\d+)$/.exec(this.range || '');
-        if (!this.url.endsWith('/range.bin') || !match) {
+        if (!this.url.includes('/range.bin?b64=1') || !match) {
           this.status = 500;
           this.responseText = '';
           return;
@@ -270,13 +270,14 @@ const context = {
         this.status = 206;
         const bytes = Buffer.alloc(end - start + 1);
         for (let i = 0; i < bytes.length; i += 1) bytes[i] = (start + i) & 0xff;
-        this.responseText = bytes.toString('latin1');
+        this.responseText = bytes.toString('base64');
       }
     }
     const mountSandbox = {
       console,
       fetch: ownerFetch,
       XMLHttpRequest: FakeXHR,
+      atob(value) { return Buffer.from(value, 'base64').toString('latin1'); },
       document: undefined
     };
     mountSandbox.globalThis = mountSandbox;

@@ -3,10 +3,15 @@ set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 dist_dir="$repo_dir/web/dist"
-q1_build_dir="${IDTECH2_Q1_BUILD_DIR:-$repo_dir/build-web}"
-framework_dir="${WASM_FRAMEWORK_DIR:-$repo_dir/../wasm-game-framework}"
+q1_source_dir="${IDTECH2_Q1_SOURCE_DIR:-$repo_dir/.work/source/quake}"
+q2_source_dir="${IDTECH2_Q2_SOURCE_DIR:-$repo_dir/.work/source/quake2}"
+q1_build_dir="${IDTECH2_Q1_BUILD_DIR:-$repo_dir/.work/build/quake}"
+workspace_dir="$(cd "$repo_dir/../.." && pwd)"
+framework_dir="${WASM_FRAMEWORK_DIR:-$workspace_dir/wasm-game-framework}"
 
-"$repo_dir/scripts/build-web.sh"
+if [[ "${IDTECH2_SKIP_BUILD:-0}" != "1" ]]; then
+    "$repo_dir/scripts/build-web.sh"
+fi
 
 for required in quake1.js quake1.wasm quake2.js quake2.wasm quake.ico quake2.ico \
     quake-192.png quake-512.png quake2-192.png quake2-512.png \
@@ -30,19 +35,19 @@ if grep -R -E 'quake1\.data|/local-data/|/home/ted/|WolfWasmShell|wolfwasm-' \
     exit 1
 fi
 if grep -E -- '--preload-file|-DQUAKE_DATA_DIR|set\(QUAKE_DATA_DIR|/home/ted/' \
-    "$repo_dir/CMakeLists.txt" "$repo_dir/scripts/build-web.sh"; then
+    "$q1_source_dir/CMakeLists.txt" "$repo_dir/scripts/build-web.sh"; then
     printf 'Build configuration contains a game-data preload or workstation path.\n' >&2
     exit 1
 fi
-grep -Fq '"SHELL:-lidbfs.js"' "$repo_dir/CMakeLists.txt"
-grep -Fq '"-lidbfs.js"' "$repo_dir/engines/quake2/CMakeLists.txt"
+grep -Fq '"SHELL:-lidbfs.js"' "$q1_source_dir/CMakeLists.txt"
+grep -Fq '"-lidbfs.js"' "$q2_source_dir/CMakeLists.txt"
 if [[ -f "$q1_build_dir/CMakeCache.txt" ]] && grep -E 'QUAKE_DATA_DIR|/home/ted/\.steam/' "$q1_build_dir/CMakeCache.txt"; then
     printf 'Generated CMake cache retains a game-data path.\n' >&2
     exit 1
 fi
 
 for source in "$dist_dir/game-adapter.js" "$dist_dir/adapters/quake.js" "$dist_dir/adapters/quake2.js" \
-    "$repo_dir/engines/quake2/web/pre.js"; do
+    "$q2_source_dir/web/pre.js"; do
     node --check "$source"
 done
 node --check "$dist_dir/quake1.js"
@@ -62,8 +67,8 @@ else
 fi
 
 cmp "$repo_dir/web/game-adapter.js" "$dist_dir/game-adapter.js"
-cmp "$repo_dir/web/quake-adapter.js" "$dist_dir/adapters/quake.js"
-cmp "$repo_dir/engines/quake2/web/game-adapter.js" "$dist_dir/adapters/quake2.js"
+cmp "$repo_dir/games/quake/web/game-adapter.js" "$dist_dir/adapters/quake.js"
+cmp "$repo_dir/games/quake2/web/game-adapter.js" "$dist_dir/adapters/quake2.js"
 cmp "$repo_dir/web/wasm-game.json" "$dist_dir/wasm-game.json"
 cmp "$repo_dir/web/wasm-game-data.json" "$dist_dir/wasm-game-data.json"
 cmp "$framework_dir/dist/wasm-game-framework.js" "$dist_dir/shared-shell/wasm-game-framework.js"
@@ -76,23 +81,28 @@ for marker in Q1_BrowserSetInputCaptured Q1_BrowserControlsValid Q1_BrowserRunti
     Q1_BrowserSensitivityX100 Q1_BrowserDemoPlayback Q1_BrowserMenuActive \
     Q1_BrowserControllerKey Q1_BrowserControllerLook \
     Q1_BrowserControllerReleaseAll Q1_BrowserWriteConfiguration; do
-    grep -Fq "$marker" "$repo_dir/WinQuake/"*.c || { printf 'Missing Quake native seam: %s\n' "$marker" >&2; exit 1; }
+    grep -Fq "$marker" "$q1_source_dir/WinQuake/"*.c || { printf 'Missing Quake native seam: %s\n' "$marker" >&2; exit 1; }
 done
-grep -Fq 'host_framecount > frame_before' "$repo_dir/WinQuake/sys_emscripten.c"
-grep -Fq '#ifndef WEBQUAKE' "$repo_dir/WinQuake/menu.c"
-if grep -Fq 'SDL_SetRelativeMouseMode(SDL_TRUE)' "$repo_dir/WinQuake/vid_emscripten.c"; then
+grep -Fq 'host_framecount > frame_before' "$q1_source_dir/WinQuake/sys_emscripten.c"
+grep -Fq '#ifndef WEBQUAKE' "$q1_source_dir/WinQuake/menu.c"
+if grep -Fq 'SDL_SetRelativeMouseMode(SDL_TRUE)' "$q1_source_dir/WinQuake/vid_emscripten.c"; then
     printf 'Quake must not capture relative input during engine initialization.\n' >&2
     exit 1
 fi
 
-grep -Fq 'grab = grab && q2web_input_captured' "$repo_dir/engines/quake2/src/client/vid/glimp_sdl2.c"
+grep -Fq 'grab = grab && q2web_input_captured' "$q2_source_dir/src/client/vid/glimp_sdl2.c"
 for marker in Q2Web_ConfigureControls Q2Web_RuntimeState Q2Web_ResizeViewport Q2Web_ApplyQuality \
-    Q2Web_ControllerKey Q2Web_ControllerReleaseAll Q2Web_WriteConfiguration; do
-    grep -Fq "$marker" "$repo_dir/engines/quake2/src/backends/web/main.c" || { printf 'Missing Quake II native seam: %s\n' "$marker" >&2; exit 1; }
+    Q2Web_ControllerKey Q2Web_ControllerReleaseAll Q2Web_WriteConfiguration \
+    Q2Web_Connected Q2Web_OriginX100 Q2Web_YawX100; do
+    grep -Fq "$marker" "$q2_source_dir/src/backends/web/main.c" || { printf 'Missing Quake II native seam: %s\n' "$marker" >&2; exit 1; }
 done
-grep -Fq 'Q2Web_AudioNonzeroCallbacks' "$repo_dir/engines/quake2/src/client/sound/sdl.c"
-for marker in 'WasmGameFramework.mountOwnerFiles' "root: '/data/baseq2'" "mode: 'memfs'"; do
-    grep -Fq "$marker" "$repo_dir/engines/quake2/web/pre.js" || { printf 'Missing Quake II mount seam: %s\n' "$marker" >&2; exit 1; }
+for marker in Q2Web_NetworkState Q2Web_NetworkPacketsSent Q2Web_NetworkPacketsReceived Q2Web_NetworkConnect; do
+    grep -Fq "$marker" "$q2_source_dir/src/backends/web/network.c" || { printf 'Missing Quake II network seam: %s\n' "$marker" >&2; exit 1; }
+done
+grep -Fq 'Q2Web_AudioNonzeroCallbacks' "$q2_source_dir/src/client/sound/sdl.c"
+for marker in 'WasmGameFramework.mountOwnerFiles' "root: '/data/baseq2'" "mode: 'memfs'" \
+    'FS.mkdirTree(`/data/${expansion}`)' 'root: `/data/${expansion}`' 'quake2Expansion'; do
+    grep -Fq "$marker" "$q2_source_dir/web/pre.js" || { printf 'Missing Quake II mount seam: %s\n' "$marker" >&2; exit 1; }
 done
 if strings "$dist_dir/quake2.wasm" | grep -F 'Yamagi Quake II' >/dev/null; then
     printf 'Quake II browser binary retains source-port title branding.\n' >&2

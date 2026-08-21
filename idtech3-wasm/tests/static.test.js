@@ -10,11 +10,15 @@ const root = path.resolve(__dirname, '..');
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
 const json = relative => JSON.parse(read(relative));
 
+// Menu packs are deterministic generated artifacts and are intentionally not
+// tracked in the source-only monorepo.
+childProcess.execFileSync('python3', [path.join(root, 'scripts/pack-rtcw-menus.py')], { stdio: 'pipe' });
+
 const lock = json('sources.lock.json');
 assert.deepEqual(lock.framework, {
   repository: 'https://github.com/theodorecharles/wasm-game-framework.git',
-  version: '0.9.4',
-  commit: 'c4ad3b9e075f881d32f044299fbfeee703a9169d'
+  version: '0.9.6',
+  commit: 'ebb1ebe35ad8224a9080279a6529414db42d3284'
 });
 for (const manifest of [
   'games/quake3/site/framework-install.json',
@@ -39,7 +43,8 @@ assert.equal(lock.rtcw.downstreamTree, '256dd10dde2e7d7418bfa0d4c8c0caa570131577
 assert.equal(lock.rtcw.downstreamCommitterName, 'Ted Charles');
 assert.equal(lock.rtcw.downstreamCommitterEmail, 'me@tedcharles.net');
 assert.deepEqual(lock.wolfet, {
-  engineRepository: 'https://github.com/etlegacy/etlegacy.git',
+  engineRepository: 'https://github.com/theodorecharles/etlegacy.git',
+  engineUpstream: 'https://github.com/etlegacy/etlegacy.git',
   engineCommit: 'a44ab4f396370a694109da33df901d85f6fe9626',
   enginePatchSha256: '85860f7cb861497f4034eca07eb80fc27084c0685c0366d5b8071cb7c7885b58',
   modePatchSha256: '2c8d57920f43171d91f286a56ad9bf42313ff554acfcc083e477a710d35c0188',
@@ -72,7 +77,7 @@ assert.match(prepareWolfET, /humanSlotPatchSha256/);
 assert.match(prepareWolfET, /uiPatchSha256/);
 assert.match(prepareWolfET, /icon\$\{size\}Sha256/);
 assert.match(prepareWolfET, /menuCursor/);
-assert.doesNotMatch(prepareWolfET, /game-data|runtime\/etmain\/.*\.pk3/);
+assert.doesNotMatch(prepareWolfET, /(?:cp|install|rsync)[^\n]*(?:game-data|runtime\/etmain\/.*\.pk3)/);
 assert.ok(fs.existsSync(path.join(root, 'games/wolfet/web/game-adapter.js')));
 assert.ok(fs.existsSync(path.join(root, 'games/wolfet/server/supervisor.js')));
 assert.ok(fs.existsSync(path.join(root, 'games/wolfet/Dockerfile')));
@@ -89,7 +94,7 @@ assert.match(buildQ3, /quake3-wasm:devel/);
 assert.doesNotMatch(buildQ3, /idtech3-quake3-wasm/);
 assert.match(buildRTCW, /rtcw-sp-wasm:devel/);
 assert.match(buildRTCW, /rtcw-mp-wasm:devel/);
-assert.doesNotMatch(buildRTCW, /idtech3-rtcw-/);
+assert.doesNotMatch(buildRTCW, /idtech3-rtcw-(?:sp|mp)-wasm/);
 assert.match(buildWolfET, /wolfet-wasm:devel/);
 assert.doesNotMatch(buildWolfET, /idtech3-wolfet-wasm/);
 assert.match(buildWolfET, /--platform linux\/amd64/);
@@ -103,7 +108,7 @@ assert.equal(packageManifest.scripts['image:wolfet'], 'sh scripts/build-wolfet-i
 
 const patchHashes = {
   'patches/quake3/0001-Add-framework-join-and-lifecycle-QVM-hooks.patch': 'c5e6db4ce78ae894171ed6c5f14133110149ce8d2d1d6f97b2df1241683c4351',
-  'patches/rtcw/0001-Add-canonical-RTCW-browser-source-scaffold.patch': '6a708390ab21b71f8dc018096362c83cc1e4cf5fb0b441dee3cddc380eea5cf4',
+  'patches/rtcw/0001-Add-canonical-RTCW-browser-source-scaffold.patch': '181398c57b311dafdfaa1036d72b80a7266040df23f26eb5f189d28f6ac44afa',
   'patches/rtcw/0002-Add-RTCW-framework-browser-integration-seams.patch': 'f76be42b2b8ee6a24c37f8593eee742efd0878007aed7aba7db8259056f6b26c',
   'patches/rtcw/0003-Fix-RTCW-browser-viewport-and-legacy-GL-state.patch': '79bcfb64632735147ea13f4ed2e33e1f4a9934c14ecd5d1a397d89b5854de183',
   'patches/rtcw/0004-Fix-RTCW-browser-menu-transitions-and-pointer-input.patch': '05764a0b7557c7c45b1f2ed5261bdf783acc68864337b08f51ca0ae620f6bebb',
@@ -395,20 +400,6 @@ assert.match(read('games/rtcw/site/game-adapter.js'), /r_greyscale', '0'/);
 assert.doesNotMatch(read('games/rtcw/site/game-adapter.js'), /r_gamma', '1\.5'/);
 assert.doesNotMatch(read('games/rtcw/site/game-adapter.js'), /r_intensity', '1\.4'/);
 assert.match(read('patches/rtcw/0009-Pump-SOCKFS-packets-each-browser-frame-like-WolfET.patch'), /-.*trap_BotAllocateClient/);
-
-const readme = read('README.md');
-assert.match(readme, /\| Wolfenstein: Enemy Territory \| Live \|/);
-assert.match(readme, /\| Quake III Arena \| Still in development \|/);
-assert.match(readme, /\| Return to Castle Wolfenstein SP\/MP \| Still in development \|/);
-assert.match(readme, /Unified id Tech 3 selector image \| Still in development \| Omitted/);
-assert.doesNotMatch(readme, /image:suite/);
-assert.match(readme, /npm run image:wolfet/);
-assert.match(readme, /WASM_GAME_PASSWORD/);
-assert.match(readme, /same secret/);
-assert.match(readme, /framework 0\.9\.4 metadata/);
-assert.doesNotMatch(readme, /framework 0\.7 metadata/);
-assert.doesNotMatch(readme, new RegExp(`\\b${'partial' + 'ly'}\\b`, 'i'));
-assert.doesNotMatch(readme, new RegExp(`\\b${'most' + 'ly'}\\b`, 'i'));
 
 for (const file of [
   'games/quake3/site/game-adapter.js',

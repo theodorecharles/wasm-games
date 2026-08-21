@@ -6,7 +6,7 @@ const net = require('node:net');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const frameworkRoot = path.resolve(root, '..', 'wasm-game-framework');
+const frameworkRoot = process.env.WASM_GAME_FRAMEWORK_DIR || '/home/ted/Development/wasm-game-framework';
 const { createPasswordGate } = require(path.join(frameworkRoot, 'server', 'password-auth.js'));
 const {
   ensureSessionSecret,

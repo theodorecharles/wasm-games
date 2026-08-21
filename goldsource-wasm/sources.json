@@ -21,8 +21,8 @@
       "name": "hlsdk-portable",
       "upstream": "https://github.com/FWGS/hlsdk-portable",
       "fork": "https://github.com/theodorecharles/hlsdk-portable",
-      "usedVia": "npm package hlsdk-portable@0.1.2 (from webxash3d-fwgs)",
-      "purpose": "Portable Half-Life SDK — the HL/Blue Shift/Opposing Force game logic (client + server DLLs)."
+      "usedVia": "npm package hlsdk-portable@0.1.2 for Half-Life/Blue Shift; scripts/build-opfor-framework.sh at opfor commit 613eb55d5bcd257219c881297d1d43c1da4a7445 for Opposing Force",
+      "purpose": "Portable Half-Life SDK — the HL/Blue Shift game logic plus the expansion-specific Opposing Force client/server DLLs."
     },
     {
       "name": "cs16-client",
@@ -38,6 +38,16 @@
       "usedVia": "cs16-client submodule (3rdparty/mainui_cpp), overridden to the fork in build-cs-menu.sh",
       "purpose": "Counter-Strike main-menu library. Patched by games/counter-strike/patches/cs16/main-menu.patch (Join Game button, no quit/previews).",
       "patches": ["games/counter-strike/patches/cs16/main-menu.patch"]
+    },
+    {
+      "name": "yapb",
+      "upstream": "https://github.com/yapb/yapb",
+      "commit": "9b9d4b655898744dcef1f3dfb87bcd4b4554b41e",
+      "release": "4.4.957",
+      "artifact": "yapb-4.4.957-linux.tar.xz",
+      "sha256": "8c095ac89b9b2ccc70a66a71d608e1a570b5268c57c6083ced8c06161533a4b1",
+      "usedVia": "runtime/counter-strike/build-host-image.sh",
+      "purpose": "Native AI players for the pinned Counter-Strike Xash3D dedicated host."
     }
   ]
 }

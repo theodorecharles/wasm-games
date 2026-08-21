@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "policy": "Build sources must be pinned to repositories owned by github.com/theodorecharles. Upstream URLs are provenance only.",
+  "status": "pinned-with-game-patch",
+  "repositories": [
+    {
+      "name": "official-winquake-source",
+      "repository": "https://github.com/theodorecharles/idtech2-wasm.git",
+      "commit": "0023db327bc1db00068284b70e1db45857aeee35",
+      "upstream": "https://github.com/id-Software/Quake.git",
+      "patches": ["patches/browser.patch"]
+    }
+  ],
+  "runtimeDependencies": [
+    {
+      "name": "FrikBotNex",
+      "repository": "https://github.com/0xBrsm/FrikBotNex.git",
+      "commit": "deeae8b7eaa5d63572d1065eddddce7ea299d7ac",
+      "purpose": "Native NetQuake dedicated server and two server-side deathmatch bots"
+    }
+  ]
+}

@@ -2,10 +2,10 @@
 set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 image="${1:-source-wasm-wasm:dev}"
-framework_root="${WASM_GAME_FRAMEWORK_ROOT:-}"
-if [[ -n "${framework_root}" && -x "${framework_root}/scripts/build-static-image.sh" ]]; then
-  "${framework_root}/scripts/build-static-image.sh" "${root}/web" "${image}"
-  exit 0
+framework_root="${WASM_GAME_FRAMEWORK_ROOT:-${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}}"
+framework_image="${WASM_GAME_FRAMEWORK_IMAGE:-wasm-game-framework:0.9.6}"
+if ! docker image inspect "${framework_image}" >/dev/null 2>&1; then
+  "${framework_root}/scripts/build-base-image.sh" "${framework_image}"
 fi
-echo "Building ${image} from Dockerfile (expects wasm-game-framework:0.9.6 or WASM_GAME_FRAMEWORK_IMAGE)"
-docker build --build-arg "FRAMEWORK_IMAGE=${WASM_GAME_FRAMEWORK_IMAGE:-wasm-game-framework:0.9.6}" --tag "${image}" "${root}"
+echo "Building ${image} from Dockerfile with ${framework_image}"
+docker build --build-arg "FRAMEWORK_IMAGE=${framework_image}" --tag "${image}" "${root}"

@@ -3,13 +3,18 @@ set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source_dir="${XASH_SOURCE_DIR:-}"
+source_parent=""
 output="${XASH_FRAMEWORK_OUTPUT:-${repo_dir}/native/xash-framework.wasm}"
 glue_output="${XASH_FRAMEWORK_GLUE_OUTPUT:-${repo_dir}/native/xash-framework.js}"
+repository="https://github.com/theodorecharles/xash3d-fwgs.git"
 expected_commit="f85aa0c8f7d46c27191132b44d872c8e331308de"
 
 if [[ -z "${source_dir}" || ! -d "${source_dir}/.git" ]]; then
-  echo "Set XASH_SOURCE_DIR to an exact Xash3D-FWGS source checkout." >&2
-  exit 2
+  source_parent="$(mktemp -d -t goldsource-xash-source.XXXXXX)"
+  source_dir="${source_parent}/source"
+  git clone --filter=blob:none --no-checkout "${repository}" "${source_dir}"
+  git -C "${source_dir}" checkout --detach "${expected_commit}"
+  git -C "${source_dir}" submodule update --init --recursive
 fi
 if [[ "$(git -C "${source_dir}" rev-parse HEAD)" != "${expected_commit}" ]]; then
   echo "Xash source must be exactly ${expected_commit}." >&2
@@ -24,7 +29,7 @@ build_context="$(mktemp -d -t goldsource-xash-build.XXXXXX)"
 container_id=""
 cleanup() {
   if [[ -n "${container_id}" ]]; then docker rm -f "${container_id}" >/dev/null 2>&1 || true; fi
-  rm -rf -- "${build_context}"
+  rm -rf -- "${build_context}" ${source_parent:+"${source_parent}"}
 }
 trap cleanup EXIT
 

@@ -8,6 +8,8 @@ import softUrl from 'xash3d-fwgs/libref_soft.wasm';
 import extrasUrl from 'xash3d-fwgs/extras.pk3';
 import hlClientUrl from 'hlsdk-portable/cl_dlls/client_emscripten_wasm32.wasm';
 import hlServerUrl from 'hlsdk-portable/dlls/hl_emscripten_wasm32.wasm';
+import opforClientUrl from '../native/opfor-client-framework.wasm';
+import opforServerUrl from '../native/opfor-server-framework.wasm';
 import csMenuUrl from '../native/cs-menu-framework.wasm';
 import csClientUrl from 'cs16-client/cl_dll/client_emscripten_wasm32.wasm';
 import csServerUrl from 'cs16-client/dlls/cs_emscripten_wasm32.wasm';
@@ -26,6 +28,7 @@ let persistentMount = null;
 let lastEscapeAt = 0;
 let manifest = null;
 let started = false;
+let nativeReady = false;
 let activeContext = null;
 let telemetryTimer = 0;
 let lastIdentityRetryAt = 0;
@@ -39,6 +42,8 @@ let pendingViewport = null;
 let nativeViewport = '';
 let pendingCaptureEvent = null;
 let pendingCaptureUntil = 0;
+let captureRecoveryEvent = null;
+let captureRecoveryUntil = 0;
 const controllerHeld = new Map();
 let controllerMenu = null;
 let controllerLookX = 0;
@@ -101,6 +106,7 @@ class WebRtcXash extends Xash3D {
     this.peer = null;
     this.socket = null;
     this.pendingCandidates = [];
+    this.signalingVersion = null;
   }
 
   async init() {
@@ -124,7 +130,7 @@ class WebRtcXash extends Xash3D {
     this.peer = peer;
     peer.onicecandidate = event => {
       if (event.candidate && this.socket?.readyState === WebSocket.OPEN) {
-        this.socket.send(JSON.stringify({ event: 'candidate', data: event.candidate.toJSON() }));
+        this.sendSignal('candidate', event.candidate.toJSON());
       }
     };
     peer.onconnectionstatechange = () => {
@@ -158,19 +164,46 @@ class WebRtcXash extends Xash3D {
   }
 
   async handleSignal(message, resolve, reject) {
+    const decoded = this.decodeSignal(message.data);
+    this.signalingVersion = decoded.version;
     this.createPeer(resolve, reject);
-    const signal = JSON.parse(message.data);
-    const data = typeof signal.data === 'string' ? JSON.parse(signal.data) : signal.data;
-    if (signal.event === 'offer') {
+    if (decoded.event === 'offer') {
+      const data = decoded.data;
       await this.peer.setRemoteDescription(data);
       for (const candidate of this.pendingCandidates.splice(0)) await this.peer.addIceCandidate(candidate);
       const answer = await this.peer.createAnswer();
       await this.peer.setLocalDescription(answer);
-      this.socket.send(JSON.stringify({ event: 'answer', data: answer }));
-    } else if (signal.event === 'candidate') {
-      if (this.peer.remoteDescription) await this.peer.addIceCandidate(data);
-      else this.pendingCandidates.push(data);
+      this.sendSignal('answer', answer);
+    } else if (decoded.event === 'candidate') {
+      if (this.peer.remoteDescription) await this.peer.addIceCandidate(decoded.data);
+      else this.pendingCandidates.push(decoded.data);
     }
+  }
+
+  decodeSignal(raw) {
+    const signal = JSON.parse(raw);
+    if (Array.isArray(signal)) {
+      const wireEvent = String(signal[0] || '');
+      const separator = wireEvent.indexOf(':');
+      if (separator <= 0 || !wireEvent.slice(0, separator).match(/^v\d+$/)) {
+        throw new Error(`Unsupported multiplayer signaling event: ${wireEvent || '(empty)'}`);
+      }
+      return {
+        version: wireEvent.slice(0, separator),
+        event: wireEvent.slice(separator + 1),
+        data: signal[1]
+      };
+    }
+    const data = typeof signal.data === 'string' ? JSON.parse(signal.data) : signal.data;
+    return { version: null, event: String(signal.event || ''), data };
+  }
+
+  sendSignal(event, data) {
+    if (this.socket?.readyState !== WebSocket.OPEN) return;
+    const message = this.signalingVersion
+      ? [`${this.signalingVersion}:${event}`, data]
+      : { event, data };
+    this.socket.send(JSON.stringify(message));
   }
 
   connect() {
@@ -246,6 +279,16 @@ async function writeBlob(FS, path, blob) {
   }
 }
 
+async function waitForNativeMain(instance, timeoutMs = 30000) {
+  const startedAt = performance.now();
+  while (!instance?.em?.Module?.calledRun) {
+    if (performance.now() - startedAt >= timeoutMs) {
+      throw new Error('Xash native startup timed out before main completed.');
+    }
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+}
+
 function trackPersistentWrites(FS, mount) {
   if (!mount || typeof FS.write !== 'function') return;
   const originalWrite = FS.write.bind(FS);
@@ -271,11 +314,12 @@ function synchronizeNativeViewport(detail) {
   const width = Math.max(320, Math.round(requestedWidth));
   const height = Math.max(240, Math.round(requestedHeight));
   pendingViewport = { bufferWidth: width, bufferHeight: height };
-  if (!xash?.running) return;
+  if (!nativeReady || !xash?.running) return;
   const viewport = `${width}x${height}`;
   if (viewport === nativeViewport) return;
   nativeViewport = viewport;
-  xash.Cmd_ExecuteString(`vid_setmode ${width} ${height}`);
+  globalThis.__goldsourceNativeViewport = viewport;
+  nativeCall('WasmGame_Resize', null, ['number', 'number'], [width, height]);
 }
 
 function engineOptions(context, selected, networked) {
@@ -294,17 +338,20 @@ function engineOptions(context, selected, networked) {
     '+voice_enable', '0',
     '+name', playerName, '+fps_max', String(fps)
   ];
+  if (!isCs) argumentsList.push('+sv_cheats', '1');
   if (selected.game !== 'valve') argumentsList.push('-game', selected.game);
   if (isCs) argumentsList.push('+_vgui_menus', '0');
   const filesMap = {
+    '/rwdir/filesystem_stdio.wasm': filesystemUrl,
+    [`${context.persistence.root}/filesystem_stdio.wasm`]: filesystemUrl,
     'dlls/bshift_emscripten_wasm32.wasm': hlServerUrl,
-    'dlls/opfor_emscripten_wasm32.wasm': hlServerUrl,
+    'dlls/opfor_emscripten_wasm32.wasm': opforServerUrl,
     'dlls/cs_emscripten_wasm32.wasm': csServerUrl,
     'dlls/mp_emscripten_wasm32.wasm': csServerUrl
   };
   return {
     canvas: context.elements.canvas,
-    renderer: isCs ? 'soft' : 'gles3compat',
+    renderer: 'gles3compat',
     arguments: argumentsList,
     filesMap,
     dynamicLibraries: isCs
@@ -318,7 +365,10 @@ function engineOptions(context, selected, networked) {
       filesystem: filesystemUrl,
       xash: xashUrl,
       menu: isCs ? csMenuUrl : menuUrl,
-      client: isCs ? csClientUrl : hlClientUrl,
+      client: isCs ? csClientUrl : selected.game === 'gearbox' ? opforClientUrl : hlClientUrl,
+      // Xash always preloads the generic server slot. Keep that slot on the
+      // base module and preload Opposing Force once under the Gearbox DLL name
+      // that its liblist requests at runtime.
       server: isCs ? csServerUrl : hlServerUrl,
       render: { gles3compat: webgl2Url, gl4es: webgl2Url, soft: softUrl }
     },
@@ -341,14 +391,21 @@ function safePlayerName(value) {
 }
 
 function applyPreferences(values) {
-  if (!xash?.running) return;
+  if (!nativeReady || !xash?.running) return;
   const name = safePlayerName(values.playerName);
   const fps = Math.max(30, Math.min(120, Number(values.targetFps) || 120));
   for (const command of [
     'bind w +forward', 'bind s +back', 'bind a +moveleft', 'bind d +moveright',
-    'bind SPACE +jump', 'bind e +use', 'bind MOUSE1 +attack', 'bind MOUSE2 +jump',
+    'bind SPACE +jump', 'bind CTRL +duck', 'bind SHIFT +speed', 'bind e +use',
+    'bind r +reload', 'bind q lastinv', 'bind g drop', 'bind f "impulse 100"',
+    'bind b buy', 'bind m chooseteam', 'bind TAB +showscores',
+    'bind 1 slot1', 'bind 2 slot2', 'bind 3 slot3', 'bind 4 slot4', 'bind 5 slot5',
+    'bind 6 slot6', 'bind 7 slot7', 'bind 8 slot8', 'bind 9 slot9', 'bind 0 slot10',
+    'bind MWHEELUP invprev', 'bind MWHEELDOWN invnext',
+    'bind MOUSE1 +attack', 'bind MOUSE2 +attack2',
     '+mlook', 'lookstrafe 0', 'lookspring 0', 'm_filter 0'
   ]) xash.Cmd_ExecuteString(command);
+  if (activeContext?.variant !== 'counter-strike') xash.Cmd_ExecuteString('sv_cheats 1');
   xash.Cmd_ExecuteString(`name "${name}"`);
   xash.Cmd_ExecuteString(`fps_max ${fps}`);
 }
@@ -371,6 +428,10 @@ function noteEngineLine(context, line) {
   const text = String(line || '').trim();
   if (!text) return;
   lastEngineLine = text.length > 140 ? `${text.slice(0, 137)}…` : text;
+  globalThis.__goldsourceLastEngineLine = lastEngineLine;
+  const history = globalThis.__goldsourceEngineHistory || [];
+  history.push(text);
+  globalThis.__goldsourceEngineHistory = history.slice(-500);
   if (loadingKind === 'loading') {
     for (const [pattern, floor] of LOAD_STAGES) {
       if (pattern.test(text)) {
@@ -419,7 +480,7 @@ function publishState(context, state, options) {
 }
 
 function nativeCall(name, returnType = 'number', argumentTypes = [], argumentsList = []) {
-  if (!xash?.running || !xash.em?.Module?.ccall) return null;
+  if (!nativeReady || !xash?.running || !xash.em?.Module?.ccall) return null;
   try {
     return xash.em.Module.ccall(name, returnType, argumentTypes, argumentsList);
   } catch (error) {
@@ -456,7 +517,7 @@ function releaseController() {
 }
 
 function applyControllerFrame(detail) {
-  if (!xash?.running || !detail?.actions) return;
+  if (!nativeReady || !xash?.running || !detail?.actions) return;
   const actions = detail.actions;
   const menu = synchronizeEngineState() !== 'gameplay';
   if (controllerMenu !== menu) {
@@ -499,7 +560,11 @@ function synchronizeEngineState(context = activeContext, event = null, captureGa
   const shouldCapture = (captureGameplay || Boolean(pendingCaptureEvent)) &&
     (state === 'gameplay' || (state === 'loading' && nativeCaptureIntent()));
   if (context && state) publishState(context, state, shouldCapture ? { capture: true, event: captureEvent } : undefined);
-  if (shouldCapture) pendingCaptureEvent = null;
+  if (shouldCapture) {
+    captureRecoveryEvent = captureEvent;
+    captureRecoveryUntil = now + 1500;
+    pendingCaptureEvent = null;
+  }
   return state || engineState;
 }
 
@@ -510,6 +575,15 @@ function rememberCaptureIntent(event) {
 }
 
 function synchronizeNativePointer(detail) {
+  if (detail?.captured === true) {
+    const dx = Math.round(Number(detail.movementX));
+    const dy = Math.round(Number(detail.movementY));
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
+    globalThis.__goldsourcePointerDeltas = (globalThis.__goldsourcePointerDeltas || 0) + 1;
+    globalThis.__goldsourceLastPointerDelta = [dx, dy];
+    nativeCall('WasmGame_PointerDelta', null, ['number', 'number'], [dx, dy]);
+    return;
+  }
   const x = Math.round(Number(detail?.x));
   const y = Math.round(Number(detail?.y));
   if (!Number.isFinite(x) || !Number.isFinite(y)) return;
@@ -539,6 +613,7 @@ function pollNativeContract(context) {
 async function start(context) {
   if (started) return;
   started = true;
+  nativeReady = false;
   activeContext = context;
   const selected = configurationFor(context.variant);
   try {
@@ -594,6 +669,12 @@ async function start(context) {
     lastEngineLine = 'WASD + mouse; Escape releases capture.';
     publishState(context, 'booting');
     xash.main();
+    // Xash3D.main() only schedules native main when side modules are still
+    // compiling. Module.calledRun is set in the same synchronous turn that
+    // initializes the command pool and enters the engine loop, so wait for it
+    // before issuing commands or invoking the browser/native contract.
+    await waitForNativeMain(xash);
+    nativeReady = true;
     nativeViewport = `${options.arguments[options.arguments.indexOf('-width') + 1]}x${options.arguments[options.arguments.indexOf('-height') + 1]}`;
     synchronizeNativeViewport(pendingViewport || {
       bufferWidth: context.elements.canvas.width,
@@ -608,6 +689,7 @@ async function start(context) {
     telemetryTimer = setInterval(() => pollNativeContract(context), 50);
   } catch (error) {
     started = false;
+    nativeReady = false;
     engineState = 'crashed';
     throw error;
   }
@@ -617,7 +699,7 @@ window.addEventListener('keydown', event => {
   if (event.key === 'Escape') lastEscapeAt = performance.now();
 }, true);
 window.addEventListener('keyup', event => {
-  if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Tab') {
+  if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Tab' || event.code === 'Backquote') {
     rememberCaptureIntent(event);
     queueMicrotask(() => synchronizeEngineState(activeContext, event, true));
   }
@@ -632,6 +714,10 @@ globalThis.WasmGameAdapter = Object.freeze({
     configurationFor(context.variant);
     const capabilities = context.framework.requireCapabilities({ wasm: true, webgl2: true, audio: true, indexedDb: true });
     if (!capabilities.supported) throw new Error(`This browser is missing: ${capabilities.missing.join(', ')}.`);
+    // The framework normalizes absolute menu coordinates and captured
+    // movementX/movementY. Suppress SDL's parallel DOM mouse path before Xash
+    // installs it so a locked movement is applied exactly once.
+    context.elements.canvas.addEventListener('mousemove', event => event.stopImmediatePropagation(), true);
   },
   start,
   readEngineState(context) { return synchronizeEngineState(context); },
@@ -651,15 +737,21 @@ globalThis.WasmGameAdapter = Object.freeze({
     }
   },
   captureLost(_detail, context) {
-    if (!xash?.running) return;
-    if (synchronizeEngineState(context) === 'gameplay' && performance.now() - lastEscapeAt > 750) {
-      xash.Cmd_ExecuteString('togglemenu');
+    if (!nativeReady || !xash?.running) return;
+    const now = performance.now();
+    if (synchronizeEngineState(context) === 'gameplay') {
+      if (captureRecoveryEvent && now <= captureRecoveryUntil) {
+        const event = captureRecoveryEvent;
+        queueMicrotask(() => synchronizeEngineState(context, event, true));
+      } else if (now - lastEscapeAt > 750) {
+        xash.Cmd_ExecuteString('togglemenu');
+      }
     }
     queueMicrotask(() => synchronizeEngineState(context));
     persistentMount?.save().catch(error => context.log(error));
   },
   inputCaptureChanged(captured, context) {
-    if (!started) return;
+    if (!nativeReady) return;
     nativeCall('WasmGame_SetInputCaptured', null, ['number'], [captured ? 1 : 0]);
     if (captured) {
       applyPreferences(context.preferences.values());
@@ -685,17 +777,17 @@ globalThis.WasmGameAdapter = Object.freeze({
   },
   contextRestored(_event, context) {
     contextIsLost = false;
-    xash?.Cmd_ExecuteString('vid_restart');
+    if (nativeReady) xash?.Cmd_ExecuteString('vid_restart');
     queueMicrotask(() => synchronizeEngineState(context));
     context.log('WebGL context restored; renderer restart requested.');
   },
   executeCommand(command) {
-    if (!xash?.running) return false;
+    if (!nativeReady || !xash?.running) return false;
     xash.Cmd_ExecuteString(String(command));
     return true;
   },
   readFile(path) {
-    if (!xash?.running) return null;
+    if (!nativeReady || !xash?.running) return null;
     try {
       const bytes = xash.em.FS.readFile(String(path));
       return new TextDecoder().decode(bytes);

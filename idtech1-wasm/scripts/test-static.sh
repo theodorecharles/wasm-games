@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-framework_dir="${WASM_FRAMEWORK_DIR:-$(cd "${repo_dir}/../wasm-game-framework" && pwd)}"
+framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 data_dir="$(mktemp -d -t idtech1-static-data.XXXXXX)"
 log_file="$(mktemp -t idtech1-static-server.XXXXXX.log)"
 port="${IDTECH1_TEST_PORT:-4177}"
@@ -35,7 +35,7 @@ curl -fsS "http://127.0.0.1:${port}/" | grep -Fq 'data-shell-launch-fullscreen'
 test "$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}/shared-shell/wolfwasm-shell.js")" = "404"
 curl -fsS "http://127.0.0.1:${port}/app.webmanifest?variant=doom" | grep -Fq '/assets/doom-512.png'
 curl -fsS "http://127.0.0.1:${port}/app.webmanifest?variant=heretic" | grep -Fq '/assets/heretic-512.png'
-curl -fsS "http://127.0.0.1:${port}/service-worker.js" | grep -Fq 'wasm-game-shell-0.9.4'
+curl -fsS "http://127.0.0.1:${port}/service-worker.js" | grep -Fq 'wasm-game-shell-0.9.6'
 curl -fsS "http://127.0.0.1:${port}/data-validator.mjs" | grep -Fq 'validateIdTech1Data'
 curl -fsS "http://127.0.0.1:${port}/game-data/status?variant=doom2" | grep -Fq '"ready":false'
 test "$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}/data/DOOM2.WAD")" = "404"
@@ -48,4 +48,4 @@ curl -fsS -X PUT --data-binary "@${data_dir}/fixtures/doom2-valid.wad" \
 curl -fsS "http://127.0.0.1:${port}/game-data/status?variant=doom2" | grep -Fq '"ready":true'
 curl -fsS "http://127.0.0.1:${port}/game-data/files/iwad?variant=doom2" -o "${data_dir}/served-doom2.wad"
 cmp "${data_dir}/fixtures/doom2-valid.wad" "${data_dir}/served-doom2.wad"
-echo "Verified framework 0.9.4 document, PWA/fullscreen shell, structural validator upload/status/download, and private /data boundary."
+echo "Verified framework 0.9.6 document, PWA/fullscreen shell, structural validator upload/status/download, and private /data boundary."

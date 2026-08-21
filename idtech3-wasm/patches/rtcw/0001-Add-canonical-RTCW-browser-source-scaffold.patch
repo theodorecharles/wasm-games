@@ -519,7 +519,7 @@ index 0000000..f603525
 @@ -0,0 +1,160 @@
 +# RTCW WebAssembly runbook
 +
-+Read `/home/ted/Development/wasm/RUNBOOK.md` before changing this repository. This is a downstream-only browser port of the native ioRTCW SP and MP source trees. Do not copy an existing browser/WASM port, submit changes upstream, open upstream issues, or push to the `upstream` remote.
++Read `/home/ted/Development/wasm-games/PROJECT-TRACKER.md` before changing this repository. This is a downstream-only browser port of the native ioRTCW SP and MP source trees. Do not copy an existing browser/WASM port, submit changes upstream, open upstream issues, or push to the `upstream` remote.
 +
 +## Verified checkpoint (2026-08-14)
 +
@@ -538,7 +538,7 @@ index 0000000..f603525
 +The checked-in output path used by the portfolio portal is:
 +
 +```text
-+/home/ted/Development/wasm/rtcw-wasm/web/sp
++/home/ted/Development/wasm-games/idtech3-wasm/games/rtcw/site
 +```
 +
 +Generated client artifacts live below ignored paths:
@@ -568,10 +568,10 @@ index 0000000..f603525
 +The staged owner data is outside this repository:
 +
 +```text
-+/home/ted/Development/wasm/data/rtcw/Main
++/home/ted/wasm-game-data/rtcw/Main
 +```
 +
-+The portal mounts `/home/ted/Development/wasm/data/rtcw` read-only at `/owner-data` and exposes it only through the loopback-bound `/local-data/` route. The launcher refuses owner-data import unless the page hostname is `localhost`, `127.0.0.1`, or `::1`.
++The portal mounts `/home/ted/wasm-game-data/rtcw` read-only at `/owner-data` and exposes it only through the loopback-bound `/local-data/` route. The launcher refuses owner-data import unless the page hostname is `localhost`, `127.0.0.1`, or `::1`.
 +
 +Before import, every expected path is checked by HEAD for exact length. During streaming import, every file is checked for its expected length, ZIP/PK3 signature, and pinned SHA-256 from `web/sp/asset-spec.js`. A mismatch aborts startup. Generated QVMs are separately checked for VM2 magic before being mounted read-only.
 +
@@ -590,8 +590,8 @@ index 0000000..f603525
 +Validate an owner install without copying anything:
 +
 +```bash
-+cd /home/ted/Development/wasm/rtcw-wasm
-+RTCW_MAIN_DIR=/home/ted/Development/wasm/data/rtcw/Main ./scripts/setup-data.sh
++cd /home/ted/Development/wasm-games/idtech3-wasm/games/rtcw
++RTCW_MAIN_DIR=/home/ted/wasm-game-data/rtcw/Main ./scripts/setup-data.sh
 +```
 +
 +This writes only the ignored `runtime/asset-manifest.json`; it never links or copies retail files into `web/`.
@@ -601,7 +601,7 @@ index 0000000..f603525
 +The verified Emscripten checkout is `/home/ted/emsdk`. Build both clients and both sets of QVMs with:
 +
 +```bash
-+cd /home/ted/Development/wasm/rtcw-wasm
++cd /home/ted/Development/wasm-games/idtech3-wasm/games/rtcw
 +EMSDK_DIR=/home/ted/emsdk JOBS=8 ./scripts/build-web.sh
 +```
 +
@@ -618,7 +618,7 @@ index 0000000..f603525
 +## Run through the portfolio portal
 +
 +```bash
-+cd /home/ted/Development/wasm/portal
++cd /home/ted/Development/wasm-game-lab
 +docker compose up -d rtcw
 +```
 +
@@ -653,7 +653,7 @@ index 0000000..f603525
 +Stop the local lane after testing:
 +
 +```bash
-+cd /home/ted/Development/wasm/portal
++cd /home/ted/Development/wasm-game-lab
 +docker compose stop rtcw
 +```
 +

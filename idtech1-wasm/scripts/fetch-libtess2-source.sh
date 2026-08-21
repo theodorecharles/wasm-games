@@ -21,4 +21,6 @@ if [[ "${actual_commit}" != "${source_commit}" ]]; then
     exit 1
 fi
 
+find "${source_dir}" -type f -name '*.md' -delete
+
 printf '%s\n' "${source_dir}"

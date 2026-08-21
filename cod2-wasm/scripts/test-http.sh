@@ -38,7 +38,7 @@ test_image() {
   base="http://127.0.0.1:${port}"
   curl -fsS "${base}/" | grep -q '/shared-shell/wasm-game-framework.css'
   curl -fsS "${base}/" | grep -q '/shared-shell/wasm-game-bootstrap.js'
-  test "$(curl -fsS "${base}/wasm-game-framework.json" | node -pe 'JSON.parse(fs.readFileSync(0)).version')" = "0.9.2"
+  test "$(curl -fsS "${base}/wasm-game-framework.json" | node -pe 'JSON.parse(fs.readFileSync(0)).version')" = "0.9.6"
   test "$(curl -fsS "${base}/wasm-game-config.js" | sed -n 's/.*= "\([^"]*\)";.*/\1/p')" = "${expected_variant}"
   test "$(curl -fsS "${base}/app.webmanifest?variant=cod2-mp" | node -pe 'JSON.parse(fs.readFileSync(0)).short_name')" = "CoD2 WASM"
   headers="$(curl -fsSI "${base}/cod2_core_probe.wasm")"
@@ -55,7 +55,7 @@ test_image() {
 }
 
 test_required_data_mount() {
-  local data_root="${COD2_DATA_ROOT:-/home/ted/Development/wasm/data/cod2}"
+  local data_root="${COD2_DATA_ROOT:-/home/ted/wasm-game-data/cod2}"
   local port base status headers
   [[ -f "${data_root}/main/iw_00.iwd" ]] || return 0
   start_image "${repository}:cod2-mp-${tag}" -v "${data_root}:/data:ro"

@@ -1,0 +1,475 @@
+diff --git a/Common.mak b/Common.mak
+index e9ab24ef4..0d9c6ea90 100644
+--- a/Common.mak
++++ b/Common.mak
+@@ -998,7 +998,7 @@ else ifeq ($(SUBPLATFORM),LINUX)
+     LIBS += -lrt -latomic
+ endif
+ 
+-ifeq (,$(filter $(PLATFORM),WINDOWS WII))
++ifeq (,$(filter $(PLATFORM),WINDOWS WII EMSCRIPTEN))
+     ifneq ($(PLATFORM),BSD)
+         LIBS += -ldl
+     endif
+diff --git a/source/audiolib/src/driver_sdl.cpp b/source/audiolib/src/driver_sdl.cpp
+index 9987a83d3..2b757193f 100644
+--- a/source/audiolib/src/driver_sdl.cpp
++++ b/source/audiolib/src/driver_sdl.cpp
+@@ -269,6 +269,9 @@ int SDLDrv_PCM_Init(int *mixrate, int *numchannels, void * initdata)
+     }
+ 
+     Initialised = 1;
++#ifdef __EMSCRIPTEN__
++    LOG_F(INFO, "[NBlood WASM] SDL audio device opened: %d Hz, %d channel(s)", actual.freq, actual.channels);
++#endif
+     return SDLErr_Ok;
+ }
+ 
+diff --git a/source/audiolib/src/vorbis.cpp b/source/audiolib/src/vorbis.cpp
+index a94b8f21d..657d38c13 100644
+--- a/source/audiolib/src/vorbis.cpp
++++ b/source/audiolib/src/vorbis.cpp
+@@ -372,7 +372,13 @@ int MV_PlayVorbis(char *ptr, uint32_t length, int loopstart, int loopend, int pi
+     //if (vd->task.valid() && !vd->task.ready())
+     //    vd->task.wait();
+ 
++#ifdef __EMSCRIPTEN__
++    // Browser builds are intentionally single-threaded. Initialize the decoder
++    // immediately instead of constructing libasync's native thread pool.
++    voice->task = async::spawn(async::inline_scheduler(), [voice]() -> int
++#else
+     voice->task = async::spawn([voice]() -> int
++#endif
+     {
+ #if defined _WIN32
+         debugThreadName("MV_PlayVorbis");
+diff --git a/source/build/include/compat.h b/source/build/include/compat.h
+index 9b3988b38..d65b0674f 100644
+--- a/source/build/include/compat.h
++++ b/source/build/include/compat.h
+@@ -372,7 +372,11 @@ defined __x86_64__ || defined __amd64__ || defined _M_X64 || defined _M_IA64 ||
+ 
+ #endif
+ 
+-#if defined(__linux)
++#if defined(__EMSCRIPTEN__)
++# define B_LITTLE_ENDIAN 1
++# define B_BIG_ENDIAN    0
++
++#elif defined(__linux)
+ # include <endian.h>
+ # if __BYTE_ORDER == __LITTLE_ENDIAN || __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+ #  define B_LITTLE_ENDIAN 1
+diff --git a/source/build/src/baselayer.cpp b/source/build/src/baselayer.cpp
+index d1fa14e5f..bd71db463 100644
+--- a/source/build/src/baselayer.cpp
++++ b/source/build/src/baselayer.cpp
+@@ -9,6 +9,11 @@
+ #include "polymost.h"
+ #include "renderlayer.h"
+ 
++#ifdef __EMSCRIPTEN__
++# include <emscripten/emscripten.h>
++# include "scancodes.h"
++#endif
++
+ #define MINICORO_IMPL
+ #define MCO_LOG initprintf
+ #define MCO_ASSERT Bassert
+@@ -258,15 +263,16 @@ void (*keypresscallback)(int32_t, int32_t);
+ 
+ void keySetCallback(void (*callback)(int32_t, int32_t)) { keypresscallback = callback; }
+ 
+-int32_t keyGetState(int32_t key) { return keystatus[g_keyRemapTable[key]]; }
++int32_t keyGetState(int32_t key) { return keystatus[(uint8_t)g_keyRemapTable[key]]; }
+ 
+ void keySetState(int32_t key, int32_t state)
+ {
+-    keystatus[g_keyRemapTable[key]] = state;
++    uint8_t const remapped = (uint8_t)g_keyRemapTable[key];
++    keystatus[remapped] = state;
+ 
+     if (state)
+     {
+-        g_keyFIFO[g_keyFIFOend] = g_keyRemapTable[key];
++        g_keyFIFO[g_keyFIFOend] = remapped;
+         g_keyFIFO[(g_keyFIFOend+1)&(KEYFIFOSIZ-1)] = state;
+         g_keyFIFOend = ((g_keyFIFOend+2)&(KEYFIFOSIZ-1));
+     }
+@@ -316,6 +322,135 @@ vec2_t  g_mouseAbs;
+ int32_t g_mouseBits;
+ uint8_t g_mouseClickState;
+ 
++#ifdef __EMSCRIPTEN__
++static int32_t g_wasmControllerMouseBits;
++static uint32_t g_wasmControllerKeys;
++static uint8_t g_wasmKeyRelease[NUMKEYS];
++static uint8_t g_wasmMouseRelease[3];
++static uint32_t g_wasmInputFrames;
++static int32_t g_wasmPointerDeltaX;
++static int32_t g_wasmPointerDeltaY;
++static uint32_t g_wasmPointerDeltaEvents;
++
++static void wasmControllerKey(uint32_t const bit, int32_t const scan, uint32_t const next)
++{
++    if (!!(g_wasmControllerKeys & bit) != !!(next & bit))
++        keySetState(scan, !!(next & bit));
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Build_WasmControllerFrame(
++    uint32_t const keys, int32_t const mouseX, int32_t const mouseY, int32_t const mouseBits)
++{
++    static int32_t const scans[] = {
++        sc_W, sc_S, sc_A, sc_D, sc_Space, sc_LeftControl, sc_R, sc_Enter,
++        sc_LeftShift, sc_Tab, sc_Escape, sc_UpArrow, sc_DownArrow, sc_LeftArrow,
++        sc_RightArrow, sc_Q,
++    };
++
++    for (uint32_t bit = 0; bit < ARRAY_SIZE(scans); ++bit)
++        wasmControllerKey(1u << bit, scans[bit], keys);
++
++    g_wasmControllerKeys = keys;
++    g_wasmControllerMouseBits = mouseBits;
++    g_mousePos.x += mouseX;
++    g_mousePos.y += mouseY;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Build_WasmKeyEvent(int32_t const scan, int32_t const pressed)
++{
++    if ((uint32_t)scan >= NUMKEYS)
++        return;
++
++    if (pressed)
++    {
++        g_wasmKeyRelease[scan] = 0;
++        keySetState(scan, 1);
++    }
++    else
++    {
++        // Browser automation and very quick taps can deliver keydown+keyup
++        // before the next native frame. Keep the press visible for one full
++        // engine frame, then release it on the following frame.
++        g_wasmKeyRelease[scan] = 2;
++    }
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Build_WasmInputFrame(void)
++{
++    ++g_wasmInputFrames;
++    for (int32_t scan = 0; scan < NUMKEYS; ++scan)
++        if (g_wasmKeyRelease[scan] && --g_wasmKeyRelease[scan] == 0)
++            keySetState(scan, 0);
++
++    for (int32_t button = 0; button < 3; ++button)
++        if (g_wasmMouseRelease[button] && --g_wasmMouseRelease[button] == 0)
++        {
++            g_mouseBits &= ~(1 << button);
++            if (button == 0)
++                g_mouseClickState = MOUSE_RELEASED;
++        }
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Build_WasmPointerMove(int32_t const x, int32_t const y)
++{
++    g_mouseAbs.x = clamp(x, 0, max(0, xres - 1));
++    g_mouseAbs.y = clamp(y, 0, max(0, yres - 1));
++    g_mouseInsideWindow = true;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Build_WasmPointerDelta(int32_t const x, int32_t const y)
++{
++    // The framework owns pointer lock and forwards movementX/movementY while
++    // captured. Feed those relative deltas into the same accumulator that the
++    // desktop SDL event path uses; never reinterpret absolute menu positions
++    // as gameplay motion.
++    g_mousePos.x += x;
++    g_mousePos.y += y;
++    g_wasmPointerDeltaX = x;
++    g_wasmPointerDeltaY = y;
++    ++g_wasmPointerDeltaEvents;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Build_WasmPointerButton(int32_t const button, int32_t const pressed)
++{
++    int32_t mapped = -1;
++    switch (button)
++    {
++        case 0: mapped = 0; break;
++        case 1: mapped = 2; break;
++        case 2: mapped = 1; break;
++    }
++
++    if (mapped < 0)
++        return;
++
++    if (pressed)
++    {
++        g_wasmMouseRelease[mapped] = 0;
++        g_mouseBits |= 1 << mapped;
++    }
++    else
++        g_wasmMouseRelease[mapped] = 2;
++
++    if (button == 0 && pressed)
++        g_mouseClickState = MOUSE_PRESSED;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmRenderMode(void) { return videoGetRenderMode(); }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmRenderWidth(void) { return xres; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmRenderHeight(void) { return yres; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmRenderBpp(void) { return bpp; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerX(void) { return g_mouseAbs.x; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerY(void) { return g_mouseAbs.y; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerBits(void) { return g_mouseBits; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerClickState(void) { return g_mouseClickState; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerReleaseCountdown(void) { return g_wasmMouseRelease[0]; }
++extern "C" EMSCRIPTEN_KEEPALIVE unsigned Build_WasmInputFrameCount(void) { return g_wasmInputFrames; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerDeltaX(void) { return g_wasmPointerDeltaX; }
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmPointerDeltaY(void) { return g_wasmPointerDeltaY; }
++extern "C" EMSCRIPTEN_KEEPALIVE unsigned Build_WasmPointerDeltaEvents(void) { return g_wasmPointerDeltaEvents; }
++#endif
++
+ bool g_mouseEnabled;
+ bool g_mouseGrabbed;
+ bool g_mouseInsideWindow   = 1;
+@@ -339,7 +474,14 @@ int32_t mouseAdvanceClickState(void)
+ 
+ void mouseReadPos(int32_t *x, int32_t *y)
+ {
+-    if (!g_mouseEnabled || !g_mouseGrabbed || !appactive)
++    // Browser adapters inject framework-normalized relative deltas directly.
++    // Embedded browsers can decline pointer lock even for a trusted click, so
++    // do not discard those deltas merely because SDL relative mode is off.
++    if (!g_mouseEnabled || !appactive
++#ifndef __EMSCRIPTEN__
++        || !g_mouseGrabbed
++#endif
++       )
+     {
+         *x = *y = 0;
+         return;
+@@ -367,7 +509,12 @@ int32_t mouseReadAbs(vec2_t * const pResult, vec2_t const * const pInput)
+ 
+ int32_t mouseReadButtons(void)
+ {
+-    return (!g_mouseEnabled || !appactive || !g_mouseInsideWindow || (osd && osd->flags & OSD_CAPTURE)) ? 0 : g_mouseBits;
++    return (!g_mouseEnabled || !appactive || !g_mouseInsideWindow || (osd && osd->flags & OSD_CAPTURE)) ? 0 :
++        (g_mouseBits
++#ifdef __EMSCRIPTEN__
++         | g_wasmControllerMouseBits
++#endif
++        );
+ }
+ 
+ controllerinput_t joystick;
+@@ -885,6 +1032,14 @@ void maybe_redirect_outputs(void)
+ 
+ int engineFPSLimit(bool const throttle)
+ {
++#ifdef __EMSCRIPTEN__
++    // emscripten_set_main_loop() already schedules one callback per browser
++    // animation frame.  Applying the desktop limiter a second time can stall
++    // rendering when the virtual display has no reliable refresh metadata.
++    (void) throttle;
++    g_frameDelay = 0;
++    return true;
++#else
+     static uint64_t lastFrameTicks;
+     static uint64_t lastDelay;
+ 
+@@ -908,4 +1063,5 @@ int engineFPSLimit(bool const throttle)
+     }
+ 
+     return false;
++#endif
+ }
+diff --git a/source/build/src/compat.cpp b/source/build/src/compat.cpp
+index 8d243422f..bacc1292e 100644
+--- a/source/build/src/compat.cpp
++++ b/source/build/src/compat.cpp
+@@ -125,6 +125,9 @@ char *Bgethomedir(void)
+     if (drv)
+         drv[1] = '\0';
+     return Xstrdup(cwd);
++#elif defined(__EMSCRIPTEN__)
++    char const *e = getenv("HOME");
++    return Xstrdup(e != NULL && e[0] != '\0' ? e : "/home/web_user");
+ #else
+     char const *e;
+     if ((e = getenv("HOME")) == NULL || e[0] == '\0')
+@@ -153,6 +156,8 @@ char *Bgetappdir(void)
+ 
+ #elif defined EDUKE32_OSX
+     dir = osx_getappdir();
++#elif defined __EMSCRIPTEN__
++    dir = Xstrdup("/");
+ #elif defined __FreeBSD__
+     // the sysctl should also work when /proc/ is not mounted (which seems to
+     // be common on FreeBSD), so use it..
+diff --git a/source/build/src/sdlayer.cpp b/source/build/src/sdlayer.cpp
+index d981a3074..019faa5ea 100644
+--- a/source/build/src/sdlayer.cpp
++++ b/source/build/src/sdlayer.cpp
+@@ -15,6 +15,10 @@
+ #include "sdl_inc.h"
+ #include "softsurface.h"
+ 
++#ifdef __EMSCRIPTEN__
++# include <emscripten/html5.h>
++#endif
++
+ #if SDL_MAJOR_VERSION >= 2
+ # include "imgui.h"
+ # include "imgui_impl_sdl2.h"
+@@ -323,7 +327,7 @@ void wm_setapptitle(const char *name)
+ //
+ 
+ /* XXX: libexecinfo could be used on systems without gnu libc. */
+-#if !defined _WIN32 && defined __GNUC__ && !defined __OpenBSD__ && !(defined __APPLE__ && defined __BIG_ENDIAN__) && !defined GEKKO && !defined EDUKE32_TOUCH_DEVICES && !defined __OPENDINGUX__
++#if !defined _WIN32 && defined __GNUC__ && !defined __OpenBSD__ && !(defined __APPLE__ && defined __BIG_ENDIAN__) && !defined GEKKO && !defined EDUKE32_TOUCH_DEVICES && !defined __OPENDINGUX__ && !defined __EMSCRIPTEN__
+ # define PRINTSTACKONSEGV 1
+ # include <execinfo.h>
+ #endif
+@@ -1281,6 +1285,17 @@ static inline char grabmouse_low(char a)
+        is called only when a window is ready?                */
+     if (sdl_window)
+         SDL_SetWindowGrab(sdl_window, a ? SDL_TRUE : SDL_FALSE);
++#ifdef __EMSCRIPTEN__
++    // Browsers only grant pointer lock in direct response to a user gesture.
++    // The web shell requests it from the canvas click and then asks SDL to
++    // enter relative mode through the selected game's native capture hook.
++    if (a)
++    {
++        EmscriptenPointerlockChangeEvent status = {};
++        if (emscripten_get_pointerlock_status(&status) != EMSCRIPTEN_RESULT_SUCCESS || !status.isActive)
++            return -1;
++    }
++#endif
+     return SDL_SetRelativeMouseMode(a ? SDL_TRUE : SDL_FALSE);
+ #else
+     UNREFERENCED_PARAMETER(a);
+@@ -1741,6 +1756,13 @@ int setvideomode_sdlcommonpost(int32_t x, int32_t y, int32_t c, int32_t fs, int3
+     else
+ #endif
+         refreshfreq = desktopmode.refresh_rate;
++#ifdef __EMSCRIPTEN__
++    // The Emscripten video driver reports an unspecified (zero) desktop refresh
++    // rate. Build games use this value for their default frame limiter, so retain a
++    // browser-safe cadence instead of calculating an infinite frame delay.
++    if (refreshfreq <= 0)
++        refreshfreq = 60.0;
++#endif
+ 
+     int const matchedResolution = (desktopmode.w == x && desktopmode.h == y);
+     int const borderless = (r_borderless == 1 || (r_borderless == 2 && matchedResolution)) ? SDL_WINDOW_BORDERLESS : 0;
+@@ -1859,12 +1881,21 @@ int32_t videoSetMode(int32_t x, int32_t y, int32_t c, int32_t fs)
+             int32_t value;
+         } sdlayer_gl_attributes[] =
+         {
++#ifdef __EMSCRIPTEN__
++              // WebGL 2 exposes an OpenGL ES 3 context. Robust-access and
++              // reset-notification flags are desktop context attributes and
++              // make Emscripten's EGL context creation fail outright.
++              { SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES },
++              { SDL_GL_CONTEXT_MAJOR_VERSION, 3 },
++              { SDL_GL_CONTEXT_MINOR_VERSION, 0 },
++#else
+               { SDL_GL_CONTEXT_FLAGS,
+ #ifndef NDEBUG
+               SDL_GL_CONTEXT_DEBUG_FLAG |
+ #endif
+               SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG },
+               { SDL_GL_CONTEXT_RESET_NOTIFICATION, SDL_GL_CONTEXT_RESET_LOSE_CONTEXT },
++#endif
+               { SDL_GL_DOUBLEBUFFER, 1 },
+ 
+               { SDL_GL_STENCIL_SIZE, 1 },
+@@ -2185,6 +2216,35 @@ void videoShowFrame(int32_t w)
+ 
+     if (offscreenrendering) return;
+ 
++#ifdef __EMSCRIPTEN__
++    // SDL invalidates its window surface whenever the browser canvas changes
++    // size.  Drawing into the cached surface would both miss the canvas and
++    // potentially use its obsolete dimensions.
++    if (SDL_Surface * const currentSurface = SDL_GetWindowSurface(sdl_window))
++        sdl_surface = currentSurface;
++
++    static bool wasmFirstFrameLogged;
++    bool logWasmFrame = false;
++    uint8_t sourceMin = 255, sourceMax = 0;
++    vec2_t const sourceRes = softsurface_getBufferResolution();
++    if (!wasmFirstFrameLogged)
++    {
++        uint8_t const * const source = softsurface_getBuffer();
++
++        if (source)
++        {
++            int32_t const sourcePixels = sourceRes.x * sourceRes.y;
++            int32_t const stride = max(1, sourcePixels / 4096);
++            for (int32_t i = 0; i < sourcePixels; i += stride)
++            {
++                sourceMin = min(sourceMin, source[i]);
++                sourceMax = max(sourceMax, source[i]);
++            }
++        }
++        logWasmFrame = sourceMin != sourceMax;
++    }
++#endif
++
+     if (lockcount)
+     {
+         LOG_F(WARNING, "Frame was still locked at a depth of %d when videoShowFrame() was called!", lockcount);
+@@ -2195,7 +2255,19 @@ void videoShowFrame(int32_t w)
+     softsurface_blitBuffer((uint32_t*) sdl_surface->pixels, sdl_surface->format->BitsPerPixel);
+     if (SDL_MUSTLOCK(sdl_surface)) SDL_UnlockSurface(sdl_surface);
+ #if SDL_MAJOR_VERSION >= 2
+-    if (SDL_UpdateWindowSurface(sdl_window))
++    int const updateResult = SDL_UpdateWindowSurface(sdl_window);
++#ifdef __EMSCRIPTEN__
++    if (logWasmFrame)
++    {
++        LOG_F(INFO,
++              "[Build WASM] First rendered frame presented: source=%dx%d range=%u..%u surface=%dx%d bpp=%d",
++              sourceRes.x, sourceRes.y, sourceMin, sourceMax,
++              sdl_surface ? sdl_surface->w : 0, sdl_surface ? sdl_surface->h : 0,
++              sdl_surface ? sdl_surface->format->BitsPerPixel : 0);
++        wasmFirstFrameLogged = updateResult == 0;
++    }
++#endif
++    if (updateResult)
+     {
+         // If a fullscreen X11 window is minimized then this may be required.
+         // FIXME: What to do if this fails...
+diff --git a/source/build/src/timer.cpp b/source/build/src/timer.cpp
+index e8328bd69..78e192e17 100644
+--- a/source/build/src/timer.cpp
++++ b/source/build/src/timer.cpp
+@@ -17,6 +17,10 @@
+ 
+ #include <atomic>
+ 
++#ifdef __EMSCRIPTEN__
++# include <emscripten/emscripten.h>
++#endif
++
+ #if defined RENDERTYPESDL && (SDL_MAJOR_VERSION >= 2)
+ # define HAVE_TIMER_SDL
+ #endif
+@@ -107,9 +111,16 @@ static FORCE_INLINE ATTRIBUTE((flatten)) uint64_t timerSampleRDTSC(void)
+ // returns ticks since epoch in the format and frequency specified
+ template<typename T> T timerGetTicks(T freq)
+ {
++#ifdef __EMSCRIPTEN__
++    // Emscripten's libc clock_gettime ABI has changed across SDK releases.
++    // Using the browser's monotonic clock directly keeps all Build timers in
++    // the requested units and avoids treating nanoseconds as milliseconds.
++    return (T)(emscripten_get_now() * ((double)freq / 1000.0));
++#else
+     timespec ts;
+     enet_gettime(CLOCK_TYPE, &ts);
+     return ts.tv_sec * freq + (T)((uint64_t)ts.tv_nsec * freq / (T)1000000000);
++#endif
+ }
+ 
+ int timerGetClockRate(void) { return clockTicksPerSecond; }

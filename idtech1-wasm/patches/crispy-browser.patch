@@ -1,0 +1,277 @@
+diff --git a/src/i_browser.c b/src/i_browser.c
+new file mode 100644
+index 00000000..47d7c58a
+--- /dev/null
++++ b/src/i_browser.c
+@@ -0,0 +1,183 @@
++//
++// Copyright(C) 2026 Crispy Doom WASM contributors
++//
++// This program is free software; you can redistribute it and/or
++// modify it under the terms of the GNU General Public License
++// as published by the Free Software Foundation; either version 2
++// of the License, or (at your option) any later version.
++//
++
++#include <emscripten.h>
++
++#include <stdio.h>
++
++#include "SDL.h"
++
++#include "i_browser.h"
++
++#if defined(CRISPY_WASM_GAME_DOOM)
++#include "doom/doomdef.h"
++#include "doom/doomstat.h"
++#include "doom/m_menu.h"
++#define BROWSER_MENU_ACTIVE menuactive
++#define BROWSER_OPEN_MENU() M_StartControlPanel()
++#elif defined(CRISPY_WASM_GAME_HERETIC)
++#include "heretic/doomdef.h"
++#define BROWSER_MENU_ACTIVE MenuActive
++#define BROWSER_OPEN_MENU() MN_ActivateMenu()
++#elif defined(CRISPY_WASM_GAME_HEXEN)
++#include "hexen/h2def.h"
++#define BROWSER_MENU_ACTIVE MenuActive
++#define BROWSER_OPEN_MENU() MN_ActivateMenu()
++#else
++#error "A CRISPY_WASM_GAME_* definition is required"
++#endif
++
++static browser_frame_fn browser_frame;
++static unsigned int browser_frame_count;
++
++static void BrowserFrame(void *unused)
++{
++    (void) unused;
++    browser_frame_count++;
++    browser_frame();
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserFrameCount(void)
++{
++    return browser_frame_count;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserRuntimeState(void)
++{
++    if (paused)
++    {
++        return 2;
++    }
++
++    if (BROWSER_MENU_ACTIVE)
++    {
++        return 0;
++    }
++
++    if (gamestate == GS_INTERMISSION)
++    {
++        return 3;
++    }
++
++    return gamestate == GS_LEVEL && !demoplayback ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerX(void)
++{
++    return players[consoleplayer].mo != NULL
++        ? players[consoleplayer].mo->x / FRACUNIT : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserPlayerY(void)
++{
++    return players[consoleplayer].mo != NULL
++        ? players[consoleplayer].mo->y / FRACUNIT : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserPlayerAngle(void)
++{
++    return players[consoleplayer].mo != NULL
++        ? players[consoleplayer].mo->angle : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserViewPitch(void)
++{
++    return 0;
++}
++
++EMSCRIPTEN_KEEPALIVE int I_BrowserAttackDown(void)
++{
++    return players[consoleplayer].attackdown ? 1 : 0;
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserSetInputCaptured(int captured)
++{
++    SDL_SetRelativeMouseMode(captured ? SDL_TRUE : SDL_FALSE);
++    if (!captured)
++    {
++        SDL_GetRelativeMouseState(NULL, NULL);
++    }
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserOpenMenu(void)
++{
++    if (gamestate == GS_LEVEL && !BROWSER_MENU_ACTIVE)
++    {
++        BROWSER_OPEN_MENU();
++    }
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerKey(int keycode, int pressed)
++{
++    SDL_Event event;
++
++    SDL_zero(event);
++    event.type = pressed ? SDL_KEYDOWN : SDL_KEYUP;
++    event.key.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++    event.key.repeat = 0;
++    event.key.keysym.sym = (SDL_Keycode) keycode;
++    event.key.keysym.scancode = SDL_GetScancodeFromKey((SDL_Keycode) keycode);
++    event.key.keysym.mod = KMOD_NONE;
++    SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerMouse(int dx, int dy)
++{
++    SDL_Event event;
++
++    if (dx == 0 && dy == 0)
++    {
++        return;
++    }
++
++    SDL_zero(event);
++    event.type = SDL_MOUSEMOTION;
++    event.motion.xrel = dx;
++    event.motion.yrel = dy;
++    SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerButton(int button, int pressed)
++{
++    SDL_Event event;
++
++    SDL_zero(event);
++    event.type = pressed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
++    event.button.state = pressed ? SDL_PRESSED : SDL_RELEASED;
++    event.button.button = (Uint8) button;
++    event.button.clicks = 1;
++    SDL_PushEvent(&event);
++}
++
++EMSCRIPTEN_KEEPALIVE void I_BrowserControllerWheel(int y)
++{
++    SDL_Event event;
++
++    if (y == 0)
++    {
++        return;
++    }
++
++    SDL_zero(event);
++    event.type = SDL_MOUSEWHEEL;
++    event.wheel.y = y;
++    event.wheel.direction = SDL_MOUSEWHEEL_NORMAL;
++    SDL_PushEvent(&event);
++}
++
++void I_BrowserSetMainLoop(browser_frame_fn frame)
++{
++    browser_frame = frame;
++    printf("[crispy-wasm] cooperative main loop registered\n");
++
++    // A zero frame rate lets the browser use requestAnimationFrame. The final
++    // true argument means this call does not return into the native startup
++    // stack, matching the engines' traditional never-returning loop contract.
++    emscripten_set_main_loop_arg(BrowserFrame, NULL, 0, 1);
++}
+diff --git a/src/i_browser.h b/src/i_browser.h
+new file mode 100644
+index 00000000..07cb6dec
+--- /dev/null
++++ b/src/i_browser.h
+@@ -0,0 +1,34 @@
++//
++// Copyright(C) 2026 Crispy Doom WASM contributors
++//
++// This program is free software; you can redistribute it and/or
++// modify it under the terms of the GNU General Public License
++// as published by the Free Software Foundation; either version 2
++// of the License, or (at your option) any later version.
++//
++
++#ifndef I_BROWSER_H
++#define I_BROWSER_H
++
++typedef void (*browser_frame_fn)(void);
++
++// Hand the native engine's single-frame function to the browser scheduler.
++// This keeps the JavaScript event loop alive without Asyncify.
++void I_BrowserSetMainLoop(browser_frame_fn frame);
++
++// Framework runtime-state values: menu, gameplay, paused, debrief.
++unsigned int I_BrowserRuntimeState(void);
++
++// Mirror framework-owned browser capture into SDL relative-mouse mode.
++void I_BrowserSetInputCaptured(int captured);
++
++// Open the native menu when browser pointer capture is lost.
++void I_BrowserOpenMenu(void);
++
++// Feed controller translations into SDL's native keyboard/mouse event queue.
++void I_BrowserControllerKey(int keycode, int pressed);
++void I_BrowserControllerMouse(int dx, int dy);
++void I_BrowserControllerButton(int button, int pressed);
++void I_BrowserControllerWheel(int y);
++
++#endif
+diff --git a/src/i_video.c b/src/i_video.c
+index f71f6062..636d40dc 100644
+--- a/src/i_video.c
++++ b/src/i_video.c
+@@ -23,6 +23,10 @@
+ #include "SDL.h"
+ #include "SDL_opengl.h"
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten/html5.h>
++#endif
++
+ #ifdef _WIN32
+ #ifndef WIN32_LEAN_AND_MEAN
+ #define WIN32_LEAN_AND_MEAN
+@@ -287,6 +291,16 @@ static void SetShowCursor(boolean show)
+ {
+     if (!screensaver_mode)
+     {
++#ifdef __EMSCRIPTEN__
++        if (!show)
++        {
++            EmscriptenPointerlockChangeEvent status = {0};
++            if (emscripten_get_pointerlock_status(&status) != EMSCRIPTEN_RESULT_SUCCESS || !status.isActive)
++            {
++                return;
++            }
++        }
++#endif
+         // When the cursor is hidden, grab the input.
+         // Relative mode implicitly hides the cursor.
+         SDL_SetRelativeMouseMode(!show);
+@@ -922,6 +936,7 @@ void I_FinishUpdate (void)
+ 
+     SDL_RenderPresent(renderer);
+ 
++#ifndef CRISPY_WASM
+     if (crispy->uncapped && !singletics)
+     {
+         // Limit framerate
+@@ -951,6 +966,7 @@ void I_FinishUpdate (void)
+             }
+         }
+     }
++#endif
+ 
+     // Restore background and undo the disk indicator, if it was drawn.
+     V_RestoreDiskBackground();

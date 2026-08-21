@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const framework = path.resolve(process.env.WASM_FRAMEWORK_DIR || path.join(repo, '../wasm-game-framework'));
+const framework = path.resolve(process.env.WASM_FRAMEWORK_DIR || '/home/ted/Development/wasm-game-framework');
 const { ownerFileValidation, runDataValidator, validateOwnerFile } = require(path.join(framework, 'dist/wasm-game-framework.js'));
 const { createProvisioningStore, normalizeManifestCollection } = require(path.join(framework, 'server/provisioning.js'));
 const validatorModule = await import(new URL('../web/data-validator.mjs', import.meta.url));
@@ -135,7 +135,7 @@ try {
 
 const installedRoots = [
   '/home/ted/.steam/debian-installation/steamapps/common',
-  '/home/ted/Development/wasm/data/crispy',
+  '/home/ted/wasm-game-data/crispy',
   '/home/ted/Development/dos/DOS/CHEX'
 ];
 const familiesByName = new Map([

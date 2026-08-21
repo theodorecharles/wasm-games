@@ -1,13 +1,15 @@
 {
   "framework": {
     "repository": "https://github.com/theodorecharles/wasm-game-framework.git",
-    "version": "0.9.4",
-    "commit": "c4ad3b9e075f881d32f044299fbfeee703a9169d"
+    "version": "0.9.6",
+    "commit": "ebb1ebe35ad8224a9080279a6529414db42d3284"
   },
   "quake3": {
-    "repository": "https://github.com/inolen/quakejs.git",
+    "repository": "https://github.com/theodorecharles/quake3-wasm.git",
+    "upstream": "https://github.com/inolen/quakejs.git",
     "commit": "977b188e05b239b6c48d7ecda9d04e9ca03f1578",
-    "ioq3Repository": "https://github.com/inolen/ioq3.git",
+    "ioq3Repository": "https://github.com/theodorecharles/quake3-wasm-ioq3.git",
+    "ioq3Upstream": "https://github.com/inolen/ioq3.git",
     "ioq3Commit": "4f7d7bf2159aa0a18b79bb417aa760abac817b2a",
     "downstreamCommit": "a1732e3ea8c6f0d681a4d3551e5d5eca9fd66cf7",
     "downstreamCommitterDate": "2026-08-14T20:15:00-04:00",
@@ -15,7 +17,8 @@
     "downstreamCommitterEmail": "me@tedcharles.net"
   },
   "rtcw": {
-    "repository": "https://github.com/iortcw/iortcw.git",
+    "repository": "https://github.com/theodorecharles/rtcw-wasm.git",
+    "upstream": "https://github.com/iortcw/iortcw.git",
     "commit": "438e7d413b5f7277187c35b032eb0ef9093ae778",
     "downstreamCommit": "e9782a8dcef5cf6b37f60713f7add55025d72a4e",
     "downstreamTree": "256dd10dde2e7d7418bfa0d4c8c0caa570131577",
@@ -23,7 +26,8 @@
     "downstreamCommitterEmail": "me@tedcharles.net"
   },
   "wolfet": {
-    "engineRepository": "https://github.com/etlegacy/etlegacy.git",
+    "engineRepository": "https://github.com/theodorecharles/etlegacy.git",
+    "engineUpstream": "https://github.com/etlegacy/etlegacy.git",
     "engineCommit": "a44ab4f396370a694109da33df901d85f6fe9626",
     "enginePatchSha256": "85860f7cb861497f4034eca07eb80fc27084c0685c0366d5b8071cb7c7885b58",
     "modePatchSha256": "2c8d57920f43171d91f286a56ad9bf42313ff554acfcc083e477a710d35c0188",

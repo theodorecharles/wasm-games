@@ -3,14 +3,15 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 site_dir="${1:-${repo_root}/out/cod2-wasm-core/site}"
-framework_dir="${2:-${COD2_WASM_FRAMEWORK_DIR:-${repo_root}/../wasm-game-framework}}"
+framework_dir="${2:-${COD2_WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}}"
+source_dir="${COD2_WASM_SOURCE_DIR:-${repo_root}/.work/source}"
 site_dir="$(cd "${site_dir}" && pwd)"
 framework_dir="$(cd "${framework_dir}" && pwd)"
 
 node --check "${site_dir}/game-adapter.js"
 node --check "${site_dir}/cod2_core_probe.js"
 node "${repo_root}/scripts/test-adapter.js" "${site_dir}"
-node "${repo_root}/scripts/test-bot-foundation.js" "${repo_root}"
+node "${repo_root}/scripts/test-bot-foundation.js" "${source_dir}" "${repo_root}"
 node "${framework_dir}/scripts/check-game-package.js" "${site_dir}"
 
 node - "${site_dir}" <<'NODE'
@@ -45,7 +46,7 @@ for (const file of files) {
   assert.deepEqual(file.magic, [80, 75, 3, 4]);
 }
 const framework = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game-framework.json')));
-assert.equal(framework.version, '0.9.2');
+assert.equal(framework.version, '0.9.6');
 NODE
 
 node - "${repo_root}" <<'NODE'
@@ -55,8 +56,10 @@ const path = require('node:path');
 const root = process.argv[2];
 const lock = JSON.parse(fs.readFileSync(path.join(root, 'source-lock.json')));
 assert.equal(lock.reconstruction.baselineCommit, 'f70e697476fceeb4f53de677e1c5d5fe12a00b36');
+assert.equal(lock.reconstruction.repository, 'https://github.com/theodorecharles/cod2-wasm.git');
+assert.equal(lock.reconstruction.upstream, 'https://github.com/opencod2/opencod2.git');
 assert.equal(lock.reconstruction.licenseFilePresent, false);
-assert.equal(lock.auditedAlternative.repository, 'https://github.com/xtnded/cod2.git');
+assert.equal(lock.auditedAlternative.upstream, 'https://github.com/xtnded/cod2.git');
 assert.equal(lock.auditedAlternative.commit, '8eccf06c80423f099fb01745529bee6bb43cc84a');
 assert.equal(lock.auditedAlternative.license, 'GPL-2.0');
 assert.equal(lock.auditedAlternative.licenseSha256, 'fac9da110d1433f4df0cb9f5dda9449e9aff6ee236ed240fa29e3e92926c363a');

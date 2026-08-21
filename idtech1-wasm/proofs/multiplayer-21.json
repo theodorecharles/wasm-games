@@ -1,0 +1,1111 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-21T03:57:13.222Z",
+  "proofCriteria": {
+    "independentBrowserProcesses": 2,
+    "distinctNetworkPlayers": true,
+    "keyboardWorldMovement": true,
+    "mouseAttackPressAndRelease": true,
+    "mouseHeadingChange": true,
+    "serverHumanAndPeerCounts": true,
+    "automaticServerSleep": true,
+    "modernizedBots": 2
+  },
+  "browsers": [
+    {
+      "endpoint": "http://127.0.0.1:9225",
+      "Browser": "Chrome/151.0.7922.169",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "V8-Version": "15.1.206.21",
+      "WebKit-Version": "537.36 (@4b1c7520055f77780fe76d89bb89b76e4d19f64c)",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:9225/devtools/browser/1d5c54d3-f961-4f94-b6df-f57889fba2df"
+    },
+    {
+      "endpoint": "http://127.0.0.1:9226",
+      "Browser": "Chrome/151.0.7922.169",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "V8-Version": "15.1.206.21",
+      "WebKit-Version": "537.36 (@4b1c7520055f77780fe76d89bb89b76e4d19f64c)",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:9226/devtools/browser/cd226578-a1f3-40fb-bb44-52152dfb8c00"
+    }
+  ],
+  "endpoint": "http://127.0.0.1:4184",
+  "cases": [
+    {
+      "game": "doom",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 4395,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 1056,
+            "y": -3552,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 1055,
+            "y": -3495,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 953155584
+        }
+      }
+    },
+    {
+      "game": "doom",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4105,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 1056,
+            "y": -3552,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 1055,
+            "y": -3533,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 951058432
+        }
+      }
+    },
+    {
+      "game": "doom",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6433,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 69206016,
+            "y": -232783872,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 69206016,
+            "y": -210239927,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 884998144
+        }
+      }
+    },
+    {
+      "game": "doom2",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 3915,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 480,
+            "y": 528,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 479,
+            "y": 572,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 953155584
+        }
+      }
+    },
+    {
+      "game": "doom2",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4090,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 480,
+            "y": 528,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 479,
+            "y": 550,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 951058432
+        }
+      }
+    },
+    {
+      "game": "doom2",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6527,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -4194304,
+            "y": 91226112,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": -4194304,
+            "y": 108000128,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 884998144
+        }
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 3890,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -33,
+            "y": 12,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": -32,
+            "y": -14,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3100639232
+        }
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4199,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -33,
+            "y": 12,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": -32,
+            "y": 5,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3098542080
+        }
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6537,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 47710208,
+            "y": 47185920,
+            "angle": 2684354560,
+            "pitch": 0
+          },
+          "after": {
+            "x": 31273801,
+            "y": 30736997,
+            "angle": 2684354560,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 2684354560,
+          "after": 2495610880
+        }
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 3995,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -864,
+            "y": 320,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": -863,
+            "y": 305,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3100639232
+        }
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4078,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -864,
+            "y": 320,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": -863,
+            "y": 297,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3098542080
+        }
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6525,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -56446786,
+            "y": -28608634,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": -56322289,
+            "y": -27266176,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 884998144
+        }
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 4298,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 128,
+            "y": -944,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 127,
+            "y": -778,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 953155584
+        }
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4391,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 128,
+            "y": -944,
+            "angle": 1073741824,
+            "pitch": 0
+          },
+          "after": {
+            "x": 127,
+            "y": -778,
+            "angle": 1073741824,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1073741824,
+          "after": 951058432
+        }
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6407,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 10485760,
+            "y": 79691776,
+            "angle": 1610612736,
+            "pitch": 0
+          },
+          "after": {
+            "x": -6696738,
+            "y": 95041537,
+            "angle": 1610612736,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 1610612736,
+          "after": 1421869056
+        }
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 4715,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -1120,
+            "y": 2400,
+            "angle": 536870912,
+            "pitch": 0
+          },
+          "after": {
+            "x": -977,
+            "y": 2542,
+            "angle": 536870912,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 536870912,
+          "after": 416284672
+        }
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4697,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -1120,
+            "y": 2400,
+            "angle": 536870912,
+            "pitch": 0
+          },
+          "after": {
+            "x": -990,
+            "y": 2529,
+            "angle": 536870912,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 536870912,
+          "after": 414187520
+        }
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6318,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -73400320,
+            "y": -20971520,
+            "angle": 536870912,
+            "pitch": 0
+          },
+          "after": {
+            "x": -62421523,
+            "y": -10490233,
+            "angle": 536870912,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 536870912,
+          "after": 348127232
+        }
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "original",
+      "passed": true,
+      "durationMs": 4011,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -1168,
+            "y": -268,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": -1167,
+            "y": -286,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3100639232
+        }
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "smooth",
+      "passed": true,
+      "durationMs": 4199,
+      "clients": [
+        {
+          "slot": 0,
+          "netgame": 1,
+          "players": 2
+        },
+        {
+          "slot": 1,
+          "netgame": 1,
+          "players": 2
+        }
+      ],
+      "server": {
+        "mode": "classic",
+        "engine": "Chocolate Doom 3.1.1 compatible",
+        "humans": 2,
+        "peers": 2,
+        "bots": 0,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": -1168,
+            "y": -268,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": -1167,
+            "y": -275,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3098542080
+        }
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "modernized",
+      "passed": true,
+      "durationMs": 6626,
+      "clients": [
+        {
+          "slot": 2,
+          "netgame": 1,
+          "players": 4
+        },
+        {
+          "slot": 3,
+          "netgame": 1,
+          "players": 4
+        }
+      ],
+      "server": {
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "humans": 2,
+        "peers": 2,
+        "bots": 2,
+        "autoSleep": true
+      },
+      "input": {
+        "keyboard": {
+          "key": "KeyW",
+          "before": {
+            "x": 27131904,
+            "y": -83230720,
+            "angle": 3221225472,
+            "pitch": 0
+          },
+          "after": {
+            "x": 28191065,
+            "y": -101885789,
+            "angle": 3221225472,
+            "pitch": 0
+          }
+        },
+        "mouseFire": {
+          "down": 1,
+          "up": 0
+        },
+        "mouseTurn": {
+          "before": 3221225472,
+          "after": 3032481792
+        }
+      }
+    }
+  ],
+  "completedAt": "2026-08-21T04:02:00.208Z",
+  "passed": 21,
+  "failed": 0
+}

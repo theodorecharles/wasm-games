@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T02:52:51-04:00",
+  "result": "pass",
+  "portal": "http://127.0.0.1:8080/",
+  "shortcuts": 45,
+  "liveShortcuts": 18,
+  "composeServices": 32,
+  "runningComposeServices": 32,
+  "runtimeImageContracts": 30,
+  "live": [
+    "wolfet",
+    "blood",
+    "duke3d",
+    "quake",
+    "quake2",
+    "quake2-xatrix",
+    "quake2-rogue",
+    "doom",
+    "doom2",
+    "tnt",
+    "plutonia",
+    "heretic",
+    "hexen",
+    "chex",
+    "half-life",
+    "blue-shift",
+    "opposing-force",
+    "counter-strike"
+  ],
+  "ownerDataReady": {
+    "blood": true,
+    "duke3d": true,
+    "doom": true,
+    "doom2": true,
+    "tnt": true,
+    "plutonia": true,
+    "heretic": true,
+    "hexen": true,
+    "chex": true,
+    "half-life": true,
+    "blue-shift": true,
+    "opposing-force": true,
+    "counter-strike": true,
+    "quake": true,
+    "quake2": true,
+    "quake2-xatrix": true,
+    "quake2-rogue": true
+  },
+  "counterStrikeCompanion": {
+    "image": "wasm-games/counter-strike-yapb:4.4.957",
+    "map": "de_dust2",
+    "bots": 9,
+    "bridge": "ws://127.0.0.1:4190/websocket",
+    "graphLoaded": true
+  },
+  "halfLife2": {
+    "status": "still-in-development",
+    "enginePresent": false,
+    "browserResult": "diagnostic-only",
+    "reason": "The published Source SDK does not contain the Source engine runtime."
+  },
+  "assertions": {
+    "allComposeServicesRunning": true,
+    "allLiveHTTPOriginsResponded": true,
+    "allLiveOwnerDataGatesReady": true,
+    "counterStrikeYaPBLoaded": true,
+    "portalStatusesMatchBrowserProofs": true,
+    "unprovenGamesRemainInDevelopment": true
+  }
+}
