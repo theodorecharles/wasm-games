@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T20:03:20-04:00",
+  "browser": "Google Chrome",
+  "game": "Prey (2006)",
+  "engine": "d3wasm-derived GLES2/WebGL 1 renderer integrated into Prey2006",
+  "result": "partial",
+  "runtimeStatus": "still-in-development-gameplay-render-blocked",
+  "verified": {
+    "nativeEngineInitialized": true,
+    "mainMenuRendered": true,
+    "mainMenuMouseInput": true,
+    "newGameMenuOpenedFromRealClick": true,
+    "deferredGameplayArchivesMounted": 4,
+    "map": "game/roadhouse",
+    "mapEntitiesSpawned": 1057,
+    "playerSpawned": true,
+    "imagesLoaded": 1208,
+    "interactionTableGenerated": true,
+    "mapTransitionReturnedToBrowserFramePump": true,
+    "firstPostTransitionBrowserFrameReturned": true
+  },
+  "notVerified": [
+    "visible sustained gameplay rendering",
+    "playable keyboard and mouse input",
+    "Prey audio",
+    "cinematic playback and skipping",
+    "save and reload"
+  ],
+  "blocker": "After Roadhouse finishes loading, the canvas remains black. The first post-transition frame returns, but the following sustained gameplay pass becomes unresponsive before a visible frame is produced.",
+  "instrumentation": "The first four cooperative frames now log browser-frame, session, and screen-update stage boundaries to #loading-console so the next run can identify whether the second pass stalls in Session::Frame or UpdateScreen.",
+  "startup": {
+    "menuSecondsObserved": "30-60",
+    "firstMapDeferredPakScan": "approximately 3 minutes in the traced Chrome run",
+    "roadhouseMapAndImageLoadMilliseconds": 52221
+  },
+  "artifacts": {
+    "sourceCommit": "5a55c48254e0d847fae533d62a5cf9623999ec04",
+    "patch": "../patches/prey2006-browser.patch",
+    "patchSha256": "19bd42858212e0d9d678b9b15f76f443ab84e41fba78323295b1d08b29a68933",
+    "prey06JsSha256": "ef7ac22f59fbe56024453fbf7868638a343f12923be138364f2118d3818047e4",
+    "prey06WasmSha256": "e7044771a6c579c207cf3be021fb5be4c6a8bba2904a5dde1ae728b9a354823f"
+  },
+  "handoff": {
+    "worktree": "idtech4-wasm/.work/prey-d3wasm",
+    "build": "docker exec d3wasm-build-session sh -lc 'cmake --build /src/idtech4-wasm/.work/prey-d3wasm/build/web-d3wasm --parallel 4'",
+    "localUrl": "http://127.0.0.1:8087/",
+    "container": "wasm-prey-2006",
+    "nextStep": "Run Roadhouse, then inspect the last frame-stage marker in #loading-console; continue inside the identified Session::Frame or UpdateScreen path. Do not reintroduce the temporary +map startup argument."
+  }
+}

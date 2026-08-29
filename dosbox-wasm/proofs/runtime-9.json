@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-21T07:36:58-04:00",
+  "result": "pass",
+  "browser": "Google Chrome",
+  "source": {
+    "upstreamCommit": "8bde9c0d99858cd7bced3887885f6d4cd0a9efd3",
+    "frameworkVersion": "0.9.6",
+    "frameworkCommit": "ebb1ebe35ad8224a9080279a6529414db42d3284"
+  },
+  "artifacts": {
+    "dosbox.js": "4c9e8ae0db5518c968725416be66c650306435e52af2aeeb18dfab4f6c3cfe1c",
+    "dosbox.wasm": "0fd13b093c07684d3779d407160e90bab284df2ba3d5952aa6205b33e28ee015",
+    "game-adapter.js": "d5c706d18f948b9e6d2a3fa17cc3a3dacb0fafcb028eeeafd14edb5f86f5b27a"
+  },
+  "variants": [
+    { "id": "jill1", "program": "JILL", "canvas": "640x400", "visualTarget": "Sound Blaster prompt", "keyboardAdvancedPrompt": true, "frameUpdates": 135, "changingFrames": 135, "maximumColors": 210 },
+    { "id": "jill2", "program": "JILL2", "canvas": "640x400", "visualTarget": "Sound Blaster prompt", "frameUpdates": 135, "changingFrames": 135, "maximumColors": 210 },
+    { "id": "jill3", "program": "JILL3", "canvas": "640x400", "visualTarget": "Sound Blaster prompt", "frameUpdates": 135, "changingFrames": 135, "maximumColors": 210 },
+    { "id": "jazz", "program": "JAZZ", "canvas": "640x400", "visualTarget": "Gameplay Options", "frameUpdates": 17, "changingFrames": 11, "maximumColors": 210, "nonSilentAudioCallbacks": 542 },
+    { "id": "duke1", "program": "DN1", "canvas": "640x400", "visualTarget": "Duke Nukem episode title", "frameUpdates": 60, "changingFrames": 41, "maximumColors": 210 },
+    { "id": "duke2", "program": "NUKEM2", "canvas": "640x400", "visualTarget": "Duke Nukem II notice", "frameUpdates": 436, "changingFrames": 354, "maximumColors": 210, "nonSilentAudioCallbacks": 474 },
+    { "id": "gta", "program": "K", "canvas": "640x480", "visualTarget": "Grand Theft Auto Startup menu", "frameUpdates": 191, "changingFrames": 150, "maximumColors": 210 },
+    { "id": "nfs", "program": "TNFS", "canvas": "640x480", "visualTarget": "Road & Track presents The Need for Speed", "frameUpdates": 118, "changingFrames": 46, "maximumColors": 232, "nonSilentAudioCallbacks": 8 },
+    { "id": "simcity2000", "program": "SC2000", "canvas": "640x480", "visualTarget": "SimCity 2000 registration/title screen", "frameUpdates": 86, "changingFrames": 24, "maximumColors": 210, "nonSilentAudioCallbacks": 188 }
+  ],
+  "assertions": {
+    "allNineOwnerDataGatesReady": true,
+    "allNineNativeProgramsStarted": true,
+    "allNineFramebuffersChanged": true,
+    "allNineAudioSchedulersRan": true,
+    "nativeKeyboardQueueAdvancedGamePrompt": true,
+    "persistentConfigurationsCreated": true,
+    "protectedModeGamesReached640x480": true,
+    "chromeConsoleClean": true
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 2,
+  "recordedAt": "2026-08-21T21:16:09-04:00",
+  "browser": "Google Chrome",
+  "games": ["Doom 3", "Doom 3 Multiplayer", "Doom 3: Resurrection of Evil"],
+  "engine": "d3wasm GLES2/WebGL 1",
+  "result": "partial",
+  "runtimeStatus": "doom3-formal-campaign-keyboard-audio-same-session-save-load-proven-cross-reload-and-mouse-pending",
+  "verified": {
+    "tedOwnedSourceMirror": true,
+    "sourceAndPatchesReconstructExactly": true,
+    "doom3CleanBuild": true,
+    "roeCleanBuild": true,
+    "familySiteStagesAndPassesContracts": true,
+    "doom3ChromeEngineInitialized": true,
+    "doom3RetailArchivesMounted": 9,
+    "doom3WebglVersion": "WebGL 1 / OpenGL ES 2.0",
+    "doom3MainAndSpecializedShadersLinked": true,
+    "webAudioOpenalBridgeInitialized": true,
+    "doom3CampaignMap": "game/mars_city1",
+    "doom3CampaignLoadMilliseconds": 71623,
+    "doom3GameplayStateReached": true,
+    "realKeyboardInputEnteredNativeQueue": true,
+    "stableKeyboardMovement": {
+      "before": "(1239.05 -1501 68.25) 180.0",
+      "after": "(1210.63 -1501 68.25) 180.0",
+      "distanceAlongX": 28.42
+    },
+    "secondKeyboardMovement": {
+      "before": "(1210.63 -1501 68.25) 180.0",
+      "after": "(1177.56 -1501 68.25) 180.0",
+      "distanceAlongX": 33.07
+    },
+    "consolePauseAndBackquoteResume": true,
+    "sameSessionSaveAndReload": {
+      "saveName": "doom3_formal_proof",
+      "savedPosition": "(1210.63 -1501 68.25) 180.0",
+      "positionBeforeReload": "(1177.56 -1501 68.25) 180.0",
+      "restoredPosition": "(1210.63 -1501 68.25) 180.0"
+    },
+    "audioSnapshot": {
+      "state": "running",
+      "buffers": 197,
+      "sources": 256,
+      "starts": 27786
+    },
+    "fatalErrors": 0,
+    "finalPersistenceFixCleanBuilt": true,
+    "finalPersistenceFix": "flush framework-owned IDBFS after all save files close; remove the premature game-code sync"
+  },
+  "userObserved": [
+    "Doom 3 menu and gameplay render correctly with the d3wasm renderer",
+    "Doom 3 audio plays",
+    "automatic input capture and release works after the browser integration fixes",
+    "mouse-button release no longer leaves the weapon firing",
+    "Escape resumes from the main menu and can skip cinematics"
+  ],
+  "persistenceAudit": {
+    "initialCrossReloadAttempt": "failed: doom3_formal_proof was absent after restart because the native save path had no final post-close framework flush",
+    "firstFixAttempt": "failed: doom3_persistence_fixed was written while the old pre-close FS.syncfs and the new final flush overlapped; Chrome logged two syncfs operations in flight",
+    "finalBuildSave": "doom3_final_persist was written by the final build with no overlapping-sync warning",
+    "finalCrossReloadResult": "interrupted by user before the post-restart load command could be checked; unknown, do not claim pass or failure"
+  },
+  "notFormallyVerified": [
+    "Doom 3 save persistence across a full page/engine restart on the final build",
+    "real mouse-look and mouse-button assertions because Chrome automation could not grant pointer lock; manual Chrome behavior was user-tested",
+    "formal Escape/menu/cinematic assertions under pointer lock",
+    "Doom 3 Multiplayer connection, gameplay, and bots",
+    "Resurrection of Evil menu-to-gameplay path, input, audio, save, and reload"
+  ],
+  "artifacts": {
+    "sourceRepository": "https://github.com/theodorecharles/d3wasm-browser.git",
+    "sourceCommit": "48f8f65d1216db3ee0b11872bb3b413febadc669",
+    "roeGameSourceCommit": "31e877e7e4e691ed9f98603da9cd95ac59540cf3",
+    "enginePatch": "../patches/d3wasm-browser.patch",
+    "enginePatchSha256": "0e3be49e3a035410e02ad2604939e503dfe68e1dc0e865652ac146c4f31ecec6",
+    "roeGamePatch": "../patches/d3wasm-roe-game.patch",
+    "roeGamePatchSha256": "7b6049a861eba4ae3522ed439c6c8b32e61dc1bed4d75a3d0bedd665f5af435f",
+    "adapterSha256": "819af35b4c8b37610f89232a651a0da60de668fcdd58abb139991de080709a1d",
+    "workerSha256": "af265cbc08c1c63a413e0de7b0fceda26516142d5c349e4a5006e5308d95acde",
+    "doom3JsSha256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc",
+    "doom3WasmSha256": "0b945ed6c78cac8b088cbc18ba359b5439c0693d2e755d061acf51b26ef2c1dd",
+    "roeJsSha256": "b7810f47253aa3c7a419353dfb31dc8ec56ace6589cc3389db23cb48d8ebca21",
+    "roeWasmSha256": "3d20a0c34a4dd0721e4916da9d1af5c65e65d939a072e5a3fc2c5285f6741898",
+    "doom3ImageId": "sha256:33332d439c122bf55e0140bafbf5bbdf54857c9fb2003100c60920d9b9320ba7"
+  },
+  "shutdownState": {
+    "doom3Container": "stopped",
+    "doom3MultiplayerContainer": "stopped",
+    "d3wasmBuildContainer": "stopped",
+    "chromeProofTab": "closed or already absent"
+  },
+  "handoff": {
+    "runbook": "../RESUME-RUNBOOK.md",
+    "buildScript": "../scripts/build-all.sh",
+    "stageScript": "../scripts/stage-site.sh",
+    "doom3Url": "http://127.0.0.1:8086/",
+    "doom3MultiplayerUrl": "http://127.0.0.1:18086/",
+    "roeUrl": "http://127.0.0.1:18087/",
+    "nextStep": "Check whether doom3_final_persist loads after restart. If it does, record the cross-reload pass; if not, instrument the worker persistence callback. Then obtain one manual pointer-lock mouse proof. Do not rerun the long mars_city1 campaign proof."
+  }
+}
