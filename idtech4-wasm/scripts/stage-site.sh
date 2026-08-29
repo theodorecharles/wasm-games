@@ -4,16 +4,19 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 work_root="${IDTECH4_WORK_ROOT:-${repo_root}/.work}"
 framework_dir="${WASM_GAME_FRAMEWORK_DIR:-${work_root}/wasm-game-framework}"
-doom_web="${work_root}/dhewm3/build/web"
+doom_base_web="${work_root}/d3wasm/build-wasm"
+doom_roe_web="${work_root}/d3wasm/build-wasm-roe"
+doom_assets="${work_root}/d3wasm-roe-game"
 quake_web="${work_root}/openq4/build/web"
-prey_web="${work_root}/prey2006/output/emscripten"
+prey_source="${work_root}/prey-d3wasm"
+prey_web="${prey_source}/output/emscripten"
 site="${repo_root}/build/site"
 
 test "$(node -p "require('${framework_dir}/package.json').version")" = "0.9.6"
 test "$(git -C "${framework_dir}" rev-parse HEAD)" = "ebb1ebe35ad8224a9080279a6529414db42d3284"
 for required in \
-  "${doom_web}/dhewm3-base.js" "${doom_web}/dhewm3-base.wasm" \
-  "${doom_web}/dhewm3-roe.js" "${doom_web}/dhewm3-roe.wasm" \
+  "${doom_base_web}/d3wasm.js" "${doom_base_web}/d3wasm.wasm" \
+  "${doom_roe_web}/d3wasm.js" "${doom_roe_web}/d3wasm.wasm" \
   "${quake_web}/openQ4-client_wasm32.js" "${quake_web}/openQ4-client_wasm32.wasm" \
   "${quake_web}/baseoq4/game-sp_wasm32.wasm" "${quake_web}/baseoq4/game-mp_wasm32.wasm" \
   "${quake_web}/baseoq4/pak0.pk4" "${quake_web}/baseoq4/pak1.pk4" \
@@ -31,32 +34,37 @@ mkdir -p "${site}/baseoq4"
 install -m 0644 "${repo_root}/site/wasm-game.json" "${site}/wasm-game.json"
 install -m 0644 "${repo_root}/site/game-adapter.js" "${site}/game-adapter.js"
 
-for artifact in d3-worker.js dhewm3-base.js dhewm3-base.wasm dhewm3-roe.js dhewm3-roe.wasm doom3.ico doom3-pwa.svg roe.png; do
-  install -m 0644 "${doom_web}/${artifact}" "${site}/${artifact}"
-done
+install -m 0644 "${repo_root}/site/d3-worker.js" "${site}/d3-worker.js"
+install -m 0644 "${doom_base_web}/d3wasm.js" "${site}/dhewm3-base.js"
+install -m 0644 "${doom_base_web}/d3wasm.wasm" "${site}/dhewm3-base.wasm"
+install -m 0644 "${doom_roe_web}/d3wasm.js" "${site}/dhewm3-roe.js"
+install -m 0644 "${doom_roe_web}/d3wasm.wasm" "${site}/dhewm3-roe.wasm"
+install -m 0644 "${doom_assets}/neo/sys/win32/rc/res/doom.ico" "${site}/doom3.ico"
+install -m 0644 "${repo_root}/site/doom3-pwa.svg" "${site}/doom3-pwa.svg"
+install -m 0644 "${doom_assets}/neo/sys/aros/ROE.png" "${site}/roe.png"
 for artifact in q4-worker.js openQ4-client_wasm32.js openQ4-client_wasm32.wasm quake4.ico quake4-pwa.svg quake4-background.png; do
   install -m 0644 "${quake_web}/${artifact}" "${site}/${artifact}"
 done
 install -m 0644 "${prey_web}/prey06.js" "${site}/prey06.js"
 install -m 0644 "${prey_web}/prey06.wasm" "${site}/prey06.wasm"
 install -m 0644 "${repo_root}/site/prey-worker.js" "${site}/prey-worker.js"
-install -m 0644 "${work_root}/prey2006/neo/sys/win32/rc/res/prey.ico" "${site}/prey.ico"
+install -m 0644 "${prey_source}/neo/sys/win32/rc/res/prey.ico" "${site}/prey.ico"
 node "${repo_root}/scripts/extract-ico-png.mjs" "${site}/prey.ico" "${site}/prey-256.png"
 for artifact in game-sp_wasm32.wasm game-mp_wasm32.wasm mod.json pak0.pk4 pak1.pk4; do
   install -m 0644 "${quake_web}/baseoq4/${artifact}" "${site}/baseoq4/${artifact}"
 done
 
 node "${repo_root}/scripts/merge-data-manifests.mjs" \
-  "${work_root}/dhewm3/web/wasm-game-data.json" \
+  "${repo_root}/site/doom3-data.json" \
   "${work_root}/openq4/docker/wasm-game-data.json" \
   "${repo_root}/site/prey-data.json" \
   "${site}/wasm-game-data.json"
 
-install -m 0644 "${work_root}/dhewm3/COPYING.txt" "${site}/DHEWM3-COPYING.txt"
+install -m 0644 "${work_root}/d3wasm/COPYING.txt" "${site}/D3WASM-COPYING.txt"
 install -m 0644 "${work_root}/openq4/docs/QUAKE4-SDK-EULA.rtf" "${site}/QUAKE4-SDK-EULA.rtf"
 install -m 0644 "${work_root}/openq4/docs/REDISTRIBUTION.md" "${site}/QUAKE4-REDISTRIBUTION.md"
 install -m 0644 "${repo_root}/site/IDTECH4-NOTICES.txt" "${site}/IDTECH4-NOTICES.txt"
-install -m 0644 "${work_root}/prey2006/.github/COPYING.txt" "${site}/PREY2006-COPYING.txt"
+install -m 0644 "${prey_source}/.github/COPYING.txt" "${site}/PREY2006-COPYING.txt"
 
 metadata_dir="$(mktemp -d -t idtech4-framework.XXXXXX)"
 trap 'rm -rf -- "${metadata_dir}"' EXIT
@@ -99,7 +107,7 @@ test ! -e "${site}/app.webmanifest"
 test ! -e "${site}/service-worker.js"
 
 expected_files="$(cat <<'EOF'
-DHEWM3-COPYING.txt
+D3WASM-COPYING.txt
 IDTECH4-NOTICES.txt
 PREY2006-COPYING.txt
 QUAKE4-REDISTRIBUTION.md

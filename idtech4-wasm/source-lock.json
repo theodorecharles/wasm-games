@@ -5,21 +5,46 @@
     "version": "0.9.6"
   },
   "buildTools": {
-    "meson": "1.8.3"
+    "emscripten": "6.0.6",
+    "meson": "1.8.3",
+    "ninjaPackage": "1.11.1.4"
   },
-  "dhewm3": {
-    "url": "https://github.com/theodorecharles/doom3-wasm.git",
-    "upstream": "https://github.com/dhewm/dhewm3.git",
-    "commit": "455b88e8dff2be822f08eb498f51b383e851fa38",
-    "patch": "patches/dhewm3-browser.patch",
-    "checkpoint": "cc9309051de93e303c384da5e8c285eaf0687c43"
+  "d3wasm": {
+    "url": "https://github.com/theodorecharles/d3wasm-browser.git",
+    "upstream": "https://github.com/gabrielcuvillier/d3wasm.git",
+    "commit": "48f8f65d1216db3ee0b11872bb3b413febadc669",
+    "patch": "patches/d3wasm-browser.patch"
+  },
+  "d3wasmRoeGame": {
+    "url": "https://github.com/theodorecharles/d3wasm-browser.git",
+    "upstream": "https://github.com/gabrielcuvillier/d3wasm.git",
+    "commit": "31e877e7e4e691ed9f98603da9cd95ac59540cf3",
+    "patch": "patches/d3wasm-roe-game.patch"
   },
   "openq4": {
-    "url": "https://github.com/theodorecharles/quake4-wasm.git",
+    "url": "https://github.com/theodorecharles/openQ4-wasm.git",
     "upstream": "https://github.com/themuffinator/openQ4.git",
-    "commit": "f3d23f767dbcca5dab4cc1e5a029343ad4d0ddf2",
+    "commit": "268758e1e6ec102d52a24f0f6ab586aa4ff2d99e",
     "patch": "patches/openq4-browser.patch",
-    "checkpoint": "77d37eadf5a241db2ae7b2642b5d213bc2ff42d3"
+    "checkpoint": "77d37eadf5a241db2ae7b2642b5d213bc2ff42d3",
+    "snapshotOf": {
+      "repository": "https://github.com/theodorecharles/quake4-wasm.git",
+      "commit": "f3d23f767dbcca5dab4cc1e5a029343ad4d0ddf2"
+    },
+    "runtimePacks": {
+      "release": "sdk-assets-v1",
+      "baseUrl": "https://github.com/theodorecharles/openQ4-wasm/releases/download/sdk-assets-v1",
+      "files": {
+        "pak0.pk4": {
+          "bytes": 4285437,
+          "sha256": "6103f5872c321dfce945dbdd773b53b52834838cc9553425f4e754aa6cb27995"
+        },
+        "pak1.pk4": {
+          "bytes": 641646791,
+          "sha256": "4e5c9a55bad2dbebd6da94f897b1a86c9478b83d18db36472f2f82e4b76ce906"
+        }
+      }
+    }
   },
   "openq4Game": {
     "url": "https://github.com/theodorecharles/openQ4-game.git",

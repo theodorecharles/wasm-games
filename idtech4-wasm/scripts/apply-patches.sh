@@ -50,9 +50,11 @@ apply_one() {
   printf 'applied %s\n' "$(basename "${patch}")"
 }
 
-apply_one "${work_root}/dhewm3" "${repo_root}/patches/dhewm3-browser.patch"
+apply_one "${work_root}/d3wasm" "${repo_root}/patches/d3wasm-browser.patch"
+apply_one "${work_root}/d3wasm-roe-game" "${repo_root}/patches/d3wasm-roe-game.patch"
 apply_one "${work_root}/openq4" "${repo_root}/patches/openq4-browser.patch"
-apply_one "${work_root}/prey2006" "${repo_root}/patches/prey2006-browser.patch"
-verify_exact_patch_tree "${work_root}/dhewm3" "${repo_root}/patches/dhewm3-browser.patch"
+apply_one "${work_root}/prey-d3wasm" "${repo_root}/patches/prey2006-browser.patch"
+verify_exact_patch_tree "${work_root}/d3wasm" "${repo_root}/patches/d3wasm-browser.patch"
+verify_exact_patch_tree "${work_root}/d3wasm-roe-game" "${repo_root}/patches/d3wasm-roe-game.patch"
 verify_exact_patch_tree "${work_root}/openq4" "${repo_root}/patches/openq4-browser.patch"
-verify_exact_patch_tree "${work_root}/prey2006" "${repo_root}/patches/prey2006-browser.patch"
+verify_exact_patch_tree "${work_root}/prey-d3wasm" "${repo_root}/patches/prey2006-browser.patch"

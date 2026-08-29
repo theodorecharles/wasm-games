@@ -53,7 +53,14 @@ emmake make -C "$build_dir" -j"$jobs" CFLAGS="$cflags" CXXFLAGS="$cxxflags" LDFL
 
 test -f "$build_dir/src/dosbox"
 test -f "$build_dir/src/dosbox.wasm"
-wasm-validate "$build_dir/src/dosbox.wasm"
+if command -v wasm-validate >/dev/null 2>&1; then
+  wasm-validate "$build_dir/src/dosbox.wasm"
+elif command -v wasm-opt >/dev/null 2>&1; then
+  wasm-opt "$build_dir/src/dosbox.wasm" --validate -o /dev/null
+else
+  node -e 'new WebAssembly.Module(require("fs").readFileSync(process.argv[1]))' \
+    "$build_dir/src/dosbox.wasm"
+fi
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir/assets"

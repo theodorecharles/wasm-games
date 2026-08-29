@@ -16,9 +16,9 @@ ensure_checkout() {
   local commit="$3"
   local destination="${work_root}/${name}"
 
-  if [[ ! -d "${destination}/.git" ]]; then
+  if [[ ! -e "${destination}/.git" ]]; then
     mkdir -p "${work_root}"
-    git clone --no-checkout "${url}" "${destination}"
+    git clone --filter=blob:none --no-checkout "${url}" "${destination}"
   fi
   git -C "${destination}" remote set-url --push origin DISABLED
   if ! git -C "${destination}" cat-file -e "${commit}^{commit}" 2>/dev/null; then
@@ -38,9 +38,13 @@ ensure_checkout() {
 }
 
 ensure_checkout \
-  dhewm3 \
-  "${DHEWM3_SOURCE_URL:-$(lock_value dhewm3.url)}" \
-  "$(lock_value dhewm3.commit)"
+  d3wasm \
+  "${D3WASM_SOURCE_URL:-$(lock_value d3wasm.url)}" \
+  "$(lock_value d3wasm.commit)"
+ensure_checkout \
+  d3wasm-roe-game \
+  "${D3WASM_ROE_GAME_SOURCE_URL:-$(lock_value d3wasmRoeGame.url)}" \
+  "$(lock_value d3wasmRoeGame.commit)"
 ensure_checkout \
   openq4 \
   "${OPENQ4_SOURCE_URL:-$(lock_value openq4.url)}" \
@@ -50,7 +54,7 @@ ensure_checkout \
   "${OPENQ4_GAME_SOURCE_URL:-$(lock_value openq4Game.url)}" \
   "$(lock_value openq4Game.commit)"
 ensure_checkout \
-  prey2006 \
+  prey-d3wasm \
   "${PREY2006_SOURCE_URL:-$(lock_value prey2006.url)}" \
   "$(lock_value prey2006.commit)"
 ensure_checkout \

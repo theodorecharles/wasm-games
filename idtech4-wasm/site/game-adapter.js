@@ -59,13 +59,411 @@
   let ownerData = null;
   let started = false;
   let state = 'menu';
+  let inputMode = 'menu';
+  let resumeAvailable = false;
   let captured = false;
   let lastResize = null;
   let lifecycleBound = false;
   const controllerHeldKeys = new Set();
   const controllerHeldButtons = new Set();
+  const forwardedPointerButtons = new Set();
   let controllerLookX = 0;
   let controllerLookY = 0;
+  let audioBridge = null;
+  const proofMatch = String(document.location?.search || '')
+    .match(/(?:^|[?&])proof(?:=([^&]*))?(?:&|$)/);
+  const proofId = proofMatch
+    ? decodeURIComponent(String(proofMatch[1] || 'enabled').replace(/\+/g, ' '))
+    : null;
+  const proof = proofMatch ? {
+    schemaVersion: 1,
+    proofId,
+    variant: null,
+    startedAt: new Date().toISOString(),
+    lifecycle: [],
+    states: [],
+    logs: [],
+    input: {
+      keyDown: 0, keyUp: 0, text: 0,
+      pointerRelative: 0, pointerDx: 0, pointerDy: 0,
+      pointerAbsolute: 0, pointerDown: 0, pointerUp: 0,
+      captureChanges: 0, events: []
+    },
+    workerMessages: {},
+    audio: { state: 'not-created', buffers: 0, sources: 0, starts: 0, messages: 0 },
+    persistence: { ready: false, root: null, requests: 0 },
+    errors: []
+  } : null;
+  if (proof) globalThis.__idtech4Proof = proof;
+  let proofPublishTimer = null;
+
+  function publishProof(immediate = false) {
+    if (!proof) return;
+    const publish = () => {
+      proofPublishTimer = null;
+      document.documentElement.dataset.idtech4Proof = JSON.stringify(proof);
+    };
+    if (immediate || typeof globalThis.setTimeout !== 'function') {
+      publish();
+    } else if (!proofPublishTimer) {
+      proofPublishTimer = globalThis.setTimeout(publish, 250);
+    }
+  }
+  publishProof(true);
+
+  function proofNow() {
+    const value = globalThis.performance?.now?.() ?? Date.now();
+    return Math.round(Number(value) * 10) / 10;
+  }
+
+  function appendProof(collection, value, limit) {
+    if (!proof) return;
+    collection.push(value);
+    if (collection.length > limit) collection.splice(0, collection.length - limit);
+    publishProof();
+  }
+
+  function noteLifecycle(name, detail = {}) {
+    if (proof) appendProof(proof.lifecycle, { at: proofNow(), name, ...detail }, 200);
+  }
+
+  function noteInput(message) {
+    if (!proof || !message?.type) return;
+    const event = { at: proofNow(), type: message.type };
+    if (message.type === 'key') {
+      if (message.down) proof.input.keyDown++; else proof.input.keyUp++;
+      Object.assign(event, { scan: message.scan, key: message.key, down: Boolean(message.down), repeat: Boolean(message.repeat) });
+    } else if (message.type === 'text') {
+      proof.input.text++;
+      event.codepoint = message.codepoint;
+    } else if (message.type === 'pointer-relative') {
+      proof.input.pointerRelative++;
+      proof.input.pointerDx += Number(message.dx) || 0;
+      proof.input.pointerDy += Number(message.dy) || 0;
+      Object.assign(event, { dx: Number(message.dx) || 0, dy: Number(message.dy) || 0 });
+    } else if (message.type === 'pointer-absolute') {
+      proof.input.pointerAbsolute++;
+      Object.assign(event, { x: message.x, y: message.y });
+    } else if (message.type === 'pointer-button') {
+      if (message.down) proof.input.pointerDown++; else proof.input.pointerUp++;
+      Object.assign(event, { button: Number(message.button) || 0, down: Boolean(message.down) });
+    } else if (message.type === 'capture') {
+      proof.input.captureChanges++;
+      event.captured = Boolean(message.captured);
+    } else {
+      return;
+    }
+    appendProof(proof.input.events, event, 400);
+  }
+
+  function noteOutbound(message) {
+    if (!proof || !message?.type) return;
+    noteInput(message);
+    if (message.type === 'persist') proof.persistence.requests++;
+    proof.workerMessages[`out:${message.type}`] = (proof.workerMessages[`out:${message.type}`] || 0) + 1;
+    publishProof();
+  }
+
+  function noteInbound(message) {
+    if (!proof || !message?.type) return;
+    proof.workerMessages[`in:${message.type}`] = (proof.workerMessages[`in:${message.type}`] || 0) + 1;
+    if (message.type === 'log') {
+      const lines = String(message.text || '').split(/\r?\n/).filter(Boolean);
+      for (const line of lines) appendProof(proof.logs, { at: proofNow(), text: line }, 4000);
+    }
+    if (message.type === 'persistence-ready') {
+      proof.persistence.ready = true;
+      proof.persistence.root = message.root || null;
+    }
+    if (message.type === 'engine-state' || message.type === 'ready') {
+      appendProof(proof.states, {
+        at: proofNow(), type: message.type, state: message.state || 'menu',
+        inputMode: message.inputMode || null, resumeAvailable: message.resumeAvailable === true
+      }, 500);
+    }
+    if (message.type === 'error') appendProof(proof.errors, { at: proofNow(), text: String(message.text || '') }, 100);
+    publishProof();
+  }
+
+  function createAudioBridge() {
+    const AudioContextClass = globalThis.AudioContext || globalThis.webkitAudioContext;
+    if (!AudioContextClass) {
+      document.documentElement.dataset.d3wasmAudioState = 'unavailable';
+      if (proof) proof.audio.state = 'unavailable';
+      publishProof();
+      return null;
+    }
+
+    const context = new AudioContextClass({ latencyHint: 'interactive' });
+    const master = context.createGain();
+    const buffers = new Map();
+    const sources = new Map();
+    let starts = 0;
+    master.connect(context.destination);
+
+    const setAudioState = () => {
+      document.documentElement.dataset.d3wasmAudioState = context.state;
+      document.documentElement.dataset.d3wasmAudioBuffers = String(buffers.size);
+      document.documentElement.dataset.d3wasmAudioStarts = String(starts);
+      if (proof) Object.assign(proof.audio, {
+        state: context.state,
+        buffers: buffers.size,
+        sources: sources.size,
+        starts
+      });
+      publishProof();
+    };
+    context.addEventListener?.('statechange', setAudioState);
+    setAudioState();
+
+    function sourceRecord(id) {
+      let source = sources.get(id);
+      if (!source) {
+        source = {
+          buffer: 0, queue: [], scheduled: 0, nextStart: 0, nodes: new Set(),
+          playing: false, looping: false, relative: false,
+          gain: 1, pitch: 1, position: [0, 0, 0],
+          referenceDistance: 1, maxDistance: 10000, rolloffFactor: 1
+        };
+        sources.set(id, source);
+      }
+      return source;
+    }
+
+    function decodeBuffer(record) {
+      if (!record || record.audioBuffer) return record?.audioBuffer || null;
+      const stereo = record.format === 0x1102 || record.format === 0x1103;
+      const sixteenBit = record.format === 0x1101 || record.format === 0x1103;
+      const channels = stereo ? 2 : 1;
+      const bytesPerSample = sixteenBit ? 2 : 1;
+      const frames = Math.floor(record.data.byteLength / (channels * bytesPerSample));
+      if (!frames || !record.frequency) return null;
+      const audioBuffer = context.createBuffer(channels, frames, record.frequency);
+      const bytes = new Uint8Array(record.data);
+      const view = new DataView(record.data);
+      for (let channel = 0; channel < channels; channel++) {
+        const output = audioBuffer.getChannelData(channel);
+        for (let frame = 0; frame < frames; frame++) {
+          const sample = frame * channels + channel;
+          output[frame] = sixteenBit
+            ? Math.max(-1, view.getInt16(sample * 2, true) / 32768)
+            : (bytes[sample] - 128) / 128;
+        }
+      }
+      record.audioBuffer = audioBuffer;
+      return audioBuffer;
+    }
+
+    function setParam(param, value) {
+      if (param && typeof param.setValueAtTime === 'function') {
+        param.setValueAtTime(value, context.currentTime);
+      } else if (param) {
+        param.value = value;
+      }
+    }
+
+    function updateNode(source, node) {
+      setParam(node.gain.gain, Math.max(0, source.gain));
+      setParam(node.audio.playbackRate, Math.max(0.01, source.pitch));
+      if (!node.panner) return;
+      node.panner.refDistance = Math.max(0.001, source.referenceDistance);
+      node.panner.maxDistance = Math.max(node.panner.refDistance, source.maxDistance);
+      node.panner.rolloffFactor = Math.max(0, source.rolloffFactor);
+      if ('positionX' in node.panner) {
+        setParam(node.panner.positionX, source.position[0]);
+        setParam(node.panner.positionY, source.position[1]);
+        setParam(node.panner.positionZ, source.position[2]);
+      } else {
+        node.panner.setPosition(...source.position);
+      }
+    }
+
+    function stopSource(source) {
+      for (const node of source.nodes) {
+        try { node.audio.stop(); } catch (_) {}
+        try { node.audio.disconnect(); } catch (_) {}
+        try { node.gain.disconnect(); } catch (_) {}
+        try { node.panner?.disconnect(); } catch (_) {}
+      }
+      source.nodes.clear();
+      source.scheduled = 0;
+      source.nextStart = 0;
+      source.playing = false;
+    }
+
+    function scheduleBuffer(source, bufferId, when, loop) {
+      const audioBuffer = decodeBuffer(buffers.get(bufferId));
+      if (!audioBuffer) return when;
+      const audio = context.createBufferSource();
+      const gain = context.createGain();
+      const panner = source.relative ? null : context.createPanner();
+      const node = { audio, gain, panner };
+      audio.buffer = audioBuffer;
+      audio.loop = loop;
+      audio.connect(gain);
+      if (panner) {
+        panner.panningModel = 'equalpower';
+        panner.distanceModel = 'inverse';
+        gain.connect(panner);
+        panner.connect(master);
+      } else {
+        gain.connect(master);
+      }
+      updateNode(source, node);
+      source.nodes.add(node);
+      audio.addEventListener('ended', () => {
+        source.nodes.delete(node);
+        try { audio.disconnect(); } catch (_) {}
+        try { gain.disconnect(); } catch (_) {}
+        try { panner?.disconnect(); } catch (_) {}
+      }, { once: true });
+      audio.start(when);
+      starts++;
+      setAudioState();
+      return loop ? when : when + audioBuffer.duration / Math.max(0.01, source.pitch);
+    }
+
+    function scheduleSource(source) {
+      if (!source.playing) return;
+      let when = Math.max(context.currentTime + 0.01, source.nextStart || 0);
+      if (source.queue.length) {
+        while (source.scheduled < source.queue.length) {
+          when = scheduleBuffer(source, source.queue[source.scheduled], when, false);
+          source.scheduled++;
+        }
+      } else if (source.buffer && !source.nodes.size) {
+        when = scheduleBuffer(source, source.buffer, when, source.looping);
+      }
+      source.nextStart = when;
+    }
+
+    function updateListener(param, values) {
+      const listener = context.listener;
+      if (param === 0x1004 && values.length >= 3) {
+        if ('positionX' in listener) {
+          setParam(listener.positionX, values[0]);
+          setParam(listener.positionY, values[1]);
+          setParam(listener.positionZ, values[2]);
+        } else {
+          listener.setPosition(values[0], values[1], values[2]);
+        }
+      }
+      if (param === 0x100f && values.length >= 6) {
+        if ('forwardX' in listener) {
+          setParam(listener.forwardX, values[0]);
+          setParam(listener.forwardY, values[1]);
+          setParam(listener.forwardZ, values[2]);
+          setParam(listener.upX, values[3]);
+          setParam(listener.upY, values[4]);
+          setParam(listener.upZ, values[5]);
+        } else {
+          listener.setOrientation(...values.slice(0, 6));
+        }
+      }
+    }
+
+    return {
+      resume() {
+        const result = context.state === 'suspended' ? context.resume() : Promise.resolve();
+        void result.then(setAudioState).catch(() => setAudioState());
+      },
+      handle(message) {
+        if (proof) proof.audio.messages++;
+        publishProof();
+        switch (message.type) {
+          case 'audio-init':
+            this.resume();
+            break;
+          case 'audio-buffer':
+            buffers.set(message.id, {
+              format: message.format, frequency: message.frequency,
+              data: message.data, audioBuffer: null
+            });
+            setAudioState();
+            break;
+          case 'audio-delete-buffer':
+            buffers.delete(message.id);
+            setAudioState();
+            break;
+          case 'audio-create-source':
+            sourceRecord(message.id);
+            break;
+          case 'audio-delete-source': {
+            const source = sources.get(message.id);
+            if (source) stopSource(source);
+            sources.delete(message.id);
+            break;
+          }
+          case 'audio-source-int': {
+            const source = sourceRecord(message.id);
+            if (message.param === 0x1009) {
+              stopSource(source);
+              source.buffer = message.value;
+              source.queue = [];
+            } else if (message.param === 0x1007) {
+              source.looping = Boolean(message.value);
+            } else if (message.param === 0x202) {
+              source.relative = Boolean(message.value);
+            }
+            break;
+          }
+          case 'audio-source-float': {
+            const source = sourceRecord(message.id);
+            if (message.param === 0x1003) source.pitch = message.value;
+            if (message.param === 0x100a) source.gain = message.value;
+            if (message.param === 0x1020) source.referenceDistance = message.value;
+            if (message.param === 0x1023) source.maxDistance = message.value;
+            if (message.param === 0x1021) source.rolloffFactor = message.value;
+            for (const node of source.nodes) updateNode(source, node);
+            break;
+          }
+          case 'audio-source-position': {
+            const source = sourceRecord(message.id);
+            source.position = [message.x, message.y, message.z];
+            for (const node of source.nodes) updateNode(source, node);
+            break;
+          }
+          case 'audio-source-queue': {
+            const source = sourceRecord(message.id);
+            source.queue.push(...message.buffers);
+            scheduleSource(source);
+            break;
+          }
+          case 'audio-source-unqueue': {
+            const source = sourceRecord(message.id);
+            const count = Math.min(message.count, source.queue.length);
+            source.queue.splice(0, count);
+            source.scheduled = Math.max(0, source.scheduled - count);
+            break;
+          }
+          case 'audio-source-action': {
+            const source = sourceRecord(message.id);
+            if (message.action === 1) {
+              if (!source.playing) {
+                stopSource(source);
+                source.playing = true;
+              }
+              scheduleSource(source);
+            } else {
+              stopSource(source);
+            }
+            break;
+          }
+          case 'audio-listener-float':
+            if (message.param === 0x100a) setParam(master.gain, Math.max(0, message.value));
+            break;
+          case 'audio-listener-vector':
+            updateListener(message.param, message.values || []);
+            break;
+        }
+      }
+    };
+  }
+
+  function resumeAudioBridge() {
+    audioBridge?.resume();
+  }
+
 
   function keyScan(code) {
     if (scancodes[code]) return scancodes[code];
@@ -86,7 +484,36 @@
   }
 
   function post(message) {
-    if (worker) worker.postMessage(message);
+    if (!worker) return;
+    noteOutbound(message);
+    worker.postMessage(message);
+  }
+
+  function acceptsUncapturedPointer() {
+    return inputMode === 'menu' || inputMode === 'console';
+  }
+
+  function releaseForwardedPointerButtons() {
+    for (const button of forwardedPointerButtons) {
+      post({ type: 'pointer-button', button, down: false });
+    }
+    forwardedPointerButtons.clear();
+  }
+
+  function forwardPointerButton(button, down, x, y) {
+    if (down) forwardedPointerButtons.add(button); else forwardedPointerButtons.delete(button);
+    post({ type: 'pointer-button', button, down, x, y });
+  }
+
+  function honorKeyboardResumeGesture(ctx, event) {
+    if (!resumeAvailable) return;
+    const exitsMenu = inputMode === 'menu' && event.code === 'Escape';
+    const exitsConsole = inputMode === 'console' && (event.code === 'Escape' || event.code === 'Backquote');
+    if (!exitsMenu && !exitsConsole) return;
+    state = 'gameplay';
+    inputMode = 'gameplay';
+    resumeAvailable = false;
+    ctx.setEngineState('gameplay', { capture: true, event });
   }
 
   function setControllerKey(scan, down) {
@@ -132,11 +559,17 @@
 
   function bindInput(ctx) {
     document.addEventListener('keydown', event => {
+      resumeAudioBridge();
       if (!started || event.ctrlKey || event.metaKey || event.altKey) return;
       const scan = keyScan(event.code);
       if (!scan) return;
       post({ type: 'key', scan, key: event.key.length === 1 ? event.key.charCodeAt(0) : 0, down: true, repeat: event.repeat });
-      if (event.key.length === 1 && !event.repeat) post({ type: 'text', codepoint: event.key.charCodeAt(0) });
+      if (!event.repeat) honorKeyboardResumeGesture(ctx, event);
+      // The physical scan code toggles the console.  Sending the printable
+      // backquote as text as well inserts a stray character into commands.
+      if (event.code !== 'Backquote' && event.key.length === 1 && !event.repeat) {
+        post({ type: 'text', codepoint: event.key.charCodeAt(0) });
+      }
       if (['Escape', 'Enter', 'Tab', 'Backspace', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(event.key)) event.preventDefault();
     }, true);
     document.addEventListener('keyup', event => {
@@ -145,16 +578,28 @@
       if (scan) post({ type: 'key', scan, key: event.key.length === 1 ? event.key.charCodeAt(0) : 0, down: false });
     }, true);
     ctx.elements.canvas.addEventListener('pointermove', event => {
-      if (document.pointerLockElement === ctx.elements.canvas) {
+      if (captured && document.pointerLockElement === ctx.elements.canvas) {
         post({ type: 'pointer-relative', dx: event.movementX, dy: event.movementY });
       }
     });
+    const forwardCapturedPointerButton = event => {
+      resumeAudioBridge();
+      if (!started || !captured || document.pointerLockElement !== ctx.elements.canvas) return;
+      const button = Number(event.button) || 0;
+      forwardPointerButton(button, event.type === 'pointerdown');
+      event.preventDefault();
+    };
+    document.addEventListener('pointerdown', forwardCapturedPointerButton, true);
+    document.addEventListener('pointerup', forwardCapturedPointerButton, true);
   }
 
   globalThis.WasmGameAdapter = Object.freeze({
     async init(ctx) {
       const descriptor = engines[ctx.variant];
       if (!descriptor) throw new Error(`Unsupported id Tech 4 variant: ${ctx.variant}`);
+      if (proof) proof.variant = ctx.variant;
+      publishProof();
+      noteLifecycle('init', { variant: ctx.variant });
       const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`id Tech 4 data policy failed with HTTP ${response.status}.`);
         return response.json();
@@ -169,11 +614,15 @@
       ctx.elements.canvas.addEventListener('contextmenu', event => event.preventDefault());
       bindInput(ctx);
       bindPersistenceLifecycle();
+      noteLifecycle('initialized', { files: policy.files.length });
     },
 
     async start(ctx) {
       if (started) return;
       const descriptor = engines[ctx.variant];
+      noteLifecycle('start-requested');
+      if (descriptor.worker === '/d3-worker.js') audioBridge ||= createAudioBridge();
+      resumeAudioBridge();
       void ctx.shell.resumeAudio();
       ctx.setLoading(`Preparing ${descriptor.label}…`, '', 5);
       const data = await ctx.dataClient.load(ownerData, {
@@ -187,6 +636,10 @@
         }
       });
       document.documentElement.dataset.wasmDataSource = data.entries.every(entry => entry.cached) ? 'cache' : 'container';
+      noteLifecycle('data-ready', {
+        source: document.documentElement.dataset.wasmDataSource,
+        entries: data.entries.length
+      });
       ctx.setLoading(`Starting ${descriptor.label}…`, '', 90);
       const canvas = ctx.elements.canvas;
       const offscreen = canvas.transferControlToOffscreen();
@@ -196,12 +649,19 @@
       worker = new Worker(descriptor.worker);
       worker.onmessage = event => {
         const message = event.data || {};
+        noteInbound(message);
+        if (message.type?.startsWith('audio-')) {
+          audioBridge?.handle(message);
+          return;
+        }
         if (message.type === 'log') ctx.log(message.text);
         if (message.type === 'status') ctx.setLoading(`Preparing ${descriptor.label}…`);
         if (message.type === 'persistence-ready') ctx.log(`Save/config persistence restored at ${message.root}.`);
         if (message.type === 'engine-state' || message.type === 'ready') {
           if (state !== message.state) releaseController();
           state = message.state || 'menu';
+          inputMode = message.inputMode || (state === 'gameplay' ? 'gameplay' : 'menu');
+          resumeAvailable = message.resumeAvailable === true;
           if (message.type === 'ready') ctx.setLoading('', '', 100);
           ctx.showRuntime(state);
         }
@@ -214,10 +674,16 @@
       };
       worker.onerror = event => {
         state = 'crashed';
+        if (proof) appendProof(proof.errors, { at: proofNow(), text: String(event.message || 'Worker error') }, 100);
         ctx.setEngineState('crashed');
         ctx.setStatus(`${descriptor.label} worker failed: ${event.message}`, true);
       };
       started = true;
+      if (proof) {
+        proof.workerMessages['out:start'] = (proof.workerMessages['out:start'] || 0) + 1;
+        publishProof();
+      }
+      noteLifecycle('worker-started', { worker: descriptor.worker, width, height });
       worker.postMessage({
         type: 'start', canvas: offscreen, variant: ctx.variant,
         entries: data.entries.map(entry => ({ path: entry.policy.mountName || entry.policy.path, file: entry.file })),
@@ -242,9 +708,19 @@
       if (started) post({ type: 'resize', width: detail.requestedWidth, height: detail.requestedHeight });
     },
     pointerMove(detail) {
-      if (started && !captured) post({ type: 'pointer-absolute', x: detail.x, y: detail.y });
+      if (started && !captured && acceptsUncapturedPointer()) {
+        post({ type: 'pointer-absolute', x: detail.x, y: detail.y });
+      }
     },
-    pointerButton(detail) { if (started) post({ type: 'pointer-button', button: detail.button, down: detail.pressed, x: detail.x, y: detail.y }); },
+    pointerButton(detail) {
+      if (!started) return;
+      resumeAudioBridge();
+      const button = Number(detail.button) || 0;
+      const down = Boolean(detail.pressed);
+      const wasForwarded = forwardedPointerButtons.has(button);
+      if (!captured && !acceptsUncapturedPointer() && !(wasForwarded && !down)) return;
+      forwardPointerButton(button, down, detail.x, detail.y);
+    },
     controllerFrame(detail) {
       if (!started || !detail.actions) return;
       const actions = detail.actions;
@@ -275,7 +751,9 @@
     },
     controllerChanged() { releaseController(); },
     inputCaptureChanged(nextCaptured) {
-      captured = Boolean(nextCaptured);
+      const next = Boolean(nextCaptured);
+      if (captured && !next) releaseForwardedPointerButtons();
+      captured = next;
       if (started) post({ type: 'capture', captured });
     },
     captureLost() { if (started) post({ type: 'open-menu' }); },

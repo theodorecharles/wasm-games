@@ -4,6 +4,18 @@ let persistenceManager = null;
 let runtime = null;
 let started = false;
 let failed = false;
+let frameScheduled = false;
+
+function scheduleFrame() {
+  if (failed || !runtime || frameScheduled) return;
+  frameScheduled = true;
+  setTimeout(() => {
+    frameScheduled = false;
+    if (failed || !runtime) return;
+    call('PREYWASM_BrowserFrame');
+    scheduleFrame();
+  }, 16);
+}
 
 function post(type, text, extra) {
   self.postMessage({ type, text: text == null ? undefined : String(text), ...(extra || {}) });
@@ -70,6 +82,8 @@ async function launch(message) {
           post('persistence-ready', null, { root: persistenceManager.root, namespace: persistenceManager.namespace });
           post('status', 'Initializing the Prey renderer and menus…');
           runtime.callMain(nativeArguments);
+          post('ready', null, { state: 'menu', inputMode: 'menu', resumeAvailable: false });
+          scheduleFrame();
         })().catch(reason => {
           failed = true;
           post('error', reason instanceof Error ? reason.stack || reason.message : reason);

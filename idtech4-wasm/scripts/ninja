@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+work_root="${IDTECH4_WORK_ROOT:-${repo_root}/.work}"
+tools_dir="${IDTECH4_TOOLS_DIR:-${work_root}/build-tools}"
+ninja_package_version="$(node -p "require('${repo_root}/source-lock.json').buildTools.ninjaPackage")"
+
+exec "${tools_dir}/ninja-${ninja_package_version}/bin/ninja" "$@"

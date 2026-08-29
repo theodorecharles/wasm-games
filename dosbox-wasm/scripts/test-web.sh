@@ -5,9 +5,11 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 source_dir="${DOSBOX_SOURCE_CHECKOUT:-$repo_dir/.work/source}/vendor/dosbox"
 
-EMSDK_DIR="${EMSDK_DIR:-/home/ted/emsdk}" \
-WASM_FRAMEWORK_DIR="$framework_dir" \
-"$repo_dir/scripts/build-web.sh"
+if [[ "${DOSBOX_SKIP_BUILD:-0}" != "1" ]]; then
+  EMSDK_DIR="${EMSDK_DIR:-/home/ted/emsdk}" \
+  WASM_FRAMEWORK_DIR="$framework_dir" \
+  "$repo_dir/scripts/build-web.sh"
+fi
 
 node --check "$repo_dir/web/dist/dosbox.js"
 node --check "$repo_dir/web/dist/game-adapter.js"
@@ -20,7 +22,14 @@ if [[ "${DOSBOX_TEST_INSTALLED_GAMES:-0}" == "1" ]]; then
       "$repo_dir/web/dist" "$variant" "${DOSBOX_DATA_ROOT:-/home/ted/wasm-game-data/dosbox}" 20000
   done
 fi
-wasm-validate "$repo_dir/web/dist/dosbox.wasm"
+if command -v wasm-validate >/dev/null 2>&1; then
+  wasm-validate "$repo_dir/web/dist/dosbox.wasm"
+elif command -v wasm-opt >/dev/null 2>&1; then
+  wasm-opt "$repo_dir/web/dist/dosbox.wasm" --validate -o /dev/null
+else
+  node -e 'new WebAssembly.Module(require("fs").readFileSync(process.argv[1]))' \
+    "$repo_dir/web/dist/dosbox.wasm"
+fi
 jq -e '.variants | keys == ["duke1", "duke2", "gta", "jazz", "jill1", "jill2", "jill3", "nfs", "simcity2000"]' "$repo_dir/web/dist/wasm-game.json" >/dev/null
 jq -e '.variants | {jill1: (.jill1.files | length), jill2: (.jill2.files | length), jill3: (.jill3.files | length), jazz: (.jazz.files | length), duke1: (.duke1.files | length), duke2: (.duke2.files | length), gta: (.gta.files | length), nfs: (.nfs.files | length), simcity2000: (.simcity2000.files | length)} == {jill1: 28, jill2: 27, jill3: 34, jazz: 66, duke1: 55, duke2: 7, gta: 89, nfs: 360, simcity2000: 30}' "$repo_dir/web/dist/wasm-game-data.json" >/dev/null
 jq -e '.controller.mode == "disabled" and .persistence.root == "/persistent/dosbox/{variant}"' \
@@ -50,5 +59,5 @@ rg -q 'IDBFS' "$repo_dir/web/dist/dosbox.js"
 rg -q 'createDosBoxModule' "$repo_dir/web/dist/dosbox.js"
 
 WASM_FRAMEWORK_DIR="$framework_dir" "$repo_dir/scripts/test-static.sh"
-git -C "$repo_dir" diff --check
+git -C "$repo_dir" diff --check -- . ':(exclude)patches/*.patch'
 printf 'DOSBox native build, framework 0.9.6, IDBFS, keyboard/mouse, audio/canvas, HTTP, and game-data checks passed.\n'

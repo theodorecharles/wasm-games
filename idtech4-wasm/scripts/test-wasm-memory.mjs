@@ -42,13 +42,13 @@ function memoryDeclaration(artifact) {
 }
 
 for (const [artifact, initial] of [
-  ['dhewm3-base.wasm', 2048],
-  ['dhewm3-roe.wasm', 2048],
+  ['dhewm3-base.wasm', 6144],
+  ['dhewm3-roe.wasm', 6144],
   ['openQ4-client_wasm32.wasm', 4096],
-  ['prey06.wasm', 4096]
+  ['prey06.wasm', 6144]
 ]) {
   assert.deepEqual(memoryDeclaration(artifact), { initial, maximum: 32768 },
     `${artifact}: unexpected wasm32 initial/maximum page limits`);
 }
 
-console.log('id Tech 4 wasm memory declarations passed (Doom 3/RoE 128 MiB; Quake 4/Prey 256 MiB; all max 2 GiB)');
+console.log('id Tech 4 wasm memory declarations passed (Doom 3/RoE/Prey 384 MiB; Quake 4 256 MiB; all max 2 GiB)');

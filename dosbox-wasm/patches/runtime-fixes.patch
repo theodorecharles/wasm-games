@@ -1,5 +1,56 @@
+diff --git a/vendor/dosbox/include/dosbox.h b/vendor/dosbox/include/dosbox.h
+index e352b67c4c6a279a0d27c226ba1964e7da545ab2..55449eaf8d552964cb79cdbc72cd0a9a8a07d59d 100644
+--- a/vendor/dosbox/include/dosbox.h
++++ b/vendor/dosbox/include/dosbox.h
+@@ -33,6 +33,20 @@ class Section;
+ typedef Bitu (LoopHandler)(void);
+ 
+ void DOSBOX_RunMachine();
++#if defined(__EMSCRIPTEN__)
++/* Nested page-fault, virtual-I/O, and idle handlers must complete on the
++ * current Wasm stack. Only the outer emulation loop is allowed to yield. */
++extern int wasm_nosleep_lock;
++static inline void DOSBOX_RunMachineNoSleep() {
++	wasm_nosleep_lock++;
++	DOSBOX_RunMachine();
++	wasm_nosleep_lock--;
++}
++#else
++static inline void DOSBOX_RunMachineNoSleep() {
++	DOSBOX_RunMachine();
++}
++#endif
+ void DOSBOX_SetLoop(LoopHandler * handler);
+ void DOSBOX_SetNormalLoop();
+ 
+diff --git a/vendor/dosbox/src/cpu/callback.cpp b/vendor/dosbox/src/cpu/callback.cpp
+index 4f11665292bed00e2e7298ba9f2b21e9dcc9ca68..1df8eb90b1a9b61da6b9302ab199c4c980e34765 100644
+--- a/vendor/dosbox/src/cpu/callback.cpp
++++ b/vendor/dosbox/src/cpu/callback.cpp
+@@ -66,7 +66,7 @@ void CALLBACK_Idle(void) {
+ 	Bit32u oldeip=reg_eip;
+ 	SegSet16(cs,CB_SEG);
+ 	reg_eip=CB_SOFFSET+call_idle*CB_SIZE;
+-	DOSBOX_RunMachine();
++	DOSBOX_RunMachineNoSleep();
+ 	reg_eip=oldeip;
+ 	SegSet16(cs,oldcs);
+ 	SETFLAGBIT(IF,oldIF);
+diff --git a/vendor/dosbox/src/cpu/paging.cpp b/vendor/dosbox/src/cpu/paging.cpp
+index 3859e7b6733f3b22072f16446c665c52a9d841fe..a8ec0e62bb78b28b462f0265452af72665eb00a3 100644
+--- a/vendor/dosbox/src/cpu/paging.cpp
++++ b/vendor/dosbox/src/cpu/paging.cpp
+@@ -159,7 +159,7 @@ void PAGING_PageFault(PhysPt lin_addr,Bitu page_addr,Bitu faultcode) {
+ #if C_DEBUG
+ //	DEBUG_EnableDebugger();
+ #endif
+-	DOSBOX_RunMachine();
++	DOSBOX_RunMachineNoSleep();
+ 	pf_queue.used--;
+ 	LOG(LOG_PAGING,LOG_NORMAL)("Left PageFault for %x queue %d",lin_addr,pf_queue.used);
+ 	memcpy(&lflags,&old_lflags,sizeof(LazyFlags));
 diff --git a/vendor/dosbox/src/dosbox.cpp b/vendor/dosbox/src/dosbox.cpp
-index edee31a..8df849d 100644
+index edee31a32c3de911a0006c1954f5318a96a30cd1..269a05314c3b0dfe50f370418743a71948dadfdc 100644
 --- a/vendor/dosbox/src/dosbox.cpp
 +++ b/vendor/dosbox/src/dosbox.cpp
 @@ -22,6 +22,9 @@
@@ -12,22 +63,42 @@ index edee31a..8df849d 100644
  #include <unistd.h>
  #include "dosbox.h"
  #include "debug.h"
-@@ -115,6 +118,9 @@ void SHELL_Init(void);
+@@ -115,6 +118,11 @@ void SHELL_Init(void);
  void INT10_Init(Section*);
  
  static LoopHandler * loop;
 +#if defined(__EMSCRIPTEN__)
 +static Bit32u wasm_machine_slices = 0;
++static Bit32u wasm_last_yield = 0;
++int wasm_nosleep_lock = 0;
 +#endif
  
  bool SDLNetInited;
  
-@@ -151,7 +157,12 @@ static Bitu Normal_Loop(void) {
+@@ -128,6 +136,17 @@ void increaseticks();
+ 
+ static Bitu Normal_Loop(void) {
+ 	Bits ret;
++#if defined(__EMSCRIPTEN__)
++	/* Yield based on elapsed host time, not on every guest millisecond.  The
++	 * latter makes DOS/4GW startup take roughly a minute in Chrome.  Recursive
++	 * CPU exception handlers hold wasm_nosleep_lock because Asyncify may only
++	 * unwind the outer emulation loop safely. */
++	const Bit32u wasm_now = GetTicks();
++	if (!wasm_nosleep_lock && (Bit32u)(wasm_now - wasm_last_yield) >= 10) {
++		wasm_last_yield = wasm_now;
++		emscripten_sleep(1);
++	}
++#endif
+ 	while (1) {
+ 		if (PIC_RunQueue()) {
+ 			ret = (*cpudecoder)();
+@@ -151,7 +170,12 @@ static Bitu Normal_Loop(void) {
  }
  
  //For trying other delays
 +#if defined(__EMSCRIPTEN__)
-+/* Browser yielding happens after this complete native timeslice returns. */
++/* Normal_Loop owns the browser yield schedule. */
 +#define wrap_delay(a) ((void)(a))
 +#else
  #define wrap_delay(a) SDL_Delay(a)
@@ -35,18 +106,12 @@ index edee31a..8df849d 100644
  
  void increaseticks() { //Make it return ticksRemain and set it in the function above to remove the global variable.
  	if (GCC_UNLIKELY(ticksLocked)) { // For Fast Forward Mode
-@@ -314,9 +325,24 @@ void DOSBOX_RunMachine(void){
+@@ -314,9 +338,18 @@ void DOSBOX_RunMachine(void){
  	Bitu ret;
  	do {
  		ret=(*loop)();
 +#if defined(__EMSCRIPTEN__)
-+		/* Never Asyncify the unbounded Normal_Loop itself: doing so restores
-+		 * indirect CPU/callback locals incorrectly and poisons SDL's later audio
-+		 * table call. Yield only here, between completed native timeslices. */
-+		if (!ret) {
-+			wasm_machine_slices++;
-+			emscripten_sleep(1);
-+		}
++		if (!ret) wasm_machine_slices++;
 +#endif
  	} while (!ret);
  }
@@ -61,7 +126,7 @@ index edee31a..8df849d 100644
  	static bool autoadjust = false;
  	if (pressed) {
 diff --git a/vendor/dosbox/src/gui/sdlmain.cpp b/vendor/dosbox/src/gui/sdlmain.cpp
-index 75aab73..166224d 100644
+index 75aab73f69bd3ff29b4d2ad9a641f4134aa22803..166224d3c9974b8236260bd150c5af592187db9b 100644
 --- a/vendor/dosbox/src/gui/sdlmain.cpp
 +++ b/vendor/dosbox/src/gui/sdlmain.cpp
 @@ -39,6 +39,7 @@
@@ -179,8 +244,66 @@ index 75aab73..166224d 100644
  #if defined (WIN32)
  static BOOL WINAPI ConsoleEventHandler(DWORD event) {
  	switch (event) {
+diff --git a/vendor/dosbox/src/hardware/iohandler.cpp b/vendor/dosbox/src/hardware/iohandler.cpp
+index d53ad70420994654b2b3bf450cdd7a9004360254..32d41158adf557668075e9142203eb789cdb3087 100644
+--- a/vendor/dosbox/src/hardware/iohandler.cpp
++++ b/vendor/dosbox/src/hardware/iohandler.cpp
+@@ -299,7 +299,7 @@ void IO_WriteB(Bitu port,Bitu val) {
+ 		reg_eip = RealOff(icb)+0x08;
+ 		CPU_Exception(cpu.exception.which,cpu.exception.error);
+ 
+-		DOSBOX_RunMachine();
++		DOSBOX_RunMachineNoSleep();
+ 		iof_queue.used--;
+ 
+ 		reg_al = old_al;
+@@ -335,7 +335,7 @@ void IO_WriteW(Bitu port,Bitu val) {
+ 		reg_eip = RealOff(icb)+0x0a;
+ 		CPU_Exception(cpu.exception.which,cpu.exception.error);
+ 
+-		DOSBOX_RunMachine();
++		DOSBOX_RunMachineNoSleep();
+ 		iof_queue.used--;
+ 
+ 		reg_ax = old_ax;
+@@ -371,7 +371,7 @@ void IO_WriteD(Bitu port,Bitu val) {
+ 		reg_eip = RealOff(icb)+0x0c;
+ 		CPU_Exception(cpu.exception.which,cpu.exception.error);
+ 
+-		DOSBOX_RunMachine();
++		DOSBOX_RunMachineNoSleep();
+ 		iof_queue.used--;
+ 
+ 		reg_eax = old_eax;
+@@ -402,7 +402,7 @@ Bitu IO_ReadB(Bitu port) {
+ 		reg_eip = RealOff(icb)+0x00;
+ 		CPU_Exception(cpu.exception.which,cpu.exception.error);
+ 
+-		DOSBOX_RunMachine();
++		DOSBOX_RunMachineNoSleep();
+ 		iof_queue.used--;
+ 
+ 		retval = reg_al;
+@@ -439,7 +439,7 @@ Bitu IO_ReadW(Bitu port) {
+ 		reg_eip = RealOff(icb)+0x02;
+ 		CPU_Exception(cpu.exception.which,cpu.exception.error);
+ 
+-		DOSBOX_RunMachine();
++		DOSBOX_RunMachineNoSleep();
+ 		iof_queue.used--;
+ 
+ 		retval = reg_ax;
+@@ -475,7 +475,7 @@ Bitu IO_ReadD(Bitu port) {
+ 		reg_eip = RealOff(icb)+0x04;
+ 		CPU_Exception(cpu.exception.which,cpu.exception.error);
+ 
+-		DOSBOX_RunMachine();
++		DOSBOX_RunMachineNoSleep();
+ 		iof_queue.used--;
+ 
+ 		retval = reg_eax;
 diff --git a/vendor/dosbox/src/hardware/mixer.cpp b/vendor/dosbox/src/hardware/mixer.cpp
-index 87baac6..16ffeee 100644
+index 87baac6f219f3d98392d9f1dbd857333da4aef41..16ffeee6b9c5aa7a2816b18e3a47b91e5bfa272a 100644
 --- a/vendor/dosbox/src/hardware/mixer.cpp
 +++ b/vendor/dosbox/src/hardware/mixer.cpp
 @@ -44,6 +44,9 @@

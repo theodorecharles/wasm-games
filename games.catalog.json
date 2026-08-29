@@ -22,15 +22,15 @@
       "id": "dosbox-wasm",
       "sourceStatus": "pinned-port-snapshot-with-engine-patch",
       "games": [
-        { "id": "jill1", "title": "Jill of the Jungle", "dataPath": "dosbox/jill1", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "jill2", "title": "Jill Goes Underground", "dataPath": "dosbox/jill2", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "jill3", "title": "Jill Saves the Prince", "dataPath": "dosbox/jill3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "jazz", "title": "Jazz Jackrabbit", "dataPath": "dosbox/jazz", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "duke1", "title": "Duke Nukem", "dataPath": "dosbox/duke1", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "duke2", "title": "Duke Nukem II", "dataPath": "dosbox/duke2", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "gta", "title": "Grand Theft Auto DOS Demo", "dataPath": "dosbox/gta", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "nfs", "title": "The Need for Speed", "dataPath": "dosbox/nfs", "runtimeStatus": "broken", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
-        { "id": "simcity2000", "title": "SimCity 2000", "dataPath": "dosbox/simcity2000", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] }
+        { "id": "jill1", "title": "Jill of the Jungle", "dataPath": "dosbox/jill1", "runtimeStatus": "broken-input-regression", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "jill2", "title": "Jill Goes Underground", "dataPath": "dosbox/jill2", "runtimeStatus": "broken-input-regression", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "jill3", "title": "Jill Saves the Prince", "dataPath": "dosbox/jill3", "runtimeStatus": "broken-input-regression", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "jazz", "title": "Jazz Jackrabbit", "dataPath": "dosbox/jazz", "runtimeStatus": "broken-input-regression", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "duke1", "title": "Duke Nukem", "dataPath": "dosbox/duke1", "runtimeStatus": "broken-input-regression", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "duke2", "title": "Duke Nukem II", "dataPath": "dosbox/duke2", "runtimeStatus": "broken-input-regression", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "gta", "title": "Grand Theft Auto DOS Demo", "dataPath": "dosbox/gta", "runtimeStatus": "broken-performance-audio-input", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "nfs", "title": "The Need for Speed", "dataPath": "dosbox/nfs", "runtimeStatus": "broken-gameplay-pointer-mapping", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] },
+        { "id": "simcity2000", "title": "SimCity 2000", "dataPath": "dosbox/simcity2000", "runtimeStatus": "working-with-performance-and-pointer-issues", "sources": ["https://github.com/theodorecharles/dosbox-wasm.git"] }
       ]
     },
     {
@@ -88,14 +88,14 @@
     },
     {
       "id": "idtech4-wasm",
-      "sourceStatus": "partial-missing-openq4-game-and-prey-forks",
+      "sourceStatus": "pinned-reproducible-sources",
       "games": [
-        { "id": "doom3", "title": "Doom 3", "dataPath": "doom3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/doom3-wasm.git"] },
-        { "id": "doom3-mp", "title": "Doom 3 Multiplayer", "dataPath": "doom3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/doom3-wasm.git"] },
-        { "id": "roe", "title": "Doom 3: Resurrection of Evil", "dataPath": "doom3", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/doom3-wasm.git"] },
-        { "id": "quake4", "title": "Quake 4", "dataPath": "quake4", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/quake4-wasm.git"] },
-        { "id": "quake4-mp", "title": "Quake 4 Multiplayer", "dataPath": "quake4", "runtimeStatus": "retest", "sources": ["https://github.com/theodorecharles/quake4-wasm.git"] },
-        { "id": "prey", "title": "Prey (2006)", "dataPath": "prey", "runtimeStatus": "retest", "sources": [] }
+        { "id": "doom3", "title": "Doom 3", "dataPath": "doom3", "runtimeStatus": "working-manual-browser-pass", "sources": ["https://github.com/theodorecharles/d3wasm-browser.git"] },
+        { "id": "doom3-mp", "title": "Doom 3 Multiplayer", "dataPath": "doom3", "runtimeStatus": "broken-managed-multiplayer-missing", "sources": ["https://github.com/theodorecharles/d3wasm-browser.git"] },
+        { "id": "roe", "title": "Doom 3: Resurrection of Evil", "dataPath": "doom3", "runtimeStatus": "working-manual-browser-pass", "sources": ["https://github.com/theodorecharles/d3wasm-browser.git"] },
+        { "id": "quake4", "title": "Quake 4", "dataPath": "quake4", "runtimeStatus": "broken-renderer-initialization", "sources": ["https://github.com/theodorecharles/openQ4-wasm.git", "https://github.com/theodorecharles/openQ4-game.git"] },
+        { "id": "quake4-mp", "title": "Quake 4 Multiplayer", "dataPath": "quake4", "runtimeStatus": "broken-renderer-initialization", "sources": ["https://github.com/theodorecharles/openQ4-wasm.git", "https://github.com/theodorecharles/openQ4-game.git"] },
+        { "id": "prey", "title": "Prey (2006)", "dataPath": "prey", "runtimeStatus": "broken-gameplay-transition", "sources": ["https://github.com/theodorecharles/Prey2006.git"] }
       ]
     },
     {

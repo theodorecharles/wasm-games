@@ -48,10 +48,12 @@ for (const fixture of fixtures) {
     Blob,
     Uint8Array,
     console,
-    setTimeout,
-    clearTimeout,
-    setInterval,
-    clearInterval,
+    // Worker animation/persistence timers are outside this contract test and
+    // must not keep the Node fixture alive after native-main ordering passes.
+    setTimeout() { return 0; },
+    clearTimeout() {},
+    setInterval() { return 0; },
+    clearInterval() {},
     location: { href: 'https://idtech4.test/' },
     postMessage(message) { messages.push(message); },
     fetch: async () => ({

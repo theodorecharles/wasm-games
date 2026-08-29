@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-08-21T02:52:51-04:00",
+  "recordedAt": "2026-08-21T20:36:20-04:00",
   "result": "pass",
   "portal": "http://127.0.0.1:8080/",
   "shortcuts": 45,
-  "liveShortcuts": 18,
+  "liveShortcuts": 27,
   "composeServices": 32,
   "runningComposeServices": 32,
   "runtimeImageContracts": 30,
@@ -26,7 +26,16 @@
     "half-life",
     "blue-shift",
     "opposing-force",
-    "counter-strike"
+    "counter-strike",
+    "jill1",
+    "jill2",
+    "jill3",
+    "jazz",
+    "duke1",
+    "duke2",
+    "gta",
+    "nfs",
+    "simcity2000"
   ],
   "ownerDataReady": {
     "blood": true,
@@ -45,7 +54,73 @@
     "quake": true,
     "quake2": true,
     "quake2-xatrix": true,
-    "quake2-rogue": true
+    "quake2-rogue": true,
+    "jill1": true,
+    "jill2": true,
+    "jill3": true,
+    "jazz": true,
+    "duke1": true,
+    "duke2": true,
+    "gta": true,
+    "nfs": true,
+    "simcity2000": true
+  },
+  "dosbox": {
+    "variantsProven": 9,
+    "installedRuntimeChecks": 9,
+    "chromeConsoleErrors": 0,
+    "keyboardPromptAdvanced": true,
+    "protectedModeTargets": {
+      "gta": "Grand Theft Auto Startup menu",
+      "nfs": "Road & Track presents The Need for Speed",
+      "simcity2000": "SimCity 2000 registration/title screen"
+    }
+  },
+  "idtech4": {
+    "imageHttpContractsPassed": 7,
+    "allSixGameServicesRebuiltAndValidatedAtCheckpoint": true,
+    "doom3": {
+      "portalStatus": "Still in development",
+      "httpOriginResponded": true,
+      "container": "wasm-doom3",
+      "browserCheckpoint": "Mars City gameplay, real keyboard movement, WebAudio, console resume, and same-session save/load formally passed; final cross-reload persistence and formal pointer-lock mouse evidence remain",
+      "currentlyStoppedByUser": true,
+      "proof": "idtech4-wasm/proofs/d3wasm-checkpoint.json"
+    },
+    "doom3-mp": {
+      "portalStatus": "Still in development",
+      "httpOriginResponded": true,
+      "container": "wasm-doom3-mp",
+      "checkpoint": "clean d3wasm package deployed; multiplayer and bots unproven",
+      "currentlyStoppedByUser": true,
+      "proof": "idtech4-wasm/proofs/d3wasm-checkpoint.json"
+    },
+    "roe": {
+      "portalStatus": "Still in development",
+      "httpOriginResponded": true,
+      "container": "wasm-roe",
+      "checkpoint": "clean pinned d3wasm/RoE package deployed; runtime gameplay unproven",
+      "proof": "idtech4-wasm/proofs/d3wasm-checkpoint.json"
+    },
+    "quake4": {
+      "portalStatus": "Still in development",
+      "httpOriginResponded": true,
+      "container": "wasm-quake4",
+      "checkpoint": "pinned package deployed; campaign renderer retest remains"
+    },
+    "quake4-mp": {
+      "portalStatus": "Still in development",
+      "httpOriginResponded": true,
+      "container": "wasm-quake4-mp",
+      "checkpoint": "pinned package deployed; multiplayer and bots unproven"
+    },
+    "prey": {
+      "portalStatus": "Still in development",
+      "httpOriginResponded": true,
+      "container": "wasm-prey-2006",
+      "browserCheckpoint": "menu input and complete game/roadhouse load proven; sustained gameplay render remains black",
+      "proof": "idtech4-wasm/proofs/prey-checkpoint.json"
+    }
   },
   "counterStrikeCompanion": {
     "image": "wasm-games/counter-strike-yapb:4.4.957",

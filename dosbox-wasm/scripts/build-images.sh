@@ -34,8 +34,11 @@ smoke_image() {
 [[ "$(node -p "require('${framework_dir}/package.json').version")" == "$required_version" ]]
 [[ "$(git -C "$framework_dir" rev-parse HEAD)" == "$required_commit" ]]
 
-EMSDK_DIR="${EMSDK_DIR:-/home/ted/emsdk}" WASM_FRAMEWORK_DIR="$framework_dir" \
-  "$repo_dir/scripts/build-web.sh"
+if [[ "${DOSBOX_SKIP_BUILD:-0}" != "1" ]]; then
+  EMSDK_DIR="${EMSDK_DIR:-/home/ted/emsdk}" WASM_FRAMEWORK_DIR="$framework_dir" \
+    "$repo_dir/scripts/build-web.sh"
+fi
+test -f "$repo_dir/web/dist/dosbox.wasm"
 "$framework_dir/scripts/build-base-image.sh" "wasm-game-framework:$required_version"
 
 images=(

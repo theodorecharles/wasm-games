@@ -1,0 +1,899 @@
+diff --git a/neo/CMakeLists.txt b/neo/CMakeLists.txt
+index bbfa397b525987c464e4dc9aadc6a2c3248d1f8e..b01b24d8cdf76f0980c70f7e0464322b64663f15 100644
+--- a/neo/CMakeLists.txt
++++ b/neo/CMakeLists.txt
+@@ -21,6 +21,13 @@ option(NODLL "Build core and base game code, embedded inside one binary" ON)
+ option(NOMT "Do not use multithreading" ON)
+ option(WEBGL "We are in a WebGL environment" OFF)
+ option(NOEFX "Do not use OpenAL EFX" OFF)
++set(D3WASM_GAME "base" CACHE STRING "Embedded game code: base or roe")
++set_property(CACHE D3WASM_GAME PROPERTY STRINGS base roe)
++set(D3WASM_D3XP_SOURCE_DIR "" CACHE PATH "Pinned dhewm3 checkout providing neo/d3xp for RoE")
++
++if (NOT D3WASM_GAME STREQUAL "base" AND NOT D3WASM_GAME STREQUAL "roe")
++  message(FATAL_ERROR "D3WASM_GAME must be base or roe")
++endif ()
+ 
+ # Enforce some options for Emscripten
+ if (EMSCRIPTEN)
+@@ -28,7 +35,8 @@ if (EMSCRIPTEN)
+   set(NOMT  ON)
+   set(NODLL ON)
+   set(WEBGL ON)
+-  set(CMAKE_EXECUTABLE_SUFFIX ".html") # use the HTML suffix (will emit .html, .js and .wasm)
++  set(CMAKE_EXECUTABLE_SUFFIX ".js")
++  add_compile_options("-DD3WASM_CLIENT=1")
+ else ()
+   set(NOEFX ON)
+   set(NOMT  ON)
+@@ -56,8 +64,11 @@ if (NODLL)
+   add_compile_options("-DNODLL")
+ endif ()
+ 
+-if (EMSCRIPTEN)
++if (EMSCRIPTEN AND D3WASM_GAME STREQUAL "base")
+   add_compile_options(-fno-exceptions)
++elseif (EMSCRIPTEN AND D3WASM_GAME STREQUAL "roe")
++  # RoE's script compiler still uses exception-based error propagation.
++  add_compile_options(-fexceptions)
+ endif()
+ 
+ if (NOT CMAKE_SYSTEM_PROCESSOR)
+@@ -219,60 +230,35 @@ set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG ${CMAKE_C_FLAGS_RELEASE}")
+ set(CMAKE_CXX_FLAGS_MINSIZEREL "-DNDEBUG ${CMAKE_C_FLAGS_MINSIZEREL}")
+ 
+ if (EMSCRIPTEN)
+-  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+-    add_custom_target(package_demo_data ${CMAKE_SOURCE_DIR}/sys/wasm/package_demo_data.bat data/demo)
+-    add_custom_target(package_full_data ${CMAKE_SOURCE_DIR}/sys/wasm/package_full_data.bat data/base)
+-    add_custom_target(package_chunked_demo_data ${CMAKE_SOURCE_DIR}/sys/wasm/package_chunked_demo_data.bat data/chunked)
+-  else()
+-    add_custom_target(package_demo_data ${CMAKE_SOURCE_DIR}/sys/wasm/package_demo_data.sh data/demo)
+-    add_custom_target(package_full_data ${CMAKE_SOURCE_DIR}/sys/wasm/package_full_data.sh data/base)
+-    add_custom_target(package_chunked_demo_data ${CMAKE_SOURCE_DIR}/sys/wasm/package_chunked_demo_data.sh data/chunked)
+-  endif()
+-
+-  # demo data preload
+-  set(ldflags "${ldflags} --pre-js ../neo/sys/wasm/pre.js")
+-  # chunked demo data preload
+-  #set(ldflags "${ldflags} --pre-js ../neo/sys/wasm/pre-chunked.js")
+-  #set(ldflags "${ldflags} --post-js ../neo/sys/wasm/post-chunked.js")
+-  # full data preload
+-  #set(ldflags "${ldflags} --pre-js ../neo/sys/wasm/pre-full.js")
+-
+-  set(ldflags "${ldflags} --shell-file ../neo/sys/wasm/shell.html")
+-  set(ldflags "${ldflags} -o d3wasm.html")
+-  set(ldflags "${ldflags} -s FORCE_FILESYSTEM=1")
+-  set(ldflags "${ldflags} -s TOTAL_MEMORY=402653184") # 384MB. Going below 320MB lead to crashes after a couple of levels played.
+-  set(ldflags "${ldflags} -s ASYNCIFY=1")
+-  set(ldflags "${ldflags} -s MINIFY_HTML=0")
+-  set(ldflags "${ldflags} -s ENVIRONMENT=web")
+-
+-  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+-    file(READ ../neo/sys/wasm/asyncify.win.json ASYNCIFY_WHITELIST)
+-    set(ldflags "${ldflags} -s \"ASYNCIFY_WHITELIST=${ASYNCIFY_WHITELIST}\"")
+-  else()
+-    file(READ ../neo/sys/wasm/asyncify.json ASYNCIFY_WHITELIST)
+-    set(ldflags "${ldflags} -s 'ASYNCIFY_WHITELIST=${ASYNCIFY_WHITELIST}'")
+-  endif()
+-  set(ldflags "${ldflags} -s EXIT_RUNTIME=0")   # Don't exit the runtime
+-  set(ldflags "${ldflags} -s ASSERTIONS=0")     # Disabling assertion slightly reduce binary size
+-  # D3 uses its own optimized memory allocator, build on top of malloc.
+-  # while dlmalloc might be a bit bigger in size than emmalloc, it is more efficient with the optimized memory allocator
+-  set(ldflags "${ldflags} -s MALLOC=dlmalloc")
+-  set(ldflags "${ldflags} -s ENVIRONMENT=web")
+-  set(ldflags "${ldflags} -s USE_SDL=2")
+-  set(ldflags "${ldflags} -s USE_ZLIB=1")
+-  set(ldflags "${ldflags} -s USE_VORBIS=1")
+-  set(ldflags "${ldflags} -s USE_OGG=1")      # Already done with USE_VORBIS=1
+-  set(ldflags "${ldflags} -s USE_LIBJPEG=1")
+-  set(ldflags "${ldflags} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0") # Because of SDL2 port still use the deprecated behavior
+-  #set(ldflags "${ldflags} -s STRICT=1") # can't enable this due to DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR that have to be 0
+-  #nevertheless be explicit on the libs to link to in strict mode
+-  set(ldflags "${ldflags} -lopenal.js") # OpenAL
+-  set(ldflags "${ldflags} -lwebgl.js")  # WebGL (NB: Already done with USE_SDL=2)
+-  set(ldflags "${ldflags} -legl.js")    # EGL (NB: Already done with USE_SDL=2)
+-  set(ldflags "${ldflags} -lfs.js")     # Filesystem core functionality
+-  set(ldflags "${ldflags} -lmemfs.js")  # in-memory filesystem
+-  set(ldflags "${ldflags} -lidbfs.js")  # in-memory filesystem + idb persistency (used in pre.js for "web_user" folder)
+-  set(ldflags "${ldflags} -lsockfs.js") # needed because of libc socket implementation (D3 use sockets)
++  # The wasm-game-framework owns the page and transfers an OffscreenCanvas to
++  # a dedicated engine worker.  Owner PK4s are mounted with WORKERFS and saves
++  # are mounted by the framework's versioned IDBFS persistence contract.
++  set(ldflags "${ldflags} -sFORCE_FILESYSTEM=1")
++  set(ldflags "${ldflags} -sALLOW_MEMORY_GROWTH=1")
++  set(ldflags "${ldflags} -sINITIAL_MEMORY=402653184")
++  set(ldflags "${ldflags} -sMAXIMUM_MEMORY=2147483648")
++  set(ldflags "${ldflags} -sSTACK_SIZE=5242880")
++  set(ldflags "${ldflags} -sASYNCIFY=1")
++
++  set(ldflags "${ldflags} -sEXIT_RUNTIME=0")
++  set(ldflags "${ldflags} -sASSERTIONS=1")
++  set(ldflags "${ldflags} -sMALLOC=dlmalloc")
++  set(ldflags "${ldflags} -sENVIRONMENT=worker")
++  set(ldflags "${ldflags} -sINVOKE_RUN=0")
++  set(ldflags "${ldflags} -sUSE_SDL=2")
++  set(ldflags "${ldflags} -sUSE_ZLIB=1")
++  set(ldflags "${ldflags} -sUSE_VORBIS=1")
++  set(ldflags "${ldflags} -sUSE_LIBJPEG=1")
++  set(ldflags "${ldflags} -sMIN_WEBGL_VERSION=1")
++  set(ldflags "${ldflags} -sMAX_WEBGL_VERSION=1")
++  set(ldflags "${ldflags} -sOFFSCREENCANVAS_SUPPORT=1")
++  set(ldflags "${ldflags} -sEXPORTED_RUNTIME_METHODS=FS,WORKERFS,IDBFS,callMain")
++  set(ldflags "${ldflags} -sEXPORTED_FUNCTIONS=_main,_malloc,_free")
++  set(ldflags "${ldflags} -lworkerfs.js")
++  set(ldflags "${ldflags} -lidbfs.js")
++  if (D3WASM_GAME STREQUAL "roe")
++    set(ldflags "${ldflags} -fexceptions")
++  endif ()
+ endif ()
+ 
+ # fallback for cmake versions without GNUInstallDirs
+@@ -628,7 +614,28 @@ set(src_game
+     game/physics/Push.cpp
+     )
+ 
+-add_globbed_headers(src_game "game")
++set(D3WASM_GAME_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/game")
++if (D3WASM_GAME STREQUAL "roe")
++  if (NOT IS_DIRECTORY "${D3WASM_D3XP_SOURCE_DIR}/neo/d3xp")
++    message(FATAL_ERROR "RoE requires D3WASM_D3XP_SOURCE_DIR at the pinned d3xp source checkout")
++  endif ()
++  set(d3xp_root "${D3WASM_D3XP_SOURCE_DIR}/neo/d3xp")
++  set(src_d3xp)
++  foreach (base_source IN LISTS src_game)
++    string(REGEX REPLACE "^game/" "${d3xp_root}/" d3xp_source "${base_source}")
++    list(APPEND src_d3xp "${d3xp_source}")
++  endforeach ()
++  list(APPEND src_d3xp
++    "${d3xp_root}/anim/Anim_Import.cpp"
++    "${d3xp_root}/anim/Anim_Testmodel.cpp"
++    "${d3xp_root}/Grabber.cpp"
++    "${d3xp_root}/physics/Force_Grab.cpp"
++  )
++  set(src_game ${src_d3xp})
++  set(D3WASM_GAME_INCLUDE_DIR "${d3xp_root}")
++else ()
++  add_globbed_headers(src_game "game")
++endif ()
+ 
+ set(src_core
+     ${src_renderer}
+@@ -653,6 +660,13 @@ set(src_sys_core
+     sys/glimp.cpp
+     )
+ 
++if (EMSCRIPTEN)
++  list(APPEND src_sys_core sys/openal_emscripten.cpp)
++  # AudioContext is not available in the engine worker.  The browser OpenAL
++  # bridge above owns these symbols and forwards mixing commands to the page.
++  set(OPENAL_LIBRARY "")
++endif ()
++
+ include_directories(${CMAKE_BINARY_DIR})
+ include_directories(${CMAKE_SOURCE_DIR})
+ 
+@@ -676,9 +690,16 @@ if (CORE)
+         ${src_game}         # base game is added to core
+         )
+ 
+-    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX neo FILES ${src_core} ${src_sys_base} ${src_sys_core} ${src_game})
++    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX neo FILES ${src_core} ${src_sys_base} ${src_sys_core})
++    if (D3WASM_GAME STREQUAL "base")
++      source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX neo FILES ${src_game})
++    endif ()
+ 
+-    set_target_properties(${D3WASMBINARY} PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/game")
++    set_target_properties(${D3WASMBINARY} PROPERTIES COMPILE_FLAGS "-I${D3WASM_GAME_INCLUDE_DIR}")
++    if (D3WASM_GAME STREQUAL "roe")
++      target_compile_definitions(${D3WASMBINARY} PRIVATE _D3XP CTF)
++      target_include_directories(${D3WASMBINARY} PRIVATE "${D3WASM_D3XP_SOURCE_DIR}/neo")
++    endif ()
+   else ()
+     add_executable(${D3WASMBINARY}
+         ${src_core}
+@@ -731,4 +752,3 @@ if (BASE)
+       )
+ 
+ endif ()
+-
+diff --git a/neo/sys/glimp.cpp b/neo/sys/glimp.cpp
+index 027a3eb574de4af9d3ce4b33fb984caa367c00bb..2791aef1a83bd795265cd7105f7b0559828d3739 100644
+--- a/neo/sys/glimp.cpp
++++ b/neo/sys/glimp.cpp
+@@ -33,6 +33,10 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ #include "renderer/tr_local.h"
+ 
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ idCVar in_nograb("in_nograb", "0", CVAR_SYSTEM | CVAR_NOCHEAT, "prevents input grabbing");
+ #ifndef __EMSCRIPTEN__
+ idCVar r_waylandcompat("r_waylandcompat", "0", CVAR_SYSTEM | CVAR_NOCHEAT | CVAR_ARCHIVE, "wayland compatible framebuffer");
+@@ -42,6 +46,7 @@ static bool grabbed = false;
+ 
+ static SDL_Window *window = NULL;
+ static SDL_GLContext context = NULL;
++static glimpParms_t currentParms = {};
+ 
+ static void SetSDLIcon() {
+ #ifdef __EMSCRIPTEN__
+@@ -87,6 +92,7 @@ bool GLimp_Init(glimpParms_t parms) {
+   assert(SDL_WasInit(SDL_INIT_VIDEO));
+ 
+   Uint32 flags = SDL_WINDOW_OPENGL;
++  currentParms = parms;
+ 
+ #ifdef __EMSCRIPTEN__
+   // Fullscreen disabled for now
+@@ -229,10 +235,35 @@ GLimp_SetScreenParms
+ ===================
+ */
+ bool GLimp_SetScreenParms(glimpParms_t parms) {
+-  common->DPrintf("TODO: GLimp_ActivateContext\n");
++  currentParms = parms;
++  glConfig.vidWidth = parms.width;
++  glConfig.vidHeight = parms.height;
++#ifdef __EMSCRIPTEN__
++  EM_ASM( {
++    if ( Module['canvas'] ) {
++      Module['canvas'].width = $0;
++      Module['canvas'].height = $1;
++    }
++  }, parms.width, parms.height );
++#endif
++  if ( window ) {
++    SDL_SetWindowSize( window, parms.width, parms.height );
++  }
+   return true;
+ }
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" EMSCRIPTEN_KEEPALIVE int D3WASM_BrowserResize( int width, int height ) {
++  if ( width < 320 || height < 200 ) {
++    return 0;
++  }
++  glimpParms_t parms = currentParms;
++  parms.width = width;
++  parms.height = height;
++  return GLimp_SetScreenParms( parms ) ? 1 : 0;
++}
++#endif
++
+ /*
+ ===================
+ GLimp_Shutdown
+diff --git a/neo/sys/linux/main.cpp b/neo/sys/linux/main.cpp
+index 3b64f2b160c0050d7537890cfdfee1b8ea8349f7..26751ddb546beec040f3e019923075ae82badc26 100644
+--- a/neo/sys/linux/main.cpp
++++ b/neo/sys/linux/main.cpp
+@@ -37,13 +37,17 @@ If you have questions concerning this license or the applicable additional terms
+ #include "sys/platform.h"
+ #include "framework/Licensee.h"
+ #include "framework/FileSystem.h"
++#include "framework/Console.h"
++#include "framework/Session_local.h"
+ #include "sys/posix/posix_public.h"
+ #include "sys/sys_local.h"
++#include "ui/UserInterface.h"
+ 
+ #include <locale.h>
+ 
+ #ifdef __EMSCRIPTEN__
+ #include "emscripten.h"   // emscripten_set_main_loop
++#include <SDL.h>
+ #endif
+ 
+ static char path_argv[MAX_OSPATH];
+@@ -284,6 +288,114 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
+ }
+ 
+ #ifdef __EMSCRIPTEN__
++static int d3wasmLastBrowserState = -1;
++static int d3wasmLastResumeAvailable = -1;
++
++static int D3WASM_CurrentBrowserState() {
++	if ( console->Active() ) {
++		return 3;
++	}
++	if ( !sessLocal.mapSpawned ) {
++		return 0;
++	}
++	return sessLocal.guiActive != NULL ? 2 : 1;
++}
++
++static void D3WASM_ReportBrowserState() {
++	const int state = D3WASM_CurrentBrowserState();
++	const int resumeAvailable = sessLocal.mapSpawned &&
++		( state == 3 || sessLocal.guiActive == sessLocal.guiMainMenu );
++	if ( state == d3wasmLastBrowserState && resumeAvailable == d3wasmLastResumeAvailable ) {
++		return;
++	}
++	d3wasmLastBrowserState = state;
++	d3wasmLastResumeAvailable = resumeAvailable;
++	EM_ASM( {
++		postMessage( {
++			type: 'engine-state',
++			state: $0 === 1 ? 'gameplay' : ($0 === 0 ? 'menu' : 'paused'),
++			inputMode: $0 === 1 ? 'gameplay' : ($0 === 3 ? 'console' : 'menu'),
++			resumeAvailable: $1 !== 0
++		} );
++	}, state, resumeAvailable );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserOpenMenu() {
++	// Pointer lock loss is how browsers deliver Escape while captured.  Route
++	// it through the session's normal Escape handling so an in-game cinematic
++	// is skipped via game->HandleESC(), while ordinary gameplay opens the menu.
++	sysEvent_t event;
++	memset( &event, 0, sizeof( event ) );
++	event.evType = SE_KEY;
++	event.evValue = K_HOME;
++	event.evValue2 = 1;
++	sessLocal.ProcessEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserCapture( int captured ) {
++	Sys_GrabMouseCursor( captured != 0 );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserPointer( int x, int y, int relative ) {
++	if ( !relative && sessLocal.guiActive != NULL ) {
++		sessLocal.guiActive->SetCursor( x, y );
++		return;
++	}
++	SDL_Event event;
++	memset( &event, 0, sizeof( event ) );
++	event.type = SDL_MOUSEMOTION;
++	event.motion.xrel = x;
++	event.motion.yrel = y;
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserPointerButton( int browserButton, int down ) {
++	SDL_Event event;
++	memset( &event, 0, sizeof( event ) );
++	event.type = down ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
++	event.button.state = down ? SDL_PRESSED : SDL_RELEASED;
++	event.button.button = browserButton == 1 ? SDL_BUTTON_MIDDLE
++		: ( browserButton == 2 ? SDL_BUTTON_RIGHT : static_cast<Uint8>( SDL_BUTTON_LEFT + browserButton ) );
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserKey( int scan, int key, int down, int repeat ) {
++	if ( down && scan == SDL_SCANCODE_ESCAPE && sessLocal.mapSpawned &&
++		sessLocal.guiActive == sessLocal.guiMainMenu && !console->Active() ) {
++		sessLocal.ExitMenu();
++		D3WASM_ReportBrowserState();
++		return;
++	}
++	SDL_Event event;
++	memset( &event, 0, sizeof( event ) );
++	event.type = down ? SDL_KEYDOWN : SDL_KEYUP;
++	event.key.state = down ? SDL_PRESSED : SDL_RELEASED;
++	event.key.repeat = repeat ? 1 : 0;
++	event.key.keysym.scancode = static_cast<SDL_Scancode>( scan );
++	event.key.keysym.sym = key != 0 ? static_cast<SDL_Keycode>( key ) : SDL_GetKeyFromScancode( event.key.keysym.scancode );
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserText( int codepoint ) {
++	if ( codepoint <= 0 || codepoint > 0x7f ) {
++		return;
++	}
++	SDL_Event event;
++	memset( &event, 0, sizeof( event ) );
++	event.type = SDL_TEXTINPUT;
++	event.text.text[0] = static_cast<char>( codepoint );
++	event.text.text[1] = '\0';
++	SDL_PushEvent( &event );
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void D3WASM_BrowserCommand( const char *command ) {
++	if ( command == NULL || command[0] == '\0' ) {
++		return;
++	}
++	cmdSystem->BufferCommandText( CMD_EXEC_APPEND, command );
++	cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "\n" );
++}
++
+ /*
+ ===============
+ emloopcb
+@@ -297,6 +409,7 @@ EMSCRIPTEN Note: This is an EMTERPRETIFY function
+ extern "C" void emloopcb() {
+   // Let's do what the typical while(1) { <mainloopcode> } would do: run a single frame of the game
+ 	common->Frame();
++	D3WASM_ReportBrowserState();
+ }
+ #endif
+ 
+diff --git a/neo/sys/openal_emscripten.cpp b/neo/sys/openal_emscripten.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..0b8029ef6fa233ca284f17f3e634575ab4914019
+--- /dev/null
++++ b/neo/sys/openal_emscripten.cpp
+@@ -0,0 +1,441 @@
++/*
++===========================================================================
++
++Browser OpenAL bridge for the Doom 3 WebAssembly client.
++
++The engine runs in a dedicated worker so rendering and synchronous owner-data
++access cannot stall the page.  WebAudio's AudioContext is window-only, which
++means Emscripten's regular OpenAL implementation cannot open a device there.
++This file keeps the small OpenAL state machine Doom 3 needs in the worker and
++forwards buffer/source commands to a WebAudio renderer owned by the page.
++
++===========================================================================
++*/
++
++#include "sys/platform.h"
++#include "sound/snd_local.h"
++
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++
++// Emscripten's compact OpenAL headers declare plain C symbols and intentionally
++// omit the desktop OpenAL calling-convention decoration macros.
++#ifndef AL_API
++#define AL_API
++#endif
++#ifndef AL_APIENTRY
++#define AL_APIENTRY
++#endif
++#ifndef ALC_API
++#define ALC_API
++#endif
++#ifndef ALC_APIENTRY
++#define ALC_APIENTRY
++#endif
++
++namespace {
++
++static const int D3WASM_MAX_AL_SOURCES = 512;
++static const int D3WASM_MAX_AL_BUFFERS = 16384;
++static const int D3WASM_MAX_AL_QUEUE = 32;
++
++struct d3wasmALBuffer_t {
++	bool alive;
++	int durationMsec;
++};
++
++struct d3wasmALSource_t {
++	bool alive;
++	bool playing;
++	bool paused;
++	bool looping;
++	ALuint buffer;
++	ALuint queue[D3WASM_MAX_AL_QUEUE];
++	int queueCount;
++	double startedMsec;
++};
++
++static d3wasmALBuffer_t d3wasmBuffers[D3WASM_MAX_AL_BUFFERS] = {};
++static d3wasmALSource_t d3wasmSources[D3WASM_MAX_AL_SOURCES] = {};
++static ALenum d3wasmLastError = AL_NO_ERROR;
++static int d3wasmDeviceToken = 1;
++static int d3wasmContextToken = 1;
++
++EM_JS( void, D3WASM_AudioInit, (), {
++	postMessage( { type: 'audio-init' } );
++} );
++
++EM_JS( void, D3WASM_AudioBufferData, ( int id, int format, const void *data, int size, int frequency ), {
++	const bytes = HEAPU8.slice( data, data + size );
++	postMessage( { type: 'audio-buffer', id, format, frequency, data: bytes.buffer }, [ bytes.buffer ] );
++} );
++
++EM_JS( void, D3WASM_AudioDeleteBuffer, ( int id ), {
++	postMessage( { type: 'audio-delete-buffer', id } );
++} );
++
++EM_JS( void, D3WASM_AudioCreateSource, ( int id ), {
++	postMessage( { type: 'audio-create-source', id } );
++} );
++
++EM_JS( void, D3WASM_AudioDeleteSource, ( int id ), {
++	postMessage( { type: 'audio-delete-source', id } );
++} );
++
++EM_JS( void, D3WASM_AudioSourceInt, ( int id, int param, int value ), {
++	postMessage( { type: 'audio-source-int', id, param, value } );
++} );
++
++EM_JS( void, D3WASM_AudioSourceFloat, ( int id, int param, float value ), {
++	postMessage( { type: 'audio-source-float', id, param, value } );
++} );
++
++EM_JS( void, D3WASM_AudioSourcePosition, ( int id, float x, float y, float z ), {
++	postMessage( { type: 'audio-source-position', id, x, y, z } );
++} );
++
++EM_JS( void, D3WASM_AudioSourceQueue, ( int id, int count, const ALuint *buffers ), {
++	const values = Array.from( HEAPU32.subarray( buffers >> 2, ( buffers >> 2 ) + count ) );
++	postMessage( { type: 'audio-source-queue', id, buffers: values } );
++} );
++
++EM_JS( void, D3WASM_AudioSourceUnqueue, ( int id, int count ), {
++	postMessage( { type: 'audio-source-unqueue', id, count } );
++} );
++
++EM_JS( void, D3WASM_AudioSourceAction, ( int id, int action ), {
++	postMessage( { type: 'audio-source-action', id, action } );
++} );
++
++EM_JS( void, D3WASM_AudioListenerFloat, ( int param, float value ), {
++	postMessage( { type: 'audio-listener-float', param, value } );
++} );
++
++EM_JS( void, D3WASM_AudioListenerVector, ( int param, const ALfloat *values, int count ), {
++	postMessage( {
++		type: 'audio-listener-vector', param,
++		values: Array.from( HEAPF32.subarray( values >> 2, ( values >> 2 ) + count ) )
++	} );
++} );
++
++static d3wasmALSource_t *D3WASM_Source( ALuint id ) {
++	if ( id == 0 || id >= D3WASM_MAX_AL_SOURCES || !d3wasmSources[id].alive ) {
++		return NULL;
++	}
++	return &d3wasmSources[id];
++}
++
++static d3wasmALBuffer_t *D3WASM_Buffer( ALuint id ) {
++	if ( id == 0 || id >= D3WASM_MAX_AL_BUFFERS || !d3wasmBuffers[id].alive ) {
++		return NULL;
++	}
++	return &d3wasmBuffers[id];
++}
++
++static ALuint D3WASM_AllocSource() {
++	for ( ALuint id = 1; id < D3WASM_MAX_AL_SOURCES; ++id ) {
++		if ( !d3wasmSources[id].alive ) {
++			d3wasmSources[id] = d3wasmALSource_t();
++			d3wasmSources[id].alive = true;
++			return id;
++		}
++	}
++	d3wasmLastError = AL_OUT_OF_MEMORY;
++	return 0;
++}
++
++static ALuint D3WASM_AllocBuffer() {
++	for ( ALuint id = 1; id < D3WASM_MAX_AL_BUFFERS; ++id ) {
++		if ( !d3wasmBuffers[id].alive ) {
++			d3wasmBuffers[id] = d3wasmALBuffer_t();
++			d3wasmBuffers[id].alive = true;
++			return id;
++		}
++	}
++	d3wasmLastError = AL_OUT_OF_MEMORY;
++	return 0;
++}
++
++static int D3WASM_BufferDuration( ALuint id ) {
++	d3wasmALBuffer_t *buffer = D3WASM_Buffer( id );
++	return buffer ? ( buffer->durationMsec > 1 ? buffer->durationMsec : 1 ) : 1;
++}
++
++static int D3WASM_ProcessedBuffers( d3wasmALSource_t *source ) {
++	if ( !source->playing || source->paused || source->queueCount == 0 ) {
++		return 0;
++	}
++	double elapsed = emscripten_get_now() - source->startedMsec;
++	int processed = 0;
++	while ( processed < source->queueCount ) {
++		const int duration = D3WASM_BufferDuration( source->queue[processed] );
++		if ( elapsed < duration ) {
++			break;
++		}
++		elapsed -= duration;
++		processed++;
++	}
++	if ( processed == source->queueCount ) {
++		source->playing = false;
++	}
++	return processed;
++}
++
++} // namespace
++
++extern "C" {
++
++AL_API ALenum AL_APIENTRY alGetError() {
++	const ALenum error = d3wasmLastError;
++	d3wasmLastError = AL_NO_ERROR;
++	return error;
++}
++
++AL_API const ALchar *AL_APIENTRY alGetString( ALenum param ) {
++	switch ( param ) {
++	case AL_VENDOR: return "wasm-games";
++	case AL_RENDERER: return "WebAudio bridge";
++	case AL_VERSION: return "1.1";
++	case AL_EXTENSIONS: return "";
++	default: return "";
++	}
++}
++
++AL_API ALint AL_APIENTRY alGetInteger( ALenum ) {
++	return 0;
++}
++
++AL_API ALboolean AL_APIENTRY alIsExtensionPresent( const ALchar * ) {
++	return AL_FALSE;
++}
++
++AL_API void *AL_APIENTRY alGetProcAddress( const ALchar * ) {
++	return NULL;
++}
++
++AL_API ALenum AL_APIENTRY alGetEnumValue( const ALchar * ) {
++	return 0;
++}
++
++AL_API void AL_APIENTRY alGenSources( ALsizei count, ALuint *sources ) {
++	for ( int i = 0; i < count; ++i ) {
++		sources[i] = D3WASM_AllocSource();
++		if ( sources[i] != 0 ) {
++			D3WASM_AudioCreateSource( sources[i] );
++		}
++	}
++}
++
++AL_API void AL_APIENTRY alDeleteSources( ALsizei count, const ALuint *sources ) {
++	for ( int i = 0; i < count; ++i ) {
++		const ALuint id = sources[i];
++		if ( id > 0 && id < D3WASM_MAX_AL_SOURCES && d3wasmSources[id].alive ) {
++			D3WASM_AudioDeleteSource( id );
++			d3wasmSources[id] = d3wasmALSource_t();
++		}
++	}
++}
++
++AL_API ALboolean AL_APIENTRY alIsSource( ALuint id ) {
++	return D3WASM_Source( id ) ? AL_TRUE : AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alGenBuffers( ALsizei count, ALuint *buffers ) {
++	for ( int i = 0; i < count; ++i ) {
++		buffers[i] = D3WASM_AllocBuffer();
++	}
++}
++
++AL_API void AL_APIENTRY alDeleteBuffers( ALsizei count, const ALuint *buffers ) {
++	for ( int i = 0; i < count; ++i ) {
++		const ALuint id = buffers[i];
++		if ( id > 0 && id < D3WASM_MAX_AL_BUFFERS && d3wasmBuffers[id].alive ) {
++			D3WASM_AudioDeleteBuffer( id );
++			d3wasmBuffers[id] = d3wasmALBuffer_t();
++		}
++	}
++}
++
++AL_API ALboolean AL_APIENTRY alIsBuffer( ALuint id ) {
++	return D3WASM_Buffer( id ) ? AL_TRUE : AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alBufferData( ALuint id, ALenum format, const ALvoid *data, ALsizei size, ALsizei frequency ) {
++	d3wasmALBuffer_t *buffer = D3WASM_Buffer( id );
++	if ( !buffer || !data || size <= 0 || frequency <= 0 ) {
++		d3wasmLastError = AL_INVALID_VALUE;
++		return;
++	}
++	const int channels = ( format == AL_FORMAT_STEREO8 || format == AL_FORMAT_STEREO16 ) ? 2 : 1;
++	const int bytesPerSample = ( format == AL_FORMAT_MONO8 || format == AL_FORMAT_STEREO8 ) ? 1 : 2;
++	const int frameBytes = channels * bytesPerSample;
++	const int frames = size / ( frameBytes > 1 ? frameBytes : 1 );
++	const int durationMsec = ( frames * 1000 ) / frequency;
++	buffer->durationMsec = durationMsec > 1 ? durationMsec : 1;
++	D3WASM_AudioBufferData( id, format, data, size, frequency );
++}
++
++AL_API void AL_APIENTRY alSourcei( ALuint id, ALenum param, ALint value ) {
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source ) return;
++	if ( param == AL_BUFFER ) {
++		source->buffer = value;
++		source->queueCount = 0;
++	} else if ( param == AL_LOOPING ) {
++		source->looping = value == AL_TRUE;
++	}
++	D3WASM_AudioSourceInt( id, param, value );
++}
++
++AL_API void AL_APIENTRY alSourcef( ALuint id, ALenum param, ALfloat value ) {
++	if ( D3WASM_Source( id ) ) {
++		D3WASM_AudioSourceFloat( id, param, value );
++	}
++}
++
++AL_API void AL_APIENTRY alSource3f( ALuint id, ALenum param, ALfloat x, ALfloat y, ALfloat z ) {
++	if ( D3WASM_Source( id ) && param == AL_POSITION ) {
++		D3WASM_AudioSourcePosition( id, x, y, z );
++	}
++}
++
++AL_API void AL_APIENTRY alSource3i( ALuint, ALenum, ALint, ALint, ALint ) {
++}
++
++AL_API void AL_APIENTRY alSourceQueueBuffers( ALuint id, ALsizei count, const ALuint *buffers ) {
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source || !buffers || count <= 0 ) return;
++	const int available = D3WASM_MAX_AL_QUEUE - source->queueCount;
++	const int appendCount = static_cast<int>( count ) < available ? static_cast<int>( count ) : available;
++	for ( int i = 0; i < appendCount; ++i ) {
++		source->queue[source->queueCount++] = buffers[i];
++	}
++	D3WASM_AudioSourceQueue( id, appendCount, buffers );
++}
++
++AL_API void AL_APIENTRY alSourceUnqueueBuffers( ALuint id, ALsizei count, ALuint *buffers ) {
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source || count <= 0 ) return;
++	const int removeCount = static_cast<int>( count ) < source->queueCount ? static_cast<int>( count ) : source->queueCount;
++	int removedDuration = 0;
++	for ( int i = 0; i < removeCount; ++i ) {
++		if ( buffers ) buffers[i] = source->queue[i];
++		removedDuration += D3WASM_BufferDuration( source->queue[i] );
++	}
++	for ( int i = removeCount; i < source->queueCount; ++i ) {
++		source->queue[i - removeCount] = source->queue[i];
++	}
++	source->queueCount -= removeCount;
++	source->startedMsec += removedDuration;
++	D3WASM_AudioSourceUnqueue( id, removeCount );
++}
++
++AL_API void AL_APIENTRY alGetSourcei( ALuint id, ALenum param, ALint *value ) {
++	if ( !value ) return;
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source ) {
++		*value = 0;
++		return;
++	}
++	if ( param == AL_BUFFERS_PROCESSED ) {
++		*value = D3WASM_ProcessedBuffers( source );
++		return;
++	}
++	if ( param == AL_SOURCE_STATE ) {
++		if ( source->playing && !source->paused && source->queueCount == 0 && !source->looping ) {
++			if ( emscripten_get_now() - source->startedMsec >= D3WASM_BufferDuration( source->buffer ) ) {
++				source->playing = false;
++			}
++		}
++		*value = source->paused ? AL_PAUSED : ( source->playing ? AL_PLAYING : AL_STOPPED );
++		return;
++	}
++	*value = 0;
++}
++
++AL_API void AL_APIENTRY alSourcePlay( ALuint id ) {
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source ) return;
++	source->playing = true;
++	source->paused = false;
++	source->startedMsec = emscripten_get_now();
++	D3WASM_AudioSourceAction( id, 1 );
++}
++
++AL_API void AL_APIENTRY alSourceStop( ALuint id ) {
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source ) return;
++	source->playing = false;
++	source->paused = false;
++	D3WASM_AudioSourceAction( id, 0 );
++}
++
++AL_API void AL_APIENTRY alSourcePause( ALuint id ) {
++	d3wasmALSource_t *source = D3WASM_Source( id );
++	if ( !source ) return;
++	source->playing = false;
++	source->paused = true;
++	D3WASM_AudioSourceAction( id, 2 );
++}
++
++AL_API void AL_APIENTRY alListenerf( ALenum param, ALfloat value ) {
++	D3WASM_AudioListenerFloat( param, value );
++}
++
++AL_API void AL_APIENTRY alListenerfv( ALenum param, const ALfloat *values ) {
++	if ( !values ) return;
++	D3WASM_AudioListenerVector( param, values, param == AL_ORIENTATION ? 6 : 3 );
++}
++
++ALC_API ALCdevice *ALC_APIENTRY alcOpenDevice( const ALCchar * ) {
++	D3WASM_AudioInit();
++	return reinterpret_cast<ALCdevice *>( &d3wasmDeviceToken );
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcCloseDevice( ALCdevice * ) {
++	return ALC_TRUE;
++}
++
++ALC_API ALCcontext *ALC_APIENTRY alcCreateContext( ALCdevice *device, const ALCint * ) {
++	return device ? reinterpret_cast<ALCcontext *>( &d3wasmContextToken ) : NULL;
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcMakeContextCurrent( ALCcontext * ) {
++	return ALC_TRUE;
++}
++
++ALC_API void ALC_APIENTRY alcDestroyContext( ALCcontext * ) {
++}
++
++ALC_API void ALC_APIENTRY alcSuspendContext( ALCcontext * ) {
++}
++
++ALC_API void ALC_APIENTRY alcProcessContext( ALCcontext * ) {
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcIsExtensionPresent( ALCdevice *, const ALCchar * ) {
++	return ALC_FALSE;
++}
++
++ALC_API const ALCchar *ALC_APIENTRY alcGetString( ALCdevice *, ALCenum param ) {
++	if ( param == ALC_DEVICE_SPECIFIER || param == ALC_DEFAULT_DEVICE_SPECIFIER ) {
++		return "WebAudio";
++	}
++	return "";
++}
++
++ALC_API void ALC_APIENTRY alcGetIntegerv( ALCdevice *, ALCenum, ALCsizei size, ALCint *values ) {
++	if ( values && size > 0 ) values[0] = 0;
++}
++
++ALC_API ALCenum ALC_APIENTRY alcGetError( ALCdevice * ) {
++	return ALC_NO_ERROR;
++}
++
++ALC_API void *ALC_APIENTRY alcGetProcAddress( ALCdevice *, const ALCchar * ) {
++	return NULL;
++}
++
++} // extern "C"
++
++#endif // __EMSCRIPTEN__
+diff --git a/neo/framework/Session.cpp b/neo/framework/Session.cpp
+index 881e2a1b..efdff273 100644
+--- a/neo/framework/Session.cpp
++++ b/neo/framework/Session.cpp
+@@ -1948,6 +1948,15 @@ bool idSessionLocal::SaveGame(const char* saveName, bool autosave) {
+ 
+   syncNextGameFrame = true;
+ 
++#ifdef __EMSCRIPTEN__
++  // A completed save is high-value state.  Flush the framework-owned IDBFS
++  // mount immediately so a page close or reload cannot race the next timer.
++  EM_ASM({
++    if (typeof globalThis.idtech4PersistenceSave === 'function') {
++      globalThis.idtech4PersistenceSave();
++    }
++  });
++#endif
+ 
+   return true;
+ }
+diff --git a/neo/game/Game_local.cpp b/neo/game/Game_local.cpp
+index a21672f0..f4c3a92b 100644
+--- a/neo/game/Game_local.cpp
++++ b/neo/game/Game_local.cpp
+@@ -601,15 +601,6 @@ void idGameLocal::SaveGame( idFile *f ) {
+ 	idEvent::Save( &savegame );
+ 
+ 	savegame.Close();
+-
+-#ifdef __EMSCRIPTEN__
+-	EM_ASM(
+-			console.info('Syncing user home to IDBFS....');
+-			FS.syncfs(false, function(err) {
+-				console.info("Syncing done.");
+-			});
+-		);
+-#endif
+ }
+ 
+ /*

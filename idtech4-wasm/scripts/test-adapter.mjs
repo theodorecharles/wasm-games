@@ -47,6 +47,7 @@ async function exercise(variant) {
     transferControlToOffscreen() { return { kind: 'offscreen' }; }
   };
   const document = {
+    location: { search: `?proof=adapter-${variant}` },
     pointerLockElement: null,
     documentElement: { dataset: {} },
     addEventListener(type, listener) { listeners.set(type, listener); }
@@ -57,6 +58,8 @@ async function exercise(variant) {
   }
   const sandbox = {
     console, document, Worker: FakeWorker,
+    location: { search: `?proof=adapter-${variant}` },
+    URLSearchParams,
     addEventListener(type, listener) { globalListeners.set(type, listener); },
     fetch: async source => {
       assert.equal(source, '/wasm-game-data.json');
@@ -67,6 +70,10 @@ async function exercise(variant) {
   vm.createContext(sandbox);
   vm.runInContext(adapterSource, sandbox, { filename: 'game-adapter.js' });
   const adapter = sandbox.WasmGameAdapter;
+  assert.equal(sandbox.__idtech4Proof.schemaVersion, 1);
+  assert.equal(sandbox.__idtech4Proof.proofId, `adapter-${variant}`);
+  assert.equal(JSON.parse(document.documentElement.dataset.idtech4Proof).proofId, `adapter-${variant}`,
+    'proof telemetry must be readable through shared DOM state');
   const context = {
     variant,
     config: { ...config, ...config.variants[variant] },
@@ -92,10 +99,14 @@ async function exercise(variant) {
   };
 
   await adapter.init(context);
+  assert.equal(sandbox.__idtech4Proof.variant, variant);
+  assert.equal(sandbox.__idtech4Proof.lifecycle.at(-1).name, 'initialized');
   assert.equal(adapter.readEngineState(), 'menu');
   assert.equal(adapter.readCaptureIntent(), false);
   assert.equal(createdPolicy.namespace, dataManifest.variants[variant].namespace || dataManifest.namespace);
   await adapter.start(context);
+  assert.equal(sandbox.__idtech4Proof.lifecycle.at(-1).name, 'worker-started');
+  assert.equal(sandbox.__idtech4Proof.workerMessages['out:start'], 1);
   assert.equal(loadedPolicy, createdPolicy);
   FakeWorker.instance.onmessage({ data: { type: 'status', text: 'Mounting owner data from cache' } });
   assert.doesNotMatch(loading.flat().join('\n'), /files?|data|cache|container|browser|mount|verif|directory|folder|path|module|engine/i,
@@ -131,7 +142,8 @@ async function exercise(variant) {
   assert.ok(messages.filter(message => message.type === 'persist').length >= 2,
     'visibility and page-exit lifecycle edges must request a worker-local flush');
 
-  FakeWorker.instance.onmessage({ data: { type: 'engine-state', state: 'gameplay' } });
+  FakeWorker.instance.onmessage({ data: { type: 'engine-state', state: 'gameplay', inputMode: 'gameplay' } });
+  assert.equal(sandbox.__idtech4Proof.states.at(-1).state, 'gameplay');
   assert.equal(adapter.readEngineState(), 'gameplay');
   assert.equal(adapter.readCaptureIntent(), true);
   assert.equal(transitions.at(-1), 'gameplay');
@@ -171,15 +183,48 @@ async function exercise(variant) {
   adapter.pointerMove({ x: 100, y: 200 });
   assert.equal(messages.length, beforeAbsolute, 'captured relative input must not also emit absolute motion');
   document.pointerLockElement = canvas;
+  const beforeProofRelative = sandbox.__idtech4Proof.input.pointerRelative;
+  const beforeProofDx = sandbox.__idtech4Proof.input.pointerDx;
+  const beforeProofDy = sandbox.__idtech4Proof.input.pointerDy;
   canvasListeners.get('pointermove')({ movementX: 7, movementY: -3 });
   assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-relative', dx: 7, dy: -3 });
+  assert.equal(sandbox.__idtech4Proof.input.pointerRelative, beforeProofRelative + 1);
+  assert.equal(sandbox.__idtech4Proof.input.pointerDx, beforeProofDx + 7);
+  assert.equal(sandbox.__idtech4Proof.input.pointerDy, beforeProofDy - 3);
+  listeners.get('pointerdown')({ type: 'pointerdown', button: 0, preventDefault() {} });
+  assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-button', button: 0, down: true });
+  listeners.get('pointerup')({ type: 'pointerup', button: 0, preventDefault() {} });
+  assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-button', button: 0, down: false });
+
+  listeners.get('pointerdown')({ type: 'pointerdown', button: 0, preventDefault() {} });
+  assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-button', button: 0, down: true });
 
   adapter.inputCaptureChanged(false);
+  assert.deepEqual(plain(messages.at(-2)), { type: 'pointer-button', button: 0, down: false },
+    'capture loss must release any physical mouse button still held by the native queue');
+  assert.deepEqual(plain(messages.at(-1)), { type: 'capture', captured: false });
   document.pointerLockElement = null;
+  const beforeUncapturedGameplay = messages.length;
+  adapter.pointerMove({ x: 321, y: 123 });
+  adapter.pointerButton({ button: 0, pressed: true, x: 321, y: 123 });
+  assert.equal(messages.length, beforeUncapturedGameplay,
+    'uncaptured gameplay must drop absolute mouse motion and button presses');
+
+  FakeWorker.instance.onmessage({ data: {
+    type: 'engine-state', state: 'paused', inputMode: 'console', resumeAvailable: true
+  } });
   adapter.pointerMove({ x: 321, y: 123 });
   assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-absolute', x: 321, y: 123 });
   adapter.pointerButton({ button: 0, pressed: true, x: 321, y: 123 });
   assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-button', button: 0, down: true, x: 321, y: 123 });
+  adapter.pointerButton({ button: 0, pressed: false, x: 321, y: 123 });
+  assert.deepEqual(plain(messages.at(-1)), { type: 'pointer-button', button: 0, down: false, x: 321, y: 123 });
+
+  listeners.get('keydown')({ code: 'Backquote', key: '`', ctrlKey: false, metaKey: false, altKey: false, repeat: false,
+    preventDefault() {} });
+  assert.equal(adapter.readEngineState(), 'gameplay', 'closing the in-game console must restore gameplay state immediately');
+  assert.equal(adapter.readCaptureIntent(), true, 'closing the in-game console must request capture on the trusted key gesture');
+  assert.equal(transitions.at(-1), 'gameplay');
   adapter.resize({ requestedWidth: 1536, requestedHeight: 864 });
   assert.deepEqual(plain(messages.at(-1)), { type: 'resize', width: 1536, height: 864 });
   adapter.captureLost();

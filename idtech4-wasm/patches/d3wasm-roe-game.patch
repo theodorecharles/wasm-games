@@ -1,0 +1,72 @@
+diff --git a/neo/d3xp/Game_local.cpp b/neo/d3xp/Game_local.cpp
+index dc09037270f9fa0ccb65521a6b1b263b13fdf56d..234be772485f9039a72e0a95d45c0f928676fde9 100644
+--- a/neo/d3xp/Game_local.cpp
++++ b/neo/d3xp/Game_local.cpp
+@@ -75,6 +75,8 @@ idCVar *					idCVar::staticVars = NULL;
+ 
+ idCVar com_forceGenericSIMD( "com_forceGenericSIMD", "0", CVAR_BOOL|CVAR_SYSTEM, "force generic platform independent SIMD" );
+ 
++#else
++#include "tools/compilers/aas/AASFileManager.h"
+ #endif
+ 
+ idRenderWorld *				gameRenderWorld = NULL;		// all drawing is done to this world
+@@ -3253,7 +3255,9 @@ idEntity *idGameLocal::SpawnEntityType( const idTypeInfo &classdef, const idDict
+ 		Error( "Attempted to spawn non-entity class '%s'", classdef.classname );
+ 	}
+ 
++#if !defined(__EMSCRIPTEN__)
+ 	try {
++#endif
+ 		if ( args ) {
+ 			spawnArgs = *args;
+ 		} else {
+@@ -3261,11 +3265,14 @@ idEntity *idGameLocal::SpawnEntityType( const idTypeInfo &classdef, const idDict
+ 		}
+ 		obj = classdef.CreateInstance();
+ 		obj->CallSpawn();
++
++#if !defined(__EMSCRIPTEN__)
+ 	}
+ 
+ 	catch( idAllocError & ) {
+ 		obj = NULL;
+ 	}
++#endif
+ 	spawnArgs.Clear();
+ 
+ 	return static_cast<idEntity *>(obj);
+diff --git a/neo/d3xp/gamesys/Class.h b/neo/d3xp/gamesys/Class.h
+index f017ab3565c4ded1405b5ffed961493370db45fc..e60a5b0a02fa8136cf033ff63a0fcfd43b130978 100644
+--- a/neo/d3xp/gamesys/Class.h
++++ b/neo/d3xp/gamesys/Class.h
+@@ -112,6 +112,21 @@ proper superclass is indicated or the run-time type information will be
+ incorrect.  Use this on concrete classes only.
+ ================
+ */
++#if defined(__EMSCRIPTEN__)
++#define CLASS_DECLARATION( nameofsuperclass, nameofclass )											\
++	idTypeInfo nameofclass::Type( #nameofclass, #nameofsuperclass,									\
++		( idEventFunc<idClass> * )nameofclass::eventCallbacks,	nameofclass::CreateInstance, ( void ( idClass::* )( void ) )&nameofclass::Spawn,	\
++		( void ( idClass::* )( idSaveGame * ) const )&nameofclass::Save, ( void ( idClass::* )( idRestoreGame * ) )&nameofclass::Restore );	\
++	idClass *nameofclass::CreateInstance( void ) {													\
++			nameofclass *ptr = new nameofclass;													\
++			ptr->FindUninitializedMemory();													\
++			return ptr;																\
++	}																				\
++	idTypeInfo *nameofclass::GetType( void ) const {											\
++		return &( nameofclass::Type );														\
++	}																				\
++idEventFunc<nameofclass> nameofclass::eventCallbacks[] = {
++#else
+ #define CLASS_DECLARATION( nameofsuperclass, nameofclass )											\
+ 	idTypeInfo nameofclass::Type( #nameofclass, #nameofsuperclass,									\
+ 		( idEventFunc<idClass> * )nameofclass::eventCallbacks,	nameofclass::CreateInstance, ( void ( idClass::* )( void ) )&nameofclass::Spawn,	\
+@@ -130,6 +145,7 @@ incorrect.  Use this on concrete classes only.
+ 		return &( nameofclass::Type );																\
+ 	}																								\
+ idEventFunc<nameofclass> nameofclass::eventCallbacks[] = {
++#endif
+ 
+ /*
+ ================
