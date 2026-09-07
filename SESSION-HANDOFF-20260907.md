@@ -1,5 +1,16 @@
 # Public release and GitHub handoff — 2026-09-07
 
+LATEST18:08UTC: IE5 lifecycle recovery is live under one host PM2 supervisor.
+Cold-stack and hot-VPN-restart tests passed, including actual namespace drift;
+post-recovery network/sandbox/public39-route checks pass. The supervisor is saved
+for startup while preserving all15 existing PM2 dump entries. No game/frontend/
+writer/VM change. See Windows96 `documentation/IE5_LIFECYCLE_20260907.md` for exact
+source, current container IDs and maintenance steps. Stop ONLY the supervisor
+before intentional IE5 container/image/rule maintenance; it now repairs outages.
+Full Trashcan reboot is NOT tested. Google CAPTCHAs, XP/app/visual work and final
+writer/VM migration remain unfinished. Older lifecycle-draft notes below are
+superseded; the image remains r4 from the language-header fix.
+
 FOLLOW-UP17:50UTC: owner reported repeated Google CAPTCHAs in IE5. Reproduced
 one Google unusual-traffic challenge while proving the actual Mac Chrome UA was
 sent. Found/fixed a malformed Accept-Language header and deployed renderer r4
