@@ -1,8 +1,8 @@
 # Active portfolio and Windows-96 scope
 
 Newest checkpoint: [2026-09-07 release/GitHub handoff](SESSION-HANDOFF-20260907.md).
-Eight more icon replacements are public; all accumulated work is being synced
-to GitHub at the owner's stopping-point request. Remaining features/migration
+Eight more icon replacements are public; all accumulated work was pushed and
+verified on GitHub at the owner's stopping-point request. Remaining features/migration
 are explicitly listed there; they are not complete.
 
 Updated 2026-09-06/07 at the user's request. This extends the active goal; it

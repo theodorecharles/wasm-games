@@ -47,10 +47,18 @@ no service. Chrome visual verification showed the new Blood/Duke artwork and
 
 ## GitHub and secrets
 
-All four working repositories are in the requested sync: wasm-games,
-wasm-game-lab, wasm-game-framework and windows-96. Include source, tests, artwork,
-deployment helpers, receipts and unfinished feature code; exclude ignored build
-caches, owner game/music data, private environments and credentials.
+All four repositories were pushed and their remote master commit IDs verified:
+wasm-games `d8d76ab`, wasm-game-lab `5b98063`, wasm-game-framework `5284c74`,
+and windows-96 `2a001ba`. These are the implementation checkpoint commits;
+this handoff's final verification update follows in a documentation-only commit.
+Lab's `codex/proven-browser-roster` branch was also pushed to `5b98063`, and its
+local master was fast-forwarded to the same commit. All four working trees were
+clean after the implementation push. Framework GitHub CI and Pages deployment
+both completed successfully for `5284c74`.
+
+The push includes source, tests, artwork, deployment helpers, receipts and
+unfinished feature code; ignored build caches, owner game/music data, private
+environments and credentials remain excluded.
 
 Before pushing, the old Windows96 workflows `prod-update.yml` (204718922) and
 `devel-update.yml` (204718562) were disabled using GitHub's workflow API. Both were
@@ -78,6 +86,12 @@ Git. No game/music payload or private database was uploaded.
   AIM101 handshake passes; public browser remains503.
 - Build/DOSBox/CoD2/idTech1/idTech2/Wolf3D adapter regression commands passed.
   Source-family complete `npm test` passed. These are not full browser gameplay QA.
+- Additional direct GoldSource adapter,33 endpoint-policy and6 cleanup cases
+  passed. Quake3 transport/adapter and RTCW adapters passed. All7 WolfET prefix/
+  transport cases passed with `NODE_PATH` pointing to the existing RTCW server's
+  `node_modules` (plain invocation initially lacked `ws`; no production change).
+- Whitespace checks passed for authored code/docs. Upstream SVG whitespace/CRLF
+  and unified-patch blank context lines were intentionally preserved byte-for-byte.
 - Default idTech3 and GoldSource `npm test` stop at their legacy framework
   `ebb1ebe...` pin guards because the integration uses a newer working framework
   overlay. Do not weaken the guards or rewrite old receipts to make them green.
