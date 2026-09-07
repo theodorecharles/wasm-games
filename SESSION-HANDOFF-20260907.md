@@ -1,5 +1,16 @@
 # Public release and GitHub handoff — 2026-09-07
 
+OWNER-REQUESTED PAUSE20:40UTC: stop implementation/deployment/check loops until
+the owner resumes; they need to conserve usage for the work week. Windows96
+`documentation/PAUSED_HANDOFF_20260907.md` is the first resume document. Paint
+source is saved with165 passing tests, clean focused type-check/build and actual
+canvas/draft/export checks, but is NOT deployed. Production remains unchanged.
+The owner explicitly said to leave Google CAPTCHA/PIA behavior alone; the
+unfinished reconnect draft was discarded. Preview server8136 exited0; browser
+tab close was attempted but its connection was unavailable. Remaining app/game
+scope is deferred, not complete. Do not automatically restart old writers or
+resume Google investigations.
+
 LATEST20:01UTC: Picard's9 superseded game containers plus Trashcan's old
 `purejsdoom` are stopped, restart=no. Picard's default Compose startup excludes
 the9 retired services using an explicit retired-games profile;15 unrelated
