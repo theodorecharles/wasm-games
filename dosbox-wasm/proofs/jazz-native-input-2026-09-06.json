@@ -1,0 +1,346 @@
+{
+  "observedAt": "2026-09-06T12:50:15.936Z",
+  "scope": "Native Wasm diagnostics, not Chrome acceptance. Current staged engine: first-run options and New Game/Medium/Turtle Terror navigation; normal level 1:1; typed WASD906 native save; Right/Left movement and damage; load original slot restores the original visible position and full health bar; normal Quit Game returns main menu. HUD/scene/name interpretation is visual, not an automated pixel oracle. The save and reload are in the same native process, not browser page persistence. No production engine/adapter/data/image changed.",
+  "artifacts": [
+    {
+      "file": "dosbox.js",
+      "sha256": "16fd8f9724796f15e3eac63a1126b2f4b441f3a059f517235d14698f4f4d25f8"
+    },
+    {
+      "file": "dosbox.wasm",
+      "sha256": "968e799bacb2a42c3e5260457e220c9a7421b55d095832db1bfe1b731aaf386f"
+    }
+  ],
+  "ownerFilesVerified": 66,
+  "records": [
+    {
+      "run": "menus",
+      "stage": "settings",
+      "file": "jazz-native-settings-2026-09-06.png",
+      "sha256": "876e07273235e1f7beae4f273084b3701d326288129c6875dade45716fefbf6a",
+      "frame": 3,
+      "sample": {
+        "elapsedMs": 23523,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 14,
+        "changingFrames": 14,
+        "nonuniformFrames": 12,
+        "machineSlices": 2376103,
+        "cpuCycles": 41411,
+        "audioCallbacks": 1018,
+        "audioNonzeroCallbacks": 967
+      }
+    },
+    {
+      "run": "menus",
+      "stage": "settings-down",
+      "file": "jazz-native-settings-down-2026-09-06.png",
+      "sha256": "c369e1ce7f7f037065fbb37e2da6e28c727ce549074b25c9b32f849722d2559e",
+      "frame": 6,
+      "sample": {
+        "elapsedMs": 44749,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 16,
+        "changingFrames": 16,
+        "nonuniformFrames": 14,
+        "machineSlices": 3175019,
+        "cpuCycles": 30482,
+        "audioCallbacks": 1932,
+        "audioNonzeroCallbacks": 1880
+      }
+    },
+    {
+      "run": "menus",
+      "stage": "difficulty",
+      "file": "jazz-native-difficulty-2026-09-06.png",
+      "sha256": "1a5087922049c07da6400c2fc0eac5df6f97712da4dbad98a83a4f17d7d4f770",
+      "frame": 28,
+      "sample": {
+        "elapsedMs": 204921,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 5690,
+        "changingFrames": 5645,
+        "nonuniformFrames": 5632,
+        "machineSlices": 112178278,
+        "cpuCycles": 28751,
+        "audioCallbacks": 8830,
+        "audioNonzeroCallbacks": 8624
+      }
+    },
+    {
+      "run": "menus",
+      "stage": "episode",
+      "file": "jazz-native-episode-2026-09-06.png",
+      "sha256": "d4f1043fec4fde661544a0e9c5863593d2093bfe14aafe96a654915453f00ee6",
+      "frame": 37,
+      "sample": {
+        "elapsedMs": 270613,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 9814,
+        "changingFrames": 9768,
+        "nonuniformFrames": 9754,
+        "machineSlices": 116174095,
+        "cpuCycles": 34605,
+        "audioCallbacks": 11659,
+        "audioNonzeroCallbacks": 11434
+      }
+    },
+    {
+      "run": "save",
+      "stage": "pause",
+      "file": "jazz-native-pause-2026-09-06.png",
+      "sha256": "50d99fac7d95931878124cfcf5619cc7371ee11b9890b8e9e2fa4e792d7cb898",
+      "frame": 67,
+      "sample": {
+        "elapsedMs": 66069,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 1254,
+        "changingFrames": 1226,
+        "nonuniformFrames": 1212,
+        "machineSlices": 21566669,
+        "cpuCycles": 29978,
+        "audioCallbacks": 2850,
+        "audioNonzeroCallbacks": 2441
+      }
+    },
+    {
+      "run": "save",
+      "stage": "empty-slots",
+      "file": "jazz-native-empty-slots-2026-09-06.png",
+      "sha256": "5dc64e7f43af386cbb685c7938ae6b495bab39b74d2348b2f38d4e6586bb5d1a",
+      "frame": 81,
+      "sample": {
+        "elapsedMs": 79210,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 1286,
+        "changingFrames": 1258,
+        "nonuniformFrames": 1244,
+        "machineSlices": 23638132,
+        "cpuCycles": 23948,
+        "audioCallbacks": 3416,
+        "audioNonzeroCallbacks": 2986
+      }
+    },
+    {
+      "run": "save",
+      "stage": "name-prompt",
+      "file": "jazz-native-name-prompt-2026-09-06.png",
+      "sha256": "e5ed19c55b011059a635f0810cdaa6a80e102097729abac6702fea18b4992a19",
+      "frame": 98,
+      "sample": {
+        "elapsedMs": 94512,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 1307,
+        "changingFrames": 1279,
+        "nonuniformFrames": 1265,
+        "machineSlices": 26327056,
+        "cpuCycles": 20154,
+        "audioCallbacks": 4075,
+        "audioNonzeroCallbacks": 3625
+      }
+    },
+    {
+      "run": "save",
+      "stage": "typed-name",
+      "file": "jazz-native-typed-name-2026-09-06.png",
+      "sha256": "734701271525598e6f414bc1c5f637baf6f400182814534b3067657d6a3ec878",
+      "frame": 122,
+      "sample": {
+        "elapsedMs": 117761,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 1957,
+        "changingFrames": 1929,
+        "nonuniformFrames": 1915,
+        "machineSlices": 80506749,
+        "cpuCycles": 23841,
+        "audioCallbacks": 5077,
+        "audioNonzeroCallbacks": 4604
+      }
+    },
+    {
+      "run": "save",
+      "stage": "saved-world",
+      "file": "jazz-native-saved-world-2026-09-06.png",
+      "sha256": "01fbb242099b16c167a11ff0b50b7ddca7c5c842a18a70e9ad139aa9f4da45f3",
+      "frame": 143,
+      "sample": {
+        "elapsedMs": 137557,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 2520,
+        "changingFrames": 2492,
+        "nonuniformFrames": 2478,
+        "machineSlices": 128453295,
+        "cpuCycles": 23283,
+        "audioCallbacks": 5929,
+        "audioNonzeroCallbacks": 5437
+      }
+    },
+    {
+      "run": "save",
+      "stage": "right-damage",
+      "file": "jazz-native-right-damage-2026-09-06.png",
+      "sha256": "90e4479b89a772541391d726c38ceb119518e113f02d5b28b38d5c71f03f647a",
+      "frame": 161,
+      "sample": {
+        "elapsedMs": 154762,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 3310,
+        "changingFrames": 3282,
+        "nonuniformFrames": 3268,
+        "machineSlices": 166419093,
+        "cpuCycles": 21974,
+        "audioCallbacks": 6670,
+        "audioNonzeroCallbacks": 6154
+      }
+    },
+    {
+      "run": "save",
+      "stage": "left-return",
+      "file": "jazz-native-left-return-2026-09-06.png",
+      "sha256": "49f5945bf27a766bc2e7d6fa583e774d246166bfec391742a75a68daef734039",
+      "frame": 164,
+      "sample": {
+        "elapsedMs": 156575,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 3397,
+        "changingFrames": 3369,
+        "nonuniformFrames": 3355,
+        "machineSlices": 170199002,
+        "cpuCycles": 21209,
+        "audioCallbacks": 6748,
+        "audioNonzeroCallbacks": 6228
+      }
+    },
+    {
+      "run": "save",
+      "stage": "pause-damaged",
+      "file": "jazz-native-pause-damaged-2026-09-06.png",
+      "sha256": "f48e6851299a78b534234bcc32aeed76aa624f242fa70f6315a58ec5286f5466",
+      "frame": 174,
+      "sample": {
+        "elapsedMs": 166498,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 3432,
+        "changingFrames": 3404,
+        "nonuniformFrames": 3390,
+        "machineSlices": 172509679,
+        "cpuCycles": 28863,
+        "audioCallbacks": 7175,
+        "audioNonzeroCallbacks": 6639
+      }
+    },
+    {
+      "run": "save",
+      "stage": "load-slot",
+      "file": "jazz-native-load-slot-2026-09-06.png",
+      "sha256": "ae24298ae52108e35bf6256d41072c72a961a4acd9c6130e5ed13ace5e9d8aec",
+      "frame": 188,
+      "sample": {
+        "elapsedMs": 178993,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 3465,
+        "changingFrames": 3437,
+        "nonuniformFrames": 3423,
+        "machineSlices": 174549585,
+        "cpuCycles": 23732,
+        "audioCallbacks": 7714,
+        "audioNonzeroCallbacks": 7157
+      }
+    },
+    {
+      "run": "save",
+      "stage": "restored-world",
+      "file": "jazz-native-restored-world-2026-09-06.png",
+      "sha256": "142be1c21620cac5543c96e154688eb1a56dfd2d0140cf72770a4a1fe92a8479",
+      "frame": 227,
+      "sample": {
+        "elapsedMs": 215893,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 4774,
+        "changingFrames": 4733,
+        "nonuniformFrames": 4716,
+        "machineSlices": 212699539,
+        "cpuCycles": 22161,
+        "audioCallbacks": 9303,
+        "audioNonzeroCallbacks": 8405
+      }
+    },
+    {
+      "run": "save",
+      "stage": "quit-menu",
+      "file": "jazz-native-quit-menu-2026-09-06.png",
+      "sha256": "ead2a4cfedabda377b10df24bdca1227d5181fb1cf0063f219f2f171b1e84391",
+      "frame": 253,
+      "sample": {
+        "elapsedMs": 240002,
+        "title": "DOSBox 0.74-3, Cpu speed: max 100% cycles, Frameskip  0, Program:     JAZZ",
+        "frameUpdates": 5667,
+        "changingFrames": 5624,
+        "nonuniformFrames": 5604,
+        "machineSlices": 243784709,
+        "cpuCycles": 25770,
+        "audioCallbacks": 10341,
+        "audioNonzeroCallbacks": 9403
+      }
+    }
+  ],
+  "sampleFiles": [
+    {
+      "run": "menus",
+      "file": "jazz-native-menus-samples-2026-09-06.json",
+      "sha256": "032ce0b7fb74980106caa21e52c407a1ec9565d41d0e838e69297119c25adeb8"
+    },
+    {
+      "run": "save",
+      "file": "jazz-native-save-samples-2026-09-06.json",
+      "sha256": "6811fc758fa101d1f1e1644149f4ed7f9327493fbeb172917141726abcbc97c5"
+    }
+  ],
+  "counterRegression": {
+    "file": "jazz-native-old-counter-samples-2026-09-06.json",
+    "sha256": "53a1cf711fd08adedd9b599e6438ed152e2e14669985cf286e5960e1cdf14db4",
+    "rawLast": -2088228463,
+    "unsignedLast": 2206738833,
+    "oldGatePasses": false,
+    "newGatePasses": true,
+    "explanation": "The old ten-minute live-engine diagnostic exited 1 at the >10 machine-loop gate although its frame/audio counters advanced. Native counter normalization now interprets the Wasm i32 ABI correctly; exact captured negative value and wrap deltas are unit tested."
+  },
+  "nativeSaveRunExitCode": 0,
+  "chrome": {
+    "accepted": false,
+    "observed": "Live Jazz still showed no reliable root-menu selection with short Chrome taps; direct row click did not establish selection. Demo scenes were excluded from gameplay claims. All four owned tabs were left blank."
+  },
+  "containers": [
+    {
+      "name": "/wasm-jazz",
+      "image": "sha256:da9bcff1509485639e6245881de9681c8ae4be800dbfd9718aa75abb43c45799",
+      "startedAt": "2026-09-04T19:48:48.280803025Z",
+      "restartCount": 0
+    },
+    {
+      "name": "/wasm-dosbox-suite",
+      "image": "sha256:0ec9147888b1da3cd0e294ddd8328412d5575907d40f043a374d61b0e1619429",
+      "startedAt": "2026-09-04T19:48:48.277091734Z",
+      "restartCount": 0
+    },
+    {
+      "name": "/wasm-duke1",
+      "image": "sha256:595d95c76daad9f345cb15392700b42daea378bb574cef9c20d3a96ddef037b9",
+      "startedAt": "2026-09-04T19:48:48.286590357Z",
+      "restartCount": 0
+    },
+    {
+      "name": "/wasm-duke2",
+      "image": "sha256:6fe196f49edbaade2972b6f6209742e7d8f559366399965709d5a79b4bb50970",
+      "startedAt": "2026-09-04T19:48:48.281339463Z",
+      "restartCount": 0
+    },
+    {
+      "name": "/wasm-rtcw-sp",
+      "image": "sha256:e6cc9c2be15c9009450dd341e7c25fefc04e868a6ed60be195e5ac6479a6c759",
+      "startedAt": "2026-09-04T20:59:30.05162676Z",
+      "restartCount": 0
+    }
+  ],
+  "deployed": false
+}

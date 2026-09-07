@@ -11,7 +11,8 @@ if [[ "${BUILD_WASM_SKIP_BUILD:-0}" != "1" ]]; then
     "$repo_dir/build-web.sh"
 fi
 
-for required in blood.js blood.wasm blood.data duke3d.js duke3d.wasm \
+for required in blood.js blood.wasm blood.data blood-modernized.js blood-modernized.wasm blood-modernized.data \
+    duke3d.js duke3d.wasm duke3d-modernized.js duke3d-modernized.wasm \
     blood.ico duke3d.ico blood-192.png blood-512.png duke3d-192.png duke3d-512.png \
     game-adapter.js adapters/blood.js adapters/duke3d.js wasm-game.json wasm-game-data.json \
     shared-shell/wasm-game-framework.js shared-shell/wasm-game-framework.css \
@@ -25,7 +26,7 @@ for forbidden in index.html index.js index.wasm index.data data-ingest.js owner-
     [[ ! -e "$dist_dir/$forbidden" ]] || { printf 'Downstream owns forbidden shell/data artifact: %s\n' "$forbidden" >&2; exit 1; }
 done
 
-for source in "$dist_dir/blood.js" "$dist_dir/duke3d.js" "$dist_dir/game-adapter.js" \
+for source in "$dist_dir/blood.js" "$dist_dir/blood-modernized.js" "$dist_dir/duke3d.js" "$dist_dir/duke3d-modernized.js" "$dist_dir/game-adapter.js" \
     "$dist_dir/adapters/blood.js" "$dist_dir/adapters/duke3d.js" \
     "$dist_dir/shared-shell/wasm-game-framework.js" "$dist_dir/shared-shell/wasm-game-bootstrap.js"; do
     node --check "$source"
@@ -34,9 +35,11 @@ node "$repo_dir/scripts/test-family-adapter.js"
 node "$repo_dir/scripts/test-variant-adapters.js"
 if command -v wasm-validate >/dev/null 2>&1; then
     wasm-validate "$dist_dir/blood.wasm"
+    wasm-validate "$dist_dir/blood-modernized.wasm"
     wasm-validate "$dist_dir/duke3d.wasm"
+    wasm-validate "$dist_dir/duke3d-modernized.wasm"
 else
-    for wasm in "$dist_dir/blood.wasm" "$dist_dir/duke3d.wasm"; do
+    for wasm in "$dist_dir/blood.wasm" "$dist_dir/blood-modernized.wasm" "$dist_dir/duke3d.wasm" "$dist_dir/duke3d-modernized.wasm"; do
         [[ "$(od -An -tx1 -N4 "$wasm" | tr -d ' \n')" == "0061736d" ]]
     done
 fi
@@ -56,7 +59,8 @@ for marker in CONFIG_SetDefaultKeys 'gSetup.xdim = 800' 'gMouseAim = 1' \
 done
 for marker in 'emscripten_set_main_loop(Duke_WasmFrame' Duke_WasmEnterFrontend Duke_WasmDrawFrontend \
     'does not return until a game starts' 'ud.setup.xdim = 800' 'ud.setup.ydim = 600' \
-    'ud.setup.bpp = 8' 'ud.mouseaiming = 0' Duke_WasmRuntimeState Duke_WasmEnsureMenu \
+    'ud.setup.bpp = 8' 'ud.setup.xdim = 1280' 'ud.setup.ydim = 720' 'ud.setup.bpp = 32' \
+    'ud.mouseaiming = 0' Duke_WasmRuntimeState Duke_WasmEnsureMenu \
     Duke_WasmSetPointerLock Duke_WasmControlsMask Duke_WasmMenuId Duke_WasmMenuEntry; do
     rg -Fq "$marker" "$source_dir/source/duke3d/src/game.cpp" || { printf 'Missing Duke native seam: %s\n' "$marker" >&2; exit 1; }
 done
@@ -79,9 +83,11 @@ for marker in SDL_GL_CONTEXT_PROFILE_ES 'SDL_GL_CONTEXT_MAJOR_VERSION, 3' 'SDL_G
     }
 done
 for marker in _NBlood_WasmRuntimeState _NBlood_WasmCaptureIntent _NBlood_WasmCaptureTarget _NBlood_WasmEnsureMenu _NBlood_WasmSetPointerLock _NBlood_WasmControlsMask; do
-    rg -Fq "$marker" "$dist_dir/blood.js" || { printf 'Blood native hook is not exported: %s\n' "$marker" >&2; exit 1; }
+    for generated in "$dist_dir/blood.js" "$dist_dir/blood-modernized.js"; do
+        rg -Fq "$marker" "$generated" || { printf 'Blood native hook is not exported: %s (%s)\n' "$marker" "$generated" >&2; exit 1; }
+    done
 done
-for generated in "$dist_dir/blood.js" "$dist_dir/duke3d.js"; do
+for generated in "$dist_dir/blood.js" "$dist_dir/blood-modernized.js" "$dist_dir/duke3d.js" "$dist_dir/duke3d-modernized.js"; do
     rg -Fq '_Build_WasmControllerFrame' "$generated" || { printf 'Native controller seam is not exported: %s\n' "$generated" >&2; exit 1; }
     for marker in _Build_WasmKeyEvent _Build_WasmInputFrame _Build_WasmPointerMove _Build_WasmPointerDelta _Build_WasmPointerButton \
         _Build_WasmRenderMode _Build_WasmRenderWidth _Build_WasmRenderHeight _Build_WasmRenderBpp; do
@@ -91,8 +97,10 @@ done
 rg -Fq 'Build_WasmControllerFrame' "$source_dir/source/build/src/baselayer.cpp"
 rg -Fq 'Browser adapters inject framework-normalized relative deltas directly.' "$source_dir/source/build/src/baselayer.cpp"
 for marker in _Duke_WasmRuntimeState _Duke_WasmEnsureMenu _Duke_WasmSetPointerLock _Duke_WasmControlsMask \
-    _Duke_WasmMenuId _Duke_WasmMenuEntry; do
-    rg -Fq "$marker" "$dist_dir/duke3d.js" || { printf 'Duke native hook is not exported: %s\n' "$marker" >&2; exit 1; }
+    _Duke_WasmMenuId _Duke_WasmMenuEntry _Build_WasmTextEvent; do
+    for generated in "$dist_dir/duke3d.js" "$dist_dir/duke3d-modernized.js"; do
+        rg -Fq "$marker" "$generated" || { printf 'Duke native hook is not exported: %s (%s)\n' "$marker" "$generated" >&2; exit 1; }
+    done
 done
 rg -Fq 'dataset.dukePlayerView' "$source_dir/source/duke3d/src/game.cpp"
 rg -Fq '#define DUKE13_CRC  (int32_t)0xBBC9CE44' "$source_dir/source/duke3d/src/grpscan.h"
@@ -105,11 +113,12 @@ for adapter in "$dist_dir/adapters/blood.js" "$dist_dir/adapters/duke3d.js"; do
     done
 done
 
-if strings "$dist_dir/blood.data" | rg -i 'BLOOD\.(RFF|INI)|TILES[0-9]{3}\.ART|SOUNDS\.RFF' >/dev/null; then
+if strings "$dist_dir/blood.data" "$dist_dir/blood-modernized.data" | rg -i 'BLOOD\.(RFF|INI)|TILES[0-9]{3}\.ART|SOUNDS\.RFF' >/dev/null; then
     printf 'Retail Blood data leaked into the preload bundle.\n' >&2
     exit 1
 fi
 rg -Fq '/game/nblood.pk3' "$dist_dir/blood.js" || { printf 'Tracked NBlood engine resource is absent from preload metadata.\n' >&2; exit 1; }
+rg -Fq '/game/nblood.pk3' "$dist_dir/blood-modernized.js" || { printf 'Tracked Modernized NBlood engine resource is absent from preload metadata.\n' >&2; exit 1; }
 if find "$dist_dir" -type f \( -iname '*.rff' -o -iname '*.art' -o -iname '*.grp' -o -iname '*.rts' \
     -o -iname '*.map' -o -iname '*.smk' -o -iname '*.ogg' \) -print -quit | rg -q .; then
     printf 'Game data was found under the public document root.\n' >&2
@@ -130,5 +139,5 @@ fi
 
 node "$repo_dir/scripts/verify-site-contract.js"
 file "$dist_dir/blood.wasm" "$dist_dir/duke3d.wasm" "$dist_dir/blood.data"
-git -C "$repo_dir" diff --check
+git -C "$repo_dir" diff --check -- .
 printf 'Blood and Duke Nukem 3D builds passed native, framework, data-boundary, input, audio, state, and PWA checks.\n'

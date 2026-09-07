@@ -1,5 +1,66 @@
 # GoldSrc campaign browser proof
 
+## Current repair checkpoint
+
+[Counter-Strike managed-match menu](CS-MANAGED-MENU-2026-09-06.md) is installed
+on 8017. Join-only cold UI and compact Resume/Disconnect/Configuration/Console
+pause UI replace unsupported native main-menu actions; Customize remains
+available directly through Configuration. A Chrome-reproduced Enter focus
+failure is fixed and regression-tested. This is the current image checkpoint;
+the preceding global-isolation fix and stored-WAD installation remain included.
+
+[Counter-Strike menu global isolation](CS-MENU-GLOBALS-2026-09-06.md) was
+installed after paired original/patched Wasm tests and candidate Chrome
+acceptance and remains included. It fixes the CS client's overwrite of menu
+globals, restoring Resume-button input, Console/Disconnect controls and menu
+backgrounds. That preceding release superseded the image ID below; stored-WAD data and
+all other native artifacts remain unchanged.
+
+[The cumulative live release](RELEASE-2026-09-06.md) installs the exact tested
+32932 image on 8017 with its matched stored-WAD data. All original installation
+files remain intact; the image/data/container audit and current Chrome checks
+are recorded there. Earlier candidate-only notes below describe their original
+checkpoints, not the current deployment state.
+The live release also restores a save made with the old image and verifies
+the corrected native key hints. Its read-only
+[Chrome evidence verifier](../scripts/test-release-evidence.mjs) checks native
+load/start/departure ordering and keeps unresolved capture acceptance false.
+
+[Blue Shift saves and save-key hints](GOLDSOURCE-SAVES-2026-09-05.md) adds actual
+menu save → full page reload → native restore, plus trusted F6/F7 quick-save/load.
+The native menu's obsolete binding lookup is repaired and verified in Chrome;
+compiled regressions and exact package comparisons pass on local candidate 32932.
+Capture, other-variant saves and broader campaign acceptance remain open.
+
+[Stored-WAD load-time repair](GOLDSOURCE-STORED-WAD-2026-09-05.md) verifies the
+expansions' long native map-load stage comes from repeatedly decompressing
+texture archives. Storage-only candidate data reduces measured Blue Shift /
+Opposing Force map startup from roughly 19 / 15 seconds to about 1 second each.
+Payloads/native/browser bytes are checked. That historical comparison did not
+replace live data; the cumulative release above now supplies the matched
+versioned installation. Capture remains open.
+
+[Normal campaigns and capture repairs](GOLDSOURCE-CAPTURE-CAMPAIGNS-2026-09-05.md)
+records current unaccelerated Half-Life transitions, actual Chrome capture
+traces, and isolated shared-shell request/loading fixes. Full control and
+campaign acceptance remains explicitly separate from these results.
+
+[Counter-Strike Chrome join and endpoint repair](COUNTER-STRIKE-CHROME-2026-09-05.md)
+adds actual Dust II/bot/native-roster evidence and the tested local candidate
+that respects an explicit server selection. It distinguishes Chrome rendering
+and retry evidence from the still-open capture/audio and model-overflow work.
+
+[Counter-Strike host recovery and signaling](COUNTER-STRIKE-2026-09-04.md)
+records the latest host/frontend images, native fault-injection results, the
+4192 signaling-port migration, and remaining browser/model-overflow work.
+
+[2026-09-04 repairs](REPAIR-2026-09-04.md) records the current lab image and
+shared log-selection fix, including the tests that passed and browser checks
+still outstanding. The campaign and bot reports below are historical evidence,
+not acceptance of this replacement image.
+
+## Historical campaign report
+
 Current report: `campaign-intros.json`
 
 SHA-256: `21343feafb4dead5f6328f8a0a07daec94949b2bc9b3e8b330013e354836cfaa`

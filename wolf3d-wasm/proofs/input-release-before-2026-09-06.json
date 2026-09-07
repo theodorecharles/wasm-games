@@ -1,0 +1,4159 @@
+{
+  "observedAt": "2026-09-06T23:06:48.984Z",
+  "mode": "before",
+  "images": {
+    "wolf3d": {
+      "image": "local/wolf3d-wasm:input-edges-20260906",
+      "id": "sha256:c98f904e614d64d59bdba5aab6a31ca5a0ab8426e145b4292b62f00e46fe1636",
+      "variant": "wolf3d",
+      "siteFiles": 16,
+      "files": {
+        "wasm-game-framework.json": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+        "wolf3d-512.png": "40ae01dda39182648e0ef990bffbe44c65462133192b610604ff85e03b281456",
+        "wolf3d.ico": "d0407fba4bf21844598aa7712841e0c95aa0caf23044d9749b8d9a5492625824",
+        "wasm-game-data.json": "a3135a1e2a0c34674dffaa19f114317d79506fcd6f08624a52902cb8b0eae695",
+        "wasm-game.json": "aed03168e73eeb229cd66eadf8419662df62d914fed286f496f2bb910659e916",
+        "spear.js": "6153c98f62bc0825aafcbe4119be4d79c91e8130f6adb96fb82be4523a1394fc",
+        "wolf3d.wasm": "10ffc86942c8f93fed28fc8abbe958c5a81a31f635736c7ca775de92b9aa456f",
+        "shared-shell/wasm-game-bootstrap.js": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33",
+        "shared-shell/wasm-game-framework.json": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+        "shared-shell/index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+        "shared-shell/wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+        "shared-shell/wasm-game-framework.js": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+        "wolf3d-192.png": "ab348b374ab5b23e0b50cb379ec05f8b0685f674daf0d6fff7e28140571cc093",
+        "spear.wasm": "398205f0a0303ec8ae5955fe011a9d69f024c03c3797baf68fc752a6d43aa1d1",
+        "wolf3d.js": "e5267b4c371089d897b1fd66895fc4dfc2d5ed651de35a6226d0f6094a1386f7",
+        "game-adapter.js": "1c2992fbf94ffaa39b97025b5be987160c26ee2878a68da340f47c0548ca3854"
+      },
+      "effectiveShell": {
+        "index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+        "wasm-game-framework.js": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+        "wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+        "wasm-game-bootstrap.js": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+      },
+      "nativeModulesValidated": 2,
+      "audited": true
+    },
+    "spear": {
+      "image": "local/spear-wasm:input-edges-20260906",
+      "id": "sha256:4e4bb23794fca5ce5c258e24ef097280a391e518b24175cb811bea51c4e2e2d1",
+      "variant": "spear",
+      "siteFiles": 16,
+      "files": {
+        "wasm-game-framework.json": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+        "wolf3d-512.png": "40ae01dda39182648e0ef990bffbe44c65462133192b610604ff85e03b281456",
+        "wolf3d.ico": "d0407fba4bf21844598aa7712841e0c95aa0caf23044d9749b8d9a5492625824",
+        "wasm-game-data.json": "a3135a1e2a0c34674dffaa19f114317d79506fcd6f08624a52902cb8b0eae695",
+        "wasm-game.json": "aed03168e73eeb229cd66eadf8419662df62d914fed286f496f2bb910659e916",
+        "spear.js": "6153c98f62bc0825aafcbe4119be4d79c91e8130f6adb96fb82be4523a1394fc",
+        "wolf3d.wasm": "10ffc86942c8f93fed28fc8abbe958c5a81a31f635736c7ca775de92b9aa456f",
+        "shared-shell/wasm-game-bootstrap.js": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33",
+        "shared-shell/wasm-game-framework.json": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+        "shared-shell/index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+        "shared-shell/wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+        "shared-shell/wasm-game-framework.js": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+        "wolf3d-192.png": "ab348b374ab5b23e0b50cb379ec05f8b0685f674daf0d6fff7e28140571cc093",
+        "spear.wasm": "398205f0a0303ec8ae5955fe011a9d69f024c03c3797baf68fc752a6d43aa1d1",
+        "wolf3d.js": "e5267b4c371089d897b1fd66895fc4dfc2d5ed651de35a6226d0f6094a1386f7",
+        "game-adapter.js": "1c2992fbf94ffaa39b97025b5be987160c26ee2878a68da340f47c0548ca3854"
+      },
+      "effectiveShell": {
+        "index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+        "wasm-game-framework.js": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+        "wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+        "wasm-game-bootstrap.js": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+      },
+      "nativeModulesValidated": 2,
+      "audited": true
+    }
+  },
+  "http": {
+    "wolf3d": {
+      "base": "http://127.0.0.1:32992",
+      "ready": true,
+      "checkedFiles": 14
+    },
+    "spear": {
+      "base": "http://127.0.0.1:32993",
+      "ready": true,
+      "checkedFiles": 14
+    }
+  },
+  "evidence": {
+    "wolf-input-menu-2026-09-06.json": "4cf54935b7ef9ebc0c34129c4667de9fb5b19282d6271da74a5d3d4cfc486454",
+    "wolf-input-menu-2026-09-06.jpg": "350cc54f4dd859028efb9ca073afd8664e70c5b1f757f30b9ec56d67745189a4",
+    "wolf-input-world-2026-09-06.json": "b8fa06e8a4b0cf70fac8b3064ab61fb7041de1ed022858eb1e882782d86d6426",
+    "wolf-input-world-2026-09-06.jpg": "50b12c8055ca44ced58650cd41d02183a05120979a9c40f812879ac0fbd7b8e4",
+    "wolf-input-forward-2026-09-06.json": "e734902a33d2b56e8d0f2cdca56f144146526eeef77e5fb0e272985278a1add0",
+    "wolf-input-forward-2026-09-06.jpg": "1f13bd09fb3234d715056a8b5e7e10a83bfb287d7b5a1a6eaebf3d0af29e3732",
+    "wolf-input-fire-one-2026-09-06.json": "951c4ec934950bc61b543ebd9f7a6896eb9a4fd401e05fd5858c8cbdab5050ae",
+    "wolf-input-fire-one-2026-09-06.jpg": "2d425dfd6a3792cad180688baaee2ada241f6b63844c11eacdbd07b58402e6d2",
+    "wolf-input-pause-2026-09-06.json": "391c3ed9b8b0ad5c1d06d766b70276b4a37af12a07b470af679c8c87103d1c92",
+    "wolf-input-pause-2026-09-06.jpg": "9b9185bc5ca2a3ecb348206f7b92d3cc69eb12aeee7ba7a92789e43c4c573eae",
+    "wolf-input-resumed-2026-09-06.json": "e59b9dd8adb19704e51440ee265ff4e6ee0d5c2dfd1b5c2e6091110d33125793",
+    "wolf-input-resumed-2026-09-06.jpg": "a897105abc55e631bbf5f57031a24f8a752e2bb7eefd192e0bb638e61271e418",
+    "wolf-input-resume-fire-2026-09-06.json": "1a1feb3726aca0a146b9b73e55fa6453cc83fb260eda12b599b46380cbc58d73",
+    "wolf-input-resume-fire-2026-09-06.jpg": "03e15569e4b7d3e4599a0a8e55c564faf544dad86aac98dd34fd6fe6bea30008",
+    "spear-input-menu-2026-09-06.json": "ace2883a5f2363894b7883d6fa6d3e25e9e81680d57df66b4877038e5b150396",
+    "spear-input-menu-2026-09-06.jpg": "128eaf27aaa335c4fadf7e76bccc8bc339d411797e4cef74ff613168ba9b8590",
+    "spear-input-world-2026-09-06.json": "de1d5883377da45e6d9536ed033879b07d1515ceaa61bab6335b33f47ebe74ec",
+    "spear-input-world-2026-09-06.jpg": "303a2035d7196e97d072b6b7d8e826432e39fdefda7daadffa06156cc3da25a6",
+    "spear-input-forward-2026-09-06.json": "45c2f28a00a74f9bfc6d4857184e1bc7407c8a441dc3c2f8de59142bdba3157e",
+    "spear-input-forward-2026-09-06.jpg": "62ffcd76f29096121c7bfadecb1be6641da5f681b600e43685f06fcbcc22a1fd",
+    "spear-input-fire-one-2026-09-06.json": "76b762a6c42c7dbececc0891cb51f85cfbef224313af6c6c4220ad886788e8d7",
+    "spear-input-fire-one-2026-09-06.jpg": "1cabe63802cf2041bb90aaac904f0b562d2003f9eb4ac56c01e706b28051c5c4",
+    "spear-input-pause-2026-09-06.json": "7b2b3fc6651043a0cb5e20fa183e686dc7e8bb17e7fbde06dac3c1f1c3ee30e4",
+    "spear-input-pause-2026-09-06.jpg": "2efe1a30d965f1112b1eebc810fa647b05357e74652fa2d479405af4102bd93e",
+    "spear-input-resumed-2026-09-06.json": "131eb56f47453cd263b905d06781b0bdfcee96e39718ab42c487c1632a88fb3d",
+    "spear-input-resumed-2026-09-06.jpg": "1cabe63802cf2041bb90aaac904f0b562d2003f9eb4ac56c01e706b28051c5c4",
+    "spear-input-resume-fire-2026-09-06.json": "7fe313119a31bfd15e73137c66fb586a836b8cdbc38ba6dada9b46d22377730e",
+    "spear-input-resume-fire-2026-09-06.jpg": "97f99af9eab6f13afa571c086fa2bf11b59ab6dea2889aa236a374f487ce6adc"
+  },
+  "patches": {
+    "browser.patch": "7da9dba2418fed92d3f1246540c39deac010d929c9609f910004b4ba4dbc49da",
+    "menu-pointer.patch": "ed417b9126d6915cf3d3ac0bc0386aa9d68278a67d9d394970eeaed362ed771a",
+    "menu-key-pump.patch": "6a577a9fbac44519b1cba7e58390ed717cf5612641fe8614603f5ab4b347cb21",
+    "browser-palette-present.patch": "9011fe1544a2606ae2484a1c59211c1d2cac5b4608aa4d343a11581f740bce67",
+    "gameplay-input-edges.patch": "4b9cdf5bf3f3091a98ab47ee95a0af628f10548619f9d18483128004dd59b940"
+  },
+  "containers": {
+    "spear-input-proof-20260906": {
+      "id": "b7da56305ca8555626b50cb1e4f258b53b7c8c1b195c398ce6665e60919dcf72",
+      "image": "sha256:4e4bb23794fca5ce5c258e24ef097280a391e518b24175cb811bea51c4e2e2d1",
+      "status": "running",
+      "startedAt": "2026-09-06T23:02:38.912523276Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/6486686b2c8e103fe79a06973b31279e3590ae6bcc8c0127777b4d9a2eefde4a/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32993"
+          }
+        ]
+      }
+    },
+    "wolf-input-proof-20260906": {
+      "id": "24a5692b9860d107dc933256bfb331da218189808ecc2abb92485da9b22c7ac4",
+      "image": "sha256:c98f904e614d64d59bdba5aab6a31ca5a0ab8426e145b4292b62f00e46fe1636",
+      "status": "running",
+      "startedAt": "2026-09-06T23:02:38.718529452Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/5812db53184cbb395b7c79b9d23c27c80d9c3c5aff2d2ba655776ad381d7ea98/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32992"
+          }
+        ]
+      }
+    },
+    "wolf-family-input-build-20260906": {
+      "id": "d5466dc253bc50890b753dc7e8db904c3287360c7cf4e3e79a5547dd9600dca9",
+      "image": "sha256:9bc6c7b128b567c4001321ef4167356b672e8129673991f6aec946ba53a393e0",
+      "status": "exited",
+      "startedAt": "2026-09-06T23:01:42.968834586Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-framework",
+          "destination": "/framework",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ],
+      "ports": {}
+    },
+    "wasm-spear": {
+      "id": "f2c0e717506beecc11ce1ba5ac917295410706b13cc09bea1c143b1c152cca1a",
+      "image": "sha256:4be9738a26a29d6928b7e546fa477d64cca3f36ba2eb777b9f5a4c3cbf9c3345",
+      "status": "running",
+      "startedAt": "2026-09-06T22:35:43.135181499Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/bd0cf47209c3a30f596867d37fd599730070141b5fc236c83a6aaf82aaad3fd5/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8012"
+          }
+        ]
+      }
+    },
+    "wasm-wolf3d": {
+      "id": "5e755e4bc27af15fcb8a5e74f4522c3aca78a536d0b76af402e758b53d59f129",
+      "image": "sha256:3424e05557beb19fae09b34342fc91ef01655d55e779f5d5150046ffc898aad0",
+      "status": "running",
+      "startedAt": "2026-09-06T22:35:43.134728034Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ee4d5998bb55fa2abcbfddde505e47afcb199cf34a2e78ce43f0140f44fa92ff/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8011"
+          }
+        ]
+      }
+    },
+    "spear-palette-proof-20260906": {
+      "id": "aa6dd43102e3003eff56b976372c6267aeec621eee323653f9a78b3c6e8ac89a",
+      "image": "sha256:4be9738a26a29d6928b7e546fa477d64cca3f36ba2eb777b9f5a4c3cbf9c3345",
+      "status": "running",
+      "startedAt": "2026-09-06T22:26:36.152145933Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/a6f47fa2e0f012e823e0b9d1638eb0ee344039688e1c08e448cd199356ad159b/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32991"
+          }
+        ]
+      }
+    },
+    "wolf-palette-proof-20260906": {
+      "id": "8b3e93bd971cd3b7648ca650440d3ae97ed2d19b08b135e1644a309ed7550014",
+      "image": "sha256:3424e05557beb19fae09b34342fc91ef01655d55e779f5d5150046ffc898aad0",
+      "status": "running",
+      "startedAt": "2026-09-06T22:26:35.89889842Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ad504aa5c896b0decf739eae2b05dd6cc5e2c0750bd1518e71cd2c8eb374db76/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32990"
+          }
+        ]
+      }
+    },
+    "wolf-family-palette-build-20260906": {
+      "id": "cd92591a569c19ed5c99cf2e083fa0f6d889541408a323ca45c7c7c017c989c8",
+      "image": "sha256:9bc6c7b128b567c4001321ef4167356b672e8129673991f6aec946ba53a393e0",
+      "status": "exited",
+      "startedAt": "2026-09-06T22:21:51.119882888Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-framework",
+          "destination": "/framework",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ],
+      "ports": {}
+    },
+    "wolf-family-build-20260906": {
+      "id": "7557856e2a8d0b0b3a2722087efc0fe51c43eb136e7dd3d578bb17d085aee6e7",
+      "image": "sha256:9bc6c7b128b567c4001321ef4167356b672e8129673991f6aec946ba53a393e0",
+      "status": "exited",
+      "startedAt": "2026-09-06T22:14:13.904654056Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-framework",
+          "destination": "/framework",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ],
+      "ports": {}
+    },
+    "wolf-family-compile-20260906": {
+      "id": "beff46152d6f5ba3feaf8ca94269b3a9d4b69e1b8d20b6280959d86549707f6a",
+      "image": "sha256:9bc6c7b128b567c4001321ef4167356b672e8129673991f6aec946ba53a393e0",
+      "status": "exited",
+      "startedAt": "2026-09-06T22:13:22.299520532Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-framework",
+          "destination": "/framework",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ],
+      "ports": {}
+    },
+    "wasm-blood": {
+      "id": "70b007469db4e6c60c03aed7172359d6bd09e5e311e516a175a2aecdbe0ef9e2",
+      "image": "sha256:db6c466f16e89fed82c5c53b6c3fdfa62864cbbd72aaf278a7252f9101b31512",
+      "status": "running",
+      "startedAt": "2026-09-06T21:57:58.601104085Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8007"
+          }
+        ]
+      }
+    },
+    "wasm-duke3d": {
+      "id": "5c8d76af82faff5310fe40c48c0267fd31262f26aa745dc123105777c3ed04f1",
+      "image": "sha256:6f0fbb17a90525cdc288f750ba53e4ebd1abc69cba400809d91f9178cccd9af4",
+      "status": "running",
+      "startedAt": "2026-09-06T21:57:58.601720866Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18007"
+          }
+        ]
+      }
+    },
+    "build-family-current-proof-20260906": {
+      "id": "d0b301b0114b9a31d061a7b5f5e67deb17111ec861dc3f08b162bc5f61b492bb",
+      "image": "sha256:b50185ae5750bfa4d571ddcb7677b07af8b01f33000b0e3573f995a68f5e6500",
+      "status": "running",
+      "startedAt": "2026-09-06T21:38:47.083221307Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/c1e65758cb5c2ccc9e3c1d2019a40c4433e44046a481478584ba03c3f70dc7c5/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/blood",
+          "destination": "/data/blood",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32989"
+          }
+        ]
+      }
+    },
+    "build-family-modernized-proof-20260906": {
+      "id": "a44dfd3f8b1fe04612bed63eff370dc01a105710d5bd02ab873be7364de074e3",
+      "image": "sha256:19927d01facc9d1aed20e59cb5d4547aea18e4cf4a1f51e93238fc71cb85f080",
+      "status": "running",
+      "startedAt": "2026-09-06T21:36:36.871596097Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/d4193166cf2e171084d5e11dd6131488c8dc2b7a4a37f765346faad2f913f4b2/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/blood",
+          "destination": "/data/blood",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32988"
+          }
+        ]
+      }
+    },
+    "build-family-compile-20260906": {
+      "id": "dd08f558c411b0b84c68c578b3a9d3b7726a8f43ce881c63bee8159b51099bb2",
+      "image": "sha256:9bc6c7b128b567c4001321ef4167356b672e8129673991f6aec946ba53a393e0",
+      "status": "exited",
+      "startedAt": "2026-09-06T21:31:21.20970516Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-framework",
+          "destination": "/framework",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ],
+      "ports": {}
+    },
+    "blood-modernized-profiles-proof-20260906": {
+      "id": "4a2a02b1f99b0a411538fd5411778b00910aadbe2d5e3d7e9fe310ece924e2ed",
+      "image": "sha256:38854e42d15bb80dd01900be270e0ce19161f48abdf2c7cb7c0e09dd956b6c20",
+      "status": "running",
+      "startedAt": "2026-09-06T21:12:23.339394601Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/1b5bb6cece320e9d03a9f89a10d8cb9ff79e5d71f4281eb3a0f94a91eaa4a879/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/blood",
+          "destination": "/data/blood",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32987"
+          }
+        ]
+      }
+    },
+    "duke-polymost-profiles-text-proof-20260906": {
+      "id": "a45925dfbf2a81ff2f191e6c1220995aef0c4fdb577f9c0b61673cc380fbab29",
+      "image": "sha256:f8b946e377699f674493e9286ed8dde3bcd0d60c41b7f3230d3dae8035e407bf",
+      "status": "running",
+      "startedAt": "2026-09-06T20:54:59.238950375Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/82552adeb54e647540fcca4ee70190d67e06a3b37009e754aaa5beb5552b829f/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32986"
+          }
+        ]
+      }
+    },
+    "duke-polymost-profiles-alpha-proof-20260906": {
+      "id": "78ed9074492f1825fbcd5ade88eb9d324a121b7bba9a833418440320e044fce8",
+      "image": "sha256:f9abfa3e2b8f5290df469cb0c5fa98f88147940f8882f48e864b9e8197fb3dc2",
+      "status": "running",
+      "startedAt": "2026-09-06T20:28:26.061605435Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/9ccb8e174afa4fd522250157cafaf414d7ef01747cdb02fbe637da6051fb7099/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32985"
+          }
+        ]
+      }
+    },
+    "duke-polymost-profiles-precision-proof-20260906": {
+      "id": "52e84b41513c442ff219ef5b3875d8edf3b15f05266a2a30468ff49c0884411a",
+      "image": "sha256:3819854f04793930aee371f16303891035b0088da005fe840dbc0303cb31d339",
+      "status": "running",
+      "startedAt": "2026-09-06T20:13:10.549353895Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/688cb2a2a41a91a5b2f0cf3ba7ad9a55bc1b7e918b4c49e3308fcd8c1f7e2499/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32984"
+          }
+        ]
+      }
+    },
+    "duke-polymost-profiles-npot-proof-20260906": {
+      "id": "c341f9e039866486fa77bfb731529cfd826edb163e96a8ddc456c80763bba87b",
+      "image": "sha256:f8d48ee6b9ac66f29a8635fb3f783d5cad68a305d46b3d869ba677e07d0a9780",
+      "status": "running",
+      "startedAt": "2026-09-06T19:59:52.505191557Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/101299c6f65c161713303022bb84d078161f39dcf3df03630524c6232a8585fc/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32983"
+          }
+        ]
+      }
+    },
+    "duke-polymost-profiles-visible-proof-20260906": {
+      "id": "fb547d5f757df12cc2ef711fd90c0992c6719e57d44fa84aa1ae5bd687590efc",
+      "image": "sha256:2ccfad751cbf756e3722a8b0e8912eec9d66a269a7de6a22aab9db59ad31e318",
+      "status": "running",
+      "startedAt": "2026-09-06T19:44:53.424804364Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/7b6e8e29e1cdd8420dae024f15cf9f7c19ce4fd84a1d6199d23ee166fb30ba91/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32982"
+          }
+        ]
+      }
+    },
+    "duke-polymost-profiles-proof-20260906": {
+      "id": "32cdc97be0dfa79e928ca4c1f9b643d4fe355f50f3b51a9681b3ed4294f22293",
+      "image": "sha256:9a0e9da870afcf0fab425eb19e87b1ff363ec16a0e056c395170e7873504deeb",
+      "status": "running",
+      "startedAt": "2026-09-06T19:43:07.593486467Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/e91427f6636e6ece4cbd0935186f944fa8b0c7cb4fea4b34698e3f2b22d841d3/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32981"
+          }
+        ]
+      }
+    },
+    "duke-polymost-projection-proof-20260906": {
+      "id": "68637b8840e4a5978e98d82faea059d5a0a7f53d7e12398419667a3d2f7e9675",
+      "image": "sha256:b66800ee76a5719c52c3854d7736c3ea549c93b480984b08c1fd01d9e3fdbb59",
+      "status": "running",
+      "startedAt": "2026-09-06T19:27:56.091263244Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/aba088ad0fcc0a4f7571496bfa8722c603dc75b59daa5d5f4474ed7f4c237f53/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32980"
+          }
+        ]
+      }
+    },
+    "duke-polymost-visible-proof-20260906": {
+      "id": "1f96819739c49d3966d84c7df14b69bddecf4e73d132328472dc5412205c75df",
+      "image": "sha256:5a06a7977916323b80b7fae7e9862ec6011c17724871b8837b10322412cf21e9",
+      "status": "running",
+      "startedAt": "2026-09-06T19:21:41.674042171Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/27c9ef160577edc36e68b8bb204b17e497b6ae78871bc72f7f44d8a9e7671eb9/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32979"
+          }
+        ]
+      }
+    },
+    "duke-polymost-sky-proof-20260906": {
+      "id": "7f27ba12d342f6776d65838b5ae13f1b1e97caab29053ae4dac40876cce53804",
+      "image": "sha256:a79ef2e40a6eb2634adf03dce2ef9ba0d8a197823929d33a66912a617ead73ae",
+      "status": "running",
+      "startedAt": "2026-09-06T19:20:22.142503207Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/a5e6d008654c6f0ea2deb57bdba74e7230c62d481671e5c6ff724c32ddfe3e6c/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32978"
+          }
+        ]
+      }
+    },
+    "duke-polymost-hints-fixed-proof-20260906": {
+      "id": "7d2bb49ce0853a19c0ef63e4922a33ef300faffa8247fe06811bfe652be4209a",
+      "image": "sha256:a3bfbdcaba4fc013395866c4513926fee4eca982528a86927c52ca9ef92cc337",
+      "status": "running",
+      "startedAt": "2026-09-06T19:17:41.476267404Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/a69f8407e18c04b8d48262d12c872a2d1c8571cdb36d90226d397db28412e4ff/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32977"
+          }
+        ]
+      }
+    },
+    "duke-polymost-world-proof-20260906": {
+      "id": "e51390e78dfe120f111bc21d8b1791fbd8e2d71cdc03a27e5f39c8dbd391d4ff",
+      "image": "sha256:75a61f7be4014ffabd6990058ec582b9939a0cada0742d45fa32bb87f77d30ef",
+      "status": "running",
+      "startedAt": "2026-09-06T19:16:34.75430028Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/577cca6c7f00963606c2b2cd770437960d213a5cb82753b4ac1926dd5f27d909/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32976"
+          }
+        ]
+      }
+    },
+    "duke-polymost-hint-proof-20260906": {
+      "id": "f0143e977be1299874280b3fdbe49214ad8fb283ec8c72d2e561c978a70bb03b",
+      "image": "sha256:06a36806a51c111a26fc099d274ce20d69b3bf0868647f923ef2300b6d64a4c6",
+      "status": "running",
+      "startedAt": "2026-09-06T19:13:17.682239784Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b24137c218e29efe04ffa37eda2458494e78d5ba0da26e0b034ccebd6e880682/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32975"
+          }
+        ]
+      }
+    },
+    "duke-polymost-pixels-proof-20260906": {
+      "id": "b3521106022b054487c300d09b82ae2f8ced11d07ad6628657ccc06b68d02dba",
+      "image": "sha256:f81953afdc64681951a0b9870193802b9b42e7b19a4d6424cba31280c32b20cd",
+      "status": "running",
+      "startedAt": "2026-09-06T19:10:54.139685295Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b17ba6283c8d2d33ca5e5027b2e374bee4cb1957fd6f56bba76290fbb923520d/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32974"
+          }
+        ]
+      }
+    },
+    "duke-polymost-texture-proof-20260906": {
+      "id": "afecfbfcd0687cfb3c2d2009b638f149ae6a22518ced8e94a13ed81e66ed3711",
+      "image": "sha256:bf75b88d33382e98280a3da45cc0de6297fab991e6c44e15019dcaa96e0fea6c",
+      "status": "running",
+      "startedAt": "2026-09-06T18:59:52.343323475Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/86812fe9f3fa6658826515f319c8c2258a2d81d4349a25e5bd5118d476fe2941/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32973"
+          }
+        ]
+      }
+    },
+    "duke-polymost-matrix-proof-20260906": {
+      "id": "ced71cf24191145689d1c64385f27b4f9626cba53616856983dceca15fb89aad",
+      "image": "sha256:7725cc0fbd53ef4140d9eda5da7c9b96f68bcc557d7bb5afc802a8d50291e24f",
+      "status": "running",
+      "startedAt": "2026-09-06T18:57:03.13285373Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/fe2f8f24b177f17562aeb0e4431dfcc26b6b8e9f7d1829e278a76e56bb1f2555/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32972"
+          }
+        ]
+      }
+    },
+    "duke-polymost-draw-proof-20260906": {
+      "id": "f2e6b73d1feb2e42541c69273c489712bb55fb44fb6a2d72c49f129db349004d",
+      "image": "sha256:0761cd6d4c20bce9bbe2325513344985163feedbc0cf84cfa420b3530986fb19",
+      "status": "running",
+      "startedAt": "2026-09-06T18:49:43.561953122Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/0e81925b7ccbf69f6f3e2a338cbefc1a051d759ae6db0fb52eaf3f51431312a0/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32971"
+          }
+        ]
+      }
+    },
+    "duke-polymost-frontend-proof-20260906": {
+      "id": "13b3c91d602730c00e3045324942b35f6e1f43adea799d2ee30a705c93647014",
+      "image": "sha256:bb09663de0205d81561ec71aa8f144af7f16c8e4752c0cb46a3dfbf1f3dafcb8",
+      "status": "running",
+      "startedAt": "2026-09-06T18:46:13.969304718Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/2aa4ef1d109a9addb6dfbc94eab1b9d42bc7181f8f9b2d7f50154a4173024926/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32970"
+          }
+        ]
+      }
+    },
+    "duke-polymost-attachments-proof-20260906": {
+      "id": "1d118eda9879cac4173875d4a36e7d0b45ce75e96046702b911c529baa992ebf",
+      "image": "sha256:5f78d66fcee26e667aadc19aa3b7ed3faf0ce5064273927c4f4b2b0928a59e91",
+      "status": "running",
+      "startedAt": "2026-09-06T18:43:08.919097401Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/5dfff4d40c625032324964e41db6bfbfc876e532497ea4fc3a8fff070deef2a8/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32969"
+          }
+        ]
+      }
+    },
+    "duke-polymost-error-proof-20260906": {
+      "id": "020ce717bbad104dfcd492b18d05137646b8e27175f0138bf73b195f6c750a35",
+      "image": "sha256:4919bb16dfa38aba70071d291cbeff0a0795f24b5e686095565b717091997ced",
+      "status": "running",
+      "startedAt": "2026-09-06T18:41:00.394499833Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/cd94a5af293568b3f4ee32194f266984a9e3ffbe1b093aca56d3338a57092571/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32968"
+          }
+        ]
+      }
+    },
+    "duke-polymost-essl-proof-20260906": {
+      "id": "a4012b01ac202a7601d044ae0588bd3dec583de8e366a9bfe4f04b5eebecf20c",
+      "image": "sha256:af812dbd8a3ea327ae2e7303b20934819ddd8768de57c54d75b83087f7afa46b",
+      "status": "running",
+      "startedAt": "2026-09-06T18:38:05.885668096Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ddf0fd01daa5bf5c62e69f78b69e0cf9f7f66fb1e2c6859134684281865351de/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32967"
+          }
+        ]
+      }
+    },
+    "duke-polymost-shader-proof-20260906": {
+      "id": "e78a27f05e1cd4593d92f1a9ed027f6f4938631e76a53d006c85b6ed5fe6a86b",
+      "image": "sha256:025daf8f087e2ac9942a808af81929bfb0ad148bbc5662cd0aa37a115cd5443b",
+      "status": "running",
+      "startedAt": "2026-09-06T18:19:33.345844586Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/e3166d894ff095f7dd323c96b245baf1f69e458bc6b5e1822ff6ac8953aac293/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32966"
+          }
+        ]
+      }
+    },
+    "duke-polymost-fog-proof-20260906": {
+      "id": "e1ded9c94b474b71c334f815775a82bff49b03982cff18d2d553733dc3fa10d2",
+      "image": "sha256:c1b00095337e41f15f4e9734de12f164c049e61573c430fdaf0d7453a295810d",
+      "status": "running",
+      "startedAt": "2026-09-06T18:15:31.498194701Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/71cc2ba9d6da1ab31bef44b18c864eec32581a2a1d1cc0dabf9ef29f9cf510ee/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32965"
+          }
+        ]
+      }
+    },
+    "duke-polymost-sync-proof-20260906": {
+      "id": "04ae24351fbeca9410821f2174280534e4ca7d29eafc64fbe3f56326737d113a",
+      "image": "sha256:def418515afa87ec11536638a10ea5fce3660875f9597e5bb089d3dce00812f2",
+      "status": "running",
+      "startedAt": "2026-09-06T18:11:15.528843817Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/57b4ff2ac4755d0b147fb694d5bc82fe8c4c009ed3bb4586f6f33bf49e3c1948/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32964"
+          }
+        ]
+      }
+    },
+    "duke-polymost-proof-20260906": {
+      "id": "00bc984b54ac50d56de87329f5f6c2dc67e59a1d6d6bcb30f6be3097d3b91170",
+      "image": "sha256:14a839b71d12202701b0489fbb75ed3eb0acbdd828d0968ee69d9674b576ef0e",
+      "status": "running",
+      "startedAt": "2026-09-06T18:00:04.236381538Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/0927b6bc50c3013de5694eb445f005b4c5c8af998c03d2484015ce40767f86b1/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/duke3d",
+          "destination": "/data/duke3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32963"
+          }
+        ]
+      }
+    },
+    "prey-quickload-proof-20260906": {
+      "id": "36fdc84f82d71e4f99cdfa3dde5b05beb0dd9bf809699ee534085f842182d8c6",
+      "image": "sha256:41d07774c9a0e43859437cc9278dc7bd035e6b0c0cc3219da34259a218e63685",
+      "status": "running",
+      "startedAt": "2026-09-06T17:37:46.511204309Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/affbc8474cd8345b9d997998b749037027415526a8c4757d879b6e3a3dda1d28/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-trace-cache-proof-20260906": {
+      "id": "d3904e7e47fbf29e8677674a34fb9985d0decb2e94dc2d1e70b04e8a1ad44e55",
+      "image": "sha256:73534e2ca76cd98ea89ab904fe13aeeb65139fdb0ac8b49cb05a53f6202d1ffd",
+      "status": "exited",
+      "startedAt": "2026-09-06T17:00:32.724719355Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/af341be81d20c440e1055e1fde309fac79562cd4a37ae0ed7ae6332a3ded1b2b/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "q4-input-proof-20260906": {
+      "id": "b07b5b40f898b2d77673549641b5f41ab5ebb6e8f32286ae13e1607ca362649f",
+      "image": "sha256:1bfbdfd01881aff9e821d850c912307780c36e3dad4c36c7d73c43b6fee67618",
+      "status": "running",
+      "startedAt": "2026-09-06T16:19:44.303363427Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/6bc25eaf8382c44165dc1c6b319059516bd5817d8533178fdcdde2ff2479650d/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32962"
+          }
+        ]
+      }
+    },
+    "q4-quad-proof-20260906": {
+      "id": "6ac76550fd02cf67a87b133879e3faee909dafda76ae4bd8b0255ef40c9b1496",
+      "image": "sha256:fc651e2b5697e8605f53566d1e1d67b600e09d3c7166a51d3292cabc519d932a",
+      "status": "running",
+      "startedAt": "2026-09-06T15:12:50.971001546Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/26a28023149a0ff3f022d8bd8153329e1a33f4a1036f8fb7733f39a884e9c771/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32961"
+          }
+        ]
+      }
+    },
+    "q4-intro-sequence-proof-20260906": {
+      "id": "ee378f598df5148ffa35bdf7f86ecd6a19efb89c296c4c97ef7445ea521f2483",
+      "image": "sha256:2fd8241946869719aaae4f65c2ae72a274bcc379ca4e78f8cb557d7d32a8dc90",
+      "status": "running",
+      "startedAt": "2026-09-06T14:53:59.602694794Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/342a35813c15617ff8cab8122dc78a164e4d3573397050432d1e7ad78eaf3ed8/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/tmp/q4-intro-trace.jb5f5P/q4-worker-native.js",
+          "destination": "/opt/game-site/q4-worker-native.js",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/tests/q4-intro-sequence-worker.js",
+          "destination": "/opt/game-site/q4-worker.js",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32960"
+          }
+        ]
+      }
+    },
+    "q4-intro-draw-proof-20260906": {
+      "id": "5c00dbb827257964e9597171c0d444f7c8fe292257527a1eb4a028e17fd11c83",
+      "image": "sha256:2fd8241946869719aaae4f65c2ae72a274bcc379ca4e78f8cb557d7d32a8dc90",
+      "status": "running",
+      "startedAt": "2026-09-06T14:32:30.932587865Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/0f38b26295f8e66345f666ddb3cc5e2a4285ebe95b9bb0f9d5b2d455f94f0947/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/tmp/q4-intro-trace.jb5f5P/q4-worker-native.js",
+          "destination": "/opt/game-site/q4-worker-native.js",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/tests/q4-intro-draw-worker.js",
+          "destination": "/opt/game-site/q4-worker.js",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32959"
+          }
+        ]
+      }
+    },
+    "q4-intro-trace-proof-20260906": {
+      "id": "435a778350006732300594a4c5ade1e96885a2920ed608e86b9ff9a2ab8132fe",
+      "image": "sha256:2fd8241946869719aaae4f65c2ae72a274bcc379ca4e78f8cb557d7d32a8dc90",
+      "status": "running",
+      "startedAt": "2026-09-06T14:22:35.09284677Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/2c074bbd3e364e622f934a41077dd83447775514f9006a4b03903178a1b0c4b9/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32958"
+          }
+        ]
+      }
+    },
+    "q4-border-size-proof-20260906": {
+      "id": "5d9431a5da09467c0b1d38c3b93b5d48ac6693eef64caf93ae267be0d718cb32",
+      "image": "sha256:b274ab80ab6370c3f9b3ead029d88db47c58a57259dcfa90b443221056cd00ef",
+      "status": "running",
+      "startedAt": "2026-09-06T13:49:02.379703743Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/2dea9b956699055ab6a88d16958cb1d78fc226a6ac448db820d0c0cb74a6b204/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32957"
+          }
+        ]
+      }
+    },
+    "dosbox-wasd-v3-chrome-proof-20260906": {
+      "id": "d7d60da76bdb139ade5c149fc3a38e60ef18e7446c256f9ff5b402ba90581786",
+      "image": "sha256:f27cffdaa831c1e8d2d45cf3a3cfe0d417f56dc4fa031170d17129c010c658c0",
+      "status": "running",
+      "startedAt": "2026-09-06T13:14:54.926727402Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32956"
+          }
+        ]
+      }
+    },
+    "dosbox-wasd-v2-chrome-proof-20260906": {
+      "id": "44ba946f515bff0c5279ca788a2707c558db0655f4b6210f4188f2b2e168b6e2",
+      "image": "sha256:f88e9d8e830e3abcfbbe4e0719d51202498efaa668bb2f1d6bec699fd5b979db",
+      "status": "exited",
+      "startedAt": "2026-09-06T13:12:27.822551318Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32956"
+          }
+        ]
+      }
+    },
+    "dosbox-wasd-chrome-proof-20260906": {
+      "id": "87f9514a359862c968981943f1a4430a2e62acd885d7ab35ba21050c80122d45",
+      "image": "sha256:202411c7022b32458c48b536225c1e8b38dd92d6f93a3ca6f802e696a692b3ed",
+      "status": "exited",
+      "startedAt": "2026-09-06T13:11:16.990773697Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32955"
+          }
+        ]
+      }
+    },
+    "d3-roe-v8-trace-proof-20260906": {
+      "id": "9425762601f1278cc40c75134e15a99cafb4ddc32bfd37d34c55ffe6dc46b967",
+      "image": "sha256:3298bacc93ff78339f24e005be1839857bc46ad89d83544c7adcf5ca3e11cac3",
+      "status": "running",
+      "startedAt": "2026-09-06T12:06:35.914261329Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32954"
+          }
+        ]
+      }
+    },
+    "d3-sp-v8-trace-proof-20260906": {
+      "id": "39ebd133216d46cc6338a26de5ccefe6260c0ad8cde39d6ea5b7100d403da11d",
+      "image": "sha256:3298bacc93ff78339f24e005be1839857bc46ad89d83544c7adcf5ca3e11cac3",
+      "status": "running",
+      "startedAt": "2026-09-06T12:06:35.727355928Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32953"
+          }
+        ]
+      }
+    },
+    "d3-roe-v7-save-proof-20260906": {
+      "id": "f1e085ca17b48d0bdafcab32f12d9f2e85842fe2a71ea6d57ef52a9dfa1062d9",
+      "image": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+      "status": "exited",
+      "startedAt": "2026-09-06T11:25:29.178621254Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32954"
+          }
+        ]
+      }
+    },
+    "d3-sp-v7-save-proof-20260906": {
+      "id": "036465b54166d009c324b8e9d8ec1091dd780f23473c8b5abc2f43292d5f3eb6",
+      "image": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+      "status": "exited",
+      "startedAt": "2026-09-06T11:25:29.027027143Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32953"
+          }
+        ]
+      }
+    },
+    "d3-light-clock-legacy-diagnostic-20260906": {
+      "id": "9f68641d1274dd4117df416e97148cd661d50aefad9b0f8550577d3b261a6f96",
+      "image": "sha256:8f36361851c221d76968c7668a3fbcce72a254e4417a9bec99d383b99ec288bd",
+      "status": "running",
+      "startedAt": "2026-09-06T11:09:23.791144196Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32952"
+          }
+        ]
+      }
+    },
+    "d3-light-clock-diagnostic-20260906": {
+      "id": "312ca39e70041a143ccec8864fc8bb975fe0c00dba9e142dbeff071a3d6f7504",
+      "image": "sha256:05b5e75ed163207a27f2516bbd135e307053884d8c264073d2556583ffda5f35",
+      "status": "running",
+      "startedAt": "2026-09-06T11:00:10.552294739Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32951"
+          }
+        ]
+      }
+    },
+    "d3-mp-audio-chrome-proof-20260906": {
+      "id": "4b0c29781183c717e0a99000b156d67058f49409c9ab60ae2541dbf91c3dd5d5",
+      "image": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+      "status": "running",
+      "startedAt": "2026-09-06T10:40:44.793433942Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32950"
+          }
+        ]
+      }
+    },
+    "wasm-goldsource-suite": {
+      "id": "6499ac4f605dafc1dd122442d34b3ebd6813a8d1c86717a39bd471ac01189774",
+      "image": "sha256:7f11b1237e3b7f18db616fbf757d609dc89877fd2d5ca695f968deb0f65aa142",
+      "status": "running",
+      "startedAt": "2026-09-06T10:13:43.459426663Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8017"
+          }
+        ]
+      }
+    },
+    "goldsource-cs-managed-menu-final-chrome-proof-20260906": {
+      "id": "243cb8489bce00ff216548538040a3c8a4d9f550e96b64c822819800cd507d92",
+      "image": "sha256:7f11b1237e3b7f18db616fbf757d609dc89877fd2d5ca695f968deb0f65aa142",
+      "status": "running",
+      "startedAt": "2026-09-06T10:06:15.713500363Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32948"
+          }
+        ]
+      }
+    },
+    "goldsource-cs-managed-menu-chrome-proof-20260906": {
+      "id": "292fc6430b858e222867109f8e7150e54d2df7a89e37d39ce69f24a0ad8cba26",
+      "image": "sha256:2e6f501d684d7fa26d97f5667fe1d2ce5347604cd70ca38350ecc1cf2a33245c",
+      "status": "running",
+      "startedAt": "2026-09-06T09:55:32.995109234Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32947"
+          }
+        ]
+      }
+    },
+    "goldsource-cs-menu-globals-chrome-proof-20260906": {
+      "id": "7f1f5c83dffa5b3cc5f5f98e25ea53d731078d75e57295f92b73dcef8515fa2b",
+      "image": "sha256:3ac53414f7fbfb8ec82ec79ecd9efb8759bae71934bfd21585267dab411821b4",
+      "status": "running",
+      "startedAt": "2026-09-06T09:33:09.650434825Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32946"
+          }
+        ]
+      }
+    },
+    "wasm-quake3": {
+      "id": "2cc041e8dac3860e6e0019796d24a4842c498c8479f54fc5f93d30fcc2069388",
+      "image": "sha256:ea73d1bb7a5c7fae6e0a96101232f28dd8b56b7f1e19e7faeb1ab210d7c922cc",
+      "status": "running",
+      "startedAt": "2026-09-06T08:36:57.100329253Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8083"
+          }
+        ]
+      }
+    },
+    "wasm-openrct2": {
+      "id": "b73134377613e390fc8074993f54620a2c28fb12fb68dd730ca08b5e22bdc56c",
+      "image": "sha256:308d433f0442e11a04298b9b4101acbb755a4196918bff9000c7b209ed0b2378",
+      "status": "running",
+      "startedAt": "2026-09-06T08:22:08.984463224Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2/volumes/combined-rct1-rct2-20260906",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8026"
+          }
+        ]
+      }
+    },
+    "wasm-rtcw-mp": {
+      "id": "b194297c1ffd5895a40b870366142ab40e66a491e93bf95cdff4c66f4acb714f",
+      "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+      "status": "running",
+      "startedAt": "2026-09-06T08:06:54.661299486Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18085"
+          }
+        ]
+      }
+    },
+    "wasm-simcity2000": {
+      "id": "91e0b7cae2eab44b203497f18435997140bafcf7da4beaa7c51c1b3fe078f515",
+      "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+      "status": "running",
+      "startedAt": "2026-09-06T07:46:57.244338533Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8025"
+          }
+        ]
+      }
+    },
+    "simcity-save-chrome-proof-20260906": {
+      "id": "d5e5aca7fa1d0f66dec2c37f75fd665ba2f207f538ef8f6b530d820955437cb3",
+      "image": "sha256:bcb73af2aadfcf070695688d7e3c8d05bd2424f9ac521e89669b8979beb07f82",
+      "status": "running",
+      "startedAt": "2026-09-06T07:29:54.241520445Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32945"
+          }
+        ]
+      }
+    },
+    "simcity-timing-chrome-proof-20260906": {
+      "id": "80c3394d8e09cc3c307eb8601784948d61562efb644e34989e0dd0a3cd236e9a",
+      "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+      "status": "running",
+      "startedAt": "2026-09-06T06:23:26.244148966Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32944"
+          }
+        ]
+      }
+    },
+    "quake3-join-status-chrome-proof-20260906": {
+      "id": "dcbd0905fb9f0cdd5e67778ddf1745fee5f4d60619ce5d118a75e9ca0d54d946",
+      "image": "sha256:ea73d1bb7a5c7fae6e0a96101232f28dd8b56b7f1e19e7faeb1ab210d7c922cc",
+      "status": "running",
+      "startedAt": "2026-09-06T06:02:55.857533742Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32943"
+          }
+        ]
+      }
+    },
+    "rtcw-mp-array-final-proof-20260906": {
+      "id": "9b219a208063111624cdfee4d2168a01b9dbca488e5902fd474d27531efcaa44",
+      "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+      "status": "running",
+      "startedAt": "2026-09-06T05:33:51.327683105Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32942"
+          }
+        ]
+      }
+    },
+    "rtcw-mp-array-state-proof-20260906": {
+      "id": "1c323e402f481430d9ab5d8a4dbf708d2372650e82ce9a8f44859d04bbbf7363",
+      "image": "sha256:1e80d9ce31f9387c53a3165d746b9a75f3a8c72e309fe2fa5b718184c28b23ff",
+      "status": "running",
+      "startedAt": "2026-09-06T05:24:58.186433248Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32941"
+          }
+        ]
+      }
+    },
+    "openrct2-index-cache-chrome-proof-20260906": {
+      "id": "d3b768d7cbd6e49716898a1c10d378113bb3ac005e0ab27f04c97644cd1b7010",
+      "image": "sha256:308d433f0442e11a04298b9b4101acbb755a4196918bff9000c7b209ed0b2378",
+      "status": "running",
+      "startedAt": "2026-09-06T04:58:16.12209486Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32940"
+          }
+        ]
+      }
+    },
+    "openrct2-ride-music-chrome-proof-20260906": {
+      "id": "31d67733916e801b9d5b145d31248a07612c678d88f0fab667f6aaef5593eae7",
+      "image": "sha256:9534dc471ce2c399642e21c29f908a9f86d212bf30caf77c1ebeff443e9fe8ce",
+      "status": "running",
+      "startedAt": "2026-09-06T04:29:11.703737391Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32939"
+          }
+        ]
+      }
+    },
+    "openrct2-construction-dialog-chrome-proof-20260905": {
+      "id": "a9b2972eb994a0606098b2c832265fbe12377e16535bc5bbec71388582861cba",
+      "image": "sha256:71012d0e9e7a371c0852b6f570d38266c4fad17e3bd53cce1254afd72807833b",
+      "status": "running",
+      "startedAt": "2026-09-06T03:53:15.08104871Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32938"
+          }
+        ]
+      }
+    },
+    "openrct2-rct1-sprite-path-chrome-proof-20260905": {
+      "id": "778dbcd9c41b268ec6a84e888510b22ddb0e1209ae90e616291f480f9daf6897",
+      "image": "sha256:27851f04970e70f56200dd5d5c0604e3439947a212eaf9e632ff8276d60e77de",
+      "status": "running",
+      "startedAt": "2026-09-06T03:18:57.287733303Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32937"
+          }
+        ]
+      }
+    },
+    "openrct2-private-objects-v2-old-proof-20260905": {
+      "id": "e6d3d0367ed5629a9664be7c6953a94ee405495efd2f8d907ff2f839bcddf531",
+      "image": "sha256:299b31ca37eded48631ba7d6ad225cc7d45bf6331f870677d2b09985e664d184",
+      "status": "running",
+      "startedAt": "2026-09-06T02:57:56.202916947Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32936"
+          }
+        ]
+      }
+    },
+    "openrct2-private-objects-v2-chrome-proof-20260905": {
+      "id": "c9bb7466e88b9addf69963d2dac00ae92e9c2592ce733ebdc7c3053ae28dac6d",
+      "image": "sha256:7985183b8e61dfed95a7f9653f72ba97b084d2a50287486d7568a741f4a745c9",
+      "status": "running",
+      "startedAt": "2026-09-06T02:57:56.024063034Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32935"
+          }
+        ]
+      }
+    },
+    "openrct2-private-objects-old-proof-20260905": {
+      "id": "1d3d2fca31bd976b05111227810ef93bb07ce7a56139488832e5422716e97f52",
+      "image": "sha256:299b31ca37eded48631ba7d6ad225cc7d45bf6331f870677d2b09985e664d184",
+      "status": "exited",
+      "startedAt": "2026-09-06T02:55:30.949922223Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32936"
+          }
+        ]
+      }
+    },
+    "openrct2-private-objects-chrome-proof-20260905": {
+      "id": "7aa345525713d0096f74368c7a72ba998b4c76b0e3ad1e12ab49e46d0ecacb67",
+      "image": "sha256:7985183b8e61dfed95a7f9653f72ba97b084d2a50287486d7568a741f4a745c9",
+      "status": "exited",
+      "startedAt": "2026-09-06T02:55:30.83074443Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32935"
+          }
+        ]
+      }
+    },
+    "openrct2-framework-chrome-proof-20260905": {
+      "id": "48831d92525df902610078b4ec08f40731db952847a3fdca2a2de162ff491b81",
+      "image": "sha256:299b31ca37eded48631ba7d6ad225cc7d45bf6331f870677d2b09985e664d184",
+      "status": "running",
+      "startedAt": "2026-09-06T02:34:29.89680843Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2/volumes/combined-rct1-rct2",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32934"
+          }
+        ]
+      }
+    },
+    "goldsource-save-hints-chrome-proof-20260905": {
+      "id": "0deb74532571fcb14f9421a0784e93e6665ab6a42777b8a4d75ca0b5075bf755",
+      "image": "sha256:967561eca15081284748f7a46178a1f5d8f8024a3aa182e4a95e2a406ca9c2ce",
+      "status": "running",
+      "startedAt": "2026-09-06T02:13:11.315174366Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-proof-20260905/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32932"
+          }
+        ]
+      }
+    },
+    "goldsource-save-hints-build-20260905": {
+      "id": "19511bd77739bd3252e448d881bee62a700050aaf337d8e6679945310d58268c",
+      "image": "sha256:334b4091e695ecbe357dccfcb8810385297ab50531f2dd4431d39159a02ad771",
+      "status": "exited",
+      "startedAt": "2026-09-06T02:10:50.641489827Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/goldsource-wasm/patches/xash-save-hints.patch",
+          "destination": "/tmp/xash-save-hints.patch",
+          "rw": false
+        }
+      ],
+      "ports": {}
+    },
+    "goldsource-stored-wad-persistent-proof-20260905": {
+      "id": "1cff921d9afdc9a67dab970215bae8251126f84e5e7b416940d5493a6f2b8ecf",
+      "image": "sha256:08ab594ed353516732604e1bab31430daba5b56208405c631379878e01912ce4",
+      "status": "running",
+      "startedAt": "2026-09-06T01:52:02.827819716Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-proof-20260905/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "goldsource-stored-wad-chrome-proof-20260905": {
+      "id": "00630c9e6ff7c2ea93a6a7955ce3acac5097e54a3fa5dd8bc3c0d17cd88a3fd6",
+      "image": "sha256:08ab594ed353516732604e1bab31430daba5b56208405c631379878e01912ce4",
+      "status": "running",
+      "startedAt": "2026-09-06T01:41:25.392942762Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/goldsource-stored-wad.graoXC/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "goldsource-capture-loading-chrome-proof-20260905": {
+      "id": "58ceaf17395ffba7ceae58c56059bfafe0e2712ccbbd11b55731001d3b71ccec",
+      "image": "sha256:68ce8833d3d4d6048f36de1b603017c185e2dcbf8cddb85273f295f2ee4f834d",
+      "status": "running",
+      "startedAt": "2026-09-06T01:21:36.540730645Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "goldsource-pending-capture-chrome-proof-20260905": {
+      "id": "6bdf1776c7852998c4f501aa7adb5ca39827fda93d4c94fb7a747dde9700ae49",
+      "image": "sha256:a62c267dd0772c6cc96a7a2f133743151d9bc4f600b510b20d8f2c3c2cefc38a",
+      "status": "running",
+      "startedAt": "2026-09-06T01:18:09.277616759Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "goldsource-input-chrome-proof-20260905": {
+      "id": "0e444229b444dd2da0643fd734a31db1ad0c3df4fe31275900471f6a9897b1a2",
+      "image": "sha256:1ca467d1c0439261e17a9dc78f4dfaa5691b6edc9b57f856307172ce9c774bf2",
+      "status": "running",
+      "startedAt": "2026-09-06T01:03:21.770859595Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "cs-endpoint-chrome-proof-20260905": {
+      "id": "d8af54ce563a239f9443b95b42cf1fbe12dd3c79de6a1c7f6ab69a2e153ae32c",
+      "image": "sha256:aacaaaf2ed3c6fa03eb496824e06f1b071aaf8cdcf607288bb915e02da5fd8de",
+      "status": "running",
+      "startedAt": "2026-09-06T00:46:59.646708466Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "cs-chrome-reconnect-proof-20260905": {
+      "id": "53b5f54f52855eb0e2b82d30acdb51f97f4384ac7cd639551a8769b0c66caccc",
+      "image": "sha256:a108d96bbddf632160cef0d597ef4c87dcf1927fa4d0eaa5f1f9237493d00997",
+      "status": "exited",
+      "startedAt": "2026-09-06T00:48:30.724880497Z",
+      "mounts": [],
+      "ports": {
+        "4192/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "4392"
+          }
+        ],
+        "4391/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "4391"
+          }
+        ],
+        "4391/udp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "4391"
+          }
+        ]
+      }
+    },
+    "d3-modifier-chrome-proof-20260905": {
+      "id": "f4fbe51a5fb022da4c1b5dc411118284bbe382ce831359a781361b9a874ffecb",
+      "image": "sha256:729fd8035b80280ace9c9c29cb71ec3649820f20deee190f42e717f8cc26dfc5",
+      "status": "running",
+      "startedAt": "2026-09-06T00:19:17.628760463Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "d3-sabot-delta-direct-chrome-proof-20260905": {
+      "id": "0fa9f4ab59ff1f99421d777ad54704b0e716b63159676035911f1baefd53f715",
+      "image": "sha256:82f5ec5c7b2dd73ace36b6bf8458407be6a809dd71aeb16f066b712648eb9f84",
+      "status": "running",
+      "startedAt": "2026-09-05T23:53:52.97620344Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "d3-sabot-map-status-chrome-proof-20260905": {
+      "id": "f9350d39e8e7829e8531fe5b6ecb42541fc5cfb0f0de39bce398fcafb581250f",
+      "image": "sha256:82f5ec5c7b2dd73ace36b6bf8458407be6a809dd71aeb16f066b712648eb9f84",
+      "status": "running",
+      "startedAt": "2026-09-05T23:42:37.160399267Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "d3-sabot-voting-chrome-proof-20260905": {
+      "id": "110f0fdcd9ae9ac57dbb65a3f9c4e8281582c52d681a2b52109f18889ce377a4",
+      "image": "sha256:0eea95bb73dcec49358b9aabee395108c9b2e8c20ea544271a6b2a408e6d18d1",
+      "status": "running",
+      "startedAt": "2026-09-05T23:34:17.256541039Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "d3-sabot-capacity-chrome-proof-20260905": {
+      "id": "ed5209444059c26168f3d8485737ac47d47d8046fe6144339ff9b69bac0fb730",
+      "image": "sha256:9624fdce14774e883aa9c8c15dd68585888bc4d050089498f190ece052ab5916",
+      "status": "running",
+      "startedAt": "2026-09-05T23:09:47.327678452Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "d3-sabot-packaged-chrome-proof-20260905": {
+      "id": "9d8272a65d0de24500fc7fefc51e3e4f2cd629aa1ff0dffcbfdcc8df1b9da2d0",
+      "image": "sha256:2f82f01019546dbc0ac92e7daf6728e8c9f049d17166b247d4aa605ff2449213",
+      "status": "running",
+      "startedAt": "2026-09-05T22:37:08.273116317Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "d3-sabot-browser-proof-20260905": {
+      "id": "7a36d5f95444b5ace73839dbeeb9f6aebaabaf4e49c93bb48353c348331fc1aa",
+      "image": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+      "status": "running",
+      "startedAt": "2026-09-05T22:13:46.10346152Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-managed-sabot/base.so",
+          "destination": "/opt/doom3-native/base.so",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-managed-sabot/dhewm3ded",
+          "destination": "/opt/doom3-native/dhewm3ded",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-sabot-browser-candidate/runtime.cjs",
+          "destination": "/opt/doom3-server/runtime.cjs",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/idtech4a-bot-reference/Q3E/src/main/assets/pak/doom3/d3_sabot_a7.pk4",
+          "destination": "/opt/game-site/bots/d3_sabot_a7.pk4",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-sabot-browser-candidate/d3-worker.js",
+          "destination": "/opt/game-site/d3-worker.js",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3wasm-sabot/build-wasm/d3wasm.js",
+          "destination": "/opt/game-site/dhewm3-base.js",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3wasm-sabot/build-wasm/d3wasm.wasm",
+          "destination": "/opt/game-site/dhewm3-base.wasm",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32886"
+          }
+        ]
+      }
+    },
+    "d3-managed-lifecycle-chrome-proof-20260905": {
+      "id": "cae7e79b56eea4a135c44ae491374bf55b87202459eb983461c822cdaf57e1ab",
+      "image": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+      "status": "running",
+      "startedAt": "2026-09-05T21:18:33.946789367Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32885"
+          }
+        ]
+      }
+    },
+    "d3-managed-classes-chrome-proof-20260905": {
+      "id": "9b2029c40822e19a6b5e1cc19869914e7b9395d60ae6fc66777f78ea6f8dd835",
+      "image": "sha256:2cd9b866997163ac566f9379efa8d9859dd137784c5065cd55e5fd6d33ddb349",
+      "status": "exited",
+      "startedAt": "2026-09-05T21:07:08.121807723Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32884"
+          }
+        ]
+      }
+    },
+    "d3-managed-chrome-proof-20260905": {
+      "id": "0fac064e3f2b2f0977472b00a0434433a26ae49c4fcae77ed94d569250039c18",
+      "image": "sha256:b71c2c9ec8ab44689daaa7c8627f4bb7e62c3bb49a7cc475d04dfbdc36b762ce",
+      "status": "exited",
+      "startedAt": "2026-09-05T20:53:57.605743978Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32883"
+          }
+        ]
+      }
+    },
+    "d3-managed-native-proof-20260905": {
+      "id": "eef39575016509e0fd080db31258945f4657052c7b7a4f6909ee048cf127b207",
+      "image": "sha256:57882ac947f270cc109a2d1fe322ff0a99b25504484c74b1329f46784e21c011",
+      "status": "exited",
+      "startedAt": "2026-09-05T20:29:18.112783648Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-managed-native",
+          "destination": "/native",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "27666/udp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32882"
+          }
+        ]
+      }
+    },
+    "spear-menu-captions-proof-20260905": {
+      "id": "6c048110f41cf86d82d58df366cbb2f616f1a635cde8480873fe0548602f4020",
+      "image": "sha256:f5a1129956f16a900f6987e381baaf8e40963d1d36da4cf450b78105af29ce67",
+      "status": "running",
+      "startedAt": "2026-09-05T19:42:50.488636933Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/62b065fac1211dc44753ee95cf7a667d2be323c05d94cd92a04e7efccdb1dc76/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32881"
+          }
+        ]
+      }
+    },
+    "wolf-menu-captions-proof-20260905": {
+      "id": "1f3310d9f2166c269f52642790cf1fc1b4c192079ae98e000ae8993293c808bb",
+      "image": "sha256:f5a1129956f16a900f6987e381baaf8e40963d1d36da4cf450b78105af29ce67",
+      "status": "running",
+      "startedAt": "2026-09-05T19:42:50.348252585Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/7410f71f596771eaa8ef1ed565a860868120727c57f35fd3afe19e75e94a07b3/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32880"
+          }
+        ]
+      }
+    },
+    "spear-menu-keys-proof-20260905": {
+      "id": "948f50db30ef6f95cbbae217066921c9e6ed038671cf083c6320a4612dfe0188",
+      "image": "sha256:73f42d35268694acf5d1af048303d17bd94a6819595212e72415897a7816edd9",
+      "status": "exited",
+      "startedAt": "2026-09-05T19:31:10.713645713Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/39dff6a143308c26cfafa20781e0a957d747449d208630b4bb11f341e8962404/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32881"
+          }
+        ]
+      }
+    },
+    "wolf-menu-keys-proof-20260905": {
+      "id": "22a2f7ab3424aad15c53ce9c5b3ed93b7e1c86fccad210b36d99ba5cc80d363a",
+      "image": "sha256:73f42d35268694acf5d1af048303d17bd94a6819595212e72415897a7816edd9",
+      "status": "exited",
+      "startedAt": "2026-09-05T19:31:10.570255118Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/01a4469df73c13f8c83dfa840a95c2db5c8f9bc306be883971a2dbd9e90f61f1/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32880"
+          }
+        ]
+      }
+    },
+    "spear-menu-pointer-proof-20260905": {
+      "id": "263a80c9ddd99b5aef89d3159b3168b0c2e6eb37dc03d91cb50cf56ae1da92e8",
+      "image": "sha256:8f0b8ca4de310b686e53192c51f891adb87ab4ad0283b803abeb18ef07eb1c8b",
+      "status": "exited",
+      "startedAt": "2026-09-05T19:23:28.03031395Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ef88ece0513ecdc6331c41984823befb68f0ba5a0a8dd368b7065dfe77f3f756/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32881"
+          }
+        ]
+      }
+    },
+    "wolf-menu-pointer-proof-20260905": {
+      "id": "2ff8edae1068b4626eb26c3c1ef3b82fdef1bed368ad2e76172f1a5e2347f2dd",
+      "image": "sha256:8f0b8ca4de310b686e53192c51f891adb87ab4ad0283b803abeb18ef07eb1c8b",
+      "status": "exited",
+      "startedAt": "2026-09-05T19:23:27.899158529Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/cb7f3b94fe5044085c229e59a08c11ba36a46fc29841d1f6580c819b9cc6885a/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32880"
+          }
+        ]
+      }
+    },
+    "roe-escape-proof-20260905": {
+      "id": "48608194767e1d70b6a3b3f2567043e17d66f471fff1120352bd4b3a5a46333b",
+      "image": "sha256:dcad39d4ca3fa738ddd6387756709a14a1698e07d46e3ca30a04056a90f6951e",
+      "status": "running",
+      "startedAt": "2026-09-05T18:53:13.37812676Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/642e3a89d423e9d7857339b740a41ee8089128ee209276756bc343571912afa3/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32879"
+          }
+        ]
+      }
+    },
+    "d3-escape-proof-20260905": {
+      "id": "3ad604ccd847be9e8e2f479860e258d5fc7cd5e3a89f947d217c90bc38337d79",
+      "image": "sha256:dcad39d4ca3fa738ddd6387756709a14a1698e07d46e3ca30a04056a90f6951e",
+      "status": "running",
+      "startedAt": "2026-09-05T18:53:13.219094281Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/55ea28417ab3fb00369660a2508e450fe040d42339d5684fa3c2de2ac8208da7/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32878"
+          }
+        ]
+      }
+    },
+    "roe-input-proof-20260905": {
+      "id": "65b8ef9b96e3b1c5e668a860bfb40e933fc9452cf840e0a72129d2d24b784a0f",
+      "image": "sha256:629bdcc947d772734612bc27062f952f4db4ae79a96f2a27ef6559b9a509dffe",
+      "status": "exited",
+      "startedAt": "2026-09-05T18:38:05.140998489Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/235b21900646184cbbbb4d36258e9d98501a81f264c57822a59523437953c904/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32879"
+          }
+        ]
+      }
+    },
+    "d3-input-proof-20260905": {
+      "id": "75eba933f5ddd59cf5dd91178197dfff55b02ad69b5e1afeacc1eea632a5906e",
+      "image": "sha256:629bdcc947d772734612bc27062f952f4db4ae79a96f2a27ef6559b9a509dffe",
+      "status": "exited",
+      "startedAt": "2026-09-05T18:38:04.95035107Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/c2fb1c988ae465bf286d63babfe61403efec2cf770d5ce0e57fdb48f222a5421/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32878"
+          }
+        ]
+      }
+    },
+    "prey-menu-cache-proof-20260905": {
+      "id": "cbc952395c1acbcacf23d6809bf6d27e6abc69247449d36885694b72ea994ad7",
+      "image": "sha256:8571367ae10dae7267c67a28dfdf4031eaf588ee622e1171c9286be2ff5e1e6d",
+      "status": "exited",
+      "startedAt": "2026-09-05T18:21:51.711095249Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b2ab832263896aef5588ff2d3cf43a8bc0839436fd4a7124facb700fe69baa34/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-deferred-media-proof-20260905-v2": {
+      "id": "de4fa01320206cb1ef4d21dba97b0bcb3d1673ba477da979411216f610d2fdbc",
+      "image": "sha256:19b4f5dc00f85312b2debc4fee40dba1bec1ea1a77c6b6acd778ee4246fbd90a",
+      "status": "exited",
+      "startedAt": "2026-09-05T18:01:33.214223325Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/d4111bb0daa2364c7a4649283845572fe01c5aa5263c11e2251b3e1ceab61df9/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-deferred-media-proof-20260905": {
+      "id": "6e5eb0116f2a32b22f1ed1951524341f63603605ca1f161977c3a7d3ddab957f",
+      "image": "sha256:19b4f5dc00f85312b2debc4fee40dba1bec1ea1a77c6b6acd778ee4246fbd90a",
+      "status": "exited",
+      "startedAt": "2026-09-05T18:00:24.297166296Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/40be5360f6fd784fb56409af1d52c3665c682e32f6d75717b9d5fcff4457831f/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-audio-intro-proof-20260905": {
+      "id": "7ae4f86d5c6febfbb7fdb570215c74f7b15d47f411c44fb6586df9b39c5497a3",
+      "image": "sha256:4571a1a45cb37bb701c84dcc34eab9ba6cd1472a29631c09c272f3ce431dbe2b",
+      "status": "exited",
+      "startedAt": "2026-09-05T17:43:33.478379641Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/913ada949d7a3432be4d0f78c8ee09ea0a6345be54c512ac7c9b4942f5376168/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-default-images-proof-20260905": {
+      "id": "5b77c9915f8fb06da01cdb7809eb758bf8f7b58094c9d1830024865746afd40f",
+      "image": "sha256:04e41a70727078d605e9c6530e905eb3179533a6e3650437518c01dccc3c0f0a",
+      "status": "exited",
+      "startedAt": "2026-09-05T17:23:11.30053514Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b9e51bf345afafdcd5ec5eaeca66c676b26e7e90f6724dd70c138d85241284e7/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-accounting-proof-20260905": {
+      "id": "1e9e692dd676fd2c749f1bf7a9e724c33413d4dc78da175bdbd1680d14d27daa",
+      "image": "sha256:05fab450190b6a00126a0832c9c1ba4a2ef283345d2f8449b5aa02fc134803a8",
+      "status": "exited",
+      "startedAt": "2026-09-05T17:08:37.783988911Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/0ce77fe506d2dcd74da48bdcabb9ccd17af018f3db851977cf5d303da9982d06/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-input-proof-20260905": {
+      "id": "ed7784dddc0f15fce4fd8c0cfce241bb9fcf9cbf8b09f408707e7ac8a3a86c8b",
+      "image": "sha256:fbccd1842a3993f112d379df8e72718317a0703ee3a5fffc7d5e81eed1488534",
+      "status": "exited",
+      "startedAt": "2026-09-05T16:41:44.328636608Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/c0621252a84a0f60ddd71990495d84c5ba6b3d2e39ad3eacb05afc0b6b3119b8/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "prey-roadhouse-trace-20260905": {
+      "id": "69a9ab6d619c2e2ba2dcfff6cd4c6d80d5ff9af0e820cea97ec733ed44aef496",
+      "image": "sha256:8b7da1d6dc6373e564104010c0b53bfc3513a841d478226fd069d1e5ca059347",
+      "status": "exited",
+      "startedAt": "2026-09-05T16:32:19.357886725Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b52e3c684ac6d761b3a5b1f87e1408e505a581899b1a9282bbcce832fcc3e584/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32877"
+          }
+        ]
+      }
+    },
+    "q4-readback-proof-20260905": {
+      "id": "7aadc14d52f832d636e51e6a41482420c3a80c27121cea1bd87f4629a3cf2522",
+      "image": "sha256:df094f94983cd04aee5125f0fc5e1ffe8fab4f044d85bd3ec03379d05354366f",
+      "status": "running",
+      "startedAt": "2026-09-05T16:04:07.00885431Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32875"
+          }
+        ]
+      }
+    },
+    "q4-capture-console-proof-20260905": {
+      "id": "4a42ed636733704e2200bfd76bc164dba1cdbf12916261f0ed522db29d787444",
+      "image": "sha256:fe1ce9f372401adfec272da63fe9eabbbd463c4bdca4972261adec090a695ec9",
+      "status": "exited",
+      "startedAt": "2026-09-05T15:37:35.691217887Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32875"
+          }
+        ]
+      }
+    },
+    "q4-capture-relock-proof-20260905": {
+      "id": "434ef54c45e4210203b1f8288a20d18865f50f006e2f068f79d86e26604b01f4",
+      "image": "sha256:580da0e1e630a63fbb025a81a802e180157e0d5f65b412a5520ed091a40a85ff",
+      "status": "exited",
+      "startedAt": "2026-09-05T15:23:26.893276119Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32875"
+          }
+        ]
+      }
+    },
+    "q4-capture-proof-20260905": {
+      "id": "940a9f282418b63effeaa7f646d67432ab439120a30461271496e6f750df674d",
+      "image": "sha256:17dfe3132f8fc2caed7b15c9bdaa4c9a4772cb22281889425655ed8e0237c18e",
+      "status": "exited",
+      "startedAt": "2026-09-05T15:02:27.434211148Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32875"
+          }
+        ]
+      }
+    },
+    "q4-border-dialects-proof-20260905": {
+      "id": "31faa98b5a34f5ffa0b76612ee5a9afabeec9cb2b102d778ea44244146050dd2",
+      "image": "sha256:c663601a9f4f3107183c775726a09521b5f661e74ed04452604eb12f2a58f441",
+      "status": "exited",
+      "startedAt": "2026-09-05T14:20:28.584753858Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "youthful_engelbart": {
+      "id": "4e780edca2ed99bcd9e35997983427d4043bd0ccb9a4b31841bec6a5d05a5620",
+      "image": "sha256:6de09954693415f068e94181b0068f64f07e5596fe8b5757909bce7eb6ddcc38",
+      "status": "running",
+      "startedAt": "2026-09-05T13:54:36.543856833Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": ""
+          }
+        ]
+      }
+    },
+    "nervous_engelbart": {
+      "id": "4e9cc0c7b71f826abee21551c0c993cd00e808abc8ef5ee0497f5f52fea4f164",
+      "image": "sha256:001f0101946d32aa7f6af315765c1a0f4feb62cf2464ed6d902bea4f9df429cc",
+      "status": "running",
+      "startedAt": "2026-09-05T11:34:05.818676201Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32873"
+          }
+        ]
+      }
+    },
+    "wasm-idtech1": {
+      "id": "8d2e9bca755d5f92d6b5a428b49df941d2965aefb142d0ad47de3932ee862c74",
+      "image": "sha256:2f91f270c09d62957501c7ede74e60131bf1388d70150f809e98db3a655e0775",
+      "status": "running",
+      "startedAt": "2026-09-05T04:45:45.726121504Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/crispy",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8010"
+          }
+        ]
+      }
+    },
+    "wasm-counter-strike-yapb": {
+      "id": "29e8cdf04d92994a9a1c6f8b2d380bd84f88020ba8126b3a9ab309ebb6bbda5d",
+      "image": "sha256:a108d96bbddf632160cef0d597ef4c87dcf1927fa4d0eaa5f1f9237493d00997",
+      "status": "running",
+      "startedAt": "2026-09-06T19:34:00.754130217Z",
+      "mounts": [],
+      "ports": {
+        "4191/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "4191"
+          }
+        ],
+        "4191/udp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "4191"
+          }
+        ],
+        "4192/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "4192"
+          }
+        ]
+      }
+    },
+    "wasm-nfs-dos": {
+      "id": "50e655ad88f4c5f643863e998551419c73519cfd723df5b2181dade0c0ec94ce",
+      "image": "sha256:b7a5abce9c2f07beb6770d51eaec9feb244d8720de1ce6351649cb1b18e5ab9a",
+      "status": "running",
+      "startedAt": "2026-09-04T22:57:57.570427135Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8024"
+          }
+        ]
+      }
+    },
+    "wasm-gta-dos-demo": {
+      "id": "f6c0ba0ffa47872761df9008942a0aa9021b3320edc556f51873f434888b3b86",
+      "image": "sha256:8e85f5a448d9f385062e5f0d17506f58620c975c743026050f50818fc8048c9f",
+      "status": "running",
+      "startedAt": "2026-09-04T22:14:41.681924166Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8023"
+          }
+        ]
+      }
+    },
+    "wasm-rtcw-sp": {
+      "id": "0cae221aacf7a4e780eb05b7679bf75047c2f9fd40c399d6ad637b6fe846d7f5",
+      "image": "sha256:e6cc9c2be15c9009450dd341e7c25fefc04e868a6ed60be195e5ac6479a6c759",
+      "status": "running",
+      "startedAt": "2026-09-04T20:59:30.05162676Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8085"
+          }
+        ]
+      }
+    },
+    "wasm-duke1": {
+      "id": "950d4716478ba31dbee4846a279a0d5618b4b31ed3193d4a2ec693baca0e379c",
+      "image": "sha256:595d95c76daad9f345cb15392700b42daea378bb574cef9c20d3a96ddef037b9",
+      "status": "running",
+      "startedAt": "2026-09-04T19:48:48.286590357Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8021"
+          }
+        ]
+      }
+    },
+    "wasm-duke2": {
+      "id": "af3d1b8e7ccd8e42ef9081202a622df74cca61de70ce206b4ff0b7d65d1a9f4b",
+      "image": "sha256:6fe196f49edbaade2972b6f6209742e7d8f559366399965709d5a79b4bb50970",
+      "status": "running",
+      "startedAt": "2026-09-04T19:48:48.281339463Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8022"
+          }
+        ]
+      }
+    },
+    "wasm-dosbox-suite": {
+      "id": "3ecd82b0d7211675465dc021cde309edeb56c42413381faff2ff38c1886a19ab",
+      "image": "sha256:0ec9147888b1da3cd0e294ddd8328412d5575907d40f043a374d61b0e1619429",
+      "status": "running",
+      "startedAt": "2026-09-04T19:48:48.277091734Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8016"
+          }
+        ]
+      }
+    },
+    "wasm-jazz": {
+      "id": "1414750b01faf8d44c2e0eee1c27e03fa30b973df04a55f56c23da855b5e17e0",
+      "image": "sha256:da9bcff1509485639e6245881de9681c8ae4be800dbfd9718aa75abb43c45799",
+      "status": "running",
+      "startedAt": "2026-09-04T19:48:48.280803025Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8020"
+          }
+        ]
+      }
+    },
+    "wasm-quake2-xatrix": {
+      "id": "10348b31d5b5db25b86c000aaef1d9111281a2e263ef216fce2d05f120d4be04",
+      "image": "sha256:a5909ea1581d0059df2daa828f7b895e747e11fccfe0a0a198849a76cb39e53c",
+      "status": "running",
+      "startedAt": "2026-09-04T19:40:40.704859342Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/.steam/debian-installation/steamapps/common/Quake 2/xatrix/pak0.pak",
+          "destination": "/data/quake2/xatrix/pak0.pak",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18082"
+          }
+        ]
+      }
+    },
+    "wasm-quake2-rogue": {
+      "id": "216dc9906ea9f62ff7d42dfd822610ba7a479ebc7aebe4def927e8a4ff99a23d",
+      "image": "sha256:d97c8f1be697cec5d83c9492a97421cc53d3aa233b7debc3f462c0cdc6bfb020",
+      "status": "running",
+      "startedAt": "2026-09-04T19:40:40.706014201Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/.steam/debian-installation/steamapps/common/Quake 2/rogue/pak0.pak",
+          "destination": "/data/quake2/rogue/pak0.pak",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "28082"
+          }
+        ]
+      }
+    },
+    "wasm-quake2": {
+      "id": "facdb805ccb4b3242bf7a666edd5bee48318e588ba189ada1fdd7353da30d0f4",
+      "image": "sha256:559e6d2711286c50820dc656bdecf80df34845f7bfa97880633c775099df966a",
+      "status": "running",
+      "startedAt": "2026-09-04T19:40:40.705450062Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8082"
+          }
+        ]
+      }
+    },
+    "mytube-smoke-ip": {
+      "id": "f10dfc9e520fc14a9ef3c836dbc0296fbf1606fb6690ccd860de181c1e9b38b6",
+      "image": "sha256:ec58f91fe92be6be8115474ac9ee2200d1f5387ba9049cc3bae41694e63e840c",
+      "status": "exited",
+      "startedAt": "2026-08-29T23:40:50.312441971Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/mytube-smoke2.Shic9H/config",
+          "destination": "/config",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/tmp/mytube-smoke2.Shic9H/media",
+          "destination": "/media",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8098/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18098"
+          }
+        ]
+      }
+    },
+    "wasm-doom3": {
+      "id": "24b4fa88e6975accdc67192fcd656560b32b3352b29f1c94c9ddb4a7bff10c05",
+      "image": "sha256:33332d439c122bf55e0140bafbf5bbdf54857c9fb2003100c60920d9b9320ba7",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.394043134Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b90682079859bb6598ae9a48502643981fc7537d34151c2d31cca75db4b04689/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8086"
+          }
+        ]
+      }
+    },
+    "wasm-doom3-mp": {
+      "id": "bac28f609b5d6ff680d022d62964766ced9c4ee4b0bd79838dbc4e504afccbcd",
+      "image": "sha256:a7188ef7ad469833b9e8280d7d1ec2ae49cfe79a0d3fca825482dad10f7656da",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.358189164Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/470a51fdfd02409b06edc89327c892fe337a3927b18e23c0549d00fa8bdffbcf/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18086"
+          }
+        ]
+      }
+    },
+    "wasm-prey-2006": {
+      "id": "674c8b283b144e1fd9f4a1ab6314ecf3a7da6313c1b802a117d3f8d7d7375ca9",
+      "image": "sha256:1e54e9fa3343e3cb5b2971bfee1af8f2c68c2a6315add150897ab81bbf5539f6",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.35914769Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/02a8d5327ef853d48b5784c57284174cd59a36c7829ea363719d59d8c5736548/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8087"
+          }
+        ]
+      }
+    },
+    "wasm-roe": {
+      "id": "aad2d92f7f306e36b9fedb48e398043b76a5a80eccbf5a6bca8d5ba7a3a0ecd6",
+      "image": "sha256:8fd552d1a183aad0f154c95a02cf689e1a4e6bfb0b176d01ce27a3b310de44e3",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.389619422Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/3182b73fce047f1d79461c3a96fdb67a86160bf2f6039f0f9059de8bc7e4aff8/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18087"
+          }
+        ]
+      }
+    },
+    "wasm-quake4-mp": {
+      "id": "0c782b38993d0caf88d03a501e2320f20cb8e5f888423a2360142a0be4c7895f",
+      "image": "sha256:265c84eeea6436572895c14a6d91c24e2ebeea5ab8a4165d634f20bc51fc3ae4",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.385620011Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/bc76a640cf1228e6862805cf2f169599ebb748171b0e8437e2b8c51c378cd715/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18084"
+          }
+        ]
+      }
+    },
+    "wasm-quake4": {
+      "id": "45ffb1cd141c0844d9fc7f9093e74eb1003292a61d367ae0933c9ef213c41f61",
+      "image": "sha256:b64707ae6213c06da40d4258d6c94d01f0c96320ab144d13e6073761e72f20ee",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.382686315Z",
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b92ccc14f0d4836e81c66bb6e462ae7e607040dfff50dc5085ba7a3acc5c0f21/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8084"
+          }
+        ]
+      }
+    },
+    "d3wasm-build-session": {
+      "id": "0c9477497814fdf5402f68bd4af4ffadae4218210d68650c9f599df33b70106a",
+      "image": "sha256:be96eff5810e42c632f3f8b795388a6b596e4fb21ec28b9e1fb1bc49bb3b1eef",
+      "status": "running",
+      "startedAt": "2026-09-05T20:40:31.257360456Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ],
+      "ports": {}
+    },
+    "doom3-native-ref": {
+      "id": "69dceb4b76ca99d2dfbcc7b77415b46092a1c6da06e8706227808ecb3b5df278",
+      "image": "sha256:561618e2c15bf2397621dd04f96926663a3b5616c189cf7e38db7e82f5c538ea",
+      "status": "exited",
+      "startedAt": "2026-08-21T19:30:33.074955244Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/dhewm3",
+          "destination": "/src",
+          "rw": false
+        }
+      ],
+      "ports": {}
+    },
+    "wasm-wolfet": {
+      "id": "0c93f43f4ffc9ce519129352584578ce4b0384668ff2094f54e32bbad5c79057",
+      "image": "sha256:782b71fbf80cf5a2b6c0987c28e1d010355d66bb8f4c5be360cd187761fca760",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.40318189Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolfet",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ef44a691cff7744c9fdfe85900811892b9c1a52ddf40faffe33087c2a3612dde/_data",
+          "destination": "/legacy/homepath",
+          "rw": true
+        },
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/d1c527c3769abacbac64d792b054e3f37fe28382d4eb32530055cd31eeb7aeaf/_data",
+          "destination": "/legacy/server/etmain",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "27960/udp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "27960"
+          }
+        ],
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8088"
+          }
+        ]
+      }
+    },
+    "wasm-game-portal": {
+      "id": "fc7fb291006c4957e1b2ea5e7e14b4535ee2321ab2a0a2e683526bd9bc18b135",
+      "image": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.396232563Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-lab/nginx.conf",
+          "destination": "/etc/nginx/conf.d/default.conf",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-lab",
+          "destination": "/site",
+          "rw": false
+        }
+      ],
+      "ports": {
+        "80/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8080"
+          }
+        ]
+      }
+    },
+    "wasm-quake1": {
+      "id": "482b29526da1130cdb55ce67b8ab636e55b5533b4e68376d84d8bfbe55f166a3",
+      "image": "sha256:377e6f14e82347a69dd0227ffb65211f01849f4e67e6376f401a72d5c250b10d",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.386209539Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8081"
+          }
+        ]
+      }
+    },
+    "wasm-source-hl2": {
+      "id": "f740c648d7cb012211d0fe9d96b6064c586d06f49389e35d869030cf8a3abbd7",
+      "image": "sha256:6375d98742b78398de3f58cc2d0944248ee7b3663887c6148e2ca4d40ec435aa",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.374859803Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/source",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8019"
+          }
+        ]
+      }
+    },
+    "wasm-cod2": {
+      "id": "ceaf1ba1ac47be872e9948d1b1dbc2922f84672edbe9379846dfa4c3cb1a27e7",
+      "image": "sha256:397e0cdb057e40d6640d27dd9b58f4c376ade3e041bdc1086483fabef6e0e8ab",
+      "status": "running",
+      "startedAt": "2026-09-03T21:52:26.377178984Z",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/cod2",
+          "destination": "/data",
+          "rw": true
+        }
+      ],
+      "ports": {
+        "8088/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8014"
+          }
+        ]
+      }
+    },
+    "dazzling_lumiere": {
+      "id": "df970fa3a87304035b416998ee2641455762d29ddad241befc666093999e8495",
+      "image": "sha256:bdbe05ed859448c620b698e18b8c8aced8fa82329e9ef22de60430d44963df19",
+      "status": "exited",
+      "startedAt": "2025-12-31T18:54:57.941574411Z",
+      "mounts": [],
+      "ports": {
+        "5002/tcp": [
+          {
+            "HostIp": "",
+            "HostPort": "5002"
+          }
+        ]
+      }
+    }
+  },
+  "ownerData": {
+    "AUDIOHED.WL6": "16e21eab17af2062019cc85cc271f887191301d1aa6de04b1afac5998aad9d9c",
+    "AUDIOT.WL6": "2cc23cb811df16e656f1fea25cd2629859c1ec9997d35bc3b1776594094b67ef",
+    "CONFIG.WL6": "e3a2fdde0b70d5d21df40a0c86adc47bc4619aa79d2a382a70b80e4c850d568c",
+    "GAMEMAPS.WL6": "3df9f2ad54c601e79ab117c8175477b5d96571ba9e290cb9cd7d910abfeaae56",
+    "MAPHEAD.WL6": "289e04f47128a5ba19f9b3f912b4048e26dc16c6fa00205ead51efb1d8e23c69",
+    "VGADICT.WL6": "114f66d40e16f19f6866a30378178b7b85f26f02f948b85e91d9dc4d07a3a63e",
+    "VGAGRAPH.WL6": "26b4bd0a79c757a48c9c6bf943d82d4a6afbda341ee68eeedf532470e79a7f5b",
+    "VGAHEAD.WL6": "4ba3b8faedce7de2f0a9928affeaae45b3faefea6893d411f079d3ca1e8afa0b",
+    "VSWAP.WL6": "175f3acb81cbc10297223e8916c1b90c5a0db0cf1d1d55732629624906aff083",
+    "spear/AUDIOHED.SOD": "74f038a0d17e3075a8ed8be58b58a6f4ce590cd5371a140be49f8312de0415a5",
+    "spear/AUDIOT.SOD": "531b33871d4503f6f5e9131225d0739a6a24b07b0d02de62723bba813719e909",
+    "spear/CONFIG.SOD": "e3a2fdde0b70d5d21df40a0c86adc47bc4619aa79d2a382a70b80e4c850d568c",
+    "spear/GAMEMAPS.SOD": "772d834d97d429388be3cd7caa517e49a7e82e06367bd6f16d46c6b96e25ae1d",
+    "spear/MAPHEAD.SOD": "3093aa7b0c88a3dfac9f5cc16d9f1b2fee338a9c4f43e1063ce15ca109498736",
+    "spear/VGADICT.SOD": "80713ce71576626acf5f83701ae163bc15511ce6a22416748d47d80bf406ce3d",
+    "spear/VGAGRAPH.SOD": "80f96fbaf7fa91c1eb5a8aa1d4bffdebce8a9b508aa60a1354bdcc50fa537d97",
+    "spear/VGAHEAD.SOD": "79950407f8948fa09479d8ba738aaeadc146e115a9d23e289e1a2105361e5909",
+    "spear/VSWAP.SOD": "6d9e54808a4738f11c37964d032c9a1c68a8ca98fcb18e6ccba286502967a568"
+  },
+  "fullGameAccepted": false
+}

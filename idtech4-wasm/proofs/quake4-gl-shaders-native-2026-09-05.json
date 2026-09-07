@@ -1,0 +1,401 @@
+{
+  "scope": "Regression and artifact provenance for the isolated Quake 4 legacy shader repair",
+  "patchSha256": "4b7951bf7122c5827270a999f80586757fe81790550c762e353b22b6fb77bae0",
+  "candidateImage": "sha256:2b2a54ac87595ca75b1918c23f0e2170c4acf3bc836886d4992112020ba6681e",
+  "engineJsSha256": "35b89da4d03f5345d939d367d3798a70f41a0cf35ef297d701e493b89e757465",
+  "engineWasmSha256": "7c7c3ea597ecbe277e6c05f13346d84c2f1bde738c1921f8e7acf4a78ebaee2b",
+  "nativeWasmChanged": false,
+  "actualEngineRegressions": "PASS shadow/device/GUI/exception/keyboard; GL/clock/audio fixture regressions PASS",
+  "sourceReconstruction": "PASS all four exact patch trees",
+  "packageChecks": "PASS",
+  "liveDeployment": false,
+  "results": [
+    {
+      "name": "shaders-negative",
+      "scope": "Exact generated engine shader source compiled/linked with real surfaceless EGL/GLES; no browser rendering acceptance",
+      "originalJsSha256": "a87929d6fb30a975d2ea381d887ff863fbec28dfee658bff35a24384341303cd",
+      "transformedForTest": false,
+      "baseline": true,
+      "results": [
+        {
+          "label": "2d-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-interpolate-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "2d-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-modulate-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-combine-inverse-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-combine-interpolate-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-combine-two-units-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-modulate-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-combine-inverse-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-combine-interpolate-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-combine-two-units-matrix-false",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "2d-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-inverse-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "2d-combine-interpolate-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "2d-combine-two-units-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-modulate-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-combine-inverse-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-combine-interpolate-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-combine-two-units-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-modulate-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-combine-inverse-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-combine-interpolate-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        },
+        {
+          "label": "cube-and-2d-combine-two-units-matrix-true",
+          "linked": false,
+          "expectedFailure": true
+        }
+      ]
+    },
+    {
+      "name": "shaders-transformed",
+      "scope": "Exact generated engine shader source compiled/linked with real surfaceless EGL/GLES; no browser rendering acceptance",
+      "originalJsSha256": "a87929d6fb30a975d2ea381d887ff863fbec28dfee658bff35a24384341303cd",
+      "transformedForTest": true,
+      "baseline": false,
+      "results": [
+        {
+          "label": "2d-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-interpolate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-interpolate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-interpolate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-inverse-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-interpolate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-two-units-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-inverse-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-interpolate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-two-units-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-inverse-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-interpolate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-two-units-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        }
+      ]
+    },
+    {
+      "name": "shaders-artifact",
+      "scope": "Exact generated engine shader source compiled/linked with real surfaceless EGL/GLES; no browser rendering acceptance",
+      "originalJsSha256": "35b89da4d03f5345d939d367d3798a70f41a0cf35ef297d701e493b89e757465",
+      "transformedForTest": false,
+      "baseline": false,
+      "results": [
+        {
+          "label": "2d-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-interpolate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-interpolate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-modulate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-inverse-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-interpolate-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-two-units-matrix-false",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-inverse-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-interpolate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "2d-combine-two-units-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-inverse-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-interpolate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-combine-two-units-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-modulate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-inverse-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-interpolate-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        },
+        {
+          "label": "cube-and-2d-combine-two-units-matrix-true",
+          "linked": true,
+          "expectedFailure": false
+        }
+      ]
+    }
+  ]
+}

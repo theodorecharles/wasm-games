@@ -10,6 +10,34 @@ const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '.
 const work = process.env.IDTECH4_WORK_ROOT || path.join(repository, '.work');
 const preyWork = process.env.IDTECH4_PREY_WORKTREE || path.join(work, 'prey-d3wasm');
 
+// A native fixture separately exercises this cache transition. Keep staging
+// fail-closed if the packaged engine predates that build-time correction.
+const q4Glue = fs.readFileSync(path.join(work, 'openq4/build/web/openQ4-client_wasm32.js'), 'utf8');
+assert.match(q4Glue, /const q4ImmediateSavedArrayBuffer = GLctx\.currentArrayBufferBinding;/,
+  'Quake 4 immediate quads must use CPU vertices independently of the last application VBO');
+assert.match(q4Glue, /finally \{\s+GLctx\.currentArrayBufferBinding = q4ImmediateSavedArrayBuffer;/,
+  'Quake 4 immediate submission must restore the application buffer binding');
+assert.match(q4Glue, /GLImmediate\.lastStride = -1;\s+GLImmediate\.modifiedClientAttributes = false;/,
+  'Quake 4 packaged legacy renderer must invalidate prepared attributes when their layout changes');
+assert.match(q4Glue, /GLImmediate\.clientAttributes\[name\]\.bufferBinding = GLctx\.currentArrayBufferBinding;/,
+  'Quake 4 packaged array pointers must retain their own VBO binding');
+assert.match(q4Glue, /GLImmediate\.vboClientAttributes = !beginEnd && attributes\.length > 0/,
+  'Quake 4 GPU-only arrays must not enter CPU restriding');
+assert.match(q4Glue, /GLImmediate\.vboClientAttributes \? attribute\.stride : GLImmediate\.stride/,
+  'Quake 4 packaged renderer must preserve each VBO array stride');
+assert.match(q4Glue, /const savedVboArrays = legacy && GLImmediate\.enabledClientAttributes\.every/,
+  'Quake 4 indexed bridge must preserve VBO pointers after array-buffer unbind');
+assert.match(q4Glue, /q4Border:\s*\(\(\) =>/,'Quake 4 must package the border runtime');
+for (const hook of ['shaderSource','linkProgram','useProgram','deleteProgram','getUniformLocation',
+  'uniform1i','uniform1iv','activeTexture','bindTexture','deleteTexture','bindSampler','deleteSampler',
+  'drawElements','drawArrays','drawElementsInstanced','drawArraysInstanced']) {
+  assert.ok(q4Glue.includes(`GLImmediate.q4Border.get(GLctx).${hook}(`),`missing border SDK hook ${hook}`);
+  assert.ok(!q4Glue.includes(`GLctx.${hook}(`),`unrouted border SDK hook ${hook}`);
+}
+assert.ok(q4Glue.includes('texelFetch(map, texel, level)'), 'border sampling must fetch actual mip texels');
+assert.ok(q4Glue.includes('max(textureSize(map, 0) >> level, ivec2(1))'),
+  'border mip dimensions must remain per-fragment on software drivers');
+
 const webgl2SourcePairs = [
   {
     label: 'Quake 4',
@@ -139,6 +167,19 @@ try {
       `${artifact.label} does not embed both GLSL ES stages`);
     assert.match(text, artifact.readiness,
       `${artifact.label} does not embed its renderer readiness marker`);
+    if (artifact.label === 'Quake 4 SP/MP') {
+      assert.match(text, /WebAudio bridge/, 'Quake 4 must link the worker audio implementation');
+      assert.match(text, /3\.0 es \(WebGL2\)/, 'Quake 4 must identify its actual ES context');
+      assert.ok(imports.includes('Q4WASM_MultiTexCoord2f'), 'Quake 4 must link the multitexture vertex-stream operation');
+      assert.ok(imports.includes('Q4WASM_SetBorderSampler'),'Quake 4 image settings must reach the border runtime');
+      const mesonSource = fs.readFileSync(path.join(work, 'openq4/meson.build'), 'utf8');
+      assert.match(mesonSource, /openq4_engine_sources \+= files\('src\/sys\/emscripten\/openal_emscripten\.cpp'\)/);
+      assert.doesNotMatch(mesonSource, /openq4_engine_sources \+= files\('src\/sys\/stub\/stub_openal\.cpp'\)/);
+      assert.match(mesonSource, /openq4_engine_sources \+= files\('src\/sys\/emscripten\/webgl_compat\.cpp'\)/);
+      for (const file of ['emscripten_border_runtime.mjs','emscripten_border_shader.mjs','emscripten_border_sampler.glsl']) {
+        assert.ok(mesonSource.includes(`'tools/build/${file}'`), `missing border relink dependency ${file}`);
+      }
+    }
     console.log(`${artifact.label}: Wasm embeds both stages and imports real shader compile/link/use APIs`);
   }
 } finally {

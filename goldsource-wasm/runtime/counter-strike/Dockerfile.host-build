@@ -1,0 +1,29 @@
+FROM golang:1.25.1@sha256:d7098379b7da665ab25b99795465ec320b1ca9d4addb9f77409c4827dc904211 AS host-build
+
+RUN dpkg --add-architecture i386 && apt-get update && \
+    apt-get install -y --no-install-recommends gcc-multilib g++-multilib \
+      libbsd-dev:i386 python3 pkg-config && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build/server
+COPY webxash/docker/cs-web-server/go.mod webxash/docker/cs-web-server/go.sum ./
+RUN go mod download && \
+    mkdir -p /build/goxash && \
+    cp -a "$(go list -m -f '{{.Dir}}' github.com/yohimik/goxash3d-fwgs)/." /build/goxash/ && \
+    chmod -R u+w /build/goxash && \
+    go mod edit -replace github.com/yohimik/goxash3d-fwgs=/build/goxash
+
+COPY engine/ /build/engine/
+WORKDIR /build/engine
+RUN PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig \
+    ./waf configure -T release -d --enable-openmp && ./waf build -j6 && \
+    cp build/engine/libxash.a build/public/libbuild_vcs.a build/public/libpublic.a \
+       build/3rdparty/libbacktrace/libbacktrace.a \
+       build/3rdparty/library_suffix/liblibrary_suffix.a /build/goxash/pkg/
+
+WORKDIR /build/server
+COPY webxash/docker/cs-web-server/src/server/ src/server/
+RUN GOARCH=386 CC="gcc -m32 -D__i386__" CGO_ENABLED=1 \
+    CGO_CFLAGS="-fopenmp -m32 -fno-ipa-cp" CGO_LDFLAGS="-fopenmp -m32" \
+    go build -o /out/xash ./src/server && \
+    cp /build/engine/build/filesystem/filesystem_stdio.so /out/filesystem_stdio.so

@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-05",
+  "imageId": "sha256:3fe9f527dee9827451fd76ab5faf50c4c445e242e37d6194e2ea2bd283fded4b",
+  "engineJsSha256": "d0b88bc6078b638832eadbd43f73fd0c9f263785de8e5cbaaa2d1c7b7ec20884",
+  "engineWasmSha256": "656cf224473230837355fa41fa2b3956333cf234e4b3852ca1e4b21e1bf52d3b",
+  "canonicalPatchSha256": "a84d8bd7e164b0e73b5109a21b561baf8669c890d4f41b3cd6a0622c18693e1e",
+  "negativeKeyboard": {
+    "engineWasmSha256": "eebabbd40129273ca36d4484025e77a10be05e66d4a3d12014fea871d7c738c7",
+    "nativeKeyboardResult": -1,
+    "failure": "No Enter key-down in actual engine event queue",
+    "testExitCode": 1
+  },
+  "positiveKeyboard": {
+    "scope": "Actual rebuilt main module and test-only side module; no native main, GPU or retail assets",
+    "nativeKeyboardResult": 1,
+    "events": ["Enter down", "control character CR", "Enter up", "queue empty"],
+    "polledKeyboard": ["Enter down", "Enter up"],
+    "testExitCode": 0
+  },
+  "presentationClockRegression": {
+    "scope": "Extracted production presentation/Continue methods; fixture clock and engine services",
+    "oldProductionFunctionFails": true,
+    "rebuiltMethodsPass": true,
+    "checks": ["No ticks before initialization", "Scheduler called after initialization", "Blocking loading presentation services scheduler", "Dedicated presentation hook", "10000 bounded Continue frames", "Stale-input rejection", "Key/character completion", "Timeout boundary", "Exactly-once input and sound cleanup"]
+  },
+  "actualDeviceAndGuiLexerPassed": true,
+  "actualMainSideModuleExceptionUnwindingPassed": true,
+  "glFocusCaptureTestsPassed": true,
+  "audioTestsPassed": true,
+  "exactSourceTreesVerified": 4,
+  "stagedSixVariantPackagePassed": true,
+  "browserAcceptance": "Recorded separately; not established by these native tests",
+  "deployed": false
+}

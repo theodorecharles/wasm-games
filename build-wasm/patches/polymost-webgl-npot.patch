@@ -1,0 +1,17 @@
+diff --git a/source/build/src/baselayer.cpp b/source/build/src/baselayer.cpp
+--- a/source/build/src/baselayer.cpp
++++ b/source/build/src/baselayer.cpp
+@@ -583,6 +583,13 @@ void fill_glinfo(void)
+     glinfo.fbos     = !!Bstrstr(glinfo.extensions, "GL_EXT_framebuffer_object") || !!Bstrstr(glinfo.extensions, "GL_OES_framebuffer_object");
+     glinfo.shadow   = !!Bstrstr(glinfo.extensions, "GL_ARB_shadow");
+     glinfo.texnpot  = !!Bstrstr(glinfo.extensions, "GL_ARB_texture_non_power_of_two") || !!Bstrstr(glinfo.extensions, "GL_OES_texture_npot");
++#ifdef __EMSCRIPTEN__
++    // WebGL 2 exposes NPOT textures as core ES 3 functionality, not as either
++    // desktop/OES extension above. Indexed tiles use their actual dimensions;
++    // falsely padding the draw coordinates crops and enlarges their artwork.
++    glinfo.texnpot |= GLVersion.major >= 3;
++    LOG_F(INFO, "[Build WASM] NPOT textures: %d (OpenGL ES %d.%d)", glinfo.texnpot, GLVersion.major, GLVersion.minor);
++#endif
+ 
+     glinfo.bgra             = !!Bstrstr(glinfo.extensions, "GL_EXT_bgra");
+     glinfo.bufferstorage    = !!Bstrstr(glinfo.extensions, "GL_ARB_buffer_storage");

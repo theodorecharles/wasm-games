@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "image": "sha256:fbccd1842a3993f112d379df8e72718317a0703ee3a5fffc7d5e81eed1488534",
+  "tag": "local/idtech4-wasm:prey-input-candidate",
+  "container": "ed7784dddc0f15fce4fd8c0cfce241bb9fcf9cbf8b09f408707e7ac8a3a86c8b",
+  "url": "http://127.0.0.1:32877/",
+  "patchSHA256": "81736e394c52b4b5f5e2c845a3cc93b6703146fad68713c7a2128f755d77aaee",
+  "artifacts": [
+    {
+      "file": "prey06.js",
+      "stagedSHA256": "395b12cee7a62146692c98389ab4d1a51177da59ddb108526807aa3cf1256f3f",
+      "imageSHA256": "395b12cee7a62146692c98389ab4d1a51177da59ddb108526807aa3cf1256f3f"
+    },
+    {
+      "file": "prey06.wasm",
+      "stagedSHA256": "7e17973bc32ae9a9682331de7241a0ef353cba1e8c854435d3e29c9111baff48",
+      "imageSHA256": "7e17973bc32ae9a9682331de7241a0ef353cba1e8c854435d3e29c9111baff48"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3",
+      "imageSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3"
+    },
+    {
+      "file": "prey-worker.js",
+      "stagedSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1",
+      "imageSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1"
+    }
+  ],
+  "checks": {
+    "realSDLKeyCases": 37,
+    "legacyFailures": 34,
+    "repairedFailures": 0,
+    "exactPatchTrees": 4,
+    "fullStaging": true
+  },
+  "scope": "Local isolated candidate, owner Prey archive mount read-only; no live service changes; Chrome acceptance recorded separately."
+}

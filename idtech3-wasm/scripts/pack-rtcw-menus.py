@@ -29,7 +29,14 @@ def pack(tree: Path, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(destination, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for name, data in files.items():
-            archive.writestr(name, data)
+            # String names make writestr stamp the current local build time.
+            # Fixed ZIP metadata keeps identical authored menus byte-identical
+            # across builds, independent of input mtimes and the build host.
+            entry = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            entry.create_system = 3
+            entry.external_attr = 0o600 << 16
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(entry, data)
     print(f"wrote {destination} ({len(files)} files, {destination.stat().st_size} bytes)")
 
 

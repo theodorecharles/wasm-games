@@ -1,0 +1,8 @@
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake ninja-build pkg-config ca-certificates \
+    libsdl2-dev libopenal-dev libvorbis-dev libjpeg-dev zlib1g-dev libcurl4-openssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends git nodejs \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /src/idtech4-wasm

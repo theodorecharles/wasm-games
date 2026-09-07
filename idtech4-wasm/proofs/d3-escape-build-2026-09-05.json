@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "image": "sha256:dcad39d4ca3fa738ddd6387756709a14a1698e07d46e3ca30a04056a90f6951e",
+  "tag": "local/idtech4-wasm:d3-escape-candidate",
+  "containers": [
+    {
+      "name": "d3-escape-proof-20260905",
+      "id": "3ad604ccd847be9e8e2f479860e258d5fc7cd5e3a89f947d217c90bc38337d79",
+      "variant": "doom3",
+      "url": "http://127.0.0.1:32878/"
+    },
+    {
+      "name": "roe-escape-proof-20260905",
+      "id": "48608194767e1d70b6a3b3f2567043e17d66f471fff1120352bd4b3a5a46333b",
+      "variant": "roe",
+      "url": "http://127.0.0.1:32879/"
+    }
+  ],
+  "d3PatchSHA256": "18d58a9b1fc01eae22fae1396b728015e5152273e1f849a7317df2f914b55059",
+  "artifacts": [
+    {
+      "file": "dhewm3-base.js",
+      "stagedSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc",
+      "imageSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc"
+    },
+    {
+      "file": "dhewm3-base.wasm",
+      "stagedSHA256": "f5eaf1f1a2624646934e95f3227e1e911f68b71d15d77336c7f6c22fc686466f",
+      "imageSHA256": "f5eaf1f1a2624646934e95f3227e1e911f68b71d15d77336c7f6c22fc686466f"
+    },
+    {
+      "file": "dhewm3-roe.js",
+      "stagedSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab",
+      "imageSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab"
+    },
+    {
+      "file": "dhewm3-roe.wasm",
+      "stagedSHA256": "0f0663d5f3c7fe8ba5fc81272ac5d1fb41a7fe31e2d9f0a69accca9806acd768",
+      "imageSHA256": "0f0663d5f3c7fe8ba5fc81272ac5d1fb41a7fe31e2d9f0a69accca9806acd768"
+    },
+    {
+      "file": "prey06.js",
+      "stagedSHA256": "5f1d5a4dc782b83d90f8da2ba77b71d33356d5f4f2891d4e51f712ce85b03d46",
+      "imageSHA256": "5f1d5a4dc782b83d90f8da2ba77b71d33356d5f4f2891d4e51f712ce85b03d46"
+    },
+    {
+      "file": "prey06.wasm",
+      "stagedSHA256": "951f5b9c721257e9a1536c7b8df1bbb372f56f42a3b4a82c43522a84275261d7",
+      "imageSHA256": "951f5b9c721257e9a1536c7b8df1bbb372f56f42a3b4a82c43522a84275261d7"
+    },
+    {
+      "file": "openQ4-client_wasm32.js",
+      "stagedSHA256": "cc6dc74541294bc8d65f26694466c4827e4a2ba760425e874d7e4bb76aa05e2f",
+      "imageSHA256": "cc6dc74541294bc8d65f26694466c4827e4a2ba760425e874d7e4bb76aa05e2f"
+    },
+    {
+      "file": "openQ4-client_wasm32.wasm",
+      "stagedSHA256": "621a9856013abb6eab614646e119dd81907272b4561ae4c6831d9a600edf4961",
+      "imageSHA256": "621a9856013abb6eab614646e119dd81907272b4561ae4c6831d9a600edf4961"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "a1a1377e46664c42d90e25880d66a034ca5c28828c4a82925c9288cc58d96733",
+      "imageSHA256": "a1a1377e46664c42d90e25880d66a034ca5c28828c4a82925c9288cc58d96733"
+    },
+    {
+      "file": "d3-worker.js",
+      "stagedSHA256": "af265cbc08c1c63a413e0de7b0fceda26516142d5c349e4a5006e5308d95acde",
+      "imageSHA256": "af265cbc08c1c63a413e0de7b0fceda26516142d5c349e4a5006e5308d95acde"
+    }
+  ],
+  "checks": {
+    "inputCases": 52,
+    "legacyFailures": 5,
+    "baseClientBuild": true,
+    "roeClientBuild": true,
+    "exactPatchTrees": 4,
+    "fullStaging": true,
+    "sessionCases": 35,
+    "sessionLegacyFailures": 7
+  },
+  "scope": "Isolated Doom 3/RoE test services only. Owner archive binds read-only; live services unchanged; Prey/Quake 4 native artifacts unchanged. Chrome evidence separate."
+}

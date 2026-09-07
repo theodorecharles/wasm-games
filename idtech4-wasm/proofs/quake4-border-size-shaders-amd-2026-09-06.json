@@ -1,0 +1,113 @@
+{
+  "scope": "Border shader source-conversion component tests. Actual linked material shader plus targeted source cases compile/link on GLES; not draw-state or Chrome acceptance.",
+  "wasmSHA256": "621a9856013abb6eab614646e119dd81907272b4561ae4c6831d9a600edf4961",
+  "helperSHA256": "582ff67bbe204a32226df63852271a8607cd05f99598c543daa2721d81aaeeb3",
+  "transformSHA256": "2937971c1897e13acccaeecbeed7995989b51e70eb9b48a0eaa1856a9c8c0f47",
+  "linkedCases": [
+    {
+      "name": "linked-material-program",
+      "samplers": 5,
+      "calls": 5,
+      "linked": true,
+      "vertexSHA256": "25a4e73224dbacf45c9a9285ca09b5b7ee108b59cc81b1ea921bd78cbe826301",
+      "fragmentSHA256": "30646f6cfe34e07e007a21ed32f34ed478c2e82ff964ba09e11e4f16ccfe67b8"
+    },
+    {
+      "name": "legacy-matrix-and-cube",
+      "samplers": 1,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "ccd1f9f823656333852e0de8c0e1a61660ca493bf07a9204d52fe10ba1d7164d"
+    },
+    {
+      "name": "nested-two-textures",
+      "samplers": 2,
+      "calls": 2,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "4ba39929fc0b95b7c4513c07ed9cddfa4cc8658ef36b6f0294f08e3e023afd15"
+    },
+    {
+      "name": "constant-index-sampler-array",
+      "samplers": 1,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "d8aadb5bbdebe916d5b7f18cb94f11ca332e2d35bd6c9e98c01651641f359b14"
+    },
+    {
+      "name": "continued-array-size-macro",
+      "samplers": 1,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "2b2c8e11d52aeccfedd1f0763d629e178a6a6e3c01348bbf71d65724723a56a3"
+    },
+    {
+      "name": "projected-three-and-four-coordinates",
+      "samplers": 1,
+      "calls": 2,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "21dfc8484a2a12069d0ce7956b761943b53a5afc62749149f98d65486caaa1f1"
+    },
+    {
+      "name": "explicit-lod-and-gradient",
+      "samplers": 1,
+      "calls": 2,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "63a0b311c75af1fe29a60e199ef20b700d6f8195dc76d4ce77d86bd9e8acd445"
+    },
+    {
+      "name": "comments-are-not-sampler-calls",
+      "samplers": 1,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "89ea081ee2215c6837568ea9e3bcd4831093d52207b08c11d43d2e502be60167"
+    },
+    {
+      "name": "sampler-helper-forwarding",
+      "samplers": 2,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "998cd837fdca94428d5a423d29e301f6cfcb84262621fcad72600717b9710ebe"
+    },
+    {
+      "name": "cube-sampler-helper",
+      "samplers": 0,
+      "calls": 0,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "4e007b617996958f653e67c6e9e8ba3e2c4caa32450b091d8d58cb28be5d5e36"
+    },
+    {
+      "name": "three-legacy-fragment-targets",
+      "samplers": 1,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "3bbdce587518a5920d506c86b588410bac8f9804d60356771b8fd660be3642f6",
+      "fragmentSHA256": "aa2ae56d028890c51c3e956222fd9dfa8278f47bb35987da7696e9f8f59de5d4"
+    },
+    {
+      "name": "desktop-130-interface",
+      "samplers": 1,
+      "calls": 1,
+      "linked": true,
+      "vertexSHA256": "0d9261fb2f6ce2ce8044a4f5cedb918b80f7073072a66c5b66d53b2772358686",
+      "fragmentSHA256": "9358635dd2fea0e98283b34622463eb698f4b647d72ed076ec4b9c9da786aed1"
+    }
+  ],
+  "failClosedCases": [
+    "macro texture call",
+    "continued macro texture call",
+    "bias overload",
+    "unresolved sampler",
+    "dynamic legacy MRT",
+    "unknown dialect",
+    "vertex texture stage"
+  ]
+}

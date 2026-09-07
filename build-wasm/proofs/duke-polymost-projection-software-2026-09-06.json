@@ -1,0 +1,17 @@
+{
+  "scope": "Exact production projection, GLES clipping/readback; not Chrome gameplay acceptance",
+  "sourceSha256": "92851caffa87a67791c0658faf1a245025335691b7167010458de23c05b307cf",
+  "extractedSha256": "6750700b1163904d0f1c0bec04038830e0488c729a9c5f0bb522165e8ff637e3",
+  "records": [
+    {
+      "negative": false,
+      "output": "{\"checks\":27,\"renderer\":\"llvmpipe (LLVM 21.1.8, 256 bits)\"}",
+      "log": ""
+    },
+    {
+      "negative": true,
+      "output": "projection mismatch at depth 8.1 (width 640): visible=0",
+      "log": ""
+    }
+  ]
+}

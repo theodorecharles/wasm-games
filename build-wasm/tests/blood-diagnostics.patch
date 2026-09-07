@@ -1,0 +1,38 @@
+diff --git a/source/blood/src/blood.cpp b/source/blood/src/blood.cpp
+index 1a9d3aa..2018dae 100644
+--- a/source/blood/src/blood.cpp
++++ b/source/blood/src/blood.cpp
+@@ -3072,3 +3072,5 @@ void sndPlaySpecialMusicOrNothing(int nMusic)
+         strncpy(gGameOptions.zLevelSong, gEpisodeInfo[nEpisode].levelsInfo[nLevel].Song, BMAX_PATH);
+     }
+ }
++
++#include "wasm_test.h"
+diff --git a/source/blood/src/qav.cpp b/source/blood/src/qav.cpp
+index d049557..f189b28 100644
+--- a/source/blood/src/qav.cpp
++++ b/source/blood/src/qav.cpp
+@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "sfx.h"
+ #include "sound.h"
+ 
++extern "C" void NBlood_WasmTestCallback(void *player);
++
+ #define kMaxClients 64
+ static void (*clientCallback[kMaxClients])(int, void *);
+ static int nClients;
+@@ -137,6 +139,7 @@ void QAV::Play(int start, int end, int nCallback, void *pData)
+             
+             if (pFrame->nCallbackId > 0 && nCallback != -1) {
+                 clientCallback[nCallback](pFrame->nCallbackId, pData);
++                NBlood_WasmTestCallback(pData);
+             }
+         }
+     }
+@@ -164,4 +167,4 @@ void QAV::Precache(void)
+                 tilePrecacheTile(frames[i].tiles[j].picnum, 0);
+         }
+     }
+-}
+\ No newline at end of file
++}

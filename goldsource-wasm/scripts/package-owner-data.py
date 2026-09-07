@@ -10,8 +10,6 @@ import shutil
 import stat
 import zipfile
 
-from PIL import Image
-
 GAME_DIRS = ("valve", "bshift", "gearbox", "cstrike")
 NATIVE_SUFFIXES = {".dll", ".dylib", ".so", ".exe"}
 USER_FILES = {
@@ -20,6 +18,14 @@ USER_FILES = {
 }
 USER_DIRS = {"download", "downloads", "logs", "save", "screenshots"}
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
+
+
+def archive_compression(relative):
+    # Xash seeks to individual WAD texture lumps and then back. Seeking
+    # backwards through a deflated ZIP member restarts inflation, turning
+    # hundreds of texture reads into repeated whole-WAD decompression.
+    # Keep random-access WAD members stored; ordinary assets stay compressed.
+    return zipfile.ZIP_STORED if Path(relative).suffix.lower() == ".wad" else zipfile.ZIP_DEFLATED
 
 
 def include(relative: Path) -> bool:
@@ -53,16 +59,18 @@ def build_archive(source: Path, target: Path):
     with zipfile.ZipFile(target, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for name, path in files:
             info = zipfile.ZipInfo(name, FIXED_TIME)
-            info.compress_type = zipfile.ZIP_DEFLATED
+            info.compress_type = archive_compression(name)
             info.create_system = 3
             info.external_attr = (stat.S_IFREG | 0o444) << 16
             with path.open("rb") as handle:
-                archive.writestr(info, handle.read(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+                archive.writestr(info, handle.read(), compress_type=info.compress_type, compresslevel=9)
     digest = hashlib.sha256(target.read_bytes()).hexdigest()
     return {"file": target.name, "files": len(files), "size": target.stat().st_size, "sha256": digest}
 
 
 def build_icons(source: Path, output: Path, game: str):
+    from PIL import Image
+
     icon = source / ("cstrike.ico" if game == "cstrike" and not (source / "game.ico").is_file() else "game.ico")
     if not icon.is_file():
         raise FileNotFoundError(f"Required icon is missing: {icon}")

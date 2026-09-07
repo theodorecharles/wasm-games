@@ -31,7 +31,7 @@ cleanup() {
 trap cleanup EXIT
 
 port="${WOLF3D_TEST_PORT:-$(node -e "const net=require('node:net');const server=net.createServer();server.listen(0,'127.0.0.1',()=>{console.log(server.address().port);server.close()})")}"
-active_cid="$(docker run -d --rm -p "127.0.0.1:${port}:8088" "$image")"
+active_cid="$(docker run -d --rm -p "127.0.0.1:${port}:8088" -e "WASM_GAME_VARIANT=${variant}" "$image")"
 base="http://127.0.0.1:${port}"
 
 ready=false

@@ -1,0 +1,76 @@
+{
+  "date": "2026-09-05",
+  "sourceCommit": "3d41ccce8f8fecbed83aa9d8d42734c2c7e62374",
+  "sdk": "emscripten/emsdk:6.0.6",
+  "image": "sha256:8f0b8ca4de310b686e53192c51f891adb87ab4ad0283b803abeb18ef07eb1c8b",
+  "tag": "local/wolf4sdl-wasm:menu-pointer-candidate",
+  "containers": [
+    {
+      "name": "wolf-menu-pointer-proof-20260905",
+      "id": "2ff8edae1068b4626eb26c3c1ef3b82fdef1bed368ad2e76172f1a5e2347f2dd",
+      "variant": "wolf3d",
+      "url": "http://127.0.0.1:32880/",
+      "ownerDataReadOnly": true
+    },
+    {
+      "name": "spear-menu-pointer-proof-20260905",
+      "id": "263a80c9ddd99b5aef89d3159b3168b0c2e6eb37dc03d91cb50cf56ae1da92e8",
+      "variant": "spear",
+      "url": "http://127.0.0.1:32881/",
+      "ownerDataReadOnly": true
+    }
+  ],
+  "patches": [
+    {
+      "file": "browser.patch",
+      "sha256": "7da9dba2418fed92d3f1246540c39deac010d929c9609f910004b4ba4dbc49da"
+    },
+    {
+      "file": "menu-pointer.patch",
+      "sha256": "d35770b55ee22d32f1f08bc324f50e2c3dd023045b596fbbea2ffdcd6085d98e"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "wolf3d.js",
+      "stagedSHA256": "dab886f38354093f7e191c1026b0a91a6f074231aa4cc1878c2586794e47efb5",
+      "imageSHA256": "dab886f38354093f7e191c1026b0a91a6f074231aa4cc1878c2586794e47efb5"
+    },
+    {
+      "file": "wolf3d.wasm",
+      "stagedSHA256": "4347717428ca1c1e8969c22cc07e97d83374fee66148e97229219836273850e8",
+      "imageSHA256": "4347717428ca1c1e8969c22cc07e97d83374fee66148e97229219836273850e8"
+    },
+    {
+      "file": "spear.js",
+      "stagedSHA256": "40236c8cf5b13ad857c3e4b57ad005447610bac1617af4d366ecbd542482f98a",
+      "imageSHA256": "40236c8cf5b13ad857c3e4b57ad005447610bac1617af4d366ecbd542482f98a"
+    },
+    {
+      "file": "spear.wasm",
+      "stagedSHA256": "eda8359c711952b5f0f81d77a8d4b55abec8a95abadb77dc1e669a3f16e8e815",
+      "imageSHA256": "eda8359c711952b5f0f81d77a8d4b55abec8a95abadb77dc1e669a3f16e8e815"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "6b87bea80312c1a3b90f453c70140dd37b50ef48cd40963e65e327ccd205fb4e",
+      "imageSHA256": "6b87bea80312c1a3b90f453c70140dd37b50ef48cd40963e65e327ccd205fb4e"
+    },
+    {
+      "file": "wasm-game.json",
+      "stagedSHA256": "aed03168e73eeb229cd66eadf8419662df62d914fed286f496f2bb910659e916",
+      "imageSHA256": "aed03168e73eeb229cd66eadf8419662df62d914fed286f496f2bb910659e916"
+    }
+  ],
+  "checks": {
+    "nativePointerCases": 30,
+    "nativeMovementCases": 28,
+    "oldDirectionFailures": 24,
+    "bothNativeBuilds": true,
+    "bothPublicExports": true,
+    "exactPatchedFiles": 13,
+    "adapterVariants": 2,
+    "package": true
+  },
+  "scope": "Isolated candidates, read-only owner data, no lab replacement. Native menu/movement tests and package evidence; Chrome acceptance separate."
+}

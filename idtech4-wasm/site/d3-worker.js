@@ -6,6 +6,7 @@ let started = false;
 let failed = false;
 
 function post(type, text, extra) {
+  if (type === 'error') runtime?.d3ManagedNetwork?.closeAll();
   self.postMessage({ type, text: text == null ? undefined : String(text), ...(extra || {}) });
 }
 
@@ -22,6 +23,14 @@ async function launch(message) {
   const { canvas, entries = [], variant, width, height, playerName, engineArguments = [], persistence = {} } = message;
   const roe = variant === 'roe';
   try {
+    let managedNetwork;
+    if (variant === 'doom3-mp') {
+      if (message.managedMultiplayer !== true) throw new Error('Doom 3 multiplayer requires a ready managed match.');
+      importScripts('/d3-managed-network.js');
+      managedNetwork = self.createD3ManagedNetwork({pageUrl: self.location.href,
+        onError: error => post('log', error),
+        onClose: () => post('log', 'Doom 3 managed connection closed; use native reconnect to rejoin.')});
+    }
     // Emscripten's SDL screen-size shim reads the Window-only `screen` global.
     // Supply its worker equivalent from the framework-owned OffscreenCanvas.
     if (!self.screen) {
@@ -85,10 +94,13 @@ async function launch(message) {
       '+set', 'r_customHeight', String(height || 720),
       '+set', 'ui_name', String(playerName || 'Marine').slice(0, 32),
       ...engineArguments,
-      ...(roe ? ['+set', 'fs_game', 'd3xp'] : [])
+      ...(roe ? ['+set', 'fs_game', 'd3xp'] : []),
+      ...(managedNetwork ? ['+set', 'net_serverDedicated', '0', '+set', 'net_LANServer', '1',
+        '+set', 'net_clientDownload', '0', '+connect', '127.0.0.1:27666'] : [])
     ];
     self.Module = runtime = {
       canvas,
+      ...(managedNetwork ? {d3ManagedNetwork: managedNetwork} : {}),
       noInitialRun: true,
       locateFile: path => new URL(path.endsWith('.wasm') ? `dhewm3-${roe ? 'roe' : 'base'}.wasm` : path, self.location.href).href,
       preRun: [() => {
@@ -109,6 +121,7 @@ async function launch(message) {
         });
       },
       onExit: status => {
+        runtime?.d3ManagedNetwork?.closeAll();
         if (status !== 0) {
           failed = true;
           post('error', `Doom 3 exited during initialization (status ${status}).`);

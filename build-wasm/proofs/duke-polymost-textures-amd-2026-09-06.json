@@ -1,0 +1,37 @@
+{
+  "scope": "Native GLES pixel readback, not Chrome gameplay acceptance",
+  "sourceSha256": "4a4f32e87816a8b1c546c49673a62540a0fdafce5eb7d1d849d0d6501dbed6a0",
+  "extractedSha256": "7aa7c21c94641854a1fc3782213bded7605555fd1caba4e1c0d9598c309092c7",
+  "records": [
+    {
+      "name": "production",
+      "expectedFailure": false,
+      "output": "{\"checks\":40,\"renderer\":\"AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)\"}",
+      "error": ""
+    },
+    {
+      "name": "old-packed-pixels",
+      "expectedFailure": true,
+      "output": "",
+      "error": "pixel upload: GL error 0x500"
+    },
+    {
+      "name": "missing-bgra-swizzle",
+      "expectedFailure": true,
+      "output": "",
+      "error": "pixel mismatch (channel, alpha, row order or update)"
+    },
+    {
+      "name": "lost-alpha",
+      "expectedFailure": true,
+      "output": "",
+      "error": "pixel mismatch (channel, alpha, row order or update)"
+    },
+    {
+      "name": "unsized-indexed",
+      "expectedFailure": true,
+      "output": "",
+      "error": "WebGL indexed storage must use sized R8"
+    }
+  ]
+}

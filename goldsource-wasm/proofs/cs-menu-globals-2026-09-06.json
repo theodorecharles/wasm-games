@@ -1,0 +1,52 @@
+{
+  "testedAt": "2026-09-06T09:32:04.923Z",
+  "cases": [
+    {
+      "file": "goldsource-wasm/web/artifacts/cs-menu-framework-QC5WOJ5I.wasm",
+      "sha256": "e89614306e4e96c5fef273ec10d35be2d7aada08e72dc33c9c89403683ab6a86",
+      "clientSHA256": "3a8b26a14ce562ab3bcfbf2a8f57c2822ae04c2a134caedbb03355003ea5ecf7",
+      "privateMenuGlobals": false,
+      "menuCell": 1148792,
+      "clientCell": 1148792,
+      "before": [
+        1424,
+        1057,
+        32,
+        1
+      ],
+      "after": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoppedAtFirstUnprovidedEngineCallback": true,
+      "fullEngineAcceptance": false,
+      "passed": true
+    },
+    {
+      "file": "/tmp/goldsource-cs-menu-repair.eihoou/cs/menu_emscripten_wasm32.wasm",
+      "sha256": "aa34b47854c6321cc3a3bd7241edc1c09eb3ecd63753f827f7a6e62f94713867",
+      "clientSHA256": "3a8b26a14ce562ab3bcfbf2a8f57c2822ae04c2a134caedbb03355003ea5ecf7",
+      "privateMenuGlobals": true,
+      "menuCell": 1148792,
+      "clientCell": 4336720,
+      "before": [
+        1424,
+        1057,
+        32,
+        1
+      ],
+      "after": [
+        1424,
+        1057,
+        32,
+        1
+      ],
+      "stoppedAtFirstUnprovidedEngineCallback": true,
+      "fullEngineAcceptance": false,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

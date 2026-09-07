@@ -1,0 +1,10 @@
+diff --git a/docker/cs-web-server/src/server/main.go b/docker/cs-web-server/src/server/main.go
+--- a/docker/cs-web-server/src/server/main.go
++++ b/docker/cs-web-server/src/server/main.go
+@@ -62,5 +62,5 @@ func main() {
+ 	// Setup engine log capture BEFORE starting engine
+ 	setupEngineLogging()
+ 
+-	goxash3d_fwgs.DefaultXash3D.SysStart()
++	os.Exit(goxash3d_fwgs.DefaultXash3D.SysStart())
+ }

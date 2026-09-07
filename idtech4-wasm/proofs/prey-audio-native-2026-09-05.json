@@ -1,0 +1,30 @@
+{
+  "scope": "Actual Emscripten SDK OpenAL negative control and exact Prey bridge compiled to Wasm without AudioContext. Positive covers terminated device enumeration, context, copied PCM, source/queue state, pause/stop/cleanup and natural PCM completion. Not full game-script or audible-listening acceptance.",
+  "bridgeSHA256": "bf64c948659f6b8b9b52bbbe1c26976d70581ce9b9c1372a03109781f4f53997",
+  "results": [
+    {
+      "backend": "sdk-worker",
+      "deviceAvailable": false
+    },
+    {
+      "backend": "prey-bridge",
+      "deviceAvailable": true,
+      "coreApiAndPcm": true,
+      "naturalVoiceCompletion": true,
+      "messageTypes": [
+        "audio-init",
+        "audio-create-source",
+        "audio-buffer",
+        "audio-source-int",
+        "audio-source-float",
+        "audio-listener-float",
+        "audio-source-position",
+        "audio-source-action",
+        "audio-source-queue",
+        "audio-source-unqueue",
+        "audio-delete-source",
+        "audio-delete-buffer"
+      ]
+    }
+  ]
+}

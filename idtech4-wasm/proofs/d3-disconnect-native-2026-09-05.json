@@ -1,0 +1,56 @@
+{
+  "scope": "Exact native DisconnectFromServer body compiled for browser and desktop branches with tracing protocol/channel dependencies. Packet ordering and cleanup routing, not real network delivery.",
+  "sourceSHA256": "4712506951b22021fca26faa17420217dc6dba9c631bf6fd25a4fdffbd495aaa",
+  "results": [
+    {
+      "browser": false,
+      "cases": [
+        {
+          "state": 0,
+          "passed": true,
+          "trace": "shutdown,"
+        },
+        {
+          "state": 1,
+          "passed": true,
+          "trace": "shutdown,"
+        },
+        {
+          "state": 2,
+          "passed": true,
+          "trace": "pure,reliable,send,send,send,shutdown,"
+        },
+        {
+          "state": 3,
+          "passed": true,
+          "trace": "pure,reliable,send,send,send,"
+        }
+      ]
+    },
+    {
+      "browser": true,
+      "cases": [
+        {
+          "state": 0,
+          "passed": true,
+          "trace": "shutdown,close,"
+        },
+        {
+          "state": 1,
+          "passed": true,
+          "trace": "shutdown,close,"
+        },
+        {
+          "state": 2,
+          "passed": true,
+          "trace": "pure,reliable,send,send,send,shutdown,close,"
+        },
+        {
+          "state": 3,
+          "passed": true,
+          "trace": "pure,reliable,send,send,send,close,"
+        }
+      ]
+    }
+  ]
+}

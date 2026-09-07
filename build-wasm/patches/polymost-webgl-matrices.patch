@@ -1,0 +1,23 @@
+diff --git a/source/build/src/polymost.cpp b/source/build/src/polymost.cpp
+--- a/source/build/src/polymost.cpp
++++ b/source/build/src/polymost.cpp
+@@ -971,6 +971,19 @@ void polymost_glinit()
+ {
+     buildgl_resetStateAccounting();
+ 
++#ifdef __EMSCRIPTEN__
++    // The bridge only uploads texture matrices after their first update.
++    // Establish GL's identity defaults for the texture/palette/detail units.
++    for (int i = 0; i < 5; ++i)
++    {
++        buildgl_activeTexture(GL_TEXTURE0 + i);
++        glMatrixMode(GL_TEXTURE);
++        glLoadIdentity();
++    }
++    buildgl_activeTexture(GL_TEXTURE0);
++    glMatrixMode(GL_MODELVIEW);
++#else
+     glHint(GL_FOG_HINT, GL_NICEST);
++#endif
+     glFogi(GL_FOG_MODE, (r_usenewshading < 2) ? GL_EXP2 : GL_LINEAR);
+     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

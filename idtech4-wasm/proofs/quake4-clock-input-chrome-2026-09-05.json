@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-05",
+  "browser": "Chrome via browser skill",
+  "url": "http://127.0.0.1:32873/?proof=quake4-clock-input-2026-09-05",
+  "imageId": "sha256:3fe9f527dee9827451fd76ab5faf50c4c445e242e37d6194e2ea2bd283fded4b",
+  "engineWasmSha256": "656cf224473230837355fa41fa2b3956333cf234e4b3852ca1e4b21e1bf52d3b",
+  "servedWasmSha256Verified": true,
+  "map": "game/airdefense1",
+  "mapLoadMsec": 31802,
+  "continueReadyAt": 188283.3,
+  "autosaveLoggedAt": 188477.1,
+  "enterDownAt": 217736.6,
+  "enterUpAt": 217737.9,
+  "continueCompletedAt": 217743.3,
+  "states": [
+    {"at": 91030.7, "state": "menu"},
+    {"at": 188482.2, "state": "paused"},
+    {"at": 217777.3, "state": "gameplay"}
+  ],
+  "continueScreenRendered": true,
+  "nativeEnterAccepted": true,
+  "cinematicScenesObserved": ["Opening star field", "Moving textured space debris and publisher title"],
+  "desktopMouseGrabLogSpamObserved": false,
+  "audioAtCrash": {"state": "running", "buffers": 957, "messages": 120599, "sources": 23, "starts": 23},
+  "crash": {"at": 285796.8, "text": "Uncaught worker error"},
+  "escapeDownAt": 291301.4,
+  "escapeUpAt": 291302.4,
+  "causalCaution": "Crash precedes Escape by 5504.6 ms; do not classify it as a skip-input crash",
+  "firstPersonGameplayAccepted": false,
+  "deployed": false
+}

@@ -1,0 +1,17 @@
+{
+  "requestedUrl": "http://127.0.0.1:32926/?game=counter-strike&server=127.0.0.1:4392",
+  "selectedHostStopped": true,
+  "snapshot": "- main:\n  - img \"Counter-Strike 1.6\"\n  - paragraph: Xash3D-FWGS WebAssembly\n  - heading \"Counter-Strike 1.6\" [level=1]\n  - paragraph: Counter-Strike 1.6 multiplayer in the browser.\n  - text: Game\n  - combobox \"Game\":\n    - option \"Half-Life\"\n    - 'option \"Half-Life: Blue Shift\"'\n    - 'option \"Half-Life: Opposing Force\"'\n    - option \"Counter-Strike 1.6\" [selected]\n  - text: Player name\n  - textbox \"Player name\": ChromeCSEndpoint\n  - generic \"Advanced settings\"\n  - option \"WebGL 2 — native viewport\" [selected]\n  - option \"60 FPS\"\n  - option \"90 FPS\"\n  - option \"120 FPS\" [selected]\n  - checkbox \"Launch fullscreen\"\n  - text: Launch fullscreen\n  - button \"Play\"\n  - alert: Could not reach the GoldSource WebRTC bridge at ws://127.0.0.1:4392/websocket\n- status: 1Password menu is available. Press down arrow to select.",
+  "observed": {
+    "dataset": {
+      "shellDataReady": "true",
+      "shellEngineState": "launcher",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "browser",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "counter-strike"
+    },
+    "log": "Error: Could not reach the GoldSource WebRTC bridge at ws://127.0.0.1:4392/websocket\n    at n.onerror (http://127.0.0.1:32926/game-adapter.js:18:69609)\n"
+  }
+}

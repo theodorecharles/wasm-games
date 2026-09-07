@@ -1,0 +1,37 @@
+From: Codex <codex@openai.com>
+Date: Fri, 4 Sep 2026 16:10:00 -0400
+Subject: [PATCH] Guard browser packet drain before server start
+
+The browser frame hook moved packet draining outside the native wait loop
+but dropped its com_sv_running guard. At the main menu svs.clients is NULL;
+the download queue walks unallocated client state and traps in MSG_WriteData.
+Preserve the native guard for both SP and MP while keeping nonblocking drain.
+
+diff --git a/SP/code/qcommon/common.c b/SP/code/qcommon/common.c
+--- a/SP/code/qcommon/common.c
++++ b/SP/code/qcommon/common.c
+@@ -2814,7 +2814,9 @@
+ 	// Native builds drain fragmented netchan messages while waiting for the
+ 	// next frame.  A browser main loop must never block, so service the same
+ 	// queue once per animation frame instead.
+-	SV_SendQueuedPackets();
++	if ( com_sv_running->integer ) {
++		SV_SendQueuedPackets();
++	}
+ #endif
+ 
+ 	// if "dedicated" has been modified, start up
+diff --git a/MP/code/qcommon/common.c b/MP/code/qcommon/common.c
+--- a/MP/code/qcommon/common.c
++++ b/MP/code/qcommon/common.c
+@@ -3272,7 +3272,9 @@
+ 	// Native builds drain fragmented netchan messages while waiting for the
+ 	// next frame.  A browser main loop must never block, so service the same
+ 	// queue once per animation frame instead.
+-	SV_SendQueuedPackets();
++	if ( com_sv_running->integer ) {
++		SV_SendQueuedPackets();
++	}
+ #endif
+ 
+ 	// if "dedicated" has been modified, start up

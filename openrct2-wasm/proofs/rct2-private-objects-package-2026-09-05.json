@@ -1,0 +1,320 @@
+{
+  "observedAt": "2026-09-06T03:00:19.403Z",
+  "originalOrigin": "http://127.0.0.1:32934",
+  "controlOrigin": "http://127.0.0.1:32936",
+  "candidateOrigin": "http://127.0.0.1:32935",
+  "files": [
+    {
+      "name": "data-validator.mjs",
+      "sha256": "496a7a1be513e34db1c9a81edad4fe4faffebbae665506fc34c8470fde960124",
+      "changed": false
+    },
+    {
+      "name": "game-adapter.js",
+      "sha256": "c7db01c8189f0ac9ca64ffe870a4de78175185d4c6e7e8f730075032a91317cd",
+      "changed": false
+    },
+    {
+      "name": "index.html",
+      "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+      "changed": false
+    },
+    {
+      "name": "media-transformer.mjs",
+      "sha256": "685024dd36cfb6224c5a603a6ed4830d3afe5f13cc12a0adc05f16664380d55e",
+      "changed": false
+    },
+    {
+      "name": "openrct2-192.png",
+      "sha256": "9e0ea4583bd2f38cb87ca48aa020e7deea39591321f6caae4e702cdfaafc2a9e",
+      "changed": false
+    },
+    {
+      "name": "openrct2-512.png",
+      "sha256": "14547c761454ddaeaed45a798d33d7354105e9d47095ab240bd131385f27ecec",
+      "changed": false
+    },
+    {
+      "name": "openrct2-audio-bridge.mjs",
+      "sha256": "bbbae94e85313a3ecabbfeb63a8617d9b6a1caa32705dbf7003eeeb531dd82f5",
+      "changed": false
+    },
+    {
+      "name": "openrct2-hot-cache.mjs",
+      "sha256": "932cd97f5ffcda2c8401d5756f50fd9f5187d5cf70840fb7befa5bd1e64351da",
+      "changed": false
+    },
+    {
+      "name": "openrct2-worker.js",
+      "sha256": "46d7827b3ad34c2d856bf57ed492589e398073b2d99f7a47e43e000ee2e38eaa",
+      "changed": true
+    },
+    {
+      "name": "openrct2.ico",
+      "sha256": "a353c39a961398b0d0157733330d907768d30a0fcade9e2dc72284b1ddffffbd",
+      "changed": false
+    },
+    {
+      "name": "runtime/openrct2.data",
+      "sha256": "67d5eb15e5b656782492409c31241d4451bda0dff6ea9de845c94050a22b74a8",
+      "changed": false
+    },
+    {
+      "name": "runtime/openrct2.js",
+      "sha256": "586d6fb0116cda145d9112c0c1601d94787b924ce2c42b6c0243839e37079e7e",
+      "changed": false
+    },
+    {
+      "name": "runtime/openrct2.wasm",
+      "sha256": "47c9e439375f10b814810c0dc6fe8ed5f7c67c057ad87c801d77f1289cbf61b5",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-bootstrap.js",
+      "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-data.json",
+      "sha256": "12ec142324fdb62cf51d30b6d07848f279416a09719b688ffea2b513ceec9274",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-framework.css",
+      "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-framework.js",
+      "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-framework.json",
+      "sha256": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+      "changed": false
+    },
+    {
+      "name": "wasm-game.json",
+      "sha256": "a932ccf704cfa1fb1d353f17244302e22538eaabb5ac7a43b6d2ca0f83a31850",
+      "changed": false
+    }
+  ],
+  "data": {
+    "configured": true,
+    "namespace": "openrct2-installation",
+    "version": "openrct-installation-v2",
+    "ready": true,
+    "files": [],
+    "fixedReady": true,
+    "mediaLibrary": {
+      "configured": true,
+      "namespace": "openrct2-installation",
+      "version": "openrct-installation-v2",
+      "ready": true,
+      "minimumEntries": 1,
+      "launcherVisibleWhenReady": false,
+      "entries": [
+        {
+          "id": "c198ff7ec1c45e01be311b1906e75c66",
+          "label": "RollerCoaster Tycoon 1 + 2",
+          "fileCount": 2975,
+          "totalSize": 1228645759,
+          "createdAt": "2026-08-15T14:57:11.235Z",
+          "metadata": {
+            "format": "openrct-directory-tree",
+            "fileCount": 2975,
+            "rct1": true
+          }
+        }
+      ],
+      "limits": {
+        "maxEntries": 1,
+        "maxFilesPerEntry": 4096,
+        "maxFileBytes": 1073741824,
+        "maxEntryBytes": 3221225472,
+        "maxBrowserCacheBytes": 3221225472
+      }
+    },
+    "variant": "default",
+    "variants": [
+      "default"
+    ],
+    "setupTokenRequired": false
+  },
+  "owner": {
+    "archive": {
+      "url": "https://github.com/OpenRCT2/objects/releases/download/v1.7.11/objects.zip",
+      "sha256": "74e73bbd012339511bb359dd0fbb148fda899790ae37d7d69861d88183b19452"
+    },
+    "nativeJavascriptSha256": "586d6fb0116cda145d9112c0c1601d94787b924ce2c42b6c0243839e37079e7e",
+    "nativeDataSha256": "67d5eb15e5b656782492409c31241d4451bda0dff6ea9de845c94050a22b74a8",
+    "nativeTablesSha256": "c9386b394e69a9c128dccc04c0357c3a6279ae159a2b20a0f5f4bd85d491a235",
+    "requiredSceneryObjects": 474,
+    "packagedObjects": 2484,
+    "missingBefore": [
+      "couger.scenery_wall.acww33",
+      "couger.scenery_wall.acwwf32",
+      "official.scenery_small.support_structure_half",
+      "official.scenery_wall.post_flipped",
+      "official.scenery_wall.support_structure_full",
+      "official.scenery_wall.support_structure_half",
+      "toontowner.scenery_small.ttrfgl01",
+      "toontowner.scenery_small.ttrfgl02",
+      "toontowner.scenery_small.ttrfgl03",
+      "toontowner.scenery_small.ttrftl02",
+      "toontowner.scenery_small.ttrftl03",
+      "toontowner.scenery_small.ttrftl04",
+      "toontowner.scenery_small.ttrftl07",
+      "toontowner.scenery_small.ttrftl08",
+      "toontowner.scenery_small.ttrfwd01",
+      "toontowner.scenery_small.ttrfwd02",
+      "toontowner.scenery_small.ttrfwd03",
+      "toontowner.scenery_small.ttrfwd04",
+      "toontowner.scenery_small.ttrfwd06",
+      "toontowner.scenery_small.ttrfwd07",
+      "toontowner.scenery_small.ttrfwd08",
+      "toontowner.scenery_small.xxbbbr01_fix"
+    ],
+    "missingAfter": [],
+    "originalFilesPreserved": 2953,
+    "originalInventorySha256": "cdbb164db710f1826649ace33f2b11ae3ead97e02d7511621b7dfdf33ce45f21",
+    "entryId": "c198ff7ec1c45e01be311b1906e75c66",
+    "fileCount": 2975,
+    "totalSize": 1228645759,
+    "added": [
+      {
+        "name": "ObjData/couger.scenery_wall.acww33.parkobj",
+        "member": "official/scenery_wall/couger.scenery_wall.acww33.parkobj",
+        "size": 4250,
+        "sha256": "2c0abb09a0a44ff7c694151b59898147cbce5ae6992d63f68d704af43013c602"
+      },
+      {
+        "name": "ObjData/couger.scenery_wall.acwwf32.parkobj",
+        "member": "official/scenery_wall/couger.scenery_wall.acwwf32.parkobj",
+        "size": 4985,
+        "sha256": "9ae2a153a87450834afb6794323581dca913429d9440fc2e80f9d4c49e0a4429"
+      },
+      {
+        "name": "ObjData/official.scenery_small.support_structure_half.parkobj",
+        "member": "official/scenery_small/official.scenery_small.support_structure_half.parkobj",
+        "size": 2246,
+        "sha256": "840504b36c6a91549ebca5d9fa0531a55e66afe9e44ee9df7f5e6b0545004b55"
+      },
+      {
+        "name": "ObjData/official.scenery_wall.post_flipped.parkobj",
+        "member": "official/scenery_wall/official.scenery_wall.post_flipped.json",
+        "size": 1339,
+        "sha256": "18ab75026689672c941052be7c41ecd1aa04cde5c74b3fc7dc184da81d0c0451"
+      },
+      {
+        "name": "ObjData/official.scenery_wall.support_structure_full.parkobj",
+        "member": "official/scenery_wall/official.scenery_wall.support_structure_full.parkobj",
+        "size": 1872,
+        "sha256": "7f92b8fd68560ab4827eaa2805f37c352cb3397010eff84e07d9ad9ed2ed20fd"
+      },
+      {
+        "name": "ObjData/official.scenery_wall.support_structure_half.parkobj",
+        "member": "official/scenery_wall/official.scenery_wall.support_structure_half.parkobj",
+        "size": 1573,
+        "sha256": "a903c846fbea9b5fd61e113590a767c6de16c56a6740308321c207a4048bb91a"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfgl01.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfgl01.parkobj",
+        "size": 4324,
+        "sha256": "bcc2d16c38ca7529f87ecfe654460142810f54b7559ca46cb9e1b85633f5cae3"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfgl02.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfgl02.parkobj",
+        "size": 4394,
+        "sha256": "f91625053d6510eb6d83c8d7caf257532bb50da185fe8559e6c81a976b0be069"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfgl03.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfgl03.parkobj",
+        "size": 2203,
+        "sha256": "e057c47b9b52fe960acc76889ef409b63895b0fb5a6ac4f8e4bffe34a013f4d4"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrftl02.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrftl02.parkobj",
+        "size": 3471,
+        "sha256": "55c04eed0c78761c5b9a72e2c9b250f0508fefa4143abb64ff2252110c7a0495"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrftl03.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrftl03.parkobj",
+        "size": 3656,
+        "sha256": "fd0ce3174a81349a1e4aa41c470b0c796873e1abb63f2b2c511c2d3da3c3d9f2"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrftl04.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrftl04.parkobj",
+        "size": 3594,
+        "sha256": "90d448121f196da7923781cfbc94d7ab580c2d2692b6f140541a4b4747340586"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrftl07.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrftl07.parkobj",
+        "size": 2740,
+        "sha256": "e093f0bb1773a840817b9a7a3bc9a777f38f0d03cab9a251d0445ac1524f722f"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrftl08.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrftl08.parkobj",
+        "size": 1736,
+        "sha256": "3f925a4ff702bd55b8d2341c5a084b2dc28dece1d7e2550f81ae7c0e04e5e5d0"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd01.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd01.parkobj",
+        "size": 4777,
+        "sha256": "24c5d858f8ad487d0cb92492b3cf3328a69a9aa696c2059d888959493927cb91"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd02.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd02.parkobj",
+        "size": 4209,
+        "sha256": "95fe78cea171119f8c298911c39c08b6f678c9d699aae3ca6f5371a646567df4"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd03.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd03.parkobj",
+        "size": 4412,
+        "sha256": "6af5590fb8e21728b314acd2d9a741dea4cf89b7082662ec721873d9de8d367e"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd04.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd04.parkobj",
+        "size": 5014,
+        "sha256": "363e31ad829015fbe94789fd5b62e903646fc54be1b105abc26d12117b205b61"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd06.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd06.parkobj",
+        "size": 3099,
+        "sha256": "302adb2ab424d7305c4fcb35ac893b629440fa59768f7a433788f93e75128f9e"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd07.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd07.parkobj",
+        "size": 4200,
+        "sha256": "b25aed97ef68ec7570c19568c82a44aa5aaabb9a5a292ef6fae5a44cf59c25fd"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.ttrfwd08.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.ttrfwd08.parkobj",
+        "size": 1885,
+        "sha256": "b7eaa26f4e2001520d65c4c4edfd799f1ad4e51e003f45a5c0e56c4c82f3d09d"
+      },
+      {
+        "name": "ObjData/toontowner.scenery_small.xxbbbr01_fix.parkobj",
+        "member": "official/scenery_small/toontowner.scenery_small.xxbbbr01_fix.parkobj",
+        "size": 1841,
+        "sha256": "1429c44a0023d4133fe4b83d585b2e03a22fa62294d7f1950bbb39879adc7466"
+      }
+    ]
+  }
+}

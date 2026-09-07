@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Browser mouse delivery diagnostic</title>
+<style>
+  body { margin: 0; font: 16px system-ui, sans-serif; }
+  #target { height: 300px; background: #ddd; touch-action: none; user-select: none; }
+  #label { display: inline-block; margin-left: 40px; line-height: 35px; }
+  h1, p, pre { margin: 1rem; }
+  pre { white-space: pre-wrap; font-size: 13px; }
+</style>
+<div id="target"><span id="label">File</span></div>
+<h1>Browser mouse delivery diagnostic</h1>
+<p>Click or drag in the gray area. This engine-free page records ordinary
+trusted DOM events; it never synthesizes input or alters its duration.</p>
+<pre id="events">[]</pre>
+<script>
+  const rows = [], down = new Map();
+  for (const type of ['mousedown', 'mousemove', 'mouseup']) {
+    document.querySelector('#target').addEventListener(type, event => {
+      const now = performance.now();
+      const heldMs = type === 'mouseup' && down.has(event.button)
+        ? now - down.get(event.button) : null;
+      if (type === 'mousedown') down.set(event.button, now);
+      if (type === 'mouseup') down.delete(event.button);
+      rows.push({ type, button: event.button, buttons: event.buttons,
+        x: event.clientX, y: event.clientY, trusted: event.isTrusted,
+        timeStamp: event.timeStamp, receivedAt: now, heldMs });
+      if (rows.length > 100) rows.shift();
+      document.querySelector('#events').textContent = JSON.stringify(rows, null, 2);
+    });
+  }
+</script>

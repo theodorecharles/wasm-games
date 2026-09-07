@@ -1,0 +1,173 @@
+{
+  "scope": "Read-only native roster/target and relay observation while separately controlled Chrome clients join or leave. This observer does not create humans, inject input or verify rendering.",
+  "origin": "http://127.0.0.1:32907",
+  "humans": 7,
+  "target": 1,
+  "samples": [
+    {
+      "observedAt": 1788650592104,
+      "state": "running",
+      "humans": 7,
+      "keepAlive": false,
+      "idleTimeoutMs": 90000,
+      "idleSince": null,
+      "startedAt": 1788649984904,
+      "map": "game/mp/d3dm1",
+      "error": null,
+      "connect": "127.0.0.1:27666",
+      "protocol": "1.42",
+      "players": [
+        {
+          "slot": 0,
+          "ping": 176,
+          "rate": 16000,
+          "name": "Capacity01"
+        },
+        {
+          "slot": 1,
+          "ping": 16,
+          "rate": 16000,
+          "name": "Capacity02"
+        },
+        {
+          "slot": 2,
+          "ping": 304,
+          "rate": 16000,
+          "name": "Capacity03"
+        },
+        {
+          "slot": 3,
+          "ping": 160,
+          "rate": 16000,
+          "name": "Capacity04"
+        },
+        {
+          "slot": 4,
+          "ping": 49,
+          "rate": 16000,
+          "name": "Capacity05"
+        },
+        {
+          "slot": 5,
+          "ping": 144,
+          "rate": 16000,
+          "name": "Capacity06"
+        },
+        {
+          "slot": 6,
+          "ping": 65,
+          "rate": 16000,
+          "name": "Capacity07"
+        },
+        {
+          "slot": 7,
+          "ping": 64,
+          "rate": 16000,
+          "name": "Capacity08"
+        }
+      ],
+      "browserPeers": 7,
+      "bots": 0,
+      "botPlayers": [],
+      "botUpdatedAt": 1788650589924,
+      "botTarget": 0,
+      "nativeHumans": 8,
+      "botStatus": "ready",
+      "relay": {
+        "peers": 7,
+        "clientPackets": 180247,
+        "serverPackets": 62181
+      }
+    },
+    {
+      "observedAt": 1788650595107,
+      "state": "running",
+      "humans": 7,
+      "keepAlive": false,
+      "idleTimeoutMs": 90000,
+      "idleSince": null,
+      "startedAt": 1788649984904,
+      "map": "game/mp/d3dm1",
+      "error": null,
+      "connect": "127.0.0.1:27666",
+      "protocol": "1.42",
+      "players": [
+        {
+          "slot": 0,
+          "ping": 225,
+          "rate": 16000,
+          "name": "Capacity01"
+        },
+        {
+          "slot": 1,
+          "ping": 176,
+          "rate": 16000,
+          "name": "Capacity02"
+        },
+        {
+          "slot": 2,
+          "ping": 113,
+          "rate": 16000,
+          "name": "Capacity03"
+        },
+        {
+          "slot": 3,
+          "ping": 161,
+          "rate": 16000,
+          "name": "Capacity04"
+        },
+        {
+          "slot": 4,
+          "ping": 129,
+          "rate": 16000,
+          "name": "Capacity05"
+        },
+        {
+          "slot": 5,
+          "ping": 71,
+          "rate": 16000,
+          "name": "Capacity06"
+        },
+        {
+          "slot": 6,
+          "ping": 96,
+          "rate": 16000,
+          "name": "Capacity07"
+        }
+      ],
+      "browserPeers": 7,
+      "bots": 1,
+      "botPlayers": [
+        {
+          "time": 610512,
+          "slot": 31,
+          "health": 100,
+          "spectating": 0,
+          "origin": [
+            -400.063,
+            1086.44,
+            -127.75
+          ],
+          "buttons": 2,
+          "move": [
+            126,
+            -1,
+            0
+          ],
+          "weapon": 3,
+          "frags": 0
+        }
+      ],
+      "botUpdatedAt": 1788650594916,
+      "botTarget": 1,
+      "nativeHumans": 7,
+      "botStatus": "ready",
+      "relay": {
+        "peers": 7,
+        "clientPackets": 181029,
+        "serverPackets": 62554
+      }
+    }
+  ],
+  "passed": true
+}

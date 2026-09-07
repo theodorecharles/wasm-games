@@ -21,8 +21,8 @@ for (const variant of ['blood', 'duke3d']) {
   assert.equal(config.menuCursor, variant === 'blood' ? 'none' : 'native');
   assert.equal(config.displayMode, '4:3');
   assert.equal(config.canvasWidth / config.canvasHeight, 4 / 3);
-  assert.equal(config.graphics, false, `${variant} must not advertise unavailable renderer profiles`);
-  assert.equal(config.advanced, false);
+  assert.equal(config.graphics, true, `${variant} must expose its packaged renderer profiles`);
+  assert.equal(config.advanced, true, 'the framework nests its graphics selector inside Advanced');
   assert.doesNotMatch(config.description, /files?|data|cache|container|directory|folder/i,
     `${variant} ready copy must describe the game rather than provisioning`);
   assert.ok(config.provisioningText, `${variant} missing-data copy is required`);
@@ -31,8 +31,11 @@ for (const variant of ['blood', 'duke3d']) {
   assert.match(config.persistence?.root || '', /^\/home\/web_user\/\.config\//);
 }
 
-async function exercise(variant) {
+async function exercise(variant, profile = 'classic', { query = '', existingModernized = false } = {}) {
   const isBlood = variant === 'blood';
+  const modernized = profile === 'modernized';
+  const profileKey = isBlood ? 'bloodProfile' : 'dukeProfile';
+  const classicConfig = isBlood ? 'nblood.cfg' : 'eduke32.cfg';
   const source = fs.readFileSync(path.join(repo, `web/${isBlood ? 'blood' : 'duke3d'}-adapter.js`), 'utf8');
   const events = new Map();
   const canvasEvents = new Map();
@@ -49,6 +52,13 @@ async function exercise(variant) {
   let module;
   let nativeMenuId = 100;
   let nativeCaptureTarget = false;
+  const persisted = new Map([
+    [`${manifest.variants[variant].persistence.root}/${classicConfig}`, 'existing Classic settings'],
+    [`${manifest.variants[variant].persistence.root}/nblood_cvars.cfg`, 'existing Classic console settings'],
+    [`${manifest.variants[variant].persistence.root}/settings.cfg`, 'existing Classic bindings']
+  ]);
+  const modernizedPath = `${manifest.variants[variant].persistence.root}/modernized.cfg`;
+  if (existingModernized) persisted.set(modernizedPath, 'existing Modernized settings');
 
   const canvas = { addEventListener(type, listener) { canvasEvents.set(type, listener); } };
   const document = {
@@ -58,10 +68,12 @@ async function exercise(variant) {
     createElement(type) { assert.equal(type, 'script'); return {}; },
     head: {
       appendChild(script) {
-        assert.equal(script.src, isBlood ? '/blood.js' : '/duke3d.js');
+        assert.equal(script.src, `/${variant}${modernized ? '-modernized' : ''}.js`);
         module = sandbox.Module;
         module.FS = {
-          filesystems: { IDBFS: {} }, mkdirTree() {}, mount() {}, syncfs(_populate, callback) { callback(); }, chmod() {}
+          filesystems: { IDBFS: {} }, mkdirTree() {}, mount() {}, syncfs(_populate, callback) { callback(); }, chmod() {},
+          analyzePath(path) { return { exists: persisted.has(path) }; },
+          writeFile(path, contents) { assert.equal(persisted.has(path), false); persisted.set(path, contents); }
         };
         module.addRunDependency = () => {};
         module.removeRunDependency = () => {};
@@ -85,13 +97,14 @@ async function exercise(variant) {
         module[`${prefix}FlushPersistence`] = () => calls.push(['flush']);
         module._Build_WasmControllerFrame = (...values) => calls.push(['controller', ...values]);
         module._Build_WasmKeyEvent = (...values) => calls.push(['key', ...values]);
+        module._Build_WasmTextEvent = code => { calls.push(['text', code]); return 1; };
         module._Build_WasmPointerMove = (...values) => calls.push(['pointerMove', ...values]);
         module._Build_WasmPointerDelta = (...values) => calls.push(['pointerDelta', ...values]);
         module._Build_WasmPointerButton = (...values) => calls.push(['pointerButton', ...values]);
-        module._Build_WasmRenderMode = () => 0;
-        module._Build_WasmRenderWidth = () => 800;
-        module._Build_WasmRenderHeight = () => 600;
-        module._Build_WasmRenderBpp = () => 8;
+        module._Build_WasmRenderMode = () => modernized ? 3 : 0;
+        module._Build_WasmRenderWidth = () => modernized ? 1280 : 800;
+        module._Build_WasmRenderHeight = () => modernized ? 720 : 600;
+        module._Build_WasmRenderBpp = () => modernized ? 32 : 8;
         module._Build_WasmPointerX = () => 400;
         module._Build_WasmPointerY = () => 300;
         module._Build_WasmPointerBits = () => 0;
@@ -114,7 +127,7 @@ async function exercise(variant) {
       error: (...args) => consoleEvents.push(['error', ...args])
     },
     document, window, URLSearchParams, queueMicrotask,
-    performance: { now: () => now }, location: { search: '' },
+    performance: { now: () => now }, location: { search: query },
     crypto: { subtle: { digest: async () => new ArrayBuffer(32) } },
     fetch: async request => {
       assert.equal(request, '/wasm-game-data.json');
@@ -127,7 +140,7 @@ async function exercise(variant) {
   const adapter = sandbox.WasmGameAdapter;
   const context = {
     variant,
-    elements: { canvas },
+    elements: { canvas, graphicsProfile: { value: query ? 'classic' : profile }, description: {} },
     framework: {
       createOwnerDataSet(policy) { createdPolicy = policy; return policy; },
       async mountOwnerFiles(currentModule, data, options) {
@@ -151,7 +164,7 @@ async function exercise(variant) {
         }
         return {
           policy,
-          entries: policy.files.map(file => ({ cached: true, policy: { path: file.mountName } }))
+          entries: policy.files.map(file => ({ cached: true, policy: { ...file, path: file.mountName } }))
         };
       }
     },
@@ -165,7 +178,8 @@ async function exercise(variant) {
       markDirty() { calls.push(['dirty']); },
       async save() { calls.push(['save']); }
     },
-    shell: { resumeAudio() {}, engineState() { return transitions.at(-1) || 'launcher'; } },
+    shell: { resumeAudio() {}, engineState() { return transitions.at(-1) || 'launcher'; },
+      setDisplay(detail) { calls.push(['display', detail.displayMode, detail.pixelated]); } },
     setLoading(...detail) { loading.push(detail); }, log() {},
     showRuntime(state) { transitions.push(state); },
     setEngineState(state, options) {
@@ -176,9 +190,35 @@ async function exercise(variant) {
 
   assert.equal(adapter.readEngineState(), 'menu');
   await adapter.init(context);
+  {
+    assert.equal(document.documentElement.dataset[profileKey], profile);
+    assert.equal(context.elements.graphicsProfile.value, profile);
+    assert.equal(canvas.width, modernized ? 1280 : 800);
+    assert.equal(canvas.height, modernized ? 720 : 600);
+    assert.deepEqual(calls.filter(call => call[0] === 'display').at(-1), ['display', modernized ? '16:9' : '4:3', true]);
+    adapter.preferencesChanged({ qualityProfile: modernized ? 'classic' : 'modernized' }, context);
+    assert.equal(document.documentElement.dataset[profileKey], modernized ? 'classic' : 'modernized');
+    adapter.preferencesChanged({ qualityProfile: profile }, context);
+  }
   assert.ok(canvasEvents.has('mousemove'), `${variant} must prevent duplicate raw SDL mouse motion`);
   assert.equal(createdPolicy.namespace, dataManifest.variants[variant].namespace || dataManifest.namespace);
   await adapter.start(context);
+  {
+    assert.equal(module.locateFile(`${variant}.wasm`, '/'), `/${variant}${modernized ? '-modernized' : ''}.wasm`);
+    if (isBlood) assert.equal(module.locateFile('blood.data', '/'), modernized ? '/blood-modernized.data' : '/blood.data');
+    else assert.equal(module.locateFile('other.data', '/assets/'), '/assets/other.data');
+    assert.equal(module.locateFile('other.bin', '/assets/'), '/assets/other.bin');
+    assert.equal(context.elements.graphicsProfile.disabled, true);
+    const displayCalls = calls.filter(call => call[0] === 'display').length;
+    adapter.preferencesChanged({ qualityProfile: modernized ? 'classic' : 'modernized' }, context);
+    assert.equal(context.elements.graphicsProfile.value, profile, 'a running engine must not pretend to switch profiles');
+    assert.equal(calls.filter(call => call[0] === 'display').length, displayCalls);
+    assert.equal(persisted.get(`${manifest.variants[variant].persistence.root}/${classicConfig}`), 'existing Classic settings');
+    assert.equal(persisted.get(`${manifest.variants[variant].persistence.root}/nblood_cvars.cfg`), 'existing Classic console settings');
+    assert.equal(persisted.get(`${manifest.variants[variant].persistence.root}/settings.cfg`), 'existing Classic bindings');
+    assert.equal(persisted.get(modernizedPath), modernized
+      ? existingModernized ? 'existing Modernized settings' : '[Screen Setup]\n' : undefined);
+  }
   module.printErr('WARN| Found 4 warning(s), 0 error(s).');
   assert.equal(consoleEvents.at(-1)[0], 'log', 'a zero-error summary must not pollute the error console');
   module.printErr('ERROR: renderer initialization failed');
@@ -199,6 +239,15 @@ async function exercise(variant) {
     `${variant} page hide must write native configuration before flushing framework persistence`);
   const launch = calls.find(call => call[0] === 'callMain');
   assert.ok(launch);
+  if (!isBlood) assert.deepEqual(launch[1].slice(7), modernized ? ['-cfg', 'modernized.cfg'] : []);
+  else {
+    assert.equal(launch[1].includes('-cfg=modernized.cfg'), modernized);
+    assert.equal(launch[1].includes('-ini=CRYPTIC.INI'), query.includes('campaign=cryptic'));
+    if (query.includes('autostart=1')) {
+      assert(launch[1].includes('-map=CP01.MAP'));
+      assert(launch[1].includes('-quick') && launch[1].includes('-nodemo'));
+    }
+  }
   assert.ok(launch[1].includes('/game') || launch[1].includes('-game_dir=/game'));
   adapter.inputCaptureChanged(true);
   assert.deepEqual(calls.at(-1), ['capture', 1]);
@@ -209,6 +258,13 @@ async function exercise(variant) {
   adapter.pointerMove({ captured: false, x: 324, y: 207 });
   assert.deepEqual(calls.at(-1), ['pointerDelta', 24, -13],
     `${variant} must preserve mouse look when an embedded browser declines pointer lock`);
+  for (const button of [0, 1, 2]) {
+    const before = calls.length;
+    adapter.pointerButton({ button, pressed: true, captured: true }, {}, context);
+    adapter.pointerButton({ button, pressed: false, captured: true }, {}, context);
+    assert.deepEqual(calls.slice(before), [['pointerButton', button, 1], ['pointerButton', button, 0]],
+      `${variant} gameplay must forward button press/release without changing the absolute menu pointer`);
+  }
   adapter.controllerFrame({
     deltaMs: 16,
     actions: { forward: 1, right: 1, lookX: 0.5, lookY: -0.25, attack: 1, jump: 1 }
@@ -315,6 +371,56 @@ async function exercise(variant) {
     const nativeSource = fs.readFileSync(path.join(sourceRoot, 'source/duke3d/src/game.cpp'), 'utf8');
     assert.match(nativeSource, /ud\.mouseaiming = 0;\s*g_myAimMode = 1;/,
       'Duke pointer-lock input must start with vertical mouselook enabled');
+    // Text and physical scan states are separate native queues. Exercise the
+    // real adapter handler with layout-resolved key values, not just key codes.
+    const keyboard = (key, code, options = {}, type = 'keydown') => {
+      const start = calls.length;
+      let prevented = false, stopped = false;
+      canvasEvents.get(type)({ key, code, ...options,
+        preventDefault() { prevented = true; }, stopPropagation() { stopped = true; } });
+      return { calls: calls.slice(start), prevented, stopped };
+    };
+    for (const [key, code, scan, options] of [
+      ['t', 'KeyT', 0x14, {}], ['T', 'KeyT', 0x14, { shiftKey: true }],
+      ['A', 'KeyA', 0x1e, {}], ['z', 'KeyY', 0x15, {}],
+      [' ', 'Space', 0x39, {}], ['7', 'Digit7', 0x08, {}],
+      ['!', 'Digit1', 0x02, { shiftKey: true }],
+      ['t', 'KeyT', 0x14, { repeat: true }],
+      ['Enter', 'Enter', 0x1c, {}], ['Escape', 'Escape', 0x01, {}],
+      ['Backspace', 'Backspace', 0x0e, {}], ['Tab', 'Tab', 0x0f, {}]
+    ]) {
+      const ascii = { Enter: 13, Escape: 27, Backspace: 8, Tab: 9 }[key] || key.charCodeAt(0);
+      const down = keyboard(key, code, options);
+      assert.deepEqual(down.calls, [['text', ascii], ['key', scan, 1]]);
+      assert.equal(down.prevented, true, 'prevent compatibility keypress duplication');
+      assert.equal(down.stopped, true, 'keep SDL from duplicating scan delivery');
+      assert.equal(document.documentElement.dataset.buildTextInput, `${ascii}:1`);
+      assert.deepEqual(keyboard(key, code, options, 'keyup').calls, [['key', scan, 0]],
+        'release must not insert a second character');
+    }
+    for (const options of [{ ctrlKey: true }, { metaKey: true }, { altKey: true }]) {
+      const shortcut = keyboard('t', 'KeyT', options);
+      assert.deepEqual(shortcut.calls, [['key', 0x14, 1]]);
+      assert.equal(shortcut.prevented, false, 'browser shortcuts must keep their default action');
+    }
+    for (const [key, options] of [['t', { isComposing: true }], ['Dead', {}],
+      ['é', {}], ['💾', {}], ['Unidentified', {}]]) {
+      assert.deepEqual(keyboard(key, 'KeyT', options).calls, [['key', 0x14, 1]],
+        'do not guess or truncate composition/non-ASCII text into the bitmap-font editor');
+    }
+    assert.deepEqual(keyboard('<', 'Unidentified'), {
+      calls: [['text', 60]], prevented: true, stopped: true
+    }, 'a resolved ASCII character does not require a recognized physical scan');
+    const textHook = module._Build_WasmTextEvent;
+    for (const result of [0, 2]) {
+      module._Build_WasmTextEvent = code => { calls.push(['text', code]); return result; };
+      const handled = keyboard('t', 'KeyT');
+      assert.equal(handled.prevented, true, 'full FIFO or console routing must not trigger SDL fallback');
+      assert.equal(document.documentElement.dataset.buildTextInput, `116:${result}`);
+    }
+    delete module._Build_WasmTextEvent;
+    assert.deepEqual(keyboard('t', 'KeyT').calls, [['key', 0x14, 1]], 'older modules retain scan input');
+    module._Build_WasmTextEvent = textHook;
     nativeState = 0;
     nativeMenuId = 110;
     const enterEvent = {
@@ -368,8 +474,19 @@ async function exercise(variant) {
 
 (async () => {
   await exercise('blood');
+  await exercise('blood', 'modernized');
+  await exercise('blood', 'modernized', { query: '?profile=modernized' });
+  await exercise('blood', 'modernized', { existingModernized: true });
+  await exercise('blood', 'classic', { query: '?profile=unknown' });
+  await exercise('blood', 'classic', { query: '?profile=__proto__' });
+  await exercise('blood', 'modernized', { query: '?profile=modernized&campaign=cryptic&autostart=1' });
   await exercise('duke3d');
-  console.log('Build-family state, capture, mount, display, profile, and manifest contracts passed');
+  await exercise('duke3d', 'modernized');
+  await exercise('duke3d', 'modernized', { query: '?profile=modernized' });
+  await exercise('duke3d', 'modernized', { existingModernized: true });
+  await exercise('duke3d', 'classic', { query: '?profile=unknown' });
+  await exercise('duke3d', 'classic', { query: '?profile=__proto__' });
+  console.log('Build-family state, capture, text/scan input, mount, display, profile, and manifest contracts passed');
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

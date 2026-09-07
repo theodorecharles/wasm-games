@@ -1,0 +1,54 @@
+{
+  "scope": "Exact production IN_ProcessEvents with fixture SDL queue/event-state updates. Verifies menu/paused key-down visibility, releases, chords, directions, and unchanged gameplay/non-key drain policy. Not full SDL or held movement acceptance.",
+  "sourceSHA256": "77f151712acae34a56244d1f062432ae733baca656bf1b33aa7c8c5a2e594d2a",
+  "cases": [
+    {
+      "label": "main-menu-short-escape-down",
+      "passed": false
+    },
+    {
+      "label": "main-menu-short-escape-release",
+      "passed": true
+    },
+    {
+      "label": "paused-short-escape-down",
+      "passed": false
+    },
+    {
+      "label": "paused-short-escape-release",
+      "passed": true
+    },
+    {
+      "label": "modifier-before-enter",
+      "passed": false
+    },
+    {
+      "label": "short-enter-observable",
+      "passed": false
+    },
+    {
+      "label": "chord-released",
+      "passed": true
+    },
+    {
+      "label": "first-direction-observable",
+      "passed": false
+    },
+    {
+      "label": "next-direction-observable",
+      "passed": false
+    },
+    {
+      "label": "all-directions-released",
+      "passed": true
+    },
+    {
+      "label": "gameplay-pump-unchanged",
+      "passed": true
+    },
+    {
+      "label": "non-key-events-not-throttled",
+      "passed": true
+    }
+  ]
+}

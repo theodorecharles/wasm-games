@@ -1,0 +1,50 @@
+{
+  "observedAt": "2026-09-06T20:57:34.244Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 801,
+        "cssWidth": 1424,
+        "height": 720,
+        "width": 1280
+      }
+    ],
+    "fullscreen": null,
+    "log": " runtime  src| \n 0.0386s INFO| Using directory /home/web_user/.config/eduke32/\n 0.0403s INFO| Started at 2026-09-06 16:55:46.476\n 0.0414s INFO| EDuke32 r14377[HEAD]-f86390315\n 0.0420s INFO| Built Sep  6 2026 18:18:58, clang 24.0.0, 32-bit\n 0.0424s INFO| Application parameters: -game_dir /game -gamegrp DUKE3D.GRP -noautoload -nosetup -nologo -cfg modernized.cfg\n 0.0429s INFO| Autoload disabled\n 0.0433s INFO| Using directory /game/\n 0.0472s INFO| Initializing SDL 2.32.10\n 0.0485s INFO| Using 'emscripten' video driver.\n 0.0496s  GFX| Detecting video modes for display 0 (0)...\n 0.0505s INFO| Using config file 'modernized.cfg'.\n 0.0513s INFO| Searching for game data...\n 0.0796s INFO|  DUKE3D.GRP has checksum 0xbbc9ce44\n 0.0829s INFO| Using DUKE3D.GRP as main data file.\n 0.0881s  CON| Compiling: GAME.CON (99639 bytes)\n 0.0932s  CON| Including: DEFS.CON (28893 bytes)\n 0.0957s  CON| Including: USER.CON (36930 bytes)\n 0.0971s WARN| USER.CON:751: overwriting existing definition for sound #261 (hydro43.voc)\n 0.0982s  CON| GAME.CON: In state 'blimphitstate':\n 0.0987s WARN| GAME.CON:157: expected action, found define.\n 0.1003s  CON| GAME.CON: In actor 'ORGANTIC':\n 0.1009s WARN| GAME.CON:1923: found 'else' with no 'if'\n 0.1019s  CON| GAME.CON: In state 'pigshootenemystate':\n 0.1022s WARN| GAME.CON:2817: found 'else' with no 'if'\n 0.1028s WARN| Found 4 warning(s), 0 error(s).\n 0.1077s  CON| Compiled 53980 bytes in 19ms, v1.3D compatibility mode\n 0.2466s INFO| Initialized 96.0M cache\n 0.5699s INFO| Loaded DUKE.RTS\n 0.5706s INFO| Initializing console...\n 0.5723s INPT| No game controllers found.\n 0.5767s  GFX| Setting video mode 1280x720 (32-bpp windowed).\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nWARNING: using emscripten GL immediate mode emulation. This is very limited in what it supports\nemscripten_set_main_loop_timing: Cannot set timing mode for main loop since a main loop does not exist! Call emscripten_set_main_loop first to set one up.\nTODO: glShadeModel\n 0.6149s INFO| [Build WASM] NPOT textures: 1 (OpenGL ES 3.0)\n 0.6159s WARN| OpenGL driver lacks the necessary functions to use caching.\n 0.6175s  GFX| OpenGL driver: WebKit WebGL OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))\n 0.6186s  GFX| OpenGL context: version 3.0\n 0.6191s  GFX| Refresh rate: 60.00Hz.\n 0.6206s   GL| Unable to use persistent stream buffers: required extensions missing.\nglUniform1f called with a nonexisting location ID -1!\nglUniform1f called with a nonexisting location ID -1!\n 0.6440s INFO| Opened texturecache as cache file.\n 0.6449s  ASS| Initializing Apogee Sound System\n 0.6488s  ASS| Using SDL EMSCRIPTEN driver on System audio output device\n 0.6498s INFO| [NBlood WASM] SDL audio device opened: 48000 Hz, 2 channel(s)\n 0.6507s  ASS| Initialized sound at 48.0 KHz stereo with 64 voices\n 0.6513s  ASS| Initializing MIDI driver: AdLib OPL3 emulation\n 0.6537s INFO| [Duke WASM] Starting cooperative browser game loop\n47.4191s INFO| Cache time: 1825ms.\n47.4238s INFO| E1L1: HOLLYWOOD HOLOCAUST\n",
+    "pointerLock": null,
+    "root": {
+      "audioState": "running",
+      "buildInputFrames": "393",
+      "buildLastKey": "KeyT:up",
+      "buildLastScan": "20",
+      "buildNativeClickState": "0",
+      "buildNativePointer": "863,187",
+      "buildNativePointerBits": "0",
+      "buildPointer": "863,187",
+      "buildPointerButton": "0:up@863,187",
+      "buildPointerDelta": "0,0",
+      "buildPointerDeltaEvents": "0",
+      "buildPointerRelease": "0",
+      "buildRenderBpp": "32",
+      "buildRenderMode": "3",
+      "buildRenderSize": "1280x720",
+      "buildTextInput": "84:1",
+      "dukeControlsMask": "31",
+      "dukeControlsValid": "true",
+      "dukeMenuEntry": "-1",
+      "dukeMenuId": "350",
+      "dukePlayerView": "-31206,7313,-158314,422,106",
+      "dukeProfile": "modernized",
+      "persistence": "ready",
+      "shellDataReady": "true",
+      "shellEngineState": "menu",
+      "shellHostCursor": "hidden",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmDataSource": "container",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "duke3d"
+    },
+    "url": "http://127.0.0.1:32986/?game=duke3d&profile=modernized"
+  }
+}

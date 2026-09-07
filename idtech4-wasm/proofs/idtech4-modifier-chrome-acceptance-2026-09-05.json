@@ -1,0 +1,83 @@
+{
+  "scope": "Actual Chrome packaged-adapter physical modifier forwarding and native spectator-action acceptance; not sustained held input or full renderer acceptance.",
+  "image": "sha256:729fd8035b80280ace9c9c29cb71ec3649820f20deee190f42e717f8cc26dfc5",
+  "ctrlForwarding": true,
+  "altForwarding": true,
+  "nativeAction": {
+    "observation": "Screenshot changed from SPECTATING to FOLLOWING: [BOT30] James Torbin (3) after Ctrl taps, without rebinding.",
+    "before": "idtech4-modifier-spectator-before-2026-09-05.jpg",
+    "after": "idtech4-modifier-spectator-after-2026-09-05.jpg"
+  },
+  "current": {
+    "state": "running",
+    "humans": 1,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": 1788654010887,
+    "map": "game/mp/d3dm2",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "ModifierMarine"
+      }
+    ],
+    "browserPeers": 1,
+    "bots": 2,
+    "botPlayers": [
+      {
+        "time": 470816,
+        "slot": 30,
+        "health": 100,
+        "spectating": 1,
+        "origin": [
+          -189.655,
+          417.729,
+          86.679
+        ],
+        "buttons": 0,
+        "move": [
+          0,
+          0,
+          0
+        ],
+        "weapon": -1,
+        "frags": 0
+      },
+      {
+        "time": 470816,
+        "slot": 31,
+        "health": 100,
+        "spectating": 1,
+        "origin": [
+          -47.491,
+          409.41,
+          93.251
+        ],
+        "buttons": 0,
+        "move": [
+          0,
+          0,
+          0
+        ],
+        "weapon": -1,
+        "frags": 10
+      }
+    ],
+    "botUpdatedAt": 1788654480902,
+    "botTarget": 2,
+    "nativeHumans": 1,
+    "botStatus": "ready",
+    "relay": {
+      "peers": 1,
+      "clientPackets": 28642,
+      "serverPackets": 7839
+    }
+  },
+  "passed": true
+}

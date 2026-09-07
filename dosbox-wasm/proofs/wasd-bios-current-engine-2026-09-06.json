@@ -1,0 +1,1309 @@
+{
+  "scope": "Actual adapter DOM handlers and movement/typing control into production Wasm and a DOS BIOS diagnostic. Original letters/Shift/digits, WASD arrows and restored save-name typing. Not Chrome held-key/gameplay acceptance.",
+  "keyboardOnly": false,
+  "adapterKeyboard": true,
+  "artifacts": [
+    {
+      "file": "dosbox.js",
+      "sha256": "16fd8f9724796f15e3eac63a1126b2f4b441f3a059f517235d14698f4f4d25f8"
+    },
+    {
+      "file": "dosbox.wasm",
+      "sha256": "968e799bacb2a42c3e5260457e220c9a7421b55d095832db1bfe1b731aaf386f"
+    },
+    {
+      "file": "game-adapter.js",
+      "sha256": "325130ee7a69b10d89a89dd24ce0dcd96cd1a3e5aa5dcb3d835dc36ff5c09d61"
+    }
+  ],
+  "cases": [
+    {
+      "code": 276,
+      "shift": false,
+      "physical": "ArrowLeft",
+      "wasd": false,
+      "expected": [
+        0,
+        75
+      ],
+      "actual": [
+        0,
+        75
+      ]
+    },
+    {
+      "code": 275,
+      "shift": false,
+      "physical": "ArrowRight",
+      "wasd": false,
+      "expected": [
+        0,
+        77
+      ],
+      "actual": [
+        0,
+        77
+      ]
+    },
+    {
+      "code": 273,
+      "shift": false,
+      "physical": "ArrowUp",
+      "wasd": false,
+      "expected": [
+        0,
+        72
+      ],
+      "actual": [
+        0,
+        72
+      ]
+    },
+    {
+      "code": 274,
+      "shift": false,
+      "physical": "ArrowDown",
+      "wasd": false,
+      "expected": [
+        0,
+        80
+      ],
+      "actual": [
+        0,
+        80
+      ]
+    },
+    {
+      "code": 27,
+      "shift": false,
+      "physical": "Escape",
+      "wasd": false,
+      "expected": [
+        27,
+        1
+      ],
+      "actual": [
+        27,
+        1
+      ]
+    },
+    {
+      "code": 97,
+      "shift": false,
+      "physical": "KeyA",
+      "wasd": false,
+      "expected": [
+        97,
+        30
+      ],
+      "actual": [
+        97,
+        30
+      ]
+    },
+    {
+      "code": 8,
+      "shift": false,
+      "physical": "Backspace",
+      "wasd": false,
+      "expected": [
+        8,
+        14
+      ],
+      "actual": [
+        8,
+        14
+      ]
+    },
+    {
+      "code": 13,
+      "shift": false,
+      "physical": "Enter",
+      "wasd": false,
+      "expected": [
+        13,
+        28
+      ],
+      "actual": [
+        13,
+        28
+      ]
+    },
+    {
+      "code": 97,
+      "shift": false,
+      "physical": "KeyA",
+      "wasd": false,
+      "expected": [
+        97,
+        30
+      ],
+      "actual": [
+        97,
+        30
+      ]
+    },
+    {
+      "code": 98,
+      "shift": false,
+      "physical": "KeyB",
+      "wasd": false,
+      "expected": [
+        98,
+        48
+      ],
+      "actual": [
+        98,
+        48
+      ]
+    },
+    {
+      "code": 99,
+      "shift": false,
+      "physical": "KeyC",
+      "wasd": false,
+      "expected": [
+        99,
+        46
+      ],
+      "actual": [
+        99,
+        46
+      ]
+    },
+    {
+      "code": 100,
+      "shift": false,
+      "physical": "KeyD",
+      "wasd": false,
+      "expected": [
+        100,
+        32
+      ],
+      "actual": [
+        100,
+        32
+      ]
+    },
+    {
+      "code": 101,
+      "shift": false,
+      "physical": "KeyE",
+      "wasd": false,
+      "expected": [
+        101,
+        18
+      ],
+      "actual": [
+        101,
+        18
+      ]
+    },
+    {
+      "code": 102,
+      "shift": false,
+      "physical": "KeyF",
+      "wasd": false,
+      "expected": [
+        102,
+        33
+      ],
+      "actual": [
+        102,
+        33
+      ]
+    },
+    {
+      "code": 103,
+      "shift": false,
+      "physical": "KeyG",
+      "wasd": false,
+      "expected": [
+        103,
+        34
+      ],
+      "actual": [
+        103,
+        34
+      ]
+    },
+    {
+      "code": 104,
+      "shift": false,
+      "physical": "KeyH",
+      "wasd": false,
+      "expected": [
+        104,
+        35
+      ],
+      "actual": [
+        104,
+        35
+      ]
+    },
+    {
+      "code": 105,
+      "shift": false,
+      "physical": "KeyI",
+      "wasd": false,
+      "expected": [
+        105,
+        23
+      ],
+      "actual": [
+        105,
+        23
+      ]
+    },
+    {
+      "code": 106,
+      "shift": false,
+      "physical": "KeyJ",
+      "wasd": false,
+      "expected": [
+        106,
+        36
+      ],
+      "actual": [
+        106,
+        36
+      ]
+    },
+    {
+      "code": 107,
+      "shift": false,
+      "physical": "KeyK",
+      "wasd": false,
+      "expected": [
+        107,
+        37
+      ],
+      "actual": [
+        107,
+        37
+      ]
+    },
+    {
+      "code": 108,
+      "shift": false,
+      "physical": "KeyL",
+      "wasd": false,
+      "expected": [
+        108,
+        38
+      ],
+      "actual": [
+        108,
+        38
+      ]
+    },
+    {
+      "code": 109,
+      "shift": false,
+      "physical": "KeyM",
+      "wasd": false,
+      "expected": [
+        109,
+        50
+      ],
+      "actual": [
+        109,
+        50
+      ]
+    },
+    {
+      "code": 110,
+      "shift": false,
+      "physical": "KeyN",
+      "wasd": false,
+      "expected": [
+        110,
+        49
+      ],
+      "actual": [
+        110,
+        49
+      ]
+    },
+    {
+      "code": 111,
+      "shift": false,
+      "physical": "KeyO",
+      "wasd": false,
+      "expected": [
+        111,
+        24
+      ],
+      "actual": [
+        111,
+        24
+      ]
+    },
+    {
+      "code": 112,
+      "shift": false,
+      "physical": "KeyP",
+      "wasd": false,
+      "expected": [
+        112,
+        25
+      ],
+      "actual": [
+        112,
+        25
+      ]
+    },
+    {
+      "code": 113,
+      "shift": false,
+      "physical": "KeyQ",
+      "wasd": false,
+      "expected": [
+        113,
+        16
+      ],
+      "actual": [
+        113,
+        16
+      ]
+    },
+    {
+      "code": 114,
+      "shift": false,
+      "physical": "KeyR",
+      "wasd": false,
+      "expected": [
+        114,
+        19
+      ],
+      "actual": [
+        114,
+        19
+      ]
+    },
+    {
+      "code": 115,
+      "shift": false,
+      "physical": "KeyS",
+      "wasd": false,
+      "expected": [
+        115,
+        31
+      ],
+      "actual": [
+        115,
+        31
+      ]
+    },
+    {
+      "code": 116,
+      "shift": false,
+      "physical": "KeyT",
+      "wasd": false,
+      "expected": [
+        116,
+        20
+      ],
+      "actual": [
+        116,
+        20
+      ]
+    },
+    {
+      "code": 117,
+      "shift": false,
+      "physical": "KeyU",
+      "wasd": false,
+      "expected": [
+        117,
+        22
+      ],
+      "actual": [
+        117,
+        22
+      ]
+    },
+    {
+      "code": 118,
+      "shift": false,
+      "physical": "KeyV",
+      "wasd": false,
+      "expected": [
+        118,
+        47
+      ],
+      "actual": [
+        118,
+        47
+      ]
+    },
+    {
+      "code": 119,
+      "shift": false,
+      "physical": "KeyW",
+      "wasd": false,
+      "expected": [
+        119,
+        17
+      ],
+      "actual": [
+        119,
+        17
+      ]
+    },
+    {
+      "code": 120,
+      "shift": false,
+      "physical": "KeyX",
+      "wasd": false,
+      "expected": [
+        120,
+        45
+      ],
+      "actual": [
+        120,
+        45
+      ]
+    },
+    {
+      "code": 121,
+      "shift": false,
+      "physical": "KeyY",
+      "wasd": false,
+      "expected": [
+        121,
+        21
+      ],
+      "actual": [
+        121,
+        21
+      ]
+    },
+    {
+      "code": 122,
+      "shift": false,
+      "physical": "KeyZ",
+      "wasd": false,
+      "expected": [
+        122,
+        44
+      ],
+      "actual": [
+        122,
+        44
+      ]
+    },
+    {
+      "code": 97,
+      "shift": true,
+      "physical": "KeyA",
+      "wasd": false,
+      "expected": [
+        65,
+        30
+      ],
+      "actual": [
+        65,
+        30
+      ]
+    },
+    {
+      "code": 98,
+      "shift": true,
+      "physical": "KeyB",
+      "wasd": false,
+      "expected": [
+        66,
+        48
+      ],
+      "actual": [
+        66,
+        48
+      ]
+    },
+    {
+      "code": 99,
+      "shift": true,
+      "physical": "KeyC",
+      "wasd": false,
+      "expected": [
+        67,
+        46
+      ],
+      "actual": [
+        67,
+        46
+      ]
+    },
+    {
+      "code": 100,
+      "shift": true,
+      "physical": "KeyD",
+      "wasd": false,
+      "expected": [
+        68,
+        32
+      ],
+      "actual": [
+        68,
+        32
+      ]
+    },
+    {
+      "code": 101,
+      "shift": true,
+      "physical": "KeyE",
+      "wasd": false,
+      "expected": [
+        69,
+        18
+      ],
+      "actual": [
+        69,
+        18
+      ]
+    },
+    {
+      "code": 102,
+      "shift": true,
+      "physical": "KeyF",
+      "wasd": false,
+      "expected": [
+        70,
+        33
+      ],
+      "actual": [
+        70,
+        33
+      ]
+    },
+    {
+      "code": 103,
+      "shift": true,
+      "physical": "KeyG",
+      "wasd": false,
+      "expected": [
+        71,
+        34
+      ],
+      "actual": [
+        71,
+        34
+      ]
+    },
+    {
+      "code": 104,
+      "shift": true,
+      "physical": "KeyH",
+      "wasd": false,
+      "expected": [
+        72,
+        35
+      ],
+      "actual": [
+        72,
+        35
+      ]
+    },
+    {
+      "code": 105,
+      "shift": true,
+      "physical": "KeyI",
+      "wasd": false,
+      "expected": [
+        73,
+        23
+      ],
+      "actual": [
+        73,
+        23
+      ]
+    },
+    {
+      "code": 106,
+      "shift": true,
+      "physical": "KeyJ",
+      "wasd": false,
+      "expected": [
+        74,
+        36
+      ],
+      "actual": [
+        74,
+        36
+      ]
+    },
+    {
+      "code": 107,
+      "shift": true,
+      "physical": "KeyK",
+      "wasd": false,
+      "expected": [
+        75,
+        37
+      ],
+      "actual": [
+        75,
+        37
+      ]
+    },
+    {
+      "code": 108,
+      "shift": true,
+      "physical": "KeyL",
+      "wasd": false,
+      "expected": [
+        76,
+        38
+      ],
+      "actual": [
+        76,
+        38
+      ]
+    },
+    {
+      "code": 109,
+      "shift": true,
+      "physical": "KeyM",
+      "wasd": false,
+      "expected": [
+        77,
+        50
+      ],
+      "actual": [
+        77,
+        50
+      ]
+    },
+    {
+      "code": 110,
+      "shift": true,
+      "physical": "KeyN",
+      "wasd": false,
+      "expected": [
+        78,
+        49
+      ],
+      "actual": [
+        78,
+        49
+      ]
+    },
+    {
+      "code": 111,
+      "shift": true,
+      "physical": "KeyO",
+      "wasd": false,
+      "expected": [
+        79,
+        24
+      ],
+      "actual": [
+        79,
+        24
+      ]
+    },
+    {
+      "code": 112,
+      "shift": true,
+      "physical": "KeyP",
+      "wasd": false,
+      "expected": [
+        80,
+        25
+      ],
+      "actual": [
+        80,
+        25
+      ]
+    },
+    {
+      "code": 113,
+      "shift": true,
+      "physical": "KeyQ",
+      "wasd": false,
+      "expected": [
+        81,
+        16
+      ],
+      "actual": [
+        81,
+        16
+      ]
+    },
+    {
+      "code": 114,
+      "shift": true,
+      "physical": "KeyR",
+      "wasd": false,
+      "expected": [
+        82,
+        19
+      ],
+      "actual": [
+        82,
+        19
+      ]
+    },
+    {
+      "code": 115,
+      "shift": true,
+      "physical": "KeyS",
+      "wasd": false,
+      "expected": [
+        83,
+        31
+      ],
+      "actual": [
+        83,
+        31
+      ]
+    },
+    {
+      "code": 116,
+      "shift": true,
+      "physical": "KeyT",
+      "wasd": false,
+      "expected": [
+        84,
+        20
+      ],
+      "actual": [
+        84,
+        20
+      ]
+    },
+    {
+      "code": 117,
+      "shift": true,
+      "physical": "KeyU",
+      "wasd": false,
+      "expected": [
+        85,
+        22
+      ],
+      "actual": [
+        85,
+        22
+      ]
+    },
+    {
+      "code": 118,
+      "shift": true,
+      "physical": "KeyV",
+      "wasd": false,
+      "expected": [
+        86,
+        47
+      ],
+      "actual": [
+        86,
+        47
+      ]
+    },
+    {
+      "code": 119,
+      "shift": true,
+      "physical": "KeyW",
+      "wasd": false,
+      "expected": [
+        87,
+        17
+      ],
+      "actual": [
+        87,
+        17
+      ]
+    },
+    {
+      "code": 120,
+      "shift": true,
+      "physical": "KeyX",
+      "wasd": false,
+      "expected": [
+        88,
+        45
+      ],
+      "actual": [
+        88,
+        45
+      ]
+    },
+    {
+      "code": 121,
+      "shift": true,
+      "physical": "KeyY",
+      "wasd": false,
+      "expected": [
+        89,
+        21
+      ],
+      "actual": [
+        89,
+        21
+      ]
+    },
+    {
+      "code": 122,
+      "shift": true,
+      "physical": "KeyZ",
+      "wasd": false,
+      "expected": [
+        90,
+        44
+      ],
+      "actual": [
+        90,
+        44
+      ]
+    },
+    {
+      "code": 49,
+      "shift": false,
+      "physical": "Digit1",
+      "wasd": false,
+      "expected": [
+        49,
+        2
+      ],
+      "actual": [
+        49,
+        2
+      ]
+    },
+    {
+      "code": 50,
+      "shift": false,
+      "physical": "Digit2",
+      "wasd": false,
+      "expected": [
+        50,
+        3
+      ],
+      "actual": [
+        50,
+        3
+      ]
+    },
+    {
+      "code": 51,
+      "shift": false,
+      "physical": "Digit3",
+      "wasd": false,
+      "expected": [
+        51,
+        4
+      ],
+      "actual": [
+        51,
+        4
+      ]
+    },
+    {
+      "code": 52,
+      "shift": false,
+      "physical": "Digit4",
+      "wasd": false,
+      "expected": [
+        52,
+        5
+      ],
+      "actual": [
+        52,
+        5
+      ]
+    },
+    {
+      "code": 53,
+      "shift": false,
+      "physical": "Digit5",
+      "wasd": false,
+      "expected": [
+        53,
+        6
+      ],
+      "actual": [
+        53,
+        6
+      ]
+    },
+    {
+      "code": 54,
+      "shift": false,
+      "physical": "Digit6",
+      "wasd": false,
+      "expected": [
+        54,
+        7
+      ],
+      "actual": [
+        54,
+        7
+      ]
+    },
+    {
+      "code": 55,
+      "shift": false,
+      "physical": "Digit7",
+      "wasd": false,
+      "expected": [
+        55,
+        8
+      ],
+      "actual": [
+        55,
+        8
+      ]
+    },
+    {
+      "code": 56,
+      "shift": false,
+      "physical": "Digit8",
+      "wasd": false,
+      "expected": [
+        56,
+        9
+      ],
+      "actual": [
+        56,
+        9
+      ]
+    },
+    {
+      "code": 57,
+      "shift": false,
+      "physical": "Digit9",
+      "wasd": false,
+      "expected": [
+        57,
+        10
+      ],
+      "actual": [
+        57,
+        10
+      ]
+    },
+    {
+      "code": 48,
+      "shift": false,
+      "physical": "Digit0",
+      "wasd": false,
+      "expected": [
+        48,
+        11
+      ],
+      "actual": [
+        48,
+        11
+      ]
+    },
+    {
+      "code": 273,
+      "shift": false,
+      "physical": "KeyW",
+      "wasd": true,
+      "expected": [
+        0,
+        72
+      ],
+      "actual": [
+        0,
+        72
+      ]
+    },
+    {
+      "code": 276,
+      "shift": false,
+      "physical": "KeyA",
+      "wasd": true,
+      "expected": [
+        0,
+        75
+      ],
+      "actual": [
+        0,
+        75
+      ]
+    },
+    {
+      "code": 274,
+      "shift": false,
+      "physical": "KeyS",
+      "wasd": true,
+      "expected": [
+        0,
+        80
+      ],
+      "actual": [
+        0,
+        80
+      ]
+    },
+    {
+      "code": 275,
+      "shift": false,
+      "physical": "KeyD",
+      "wasd": true,
+      "expected": [
+        0,
+        77
+      ],
+      "actual": [
+        0,
+        77
+      ]
+    },
+    {
+      "code": 273,
+      "shift": false,
+      "physical": "ArrowUp",
+      "wasd": true,
+      "expected": [
+        0,
+        72
+      ],
+      "actual": [
+        0,
+        72
+      ]
+    },
+    {
+      "code": 276,
+      "shift": false,
+      "physical": "ArrowLeft",
+      "wasd": true,
+      "expected": [
+        0,
+        75
+      ],
+      "actual": [
+        0,
+        75
+      ]
+    },
+    {
+      "code": 274,
+      "shift": false,
+      "physical": "ArrowDown",
+      "wasd": true,
+      "expected": [
+        0,
+        80
+      ],
+      "actual": [
+        0,
+        80
+      ]
+    },
+    {
+      "code": 275,
+      "shift": false,
+      "physical": "ArrowRight",
+      "wasd": true,
+      "expected": [
+        0,
+        77
+      ],
+      "actual": [
+        0,
+        77
+      ]
+    },
+    {
+      "code": 113,
+      "shift": false,
+      "physical": "KeyQ",
+      "wasd": true,
+      "expected": [
+        113,
+        16
+      ],
+      "actual": [
+        113,
+        16
+      ]
+    },
+    {
+      "code": 9,
+      "shift": false,
+      "physical": "Tab",
+      "wasd": true,
+      "expected": [
+        9,
+        15
+      ],
+      "actual": [
+        9,
+        15
+      ]
+    },
+    {
+      "code": 27,
+      "shift": false,
+      "physical": "Escape",
+      "wasd": true,
+      "expected": [
+        27,
+        1
+      ],
+      "actual": [
+        27,
+        1
+      ]
+    },
+    {
+      "code": 13,
+      "shift": false,
+      "physical": "Enter",
+      "wasd": true,
+      "expected": [
+        13,
+        28
+      ],
+      "actual": [
+        13,
+        28
+      ]
+    },
+    {
+      "code": 119,
+      "shift": false,
+      "physical": "KeyW",
+      "wasd": false,
+      "expected": [
+        119,
+        17
+      ],
+      "actual": [
+        119,
+        17
+      ]
+    },
+    {
+      "code": 97,
+      "shift": false,
+      "physical": "KeyA",
+      "wasd": false,
+      "expected": [
+        97,
+        30
+      ],
+      "actual": [
+        97,
+        30
+      ]
+    },
+    {
+      "code": 115,
+      "shift": false,
+      "physical": "KeyS",
+      "wasd": false,
+      "expected": [
+        115,
+        31
+      ],
+      "actual": [
+        115,
+        31
+      ]
+    },
+    {
+      "code": 100,
+      "shift": false,
+      "physical": "KeyD",
+      "wasd": false,
+      "expected": [
+        100,
+        32
+      ],
+      "actual": [
+        100,
+        32
+      ]
+    },
+    {
+      "code": 57,
+      "shift": false,
+      "physical": "Digit9",
+      "wasd": false,
+      "expected": [
+        57,
+        10
+      ],
+      "actual": [
+        57,
+        10
+      ]
+    },
+    {
+      "code": 48,
+      "shift": false,
+      "physical": "Digit0",
+      "wasd": false,
+      "expected": [
+        48,
+        11
+      ],
+      "actual": [
+        48,
+        11
+      ]
+    },
+    {
+      "code": 54,
+      "shift": false,
+      "physical": "Digit6",
+      "wasd": false,
+      "expected": [
+        54,
+        7
+      ],
+      "actual": [
+        54,
+        7
+      ]
+    },
+    {
+      "code": 8,
+      "shift": false,
+      "physical": "Backspace",
+      "wasd": false,
+      "expected": [
+        8,
+        14
+      ],
+      "actual": [
+        8,
+        14
+      ]
+    },
+    {
+      "code": 54,
+      "shift": false,
+      "physical": "Digit6",
+      "wasd": false,
+      "expected": [
+        54,
+        7
+      ],
+      "actual": [
+        54,
+        7
+      ]
+    },
+    {
+      "code": 13,
+      "shift": false,
+      "physical": "Enter",
+      "wasd": false,
+      "expected": [
+        13,
+        28
+      ],
+      "actual": [
+        13,
+        28
+      ]
+    }
+  ]
+}

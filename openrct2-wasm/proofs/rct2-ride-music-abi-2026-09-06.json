@@ -1,0 +1,317 @@
+{
+  "checkedAt": "2026-09-06T04:22:36.379Z",
+  "toolchain": "ghcr.io/openrct2/openrct2-build@sha256:0e1daa8e3f5a1c6951179aeab5c5de471ea705cb5f756bfb6e0ae5162b7e67be",
+  "compiler": "clang version 23.0.0git (https:/github.com/llvm/llvm-project 358db292cc6a9a8a5448a296f643312289f328d7)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /emsdk/upstream/bin",
+  "records": [
+    {
+      "variant": "original",
+      "optimization": "-O0",
+      "declarations": [
+        "declare void @_ZN8OpenRCT29RideAudio37RideMusicGetTrackOffsetLength_DefaultERK4Ride()",
+        "declare void @_ZN8OpenRCT29RideAudio36RideMusicGetTrackOffsetLength_CircusERK4Ride()"
+      ]
+    },
+    {
+      "variant": "original",
+      "optimization": "-O3",
+      "declarations": [
+        "declare void @_ZN8OpenRCT29RideAudio37RideMusicGetTrackOffsetLength_DefaultERK4Ride()",
+        "declare void @_ZN8OpenRCT29RideAudio36RideMusicGetTrackOffsetLength_CircusERK4Ride()"
+      ]
+    },
+    {
+      "variant": "original",
+      "lto": false,
+      "cases": [
+        {
+          "scenario": 0,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 0,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": true,
+          "passed": true
+        }
+      ],
+      "bytes": 1195,
+      "sha256": "30d5b01a7c718f23b9df9e918c4bfb9c95f6f6bdbfe6fceb137a3ba33952b01e",
+      "linkerDiagnostics": ""
+    },
+    {
+      "variant": "original",
+      "lto": true,
+      "cases": [
+        {
+          "scenario": 0,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 0,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": true,
+          "passed": true
+        }
+      ],
+      "bytes": 1195,
+      "sha256": "d309139a71347162752a2c1466b6c7c62c83451cda1b8211692ff1d59378ccdb",
+      "linkerDiagnostics": ""
+    },
+    {
+      "variant": "applied",
+      "optimization": "-O0",
+      "declarations": [
+        "declare void @_ZN8OpenRCT29RideAudio37RideMusicGetTrackOffsetLength_DefaultERK4Ride(ptr dead_on_unwind writable sret(%\"struct.std::__2::pair\") align 4, ptr noundef nonnull align 1) #1",
+        "declare void @_ZN8OpenRCT29RideAudio36RideMusicGetTrackOffsetLength_CircusERK4Ride(ptr dead_on_unwind writable sret(%\"struct.std::__2::pair\") align 4, ptr noundef nonnull align 1) #1"
+      ]
+    },
+    {
+      "variant": "applied",
+      "optimization": "-O3",
+      "declarations": [
+        "declare void @_ZN8OpenRCT29RideAudio37RideMusicGetTrackOffsetLength_DefaultERK4Ride(ptr dead_on_unwind writable sret(%\"struct.std::__2::pair\") align 4, ptr noundef nonnull align 1) #1",
+        "declare void @_ZN8OpenRCT29RideAudio36RideMusicGetTrackOffsetLength_CircusERK4Ride(ptr dead_on_unwind writable sret(%\"struct.std::__2::pair\") align 4, ptr noundef nonnull align 1) #1"
+      ]
+    },
+    {
+      "variant": "applied",
+      "lto": false,
+      "cases": [
+        {
+          "scenario": 0,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 0,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": true,
+          "passed": true
+        }
+      ],
+      "bytes": 1194,
+      "sha256": "3638047b82fc74ca36fa65c2b41e2f2ec5dabd0c1a6ffa3145e8ef4c42b14aba",
+      "linkerDiagnostics": ""
+    },
+    {
+      "variant": "applied",
+      "lto": true,
+      "cases": [
+        {
+          "scenario": 0,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 0,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 1,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 2,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 3,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 4,
+          "circus": true,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": false,
+          "passed": true
+        },
+        {
+          "scenario": 5,
+          "circus": true,
+          "passed": true
+        }
+      ],
+      "bytes": 1194,
+      "sha256": "c9289a772bd5accf6922c4ccad307c11a92c9ecf7649e471111655e3c169ccce",
+      "linkerDiagnostics": ""
+    }
+  ],
+  "scope": "Exact original/applied native header, exact unmodified callback bodies with controlled metadata; address-only IR at O0/O3 and 48 Wasm indirect-call scenarios across normal/ThinLTO objects. Original reduced runtime cases pass too. Full native link and Chrome are separate gates; this is not an audio listening test.",
+  "scratch": "/tmp/openrct2-music-test-zkQiv0"
+}

@@ -7,6 +7,8 @@ import vm from 'node:vm';
 const site = path.resolve(process.argv[2] || new URL('../build/site', import.meta.url).pathname);
 const fixtures = [
   { worker: 'd3-worker.js', variant: 'doom3', engine: '/dhewm3-base.js' },
+  { worker: 'd3-worker.js', variant: 'doom3-mp', engine: '/dhewm3-base.js' },
+  { worker: 'd3-worker.js', variant: 'roe', engine: '/dhewm3-roe.js' },
   { worker: 'q4-worker.js', variant: 'quake4', engine: '/openQ4-client_wasm32.js' },
   { worker: 'prey-worker.js', variant: 'prey', engine: '/prey06.js' }
 ];
@@ -20,7 +22,8 @@ async function settleUntil(predicate) {
 }
 
 for (const fixture of fixtures) {
-  const source = fs.readFileSync(path.join(site, fixture.worker), 'utf8');
+  const source = fs.readFileSync(fixture.worker === 'q4-worker.js' && process.env.IDTECH4_Q4_WORKER_SOURCE ||
+    fixture.worker === 'd3-worker.js' && process.env.IDTECH4_D3_WORKER_SOURCE || path.join(site, fixture.worker), 'utf8');
   assert.doesNotMatch(source, /FS\.mount\(IDBFS|FS\.syncfs\(/,
     `${fixture.worker} must delegate IDBFS lifecycle to framework 0.9.6`);
   assert.match(source, /noInitialRun:\s*true/,
@@ -35,8 +38,10 @@ for (const fixture of fixtures) {
   const order = [];
   const messages = [];
   const managerCalls = [];
+  const focusCalls = [];
   let managerOptions;
   let nativeModule;
+  let networkDisposals = 0;
   const fakeFs = {
     filesystems: { IDBFS: {} },
     mkdir() {},
@@ -67,6 +72,13 @@ for (const fixture of fixtures) {
   sandbox.self = sandbox;
   sandbox.importScripts = url => {
     order.push(`import:${url}`);
+    if (url === '/d3-managed-network.js') {
+      sandbox.createD3ManagedNetwork = options => {
+        assert.equal(options.pageUrl, sandbox.location.href);
+        return {kind: 'managed-datagram-fixture', closeAll() { networkDisposals++; }};
+      };
+      return;
+    }
     if (url === '/shared-shell/wasm-game-framework.js') {
       sandbox.WasmGameFramework = {
         version: '0.9.6',
@@ -90,8 +102,12 @@ for (const fixture of fixtures) {
     }
     nativeModule = sandbox.Module;
     sandbox.FS = fakeFs;
-    sandbox.WORKERFS = {};
+    sandbox.WORKERFS = { stream_ops: { read() { return 0; } } };
     nativeModule.FS = fakeFs;
+    nativeModule._Q4WASM_BrowserFocus = focused => {
+      order.push(`focus:${focused}`);
+      focusCalls.push(focused);
+    };
     nativeModule.callMain = args => {
       order.push('native-main');
       nativeModule.nativeArguments = args;
@@ -104,9 +120,11 @@ for (const fixture of fixtures) {
   vm.runInContext(source, sandbox, { filename: fixture.worker });
   sandbox.onmessage({ data: {
     type: 'start',
+    focused: true,
     canvas: {},
     entries: [{ path: 'base/pak000.pk4', file: new Blob(['owner']) }],
     variant: fixture.variant,
+    ...(fixture.variant === 'doom3-mp' ? {managedMultiplayer: true} : {}),
     width: 1280,
     height: 720,
     playerName: 'Fixture',
@@ -121,9 +139,27 @@ for (const fixture of fixtures) {
       frameworkVersion: '0.9.6'
     }
   } });
+  if (fixture.worker === 'q4-worker.js') {
+    sandbox.onmessage({ data: { type: 'focus', focused: false } });
+    assert.equal(focusCalls.length, 0, 'focus received during fetch must wait for native initialization');
+  }
   await settleUntil(() => order.includes('native-main'));
+  if (fixture.worker === 'q4-worker.js') {
+    assert.deepEqual(focusCalls, [0], 'latest pre-main focus overrides startup focus');
+    assert.ok(order.indexOf('focus:0') < order.indexOf('native-main'));
+    sandbox.onmessage({ data: { type: 'focus', focused: true } });
+    sandbox.onmessage({ data: { type: 'focus', focused: false } });
+    assert.deepEqual(focusCalls, [0, 1, 0], 'native focus must follow page lifecycle changes');
+  }
 
   assert.equal(nativeModule.noInitialRun, true);
+  if (fixture.variant === 'doom3-mp') {
+    assert.equal(nativeModule.d3ManagedNetwork.kind, 'managed-datagram-fixture');
+    assert.deepEqual(Array.from(nativeModule.nativeArguments.slice(-2)), ['+connect', '127.0.0.1:27666']);
+  } else {
+    assert.equal(nativeModule.d3ManagedNetwork, undefined);
+    assert.equal(nativeModule.nativeArguments.includes('+connect'), false);
+  }
   assert.ok(order.indexOf('import:/shared-shell/wasm-game-framework.js') < order.indexOf(`import:${fixture.engine}`));
   assert.ok(order.indexOf('persistence-attached') < order.indexOf('native-main'),
     `${fixture.worker} must restore persistence before native main`);
@@ -140,6 +176,27 @@ for (const fixture of fixtures) {
   assert.ok(managerCalls.includes('dirty'), `${fixture.worker} must accept native dirty notifications`);
   assert.ok(managerCalls.filter(call => call === 'save').length >= 2,
     `${fixture.worker} must flush high-value saves and lifecycle requests`);
+  if (fixture.worker === 'd3-worker.js') {
+    const expectsPeer = fixture.variant === 'doom3-mp';
+    assert.equal(networkDisposals, 0, 'healthy worker keeps its managed peer');
+    nativeModule.onAbort('fixture abort');
+    assert.equal(networkDisposals, expectsPeer ? 1 : 0, 'native abort releases managed peer');
+    sandbox.onerror('fixture error', '/engine.js', 1, 2);
+    assert.equal(networkDisposals, expectsPeer ? 2 : 0, 'uncaught worker error releases managed peer');
+    nativeModule.onExit(0);
+    assert.equal(networkDisposals, expectsPeer ? 3 : 0, 'normal native exit releases managed peer');
+    nativeModule.onExit(1);
+    assert.equal(networkDisposals, expectsPeer ? 5 : 0, 'failed native exit releases managed peer idempotently');
+  }
+  if (fixture.worker === 'q4-worker.js') {
+    sandbox.onerror('shader failure', '/engine.js', 12, 34, { stack: 'Error: shader failure\n    at drawScene (engine.js:12:34)' });
+    assert.match(messages.at(-1).text, /at drawScene/,
+      'WorkerGlobalScope.onerror must retain the fifth-argument exception stack');
+    sandbox.onerror('range failure', '/engine.js', 56, 78);
+    assert.equal(messages.at(-1).text, 'range failure (/engine.js:56:78)');
+    sandbox.onerror({ message: 'event failure', filename: '/worker.js', lineno: 4, colno: 5 });
+    assert.equal(messages.at(-1).text, 'event failure (/worker.js:4:5)');
+  }
 }
 
 console.log('id Tech 4 worker-local framework persistence, pre-main restore, native save hooks, and Blob-backed PK4 contracts passed');

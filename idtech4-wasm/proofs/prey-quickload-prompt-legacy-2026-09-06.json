@@ -1,0 +1,172 @@
+{
+  "scope": "Exact Prey QuickLoad confirmation block, NumBinds, IN_FirstKeyFromBinding and MaterialKeyForBinding compiled natively with ASan/UBSan and to Wasm with SAFE_HEAP/UBSan. Fixture supplies key-name/localization primitives and GUI recorder. File load/rotation and timeout loop are not substituted or claimed tested by this fixture; Chrome tests cover those paths separately.",
+  "legacy": true,
+  "sessionSHA256": "dc07e65e732fa809bf970367c74cdd34891a3e2af0763c5bc275f4688694a471",
+  "commonSHA256": "416d2f23e7f49865969c6633b4cb1be73a249de22be486de7bf4007e4e0465e6",
+  "inputSHA256": "d1c1a7afc1c6a28b9c742091966f6713be98fdc124fc522d91e944c9227ac60f",
+  "fixtureSHA256": "01c485414ac19580d38259cd044259eb54f1803a1fe0f83e89f153c01d7d044f",
+  "results": [
+    {
+      "target": "native",
+      "negative": true,
+      "productionSHA256": "ab723dc87101a039a19c22d4e197afec65ed8568c9caba469721a7948d3a36af",
+      "cases": [
+        {
+          "case": "default-f9",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "bare-command",
+          "passed": true,
+          "key": "f9",
+          "material": "textures/interface/tips/keywide"
+        },
+        {
+          "case": "explicit-preferred",
+          "passed": false,
+          "key": "f6",
+          "material": "textures/interface/tips/keywide"
+        },
+        {
+          "case": "custom-function-key",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "custom-letter",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "mouse-key",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "mouse-bare-command",
+          "passed": true,
+          "key": "",
+          "material": "textures/interface/tips/mouse2"
+        },
+        {
+          "case": "wheel-key",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "case-insensitive",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "unbound-console-invocation",
+          "passed": true,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "named-save-is-not-quickload",
+          "passed": true,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "already-confirmed-falls-through",
+          "passed": true
+        },
+        {
+          "case": "no-ui-falls-through",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "productionSHA256": "ab723dc87101a039a19c22d4e197afec65ed8568c9caba469721a7948d3a36af",
+      "cases": [
+        {
+          "case": "default-f9",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "bare-command",
+          "passed": true,
+          "key": "f9",
+          "material": "textures/interface/tips/keywide"
+        },
+        {
+          "case": "explicit-preferred",
+          "passed": false,
+          "key": "f6",
+          "material": "textures/interface/tips/keywide"
+        },
+        {
+          "case": "custom-function-key",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "custom-letter",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "mouse-key",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "mouse-bare-command",
+          "passed": true,
+          "key": "",
+          "material": "textures/interface/tips/mouse2"
+        },
+        {
+          "case": "wheel-key",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "case-insensitive",
+          "passed": false,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "unbound-console-invocation",
+          "passed": true,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "named-save-is-not-quickload",
+          "passed": true,
+          "key": "",
+          "material": "textures/interface/tips/key"
+        },
+        {
+          "case": "already-confirmed-falls-through",
+          "passed": true
+        },
+        {
+          "case": "no-ui-falls-through",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

@@ -60,7 +60,7 @@ assert.ok(data.variants['counter-strike'].files.some(file => file.key === 'cstri
 const csHostStart = readFileSync(path.join(repo, 'runtime/counter-strike/start.sh'), 'utf8');
 assert.match(csHostStart, /yohimik\/cs-web-server@sha256:[a-f0-9]{64}/,
   'Counter-Strike multiplayer host image must be immutable');
-assert.match(csHostStart, /CS_BRIDGE_PORT:-4190/,
+assert.match(csHostStart, /CS_BRIDGE_PORT:-4192/,
   'Counter-Strike host default must match the adapter bridge fallback');
 assert.ok(existsSync(path.join(repo, 'runtime/counter-strike/stop.sh')),
   'Counter-Strike multiplayer host needs a targeted stop command');

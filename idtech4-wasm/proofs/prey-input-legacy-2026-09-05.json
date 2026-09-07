@@ -1,0 +1,302 @@
+{
+  "scope": "Exact production browser keyboard export compiled to Wasm with the real SDL2 event queue, initialized without video as in Prey. This fixture does not run the game event mapper, native main or a browser.",
+  "sourceSHA256": "72daee588430150ab8ce551553a83c18951910c876003d27addad41ec9b64fac",
+  "cases": [
+    {
+      "label": "escape",
+      "scan": 41,
+      "expected": 27,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "return",
+      "scan": 40,
+      "expected": 13,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "tab",
+      "scan": 43,
+      "expected": 9,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "backspace",
+      "scan": 42,
+      "expected": 8,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "delete",
+      "scan": 76,
+      "expected": 127,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "up",
+      "scan": 82,
+      "expected": 1073741906,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "down",
+      "scan": 81,
+      "expected": 1073741905,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "left",
+      "scan": 80,
+      "expected": 1073741904,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "right",
+      "scan": 79,
+      "expected": 1073741903,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "shift",
+      "scan": 225,
+      "expected": 1073742049,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "right-shift",
+      "scan": 229,
+      "expected": 1073742053,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "control",
+      "scan": 224,
+      "expected": 1073742048,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "alt",
+      "scan": 226,
+      "expected": 1073742050,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "f1",
+      "scan": 58,
+      "expected": 1073741882,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "f5",
+      "scan": 62,
+      "expected": 1073741886,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "f9",
+      "scan": 66,
+      "expected": 1073741890,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "f12",
+      "scan": 69,
+      "expected": 1073741893,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "insert",
+      "scan": 73,
+      "expected": 1073741897,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "home",
+      "scan": 74,
+      "expected": 1073741898,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "end",
+      "scan": 77,
+      "expected": 1073741901,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "page-up",
+      "scan": 75,
+      "expected": 1073741899,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "page-down",
+      "scan": 78,
+      "expected": 1073741902,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "keypad-enter",
+      "scan": 88,
+      "expected": 1073741912,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "keypad-1",
+      "scan": 89,
+      "expected": 1073741913,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "keypad-divide",
+      "scan": 84,
+      "expected": 1073741908,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "pause",
+      "scan": 72,
+      "expected": 1073741896,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "caps-lock",
+      "scan": 57,
+      "expected": 1073741881,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "space-without-text",
+      "scan": 44,
+      "expected": 32,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "w-without-text",
+      "scan": 26,
+      "expected": 119,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "a-without-text",
+      "scan": 4,
+      "expected": 97,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "zero-without-text",
+      "scan": 39,
+      "expected": 48,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "one-without-text",
+      "scan": 30,
+      "expected": 49,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "grave-without-text",
+      "scan": 53,
+      "expected": 96,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "slash-without-text",
+      "scan": 56,
+      "expected": 47,
+      "actual": 0,
+      "events": 2,
+      "passed": false
+    },
+    {
+      "label": "supplied-w",
+      "scan": 26,
+      "expected": 119,
+      "actual": 119,
+      "events": 2,
+      "passed": true
+    },
+    {
+      "label": "supplied-space",
+      "scan": 44,
+      "expected": 32,
+      "actual": 32,
+      "events": 2,
+      "passed": true
+    },
+    {
+      "label": "supplied-layout",
+      "scan": 4,
+      "expected": 113,
+      "actual": 113,
+      "events": 2,
+      "passed": true
+    }
+  ]
+}

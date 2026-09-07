@@ -1,0 +1,4407 @@
+{
+  "observedAt": "2026-09-06T17:25:37.832Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 1057,
+        "cssWidth": 1424,
+        "height": 1057,
+        "width": 1424
+      }
+    ],
+    "fullscreen": null,
+    "log": "Save/config persistence restored at /save/prey.\n[prey-wasm] native main entered\n[prey-wasm] executable path initialized\n[prey-wasm] save path initialized\n[prey-wasm] initializing platform signal seam\n[prey-wasm] SDL browser event queue initialized\n[prey-wasm] entering common initialization\nbrowser threading: cooperative single-thread primitives\nPrey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10\nSDL video driver: (null)\nLogging console output to /home/web_user/.local/share/prey06/qconsolelog.txt\nterminal support enabled ( use +set in_tty 0 to disable )\npid: 42\n2048 MB System Memory\nbrowser networking: loopback interface only\n----- Initializing File System -----\nLoaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2\nLoaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14\nLoaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08\nLoaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c\nLoaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede\nDeferred pk4 pak001.pk4 until first map load\nDeferred pk4 pak002.pk4 until first map load\nLoaded pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe\nLoaded pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380\nLoaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190\nLoaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397\nLoaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193\nLoaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5\nCurrent search path:\n/save/prey/base\n/owner-data/base\n/owner-data/base/pak040.pk4 (468 files)\n/owner-data/base/pak020.pk4 (23 files)\n/owner-data/base/pak006.pk4 (108 files)\n/owner-data/base/pak005.pk4 (10 files)\n/owner-data/base/pak004.pk4 (3739 files)\n/owner-data/base/pak003.pk4 (4111 files)\n/owner-data/base/pak000.pk4 (3318 files)\n/owner-data/base/game03.pk4 (2 files)\n/owner-data/base/game02.pk4 (10 files)\n/owner-data/base/game01.pk4 (2 files)\n/owner-data/base/game00.pk4 (2 files)\ngame DLL: 0x0 in pak: 0x0\nAddon pk4s:\nbrowser filesystem: background reads run cooperatively\n----- Initializing Decls -----\n2661 strings read from strings/english001.lang\n[prey-wasm] EndFrame: begin\nCouldn't open journal files\n[prey-wasm] EndFrame: begin\nCouldn't exec editor.cfg - file does not exist.\nexecing default.cfg\nexecing prey06.cfg\nCouldn't exec autoexec.cfg - file does not exist.\n2661 strings read from strings/english001.lang\n[prey-wasm] EndFrame: begin\n----- Initializing OpenAL -----\nSetup OpenAL device and context\nOpenAL vendor: wasm-games\nOpenAL renderer: WebAudio bridge\nOpenAL version: 1.1\nOpenAL: EFX extension not found\nOpenAL: found 256 hardware voices\n[prey-wasm] EndFrame: begin\nWARNING: Failed to load master servers list\n\n[prey-wasm] EndFrame: begin\n----- Initializing OpenGL -----\n[prey-wasm] creating worker WebGL 1 / GLES2 context\n[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1057\nOpenGL vendor: WebKit\nOpenGL renderer: WebKit WebGL\nOpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))\n...using GL_EXT_texture_filter_anisotropic\n   maxTextureAnisotropy: 16.000000\n----- R_ReloadGLSLPrograms -----\nLoading main interaction shader\nLoading main interaction shader (Phong) \nLoading default diffuse shader\nLoading skybox cubemap shader\nLoading reflection cubemap shader\nLoading diffuse cubemap shader\nLoading Zfill shader\nLoading Zfill shader (Clip plane version)\nLoading Fog shader\nLoading BlendLight shader\nLoading Stencil shadow shader\n-------------------------------\nInit Vertex Cache\nusing GLSL renderSystem\nWill apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)\n----- OpenGL Initialization complete-----\n[prey-wasm] EndFrame: begin\n[prey-wasm] EndFrame: GUI emitted\n[prey-wasm] EndFrame: issuing backend\n[prey-wasm] backend: begin\n[prey-wasm] backend: command 0 begin\n[prey-wasm] backend: command 0 complete\n[prey-wasm] backend: command 2 begin\n[prey-wasm] backend: command 2 complete\n[prey-wasm] backend: command 1 begin\n[prey-wasm] backend: command 1 complete\n[prey-wasm] backend: command 4 begin\n[prey-wasm] backend: command 4 complete\n[prey-wasm] backend: complete\n[prey-wasm] EndFrame: backend complete\n[prey-wasm] EndFrame: frame toggled\n[prey-wasm] EndFrame: vertex cache retired\n----- Initializing Game -----\ngamename: basePrey-1\ngamedate: Jan 11 2026\nInitializing event system\n...1028 event definitions\nInitializing class hierarchy\n...366 classes, 2130016 bytes for event callbacks\nInitializing scripts\nCompiled 'script/prey_main.script': 739 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 58, 6800 bytes\n  Statements: 92650, 1853000 bytes\n   Functions: 2987, 352692 bytes\n   Variables: 411160 bytes\n    Mem used: 3782148 bytes\n Static data: 3617736 bytes\n   Allocated: 5129776 bytes\n Thread size: 13224 bytes\n...11 aas types\n----- Initializing Session -----\nWARNING: Couldn't load image: _menushot\nWARNING: Couldn't load image: models/mapobjects/skybox/sun1\n----- Warnings -----\nduring Prey initialization...\nWARNING: Couldn't load image: _menushot\nWARNING: Couldn't load image: models/mapobjects/skybox/sun1\nWARNING: Failed to load master servers list\n\n----- 3 warnings -----\n[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump\n[prey-wasm] archive read cache: {\"requests\":127070,\"hits\":123347,\"backingReads\":4811,\"residentBytes\":720896,\"maxBytes\":1048576}\n[prey-wasm] frame 0: begin\n[prey-wasm] frame 0: async complete\n[prey-wasm] common frame 0: session begin\n[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4\n[prey-wasm] common frame 0: session complete, screen begin\n[prey-wasm] common frame 0: screen complete\n[prey-wasm] frame 0: common frame complete\n[prey-wasm] frame 0: complete\n[prey-wasm] frame 1: begin\n[prey-wasm] frame 1: async complete\n[prey-wasm] common frame 1: session begin\n[prey-wasm] common frame 1: session complete, screen begin\n[prey-wasm] common frame 1: screen complete\n[prey-wasm] frame 1: common frame complete\n[prey-wasm] frame 1: complete\n[prey-wasm] frame 2: begin\n[prey-wasm] frame 2: async complete\n[prey-wasm] common frame 2: session begin\n[prey-wasm] common frame 2: session complete, screen begin\n[prey-wasm] common frame 2: screen complete\n[prey-wasm] frame 2: common frame complete\n[prey-wasm] frame 2: complete\n[prey-wasm] frame 3: begin\n[prey-wasm] frame 3: async complete\n[prey-wasm] common frame 3: session begin\n[prey-wasm] common frame 3: session complete, screen begin\n[prey-wasm] common frame 3: screen complete\n[prey-wasm] frame 3: common frame complete\n[prey-wasm] frame 3: complete\n[prey-wasm] AnimPortalIn guiTime=2144 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=4208 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=6256 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=8304 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=10352 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=12400 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=14448 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=16512 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=18576 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=20624 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=22672 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=24720 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=26784 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=28848 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=30896 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=32976 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=35008 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=37056 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=39088 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=41152 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=43184 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=45232 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=47312 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=49376 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=51472 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=53536 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=55616 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=57696 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=59792 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=61888 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=63968 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=66048 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=68112 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=70192 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=72256 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=74336 timeLine=0 noTime=0 events=4\nMounting deferred Prey gameplay archives...\nMounted deferred pk4 /owner-data/base/pak001.pk4 with checksum 0xd06647b1\nMounted deferred pk4 /owner-data/base/pak002.pk4 with checksum 0x57dce443\nDeferred Prey gameplay archives are ready\n----- Game Map Shutdown -----\nWARNING: Couldn't load sound '_default.wav' using default\nDeferred Prey declaration folders refreshed\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/subtitles.gui.\nreloading guis/msg.gui.\nreloading guis/save.gui.\n----- Map Initialization -----\nMap: game/roadhouse\nNo deathwalk map in maps/game/roadhouse\n----- Game Map Init SaveGame -----\nSavegame was created by Prey 1.5.4 on emscripten x86. BuildNumber was 1306, savegameversion 1\ncollision data:\n   345 models\n 10755 vertices (252 KB)\n 19166 edges (673 KB)\n  7975 polygons (558 KB)\n  1257 brushes (172 KB)\n  3123 nodes (85 KB)\n 13008 polygon refs (101 KB)\n  4066 brush refs (31 KB)\n  4971 internal edges\n   649 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  1875 KB total memory used\n106 msec to load collision data.\n0 game portals found.\nmap bounds are (10576.0, 3600.0, 3000.0)\nmax clip sector is (0.0, 0.0, 0.0)\n  784 bytes passage memory used to build PVS\n    0 msec to calculate PVS\n   17 areas\n   42 portals\n    7 areas visible on average\n   68 bytes PVS data\n[Load AAS]\nloading maps/game/roadhouse.aas48\ndone.\n[Load AAS]\nloading maps/game/roadhouse.aas96\n[Load AAS]\nloading maps/game/roadhouse.aas240\n[Load AAS]\nloading maps/game/roadhouse.aasKeeper\n[Load AAS]\nloading maps/game/roadhouse.aasDroid\n[Load AAS]\nloading maps/game/roadhouse.aasGasbag\n[Load AAS]\nloading maps/game/roadhouse.aasChild\n[Load AAS]\nloading maps/game/roadhouse.aasFodder\n[Load AAS]\nloading maps/game/roadhouse.aasDroidIndoor\n[Load AAS]\nloading maps/game/roadhouse.aasJetpack\n[Load AAS]\nloading maps/game/roadhouse.aasCreatureX\n----- idRenderModelManagerLocal::EndLevelLoad -----\n    0 models purged from previous level,   709 models kept.\n----- idImageManager::EndLevelLoad -----\n    0 purged from previous\n  107 kept from previous\n 1235 new loaded\nall images loaded in   5.2 seconds\n----- idSoundCache::EndLevelLoad -----\n64973k referenced\n    0k purged\n 14409 msec to load game/roadhouse\nidRenderWorld::GenerateAllInteractions, msec = 1, staticAllocCount = 0.\ninteractionTable size: 535200 bytes\n9663 interaction take 1082256 bytes\n[prey-wasm] map transition complete; returning to browser frame pump\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 4344: session begin\n[prey-wasm] common frame 4344: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 4344: screen complete\n[prey-wasm] frame 4345: begin\n[prey-wasm] frame 4345: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 4345: session begin\n[prey-wasm] common frame 4345: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 4345: screen complete\n[prey-wasm] frame 4345: common frame complete\n[prey-wasm] frame 4345: complete\n[prey-wasm] frame 4346: begin\n[prey-wasm] frame 4346: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 4346: session begin\n[prey-wasm] common frame 4346: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 4346: screen complete\n[prey-wasm] frame 4346: common frame complete\n[prey-wasm] frame 4346: complete\n[prey-wasm] frame 4347: begin\n[prey-wasm] frame 4347: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 4347: session begin\n[prey-wasm] common frame 4347: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 4347: screen complete\n[prey-wasm] frame 4347: common frame complete\n[prey-wasm] frame 4347: complete\n[prey-wasm] frame 4348: begin\n[prey-wasm] frame 4348: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 4348: session begin\n[prey-wasm] common frame 4348: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 4348: screen complete\n[prey-wasm] frame 4348: common frame complete\n[prey-wasm] frame 4348: complete\n]bind f5\n\"f5\" = \"savegame quick\"\n]bind f9\n\"f9\" = \"loadgame quick\"\n]com_numQuicksaves\n\"com_numQuicksaves\" is:\"4\" default:\"4\"\nnumber of quicksaves to keep before overwriting the oldest\n]getviewpos\n(-282 -340 68.25) 180.0\nQuickSave\n]setviewpos -282 -356 68.25 180\n]getviewpos\n(-282 -356 68.5) 180.0\nQuickSave2\n]setviewpos -282 -340 68.25 180\n]getviewpos\n(-282 -340 68.5) 180.0\n",
+    "pointerLock": null,
+    "proof": {
+      "audio": {
+        "buffers": 859,
+        "messages": 624220,
+        "sources": 256,
+        "starts": 6083,
+        "state": "running"
+      },
+      "capture": [],
+      "errors": [],
+      "input": {
+        "captureChanges": 0,
+        "events": [
+          {
+            "at": 100849.1,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 100850.2,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 117175.9,
+            "type": "pointer-absolute",
+            "x": 246.4333017975402,
+            "y": 245.54020813082116
+          },
+          {
+            "at": 117177.1,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 117178.6,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 153331.1,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 153344.1,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 153356.7,
+            "down": true,
+            "key": 98,
+            "repeat": false,
+            "scan": 5,
+            "type": "key"
+          },
+          {
+            "at": 153356.7,
+            "codepoint": 98,
+            "type": "text"
+          },
+          {
+            "at": 153357.7,
+            "down": false,
+            "key": 98,
+            "repeat": false,
+            "scan": 5,
+            "type": "key"
+          },
+          {
+            "at": 153367.3,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153367.3,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 153368.8,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153379.7,
+            "down": true,
+            "key": 110,
+            "repeat": false,
+            "scan": 17,
+            "type": "key"
+          },
+          {
+            "at": 153379.8,
+            "codepoint": 110,
+            "type": "text"
+          },
+          {
+            "at": 153380.7,
+            "down": false,
+            "key": 110,
+            "repeat": false,
+            "scan": 17,
+            "type": "key"
+          },
+          {
+            "at": 153391.3,
+            "down": true,
+            "key": 100,
+            "repeat": false,
+            "scan": 7,
+            "type": "key"
+          },
+          {
+            "at": 153391.4,
+            "codepoint": 100,
+            "type": "text"
+          },
+          {
+            "at": 153392.5,
+            "down": false,
+            "key": 100,
+            "repeat": false,
+            "scan": 7,
+            "type": "key"
+          },
+          {
+            "at": 153401.8,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 153401.8,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 153402.6,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 153412.4,
+            "down": true,
+            "key": 102,
+            "repeat": false,
+            "scan": 9,
+            "type": "key"
+          },
+          {
+            "at": 153412.5,
+            "codepoint": 102,
+            "type": "text"
+          },
+          {
+            "at": 153413.6,
+            "down": false,
+            "key": 102,
+            "repeat": false,
+            "scan": 9,
+            "type": "key"
+          },
+          {
+            "at": 153425,
+            "down": true,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 153425,
+            "codepoint": 53,
+            "type": "text"
+          },
+          {
+            "at": 153425.9,
+            "down": false,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 153438.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153439.4,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153450.7,
+            "down": true,
+            "key": 98,
+            "repeat": false,
+            "scan": 5,
+            "type": "key"
+          },
+          {
+            "at": 153450.7,
+            "codepoint": 98,
+            "type": "text"
+          },
+          {
+            "at": 153451.9,
+            "down": false,
+            "key": 98,
+            "repeat": false,
+            "scan": 5,
+            "type": "key"
+          },
+          {
+            "at": 153462.8,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153462.8,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 153463.8,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153475.5,
+            "down": true,
+            "key": 110,
+            "repeat": false,
+            "scan": 17,
+            "type": "key"
+          },
+          {
+            "at": 153475.5,
+            "codepoint": 110,
+            "type": "text"
+          },
+          {
+            "at": 153476.4,
+            "down": false,
+            "key": 110,
+            "repeat": false,
+            "scan": 17,
+            "type": "key"
+          },
+          {
+            "at": 153487.9,
+            "down": true,
+            "key": 100,
+            "repeat": false,
+            "scan": 7,
+            "type": "key"
+          },
+          {
+            "at": 153488,
+            "codepoint": 100,
+            "type": "text"
+          },
+          {
+            "at": 153488.7,
+            "down": false,
+            "key": 100,
+            "repeat": false,
+            "scan": 7,
+            "type": "key"
+          },
+          {
+            "at": 153498.4,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 153498.4,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 153499.2,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 153510.3,
+            "down": true,
+            "key": 102,
+            "repeat": false,
+            "scan": 9,
+            "type": "key"
+          },
+          {
+            "at": 153510.4,
+            "codepoint": 102,
+            "type": "text"
+          },
+          {
+            "at": 153511.1,
+            "down": false,
+            "key": 102,
+            "repeat": false,
+            "scan": 9,
+            "type": "key"
+          },
+          {
+            "at": 153520.5,
+            "down": true,
+            "key": 57,
+            "repeat": false,
+            "scan": 38,
+            "type": "key"
+          },
+          {
+            "at": 153520.5,
+            "codepoint": 57,
+            "type": "text"
+          },
+          {
+            "at": 153521.4,
+            "down": false,
+            "key": 57,
+            "repeat": false,
+            "scan": 38,
+            "type": "key"
+          },
+          {
+            "at": 153532.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153533.5,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153543.8,
+            "down": true,
+            "key": 99,
+            "repeat": false,
+            "scan": 6,
+            "type": "key"
+          },
+          {
+            "at": 153543.9,
+            "codepoint": 99,
+            "type": "text"
+          },
+          {
+            "at": 153544.8,
+            "down": false,
+            "key": 99,
+            "repeat": false,
+            "scan": 6,
+            "type": "key"
+          },
+          {
+            "at": 153555.2,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 153555.2,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 153556,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 153566,
+            "down": true,
+            "key": 109,
+            "repeat": false,
+            "scan": 16,
+            "type": "key"
+          },
+          {
+            "at": 153566,
+            "codepoint": 109,
+            "type": "text"
+          },
+          {
+            "at": 153566.9,
+            "down": false,
+            "key": 109,
+            "repeat": false,
+            "scan": 16,
+            "type": "key"
+          },
+          {
+            "at": 153576.8,
+            "down": true,
+            "key": 95,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 153576.8,
+            "codepoint": 95,
+            "type": "text"
+          },
+          {
+            "at": 153577.5,
+            "down": false,
+            "key": 95,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 153586.7,
+            "down": true,
+            "key": 110,
+            "repeat": false,
+            "scan": 17,
+            "type": "key"
+          },
+          {
+            "at": 153586.7,
+            "codepoint": 110,
+            "type": "text"
+          },
+          {
+            "at": 153587.3,
+            "down": false,
+            "key": 110,
+            "repeat": false,
+            "scan": 17,
+            "type": "key"
+          },
+          {
+            "at": 153597,
+            "down": true,
+            "key": 117,
+            "repeat": false,
+            "scan": 24,
+            "type": "key"
+          },
+          {
+            "at": 153597,
+            "codepoint": 117,
+            "type": "text"
+          },
+          {
+            "at": 153597.7,
+            "down": false,
+            "key": 117,
+            "repeat": false,
+            "scan": 24,
+            "type": "key"
+          },
+          {
+            "at": 153607.1,
+            "down": true,
+            "key": 109,
+            "repeat": false,
+            "scan": 16,
+            "type": "key"
+          },
+          {
+            "at": 153607.2,
+            "codepoint": 109,
+            "type": "text"
+          },
+          {
+            "at": 153607.9,
+            "down": false,
+            "key": 109,
+            "repeat": false,
+            "scan": 16,
+            "type": "key"
+          },
+          {
+            "at": 153618.1,
+            "down": true,
+            "key": 81,
+            "repeat": false,
+            "scan": 20,
+            "type": "key"
+          },
+          {
+            "at": 153618.1,
+            "codepoint": 81,
+            "type": "text"
+          },
+          {
+            "at": 153618.9,
+            "down": false,
+            "key": 81,
+            "repeat": false,
+            "scan": 20,
+            "type": "key"
+          },
+          {
+            "at": 153628,
+            "down": true,
+            "key": 117,
+            "repeat": false,
+            "scan": 24,
+            "type": "key"
+          },
+          {
+            "at": 153628,
+            "codepoint": 117,
+            "type": "text"
+          },
+          {
+            "at": 153628.7,
+            "down": false,
+            "key": 117,
+            "repeat": false,
+            "scan": 24,
+            "type": "key"
+          },
+          {
+            "at": 153636.7,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153636.7,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 153637.9,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153648.3,
+            "down": true,
+            "key": 99,
+            "repeat": false,
+            "scan": 6,
+            "type": "key"
+          },
+          {
+            "at": 153648.3,
+            "codepoint": 99,
+            "type": "text"
+          },
+          {
+            "at": 153649,
+            "down": false,
+            "key": 99,
+            "repeat": false,
+            "scan": 6,
+            "type": "key"
+          },
+          {
+            "at": 153655.8,
+            "down": true,
+            "key": 107,
+            "repeat": false,
+            "scan": 14,
+            "type": "key"
+          },
+          {
+            "at": 153655.8,
+            "codepoint": 107,
+            "type": "text"
+          },
+          {
+            "at": 153656.5,
+            "down": false,
+            "key": 107,
+            "repeat": false,
+            "scan": 14,
+            "type": "key"
+          },
+          {
+            "at": 153665.3,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 153665.3,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 153815.8,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 153826.7,
+            "down": true,
+            "key": 97,
+            "repeat": false,
+            "scan": 4,
+            "type": "key"
+          },
+          {
+            "at": 153826.8,
+            "codepoint": 97,
+            "type": "text"
+          },
+          {
+            "at": 153827.8,
+            "down": false,
+            "key": 97,
+            "repeat": false,
+            "scan": 4,
+            "type": "key"
+          },
+          {
+            "at": 153838.1,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 153838.2,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 153839.4,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 153849.6,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 153849.7,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 153850.5,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 153860.6,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 153860.7,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 153861.3,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 153871,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153873.2,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153882.8,
+            "down": true,
+            "key": 103,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 153882.8,
+            "codepoint": 103,
+            "type": "text"
+          },
+          {
+            "at": 153883.7,
+            "down": false,
+            "key": 103,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 153895,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 153895.1,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 153896.9,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 153905.5,
+            "down": true,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 153905.6,
+            "codepoint": 116,
+            "type": "text"
+          },
+          {
+            "at": 153906.2,
+            "down": false,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 153917.3,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 153917.3,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 153918.1,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 153928.3,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153928.3,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 153929.5,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 153939.1,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 153939.2,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 153940.9,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 153952.6,
+            "down": true,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 153952.6,
+            "codepoint": 119,
+            "type": "text"
+          },
+          {
+            "at": 153953.2,
+            "down": false,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 153960.5,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 153960.5,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 153962.8,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 153972,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 153972,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 153972.6,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 153980,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 153980.1,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 153980.9,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 153992,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 153992.8,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 162521.1,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 162522.1,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 169377.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 62,
+            "type": "key"
+          },
+          {
+            "at": 169378.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 62,
+            "type": "key"
+          },
+          {
+            "at": 179822.8,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 179823.8,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 179832.8,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 179832.8,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 179833.7,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 179841.5,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 179841.6,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 179842.6,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 179854.7,
+            "down": true,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 179854.7,
+            "codepoint": 116,
+            "type": "text"
+          },
+          {
+            "at": 179855.8,
+            "down": false,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 179865.5,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 179865.6,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 179867,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 179880.2,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 179880.3,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 179881.4,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 179894.2,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 179894.2,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 179895.1,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 179905.7,
+            "down": true,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 179905.7,
+            "codepoint": 119,
+            "type": "text"
+          },
+          {
+            "at": 179906.7,
+            "down": false,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 179916.7,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 179916.7,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 179917.7,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 179928,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 179928,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 179928.7,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 179940.2,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 179940.2,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 179941.3,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 179951.3,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 179951.3,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 179952,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 179964,
+            "down": true,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 179964,
+            "codepoint": 45,
+            "type": "text"
+          },
+          {
+            "at": 179964.9,
+            "down": false,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 179974.2,
+            "down": true,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 179974.2,
+            "codepoint": 50,
+            "type": "text"
+          },
+          {
+            "at": 179974.9,
+            "down": false,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 179988.5,
+            "down": true,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 179988.5,
+            "codepoint": 56,
+            "type": "text"
+          },
+          {
+            "at": 179989.3,
+            "down": false,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 179998.8,
+            "down": true,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 179998.8,
+            "codepoint": 50,
+            "type": "text"
+          },
+          {
+            "at": 179999.8,
+            "down": false,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 180009.5,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 180009.5,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 180010.8,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 180021.1,
+            "down": true,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 180021.1,
+            "codepoint": 45,
+            "type": "text"
+          },
+          {
+            "at": 180022,
+            "down": false,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 180032.7,
+            "down": true,
+            "key": 51,
+            "repeat": false,
+            "scan": 32,
+            "type": "key"
+          },
+          {
+            "at": 180032.7,
+            "codepoint": 51,
+            "type": "text"
+          },
+          {
+            "at": 180033.5,
+            "down": false,
+            "key": 51,
+            "repeat": false,
+            "scan": 32,
+            "type": "key"
+          },
+          {
+            "at": 180042,
+            "down": true,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 180042,
+            "codepoint": 53,
+            "type": "text"
+          },
+          {
+            "at": 180043.3,
+            "down": false,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 180053.9,
+            "down": true,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 180053.9,
+            "codepoint": 54,
+            "type": "text"
+          },
+          {
+            "at": 180055,
+            "down": false,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 180065.6,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 180065.6,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 180066.5,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 180077,
+            "down": true,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 180077.1,
+            "codepoint": 54,
+            "type": "text"
+          },
+          {
+            "at": 180077.9,
+            "down": false,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 180087.1,
+            "down": true,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 180087.1,
+            "codepoint": 56,
+            "type": "text"
+          },
+          {
+            "at": 180087.9,
+            "down": false,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 180099.2,
+            "down": true,
+            "key": 46,
+            "repeat": false,
+            "scan": 55,
+            "type": "key"
+          },
+          {
+            "at": 180099.2,
+            "codepoint": 46,
+            "type": "text"
+          },
+          {
+            "at": 180100.5,
+            "down": false,
+            "key": 46,
+            "repeat": false,
+            "scan": 55,
+            "type": "key"
+          },
+          {
+            "at": 180109.1,
+            "down": true,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 180109.1,
+            "codepoint": 50,
+            "type": "text"
+          },
+          {
+            "at": 180109.8,
+            "down": false,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 180120.3,
+            "down": true,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 180120.3,
+            "codepoint": 53,
+            "type": "text"
+          },
+          {
+            "at": 180121.8,
+            "down": false,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 180288.6,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 180288.6,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 180289.3,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 180298,
+            "down": true,
+            "key": 49,
+            "repeat": false,
+            "scan": 30,
+            "type": "key"
+          },
+          {
+            "at": 180298,
+            "codepoint": 49,
+            "type": "text"
+          },
+          {
+            "at": 180298.8,
+            "down": false,
+            "key": 49,
+            "repeat": false,
+            "scan": 30,
+            "type": "key"
+          },
+          {
+            "at": 180307.3,
+            "down": true,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 180307.4,
+            "codepoint": 56,
+            "type": "text"
+          },
+          {
+            "at": 180308.4,
+            "down": false,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 180319.3,
+            "down": true,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 180319.3,
+            "codepoint": 48,
+            "type": "text"
+          },
+          {
+            "at": 180320.4,
+            "down": false,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 180330.7,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 180331.7,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 180341.9,
+            "down": true,
+            "key": 103,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 180342,
+            "codepoint": 103,
+            "type": "text"
+          },
+          {
+            "at": 180343.1,
+            "down": false,
+            "key": 103,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 180354.4,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 180354.4,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 180355.5,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 180366,
+            "down": true,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 180366,
+            "codepoint": 116,
+            "type": "text"
+          },
+          {
+            "at": 180367.3,
+            "down": false,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 180379.2,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 180379.2,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 180380.5,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 180390.4,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 180390.5,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 180391.2,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 180402.2,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 180402.2,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 180404.3,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 180413.2,
+            "down": true,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 180413.3,
+            "codepoint": 119,
+            "type": "text"
+          },
+          {
+            "at": 180414.3,
+            "down": false,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 180423.4,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 180423.4,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 180424.5,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 180433.4,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 180433.4,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 180434.7,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 180443.8,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 180443.9,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 180445.2,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 180456.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 180457.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 198980.2,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 198981.2,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 210306.1,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 62,
+            "type": "key"
+          },
+          {
+            "at": 210306.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 62,
+            "type": "key"
+          },
+          {
+            "at": 219675.8,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 219676.9,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 219687.5,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 219687.6,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 219688.4,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 219698.1,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 219698.1,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 219699.2,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 219708.1,
+            "down": true,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 219708.2,
+            "codepoint": 116,
+            "type": "text"
+          },
+          {
+            "at": 219708.8,
+            "down": false,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 219716.8,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 219716.8,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 219717.8,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 219729.4,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 219729.4,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 219730.2,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 219740.5,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 219740.5,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 219741.7,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 219751.1,
+            "down": true,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 219751.2,
+            "codepoint": 119,
+            "type": "text"
+          },
+          {
+            "at": 219751.9,
+            "down": false,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 219763,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 219763,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 219764.2,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 219775.5,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 219775.6,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 219776.3,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 219785.9,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 219785.9,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 219788.8,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 219798.7,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219798.8,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 219799.4,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219809.5,
+            "down": true,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 219809.5,
+            "codepoint": 45,
+            "type": "text"
+          },
+          {
+            "at": 219810.3,
+            "down": false,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 219820.1,
+            "down": true,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 219820.1,
+            "codepoint": 50,
+            "type": "text"
+          },
+          {
+            "at": 219820.8,
+            "down": false,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 219830.5,
+            "down": true,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 219830.5,
+            "codepoint": 56,
+            "type": "text"
+          },
+          {
+            "at": 219831.5,
+            "down": false,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 219840.1,
+            "down": true,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 219840.2,
+            "codepoint": 50,
+            "type": "text"
+          },
+          {
+            "at": 219841,
+            "down": false,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 219849,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219849,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 219850.6,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219863.2,
+            "down": true,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 219863.3,
+            "codepoint": 45,
+            "type": "text"
+          },
+          {
+            "at": 219864.1,
+            "down": false,
+            "key": 45,
+            "repeat": false,
+            "scan": 45,
+            "type": "key"
+          },
+          {
+            "at": 219875.2,
+            "down": true,
+            "key": 51,
+            "repeat": false,
+            "scan": 32,
+            "type": "key"
+          },
+          {
+            "at": 219875.2,
+            "codepoint": 51,
+            "type": "text"
+          },
+          {
+            "at": 219876.2,
+            "down": false,
+            "key": 51,
+            "repeat": false,
+            "scan": 32,
+            "type": "key"
+          },
+          {
+            "at": 219888.3,
+            "down": true,
+            "key": 52,
+            "repeat": false,
+            "scan": 33,
+            "type": "key"
+          },
+          {
+            "at": 219888.3,
+            "codepoint": 52,
+            "type": "text"
+          },
+          {
+            "at": 219889.3,
+            "down": false,
+            "key": 52,
+            "repeat": false,
+            "scan": 33,
+            "type": "key"
+          },
+          {
+            "at": 219899.6,
+            "down": true,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 219899.6,
+            "codepoint": 48,
+            "type": "text"
+          },
+          {
+            "at": 219900.5,
+            "down": false,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 219911.6,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219911.6,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 219912.3,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219920,
+            "down": true,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 219920,
+            "codepoint": 54,
+            "type": "text"
+          },
+          {
+            "at": 219920.6,
+            "down": false,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 219933.9,
+            "down": true,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 219933.9,
+            "codepoint": 56,
+            "type": "text"
+          },
+          {
+            "at": 219934.8,
+            "down": false,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 219946,
+            "down": true,
+            "key": 46,
+            "repeat": false,
+            "scan": 55,
+            "type": "key"
+          },
+          {
+            "at": 219946.1,
+            "codepoint": 46,
+            "type": "text"
+          },
+          {
+            "at": 219947.5,
+            "down": false,
+            "key": 46,
+            "repeat": false,
+            "scan": 55,
+            "type": "key"
+          },
+          {
+            "at": 219956.4,
+            "down": true,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 219956.4,
+            "codepoint": 50,
+            "type": "text"
+          },
+          {
+            "at": 219957.7,
+            "down": false,
+            "key": 50,
+            "repeat": false,
+            "scan": 31,
+            "type": "key"
+          },
+          {
+            "at": 219971.7,
+            "down": true,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 219971.7,
+            "codepoint": 53,
+            "type": "text"
+          },
+          {
+            "at": 219972.8,
+            "down": false,
+            "key": 53,
+            "repeat": false,
+            "scan": 34,
+            "type": "key"
+          },
+          {
+            "at": 219983.5,
+            "down": true,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219983.6,
+            "codepoint": 32,
+            "type": "text"
+          },
+          {
+            "at": 219984.9,
+            "down": false,
+            "key": 32,
+            "repeat": false,
+            "scan": 44,
+            "type": "key"
+          },
+          {
+            "at": 219995.3,
+            "down": true,
+            "key": 49,
+            "repeat": false,
+            "scan": 30,
+            "type": "key"
+          },
+          {
+            "at": 219995.3,
+            "codepoint": 49,
+            "type": "text"
+          },
+          {
+            "at": 219996.1,
+            "down": false,
+            "key": 49,
+            "repeat": false,
+            "scan": 30,
+            "type": "key"
+          },
+          {
+            "at": 220005.8,
+            "down": true,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 220005.8,
+            "codepoint": 56,
+            "type": "text"
+          },
+          {
+            "at": 220006.8,
+            "down": false,
+            "key": 56,
+            "repeat": false,
+            "scan": 37,
+            "type": "key"
+          },
+          {
+            "at": 220018,
+            "down": true,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 220018.1,
+            "codepoint": 48,
+            "type": "text"
+          },
+          {
+            "at": 220019.9,
+            "down": false,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 220029,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 220030.4,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 220041.2,
+            "down": true,
+            "key": 103,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 220041.3,
+            "codepoint": 103,
+            "type": "text"
+          },
+          {
+            "at": 220042.3,
+            "down": false,
+            "key": 103,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 220051.8,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 220051.8,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 220052.3,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 220214.8,
+            "down": true,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 220214.8,
+            "codepoint": 116,
+            "type": "text"
+          },
+          {
+            "at": 220216.5,
+            "down": false,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 220227,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 220227,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 220227.6,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 220236.8,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 220236.8,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 220237.7,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 220249.5,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 220249.5,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 220250.4,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 220260.4,
+            "down": true,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 220260.4,
+            "codepoint": 119,
+            "type": "text"
+          },
+          {
+            "at": 220261.3,
+            "down": false,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 220272,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 220272.1,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 220272.9,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 220283.5,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 220283.5,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 220284.4,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 220293.9,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 220293.9,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 220296.8,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 220306,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 220306.7,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 230022.7,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 230024,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          }
+        ],
+        "keyDown": 137,
+        "keyUp": 137,
+        "pointerAbsolute": 4,
+        "pointerDown": 4,
+        "pointerDx": 0,
+        "pointerDy": 0,
+        "pointerRelative": 0,
+        "pointerUp": 4,
+        "text": 121
+      },
+      "lifecycle": [
+        {
+          "at": 161.7,
+          "name": "init",
+          "variant": "prey"
+        },
+        {
+          "at": 171.3,
+          "files": 13,
+          "name": "initialized"
+        },
+        {
+          "at": 39814.4,
+          "name": "start-requested"
+        },
+        {
+          "at": 39843.6,
+          "entries": 13,
+          "name": "data-ready",
+          "source": "cache"
+        },
+        {
+          "at": 39843.9,
+          "height": 1057,
+          "name": "worker-started",
+          "width": 1424,
+          "worker": "/prey-worker.js"
+        }
+      ],
+      "logs": [
+        {
+          "at": 39944.5,
+          "text": "[prey-wasm] native main entered"
+        },
+        {
+          "at": 39944.8,
+          "text": "[prey-wasm] executable path initialized"
+        },
+        {
+          "at": 39944.9,
+          "text": "[prey-wasm] save path initialized"
+        },
+        {
+          "at": 39944.9,
+          "text": "[prey-wasm] initializing platform signal seam"
+        },
+        {
+          "at": 39945,
+          "text": "[prey-wasm] SDL browser event queue initialized"
+        },
+        {
+          "at": 39945.1,
+          "text": "[prey-wasm] entering common initialization"
+        },
+        {
+          "at": 39945.1,
+          "text": "browser threading: cooperative single-thread primitives"
+        },
+        {
+          "at": 39945.2,
+          "text": "Prey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10"
+        },
+        {
+          "at": 39945.3,
+          "text": "SDL video driver: (null)"
+        },
+        {
+          "at": 39945.5,
+          "text": "Logging console output to /home/web_user/.local/share/prey06/qconsolelog.txt"
+        },
+        {
+          "at": 39945.6,
+          "text": "terminal support enabled ( use +set in_tty 0 to disable )"
+        },
+        {
+          "at": 39945.7,
+          "text": "pid: 42"
+        },
+        {
+          "at": 39945.9,
+          "text": "2048 MB System Memory"
+        },
+        {
+          "at": 39946,
+          "text": "browser networking: loopback interface only"
+        },
+        {
+          "at": 39946.1,
+          "text": "----- Initializing File System -----"
+        },
+        {
+          "at": 39946.3,
+          "text": "Loaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2"
+        },
+        {
+          "at": 39947.3,
+          "text": "Loaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14"
+        },
+        {
+          "at": 39949.1,
+          "text": "Loaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08"
+        },
+        {
+          "at": 39950.8,
+          "text": "Loaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c"
+        },
+        {
+          "at": 40040.6,
+          "text": "Loaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede"
+        },
+        {
+          "at": 40041.1,
+          "text": "Deferred pk4 pak001.pk4 until first map load"
+        },
+        {
+          "at": 40041.3,
+          "text": "Deferred pk4 pak002.pk4 until first map load"
+        },
+        {
+          "at": 40183.7,
+          "text": "Loaded pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe"
+        },
+        {
+          "at": 40300.2,
+          "text": "Loaded pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380"
+        },
+        {
+          "at": 40302.6,
+          "text": "Loaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190"
+        },
+        {
+          "at": 40304.1,
+          "text": "Loaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397"
+        },
+        {
+          "at": 40304.4,
+          "text": "Loaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193"
+        },
+        {
+          "at": 40314.6,
+          "text": "Loaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5"
+        },
+        {
+          "at": 40315.2,
+          "text": "Current search path:"
+        },
+        {
+          "at": 40315.4,
+          "text": "/save/prey/base"
+        },
+        {
+          "at": 40315.5,
+          "text": "/owner-data/base"
+        },
+        {
+          "at": 40315.6,
+          "text": "/owner-data/base/pak040.pk4 (468 files)"
+        },
+        {
+          "at": 40315.8,
+          "text": "/owner-data/base/pak020.pk4 (23 files)"
+        },
+        {
+          "at": 40315.9,
+          "text": "/owner-data/base/pak006.pk4 (108 files)"
+        },
+        {
+          "at": 40316.1,
+          "text": "/owner-data/base/pak005.pk4 (10 files)"
+        },
+        {
+          "at": 40316.2,
+          "text": "/owner-data/base/pak004.pk4 (3739 files)"
+        },
+        {
+          "at": 40316.3,
+          "text": "/owner-data/base/pak003.pk4 (4111 files)"
+        },
+        {
+          "at": 40316.5,
+          "text": "/owner-data/base/pak000.pk4 (3318 files)"
+        },
+        {
+          "at": 40316.6,
+          "text": "/owner-data/base/game03.pk4 (2 files)"
+        },
+        {
+          "at": 40316.8,
+          "text": "/owner-data/base/game02.pk4 (10 files)"
+        },
+        {
+          "at": 40316.9,
+          "text": "/owner-data/base/game01.pk4 (2 files)"
+        },
+        {
+          "at": 40317.1,
+          "text": "/owner-data/base/game00.pk4 (2 files)"
+        },
+        {
+          "at": 40317.2,
+          "text": "game DLL: 0x0 in pak: 0x0"
+        },
+        {
+          "at": 40317.4,
+          "text": "Addon pk4s:"
+        },
+        {
+          "at": 40317.6,
+          "text": "browser filesystem: background reads run cooperatively"
+        },
+        {
+          "at": 40318.3,
+          "text": "----- Initializing Decls -----"
+        },
+        {
+          "at": 40755.8,
+          "text": "2661 strings read from strings/english001.lang"
+        },
+        {
+          "at": 40795.1,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 40800.2,
+          "text": "Couldn't open journal files"
+        },
+        {
+          "at": 40800.8,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 40801.1,
+          "text": "Couldn't exec editor.cfg - file does not exist."
+        },
+        {
+          "at": 40801.3,
+          "text": "execing default.cfg"
+        },
+        {
+          "at": 40801.9,
+          "text": "execing prey06.cfg"
+        },
+        {
+          "at": 40802.9,
+          "text": "Couldn't exec autoexec.cfg - file does not exist."
+        },
+        {
+          "at": 40809.9,
+          "text": "2661 strings read from strings/english001.lang"
+        },
+        {
+          "at": 40810.6,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 40811,
+          "text": "----- Initializing OpenAL -----"
+        },
+        {
+          "at": 40811.2,
+          "text": "Setup OpenAL device and context"
+        },
+        {
+          "at": 40811.7,
+          "text": "OpenAL vendor: wasm-games"
+        },
+        {
+          "at": 40811.9,
+          "text": "OpenAL renderer: WebAudio bridge"
+        },
+        {
+          "at": 40812,
+          "text": "OpenAL version: 1.1"
+        },
+        {
+          "at": 40812.2,
+          "text": "OpenAL: EFX extension not found"
+        },
+        {
+          "at": 40814.4,
+          "text": "OpenAL: found 256 hardware voices"
+        },
+        {
+          "at": 40814.7,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 40814.8,
+          "text": "WARNING: Failed to load master servers list"
+        },
+        {
+          "at": 40815.2,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 40815.4,
+          "text": "----- Initializing OpenGL -----"
+        },
+        {
+          "at": 40815.6,
+          "text": "[prey-wasm] creating worker WebGL 1 / GLES2 context"
+        },
+        {
+          "at": 40837.1,
+          "text": "[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1057"
+        },
+        {
+          "at": 40837.7,
+          "text": "OpenGL vendor: WebKit"
+        },
+        {
+          "at": 40838,
+          "text": "OpenGL renderer: WebKit WebGL"
+        },
+        {
+          "at": 40838.2,
+          "text": "OpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))"
+        },
+        {
+          "at": 40838.4,
+          "text": "...using GL_EXT_texture_filter_anisotropic"
+        },
+        {
+          "at": 40838.6,
+          "text": "   maxTextureAnisotropy: 16.000000"
+        },
+        {
+          "at": 40838.8,
+          "text": "----- R_ReloadGLSLPrograms -----"
+        },
+        {
+          "at": 40839,
+          "text": "Loading main interaction shader"
+        },
+        {
+          "at": 40842,
+          "text": "Loading main interaction shader (Phong) "
+        },
+        {
+          "at": 40847.6,
+          "text": "Loading default diffuse shader"
+        },
+        {
+          "at": 40848.2,
+          "text": "Loading skybox cubemap shader"
+        },
+        {
+          "at": 40848.6,
+          "text": "Loading reflection cubemap shader"
+        },
+        {
+          "at": 40849.1,
+          "text": "Loading diffuse cubemap shader"
+        },
+        {
+          "at": 40849.4,
+          "text": "Loading Zfill shader"
+        },
+        {
+          "at": 40849.8,
+          "text": "Loading Zfill shader (Clip plane version)"
+        },
+        {
+          "at": 40850.2,
+          "text": "Loading Fog shader"
+        },
+        {
+          "at": 40850.8,
+          "text": "Loading BlendLight shader"
+        },
+        {
+          "at": 40851.2,
+          "text": "Loading Stencil shadow shader"
+        },
+        {
+          "at": 40851.5,
+          "text": "-------------------------------"
+        },
+        {
+          "at": 40851.8,
+          "text": "Init Vertex Cache"
+        },
+        {
+          "at": 40856.8,
+          "text": "using GLSL renderSystem"
+        },
+        {
+          "at": 40857.1,
+          "text": "Will apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)"
+        },
+        {
+          "at": 40857.4,
+          "text": "----- OpenGL Initialization complete-----"
+        },
+        {
+          "at": 40906.8,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 40907.5,
+          "text": "[prey-wasm] EndFrame: GUI emitted"
+        },
+        {
+          "at": 40907.8,
+          "text": "[prey-wasm] EndFrame: issuing backend"
+        },
+        {
+          "at": 40908,
+          "text": "[prey-wasm] backend: begin"
+        },
+        {
+          "at": 40908.3,
+          "text": "[prey-wasm] backend: command 0 begin"
+        },
+        {
+          "at": 40908.5,
+          "text": "[prey-wasm] backend: command 0 complete"
+        },
+        {
+          "at": 40908.7,
+          "text": "[prey-wasm] backend: command 2 begin"
+        },
+        {
+          "at": 40909,
+          "text": "[prey-wasm] backend: command 2 complete"
+        },
+        {
+          "at": 40909.2,
+          "text": "[prey-wasm] backend: command 1 begin"
+        },
+        {
+          "at": 40909.5,
+          "text": "[prey-wasm] backend: command 1 complete"
+        },
+        {
+          "at": 40909.7,
+          "text": "[prey-wasm] backend: command 4 begin"
+        },
+        {
+          "at": 40910,
+          "text": "[prey-wasm] backend: command 4 complete"
+        },
+        {
+          "at": 40910.2,
+          "text": "[prey-wasm] backend: complete"
+        },
+        {
+          "at": 40910.4,
+          "text": "[prey-wasm] EndFrame: backend complete"
+        },
+        {
+          "at": 40910.7,
+          "text": "[prey-wasm] EndFrame: frame toggled"
+        },
+        {
+          "at": 40910.9,
+          "text": "[prey-wasm] EndFrame: vertex cache retired"
+        },
+        {
+          "at": 40944.1,
+          "text": "----- Initializing Game -----"
+        },
+        {
+          "at": 40944.8,
+          "text": "gamename: basePrey-1"
+        },
+        {
+          "at": 40945.1,
+          "text": "gamedate: Jan 11 2026"
+        },
+        {
+          "at": 41210.7,
+          "text": "Initializing event system"
+        },
+        {
+          "at": 41211.5,
+          "text": "...1028 event definitions"
+        },
+        {
+          "at": 41211.9,
+          "text": "Initializing class hierarchy"
+        },
+        {
+          "at": 41212.3,
+          "text": "...366 classes, 2130016 bytes for event callbacks"
+        },
+        {
+          "at": 41212.6,
+          "text": "Initializing scripts"
+        },
+        {
+          "at": 41951,
+          "text": "Compiled 'script/prey_main.script': 739 ms"
+        },
+        {
+          "at": 41951.8,
+          "text": "----- Compile stats -----"
+        },
+        {
+          "at": 41952.2,
+          "text": "Memory usage:"
+        },
+        {
+          "at": 41952.6,
+          "text": "     Strings: 58, 6800 bytes"
+        },
+        {
+          "at": 41953,
+          "text": "  Statements: 92650, 1853000 bytes"
+        },
+        {
+          "at": 41953.4,
+          "text": "   Functions: 2987, 352692 bytes"
+        },
+        {
+          "at": 41953.7,
+          "text": "   Variables: 411160 bytes"
+        },
+        {
+          "at": 41954.1,
+          "text": "    Mem used: 3782148 bytes"
+        },
+        {
+          "at": 41954.5,
+          "text": " Static data: 3617736 bytes"
+        },
+        {
+          "at": 41954.9,
+          "text": "   Allocated: 5129776 bytes"
+        },
+        {
+          "at": 41955.2,
+          "text": " Thread size: 13224 bytes"
+        },
+        {
+          "at": 41955.6,
+          "text": "...11 aas types"
+        },
+        {
+          "at": 41956,
+          "text": "----- Initializing Session -----"
+        },
+        {
+          "at": 41957.1,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 42015.6,
+          "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+        },
+        {
+          "at": 42426.5,
+          "text": "----- Warnings -----"
+        },
+        {
+          "at": 42427.1,
+          "text": "during Prey initialization..."
+        },
+        {
+          "at": 42427.4,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 42427.7,
+          "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+        },
+        {
+          "at": 42428,
+          "text": "WARNING: Failed to load master servers list"
+        },
+        {
+          "at": 42428.5,
+          "text": "----- 3 warnings -----"
+        },
+        {
+          "at": 42428.8,
+          "text": "[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump"
+        },
+        {
+          "at": 42429.3,
+          "text": "[prey-wasm] archive read cache: {\"requests\":127070,\"hits\":123347,\"backingReads\":4811,\"residentBytes\":720896,\"maxBytes\":1048576}"
+        },
+        {
+          "at": 42443.4,
+          "text": "[prey-wasm] frame 0: begin"
+        },
+        {
+          "at": 42444,
+          "text": "[prey-wasm] frame 0: async complete"
+        },
+        {
+          "at": 42444,
+          "text": "[prey-wasm] common frame 0: session begin"
+        },
+        {
+          "at": 42444.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 42444.6,
+          "text": "[prey-wasm] common frame 0: session complete, screen begin"
+        },
+        {
+          "at": 42444.9,
+          "text": "[prey-wasm] common frame 0: screen complete"
+        },
+        {
+          "at": 42444.9,
+          "text": "[prey-wasm] frame 0: common frame complete"
+        },
+        {
+          "at": 42444.9,
+          "text": "[prey-wasm] frame 0: complete"
+        },
+        {
+          "at": 42461.2,
+          "text": "[prey-wasm] frame 1: begin"
+        },
+        {
+          "at": 42461.6,
+          "text": "[prey-wasm] frame 1: async complete"
+        },
+        {
+          "at": 42461.6,
+          "text": "[prey-wasm] common frame 1: session begin"
+        },
+        {
+          "at": 42461.7,
+          "text": "[prey-wasm] common frame 1: session complete, screen begin"
+        },
+        {
+          "at": 42462,
+          "text": "[prey-wasm] common frame 1: screen complete"
+        },
+        {
+          "at": 42462,
+          "text": "[prey-wasm] frame 1: common frame complete"
+        },
+        {
+          "at": 42462.1,
+          "text": "[prey-wasm] frame 1: complete"
+        },
+        {
+          "at": 42478.2,
+          "text": "[prey-wasm] frame 2: begin"
+        },
+        {
+          "at": 42478.4,
+          "text": "[prey-wasm] frame 2: async complete"
+        },
+        {
+          "at": 42478.4,
+          "text": "[prey-wasm] common frame 2: session begin"
+        },
+        {
+          "at": 42478.6,
+          "text": "[prey-wasm] common frame 2: session complete, screen begin"
+        },
+        {
+          "at": 42478.9,
+          "text": "[prey-wasm] common frame 2: screen complete"
+        },
+        {
+          "at": 42478.9,
+          "text": "[prey-wasm] frame 2: common frame complete"
+        },
+        {
+          "at": 42478.9,
+          "text": "[prey-wasm] frame 2: complete"
+        },
+        {
+          "at": 42495.1,
+          "text": "[prey-wasm] frame 3: begin"
+        },
+        {
+          "at": 42495.3,
+          "text": "[prey-wasm] frame 3: async complete"
+        },
+        {
+          "at": 42495.3,
+          "text": "[prey-wasm] common frame 3: session begin"
+        },
+        {
+          "at": 42495.5,
+          "text": "[prey-wasm] common frame 3: session complete, screen begin"
+        },
+        {
+          "at": 42495.7,
+          "text": "[prey-wasm] common frame 3: screen complete"
+        },
+        {
+          "at": 42495.7,
+          "text": "[prey-wasm] frame 3: common frame complete"
+        },
+        {
+          "at": 42495.8,
+          "text": "[prey-wasm] frame 3: complete"
+        },
+        {
+          "at": 44572,
+          "text": "[prey-wasm] AnimPortalIn guiTime=2144 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 46636.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=4208 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 48683,
+          "text": "[prey-wasm] AnimPortalIn guiTime=6256 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 50735.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=8304 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 52787.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=10352 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 54837,
+          "text": "[prey-wasm] AnimPortalIn guiTime=12400 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 56889.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=14448 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 58952.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=16512 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 61008.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=18576 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 63061.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=20624 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 65111.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=22672 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 67159.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=24720 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 69212,
+          "text": "[prey-wasm] AnimPortalIn guiTime=26784 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 71278,
+          "text": "[prey-wasm] AnimPortalIn guiTime=28848 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 73337.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=30896 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 75403.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=32976 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 77444.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=35008 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 79486.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=37056 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 81530.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=39088 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 83580.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=41152 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 85623,
+          "text": "[prey-wasm] AnimPortalIn guiTime=43184 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 87671.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=45232 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 89740.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=47312 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 91818.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=49376 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 93902.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=51472 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 95971.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=53536 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 98048.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=55616 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 100135.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=57696 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 102234.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=59792 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 104319.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=61888 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 106399.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=63968 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 108478,
+          "text": "[prey-wasm] AnimPortalIn guiTime=66048 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 110552.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=68112 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 112626.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=70192 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 114697.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=72256 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 116768.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=74336 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 117184.2,
+          "text": "Mounting deferred Prey gameplay archives..."
+        },
+        {
+          "at": 117374.6,
+          "text": "Mounted deferred pk4 /owner-data/base/pak001.pk4 with checksum 0xd06647b1"
+        },
+        {
+          "at": 117546.3,
+          "text": "Mounted deferred pk4 /owner-data/base/pak002.pk4 with checksum 0x57dce443"
+        },
+        {
+          "at": 117546.6,
+          "text": "Deferred Prey gameplay archives are ready"
+        },
+        {
+          "at": 117547.6,
+          "text": "----- Game Map Shutdown -----"
+        },
+        {
+          "at": 117573.1,
+          "text": "WARNING: Couldn't load sound '_default.wav' using default"
+        },
+        {
+          "at": 119330,
+          "text": "Deferred Prey declaration folders refreshed"
+        },
+        {
+          "at": 119407,
+          "text": "reloading guis/mainmenu.gui."
+        },
+        {
+          "at": 119410.8,
+          "text": "reloading guis/restart.gui."
+        },
+        {
+          "at": 119412.2,
+          "text": "reloading guis/subtitles.gui."
+        },
+        {
+          "at": 119415.3,
+          "text": "reloading guis/msg.gui."
+        },
+        {
+          "at": 119416.7,
+          "text": "reloading guis/save.gui."
+        },
+        {
+          "at": 119450.9,
+          "text": "----- Map Initialization -----"
+        },
+        {
+          "at": 119451.1,
+          "text": "Map: game/roadhouse"
+        },
+        {
+          "at": 119464.7,
+          "text": "No deathwalk map in maps/game/roadhouse"
+        },
+        {
+          "at": 119587.7,
+          "text": "----- Game Map Init SaveGame -----"
+        },
+        {
+          "at": 119587.9,
+          "text": "Savegame was created by Prey 1.5.4 on emscripten x86. BuildNumber was 1306, savegameversion 1"
+        },
+        {
+          "at": 119778.6,
+          "text": "collision data:"
+        },
+        {
+          "at": 119778.9,
+          "text": "   345 models"
+        },
+        {
+          "at": 119778.9,
+          "text": " 10755 vertices (252 KB)"
+        },
+        {
+          "at": 119779,
+          "text": " 19166 edges (673 KB)"
+        },
+        {
+          "at": 119779,
+          "text": "  7975 polygons (558 KB)"
+        },
+        {
+          "at": 119779,
+          "text": "  1257 brushes (172 KB)"
+        },
+        {
+          "at": 119779.1,
+          "text": "  3123 nodes (85 KB)"
+        },
+        {
+          "at": 119779.1,
+          "text": " 13008 polygon refs (101 KB)"
+        },
+        {
+          "at": 119779.1,
+          "text": "  4066 brush refs (31 KB)"
+        },
+        {
+          "at": 119779.2,
+          "text": "  4971 internal edges"
+        },
+        {
+          "at": 119779.2,
+          "text": "   649 sharp edges"
+        },
+        {
+          "at": 119779.2,
+          "text": "     0 contained polygons removed"
+        },
+        {
+          "at": 119779.2,
+          "text": "     0 polygons merged"
+        },
+        {
+          "at": 119779.2,
+          "text": "  1875 KB total memory used"
+        },
+        {
+          "at": 119779.3,
+          "text": "106 msec to load collision data."
+        },
+        {
+          "at": 124567.8,
+          "text": "0 game portals found."
+        },
+        {
+          "at": 124568.8,
+          "text": "map bounds are (10576.0, 3600.0, 3000.0)"
+        },
+        {
+          "at": 124568.9,
+          "text": "max clip sector is (0.0, 0.0, 0.0)"
+        },
+        {
+          "at": 124569,
+          "text": "  784 bytes passage memory used to build PVS"
+        },
+        {
+          "at": 124569,
+          "text": "    0 msec to calculate PVS"
+        },
+        {
+          "at": 124569.1,
+          "text": "   17 areas"
+        },
+        {
+          "at": 124569.1,
+          "text": "   42 portals"
+        },
+        {
+          "at": 124569.1,
+          "text": "    7 areas visible on average"
+        },
+        {
+          "at": 124569.1,
+          "text": "   68 bytes PVS data"
+        },
+        {
+          "at": 124569.1,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124569.2,
+          "text": "loading maps/game/roadhouse.aas48"
+        },
+        {
+          "at": 124574.8,
+          "text": "done."
+        },
+        {
+          "at": 124574.9,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124574.9,
+          "text": "loading maps/game/roadhouse.aas96"
+        },
+        {
+          "at": 124574.9,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575,
+          "text": "loading maps/game/roadhouse.aas240"
+        },
+        {
+          "at": 124575,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575,
+          "text": "loading maps/game/roadhouse.aasKeeper"
+        },
+        {
+          "at": 124575,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.1,
+          "text": "loading maps/game/roadhouse.aasDroid"
+        },
+        {
+          "at": 124575.1,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.1,
+          "text": "loading maps/game/roadhouse.aasGasbag"
+        },
+        {
+          "at": 124575.1,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.1,
+          "text": "loading maps/game/roadhouse.aasChild"
+        },
+        {
+          "at": 124575.1,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.2,
+          "text": "loading maps/game/roadhouse.aasFodder"
+        },
+        {
+          "at": 124575.2,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.2,
+          "text": "loading maps/game/roadhouse.aasDroidIndoor"
+        },
+        {
+          "at": 124575.2,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.2,
+          "text": "loading maps/game/roadhouse.aasJetpack"
+        },
+        {
+          "at": 124575.3,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 124575.3,
+          "text": "loading maps/game/roadhouse.aasCreatureX"
+        },
+        {
+          "at": 128684,
+          "text": "----- idRenderModelManagerLocal::EndLevelLoad -----"
+        },
+        {
+          "at": 128685,
+          "text": "    0 models purged from previous level,   709 models kept."
+        },
+        {
+          "at": 128685,
+          "text": "----- idImageManager::EndLevelLoad -----"
+        },
+        {
+          "at": 133859.9,
+          "text": "    0 purged from previous"
+        },
+        {
+          "at": 133860.1,
+          "text": "  107 kept from previous"
+        },
+        {
+          "at": 133860.1,
+          "text": " 1235 new loaded"
+        },
+        {
+          "at": 133860.1,
+          "text": "all images loaded in   5.2 seconds"
+        },
+        {
+          "at": 133860.1,
+          "text": "----- idSoundCache::EndLevelLoad -----"
+        },
+        {
+          "at": 133860.1,
+          "text": "64973k referenced"
+        },
+        {
+          "at": 133860.2,
+          "text": "    0k purged"
+        },
+        {
+          "at": 133860.2,
+          "text": " 14409 msec to load game/roadhouse"
+        },
+        {
+          "at": 133861,
+          "text": "idRenderWorld::GenerateAllInteractions, msec = 1, staticAllocCount = 0."
+        },
+        {
+          "at": 133861.1,
+          "text": "interactionTable size: 535200 bytes"
+        },
+        {
+          "at": 133861.1,
+          "text": "9663 interaction take 1082256 bytes"
+        },
+        {
+          "at": 133861.1,
+          "text": "[prey-wasm] map transition complete; returning to browser frame pump"
+        },
+        {
+          "at": 133861.1,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 133861.1,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 133861.1,
+          "text": "[prey-wasm] common frame 4344: session begin"
+        },
+        {
+          "at": 133861.2,
+          "text": "[prey-wasm] common frame 4344: session complete, screen begin"
+        },
+        {
+          "at": 133861.2,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 133861.4,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 133862.4,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 133862.4,
+          "text": "[prey-wasm] common frame 4344: screen complete"
+        },
+        {
+          "at": 133913,
+          "text": "[prey-wasm] frame 4345: begin"
+        },
+        {
+          "at": 133924.6,
+          "text": "[prey-wasm] frame 4345: async complete"
+        },
+        {
+          "at": 133924.7,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 133924.7,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 133924.7,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 133924.8,
+          "text": "[prey-wasm] common frame 4345: session begin"
+        },
+        {
+          "at": 133924.8,
+          "text": "[prey-wasm] common frame 4345: session complete, screen begin"
+        },
+        {
+          "at": 133924.8,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 133924.9,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 133925.8,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 133925.8,
+          "text": "[prey-wasm] common frame 4345: screen complete"
+        },
+        {
+          "at": 133925.9,
+          "text": "[prey-wasm] frame 4345: common frame complete"
+        },
+        {
+          "at": 133925.9,
+          "text": "[prey-wasm] frame 4345: complete"
+        },
+        {
+          "at": 133943.3,
+          "text": "[prey-wasm] frame 4346: begin"
+        },
+        {
+          "at": 133944.2,
+          "text": "[prey-wasm] frame 4346: async complete"
+        },
+        {
+          "at": 133944.2,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 133944.3,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 133944.3,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 133944.3,
+          "text": "[prey-wasm] common frame 4346: session begin"
+        },
+        {
+          "at": 133944.3,
+          "text": "[prey-wasm] common frame 4346: session complete, screen begin"
+        },
+        {
+          "at": 133944.3,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 133945.6,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 133947,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 133947.1,
+          "text": "[prey-wasm] common frame 4346: screen complete"
+        },
+        {
+          "at": 133947.1,
+          "text": "[prey-wasm] frame 4346: common frame complete"
+        },
+        {
+          "at": 133947.1,
+          "text": "[prey-wasm] frame 4346: complete"
+        },
+        {
+          "at": 133963.4,
+          "text": "[prey-wasm] frame 4347: begin"
+        },
+        {
+          "at": 133964.8,
+          "text": "[prey-wasm] frame 4347: async complete"
+        },
+        {
+          "at": 133964.9,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 133964.9,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 133964.9,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 133964.9,
+          "text": "[prey-wasm] common frame 4347: session begin"
+        },
+        {
+          "at": 133965,
+          "text": "[prey-wasm] common frame 4347: session complete, screen begin"
+        },
+        {
+          "at": 133965,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 133965.9,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 133967.1,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 133967.2,
+          "text": "[prey-wasm] common frame 4347: screen complete"
+        },
+        {
+          "at": 133967.2,
+          "text": "[prey-wasm] frame 4347: common frame complete"
+        },
+        {
+          "at": 133967.3,
+          "text": "[prey-wasm] frame 4347: complete"
+        },
+        {
+          "at": 133983.4,
+          "text": "[prey-wasm] frame 4348: begin"
+        },
+        {
+          "at": 133984.6,
+          "text": "[prey-wasm] frame 4348: async complete"
+        },
+        {
+          "at": 133984.8,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 133984.8,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 133984.8,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 133984.8,
+          "text": "[prey-wasm] common frame 4348: session begin"
+        },
+        {
+          "at": 133984.8,
+          "text": "[prey-wasm] common frame 4348: session complete, screen begin"
+        },
+        {
+          "at": 133984.9,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 133985.5,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 133986.4,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 133986.4,
+          "text": "[prey-wasm] common frame 4348: screen complete"
+        },
+        {
+          "at": 133986.5,
+          "text": "[prey-wasm] frame 4348: common frame complete"
+        },
+        {
+          "at": 133986.5,
+          "text": "[prey-wasm] frame 4348: complete"
+        },
+        {
+          "at": 153441.8,
+          "text": "]bind f5"
+        },
+        {
+          "at": 153443.4,
+          "text": "\"f5\" = \"savegame quick\""
+        },
+        {
+          "at": 153539.4,
+          "text": "]bind f9"
+        },
+        {
+          "at": 153540.9,
+          "text": "\"f9\" = \"loadgame quick\""
+        },
+        {
+          "at": 153887.7,
+          "text": "]com_numQuicksaves"
+        },
+        {
+          "at": 153889.1,
+          "text": "\"com_numQuicksaves\" is:\"4\" default:\"4\""
+        },
+        {
+          "at": 153889.3,
+          "text": "number of quicksaves to keep before overwriting the oldest"
+        },
+        {
+          "at": 154003.3,
+          "text": "]getviewpos"
+        },
+        {
+          "at": 154005.1,
+          "text": "(-282 -340 68.25) 180.0"
+        },
+        {
+          "at": 169436.7,
+          "text": "QuickSave"
+        },
+        {
+          "at": 180332.7,
+          "text": "]setviewpos -282 -356 68.25 180"
+        },
+        {
+          "at": 180472.5,
+          "text": "]getviewpos"
+        },
+        {
+          "at": 180473.8,
+          "text": "(-282 -356 68.5) 180.0"
+        },
+        {
+          "at": 210349.5,
+          "text": "QuickSave2"
+        },
+        {
+          "at": 220034.5,
+          "text": "]setviewpos -282 -340 68.25 180"
+        },
+        {
+          "at": 220310.2,
+          "text": "]getviewpos"
+        },
+        {
+          "at": 220311.6,
+          "text": "(-282 -340 68.5) 180.0"
+        }
+      ],
+      "persistence": {
+        "ready": true,
+        "requests": 0,
+        "root": "/save/prey"
+      },
+      "proofId": "prey-lifecycle-current",
+      "schemaVersion": 1,
+      "startedAt": "2026-09-06T17:21:37.108Z",
+      "states": [
+        {
+          "at": 42429.1,
+          "inputMode": null,
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "engine-state"
+        },
+        {
+          "at": 42429.5,
+          "inputMode": "menu",
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "ready"
+        },
+        {
+          "at": 133862.4,
+          "inputMode": null,
+          "resumeAvailable": false,
+          "state": "gameplay",
+          "type": "engine-state"
+        }
+      ],
+      "variant": "prey",
+      "workerMessages": {
+        "in:audio-buffer": 6876,
+        "in:audio-create-source": 256,
+        "in:audio-delete-buffer": 31,
+        "in:audio-init": 1,
+        "in:audio-listener-float": 11351,
+        "in:audio-listener-vector": 22702,
+        "in:audio-source-action": 121,
+        "in:audio-source-float": 326312,
+        "in:audio-source-int": 163074,
+        "in:audio-source-position": 81514,
+        "in:audio-source-queue": 5998,
+        "in:audio-source-unqueue": 5984,
+        "in:engine-state": 2,
+        "in:log": 361,
+        "in:persistence-ready": 1,
+        "in:ready": 1,
+        "in:status": 2,
+        "out:key": 274,
+        "out:pointer-absolute": 4,
+        "out:pointer-button": 8,
+        "out:resize": 2,
+        "out:start": 1,
+        "out:text": 121
+      }
+    },
+    "root": {
+      "d3wasmAudioBuffers": "859",
+      "d3wasmAudioStarts": "6091",
+      "d3wasmAudioState": "running",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmDataSource": "cache",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "prey"
+    },
+    "title": "Prey (2006)",
+    "url": "http://127.0.0.1:32877/?game=prey&proof=prey-lifecycle-current"
+  }
+}

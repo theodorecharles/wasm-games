@@ -2,6 +2,20 @@
   "comment": "Original GoldSource engine/game sources. The project forks every upstream under github.com/theodorecharles so the exact source is controlled and pinned. Build scripts clone the forks (or consume npm packages built from them); wasm-games itself never commits the upstream source.",
   "sources": [
     {
+      "name": "counter-strike-web-host",
+      "fork": "https://github.com/theodorecharles/webxash3d-fwgs",
+      "commit": "12dd859883276081fb58952b1af3b1068de6b3bf",
+      "usedVia": "runtime/counter-strike/build-host-image.sh",
+      "purpose": "Rebuild the native Go/WebRTC host, preserve Xash's exit code, and reuse the pinned base image's existing game-data layer.",
+      "patches": ["patches/webxash-host-exit-code.patch"],
+      "engine": {
+        "fork": "https://github.com/theodorecharles/xash3d-fwgs",
+        "commit": "f85aa0c8f7d46c27191132b44d872c8e331308de",
+        "patches": ["patches/xash-managed-host-error.patch"]
+      },
+      "notes": "Managed-host-only fatal-error recovery and more specific model-limit diagnostics. This does not change browser engine artifacts or claim to fix the historical model overflow's initiating cause."
+    },
+    {
       "name": "webxash3d-fwgs",
       "upstream": "https://github.com/yohimik/webxash3d-fwgs",
       "fork": "https://github.com/theodorecharles/webxash3d-fwgs",
@@ -14,8 +28,8 @@
       "upstream": "https://github.com/FWGS/xash3d-fwgs",
       "fork": "https://github.com/theodorecharles/xash3d-fwgs",
       "usedVia": "scripts/build-xash-framework.sh (source checkout, patched)",
-      "purpose": "Upstream GoldSource-compatible engine. Patched by patches/xash-no-quit.patch + patches/xash-framework-contract.patch.",
-      "patches": ["patches/xash-no-quit.patch", "patches/xash-framework-contract.patch"]
+      "purpose": "Upstream GoldSource-compatible engine, browser runtime/menu contract and current/legacy save-key hints.",
+      "patches": ["patches/xash-no-quit.patch", "patches/xash-framework-contract.patch", "patches/xash-save-hints.patch"]
     },
     {
       "name": "hlsdk-portable",
@@ -36,8 +50,8 @@
       "upstream": "https://github.com/Velaron/mainui_cpp",
       "fork": "https://github.com/theodorecharles/mainui_cpp",
       "usedVia": "cs16-client submodule (3rdparty/mainui_cpp), overridden to the fork in build-cs-menu.sh",
-      "purpose": "Counter-Strike main-menu library. Patched by games/counter-strike/patches/cs16/main-menu.patch (Join Game button, no quit/previews).",
-      "patches": ["games/counter-strike/patches/cs16/main-menu.patch"]
+      "purpose": "Counter-Strike main-menu library: managed-match Join/Resume/Disconnect/Configuration controls, preserved player customization, and menu globals isolated from incompatible CS client weapon globals in Emscripten's shared GOT.",
+      "patches": ["games/counter-strike/patches/cs16/main-menu.patch", "games/counter-strike/patches/cs16/menu-globals.patch", "games/counter-strike/patches/cs16/managed-menu.patch"]
     },
     {
       "name": "yapb",

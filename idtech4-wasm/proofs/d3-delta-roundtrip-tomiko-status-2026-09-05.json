@@ -1,0 +1,108 @@
+{
+  "observedAt": "2026-09-06T00:03:16.426Z",
+  "managed": {
+    "state": "running",
+    "humans": 1,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": 1788652498573,
+    "map": "game/mp/d3dm1",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "DeltaDirect"
+      }
+    ],
+    "browserPeers": 1,
+    "bots": 2,
+    "botPlayers": [
+      {
+        "time": 37664,
+        "slot": 30,
+        "health": 62,
+        "spectating": 0,
+        "origin": [
+          -1027.739,
+          554.681,
+          -319.749
+        ],
+        "buttons": 2,
+        "move": [
+          126,
+          9,
+          0
+        ],
+        "weapon": 1,
+        "frags": 0
+      },
+      {
+        "time": 37664,
+        "slot": 31,
+        "health": 97,
+        "spectating": 0,
+        "origin": [
+          -0.194,
+          -885.439,
+          -182.794
+        ],
+        "buttons": 2,
+        "move": [
+          126,
+          0,
+          0
+        ],
+        "weapon": 1,
+        "frags": 0
+      }
+    ],
+    "botUpdatedAt": 1788652993593,
+    "botTarget": 2,
+    "nativeHumans": 1,
+    "botStatus": "ready",
+    "relay": {
+      "peers": 1,
+      "clientPackets": 30285,
+      "serverPackets": 8282
+    }
+  },
+  "native": {
+    "protocol": "1.42",
+    "map": "game/mp/d3dm1",
+    "gameType": "deathmatch",
+    "name": "Browser Doom 3 Deathmatch",
+    "info": {
+      "si_idleServer": "1",
+      "net_serverDedicated": "1",
+      "fs_game_base": "",
+      "fs_game": "",
+      "si_version": "dhewm3 1.5.1pre.1304 linux-x86_64 Sep  5 2026 21:55:04",
+      "si_pure": "0",
+      "si_name": "Browser Doom 3 Deathmatch",
+      "si_gameType": "deathmatch",
+      "si_maxPlayers": "8",
+      "si_warmup": "0",
+      "si_map": "game/mp/d3dm1",
+      "si_serverURL": "",
+      "si_spectators": "1",
+      "si_usepass": "0",
+      "si_teamDamage": "0",
+      "si_timeLimit": "10",
+      "si_fragLimit": "10",
+      "gamename": "baseDOOM-1"
+    },
+    "players": [
+      {
+        "slot": 0,
+        "ping": 1,
+        "rate": 16000,
+        "name": "DeltaDirect"
+      }
+    ]
+  }
+}

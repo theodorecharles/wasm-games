@@ -1,89 +1,167 @@
-# wasm-games
+# WASM Games
 
-Source-only WebAssembly ports of classic games. This monorepo contains the
-browser adapters, deterministic source locks and patches, build scripts,
-manifests, server supervisors, and container packaging. Original game data and
-generated `.wasm`/`.data` artifacts are not committed; owner-supplied data is
-mounted from `/home/ted/wasm-game-data` during local development.
+Classic game engines, brought to the browser with WebAssembly.
 
-The shared runtime lives in the separate
-[`wasm-game-framework`](https://github.com/theodorecharles/wasm-game-framework)
-repository. The workstation launcher lives in the separate
-[`wasm-game-lab`](https://github.com/theodorecharles/wasm-game-lab) repository.
+WASM Games is a source-only collection of browser ports, DOS runtimes, and
+experimental engine integrations. It brings projects such as Doom, Quake,
+Half-Life, Duke Nukem 3D, Wolfenstein, and OpenRCT2 into a shared browser-game
+environment while keeping each engine's build and game-data requirements explicit.
 
-## Browser-proven roster
+**Active development:** several games have browser-tested gameplay paths; others
+are experimental or not yet runnable. This repository does not include retail
+game data or ready-to-run compiled game bundles.
 
-These results were recorded in Google Chrome on 2026-08-21. “Browser-proven”
-means the built game reached the stated native runtime condition; it is
-stronger than a successful compile or static-site smoke test. The 2026-08-29
-lab retest found regressions in several of these families (idtech1, dosbox,
-goldsource, idtech2 expansions); see
-[`GAME-LAB-TEST-ISSUES.md`](GAME-LAB-TEST-ISSUES.md).
+## What is here
 
-| Engine | Game | Proven result | Evidence |
-| --- | --- | --- | --- |
-| Build | Blood | Playable E1M1; keyboard plus horizontal and vertical mouse look | [`mouselook.json`](build-wasm/proofs/mouselook.json) |
-| Build | Duke Nukem 3D | Playable L.A. Meltdown; keyboard plus native yaw and horizon mouse look | [`mouselook.json`](build-wasm/proofs/mouselook.json) |
-| GoldSource | Half-Life | Intro advanced from `c0a0` through `c0a0e` into gameplay | [`campaign-intros.json`](goldsource-wasm/proofs/campaign-intros.json) |
-| GoldSource | Half-Life: Blue Shift | Intro advanced from `ba_tram1` through `ba_tram3` into gameplay | [`campaign-intros.json`](goldsource-wasm/proofs/campaign-intros.json) |
-| GoldSource | Half-Life: Opposing Force | Helicopter intro advanced from `of0a0` to playable `of1a1` | [`campaign-intros.json`](goldsource-wasm/proofs/campaign-intros.json) |
-| GoldSource | Counter-Strike 1.6 | Playable `de_dust2` with four YaPB bots | [`counter-strike-bots.json`](goldsource-wasm/proofs/counter-strike-bots.json) |
-| id Tech 1 | Doom, Doom II, TNT, Plutonia, Heretic, Hexen, Chex Quest | 21/21 two-browser multiplayer combinations passed across Original, Smooth, and Modernized profiles; Modernized adds two bots | [`multiplayer-21.json`](idtech1-wasm/proofs/multiplayer-21.json) |
-| id Tech 2 | Quake | Two Chrome clients plus two FrikBot bots, independent mouse look, server auto-wake/sleep | [`quake-multiplayer.json`](idtech2-wasm/proofs/quake-multiplayer.json) |
-| id Tech 2 | Quake II | Two Chrome clients plus two 3ZB2 bots, independent mouse look, server auto-wake/sleep | [`quake2-multiplayer.json`](idtech2-wasm/proofs/quake2-multiplayer.json) |
-| id Tech 2 | Quake II: The Reckoning | Owner PAK validated and playable `xswamp` reached with the native Xatrix module | [`quake2-expansions.json`](idtech2-wasm/proofs/quake2-expansions.json) |
-| id Tech 2 | Quake II: Ground Zero | Owner PAK validated and playable `rbase1` reached with the native Rogue module | [`quake2-expansions.json`](idtech2-wasm/proofs/quake2-expansions.json) |
-| DOSBox | Jill I–III; Jazz Jackrabbit; Duke Nukem I–II; GTA; The Need for Speed; SimCity 2000 | 9/9 reached real rendered game content; native keyboard input, changing framebuffers, audio scheduling, and persistent config passed | [`runtime-9.json`](dosbox-wasm/proofs/runtime-9.json) |
-| id Tech 4 | Doom 3 / RoE d3wasm checkpoint | Pinned d3wasm WebGL 1 builds reproduce for Doom 3 and RoE; Chrome formally proved Mars City gameplay, real keyboard movement, audio, console resume, and same-session save/load. Final cross-reload persistence and formal pointer-lock mouse evidence remain. | [`d3wasm-checkpoint.json`](idtech4-wasm/proofs/d3wasm-checkpoint.json) · [`resume runbook`](idtech4-wasm/RESUME-RUNBOOK.md) |
-| id Tech 4 | Prey (2006) checkpoint | d3wasm renderer and real menu clicks work; `game/roadhouse` mounted all four deferred packs, spawned its player, loaded 1,208 images, and returned to the browser pump; sustained gameplay remains black | [`prey-checkpoint.json`](idtech4-wasm/proofs/prey-checkpoint.json) |
+- **Engine integrations:** browser input, rendering, audio, menus, and persistence.
+- **Reproducible source inputs:** pinned repositories, source locks, and ordered
+  patch sets instead of checked-in upstream source trees.
+- **Build and deployment tooling:** Emscripten builds, per-game manifests,
+  container definitions, and package validation.
+- **Managed multiplayer:** dedicated-server lifecycle, browser networking, and
+  bots for supported engines.
+- **Verification records:** native regressions, package checks, and dated browser
+  observations that distinguish a successful build from working gameplay.
 
-The id Tech 1 multiplayer menu maps **New Game** to single-player and **Join
-Deathmatch** to the managed multiplayer path. Original and Smooth use the
-Chocolate-compatible server; Modernized uses Zandronum with bots. Quake and
-Quake II use managed native servers with bots and the framework’s automatic
-wake/idle-sleep lifecycle.
+The project is split across three repositories:
 
-## Full project roster
+| Repository | Role |
+| --- | --- |
+| **wasm-games** — this repository | Engine patches, adapters, game manifests, builds, and tests |
+| [wasm-game-framework](https://github.com/BuiltByTed/wasm-game-framework) | Shared browser shell, launcher, data loading, persistence, and container runtime |
+| [wasm-game-lab](https://github.com/BuiltByTed/wasm-game-lab) | Self-hosted game portal and multi-service deployment |
 
-| Engine family | Games | Current status |
+## Games and current progress
+
+Snapshot: **September 6, 2026**. Browser-tested means the specific path described
+in the linked record was observed in Chrome—not that every map, control, browser,
+or multiplayer mode is fully supported. Experimental results may exist only in
+development builds and may not be present in an installed image.
+
+| Family | Games | Current milestone |
 | --- | --- | --- |
-| `build-wasm` | Blood; Duke Nukem 3D | 🟡 Playable in the 2026-08-29 lab test; mouse click not bound to fire (RCtrl fires); one Blood crash after firing; Modernized profile (widescreen, OpenGL, full mouse look) requested |
-| `goldsource-wasm` | Half-Life; Blue Shift; Opposing Force; Counter-Strike 1.6 | 🟡 HL playable but no mouse look; Blue Shift/OF slow to start with unselectable log; CS bridge down (host server crashed: MAX_MODELS limit) |
-| `idtech1-wasm` | Doom / Ultimate Doom; Doom II; Final Doom TNT; Final Doom Plutonia; Heretic; Hexen; Chex Quest | 🔴 Regressed in the 2026-08-29 lab test: Chocolate/Crispy freeze on startup; deathmatch never starts (no bots); Modernized has no menu cursor and DM is console-only |
-| `idtech2-wasm` | Quake; Quake II; The Reckoning; Ground Zero | 🟡 Quake playable (pointer-lock lifecycle needs work); Quake II DM + both expansions broken — q2ded refuses to run as root (server wake 500) |
-| `idtech3-wasm` | Quake III Arena; RTCW single-player; RTCW multiplayer; Wolfenstein: Enemy Territory | 🟡 WolfET is production ready; Quake3 has a first-join race + pointer lock; RTCW SP/MP broken (stale 08-15 images, rebuild needed) |
-| `idtech4-wasm` | Doom 3; Doom 3 Multiplayer; Resurrection of Evil; Quake 4; Quake 4 Multiplayer; Prey (2006) | 🟠 Doom 3 SP + RoE pass in the lab; Doom 3 MP shows the server browser (needs a managed dedicated server); Quake 4 SP/MP renderer aborts under WebGL2; Prey freezes on New Game |
-| `wolf3d-wasm` | Wolfenstein 3D; Spear of Destiny | 🟡 Playable but input broken: A/D turn and strafe at once, menu unusable, no cursor; images stale |
-| `dosbox-wasm` | Jill I–III; Jazz Jackrabbit; Duke Nukem I–II; GTA DOS demo; The Need for Speed; SimCity 2000 | 🔴 Regressed: arrows may be mapped to Escape (Jill 1–3, Duke 1–2, Jazz); GTA ~1fps + no sound; NFS menu-only; SimCity cursor offset |
-| `source-wasm` | Half-Life 2; Portal | 🔴 Still in development; the published SDK has no Source engine runtime (stub menu) |
-| `openrct2-wasm` | OpenRCT2 | ✅ Works good in the 2026-08-29 lab test; RCT2 entry requested |
-| `openut-wasm` | Unreal Tournament | 🟡 Source/runtime work remains |
-| `lithtech-wasm` | No One Lives Forever; No One Lives Forever 2 | 🟡 Source/runtime work remains |
-| `midtown-wasm` | Midtown Madness; Midtown Madness 2 | 🟡 Source/runtime work remains |
-| `cod2-wasm` | Call of Duty 2 Multiplayer | 🔴 Diagnostic client only; native link/runtime blocker remains (stub menu) |
-| `emulation-wasm` | NES; SNES; PlayStation; PlayStation 2 | ⚪ Runtime images are not yet available |
+| [Build](build-wasm/) | Blood; Duke Nukem 3D | Classic and Modernized profiles, including widescreen GPU rendering and pitch/yaw mouse look. First-level rendering and movement tested in both profiles; Duke mouse firing and isolated save/reload checks pass. Blood's reported firing crash remains unresolved. [Details](build-wasm/proofs/BUILD-RELEASE-2026-09-06.md) |
+| [id Tech 1](idtech1-wasm/) | Doom; Doom II; TNT; Plutonia; Heretic; Hexen; Chex Quest | Original, Smooth, and Modernized first-map deathmatches tested across all seven titles, with managed bots. Startup, menu, input, and audio repairs are integrated. [Details](idtech1-wasm/proofs/README.md) |
+| [id Tech 2](idtech2-wasm/) | Quake; Quake II; The Reckoning; Ground Zero | Native managed servers and bot integrations. The Quake II server-start regression is repaired; fresh expansion gameplay and capture checks remain. [Details](idtech2-wasm/proofs/README.md) |
+| [id Tech 3](idtech3-wasm/) | Quake III Arena; Return to Castle Wolfenstein SP/MP; Wolfenstein: Enemy Territory | RTCW SP rendering and save/reload tested; RTCW MP and Quake III managed joins, bot matches, and menu transitions tested. Enemy Territory has an established runtime. [Details](idtech3-wasm/proofs/README.md) |
+| [Wolf4SDL](wolf3d-wasm/) | Wolfenstein 3D; Spear of Destiny | Native menus, dialogs, key labels, first-level movement, firing, and pause/resume tested. Config persistence and browser capture remain in progress. [Details](wolf3d-wasm/proofs/README.md) |
+| [GoldSource](goldsource-wasm/) | Half-Life; Blue Shift; Opposing Force; Counter-Strike 1.6 | Campaign intros, Blue Shift save/reload, and CS bot joins tested. Expansion loading and CS menus repaired. Mouse capture and the original CS model-overflow cause remain open. [Details](goldsource-wasm/proofs/README.md) |
+| [OpenRCT2](openrct2-wasm/) | RollerCoaster Tycoon 1 and 2 content through OpenRCT2 | Both libraries supported by the same entry. Browser checks cover park loading, ride construction, passenger trips, and save restoration across reload. [Details](openrct2-wasm/proofs/README.md) |
+| [DOSBox](dosbox-wasm/) | Jill I–III; Jazz Jackrabbit; Duke Nukem I–II; GTA DOS demo; The Need for Speed; SimCity 2000 | Keyboard, timing, and mouse repairs are integrated. SimCity has browser save/reload evidence; other titles still need broader browser input/performance checks. GTA/NFS native-runtime results are not full browser acceptance. [Details](dosbox-wasm/proofs/README.md) |
+| [id Tech 4](idtech4-wasm/) | Doom 3; Resurrection of Evil; Doom 3 MP; Quake 4 SP/MP; Prey (2006) | Experimental builds verify Doom 3/RoE saves, managed Doom 3 bot matches, and Quake 4/Prey intro-to-world rendering. Recent repairs are not yet promoted to the regular lab images; Quake 4 MP acceptance remains open. [Details](idtech4-wasm/proofs/README.md) |
 
-Statuses reflect the full-portfolio lab test session of 2026-08-29. Per-game
-results, root causes, and the fix plan are in
-[`GAME-LAB-TEST-ISSUES.md`](GAME-LAB-TEST-ISSUES.md); the working fix list is
-[`GAME-LAB-FIX-TODO.md`](GAME-LAB-FIX-TODO.md).
+Additional targets are tracked separately from browser-tested runtimes:
 
-Machine-readable status and data paths live in [`games.catalog.json`](games.catalog.json).
-The detailed recovery and verification record is in
-[`PROJECT-TRACKER.md`](PROJECT-TRACKER.md). The running workstation portal and
-its 27 live shortcuts are recorded in
-[`game-lab-runtime.json`](proofs/game-lab-runtime.json).
+| Family | Targets | Status |
+| --- | --- | --- |
+| [Source](source-wasm/) | Half-Life 2; Portal | Engine-runtime work incomplete; the diagnostic frontend is not a playable game |
+| [Call of Duty 2](cod2-wasm/) | Call of Duty 2 multiplayer | Diagnostic client; native link/runtime blockers remain |
+| [OpenUT](openut-wasm/) | Unreal Tournament | Source/runtime integration in development |
+| [LithTech](lithtech-wasm/) | No One Lives Forever 1 and 2 | Source/runtime integration in development |
+| [Midtown](midtown-wasm/) | Midtown Madness 1 and 2 | Source/runtime integration in development |
+| [Emulation](emulation-wasm/) | NES; SNES; PlayStation; PlayStation 2 | Catalog targets only; no launchable runtime images |
 
-## Layout and verification
+The [game catalog](games.catalog.json) lists game IDs, source references, and data
+paths, including planned targets. For tested behavior and current limitations,
+use the dated evidence linked above rather than assuming catalog membership
+means a game is playable.
 
-Each engine family has an `engine.json`, and each catalog game has a
-`games/<game>/game.json`, `sources.json`, and ordered patch series. Validate the
-source-only layout with:
+## Getting started
 
-```bash
+This is a development workspace, not a single-click game download. To build a
+port, start with the source repository and shared framework as sibling checkouts:
+
+```sh
+git clone https://github.com/theodorecharles/wasm-games.git
+git clone https://github.com/BuiltByTed/wasm-game-framework.git
+cd wasm-games
+
+# Check the catalog, manifests, patch references, and repository layout.
 node scripts/validate-layout.mjs
+
+# Point build scripts at your framework checkout.
+export WASM_FRAMEWORK_DIR="$(cd ../wasm-game-framework && pwd)"
 ```
 
-Engine-specific test and image scripts live under each family’s `scripts/`
-directory. Builds use the sibling framework checkout by default or
-`WASM_FRAMEWORK_DIR` when explicitly supplied.
+Layout validation needs Node.js; it does not compile or launch games. Individual
+ports have different Emscripten versions, native dependencies, framework pins,
+and data requirements. Check the selected family's scripts and manifests before
+building—there is no universal build command or SDK version for the collection.
+
+Useful build entry points include:
+
+- [Build-family build](build-wasm/build-web.sh)
+- [id Tech 1 build scripts](idtech1-wasm/scripts/)
+- [id Tech 3 package commands](idtech3-wasm/package.json)
+- [GoldSource package commands](goldsource-wasm/package.json)
+- [Wolf4SDL build](wolf3d-wasm/build-web.sh)
+- [DOSBox build](dosbox-wasm/scripts/build-web.sh)
+- [id Tech 4 build scripts](idtech4-wasm/scripts/)
+
+For the self-hosted portal and deployment setup, see
+[wasm-game-lab](https://github.com/BuiltByTed/wasm-game-lab). Build artifacts,
+installed images, and experimental candidates can represent different revisions;
+check the corresponding verification record before deploying an update.
+
+## Bring your own game data
+
+Supply game files from your own installation in the format expected by the
+selected port. Retail archives, textures, music, ROMs, and firmware are not
+included here. Keep game data outside the source checkout and provide it through
+the selected runtime's data-import or mount configuration.
+
+Each game's `game.json` and `sources.json`, together with its browser data
+manifest where present, describe the integration. Supported file layouts and
+versions vary; a directory of game files is not interchangeable across ports.
+
+## How the repository is organized
+
+The common layout is shown below; shared family-level build and web assets vary
+by engine.
+
+```text
+<family>-wasm/
+  engine.json              Family and game identifiers
+  patches/                 Shared engine changes
+  games/<game>/
+    game.json              Game and data configuration
+    sources.json           Source inputs and provenance
+    patches/series         Ordered game-specific patches
+  scripts/                 Build, packaging, and verification tools
+  proofs/                  Runtime evidence and development checkpoints
+games.catalog.json         Portfolio catalog
+```
+
+Upstream source checkouts and generated outputs belong in build work directories,
+not the source history. The shared framework and game portal remain separate
+projects rather than embedded copies.
+
+## Testing and known limitations
+
+Verification happens at several levels: source reconstruction, native regression
+tests, generated-package checks, and real browser interaction. A passing compile
+or HTTP health check does not establish working rendering, controls, or saves.
+
+Current cross-project work includes pointer-lock/fullscreen behavior, sustained
+keyboard controls, persistence edge cases, longer campaign/multiplayer sessions,
+and audio listening. Browser audio scheduling is recorded separately from audible
+playback checks. Support outside the tested Chrome environment is not implied.
+
+When reporting an issue, include the game and profile, build/revision, browser
+and OS, reproduction steps, and relevant logs or screenshots. Do not attach
+retail game archives, ROMs, firmware, or other private game data.
+
+## Development notes
+
+- [Current progress and remaining fixes](GAME-LAB-FIX-TODO.md)
+- [Maintainer recovery runbook](RESUME-RUNBOOK.md) — exact development handoff;
+  contains workstation-specific details, not general installation instructions
+- [Original regression report](GAME-LAB-TEST-ISSUES.md) — historical baseline
+
+## Credits and licensing
+
+These integrations build on the work of the upstream engine and port communities.
+Source manifests record repository provenance and pinned revisions. Licensing
+varies by component; consult the relevant source repositories and included
+license/third-party notices rather than assuming one license covers every engine.
+Game data is separate from the engine source and is not distributed by this project.

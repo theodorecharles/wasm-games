@@ -1,0 +1,375 @@
+{
+  "scope": "All 16 engine anisotropy settings: same-footprint native border oracle on desktop GL and GLES. Vendor-kernel pixel differences retained; not production or campaign acceptance.",
+  "fixtureSHA256": "52c6bed15914ab8b5437d72b1d7b2b5e9ba8f7a0c5799b44b219b353775a50e0",
+  "prototypeSHA256": "582ff67bbe204a32226df63852271a8607cd05f99598c543daa2721d81aaeeb3",
+  "packagedShaderRouting": true,
+  "packagedJsSHA256": "1d6d837a8d3dbdcfdbf103add753e7744460bed786e8a2e09f2da4cfe23d1c74",
+  "transformSHA256": "2937971c1897e13acccaeecbeed7995989b51e70eb9b48a0eaa1856a9c8c0f47",
+  "convertedFragmentSHA256": "71de2068e60dda79045a608f0db0771f2ab0f7c4a9b62ec1c8596c5414a9ab71",
+  "glesPath": "transformed texture/textureProj/textureLod/textureGrad calls with active per-sampler metadata; implicit sampling forwards metadata through two sampler-parameter helper functions",
+  "imageSourceSHA256": "52634fbabac245b61f397f01ea1d5a6b2c46fa87a3087d3ada82a7251853aa4d",
+  "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "esDriver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "cases": [
+    {
+      "anisotropy": 1,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 9,
+        "vendorMaximumChannelDifference": 5
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 9,
+        "vendorMaximumChannelDifference": 4
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 9,
+        "maximumChannelDifference": 5
+      }
+    },
+    {
+      "anisotropy": 2,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 165
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 165
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 133
+      }
+    },
+    {
+      "anisotropy": 3,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 129
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 129
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 4,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 152
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 152
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 5,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 135
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 135
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 6,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 143
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 143
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 7,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 141
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 141
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 8,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 142
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 142
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 9,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 138
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 138
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 10,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 144
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 144
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 11,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 139
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 139
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 12,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 144
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 144
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 13,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 141
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 140
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 14,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 143
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 143
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 15,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 142
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 142
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    },
+    {
+      "anisotropy": 16,
+      "desktop": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 143
+      },
+      "gles": {
+        "cases": 128,
+        "nativeKernelMismatches": 0,
+        "nativeKernelMaximumChannelDifference": 1,
+        "vendorMismatches": 64,
+        "vendorMaximumChannelDifference": 143
+      },
+      "isotropicControl": {
+        "cases": 128,
+        "mismatches": 64,
+        "maximumChannelDifference": 129
+      }
+    }
+  ],
+  "failures": [
+    {
+      "anisotropy": 1,
+      "status": 1,
+      "signal": null,
+      "error": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n9 !== 0\n\n    at file:///src/idtech4-wasm/scripts/test-q4-border-sampling.mjs:143:32 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 9,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.19.0\n"
+    }
+  ]
+}

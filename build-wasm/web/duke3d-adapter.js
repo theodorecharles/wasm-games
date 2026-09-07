@@ -9,6 +9,30 @@
   let context = null;
   let captureIntent = false;
   let unlockedPointer = null;
+  let profile = 'classic';
+  let launchProfile = null;
+  const profiles = Object.freeze({
+    classic: { script: '/duke3d.js', wasm: '/duke3d.wasm', width: 800, height: 600,
+      displayMode: '4:3', note: 'Classic Duke Nukem 3D at 800×600 with full mouse look.' },
+    modernized: { script: '/duke3d-modernized.js', wasm: '/duke3d-modernized.wasm', width: 1280, height: 720,
+      displayMode: '16:9', note: 'Modernized Duke Nukem 3D: 1280×720 widescreen, OpenGL renderer, and full mouse look.' }
+  });
+
+  function applyProfile(ctx, requested) {
+    // An Emscripten runtime cannot change renderers without a fresh page load.
+    profile = launchProfile || (Object.hasOwn(profiles, requested) ? requested : 'classic');
+    const selected = profiles[profile];
+    ctx.elements.graphicsProfile.value = profile;
+    ctx.elements.description.textContent = selected.note;
+    ctx.elements.description.hidden = false;
+    if (!launchProfile) {
+      ctx.elements.canvas.width = selected.width;
+      ctx.elements.canvas.height = selected.height;
+      ctx.shell.setDisplay({ displayMode: selected.displayMode, pixelated: true });
+    }
+    document.documentElement.dataset.dukeProfile = profile;
+    return selected;
+  }
 
   const browserScanCodes = Object.freeze({
     Escape: 0x01, Digit1: 0x02, Digit2: 0x03, Digit3: 0x04, Digit4: 0x05, Digit5: 0x06,
@@ -60,6 +84,7 @@
     runtimePromise = new Promise((resolve, reject) => {
       engine = globalThis.Module = {
         canvas: ctx.elements.canvas,
+        locateFile(path, prefix) { return path.endsWith('.wasm') ? profiles[profile].wasm : prefix + path; },
         noInitialRun: true,
         print: (...args) => { console.log('[Duke WASM]', ...args); ctx.log(args.join(' ')); },
         printErr: (...args) => {
@@ -87,7 +112,7 @@
           reject(new Error(`Duke Nukem 3D stopped: ${reason}`));
         }
       };
-      loadScript('/duke3d.js').catch(reject);
+      loadScript(profiles[profile].script).catch(reject);
     });
     return runtimePromise;
   }
@@ -182,6 +207,8 @@
   globalThis.WasmGameAdapter = Object.freeze({
     async init(ctx) {
       context = ctx;
+      const requested = new URLSearchParams(location.search).get('profile');
+      applyProfile(ctx, requested || ctx.elements.graphicsProfile.value);
       document.documentElement.dataset.audioState = 'not-created';
       document.documentElement.dataset.persistence = 'not-started';
       const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
@@ -206,6 +233,27 @@
       const publishKey = (event, pressed) => {
         const scan = browserScanCodes[event.code];
         document.documentElement.dataset.buildLastKey = `${event.code || 'unknown'}:${pressed ? 'down' : 'up'}`;
+        let textHandled = false;
+        if (pressed && !event.isComposing && !event.ctrlKey && !event.metaKey && !event.altKey &&
+            typeof engine?._Build_WasmTextEvent === 'function') {
+          // event.key already includes the user's layout, Shift and Caps Lock.
+          // Duke's bitmap-font editor consumes ASCII characters separately
+          // from physical scan states; do not guess characters from event.code.
+          const controls = { Enter: 13, Escape: 27, Backspace: 8, Tab: 9 };
+          const code = Object.hasOwn(controls, event.key) ? controls[event.key] :
+            typeof event.key === 'string' && event.key.length === 1 ? event.key.charCodeAt(0) : 0;
+          if (code > 0 && code < 128) {
+            const result = engine._Build_WasmTextEvent(code);
+            document.documentElement.dataset.buildTextInput = `${code}:${result}`;
+            textHandled = true;
+          }
+        }
+        // Suppress the later compatibility keypress after this character has
+        // been routed, including when the native FIFO/console consumes it.
+        if (textHandled) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (scan == null || typeof engine?._Build_WasmKeyEvent !== 'function') return;
         document.documentElement.dataset.buildLastScan = String(scan);
         engine._Build_WasmKeyEvent(scan, pressed ? 1 : 0);
@@ -238,6 +286,9 @@
 
     async start(ctx) {
       if (started) return;
+      applyProfile(ctx, ctx.elements.graphicsProfile.value);
+      launchProfile = profile;
+      ctx.elements.graphicsProfile.disabled = true;
       void ctx.shell.resumeAudio();
       ctx.setLoading('Preparing Duke Nukem 3D…', '', 5);
       const data = await ctx.dataClient.load(ownerData, {
@@ -256,6 +307,16 @@
       document.documentElement.dataset.persistence = 'loading';
       await ctx.persistence.attach(engine.FS, { root: ctx.persistence.root });
       document.documentElement.dataset.persistence = 'ready';
+      if (profile === 'modernized') {
+        // Native -cfg also separates its companion *_settings.cfg. Keep saves
+        // in the existing game directory, without importing or replacing the
+        // user's Classic configuration when this profile is first launched.
+        const configPath = `${ctx.persistence.root}/modernized.cfg`;
+        if (!engine.FS.analyzePath(configPath).exists) {
+          engine.FS.writeFile(configPath, '[Screen Setup]\n');
+          ctx.persistence.markDirty();
+        }
+      }
       await ctx.framework.mountOwnerFiles(engine, data, {
         root: '/game',
         mode: 'memfs',
@@ -269,6 +330,7 @@
       started = true;
       ctx.setLoading('Starting Duke Nukem 3D…', '', 98);
       const args = ['-game_dir', '/game', '-gamegrp', 'DUKE3D.GRP', '-noautoload', '-nosetup', '-nologo'];
+      if (profile === 'modernized') args.push('-cfg', 'modernized.cfg');
       try { engine.callMain(args); }
       catch (error) { if (error !== 'unwind') throw error; }
       ctx.showRuntime(nativeState());
@@ -276,6 +338,7 @@
     },
 
     readEngineState() { return nativeState(); },
+    preferencesChanged(values, ctx) { applyProfile(ctx, values.qualityProfile); },
     readCaptureIntent() { return captureIntent; },
     pointerMove(detail) {
       if (!started) return;
@@ -297,7 +360,11 @@
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
     },
     pointerButton(detail, event, ctx) {
-      if (!started || nativeState() === 'gameplay') return;
+      if (!started) return;
+      if (nativeState() === 'gameplay') {
+        engine?._Build_WasmPointerButton?.(detail.button, detail.pressed ? 1 : 0);
+        return;
+      }
       if (detail.button === 0 && detail.pressed && nativeStateCode() === 0 && engine?._Duke_WasmMenuId?.() === 110) {
         captureIntent = true;
         ctx?.setEngineState?.('loading', { capture: true, event });

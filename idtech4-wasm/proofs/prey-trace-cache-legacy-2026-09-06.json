@@ -1,0 +1,134 @@
+{
+  "scope": "Actual Prey cache/LoadModel/Shutdown/ownership methods and extracted Init/entity-reference/SaveGame call compiled with host ASan/UBSan and Wasm SAFE_HEAP/UBSan. Shared fixture models typed records and reference ownership, not Human Head collision math or disk save compatibility. Nine scenarios repeat three loads; fresh shutdown and original warning guard also tested. Original cache serialization is byte-identical to pinned Prey upstream.",
+  "legacy": true,
+  "clipSHA256": "2380201eebf913caf02ba3123782e42b7a4a9615942a0f6cfe0488713cf078d4",
+  "headerSHA256": "5e53582356da85f3f6aec7ee2c4cdc53e03e0106c51eea9f0e5af0beb97873f8",
+  "saveSHA256": "6b92795dfe7020813a8589eaae604faee3ac92f909831b67cf448dd8977e4e3f",
+  "fixtureSHA256": "88209f93197bda8023dc224516a388557dc5b5dcf4a21cbebd1fd6edc3347c18",
+  "results": [
+    {
+      "target": "native",
+      "negative": true,
+      "productionSHA256": "828744099550595ed55de376efd29c7e23662f4a9f4b5c45d753fcbcb430773c",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "productionSHA256": "828744099550595ed55de376efd29c7e23662f4a9f4b5c45d753fcbcb430773c",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

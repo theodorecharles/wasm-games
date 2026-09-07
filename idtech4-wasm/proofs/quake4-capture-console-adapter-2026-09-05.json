@@ -1,0 +1,19 @@
+{
+  "scope": "Six-variant VM contract. Quake 4 console Escape may produce menu or gameplay depending on native game HandleESC; capture requires actual gameplay acknowledgement. No browser permission acceptance in this fixture.",
+  "cases": [
+    {
+      "label": "relock-image",
+      "adapterSHA256": "2468e117eff3d03d79d73faa0c75bdfae726248314158f3a8aecbcd652ec7659",
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: a cinematic may consume Escape after closing the console\n\n2 !== 3\n\n    at exercise (file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:329:12)\n    at async file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:411:53 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 2,\n  expected: 3,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.19.0\n"
+    },
+    {
+      "label": "console-candidate",
+      "adapterSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3",
+      "status": 0,
+      "stdout": "id Tech 4 adapter state, identity, input, disabled-controller, persistence, pointer, resize, profile, and PWA contracts passed\n",
+      "stderr": ""
+    }
+  ]
+}

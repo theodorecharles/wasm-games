@@ -1,0 +1,55 @@
+diff --git a/engine/common/host.c b/engine/common/host.c
+--- a/engine/common/host.c
++++ b/engine/common/host.c
+@@ -874,6 +874,15 @@ void GAME_EXPORT Host_Error( const char *error, ... )
+ 	Mod_FreeAll();
+ 
+ 	recursive = false;
++#if XASH_DEDICATED
++	// A managed web host cannot leave its bridge alive with no native match.
++	// Finish normal cleanup, then let its supervisor restart the whole host.
++	if( Sys_CheckParm( "-exit-on-host-error" ))
++	{
++		error_on_exit = 1;
++		Sys_Quit( "managed dedicated host error" );
++	}
++#endif
+ 	Host_AbortCurrentFrame();
+ }
+ 
+diff --git a/engine/common/model.c b/engine/common/model.c
+--- a/engine/common/model.c
++++ b/engine/common/model.c
+@@ -238,7 +238,7 @@ model_t *Mod_FindName( const char *filename, qboolean trackCRC )
+ 	if( i == mod_numknown )
+ 	{
+ 		if( mod_numknown == MAX_MODELS )
+-			Host_Error( "MAX_MODELS limit exceeded (%d)\n", MAX_MODELS );
++			Host_Error( "%s: MAX_MODELS limit exceeded (%d), requested %s\n", __func__, MAX_MODELS, modname );
+ 		mod_numknown++;
+ 	}
+ 
+diff --git a/engine/server/sv_game.c b/engine/server/sv_game.c
+--- a/engine/server/sv_game.c
++++ b/engine/server/sv_game.c
+@@ -4527,7 +4527,7 @@ static void GAME_EXPORT pfnForceUnmodified( FORCE_TYPE type, float *mins, float *max
+ 			else if( !Q_strcmp( filename, pc->filename ))
+ 				return;
+ 		}
+-		Host_Error( "MAX_MODELS limit exceeded (%d)\n", MAX_MODELS );
++		Host_Error( "%s: MAX_MODELS limit exceeded (%d), requested %s\n", __func__, MAX_MODELS, filename );
+ 	}
+ 	else
+ 	{
+diff --git a/engine/server/sv_init.c b/engine/server/sv_init.c
+--- a/engine/server/sv_init.c
++++ b/engine/server/sv_init.c
+@@ -121,7 +121,7 @@ int SV_ModelIndex( const char *filename )
+ 
+ 	if( i == MAX_MODELS )
+ 	{
+-		Host_Error( "MAX_MODELS limit exceeded (%d)\n", MAX_MODELS );
++		Host_Error( "%s: MAX_MODELS limit exceeded (%d), requested %s\n", __func__, MAX_MODELS, name );
+ 		return 0;
+ 	}
+ 

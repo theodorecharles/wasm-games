@@ -1,0 +1,2584 @@
+{
+  "observedAt": "2026-09-06T10:06:53.396Z",
+  "installed": false,
+  "oldImage": "sha256:3ac53414f7fbfb8ec82ec79ecd9efb8759bae71934bfd21585267dab411821b4",
+  "newImage": "sha256:7f11b1237e3b7f18db616fbf757d609dc89877fd2d5ca695f968deb0f65aa142",
+  "containers": [
+    {
+      "name": "/cs-chrome-reconnect-proof-20260905",
+      "id": "53b5f54f52855eb0e2b82d30acdb51f97f4384ac7cd639551a8769b0c66caccc",
+      "image": "sha256:a108d96bbddf632160cef0d597ef4c87dcf1927fa4d0eaa5f1f9237493d00997",
+      "startedAt": "2026-09-06T00:48:30.724880497Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": []
+    },
+    {
+      "name": "/cs-endpoint-chrome-proof-20260905",
+      "id": "d8af54ce563a239f9443b95b42cf1fbe12dd3c79de6a1c7f6ab69a2e153ae32c",
+      "image": "sha256:aacaaaf2ed3c6fa03eb496824e06f1b071aaf8cdcf607288bb915e02da5fd8de",
+      "startedAt": "2026-09-06T00:46:59.646708466Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-escape-proof-20260905",
+      "id": "3ad604ccd847be9e8e2f479860e258d5fc7cd5e3a89f947d217c90bc38337d79",
+      "image": "sha256:dcad39d4ca3fa738ddd6387756709a14a1698e07d46e3ca30a04056a90f6951e",
+      "startedAt": "2026-09-05T18:53:13.219094281Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/55ea28417ab3fb00369660a2508e450fe040d42339d5684fa3c2de2ac8208da7/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-input-proof-20260905",
+      "id": "75eba933f5ddd59cf5dd91178197dfff55b02ad69b5e1afeacc1eea632a5906e",
+      "image": "sha256:629bdcc947d772734612bc27062f952f4db4ae79a96f2a27ef6559b9a509dffe",
+      "startedAt": "2026-09-05T18:38:04.95035107Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/c2fb1c988ae465bf286d63babfe61403efec2cf770d5ce0e57fdb48f222a5421/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-managed-chrome-proof-20260905",
+      "id": "0fac064e3f2b2f0977472b00a0434433a26ae49c4fcae77ed94d569250039c18",
+      "image": "sha256:b71c2c9ec8ab44689daaa7c8627f4bb7e62c3bb49a7cc475d04dfbdc36b762ce",
+      "startedAt": "2026-09-05T20:53:57.605743978Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-managed-classes-chrome-proof-20260905",
+      "id": "9b2029c40822e19a6b5e1cc19869914e7b9395d60ae6fc66777f78ea6f8dd835",
+      "image": "sha256:2cd9b866997163ac566f9379efa8d9859dd137784c5065cd55e5fd6d33ddb349",
+      "startedAt": "2026-09-05T21:07:08.121807723Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-managed-lifecycle-chrome-proof-20260905",
+      "id": "cae7e79b56eea4a135c44ae491374bf55b87202459eb983461c822cdaf57e1ab",
+      "image": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+      "startedAt": "2026-09-05T21:18:33.946789367Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-managed-native-proof-20260905",
+      "id": "eef39575016509e0fd080db31258945f4657052c7b7a4f6909ee048cf127b207",
+      "image": "sha256:57882ac947f270cc109a2d1fe322ff0a99b25504484c74b1329f46784e21c011",
+      "startedAt": "2026-09-05T20:29:18.112783648Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-managed-native",
+          "destination": "/native",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-modifier-chrome-proof-20260905",
+      "id": "f4fbe51a5fb022da4c1b5dc411118284bbe382ce831359a781361b9a874ffecb",
+      "image": "sha256:729fd8035b80280ace9c9c29cb71ec3649820f20deee190f42e717f8cc26dfc5",
+      "startedAt": "2026-09-06T00:19:17.628760463Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-sabot-browser-proof-20260905",
+      "id": "7a36d5f95444b5ace73839dbeeb9f6aebaabaf4e49c93bb48353c348331fc1aa",
+      "image": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+      "startedAt": "2026-09-05T22:13:46.10346152Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-managed-sabot/base.so",
+          "destination": "/opt/doom3-native/base.so",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-managed-sabot/dhewm3ded",
+          "destination": "/opt/doom3-native/dhewm3ded",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-sabot-browser-candidate/runtime.cjs",
+          "destination": "/opt/doom3-server/runtime.cjs",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/idtech4a-bot-reference/Q3E/src/main/assets/pak/doom3/d3_sabot_a7.pk4",
+          "destination": "/opt/game-site/bots/d3_sabot_a7.pk4",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3-sabot-browser-candidate/d3-worker.js",
+          "destination": "/opt/game-site/d3-worker.js",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3wasm-sabot/build-wasm/d3wasm.js",
+          "destination": "/opt/game-site/dhewm3-base.js",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/d3wasm-sabot/build-wasm/d3wasm.wasm",
+          "destination": "/opt/game-site/dhewm3-base.wasm",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-sabot-capacity-chrome-proof-20260905",
+      "id": "ed5209444059c26168f3d8485737ac47d47d8046fe6144339ff9b69bac0fb730",
+      "image": "sha256:9624fdce14774e883aa9c8c15dd68585888bc4d050089498f190ece052ab5916",
+      "startedAt": "2026-09-05T23:09:47.327678452Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-sabot-delta-direct-chrome-proof-20260905",
+      "id": "0fa9f4ab59ff1f99421d777ad54704b0e716b63159676035911f1baefd53f715",
+      "image": "sha256:82f5ec5c7b2dd73ace36b6bf8458407be6a809dd71aeb16f066b712648eb9f84",
+      "startedAt": "2026-09-05T23:53:52.97620344Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-sabot-map-status-chrome-proof-20260905",
+      "id": "f9350d39e8e7829e8531fe5b6ecb42541fc5cfb0f0de39bce398fcafb581250f",
+      "image": "sha256:82f5ec5c7b2dd73ace36b6bf8458407be6a809dd71aeb16f066b712648eb9f84",
+      "startedAt": "2026-09-05T23:42:37.160399267Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-sabot-packaged-chrome-proof-20260905",
+      "id": "9d8272a65d0de24500fc7fefc51e3e4f2cd629aa1ff0dffcbfdcc8df1b9da2d0",
+      "image": "sha256:2f82f01019546dbc0ac92e7daf6728e8c9f049d17166b247d4aa605ff2449213",
+      "startedAt": "2026-09-05T22:37:08.273116317Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3-sabot-voting-chrome-proof-20260905",
+      "id": "110f0fdcd9ae9ac57dbb65a3f9c4e8281582c52d681a2b52109f18889ce377a4",
+      "image": "sha256:0eea95bb73dcec49358b9aabee395108c9b2e8c20ea544271a6b2a408e6d18d1",
+      "startedAt": "2026-09-05T23:34:17.256541039Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/d3wasm-build-session",
+      "id": "0c9477497814fdf5402f68bd4af4ffadae4218210d68650c9f599df33b70106a",
+      "image": "sha256:be96eff5810e42c632f3f8b795388a6b596e4fb21ec28b9e1fb1bc49bb3b1eef",
+      "startedAt": "2026-09-05T20:40:31.257360456Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games",
+          "destination": "/src",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/dazzling_lumiere",
+      "id": "df970fa3a87304035b416998ee2641455762d29ddad241befc666093999e8495",
+      "image": "sha256:bdbe05ed859448c620b698e18b8c8aced8fa82329e9ef22de60430d44963df19",
+      "startedAt": "2025-12-31T18:54:57.941574411Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": []
+    },
+    {
+      "name": "/doom3-native-ref",
+      "id": "69dceb4b76ca99d2dfbcc7b77415b46092a1c6da06e8706227808ecb3b5df278",
+      "image": "sha256:561618e2c15bf2397621dd04f96926663a3b5616c189cf7e38db7e82f5c538ea",
+      "startedAt": "2026-08-21T19:30:33.074955244Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3",
+          "destination": "/data",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/idtech4-wasm/.work/dhewm3",
+          "destination": "/src",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-capture-loading-chrome-proof-20260905",
+      "id": "58ceaf17395ffba7ceae58c56059bfafe0e2712ccbbd11b55731001d3b71ccec",
+      "image": "sha256:68ce8833d3d4d6048f36de1b603017c185e2dcbf8cddb85273f295f2ee4f834d",
+      "startedAt": "2026-09-06T01:21:36.540730645Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-cs-managed-menu-chrome-proof-20260906",
+      "id": "292fc6430b858e222867109f8e7150e54d2df7a89e37d39ce69f24a0ad8cba26",
+      "image": "sha256:2e6f501d684d7fa26d97f5667fe1d2ce5347604cd70ca38350ecc1cf2a33245c",
+      "startedAt": "2026-09-06T09:55:32.995109234Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-cs-managed-menu-final-chrome-proof-20260906",
+      "id": "243cb8489bce00ff216548538040a3c8a4d9f550e96b64c822819800cd507d92",
+      "image": "sha256:7f11b1237e3b7f18db616fbf757d609dc89877fd2d5ca695f968deb0f65aa142",
+      "startedAt": "2026-09-06T10:06:15.713500363Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-cs-menu-globals-chrome-proof-20260906",
+      "id": "7f1f5c83dffa5b3cc5f5f98e25ea53d731078d75e57295f92b73dcef8515fa2b",
+      "image": "sha256:3ac53414f7fbfb8ec82ec79ecd9efb8759bae71934bfd21585267dab411821b4",
+      "startedAt": "2026-09-06T09:33:09.650434825Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-input-chrome-proof-20260905",
+      "id": "0e444229b444dd2da0643fd734a31db1ad0c3df4fe31275900471f6a9897b1a2",
+      "image": "sha256:1ca467d1c0439261e17a9dc78f4dfaa5691b6edc9b57f856307172ce9c774bf2",
+      "startedAt": "2026-09-06T01:03:21.770859595Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-pending-capture-chrome-proof-20260905",
+      "id": "6bdf1776c7852998c4f501aa7adb5ca39827fda93d4c94fb7a747dde9700ae49",
+      "image": "sha256:a62c267dd0772c6cc96a7a2f133743151d9bc4f600b510b20d8f2c3c2cefc38a",
+      "startedAt": "2026-09-06T01:18:09.277616759Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-save-hints-build-20260905",
+      "id": "19511bd77739bd3252e448d881bee62a700050aaf337d8e6679945310d58268c",
+      "image": "sha256:334b4091e695ecbe357dccfcb8810385297ab50531f2dd4431d39159a02ad771",
+      "startedAt": "2026-09-06T02:10:50.641489827Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-games/goldsource-wasm/patches/xash-save-hints.patch",
+          "destination": "/tmp/xash-save-hints.patch",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-save-hints-chrome-proof-20260905",
+      "id": "0deb74532571fcb14f9421a0784e93e6665ab6a42777b8a4d75ca0b5075bf755",
+      "image": "sha256:967561eca15081284748f7a46178a1f5d8f8024a3aa182e4a95e2a406ca9c2ce",
+      "startedAt": "2026-09-06T02:13:11.315174366Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-proof-20260905/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-stored-wad-chrome-proof-20260905",
+      "id": "00630c9e6ff7c2ea93a6a7955ce3acac5097e54a3fa5dd8bc3c0d17cd88a3fd6",
+      "image": "sha256:08ab594ed353516732604e1bab31430daba5b56208405c631379878e01912ce4",
+      "startedAt": "2026-09-06T01:41:25.392942762Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/goldsource-stored-wad.graoXC/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/goldsource-stored-wad-persistent-proof-20260905",
+      "id": "1cff921d9afdc9a67dab970215bae8251126f84e5e7b416940d5493a6f2b8ecf",
+      "image": "sha256:08ab594ed353516732604e1bab31430daba5b56208405c631379878e01912ce4",
+      "startedAt": "2026-09-06T01:52:02.827819716Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-proof-20260905/data",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/mytube-smoke-ip",
+      "id": "f10dfc9e520fc14a9ef3c836dbc0296fbf1606fb6690ccd860de181c1e9b38b6",
+      "image": "sha256:ec58f91fe92be6be8115474ac9ee2200d1f5387ba9049cc3bae41694e63e840c",
+      "startedAt": "2026-08-29T23:40:50.312441971Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/mytube-smoke2.Shic9H/config",
+          "destination": "/config",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/tmp/mytube-smoke2.Shic9H/media",
+          "destination": "/media",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/nervous_engelbart",
+      "id": "4e9cc0c7b71f826abee21551c0c993cd00e808abc8ef5ee0497f5f52fea4f164",
+      "image": "sha256:001f0101946d32aa7f6af315765c1a0f4feb62cf2464ed6d902bea4f9df429cc",
+      "startedAt": "2026-09-05T11:34:05.818676201Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-construction-dialog-chrome-proof-20260905",
+      "id": "a9b2972eb994a0606098b2c832265fbe12377e16535bc5bbec71388582861cba",
+      "image": "sha256:71012d0e9e7a371c0852b6f570d38266c4fad17e3bd53cce1254afd72807833b",
+      "startedAt": "2026-09-06T03:53:15.08104871Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-framework-chrome-proof-20260905",
+      "id": "48831d92525df902610078b4ec08f40731db952847a3fdca2a2de162ff491b81",
+      "image": "sha256:299b31ca37eded48631ba7d6ad225cc7d45bf6331f870677d2b09985e664d184",
+      "startedAt": "2026-09-06T02:34:29.89680843Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2/volumes/combined-rct1-rct2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-index-cache-chrome-proof-20260906",
+      "id": "d3b768d7cbd6e49716898a1c10d378113bb3ac005e0ab27f04c97644cd1b7010",
+      "image": "sha256:308d433f0442e11a04298b9b4101acbb755a4196918bff9000c7b209ed0b2378",
+      "startedAt": "2026-09-06T04:58:16.12209486Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-private-objects-chrome-proof-20260905",
+      "id": "7aa345525713d0096f74368c7a72ba998b4c76b0e3ad1e12ab49e46d0ecacb67",
+      "image": "sha256:7985183b8e61dfed95a7f9653f72ba97b084d2a50287486d7568a741f4a745c9",
+      "startedAt": "2026-09-06T02:55:30.83074443Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-private-objects-old-proof-20260905",
+      "id": "1d3d2fca31bd976b05111227810ef93bb07ce7a56139488832e5422716e97f52",
+      "image": "sha256:299b31ca37eded48631ba7d6ad225cc7d45bf6331f870677d2b09985e664d184",
+      "startedAt": "2026-09-06T02:55:30.949922223Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-private-objects-v2-chrome-proof-20260905",
+      "id": "c9bb7466e88b9addf69963d2dac00ae92e9c2592ce733ebdc7c3053ae28dac6d",
+      "image": "sha256:7985183b8e61dfed95a7f9653f72ba97b084d2a50287486d7568a741f4a745c9",
+      "startedAt": "2026-09-06T02:57:56.024063034Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-private-objects-v2-old-proof-20260905",
+      "id": "e6d3d0367ed5629a9664be7c6953a94ee405495efd2f8d907ff2f839bcddf531",
+      "image": "sha256:299b31ca37eded48631ba7d6ad225cc7d45bf6331f870677d2b09985e664d184",
+      "startedAt": "2026-09-06T02:57:56.202916947Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-rct1-sprite-path-chrome-proof-20260905",
+      "id": "778dbcd9c41b268ec6a84e888510b22ddb0e1209ae90e616291f480f9daf6897",
+      "image": "sha256:27851f04970e70f56200dd5d5c0604e3439947a212eaf9e632ff8276d60e77de",
+      "startedAt": "2026-09-06T03:18:57.287733303Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/openrct2-ride-music-chrome-proof-20260906",
+      "id": "31d67733916e801b9d5b145d31248a07612c678d88f0fab667f6aaef5593eae7",
+      "image": "sha256:9534dc471ce2c399642e21c29f908a9f86d212bf30caf77c1ebeff443e9fe8ce",
+      "startedAt": "2026-09-06T04:29:11.703737391Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2-objects-proof-20260905-v2",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-accounting-proof-20260905",
+      "id": "1e9e692dd676fd2c749f1bf7a9e724c33413d4dc78da175bdbd1680d14d27daa",
+      "image": "sha256:05fab450190b6a00126a0832c9c1ba4a2ef283345d2f8449b5aa02fc134803a8",
+      "startedAt": "2026-09-05T17:08:37.783988911Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/0ce77fe506d2dcd74da48bdcabb9ccd17af018f3db851977cf5d303da9982d06/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-audio-intro-proof-20260905",
+      "id": "7ae4f86d5c6febfbb7fdb570215c74f7b15d47f411c44fb6586df9b39c5497a3",
+      "image": "sha256:4571a1a45cb37bb701c84dcc34eab9ba6cd1472a29631c09c272f3ce431dbe2b",
+      "startedAt": "2026-09-05T17:43:33.478379641Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/913ada949d7a3432be4d0f78c8ee09ea0a6345be54c512ac7c9b4942f5376168/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-default-images-proof-20260905",
+      "id": "5b77c9915f8fb06da01cdb7809eb758bf8f7b58094c9d1830024865746afd40f",
+      "image": "sha256:04e41a70727078d605e9c6530e905eb3179533a6e3650437518c01dccc3c0f0a",
+      "startedAt": "2026-09-05T17:23:11.30053514Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b9e51bf345afafdcd5ec5eaeca66c676b26e7e90f6724dd70c138d85241284e7/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-deferred-media-proof-20260905",
+      "id": "6e5eb0116f2a32b22f1ed1951524341f63603605ca1f161977c3a7d3ddab957f",
+      "image": "sha256:19b4f5dc00f85312b2debc4fee40dba1bec1ea1a77c6b6acd778ee4246fbd90a",
+      "startedAt": "2026-09-05T18:00:24.297166296Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/40be5360f6fd784fb56409af1d52c3665c682e32f6d75717b9d5fcff4457831f/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-deferred-media-proof-20260905-v2",
+      "id": "de4fa01320206cb1ef4d21dba97b0bcb3d1673ba477da979411216f610d2fdbc",
+      "image": "sha256:19b4f5dc00f85312b2debc4fee40dba1bec1ea1a77c6b6acd778ee4246fbd90a",
+      "startedAt": "2026-09-05T18:01:33.214223325Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/d4111bb0daa2364c7a4649283845572fe01c5aa5263c11e2251b3e1ceab61df9/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-input-proof-20260905",
+      "id": "ed7784dddc0f15fce4fd8c0cfce241bb9fcf9cbf8b09f408707e7ac8a3a86c8b",
+      "image": "sha256:fbccd1842a3993f112d379df8e72718317a0703ee3a5fffc7d5e81eed1488534",
+      "startedAt": "2026-09-05T16:41:44.328636608Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/c0621252a84a0f60ddd71990495d84c5ba6b3d2e39ad3eacb05afc0b6b3119b8/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-menu-cache-proof-20260905",
+      "id": "cbc952395c1acbcacf23d6809bf6d27e6abc69247449d36885694b72ea994ad7",
+      "image": "sha256:8571367ae10dae7267c67a28dfdf4031eaf588ee622e1171c9286be2ff5e1e6d",
+      "startedAt": "2026-09-05T18:21:51.711095249Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b2ab832263896aef5588ff2d3cf43a8bc0839436fd4a7124facb700fe69baa34/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/prey-roadhouse-trace-20260905",
+      "id": "69a9ab6d619c2e2ba2dcfff6cd4c6d80d5ff9af0e820cea97ec733ed44aef496",
+      "image": "sha256:8b7da1d6dc6373e564104010c0b53bfc3513a841d478226fd069d1e5ca059347",
+      "startedAt": "2026-09-05T16:32:19.357886725Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b52e3c684ac6d761b3a5b1f87e1408e505a581899b1a9282bbcce832fcc3e584/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/q4-border-dialects-proof-20260905",
+      "id": "31faa98b5a34f5ffa0b76612ee5a9afabeec9cb2b102d778ea44244146050dd2",
+      "image": "sha256:c663601a9f4f3107183c775726a09521b5f661e74ed04452604eb12f2a58f441",
+      "startedAt": "2026-09-05T14:20:28.584753858Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/q4-capture-console-proof-20260905",
+      "id": "4a42ed636733704e2200bfd76bc164dba1cdbf12916261f0ed522db29d787444",
+      "image": "sha256:fe1ce9f372401adfec272da63fe9eabbbd463c4bdca4972261adec090a695ec9",
+      "startedAt": "2026-09-05T15:37:35.691217887Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/q4-capture-proof-20260905",
+      "id": "940a9f282418b63effeaa7f646d67432ab439120a30461271496e6f750df674d",
+      "image": "sha256:17dfe3132f8fc2caed7b15c9bdaa4c9a4772cb22281889425655ed8e0237c18e",
+      "startedAt": "2026-09-05T15:02:27.434211148Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/q4-capture-relock-proof-20260905",
+      "id": "434ef54c45e4210203b1f8288a20d18865f50f006e2f068f79d86e26604b01f4",
+      "image": "sha256:580da0e1e630a63fbb025a81a802e180157e0d5f65b412a5520ed091a40a85ff",
+      "startedAt": "2026-09-05T15:23:26.893276119Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/q4-readback-proof-20260905",
+      "id": "7aadc14d52f832d636e51e6a41482420c3a80c27121cea1bd87f4629a3cf2522",
+      "image": "sha256:df094f94983cd04aee5125f0fc5e1ffe8fab4f044d85bd3ec03379d05354366f",
+      "startedAt": "2026-09-05T16:04:07.00885431Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/quake3-join-status-chrome-proof-20260906",
+      "id": "dcbd0905fb9f0cdd5e67778ddf1745fee5f4d60619ce5d118a75e9ca0d54d946",
+      "image": "sha256:ea73d1bb7a5c7fae6e0a96101232f28dd8b56b7f1e19e7faeb1ab210d7c922cc",
+      "startedAt": "2026-09-06T06:02:55.857533742Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/roe-escape-proof-20260905",
+      "id": "48608194767e1d70b6a3b3f2567043e17d66f471fff1120352bd4b3a5a46333b",
+      "image": "sha256:dcad39d4ca3fa738ddd6387756709a14a1698e07d46e3ca30a04056a90f6951e",
+      "startedAt": "2026-09-05T18:53:13.37812676Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/642e3a89d423e9d7857339b740a41ee8089128ee209276756bc343571912afa3/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/roe-input-proof-20260905",
+      "id": "65b8ef9b96e3b1c5e668a860bfb40e933fc9452cf840e0a72129d2d24b784a0f",
+      "image": "sha256:629bdcc947d772734612bc27062f952f4db4ae79a96f2a27ef6559b9a509dffe",
+      "startedAt": "2026-09-05T18:38:05.140998489Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/235b21900646184cbbbb4d36258e9d98501a81f264c57822a59523437953c904/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/rtcw-mp-array-final-proof-20260906",
+      "id": "9b219a208063111624cdfee4d2168a01b9dbca488e5902fd474d27531efcaa44",
+      "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+      "startedAt": "2026-09-06T05:33:51.327683105Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/rtcw-mp-array-state-proof-20260906",
+      "id": "1c323e402f481430d9ab5d8a4dbf708d2372650e82ce9a8f44859d04bbbf7363",
+      "image": "sha256:1e80d9ce31f9387c53a3165d746b9a75f3a8c72e309fe2fa5b718184c28b23ff",
+      "startedAt": "2026-09-06T05:24:58.186433248Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/simcity-save-chrome-proof-20260906",
+      "id": "d5e5aca7fa1d0f66dec2c37f75fd665ba2f207f538ef8f6b530d820955437cb3",
+      "image": "sha256:bcb73af2aadfcf070695688d7e3c8d05bd2424f9ac521e89669b8979beb07f82",
+      "startedAt": "2026-09-06T07:29:54.241520445Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/simcity-timing-chrome-proof-20260906",
+      "id": "80c3394d8e09cc3c307eb8601784948d61562efb644e34989e0dd0a3cd236e9a",
+      "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+      "startedAt": "2026-09-06T06:23:26.244148966Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/spear-menu-captions-proof-20260905",
+      "id": "6c048110f41cf86d82d58df366cbb2f616f1a635cde8480873fe0548602f4020",
+      "image": "sha256:f5a1129956f16a900f6987e381baaf8e40963d1d36da4cf450b78105af29ce67",
+      "startedAt": "2026-09-05T19:42:50.488636933Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/62b065fac1211dc44753ee95cf7a667d2be323c05d94cd92a04e7efccdb1dc76/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/spear-menu-keys-proof-20260905",
+      "id": "948f50db30ef6f95cbbae217066921c9e6ed038671cf083c6320a4612dfe0188",
+      "image": "sha256:73f42d35268694acf5d1af048303d17bd94a6819595212e72415897a7816edd9",
+      "startedAt": "2026-09-05T19:31:10.713645713Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/39dff6a143308c26cfafa20781e0a957d747449d208630b4bb11f341e8962404/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/spear-menu-pointer-proof-20260905",
+      "id": "263a80c9ddd99b5aef89d3159b3168b0c2e6eb37dc03d91cb50cf56ae1da92e8",
+      "image": "sha256:8f0b8ca4de310b686e53192c51f891adb87ab4ad0283b803abeb18ef07eb1c8b",
+      "startedAt": "2026-09-05T19:23:28.03031395Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ef88ece0513ecdc6331c41984823befb68f0ba5a0a8dd368b7065dfe77f3f756/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/wasm-blood",
+      "id": "da0e6774ef16251f0240600dfbe583325fccbe41ca92159b45e8d0e18aff609d",
+      "image": "sha256:ef1fe7905bb41c0bbf9ad805d58fc520e70a54a0fe9a85b8deb35a6d61bd2328",
+      "startedAt": "2026-09-04T19:45:41.839082344Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-cod2",
+      "id": "ceaf1ba1ac47be872e9948d1b1dbc2922f84672edbe9379846dfa4c3cb1a27e7",
+      "image": "sha256:397e0cdb057e40d6640d27dd9b58f4c376ade3e041bdc1086483fabef6e0e8ab",
+      "startedAt": "2026-09-03T21:52:26.377178984Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/cod2",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-counter-strike-yapb",
+      "id": "29e8cdf04d92994a9a1c6f8b2d380bd84f88020ba8126b3a9ab309ebb6bbda5d",
+      "image": "sha256:a108d96bbddf632160cef0d597ef4c87dcf1927fa4d0eaa5f1f9237493d00997",
+      "startedAt": "2026-09-04T23:34:49.981763868Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": []
+    },
+    {
+      "name": "/wasm-doom3",
+      "id": "24b4fa88e6975accdc67192fcd656560b32b3352b29f1c94c9ddb4a7bff10c05",
+      "image": "sha256:33332d439c122bf55e0140bafbf5bbdf54857c9fb2003100c60920d9b9320ba7",
+      "startedAt": "2026-09-03T21:52:26.394043134Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b90682079859bb6598ae9a48502643981fc7537d34151c2d31cca75db4b04689/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-doom3-mp",
+      "id": "bac28f609b5d6ff680d022d62964766ced9c4ee4b0bd79838dbc4e504afccbcd",
+      "image": "sha256:a7188ef7ad469833b9e8280d7d1ec2ae49cfe79a0d3fca825482dad10f7656da",
+      "startedAt": "2026-09-03T21:52:26.358189164Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/470a51fdfd02409b06edc89327c892fe337a3927b18e23c0549d00fa8bdffbcf/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-dosbox-suite",
+      "id": "3ecd82b0d7211675465dc021cde309edeb56c42413381faff2ff38c1886a19ab",
+      "image": "sha256:0ec9147888b1da3cd0e294ddd8328412d5575907d40f043a374d61b0e1619429",
+      "startedAt": "2026-09-04T19:48:48.277091734Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-duke1",
+      "id": "950d4716478ba31dbee4846a279a0d5618b4b31ed3193d4a2ec693baca0e379c",
+      "image": "sha256:595d95c76daad9f345cb15392700b42daea378bb574cef9c20d3a96ddef037b9",
+      "startedAt": "2026-09-04T19:48:48.286590357Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-duke2",
+      "id": "af3d1b8e7ccd8e42ef9081202a622df74cca61de70ce206b4ff0b7d65d1a9f4b",
+      "image": "sha256:6fe196f49edbaade2972b6f6209742e7d8f559366399965709d5a79b4bb50970",
+      "startedAt": "2026-09-04T19:48:48.281339463Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-duke3d",
+      "id": "0081a236b95988dd914df97c962a9146adb61cfb03c4c7cc0131d3646562f77c",
+      "image": "sha256:8631a4e193cadf1eb16c4b5b5d8c3cb639dd605bcab109c7fd9dac5ea8788e90",
+      "startedAt": "2026-09-04T19:45:41.838343396Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-game-portal",
+      "id": "fc7fb291006c4957e1b2ea5e7e14b4535ee2321ab2a0a2e683526bd9bc18b135",
+      "image": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+      "startedAt": "2026-09-03T21:52:26.396232563Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-lab/nginx.conf",
+          "destination": "/etc/nginx/conf.d/default.conf",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/Development/wasm-game-lab",
+          "destination": "/site",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/wasm-goldsource-suite",
+      "id": "1dab006e032e4a230bb93cf6467edf3eed712e4c23d8e43b01a6213e6cf73446",
+      "image": "sha256:3ac53414f7fbfb8ec82ec79ecd9efb8759bae71934bfd21585267dab411821b4",
+      "startedAt": "2026-09-06T09:40:44.648731158Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/goldsource-stored-wad-20260906/data",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-gta-dos-demo",
+      "id": "f6c0ba0ffa47872761df9008942a0aa9021b3320edc556f51873f434888b3b86",
+      "image": "sha256:8e85f5a448d9f385062e5f0d17506f58620c975c743026050f50818fc8048c9f",
+      "startedAt": "2026-09-04T22:14:41.681924166Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-idtech1",
+      "id": "8d2e9bca755d5f92d6b5a428b49df941d2965aefb142d0ad47de3932ee862c74",
+      "image": "sha256:2f91f270c09d62957501c7ede74e60131bf1388d70150f809e98db3a655e0775",
+      "startedAt": "2026-09-05T04:45:45.726121504Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/crispy",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-jazz",
+      "id": "1414750b01faf8d44c2e0eee1c27e03fa30b973df04a55f56c23da855b5e17e0",
+      "image": "sha256:da9bcff1509485639e6245881de9681c8ae4be800dbfd9718aa75abb43c45799",
+      "startedAt": "2026-09-04T19:48:48.280803025Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-nfs-dos",
+      "id": "50e655ad88f4c5f643863e998551419c73519cfd723df5b2181dade0c0ec94ce",
+      "image": "sha256:b7a5abce9c2f07beb6770d51eaec9feb244d8720de1ce6351649cb1b18e5ab9a",
+      "startedAt": "2026-09-04T22:57:57.570427135Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-openrct2",
+      "id": "b73134377613e390fc8074993f54620a2c28fb12fb68dd730ca08b5e22bdc56c",
+      "image": "sha256:308d433f0442e11a04298b9b4101acbb755a4196918bff9000c7b209ed0b2378",
+      "startedAt": "2026-09-06T08:22:08.984463224Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/openrct2/volumes/combined-rct1-rct2-20260906",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-prey-2006",
+      "id": "674c8b283b144e1fd9f4a1ab6314ecf3a7da6313c1b802a117d3f8d7d7375ca9",
+      "image": "sha256:1e54e9fa3343e3cb5b2971bfee1af8f2c68c2a6315add150897ab81bbf5539f6",
+      "startedAt": "2026-09-03T21:52:26.35914769Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/02a8d5327ef853d48b5784c57284174cd59a36c7829ea363719d59d8c5736548/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake1",
+      "id": "482b29526da1130cdb55ce67b8ab636e55b5533b4e68376d84d8bfbe55f166a3",
+      "image": "sha256:377e6f14e82347a69dd0227ffb65211f01849f4e67e6376f401a72d5c250b10d",
+      "startedAt": "2026-09-03T21:52:26.386209539Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake2",
+      "id": "facdb805ccb4b3242bf7a666edd5bee48318e588ba189ada1fdd7353da30d0f4",
+      "image": "sha256:559e6d2711286c50820dc656bdecf80df34845f7bfa97880633c775099df966a",
+      "startedAt": "2026-09-04T19:40:40.705450062Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake2-rogue",
+      "id": "216dc9906ea9f62ff7d42dfd822610ba7a479ebc7aebe4def927e8a4ff99a23d",
+      "image": "sha256:d97c8f1be697cec5d83c9492a97421cc53d3aa233b7debc3f462c0cdc6bfb020",
+      "startedAt": "2026-09-04T19:40:40.706014201Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/.steam/debian-installation/steamapps/common/Quake 2/rogue/pak0.pak",
+          "destination": "/data/quake2/rogue/pak0.pak",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake2-xatrix",
+      "id": "10348b31d5b5db25b86c000aaef1d9111281a2e263ef216fce2d05f120d4be04",
+      "image": "sha256:a5909ea1581d0059df2daa828f7b895e747e11fccfe0a0a198849a76cb39e53c",
+      "startedAt": "2026-09-04T19:40:40.704859342Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/.steam/debian-installation/steamapps/common/Quake 2/xatrix/pak0.pak",
+          "destination": "/data/quake2/xatrix/pak0.pak",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake3",
+      "id": "2cc041e8dac3860e6e0019796d24a4842c498c8479f54fc5f93d30fcc2069388",
+      "image": "sha256:ea73d1bb7a5c7fae6e0a96101232f28dd8b56b7f1e19e7faeb1ab210d7c922cc",
+      "startedAt": "2026-09-06T08:36:57.100329253Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake4",
+      "id": "45ffb1cd141c0844d9fc7f9093e74eb1003292a61d367ae0933c9ef213c41f61",
+      "image": "sha256:b64707ae6213c06da40d4258d6c94d01f0c96320ab144d13e6073761e72f20ee",
+      "startedAt": "2026-09-03T21:52:26.382686315Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/b92ccc14f0d4836e81c66bb6e462ae7e607040dfff50dc5085ba7a3acc5c0f21/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-quake4-mp",
+      "id": "0c782b38993d0caf88d03a501e2320f20cb8e5f888423a2360142a0be4c7895f",
+      "image": "sha256:265c84eeea6436572895c14a6d91c24e2ebeea5ab8a4165d634f20bc51fc3ae4",
+      "startedAt": "2026-09-03T21:52:26.385620011Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/bc76a640cf1228e6862805cf2f169599ebb748171b0e8437e2b8c51c378cd715/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-roe",
+      "id": "aad2d92f7f306e36b9fedb48e398043b76a5a80eccbf5a6bca8d5ba7a3a0ecd6",
+      "image": "sha256:8fd552d1a183aad0f154c95a02cf689e1a4e6bfb0b176d01ce27a3b310de44e3",
+      "startedAt": "2026-09-03T21:52:26.389619422Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/3182b73fce047f1d79461c3a96fdb67a86160bf2f6039f0f9059de8bc7e4aff8/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/base",
+          "destination": "/data/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/doom3/d3xp",
+          "destination": "/data/d3xp",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/prey/base",
+          "destination": "/data/prey/base",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-rtcw-mp",
+      "id": "b194297c1ffd5895a40b870366142ab40e66a491e93bf95cdff4c66f4acb714f",
+      "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+      "startedAt": "2026-09-06T08:06:54.661299486Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-rtcw-sp",
+      "id": "0cae221aacf7a4e780eb05b7679bf75047c2f9fd40c399d6ad637b6fe846d7f5",
+      "image": "sha256:e6cc9c2be15c9009450dd341e7c25fefc04e868a6ed60be195e5ac6479a6c759",
+      "startedAt": "2026-09-04T20:59:30.05162676Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-simcity2000",
+      "id": "91e0b7cae2eab44b203497f18435997140bafcf7da4beaa7c51c1b3fe078f515",
+      "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+      "startedAt": "2026-09-06T07:46:57.244338533Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/dosbox",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-source-hl2",
+      "id": "f740c648d7cb012211d0fe9d96b6064c586d06f49389e35d869030cf8a3abbd7",
+      "image": "sha256:6375d98742b78398de3f58cc2d0944248ee7b3663887c6148e2ca4d40ec435aa",
+      "startedAt": "2026-09-03T21:52:26.374859803Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/source",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-spear",
+      "id": "65910c00abef73a900aff942d0770b6e54f7be139cd8e98892e3620aa7fd5ea9",
+      "image": "sha256:7cc618d3203d8af89174107f656c7bede2483d5ca3f9fd32854674d509dd98fc",
+      "startedAt": "2026-09-04T19:51:57.853225152Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/bd0cf47209c3a30f596867d37fd599730070141b5fc236c83a6aaf82aaad3fd5/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-wolf3d",
+      "id": "f6500a5eee7e746cd19038c526c03d608b731296c191525eed022dd057c9a64c",
+      "image": "sha256:9a304102e0f4a92dcf6153fb677e6c5e715b7fdbbbdac6d4413f940911c55aba",
+      "startedAt": "2026-09-04T19:51:57.853869683Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ee4d5998bb55fa2abcbfddde505e47afcb199cf34a2e78ce43f0140f44fa92ff/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wasm-wolfet",
+      "id": "0c93f43f4ffc9ce519129352584578ce4b0384668ff2094f54e32bbad5c79057",
+      "image": "sha256:782b71fbf80cf5a2b6c0987c28e1d010355d66bb8f4c5be360cd187761fca760",
+      "startedAt": "2026-09-03T21:52:26.40318189Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolfet",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/ef44a691cff7744c9fdfe85900811892b9c1a52ddf40faffe33087c2a3612dde/_data",
+          "destination": "/legacy/homepath",
+          "rw": true
+        },
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/d1c527c3769abacbac64d792b054e3f37fe28382d4eb32530055cd31eeb7aeaf/_data",
+          "destination": "/legacy/server/etmain",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "/wolf-menu-captions-proof-20260905",
+      "id": "1f3310d9f2166c269f52642790cf1fc1b4c192079ae98e000ae8993293c808bb",
+      "image": "sha256:f5a1129956f16a900f6987e381baaf8e40963d1d36da4cf450b78105af29ce67",
+      "startedAt": "2026-09-05T19:42:50.348252585Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/7410f71f596771eaa8ef1ed565a860868120727c57f35fd3afe19e75e94a07b3/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/wolf-menu-keys-proof-20260905",
+      "id": "22a2f7ab3424aad15c53ce9c5b3ed93b7e1c86fccad210b36d99ba5cc80d363a",
+      "image": "sha256:73f42d35268694acf5d1af048303d17bd94a6819595212e72415897a7816edd9",
+      "startedAt": "2026-09-05T19:31:10.570255118Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/01a4469df73c13f8c83dfa840a95c2db5c8f9bc306be883971a2dbd9e90f61f1/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/wolf-menu-pointer-proof-20260905",
+      "id": "2ff8edae1068b4626eb26c3c1ef3b82fdef1bed368ad2e76172f1a5e2347f2dd",
+      "image": "sha256:8f0b8ca4de310b686e53192c51f891adb87ab4ad0283b803abeb18ef07eb1c8b",
+      "startedAt": "2026-09-05T19:23:27.899158529Z",
+      "status": "exited",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "volume",
+          "source": "/var/lib/docker/volumes/cb7f3b94fe5044085c229e59a08c11ba36a46fc29841d1f6580c819b9cc6885a/_data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/wolf3d",
+          "destination": "/data/wolf3d",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "/youthful_engelbart",
+      "id": "4e780edca2ed99bcd9e35997983427d4043bd0ccb9a4b31841bec6a5d05a5620",
+      "image": "sha256:6de09954693415f068e94181b0068f64f07e5596fe8b5757909bce7eb6ddcc38",
+      "startedAt": "2026-09-05T13:54:36.543856833Z",
+      "status": "running",
+      "restarts": 0,
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/tmp/idtech4-chrome.pAD0Mo/data",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "source": "/home/ted/wasm-game-data/quake4/q4base",
+          "destination": "/data/q4base",
+          "rw": false
+        }
+      ]
+    }
+  ],
+  "imageInventory": {
+    "before": {
+      "/opt/game-site/artifacts/client_emscripten_wasm32-626WOQAH.wasm": {
+        "bytes": 489444,
+        "sha256": "3a8b26a14ce562ab3bcfbf2a8f57c2822ae04c2a134caedbb03355003ea5ecf7"
+      },
+      "/opt/game-site/artifacts/client_emscripten_wasm32-ZRCRVK7U.wasm": {
+        "bytes": 206433,
+        "sha256": "9899131ff1b213f6116d50abe3cdcffbc02d60a41c7d5fbc88d036aeb7f45e2e"
+      },
+      "/opt/game-site/artifacts/cs-menu-framework-YQVL64O7.wasm": {
+        "bytes": 700894,
+        "sha256": "aa34b47854c6321cc3a3bd7241edc1c09eb3ecd63753f827f7a6e62f94713867"
+      },
+      "/opt/game-site/artifacts/cs_emscripten_wasm32-3WKZKEW6.wasm": {
+        "bytes": 1323625,
+        "sha256": "9c838823ddec4f65986a0f8e715d7b22f01e2e9dc9de59fe03752bcdebdc0b97"
+      },
+      "/opt/game-site/artifacts/extras-WBIFJMOT.pk3": {
+        "bytes": 1488559,
+        "sha256": "fc0acba14e6f2e5ea613b983aeedb63c64bd7063c8e0d487db08be72eaf88852"
+      },
+      "/opt/game-site/artifacts/filesystem_stdio-VW4IQIS5.wasm": {
+        "bytes": 56427,
+        "sha256": "1be979f8cfae08192b59f6c08e8b27eb2eb56a1499219ae8b35106e85811e8f1"
+      },
+      "/opt/game-site/artifacts/hl_emscripten_wasm32-XJ2PLVDW.wasm": {
+        "bytes": 1072597,
+        "sha256": "bf0af8180933d71af77e3215328d54029dc2dde359a5dd0ed208d5229d65a99a"
+      },
+      "/opt/game-site/artifacts/libref_soft-D4JBA23V.wasm": {
+        "bytes": 154230,
+        "sha256": "8dca7719fc7b201a354966b54d6aa7a81e46cf30660eba077c2387265706e21e"
+      },
+      "/opt/game-site/artifacts/libref_webgl2-TPLNC64B.wasm": {
+        "bytes": 210106,
+        "sha256": "325c1102d2865fed1028d8413f2b553e892ac6f18eaf5701990d81559e057f52"
+      },
+      "/opt/game-site/artifacts/menu-framework-G4W5MLBE.wasm": {
+        "bytes": 284664,
+        "sha256": "70eabf13cfa662df6bc10ffc59e78e43eabd61c0d769d31a4a941fc79daa31cf"
+      },
+      "/opt/game-site/artifacts/opfor-client-framework-NSYV52IU.wasm": {
+        "bytes": 240892,
+        "sha256": "64de333156b0ce6c37c86885471fec79860f40ffe23024b62934b017fcb937b7"
+      },
+      "/opt/game-site/artifacts/opfor-server-framework-BMPXEPLD.wasm": {
+        "bytes": 1419841,
+        "sha256": "5556ac24e4dd3791c4d09820005bbdfdc3019d799929418dcb5d4c047dab9a55"
+      },
+      "/opt/game-site/artifacts/xash-framework-SNG4K6JX.wasm": {
+        "bytes": 3925329,
+        "sha256": "dbf6a33c23e077f81e6c02befde4af46cc96b671da9032ba60f63556b3b9049f"
+      },
+      "/opt/game-site/assets/background-blue-shift.svg": {
+        "bytes": 571,
+        "sha256": "3d8041ac4c8a3b0843266874b75dc699532366a8c8f13c457d180b0ec11142e1"
+      },
+      "/opt/game-site/assets/background-counter-strike.svg": {
+        "bytes": 665,
+        "sha256": "074a863ffc4d8953cb26e46580295c4cd258e2c5dafc528e64bd06373a60e679"
+      },
+      "/opt/game-site/assets/background-half-life.svg": {
+        "bytes": 581,
+        "sha256": "27c8b9208d64739ce449eb657b096a9777510560bd00863f9b2e75471686f7f1"
+      },
+      "/opt/game-site/assets/background-opposing-force.svg": {
+        "bytes": 661,
+        "sha256": "d4259e75a9c00297836ff1bcbb6f9437e63522df56581f69c9bbcf3ac399f0d6"
+      },
+      "/opt/game-site/assets/icon-blue-shift.svg": {
+        "bytes": 424,
+        "sha256": "edf42110df6d6fe3a077797c4a02e9c6831ba263746189b3572232bd1a04b362"
+      },
+      "/opt/game-site/assets/icon-counter-strike.svg": {
+        "bytes": 413,
+        "sha256": "ac5dc79eb59b8ed6433de4383ba376731c85b10bef2c0622aa58277684c9f4fb"
+      },
+      "/opt/game-site/assets/icon-half-life.svg": {
+        "bytes": 400,
+        "sha256": "3c4cf5fa1ce114d14dd6d81465625e0279644ed512ff0a88858585f20a7b83d8"
+      },
+      "/opt/game-site/assets/icon-opposing-force.svg": {
+        "bytes": 403,
+        "sha256": "9e1cbfa6788d0ee49170331d5f5c2b1342b2d3761458c0c532eed7e7a962ac69"
+      },
+      "/opt/game-site/game-adapter.js": {
+        "bytes": 431193,
+        "sha256": "b5c5fafbc8b4b304b0ce450681efbc54457714d51a18477a53ceebdd7e3827d5"
+      },
+      "/opt/game-site/wasm-game-data.json": {
+        "bytes": 8969,
+        "sha256": "6c9ba12506331ec8979d010b6efb81b01a2f0cff030e9f1f7111b88b9bfc19a2"
+      },
+      "/opt/game-site/wasm-game.json": {
+        "bytes": 5511,
+        "sha256": "9f3c1f17f7bbb84a5411bcab99ed12ff5df33fb280117ec19753416207e3841a"
+      },
+      "/opt/wasm-game-framework/dist/index.html": {
+        "bytes": 5025,
+        "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18"
+      },
+      "/opt/wasm-game-framework/dist/wasm-game-bootstrap.js": {
+        "bytes": 25701,
+        "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+      },
+      "/opt/wasm-game-framework/dist/wasm-game-framework.css": {
+        "bytes": 10498,
+        "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+      },
+      "/opt/wasm-game-framework/dist/wasm-game-framework.js": {
+        "bytes": 128979,
+        "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1"
+      },
+      "/opt/wasm-game-framework/package.json": {
+        "bytes": 2035,
+        "sha256": "142450d765c258e0df56db3959e23dd169bac198910d05993ec3364ab379daef"
+      },
+      "/opt/wasm-game-framework/server/lifecycle.js": {
+        "bytes": 4895,
+        "sha256": "d2fed3848c5e9cb64282c6434cea4ad16883cb44ef61e596858d635d9009eee3"
+      },
+      "/opt/wasm-game-framework/server/media-library.js": {
+        "bytes": 25099,
+        "sha256": "f0d922ab0692e7807f65a9f4601ba56903b91f2955c76eb58e5edf93e47d4882"
+      },
+      "/opt/wasm-game-framework/server/password-auth.js": {
+        "bytes": 8145,
+        "sha256": "ab5ac2e988d19311baaf07112fe5b5e1837585ea3ef3aeea5060da06f855bec9"
+      },
+      "/opt/wasm-game-framework/server/provisioning.js": {
+        "bytes": 15160,
+        "sha256": "08cc1a7f889cd00a54ce67691c7e04d404d5fe00e45c66fb7cc6a2c1606cedf2"
+      },
+      "/opt/wasm-game-framework/server/static-server.js": {
+        "bytes": 19519,
+        "sha256": "7512d5f782c66b6ec92fa68a4b9219cb4cecd7c2a9c6b6c4eac7607aec661547"
+      },
+      "/opt/shared-shell/index.html": {
+        "bytes": 5025,
+        "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18"
+      },
+      "/opt/shared-shell/wasm-game-bootstrap.js": {
+        "bytes": 25701,
+        "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+      },
+      "/opt/shared-shell/wasm-game-framework.css": {
+        "bytes": 10498,
+        "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+      },
+      "/opt/shared-shell/wasm-game-framework.js": {
+        "bytes": 128979,
+        "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1"
+      }
+    },
+    "after": {
+      "/opt/game-site/artifacts/client_emscripten_wasm32-626WOQAH.wasm": {
+        "bytes": 489444,
+        "sha256": "3a8b26a14ce562ab3bcfbf2a8f57c2822ae04c2a134caedbb03355003ea5ecf7"
+      },
+      "/opt/game-site/artifacts/client_emscripten_wasm32-ZRCRVK7U.wasm": {
+        "bytes": 206433,
+        "sha256": "9899131ff1b213f6116d50abe3cdcffbc02d60a41c7d5fbc88d036aeb7f45e2e"
+      },
+      "/opt/game-site/artifacts/cs-menu-framework-KSOVNLXO.wasm": {
+        "bytes": 700288,
+        "sha256": "bf04a2ca7c26a0a0b092067459d030348a59c14acef54f727535f9c660aa9881"
+      },
+      "/opt/game-site/artifacts/cs_emscripten_wasm32-3WKZKEW6.wasm": {
+        "bytes": 1323625,
+        "sha256": "9c838823ddec4f65986a0f8e715d7b22f01e2e9dc9de59fe03752bcdebdc0b97"
+      },
+      "/opt/game-site/artifacts/extras-WBIFJMOT.pk3": {
+        "bytes": 1488559,
+        "sha256": "fc0acba14e6f2e5ea613b983aeedb63c64bd7063c8e0d487db08be72eaf88852"
+      },
+      "/opt/game-site/artifacts/filesystem_stdio-VW4IQIS5.wasm": {
+        "bytes": 56427,
+        "sha256": "1be979f8cfae08192b59f6c08e8b27eb2eb56a1499219ae8b35106e85811e8f1"
+      },
+      "/opt/game-site/artifacts/hl_emscripten_wasm32-XJ2PLVDW.wasm": {
+        "bytes": 1072597,
+        "sha256": "bf0af8180933d71af77e3215328d54029dc2dde359a5dd0ed208d5229d65a99a"
+      },
+      "/opt/game-site/artifacts/libref_soft-D4JBA23V.wasm": {
+        "bytes": 154230,
+        "sha256": "8dca7719fc7b201a354966b54d6aa7a81e46cf30660eba077c2387265706e21e"
+      },
+      "/opt/game-site/artifacts/libref_webgl2-TPLNC64B.wasm": {
+        "bytes": 210106,
+        "sha256": "325c1102d2865fed1028d8413f2b553e892ac6f18eaf5701990d81559e057f52"
+      },
+      "/opt/game-site/artifacts/menu-framework-G4W5MLBE.wasm": {
+        "bytes": 284664,
+        "sha256": "70eabf13cfa662df6bc10ffc59e78e43eabd61c0d769d31a4a941fc79daa31cf"
+      },
+      "/opt/game-site/artifacts/opfor-client-framework-NSYV52IU.wasm": {
+        "bytes": 240892,
+        "sha256": "64de333156b0ce6c37c86885471fec79860f40ffe23024b62934b017fcb937b7"
+      },
+      "/opt/game-site/artifacts/opfor-server-framework-BMPXEPLD.wasm": {
+        "bytes": 1419841,
+        "sha256": "5556ac24e4dd3791c4d09820005bbdfdc3019d799929418dcb5d4c047dab9a55"
+      },
+      "/opt/game-site/artifacts/xash-framework-SNG4K6JX.wasm": {
+        "bytes": 3925329,
+        "sha256": "dbf6a33c23e077f81e6c02befde4af46cc96b671da9032ba60f63556b3b9049f"
+      },
+      "/opt/game-site/assets/background-blue-shift.svg": {
+        "bytes": 571,
+        "sha256": "3d8041ac4c8a3b0843266874b75dc699532366a8c8f13c457d180b0ec11142e1"
+      },
+      "/opt/game-site/assets/background-counter-strike.svg": {
+        "bytes": 665,
+        "sha256": "074a863ffc4d8953cb26e46580295c4cd258e2c5dafc528e64bd06373a60e679"
+      },
+      "/opt/game-site/assets/background-half-life.svg": {
+        "bytes": 581,
+        "sha256": "27c8b9208d64739ce449eb657b096a9777510560bd00863f9b2e75471686f7f1"
+      },
+      "/opt/game-site/assets/background-opposing-force.svg": {
+        "bytes": 661,
+        "sha256": "d4259e75a9c00297836ff1bcbb6f9437e63522df56581f69c9bbcf3ac399f0d6"
+      },
+      "/opt/game-site/assets/icon-blue-shift.svg": {
+        "bytes": 424,
+        "sha256": "edf42110df6d6fe3a077797c4a02e9c6831ba263746189b3572232bd1a04b362"
+      },
+      "/opt/game-site/assets/icon-counter-strike.svg": {
+        "bytes": 413,
+        "sha256": "ac5dc79eb59b8ed6433de4383ba376731c85b10bef2c0622aa58277684c9f4fb"
+      },
+      "/opt/game-site/assets/icon-half-life.svg": {
+        "bytes": 400,
+        "sha256": "3c4cf5fa1ce114d14dd6d81465625e0279644ed512ff0a88858585f20a7b83d8"
+      },
+      "/opt/game-site/assets/icon-opposing-force.svg": {
+        "bytes": 403,
+        "sha256": "9e1cbfa6788d0ee49170331d5f5c2b1342b2d3761458c0c532eed7e7a962ac69"
+      },
+      "/opt/game-site/game-adapter.js": {
+        "bytes": 431193,
+        "sha256": "15b4f95b06dc1d7e13f3db5506e769bf220b993597a5a1109205ac497a78765b"
+      },
+      "/opt/game-site/wasm-game-data.json": {
+        "bytes": 8969,
+        "sha256": "6c9ba12506331ec8979d010b6efb81b01a2f0cff030e9f1f7111b88b9bfc19a2"
+      },
+      "/opt/game-site/wasm-game.json": {
+        "bytes": 5511,
+        "sha256": "9f3c1f17f7bbb84a5411bcab99ed12ff5df33fb280117ec19753416207e3841a"
+      },
+      "/opt/wasm-game-framework/dist/index.html": {
+        "bytes": 5025,
+        "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18"
+      },
+      "/opt/wasm-game-framework/dist/wasm-game-bootstrap.js": {
+        "bytes": 25701,
+        "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+      },
+      "/opt/wasm-game-framework/dist/wasm-game-framework.css": {
+        "bytes": 10498,
+        "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+      },
+      "/opt/wasm-game-framework/dist/wasm-game-framework.js": {
+        "bytes": 128979,
+        "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1"
+      },
+      "/opt/wasm-game-framework/package.json": {
+        "bytes": 2035,
+        "sha256": "142450d765c258e0df56db3959e23dd169bac198910d05993ec3364ab379daef"
+      },
+      "/opt/wasm-game-framework/server/lifecycle.js": {
+        "bytes": 4895,
+        "sha256": "d2fed3848c5e9cb64282c6434cea4ad16883cb44ef61e596858d635d9009eee3"
+      },
+      "/opt/wasm-game-framework/server/media-library.js": {
+        "bytes": 25099,
+        "sha256": "f0d922ab0692e7807f65a9f4601ba56903b91f2955c76eb58e5edf93e47d4882"
+      },
+      "/opt/wasm-game-framework/server/password-auth.js": {
+        "bytes": 8145,
+        "sha256": "ab5ac2e988d19311baaf07112fe5b5e1837585ea3ef3aeea5060da06f855bec9"
+      },
+      "/opt/wasm-game-framework/server/provisioning.js": {
+        "bytes": 15160,
+        "sha256": "08cc1a7f889cd00a54ce67691c7e04d404d5fe00e45c66fb7cc6a2c1606cedf2"
+      },
+      "/opt/wasm-game-framework/server/static-server.js": {
+        "bytes": 19519,
+        "sha256": "7512d5f782c66b6ec92fa68a4b9219cb4cecd7c2a9c6b6c4eac7607aec661547"
+      },
+      "/opt/shared-shell/index.html": {
+        "bytes": 5025,
+        "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18"
+      },
+      "/opt/shared-shell/wasm-game-bootstrap.js": {
+        "bytes": 25701,
+        "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+      },
+      "/opt/shared-shell/wasm-game-framework.css": {
+        "bytes": 10498,
+        "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+      },
+      "/opt/shared-shell/wasm-game-framework.js": {
+        "bytes": 128979,
+        "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1"
+      }
+    },
+    "changed": [
+      "/opt/game-site/game-adapter.js"
+    ],
+    "oldMenu": "/opt/game-site/artifacts/cs-menu-framework-YQVL64O7.wasm",
+    "newMenu": "/opt/game-site/artifacts/cs-menu-framework-KSOVNLXO.wasm"
+  },
+  "originals": [
+    {
+      "file": "goldsource/bshift-liblist.gam",
+      "bytes": 369,
+      "sha256": "b4faacddb4334c1449772bcc30619a58c76f50ccf4a97d1682fbc5b055e5db0a"
+    },
+    {
+      "file": "goldsource/bshift-owner.pk3",
+      "bytes": 167073210,
+      "sha256": "79c08b5968efead53ccb631addee918d3b0bff0ccdb7868895de7b740dbff249"
+    },
+    {
+      "file": "goldsource/cstrike-liblist.gam",
+      "bytes": 335,
+      "sha256": "0dc83870fe4685bf409c3ba630a946da4e5fee6b782f9870242fcdaa6e2c3514"
+    },
+    {
+      "file": "goldsource/cstrike-owner.pk3",
+      "bytes": 142554951,
+      "sha256": "3b3522ee9d9dd68592db64aca5f81ffc61b9687d9bba1f05813ea5ffed7789cb"
+    },
+    {
+      "file": "goldsource/gearbox-liblist.gam",
+      "bytes": 284,
+      "sha256": "7892ddc19df7f581233f43016f510f88fdd6bf844b9f88e1462eb5dc96941232"
+    },
+    {
+      "file": "goldsource/gearbox-owner.pk3",
+      "bytes": 135441670,
+      "sha256": "d931d68aa7ad69ff3d85a44a5ec205bf8df62fc6bdaed85ff30a5d60d327d573"
+    },
+    {
+      "file": "goldsource/icons/bshift-icon-192.png",
+      "bytes": 3627,
+      "sha256": "453d14ace036d0728b84a5fa4ea905e0bf15ede8ea5a715a0bfa6a313193b670"
+    },
+    {
+      "file": "goldsource/icons/bshift-icon-512.png",
+      "bytes": 5578,
+      "sha256": "a1e5fcd820fb3f29474a8e30589fba116b4b21e2cf719ac0404eb3d502260213"
+    },
+    {
+      "file": "goldsource/icons/cstrike-icon-192.png",
+      "bytes": 1809,
+      "sha256": "ccfa130515c71c77dd4d69614c4116474ee83afb61d72553e034eca501f8260a"
+    },
+    {
+      "file": "goldsource/icons/cstrike-icon-512.png",
+      "bytes": 3368,
+      "sha256": "622d74ef23c68211cab0649ab1540e7a9de3848b9ec3952fcac398ee308f0437"
+    },
+    {
+      "file": "goldsource/icons/gearbox-icon-192.png",
+      "bytes": 978,
+      "sha256": "17551046efcc3d8196a27c613c26bc98ba63bd481fa360e89f8df585ba79dc46"
+    },
+    {
+      "file": "goldsource/icons/gearbox-icon-512.png",
+      "bytes": 2404,
+      "sha256": "16700944500e8374c3fb0fdfd669cd3762879ea32d3df4f03d64af17f28dac4f"
+    },
+    {
+      "file": "goldsource/icons/valve-icon-192.png",
+      "bytes": 974,
+      "sha256": "73e98c276adb67c037e4e80183dbcfeacb4f29d834c6560fd96b7d7464215a41"
+    },
+    {
+      "file": "goldsource/icons/valve-icon-512.png",
+      "bytes": 2402,
+      "sha256": "c9c4f8ffb286a9608e139af5e9dd599051ffb40ab18b16119d9fd2d7e87c78db"
+    },
+    {
+      "file": "goldsource/valve-liblist.gam",
+      "bytes": 333,
+      "sha256": "0d4034ebaabcc54ad9f00bb89e9677d5f34c3d3beda9185a69d5ac719e0e2ffb"
+    },
+    {
+      "file": "goldsource/valve-owner.pk3",
+      "bytes": 271240725,
+      "sha256": "70aed2d728525b3ef34bc50090e0a00c63f8c4c14c6a3e7fbee7c03b235f83d0"
+    }
+  ],
+  "replacements": [
+    {
+      "file": "goldsource/bshift-liblist.gam",
+      "bytes": 369,
+      "sha256": "b4faacddb4334c1449772bcc30619a58c76f50ccf4a97d1682fbc5b055e5db0a"
+    },
+    {
+      "file": "goldsource/bshift-owner.pk3",
+      "bytes": 181580086,
+      "sha256": "34f04ca7416ac0aeaffd0954d907d8b9fcc594015c11e36ffbc5b1830092f848"
+    },
+    {
+      "file": "goldsource/cstrike-liblist.gam",
+      "bytes": 335,
+      "sha256": "0dc83870fe4685bf409c3ba630a946da4e5fee6b782f9870242fcdaa6e2c3514"
+    },
+    {
+      "file": "goldsource/cstrike-owner.pk3",
+      "bytes": 155550647,
+      "sha256": "00b8838473469abf8111d85f3cbab20864144159e22df057090fb7da0dfe5407"
+    },
+    {
+      "file": "goldsource/gearbox-liblist.gam",
+      "bytes": 284,
+      "sha256": "7892ddc19df7f581233f43016f510f88fdd6bf844b9f88e1462eb5dc96941232"
+    },
+    {
+      "file": "goldsource/gearbox-owner.pk3",
+      "bytes": 138681039,
+      "sha256": "4380aa2bcbe7f100f39321108ec78b890d4980cc8b8f87b9ac1a537869367173"
+    },
+    {
+      "file": "goldsource/icons/bshift-icon-192.png",
+      "bytes": 3627,
+      "sha256": "453d14ace036d0728b84a5fa4ea905e0bf15ede8ea5a715a0bfa6a313193b670"
+    },
+    {
+      "file": "goldsource/icons/bshift-icon-512.png",
+      "bytes": 5578,
+      "sha256": "a1e5fcd820fb3f29474a8e30589fba116b4b21e2cf719ac0404eb3d502260213"
+    },
+    {
+      "file": "goldsource/icons/cstrike-icon-192.png",
+      "bytes": 1809,
+      "sha256": "ccfa130515c71c77dd4d69614c4116474ee83afb61d72553e034eca501f8260a"
+    },
+    {
+      "file": "goldsource/icons/cstrike-icon-512.png",
+      "bytes": 3368,
+      "sha256": "622d74ef23c68211cab0649ab1540e7a9de3848b9ec3952fcac398ee308f0437"
+    },
+    {
+      "file": "goldsource/icons/gearbox-icon-192.png",
+      "bytes": 978,
+      "sha256": "17551046efcc3d8196a27c613c26bc98ba63bd481fa360e89f8df585ba79dc46"
+    },
+    {
+      "file": "goldsource/icons/gearbox-icon-512.png",
+      "bytes": 2404,
+      "sha256": "16700944500e8374c3fb0fdfd669cd3762879ea32d3df4f03d64af17f28dac4f"
+    },
+    {
+      "file": "goldsource/icons/valve-icon-192.png",
+      "bytes": 974,
+      "sha256": "73e98c276adb67c037e4e80183dbcfeacb4f29d834c6560fd96b7d7464215a41"
+    },
+    {
+      "file": "goldsource/icons/valve-icon-512.png",
+      "bytes": 2402,
+      "sha256": "c9c4f8ffb286a9608e139af5e9dd599051ffb40ab18b16119d9fd2d7e87c78db"
+    },
+    {
+      "file": "goldsource/valve-liblist.gam",
+      "bytes": 333,
+      "sha256": "0d4034ebaabcc54ad9f00bb89e9677d5f34c3d3beda9185a69d5ac719e0e2ffb"
+    },
+    {
+      "file": "goldsource/valve-owner.pk3",
+      "bytes": 284353505,
+      "sha256": "73d9e7680bd6ffd18d633a6cbbac7fd089494fb1e227db538c54e3f21b7b5293"
+    }
+  ],
+  "http": [
+    {
+      "file": "artifacts/client_emscripten_wasm32-626WOQAH.wasm",
+      "sha256": "3a8b26a14ce562ab3bcfbf2a8f57c2822ae04c2a134caedbb03355003ea5ecf7"
+    },
+    {
+      "file": "artifacts/client_emscripten_wasm32-ZRCRVK7U.wasm",
+      "sha256": "9899131ff1b213f6116d50abe3cdcffbc02d60a41c7d5fbc88d036aeb7f45e2e"
+    },
+    {
+      "file": "artifacts/cs_emscripten_wasm32-3WKZKEW6.wasm",
+      "sha256": "9c838823ddec4f65986a0f8e715d7b22f01e2e9dc9de59fe03752bcdebdc0b97"
+    },
+    {
+      "file": "artifacts/extras-WBIFJMOT.pk3",
+      "sha256": "fc0acba14e6f2e5ea613b983aeedb63c64bd7063c8e0d487db08be72eaf88852"
+    },
+    {
+      "file": "artifacts/filesystem_stdio-VW4IQIS5.wasm",
+      "sha256": "1be979f8cfae08192b59f6c08e8b27eb2eb56a1499219ae8b35106e85811e8f1"
+    },
+    {
+      "file": "artifacts/hl_emscripten_wasm32-XJ2PLVDW.wasm",
+      "sha256": "bf0af8180933d71af77e3215328d54029dc2dde359a5dd0ed208d5229d65a99a"
+    },
+    {
+      "file": "artifacts/libref_soft-D4JBA23V.wasm",
+      "sha256": "8dca7719fc7b201a354966b54d6aa7a81e46cf30660eba077c2387265706e21e"
+    },
+    {
+      "file": "artifacts/libref_webgl2-TPLNC64B.wasm",
+      "sha256": "325c1102d2865fed1028d8413f2b553e892ac6f18eaf5701990d81559e057f52"
+    },
+    {
+      "file": "artifacts/menu-framework-G4W5MLBE.wasm",
+      "sha256": "70eabf13cfa662df6bc10ffc59e78e43eabd61c0d769d31a4a941fc79daa31cf"
+    },
+    {
+      "file": "artifacts/opfor-client-framework-NSYV52IU.wasm",
+      "sha256": "64de333156b0ce6c37c86885471fec79860f40ffe23024b62934b017fcb937b7"
+    },
+    {
+      "file": "artifacts/opfor-server-framework-BMPXEPLD.wasm",
+      "sha256": "5556ac24e4dd3791c4d09820005bbdfdc3019d799929418dcb5d4c047dab9a55"
+    },
+    {
+      "file": "artifacts/xash-framework-SNG4K6JX.wasm",
+      "sha256": "dbf6a33c23e077f81e6c02befde4af46cc96b671da9032ba60f63556b3b9049f"
+    },
+    {
+      "file": "assets/background-blue-shift.svg",
+      "sha256": "3d8041ac4c8a3b0843266874b75dc699532366a8c8f13c457d180b0ec11142e1"
+    },
+    {
+      "file": "assets/background-counter-strike.svg",
+      "sha256": "074a863ffc4d8953cb26e46580295c4cd258e2c5dafc528e64bd06373a60e679"
+    },
+    {
+      "file": "assets/background-half-life.svg",
+      "sha256": "27c8b9208d64739ce449eb657b096a9777510560bd00863f9b2e75471686f7f1"
+    },
+    {
+      "file": "assets/background-opposing-force.svg",
+      "sha256": "d4259e75a9c00297836ff1bcbb6f9437e63522df56581f69c9bbcf3ac399f0d6"
+    },
+    {
+      "file": "assets/icon-blue-shift.svg",
+      "sha256": "edf42110df6d6fe3a077797c4a02e9c6831ba263746189b3572232bd1a04b362"
+    },
+    {
+      "file": "assets/icon-counter-strike.svg",
+      "sha256": "ac5dc79eb59b8ed6433de4383ba376731c85b10bef2c0622aa58277684c9f4fb"
+    },
+    {
+      "file": "assets/icon-half-life.svg",
+      "sha256": "3c4cf5fa1ce114d14dd6d81465625e0279644ed512ff0a88858585f20a7b83d8"
+    },
+    {
+      "file": "assets/icon-opposing-force.svg",
+      "sha256": "9e1cbfa6788d0ee49170331d5f5c2b1342b2d3761458c0c532eed7e7a962ac69"
+    },
+    {
+      "file": "wasm-game-data.json",
+      "sha256": "6c9ba12506331ec8979d010b6efb81b01a2f0cff030e9f1f7111b88b9bfc19a2"
+    },
+    {
+      "file": "wasm-game.json",
+      "sha256": "9f3c1f17f7bbb84a5411bcab99ed12ff5df33fb280117ec19753416207e3841a"
+    },
+    {
+      "file": "shared-shell/wasm-game-framework.js",
+      "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1"
+    },
+    {
+      "file": "shared-shell/wasm-game-bootstrap.js",
+      "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33"
+    },
+    {
+      "file": "shared-shell/wasm-game-framework.css",
+      "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+    },
+    {
+      "file": "artifacts/cs-menu-framework-KSOVNLXO.wasm",
+      "sha256": "bf04a2ca7c26a0a0b092067459d030348a59c14acef54f727535f9c660aa9881"
+    },
+    {
+      "file": "game-adapter.js",
+      "sha256": "15b4f95b06dc1d7e13f3db5506e769bf220b993597a5a1109205ac497a78765b"
+    }
+  ],
+  "readiness": [
+    {
+      "variant": "half-life",
+      "ready": true
+    },
+    {
+      "variant": "blue-shift",
+      "ready": true
+    },
+    {
+      "variant": "opposing-force",
+      "ready": true
+    },
+    {
+      "variant": "counter-strike",
+      "ready": true
+    }
+  ],
+  "unchangedContainers": 96,
+  "passed": true
+}

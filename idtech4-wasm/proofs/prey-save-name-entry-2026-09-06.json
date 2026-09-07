@@ -1,0 +1,2689 @@
+{
+  "observedAt": "2026-09-06T16:40:55.177Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 1057,
+        "cssWidth": 1424,
+        "height": 1057,
+        "width": 1424
+      }
+    ],
+    "fullscreen": null,
+    "log": "Save/config persistence restored at /save/prey.\n[prey-wasm] native main entered\n[prey-wasm] executable path initialized\n[prey-wasm] save path initialized\n[prey-wasm] initializing platform signal seam\n[prey-wasm] SDL browser event queue initialized\n[prey-wasm] entering common initialization\nbrowser threading: cooperative single-thread primitives\nPrey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10\nSDL video driver: (null)\nLogging console output to /home/web_user/.local/share/prey06/qconsolelog.txt\nterminal support enabled ( use +set in_tty 0 to disable )\npid: 42\n2048 MB System Memory\nbrowser networking: loopback interface only\n----- Initializing File System -----\nLoaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2\nLoaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14\nLoaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08\nLoaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c\nLoaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede\nDeferred pk4 pak001.pk4 until first map load\nDeferred pk4 pak002.pk4 until first map load\nLoaded pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe\nLoaded pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380\nLoaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190\nLoaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397\nLoaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193\nLoaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5\nCurrent search path:\n/save/prey/base\n/owner-data/base\n/owner-data/base/pak040.pk4 (468 files)\n/owner-data/base/pak020.pk4 (23 files)\n/owner-data/base/pak006.pk4 (108 files)\n/owner-data/base/pak005.pk4 (10 files)\n/owner-data/base/pak004.pk4 (3739 files)\n/owner-data/base/pak003.pk4 (4111 files)\n/owner-data/base/pak000.pk4 (3318 files)\n/owner-data/base/game03.pk4 (2 files)\n/owner-data/base/game02.pk4 (10 files)\n/owner-data/base/game01.pk4 (2 files)\n/owner-data/base/game00.pk4 (2 files)\ngame DLL: 0x0 in pak: 0x0\nAddon pk4s:\nbrowser filesystem: background reads run cooperatively\n----- Initializing Decls -----\n2661 strings read from strings/english001.lang\n[prey-wasm] EndFrame: begin\nCouldn't open journal files\n[prey-wasm] EndFrame: begin\nCouldn't exec editor.cfg - file does not exist.\nexecing default.cfg\nexecing prey06.cfg\nCouldn't exec autoexec.cfg - file does not exist.\n2661 strings read from strings/english001.lang\n[prey-wasm] EndFrame: begin\n----- Initializing OpenAL -----\nSetup OpenAL device and context\nOpenAL vendor: wasm-games\nOpenAL renderer: WebAudio bridge\nOpenAL version: 1.1\nOpenAL: EFX extension not found\nOpenAL: found 256 hardware voices\n[prey-wasm] EndFrame: begin\nWARNING: Failed to load master servers list\n\n[prey-wasm] EndFrame: begin\n----- Initializing OpenGL -----\n[prey-wasm] creating worker WebGL 1 / GLES2 context\n[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1057\nOpenGL vendor: WebKit\nOpenGL renderer: WebKit WebGL\nOpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))\n...using GL_EXT_texture_filter_anisotropic\n   maxTextureAnisotropy: 16.000000\n----- R_ReloadGLSLPrograms -----\nLoading main interaction shader\nLoading main interaction shader (Phong) \nLoading default diffuse shader\nLoading skybox cubemap shader\nLoading reflection cubemap shader\nLoading diffuse cubemap shader\nLoading Zfill shader\nLoading Zfill shader (Clip plane version)\nLoading Fog shader\nLoading BlendLight shader\nLoading Stencil shadow shader\n-------------------------------\nInit Vertex Cache\nusing GLSL renderSystem\nWill apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)\n----- OpenGL Initialization complete-----\n[prey-wasm] EndFrame: begin\n[prey-wasm] EndFrame: GUI emitted\n[prey-wasm] EndFrame: issuing backend\n[prey-wasm] backend: begin\n[prey-wasm] backend: command 0 begin\n[prey-wasm] backend: command 0 complete\n[prey-wasm] backend: command 2 begin\n[prey-wasm] backend: command 2 complete\n[prey-wasm] backend: command 1 begin\n[prey-wasm] backend: command 1 complete\n[prey-wasm] backend: command 4 begin\n[prey-wasm] backend: command 4 complete\n[prey-wasm] backend: complete\n[prey-wasm] EndFrame: backend complete\n[prey-wasm] EndFrame: frame toggled\n[prey-wasm] EndFrame: vertex cache retired\n----- Initializing Game -----\ngamename: basePrey-1\ngamedate: Jan 11 2026\nInitializing event system\n...1028 event definitions\nInitializing class hierarchy\n...366 classes, 2130016 bytes for event callbacks\nInitializing scripts\nCompiled 'script/prey_main.script': 686 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 58, 6800 bytes\n  Statements: 92650, 1853000 bytes\n   Functions: 2987, 352692 bytes\n   Variables: 411160 bytes\n    Mem used: 3782148 bytes\n Static data: 3617736 bytes\n   Allocated: 5129776 bytes\n Thread size: 13224 bytes\n...11 aas types\n----- Initializing Session -----\nWARNING: Couldn't load image: _menushot\nWARNING: Couldn't load image: models/mapobjects/skybox/sun1\n----- Warnings -----\nduring Prey initialization...\nWARNING: Couldn't load image: _menushot\nWARNING: Couldn't load image: models/mapobjects/skybox/sun1\nWARNING: Failed to load master servers list\n\n----- 3 warnings -----\n[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump\n[prey-wasm] archive read cache: {\"requests\":127070,\"hits\":123347,\"backingReads\":4811,\"residentBytes\":720896,\"maxBytes\":1048576}\n[prey-wasm] frame 0: begin\n[prey-wasm] frame 0: async complete\n[prey-wasm] common frame 0: session begin\n[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4\n[prey-wasm] common frame 0: session complete, screen begin\n[prey-wasm] common frame 0: screen complete\n[prey-wasm] frame 0: common frame complete\n[prey-wasm] frame 0: complete\n[prey-wasm] frame 1: begin\n[prey-wasm] frame 1: async complete\n[prey-wasm] common frame 1: session begin\n[prey-wasm] common frame 1: session complete, screen begin\n[prey-wasm] common frame 1: screen complete\n[prey-wasm] frame 1: common frame complete\n[prey-wasm] frame 1: complete\n[prey-wasm] frame 2: begin\n[prey-wasm] frame 2: async complete\n[prey-wasm] common frame 2: session begin\n[prey-wasm] common frame 2: session complete, screen begin\n[prey-wasm] common frame 2: screen complete\n[prey-wasm] frame 2: common frame complete\n[prey-wasm] frame 2: complete\n[prey-wasm] frame 3: begin\n[prey-wasm] frame 3: async complete\n[prey-wasm] common frame 3: session begin\n[prey-wasm] common frame 3: session complete, screen begin\n[prey-wasm] common frame 3: screen complete\n[prey-wasm] frame 3: common frame complete\n[prey-wasm] frame 3: complete\n[prey-wasm] AnimPortalIn guiTime=2176 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=4256 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=6320 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=8368 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=10416 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=12480 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=14544 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=16608 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=18672 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=20736 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=22800 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=24848 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=26912 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=28976 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=31024 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=33088 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=35136 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=37184 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=39232 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=41264 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=43312 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=45392 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=47440 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=49488 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=51536 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=53600 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=55664 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=57712 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=59760 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=61840 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=63952 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=66112 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=68176 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=70240 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=72288 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=74368 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=76432 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=78496 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=80560 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=82640 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=84784 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=86864 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=88928 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=91008 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=93088 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=95168 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=97248 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=99328 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=101408 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=103472 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=105552 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=107632 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=109712 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=111792 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=113872 timeLine=0 noTime=0 events=4\nMounting deferred Prey gameplay archives...\nMounted deferred pk4 /owner-data/base/pak001.pk4 with checksum 0xd06647b1\nMounted deferred pk4 /owner-data/base/pak002.pk4 with checksum 0x57dce443\nDeferred Prey gameplay archives are ready\n----- Game Map Shutdown -----\nWARNING: Couldn't load sound '_default.wav' using default\nDeferred Prey declaration folders refreshed\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/subtitles.gui.\nreloading guis/msg.gui.\nreloading guis/save.gui.\n----- Map Initialization -----\nMap: game/roadhouse\nNo deathwalk map in maps/game/roadhouse\n----- Game Map Init SaveGame -----\nSavegame was created by Prey 1.5.4 on emscripten x86. BuildNumber was 1306, savegameversion 1\ncollision data:\n   345 models\n 10755 vertices (252 KB)\n 19166 edges (673 KB)\n  7975 polygons (558 KB)\n  1257 brushes (172 KB)\n  3123 nodes (85 KB)\n 13008 polygon refs (101 KB)\n  4066 brush refs (31 KB)\n  4971 internal edges\n   649 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  1875 KB total memory used\n115 msec to load collision data.\n0 game portals found.\nmap bounds are (10576.0, 3600.0, 3000.0)\nmax clip sector is (0.0, 0.0, 0.0)\n  784 bytes passage memory used to build PVS\n    1 msec to calculate PVS\n   17 areas\n   42 portals\n    7 areas visible on average\n   68 bytes PVS data\n[Load AAS]\nloading maps/game/roadhouse.aas48\ndone.\n[Load AAS]\nloading maps/game/roadhouse.aas96\n[Load AAS]\nloading maps/game/roadhouse.aas240\n[Load AAS]\nloading maps/game/roadhouse.aasKeeper\n[Load AAS]\nloading maps/game/roadhouse.aasDroid\n[Load AAS]\nloading maps/game/roadhouse.aasGasbag\n[Load AAS]\nloading maps/game/roadhouse.aasChild\n[Load AAS]\nloading maps/game/roadhouse.aasFodder\n[Load AAS]\nloading maps/game/roadhouse.aasDroidIndoor\n[Load AAS]\nloading maps/game/roadhouse.aasJetpack\n[Load AAS]\nloading maps/game/roadhouse.aasCreatureX\n----- idRenderModelManagerLocal::EndLevelLoad -----\n    0 models purged from previous level,   709 models kept.\n----- idImageManager::EndLevelLoad -----\n    0 purged from previous\n  106 kept from previous\n 1235 new loaded\nall images loaded in   5.6 seconds\n----- idSoundCache::EndLevelLoad -----\n64973k referenced\n    0k purged\n 15257 msec to load game/roadhouse\nidRenderWorld::GenerateAllInteractions, msec = 1, staticAllocCount = 0.\ninteractionTable size: 534400 bytes\n9654 interaction take 1081248 bytes\n[prey-wasm] map transition complete; returning to browser frame pump\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 6618: session begin\n[prey-wasm] common frame 6618: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 6618: screen complete\n[prey-wasm] frame 6619: begin\n[prey-wasm] frame 6619: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 6619: session begin\n[prey-wasm] common frame 6619: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 6619: screen complete\n[prey-wasm] frame 6619: common frame complete\n[prey-wasm] frame 6619: complete\n[prey-wasm] frame 6620: begin\n[prey-wasm] frame 6620: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 6620: session begin\n[prey-wasm] common frame 6620: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 6620: screen complete\n[prey-wasm] frame 6620: common frame complete\n[prey-wasm] frame 6620: complete\n[prey-wasm] frame 6621: begin\n[prey-wasm] frame 6621: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 6621: session begin\n[prey-wasm] common frame 6621: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 6621: screen complete\n[prey-wasm] frame 6621: common frame complete\n[prey-wasm] frame 6621: complete\n[prey-wasm] frame 6622: begin\n[prey-wasm] frame 6622: async complete\n[prey-wasm] common: events begin\n[prey-wasm] common: events complete, network begin\n[prey-wasm] common: network complete\n[prey-wasm] common frame 6622: session begin\n[prey-wasm] common frame 6622: session complete, screen begin\n[prey-wasm] screen: draw begin\n[prey-wasm] screen: draw complete, backend begin\n[prey-wasm] screen: backend complete\n[prey-wasm] common frame 6622: screen complete\n[prey-wasm] frame 6622: common frame complete\n[prey-wasm] frame 6622: complete\n]\n]Getviewpos\n(-282 -340 68.25) 180.0\nWARNING: Couldn't load sound 'sound/music/maploads/mapload_default.ogg' using default\nWARNING: Couldn't load image: _menushot\n[prey-wasm] AnimPortalIn guiTime=261248 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=263472 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=265712 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=267952 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=270176 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=272400 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=274640 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=276880 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=279120 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=281360 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=283600 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=285840 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=288080 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=290320 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=292560 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=294816 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=297056 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=299280 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=301520 timeLine=259216 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=303776 timeLine=259216 noTime=0 events=4\n",
+    "pointerLock": null,
+    "proof": {
+      "audio": {
+        "buffers": 869,
+        "messages": 973527,
+        "sources": 256,
+        "starts": 10068,
+        "state": "running"
+      },
+      "capture": [],
+      "errors": [],
+      "input": {
+        "captureChanges": 0,
+        "events": [
+          {
+            "at": 90069.8,
+            "type": "pointer-absolute",
+            "x": 140.17029328287606,
+            "y": 270.0624408649744
+          },
+          {
+            "at": 90071.3,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 90073.2,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 112409,
+            "type": "pointer-absolute",
+            "x": 135.62913907284766,
+            "y": 116.11731314501226
+          },
+          {
+            "at": 112410.5,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 112411.9,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 122447.2,
+            "type": "pointer-absolute",
+            "x": 522.081362346263,
+            "y": 334.5468306473774
+          },
+          {
+            "at": 122448.7,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 122450.9,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 143800.1,
+            "type": "pointer-absolute",
+            "x": 245.97918637653737,
+            "y": 245.54020813082116
+          },
+          {
+            "at": 143801.6,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 143803.8,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 195129.7,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 195132.9,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 218009,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 218009.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 226904.7,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 226906.3,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 240984.1,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 240985.4,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 240996.8,
+            "down": true,
+            "key": 71,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 240996.8,
+            "codepoint": 71,
+            "type": "text"
+          },
+          {
+            "at": 240998.5,
+            "down": false,
+            "key": 71,
+            "repeat": false,
+            "scan": 10,
+            "type": "key"
+          },
+          {
+            "at": 259503.6,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 259503.7,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 259504.6,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 259513.5,
+            "down": true,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 259513.5,
+            "codepoint": 116,
+            "type": "text"
+          },
+          {
+            "at": 259514.3,
+            "down": false,
+            "key": 116,
+            "repeat": false,
+            "scan": 23,
+            "type": "key"
+          },
+          {
+            "at": 259529.4,
+            "down": true,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 259529.4,
+            "codepoint": 118,
+            "type": "text"
+          },
+          {
+            "at": 259530.2,
+            "down": false,
+            "key": 118,
+            "repeat": false,
+            "scan": 25,
+            "type": "key"
+          },
+          {
+            "at": 259541.1,
+            "down": true,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 259541.2,
+            "codepoint": 105,
+            "type": "text"
+          },
+          {
+            "at": 259542,
+            "down": false,
+            "key": 105,
+            "repeat": false,
+            "scan": 12,
+            "type": "key"
+          },
+          {
+            "at": 259552,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 259552.1,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 259553.4,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 259565.4,
+            "down": true,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 259565.4,
+            "codepoint": 119,
+            "type": "text"
+          },
+          {
+            "at": 259566.4,
+            "down": false,
+            "key": 119,
+            "repeat": false,
+            "scan": 26,
+            "type": "key"
+          },
+          {
+            "at": 259577.4,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 259577.4,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 259578.5,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 259587.8,
+            "down": true,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 259587.9,
+            "codepoint": 111,
+            "type": "text"
+          },
+          {
+            "at": 259588.7,
+            "down": false,
+            "key": 111,
+            "repeat": false,
+            "scan": 18,
+            "type": "key"
+          },
+          {
+            "at": 259599.9,
+            "down": true,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 259600,
+            "codepoint": 115,
+            "type": "text"
+          },
+          {
+            "at": 259600.8,
+            "down": false,
+            "key": 115,
+            "repeat": false,
+            "scan": 22,
+            "type": "key"
+          },
+          {
+            "at": 259609.5,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 259610.7,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 296190.8,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 296191.7,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 306260.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 41,
+            "type": "key"
+          },
+          {
+            "at": 306261.4,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 41,
+            "type": "key"
+          },
+          {
+            "at": 322276.4,
+            "type": "pointer-absolute",
+            "x": 146.07379375591296,
+            "y": 268.7000946019659
+          },
+          {
+            "at": 322277.7,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 322279.2,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 344194.8,
+            "type": "pointer-absolute",
+            "x": 217.36991485335855,
+            "y": 404.9347209028174
+          },
+          {
+            "at": 344196.1,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 344198.1,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 344456.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 77,
+            "type": "key"
+          },
+          {
+            "at": 344468,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 77,
+            "type": "key"
+          },
+          {
+            "at": 344480.5,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344481.6,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344491.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344492.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344502.7,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344503.7,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344513.7,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344514.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344525.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344526.5,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344537,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344537.7,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344548.1,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344549,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344558.9,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344559.6,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344571.2,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344572.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344581.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344582,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344594.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344595.2,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344605.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344606.4,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344617.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344618.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344628.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344629,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344637.5,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344640.2,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344650.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344651.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344662.1,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344663,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344675.3,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344676.7,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344686.1,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344686.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344699.1,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344700.2,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344709.5,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344710.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344721.6,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344724.3,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344734.8,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344735.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344743.8,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344755.8,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 42,
+            "type": "key"
+          },
+          {
+            "at": 344764.6,
+            "down": true,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 344764.6,
+            "codepoint": 112,
+            "type": "text"
+          },
+          {
+            "at": 344765.4,
+            "down": false,
+            "key": 112,
+            "repeat": false,
+            "scan": 19,
+            "type": "key"
+          },
+          {
+            "at": 344773,
+            "down": true,
+            "key": 114,
+            "repeat": false,
+            "scan": 21,
+            "type": "key"
+          },
+          {
+            "at": 344773.1,
+            "codepoint": 114,
+            "type": "text"
+          },
+          {
+            "at": 344774.7,
+            "down": false,
+            "key": 114,
+            "repeat": false,
+            "scan": 21,
+            "type": "key"
+          },
+          {
+            "at": 344784.2,
+            "down": true,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 344784.2,
+            "codepoint": 101,
+            "type": "text"
+          },
+          {
+            "at": 344785,
+            "down": false,
+            "key": 101,
+            "repeat": false,
+            "scan": 8,
+            "type": "key"
+          },
+          {
+            "at": 344794.9,
+            "down": true,
+            "key": 121,
+            "repeat": false,
+            "scan": 28,
+            "type": "key"
+          },
+          {
+            "at": 344795,
+            "codepoint": 121,
+            "type": "text"
+          },
+          {
+            "at": 344796.1,
+            "down": false,
+            "key": 121,
+            "repeat": false,
+            "scan": 28,
+            "type": "key"
+          },
+          {
+            "at": 344804.4,
+            "down": true,
+            "key": 57,
+            "repeat": false,
+            "scan": 38,
+            "type": "key"
+          },
+          {
+            "at": 344804.4,
+            "codepoint": 57,
+            "type": "text"
+          },
+          {
+            "at": 344805.8,
+            "down": false,
+            "key": 57,
+            "repeat": false,
+            "scan": 38,
+            "type": "key"
+          },
+          {
+            "at": 344817.6,
+            "down": true,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 344817.7,
+            "codepoint": 48,
+            "type": "text"
+          },
+          {
+            "at": 344818.5,
+            "down": false,
+            "key": 48,
+            "repeat": false,
+            "scan": 39,
+            "type": "key"
+          },
+          {
+            "at": 344826.2,
+            "down": true,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 344826.2,
+            "codepoint": 54,
+            "type": "text"
+          },
+          {
+            "at": 344827.1,
+            "down": false,
+            "key": 54,
+            "repeat": false,
+            "scan": 35,
+            "type": "key"
+          },
+          {
+            "at": 344838.5,
+            "down": true,
+            "key": 97,
+            "repeat": false,
+            "scan": 4,
+            "type": "key"
+          },
+          {
+            "at": 344838.6,
+            "codepoint": 97,
+            "type": "text"
+          },
+          {
+            "at": 344839.6,
+            "down": false,
+            "key": 97,
+            "repeat": false,
+            "scan": 4,
+            "type": "key"
+          }
+        ],
+        "keyDown": 50,
+        "keyUp": 50,
+        "pointerAbsolute": 6,
+        "pointerDown": 6,
+        "pointerDx": 0,
+        "pointerDy": 0,
+        "pointerRelative": 0,
+        "pointerUp": 6,
+        "text": 18
+      },
+      "lifecycle": [
+        {
+          "at": 164.1,
+          "name": "init",
+          "variant": "prey"
+        },
+        {
+          "at": 176.7,
+          "files": 13,
+          "name": "initialized"
+        },
+        {
+          "at": 26933.1,
+          "name": "start-requested"
+        },
+        {
+          "at": 26962.4,
+          "entries": 13,
+          "name": "data-ready",
+          "source": "cache"
+        },
+        {
+          "at": 26962.7,
+          "height": 1057,
+          "name": "worker-started",
+          "width": 1424,
+          "worker": "/prey-worker.js"
+        }
+      ],
+      "logs": [
+        {
+          "at": 27040.5,
+          "text": "[prey-wasm] native main entered"
+        },
+        {
+          "at": 27040.7,
+          "text": "[prey-wasm] executable path initialized"
+        },
+        {
+          "at": 27040.8,
+          "text": "[prey-wasm] save path initialized"
+        },
+        {
+          "at": 27040.8,
+          "text": "[prey-wasm] initializing platform signal seam"
+        },
+        {
+          "at": 27040.9,
+          "text": "[prey-wasm] SDL browser event queue initialized"
+        },
+        {
+          "at": 27041,
+          "text": "[prey-wasm] entering common initialization"
+        },
+        {
+          "at": 27041.1,
+          "text": "browser threading: cooperative single-thread primitives"
+        },
+        {
+          "at": 27041.2,
+          "text": "Prey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10"
+        },
+        {
+          "at": 27041.3,
+          "text": "SDL video driver: (null)"
+        },
+        {
+          "at": 27041.4,
+          "text": "Logging console output to /home/web_user/.local/share/prey06/qconsolelog.txt"
+        },
+        {
+          "at": 27041.5,
+          "text": "terminal support enabled ( use +set in_tty 0 to disable )"
+        },
+        {
+          "at": 27041.5,
+          "text": "pid: 42"
+        },
+        {
+          "at": 27041.6,
+          "text": "2048 MB System Memory"
+        },
+        {
+          "at": 27041.7,
+          "text": "browser networking: loopback interface only"
+        },
+        {
+          "at": 27041.8,
+          "text": "----- Initializing File System -----"
+        },
+        {
+          "at": 27046.9,
+          "text": "Loaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2"
+        },
+        {
+          "at": 27048.9,
+          "text": "Loaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14"
+        },
+        {
+          "at": 27051.2,
+          "text": "Loaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08"
+        },
+        {
+          "at": 27053.4,
+          "text": "Loaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c"
+        },
+        {
+          "at": 27139.5,
+          "text": "Loaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede"
+        },
+        {
+          "at": 27140.1,
+          "text": "Deferred pk4 pak001.pk4 until first map load"
+        },
+        {
+          "at": 27140.3,
+          "text": "Deferred pk4 pak002.pk4 until first map load"
+        },
+        {
+          "at": 27296.4,
+          "text": "Loaded pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe"
+        },
+        {
+          "at": 27408.2,
+          "text": "Loaded pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380"
+        },
+        {
+          "at": 27424,
+          "text": "Loaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190"
+        },
+        {
+          "at": 27426.8,
+          "text": "Loaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397"
+        },
+        {
+          "at": 27427.3,
+          "text": "Loaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193"
+        },
+        {
+          "at": 27438,
+          "text": "Loaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5"
+        },
+        {
+          "at": 27438.5,
+          "text": "Current search path:"
+        },
+        {
+          "at": 27438.7,
+          "text": "/save/prey/base"
+        },
+        {
+          "at": 27438.9,
+          "text": "/owner-data/base"
+        },
+        {
+          "at": 27439,
+          "text": "/owner-data/base/pak040.pk4 (468 files)"
+        },
+        {
+          "at": 27439.1,
+          "text": "/owner-data/base/pak020.pk4 (23 files)"
+        },
+        {
+          "at": 27439.3,
+          "text": "/owner-data/base/pak006.pk4 (108 files)"
+        },
+        {
+          "at": 27439.4,
+          "text": "/owner-data/base/pak005.pk4 (10 files)"
+        },
+        {
+          "at": 27439.6,
+          "text": "/owner-data/base/pak004.pk4 (3739 files)"
+        },
+        {
+          "at": 27439.7,
+          "text": "/owner-data/base/pak003.pk4 (4111 files)"
+        },
+        {
+          "at": 27439.8,
+          "text": "/owner-data/base/pak000.pk4 (3318 files)"
+        },
+        {
+          "at": 27440,
+          "text": "/owner-data/base/game03.pk4 (2 files)"
+        },
+        {
+          "at": 27440.1,
+          "text": "/owner-data/base/game02.pk4 (10 files)"
+        },
+        {
+          "at": 27440.3,
+          "text": "/owner-data/base/game01.pk4 (2 files)"
+        },
+        {
+          "at": 27440.4,
+          "text": "/owner-data/base/game00.pk4 (2 files)"
+        },
+        {
+          "at": 27440.6,
+          "text": "game DLL: 0x0 in pak: 0x0"
+        },
+        {
+          "at": 27440.7,
+          "text": "Addon pk4s:"
+        },
+        {
+          "at": 27440.9,
+          "text": "browser filesystem: background reads run cooperatively"
+        },
+        {
+          "at": 27441.1,
+          "text": "----- Initializing Decls -----"
+        },
+        {
+          "at": 27873.1,
+          "text": "2661 strings read from strings/english001.lang"
+        },
+        {
+          "at": 27915.9,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 27920.6,
+          "text": "Couldn't open journal files"
+        },
+        {
+          "at": 27920.9,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 27921.1,
+          "text": "Couldn't exec editor.cfg - file does not exist."
+        },
+        {
+          "at": 27921.7,
+          "text": "execing default.cfg"
+        },
+        {
+          "at": 27922.4,
+          "text": "execing prey06.cfg"
+        },
+        {
+          "at": 27923.4,
+          "text": "Couldn't exec autoexec.cfg - file does not exist."
+        },
+        {
+          "at": 27930.2,
+          "text": "2661 strings read from strings/english001.lang"
+        },
+        {
+          "at": 27930.8,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 27931,
+          "text": "----- Initializing OpenAL -----"
+        },
+        {
+          "at": 27931.2,
+          "text": "Setup OpenAL device and context"
+        },
+        {
+          "at": 27931.7,
+          "text": "OpenAL vendor: wasm-games"
+        },
+        {
+          "at": 27931.9,
+          "text": "OpenAL renderer: WebAudio bridge"
+        },
+        {
+          "at": 27932.1,
+          "text": "OpenAL version: 1.1"
+        },
+        {
+          "at": 27932.3,
+          "text": "OpenAL: EFX extension not found"
+        },
+        {
+          "at": 27934.9,
+          "text": "OpenAL: found 256 hardware voices"
+        },
+        {
+          "at": 27935.3,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 27935.6,
+          "text": "WARNING: Failed to load master servers list"
+        },
+        {
+          "at": 27936.1,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 27936.3,
+          "text": "----- Initializing OpenGL -----"
+        },
+        {
+          "at": 27936.5,
+          "text": "[prey-wasm] creating worker WebGL 1 / GLES2 context"
+        },
+        {
+          "at": 27961.8,
+          "text": "[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1057"
+        },
+        {
+          "at": 27962.7,
+          "text": "OpenGL vendor: WebKit"
+        },
+        {
+          "at": 27963,
+          "text": "OpenGL renderer: WebKit WebGL"
+        },
+        {
+          "at": 27963.2,
+          "text": "OpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))"
+        },
+        {
+          "at": 27963.8,
+          "text": "...using GL_EXT_texture_filter_anisotropic"
+        },
+        {
+          "at": 27964.2,
+          "text": "   maxTextureAnisotropy: 16.000000"
+        },
+        {
+          "at": 27964.7,
+          "text": "----- R_ReloadGLSLPrograms -----"
+        },
+        {
+          "at": 27964.9,
+          "text": "Loading main interaction shader"
+        },
+        {
+          "at": 27971.6,
+          "text": "Loading main interaction shader (Phong) "
+        },
+        {
+          "at": 27978.8,
+          "text": "Loading default diffuse shader"
+        },
+        {
+          "at": 27980.8,
+          "text": "Loading skybox cubemap shader"
+        },
+        {
+          "at": 27982.9,
+          "text": "Loading reflection cubemap shader"
+        },
+        {
+          "at": 27985.6,
+          "text": "Loading diffuse cubemap shader"
+        },
+        {
+          "at": 27987.3,
+          "text": "Loading Zfill shader"
+        },
+        {
+          "at": 27988.9,
+          "text": "Loading Zfill shader (Clip plane version)"
+        },
+        {
+          "at": 27990.8,
+          "text": "Loading Fog shader"
+        },
+        {
+          "at": 27992.6,
+          "text": "Loading BlendLight shader"
+        },
+        {
+          "at": 27994.1,
+          "text": "Loading Stencil shadow shader"
+        },
+        {
+          "at": 27995.2,
+          "text": "-------------------------------"
+        },
+        {
+          "at": 27995.5,
+          "text": "Init Vertex Cache"
+        },
+        {
+          "at": 28000.7,
+          "text": "using GLSL renderSystem"
+        },
+        {
+          "at": 28001.3,
+          "text": "Will apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)"
+        },
+        {
+          "at": 28001.7,
+          "text": "----- OpenGL Initialization complete-----"
+        },
+        {
+          "at": 28052.7,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 28053.4,
+          "text": "[prey-wasm] EndFrame: GUI emitted"
+        },
+        {
+          "at": 28053.9,
+          "text": "[prey-wasm] EndFrame: issuing backend"
+        },
+        {
+          "at": 28054.3,
+          "text": "[prey-wasm] backend: begin"
+        },
+        {
+          "at": 28054.7,
+          "text": "[prey-wasm] backend: command 0 begin"
+        },
+        {
+          "at": 28055.1,
+          "text": "[prey-wasm] backend: command 0 complete"
+        },
+        {
+          "at": 28055.5,
+          "text": "[prey-wasm] backend: command 2 begin"
+        },
+        {
+          "at": 28055.8,
+          "text": "[prey-wasm] backend: command 2 complete"
+        },
+        {
+          "at": 28056,
+          "text": "[prey-wasm] backend: command 1 begin"
+        },
+        {
+          "at": 28056.3,
+          "text": "[prey-wasm] backend: command 1 complete"
+        },
+        {
+          "at": 28056.7,
+          "text": "[prey-wasm] backend: command 4 begin"
+        },
+        {
+          "at": 28057.1,
+          "text": "[prey-wasm] backend: command 4 complete"
+        },
+        {
+          "at": 28057.4,
+          "text": "[prey-wasm] backend: complete"
+        },
+        {
+          "at": 28057.8,
+          "text": "[prey-wasm] EndFrame: backend complete"
+        },
+        {
+          "at": 28058.1,
+          "text": "[prey-wasm] EndFrame: frame toggled"
+        },
+        {
+          "at": 28058.3,
+          "text": "[prey-wasm] EndFrame: vertex cache retired"
+        },
+        {
+          "at": 28101.4,
+          "text": "----- Initializing Game -----"
+        },
+        {
+          "at": 28102.2,
+          "text": "gamename: basePrey-1"
+        },
+        {
+          "at": 28102.5,
+          "text": "gamedate: Jan 11 2026"
+        },
+        {
+          "at": 28384.2,
+          "text": "Initializing event system"
+        },
+        {
+          "at": 28384.9,
+          "text": "...1028 event definitions"
+        },
+        {
+          "at": 28385.2,
+          "text": "Initializing class hierarchy"
+        },
+        {
+          "at": 28385.5,
+          "text": "...366 classes, 2130016 bytes for event callbacks"
+        },
+        {
+          "at": 28385.8,
+          "text": "Initializing scripts"
+        },
+        {
+          "at": 29083.2,
+          "text": "Compiled 'script/prey_main.script': 686 ms"
+        },
+        {
+          "at": 29083.9,
+          "text": "----- Compile stats -----"
+        },
+        {
+          "at": 29084.5,
+          "text": "Memory usage:"
+        },
+        {
+          "at": 29084.8,
+          "text": "     Strings: 58, 6800 bytes"
+        },
+        {
+          "at": 29085.3,
+          "text": "  Statements: 92650, 1853000 bytes"
+        },
+        {
+          "at": 29085.8,
+          "text": "   Functions: 2987, 352692 bytes"
+        },
+        {
+          "at": 29086.3,
+          "text": "   Variables: 411160 bytes"
+        },
+        {
+          "at": 29086.7,
+          "text": "    Mem used: 3782148 bytes"
+        },
+        {
+          "at": 29087.1,
+          "text": " Static data: 3617736 bytes"
+        },
+        {
+          "at": 29087.5,
+          "text": "   Allocated: 5129776 bytes"
+        },
+        {
+          "at": 29087.8,
+          "text": " Thread size: 13224 bytes"
+        },
+        {
+          "at": 29088,
+          "text": "...11 aas types"
+        },
+        {
+          "at": 29088.3,
+          "text": "----- Initializing Session -----"
+        },
+        {
+          "at": 29105.1,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 29171.2,
+          "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+        },
+        {
+          "at": 29609.7,
+          "text": "----- Warnings -----"
+        },
+        {
+          "at": 29610.6,
+          "text": "during Prey initialization..."
+        },
+        {
+          "at": 29611,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 29611.5,
+          "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+        },
+        {
+          "at": 29611.9,
+          "text": "WARNING: Failed to load master servers list"
+        },
+        {
+          "at": 29612.7,
+          "text": "----- 3 warnings -----"
+        },
+        {
+          "at": 29613.1,
+          "text": "[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump"
+        },
+        {
+          "at": 29613.7,
+          "text": "[prey-wasm] archive read cache: {\"requests\":127070,\"hits\":123347,\"backingReads\":4811,\"residentBytes\":720896,\"maxBytes\":1048576}"
+        },
+        {
+          "at": 29626.8,
+          "text": "[prey-wasm] frame 0: begin"
+        },
+        {
+          "at": 29627.6,
+          "text": "[prey-wasm] frame 0: async complete"
+        },
+        {
+          "at": 29629.5,
+          "text": "[prey-wasm] common frame 0: session begin"
+        },
+        {
+          "at": 29630,
+          "text": "[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 29630.8,
+          "text": "[prey-wasm] common frame 0: session complete, screen begin"
+        },
+        {
+          "at": 29632.3,
+          "text": "[prey-wasm] common frame 0: screen complete"
+        },
+        {
+          "at": 29632.3,
+          "text": "[prey-wasm] frame 0: common frame complete"
+        },
+        {
+          "at": 29632.3,
+          "text": "[prey-wasm] frame 0: complete"
+        },
+        {
+          "at": 29648.5,
+          "text": "[prey-wasm] frame 1: begin"
+        },
+        {
+          "at": 29648.7,
+          "text": "[prey-wasm] frame 1: async complete"
+        },
+        {
+          "at": 29648.7,
+          "text": "[prey-wasm] common frame 1: session begin"
+        },
+        {
+          "at": 29649,
+          "text": "[prey-wasm] common frame 1: session complete, screen begin"
+        },
+        {
+          "at": 29649.3,
+          "text": "[prey-wasm] common frame 1: screen complete"
+        },
+        {
+          "at": 29649.3,
+          "text": "[prey-wasm] frame 1: common frame complete"
+        },
+        {
+          "at": 29649.3,
+          "text": "[prey-wasm] frame 1: complete"
+        },
+        {
+          "at": 29665.5,
+          "text": "[prey-wasm] frame 2: begin"
+        },
+        {
+          "at": 29665.8,
+          "text": "[prey-wasm] frame 2: async complete"
+        },
+        {
+          "at": 29665.9,
+          "text": "[prey-wasm] common frame 2: session begin"
+        },
+        {
+          "at": 29666.2,
+          "text": "[prey-wasm] common frame 2: session complete, screen begin"
+        },
+        {
+          "at": 29666.5,
+          "text": "[prey-wasm] common frame 2: screen complete"
+        },
+        {
+          "at": 29666.5,
+          "text": "[prey-wasm] frame 2: common frame complete"
+        },
+        {
+          "at": 29666.6,
+          "text": "[prey-wasm] frame 2: complete"
+        },
+        {
+          "at": 29682.8,
+          "text": "[prey-wasm] frame 3: begin"
+        },
+        {
+          "at": 29682.9,
+          "text": "[prey-wasm] frame 3: async complete"
+        },
+        {
+          "at": 29683.3,
+          "text": "[prey-wasm] common frame 3: session begin"
+        },
+        {
+          "at": 29683.8,
+          "text": "[prey-wasm] common frame 3: session complete, screen begin"
+        },
+        {
+          "at": 29684.1,
+          "text": "[prey-wasm] common frame 3: screen complete"
+        },
+        {
+          "at": 29684.1,
+          "text": "[prey-wasm] frame 3: common frame complete"
+        },
+        {
+          "at": 29684.1,
+          "text": "[prey-wasm] frame 3: complete"
+        },
+        {
+          "at": 31793.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=2176 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 33871.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=4256 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 35935.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=6320 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 37993.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=8368 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 40042.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=10416 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 42097.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=12480 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 44161.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=14544 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 46231.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=16608 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 48296.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=18672 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 50350.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=20736 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 52412.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=22800 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 54467.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=24848 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 56523.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=26912 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 58588.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=28976 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 60645.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=31024 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 62700.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=33088 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 64752.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=35136 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 66801.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=37184 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 68847.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=39232 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 70889.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=41264 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 72938.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=43312 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 75004.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=45392 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 77065,
+          "text": "[prey-wasm] AnimPortalIn guiTime=47440 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 79112.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=49488 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 81154.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=51536 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 83218.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=53600 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 85280.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=55664 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 87330.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=57712 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 89385.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=59760 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 91452.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=61840 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 93578.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=63952 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 95732.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=66112 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 97795.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=68176 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 99858.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=70240 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 101911.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=72288 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 103984,
+          "text": "[prey-wasm] AnimPortalIn guiTime=74368 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 106052.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=76432 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 108122.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=78496 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 110181.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=80560 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 112258.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=82640 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 114401.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=84784 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 116477.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=86864 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 118552,
+          "text": "[prey-wasm] AnimPortalIn guiTime=88928 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 120632.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=91008 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 122712.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=93088 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 124786.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=95168 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 126869.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=97248 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 128940.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=99328 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 131021.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=101408 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 133096.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=103472 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 135172.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=105552 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 137255.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=107632 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 139337.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=109712 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 141416.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=111792 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 143497.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=113872 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 143811.9,
+          "text": "Mounting deferred Prey gameplay archives..."
+        },
+        {
+          "at": 144014.2,
+          "text": "Mounted deferred pk4 /owner-data/base/pak001.pk4 with checksum 0xd06647b1"
+        },
+        {
+          "at": 144210,
+          "text": "Mounted deferred pk4 /owner-data/base/pak002.pk4 with checksum 0x57dce443"
+        },
+        {
+          "at": 144210.2,
+          "text": "Deferred Prey gameplay archives are ready"
+        },
+        {
+          "at": 144211.5,
+          "text": "----- Game Map Shutdown -----"
+        },
+        {
+          "at": 144243.3,
+          "text": "WARNING: Couldn't load sound '_default.wav' using default"
+        },
+        {
+          "at": 145950.5,
+          "text": "Deferred Prey declaration folders refreshed"
+        },
+        {
+          "at": 146046.5,
+          "text": "reloading guis/mainmenu.gui."
+        },
+        {
+          "at": 146050.6,
+          "text": "reloading guis/restart.gui."
+        },
+        {
+          "at": 146053.1,
+          "text": "reloading guis/subtitles.gui."
+        },
+        {
+          "at": 146057.4,
+          "text": "reloading guis/msg.gui."
+        },
+        {
+          "at": 146059.8,
+          "text": "reloading guis/save.gui."
+        },
+        {
+          "at": 146065,
+          "text": "----- Map Initialization -----"
+        },
+        {
+          "at": 146065.2,
+          "text": "Map: game/roadhouse"
+        },
+        {
+          "at": 146083.6,
+          "text": "No deathwalk map in maps/game/roadhouse"
+        },
+        {
+          "at": 146221.2,
+          "text": "----- Game Map Init SaveGame -----"
+        },
+        {
+          "at": 146221.5,
+          "text": "Savegame was created by Prey 1.5.4 on emscripten x86. BuildNumber was 1306, savegameversion 1"
+        },
+        {
+          "at": 146427.1,
+          "text": "collision data:"
+        },
+        {
+          "at": 146427.4,
+          "text": "   345 models"
+        },
+        {
+          "at": 146427.5,
+          "text": " 10755 vertices (252 KB)"
+        },
+        {
+          "at": 146427.5,
+          "text": " 19166 edges (673 KB)"
+        },
+        {
+          "at": 146427.5,
+          "text": "  7975 polygons (558 KB)"
+        },
+        {
+          "at": 146427.6,
+          "text": "  1257 brushes (172 KB)"
+        },
+        {
+          "at": 146427.6,
+          "text": "  3123 nodes (85 KB)"
+        },
+        {
+          "at": 146427.6,
+          "text": " 13008 polygon refs (101 KB)"
+        },
+        {
+          "at": 146427.7,
+          "text": "  4066 brush refs (31 KB)"
+        },
+        {
+          "at": 146427.7,
+          "text": "  4971 internal edges"
+        },
+        {
+          "at": 146427.7,
+          "text": "   649 sharp edges"
+        },
+        {
+          "at": 146427.7,
+          "text": "     0 contained polygons removed"
+        },
+        {
+          "at": 146427.8,
+          "text": "     0 polygons merged"
+        },
+        {
+          "at": 146427.8,
+          "text": "  1875 KB total memory used"
+        },
+        {
+          "at": 146427.8,
+          "text": "115 msec to load collision data."
+        },
+        {
+          "at": 151430,
+          "text": "0 game portals found."
+        },
+        {
+          "at": 151435.2,
+          "text": "map bounds are (10576.0, 3600.0, 3000.0)"
+        },
+        {
+          "at": 151435.6,
+          "text": "max clip sector is (0.0, 0.0, 0.0)"
+        },
+        {
+          "at": 151435.8,
+          "text": "  784 bytes passage memory used to build PVS"
+        },
+        {
+          "at": 151435.9,
+          "text": "    1 msec to calculate PVS"
+        },
+        {
+          "at": 151436,
+          "text": "   17 areas"
+        },
+        {
+          "at": 151436,
+          "text": "   42 portals"
+        },
+        {
+          "at": 151436,
+          "text": "    7 areas visible on average"
+        },
+        {
+          "at": 151436,
+          "text": "   68 bytes PVS data"
+        },
+        {
+          "at": 151436.2,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151436.3,
+          "text": "loading maps/game/roadhouse.aas48"
+        },
+        {
+          "at": 151446,
+          "text": "done."
+        },
+        {
+          "at": 151446.1,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.1,
+          "text": "loading maps/game/roadhouse.aas96"
+        },
+        {
+          "at": 151446.2,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.2,
+          "text": "loading maps/game/roadhouse.aas240"
+        },
+        {
+          "at": 151446.3,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.3,
+          "text": "loading maps/game/roadhouse.aasKeeper"
+        },
+        {
+          "at": 151446.3,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.4,
+          "text": "loading maps/game/roadhouse.aasDroid"
+        },
+        {
+          "at": 151446.4,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.4,
+          "text": "loading maps/game/roadhouse.aasGasbag"
+        },
+        {
+          "at": 151446.4,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.5,
+          "text": "loading maps/game/roadhouse.aasChild"
+        },
+        {
+          "at": 151446.5,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.5,
+          "text": "loading maps/game/roadhouse.aasFodder"
+        },
+        {
+          "at": 151446.5,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.6,
+          "text": "loading maps/game/roadhouse.aasDroidIndoor"
+        },
+        {
+          "at": 151446.6,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.6,
+          "text": "loading maps/game/roadhouse.aasJetpack"
+        },
+        {
+          "at": 151446.6,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 151446.7,
+          "text": "loading maps/game/roadhouse.aasCreatureX"
+        },
+        {
+          "at": 155731.9,
+          "text": "----- idRenderModelManagerLocal::EndLevelLoad -----"
+        },
+        {
+          "at": 155733,
+          "text": "    0 models purged from previous level,   709 models kept."
+        },
+        {
+          "at": 155733,
+          "text": "----- idImageManager::EndLevelLoad -----"
+        },
+        {
+          "at": 161321.5,
+          "text": "    0 purged from previous"
+        },
+        {
+          "at": 161321.6,
+          "text": "  106 kept from previous"
+        },
+        {
+          "at": 161321.7,
+          "text": " 1235 new loaded"
+        },
+        {
+          "at": 161321.7,
+          "text": "all images loaded in   5.6 seconds"
+        },
+        {
+          "at": 161321.8,
+          "text": "----- idSoundCache::EndLevelLoad -----"
+        },
+        {
+          "at": 161321.8,
+          "text": "64973k referenced"
+        },
+        {
+          "at": 161321.8,
+          "text": "    0k purged"
+        },
+        {
+          "at": 161321.8,
+          "text": " 15257 msec to load game/roadhouse"
+        },
+        {
+          "at": 161323.4,
+          "text": "idRenderWorld::GenerateAllInteractions, msec = 1, staticAllocCount = 0."
+        },
+        {
+          "at": 161323.5,
+          "text": "interactionTable size: 534400 bytes"
+        },
+        {
+          "at": 161323.5,
+          "text": "9654 interaction take 1081248 bytes"
+        },
+        {
+          "at": 161323.5,
+          "text": "[prey-wasm] map transition complete; returning to browser frame pump"
+        },
+        {
+          "at": 161323.5,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 161323.5,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 161323.6,
+          "text": "[prey-wasm] common frame 6618: session begin"
+        },
+        {
+          "at": 161323.6,
+          "text": "[prey-wasm] common frame 6618: session complete, screen begin"
+        },
+        {
+          "at": 161323.6,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 161324.4,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 161324.5,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 161324.5,
+          "text": "[prey-wasm] common frame 6618: screen complete"
+        },
+        {
+          "at": 161375.9,
+          "text": "[prey-wasm] frame 6619: begin"
+        },
+        {
+          "at": 161378.7,
+          "text": "[prey-wasm] frame 6619: async complete"
+        },
+        {
+          "at": 161378.8,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 161378.8,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 161378.9,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 161378.9,
+          "text": "[prey-wasm] common frame 6619: session begin"
+        },
+        {
+          "at": 161391.2,
+          "text": "[prey-wasm] common frame 6619: session complete, screen begin"
+        },
+        {
+          "at": 161391.5,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 161402.4,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 161405.1,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 161405.2,
+          "text": "[prey-wasm] common frame 6619: screen complete"
+        },
+        {
+          "at": 161405.3,
+          "text": "[prey-wasm] frame 6619: common frame complete"
+        },
+        {
+          "at": 161405.3,
+          "text": "[prey-wasm] frame 6619: complete"
+        },
+        {
+          "at": 161421.4,
+          "text": "[prey-wasm] frame 6620: begin"
+        },
+        {
+          "at": 161424.6,
+          "text": "[prey-wasm] frame 6620: async complete"
+        },
+        {
+          "at": 161424.8,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 161424.8,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 161424.8,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 161424.8,
+          "text": "[prey-wasm] common frame 6620: session begin"
+        },
+        {
+          "at": 161424.8,
+          "text": "[prey-wasm] common frame 6620: session complete, screen begin"
+        },
+        {
+          "at": 161424.8,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 161426.5,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 161427.6,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 161427.7,
+          "text": "[prey-wasm] common frame 6620: screen complete"
+        },
+        {
+          "at": 161427.7,
+          "text": "[prey-wasm] frame 6620: common frame complete"
+        },
+        {
+          "at": 161427.7,
+          "text": "[prey-wasm] frame 6620: complete"
+        },
+        {
+          "at": 161443.7,
+          "text": "[prey-wasm] frame 6621: begin"
+        },
+        {
+          "at": 161445.2,
+          "text": "[prey-wasm] frame 6621: async complete"
+        },
+        {
+          "at": 161445.2,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 161445.2,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 161445.3,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 161445.3,
+          "text": "[prey-wasm] common frame 6621: session begin"
+        },
+        {
+          "at": 161445.3,
+          "text": "[prey-wasm] common frame 6621: session complete, screen begin"
+        },
+        {
+          "at": 161445.3,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 161446.4,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 161447.8,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 161447.8,
+          "text": "[prey-wasm] common frame 6621: screen complete"
+        },
+        {
+          "at": 161447.9,
+          "text": "[prey-wasm] frame 6621: common frame complete"
+        },
+        {
+          "at": 161447.9,
+          "text": "[prey-wasm] frame 6621: complete"
+        },
+        {
+          "at": 161464.2,
+          "text": "[prey-wasm] frame 6622: begin"
+        },
+        {
+          "at": 161465.4,
+          "text": "[prey-wasm] frame 6622: async complete"
+        },
+        {
+          "at": 161465.4,
+          "text": "[prey-wasm] common: events begin"
+        },
+        {
+          "at": 161465.5,
+          "text": "[prey-wasm] common: events complete, network begin"
+        },
+        {
+          "at": 161465.5,
+          "text": "[prey-wasm] common: network complete"
+        },
+        {
+          "at": 161465.5,
+          "text": "[prey-wasm] common frame 6622: session begin"
+        },
+        {
+          "at": 161465.6,
+          "text": "[prey-wasm] common frame 6622: session complete, screen begin"
+        },
+        {
+          "at": 161465.6,
+          "text": "[prey-wasm] screen: draw begin"
+        },
+        {
+          "at": 161466.3,
+          "text": "[prey-wasm] screen: draw complete, backend begin"
+        },
+        {
+          "at": 161467.3,
+          "text": "[prey-wasm] screen: backend complete"
+        },
+        {
+          "at": 161467.3,
+          "text": "[prey-wasm] common frame 6622: screen complete"
+        },
+        {
+          "at": 161467.4,
+          "text": "[prey-wasm] frame 6622: common frame complete"
+        },
+        {
+          "at": 161467.4,
+          "text": "[prey-wasm] frame 6622: complete"
+        },
+        {
+          "at": 218016.7,
+          "text": "]"
+        },
+        {
+          "at": 259628.1,
+          "text": "]Getviewpos"
+        },
+        {
+          "at": 259630.5,
+          "text": "(-282 -340 68.25) 180.0"
+        },
+        {
+          "at": 306476,
+          "text": "WARNING: Couldn't load sound 'sound/music/maploads/mapload_default.ogg' using default"
+        },
+        {
+          "at": 306481.7,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 308359,
+          "text": "[prey-wasm] AnimPortalIn guiTime=261248 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 310585.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=263472 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 312829.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=265712 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 315065,
+          "text": "[prey-wasm] AnimPortalIn guiTime=267952 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 317296.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=270176 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 319520.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=272400 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 321749.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=274640 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 323989.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=276880 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 326233.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=279120 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 328474,
+          "text": "[prey-wasm] AnimPortalIn guiTime=281360 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 330715.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=283600 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 332948.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=285840 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 335193.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=288080 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 337437.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=290320 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 339678.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=292560 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 341932.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=294816 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 344168.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=297056 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 346401.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=299280 timeLine=259216 noTime=0 events=4"
+        },
+        {
+          "at": 348640.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=301520 timeLine=259216 noTime=0 events=4"
+        }
+      ],
+      "persistence": {
+        "ready": true,
+        "requests": 0,
+        "root": "/save/prey"
+      },
+      "proofId": "prey-save-current",
+      "schemaVersion": 1,
+      "startedAt": "2026-09-06T16:35:04.329Z",
+      "states": [
+        {
+          "at": 29613.5,
+          "inputMode": null,
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "engine-state"
+        },
+        {
+          "at": 29614.1,
+          "inputMode": "menu",
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "ready"
+        },
+        {
+          "at": 161324.6,
+          "inputMode": null,
+          "resumeAvailable": false,
+          "state": "gameplay",
+          "type": "engine-state"
+        },
+        {
+          "at": 306482,
+          "inputMode": null,
+          "resumeAvailable": false,
+          "state": "paused",
+          "type": "engine-state"
+        }
+      ],
+      "variant": "prey",
+      "workerMessages": {
+        "in:audio-buffer": 10894,
+        "in:audio-create-source": 256,
+        "in:audio-delete-buffer": 19,
+        "in:audio-init": 1,
+        "in:audio-listener-float": 18983,
+        "in:audio-listener-vector": 37966,
+        "in:audio-source-action": 104,
+        "in:audio-source-float": 505952,
+        "in:audio-source-int": 252903,
+        "in:audio-source-position": 126424,
+        "in:audio-source-queue": 10019,
+        "in:audio-source-unqueue": 10006,
+        "in:engine-state": 3,
+        "in:log": 387,
+        "in:persistence-ready": 1,
+        "in:ready": 1,
+        "in:status": 2,
+        "out:key": 100,
+        "out:pointer-absolute": 6,
+        "out:pointer-button": 12,
+        "out:resize": 3,
+        "out:start": 1,
+        "out:text": 18
+      }
+    },
+    "root": {
+      "d3wasmAudioBuffers": "869",
+      "d3wasmAudioStarts": "10070",
+      "d3wasmAudioState": "running",
+      "shellDataReady": "true",
+      "shellEngineState": "paused",
+      "shellHostCursor": "hidden",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmDataSource": "cache",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "prey"
+    },
+    "title": "Prey (2006)",
+    "url": "http://127.0.0.1:32877/?game=prey&proof=prey-save-current"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "scope": "Native DISCONNECT entered through Chrome: one player remains but two relay peers still keep the server awake. Old packaged behavior before cleanup repair.",
+  "status": {
+    "state": "running",
+    "humans": 2,
+    "keepAlive": false,
+    "idleTimeoutMs": 300000,
+    "idleSince": null,
+    "startedAt": 1788642457540,
+    "map": "game/mp/d3dm1",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 1,
+        "ping": 0,
+        "rate": 16000,
+        "name": "ProofMarineB"
+      }
+    ],
+    "browserPeers": 2,
+    "bots": 0,
+    "botStatus": "not-installed",
+    "relay": {
+      "peers": 2,
+      "clientPackets": 44750,
+      "serverPackets": 12271
+    }
+  }
+}

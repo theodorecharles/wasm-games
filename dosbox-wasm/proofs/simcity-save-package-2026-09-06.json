@@ -1,0 +1,117 @@
+{
+  "observedAt": "2026-09-06T07:50:40.390Z",
+  "disposition": "rejected experiment; no SimCity save fix",
+  "baseline": {
+    "id": "80c3394d8e09cc3c307eb8601784948d61562efb644e34989e0dd0a3cd236e9a",
+    "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+    "startedAt": "2026-09-06T06:23:26.244148966Z",
+    "restarts": 0,
+    "mounts": [
+      {
+        "source": "/home/ted/wasm-game-data/dosbox",
+        "destination": "/data",
+        "rw": false
+      }
+    ]
+  },
+  "candidate": {
+    "id": "d5e5aca7fa1d0f66dec2c37f75fd665ba2f207f538ef8f6b530d820955437cb3",
+    "image": "sha256:bcb73af2aadfcf070695688d7e3c8d05bd2424f9ac521e89669b8979beb07f82",
+    "startedAt": "2026-09-06T07:29:54.241520445Z",
+    "restarts": 0,
+    "mounts": [
+      {
+        "source": "/home/ted/wasm-game-data/dosbox",
+        "destination": "/data",
+        "rw": false
+      }
+    ]
+  },
+  "live": {
+    "id": "91e0b7cae2eab44b203497f18435997140bafcf7da4beaa7c51c1b3fe078f515",
+    "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+    "startedAt": "2026-09-06T07:46:57.244338533Z",
+    "restarts": 0,
+    "mounts": [
+      {
+        "source": "/home/ted/wasm-game-data/dosbox",
+        "destination": "/data",
+        "rw": true
+      }
+    ]
+  },
+  "filesCompared": 28,
+  "unchangedFiles": 27,
+  "changed": [
+    {
+      "file": "/opt/game-site/dosbox.wasm",
+      "before": {
+        "bytes": 3043590,
+        "sha256": "968e799bacb2a42c3e5260457e220c9a7421b55d095832db1bfe1b731aaf386f"
+      },
+      "after": {
+        "bytes": 3043687,
+        "sha256": "6aa423331610effe5c748b57e6623ee84ac5f6aa62b6b9ef48a004e9d7bf62c9"
+      }
+    }
+  ],
+  "http": [
+    {
+      "relative": "assets/dosbox-192.png",
+      "sha256": "a7406797ad691320540db65b60c8a61264cf47b4717f7bbc14322504ce4e6e27"
+    },
+    {
+      "relative": "assets/dosbox-512.png",
+      "sha256": "05f259734a9dc2d08b11e7c025070b8b223ed9fd261f9a057ce161e1dee90c07"
+    },
+    {
+      "relative": "assets/dosbox.ico",
+      "sha256": "573c808bb08c08cca5ce45e527ed27de46e648ebced687142c3dec2f53f895ae"
+    },
+    {
+      "relative": "browser-pointer.conf",
+      "sha256": "20eba5d73a73ef719332bf77a06c6efbad7e4b5dbce2c2fe2207bedde0285b29"
+    },
+    {
+      "relative": "dosbox.js",
+      "sha256": "16fd8f9724796f15e3eac63a1126b2f4b441f3a059f517235d14698f4f4d25f8"
+    },
+    {
+      "relative": "dosbox.wasm",
+      "sha256": "6aa423331610effe5c748b57e6623ee84ac5f6aa62b6b9ef48a004e9d7bf62c9"
+    },
+    {
+      "relative": "game-adapter.js",
+      "sha256": "3186033babee2c034786108f47bc93c75b6d9aa1c57fea9b1b0853d387c91bca"
+    },
+    {
+      "relative": "shared-shell/index.html",
+      "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18"
+    },
+    {
+      "relative": "shared-shell/wasm-game-bootstrap.js",
+      "sha256": "13bb7b72ca201e8adaa6dd189bb43b0d84871d2e3b1b9c148600d277f65dedae"
+    },
+    {
+      "relative": "shared-shell/wasm-game-framework.css",
+      "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+    },
+    {
+      "relative": "shared-shell/wasm-game-framework.js",
+      "sha256": "b3c8e473fd5dd1e24d50e714d5b1ccb0505516ea6184deaa9efbefdad071dddd"
+    },
+    {
+      "relative": "wasm-game-data.json",
+      "sha256": "0871cad61e0cf1b75411600ebc543488ddbca9a0def46e7bb0638d32cdfecc3e"
+    },
+    {
+      "relative": "wasm-game.json",
+      "sha256": "747582680412151f81a12aafb162def9d821931d00785bf017f6112e26e4ab52"
+    }
+  ],
+  "privateData": {
+    "ready": true,
+    "files": 30,
+    "rawRootsHidden": true
+  }
+}

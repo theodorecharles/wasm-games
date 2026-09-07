@@ -10,6 +10,30 @@
   let context = null;
   let interactionCaptureIntent = false;
   let unlockedPointer = null;
+  let profile = 'classic';
+  let launchProfile = null;
+  const profiles = Object.freeze({
+    classic: { script: '/blood.js', wasm: '/blood.wasm', data: '/blood.data', width: 800, height: 600,
+      displayMode: '4:3', note: 'Classic Blood at 800×600 with full mouse look.' },
+    modernized: { script: '/blood-modernized.js', wasm: '/blood-modernized.wasm', data: '/blood-modernized.data',
+      width: 1280, height: 720, displayMode: '16:9',
+      note: 'Modernized Blood: 1280×720 widescreen, OpenGL renderer, and full mouse look.' }
+  });
+
+  function applyProfile(ctx, requested) {
+    profile = launchProfile || (Object.hasOwn(profiles, requested) ? requested : 'classic');
+    const selected = profiles[profile];
+    ctx.elements.graphicsProfile.value = profile;
+    ctx.elements.description.textContent = selected.note;
+    ctx.elements.description.hidden = false;
+    if (!launchProfile) {
+      ctx.elements.canvas.width = selected.width;
+      ctx.elements.canvas.height = selected.height;
+      ctx.shell.setDisplay({ displayMode: selected.displayMode, pixelated: true });
+    }
+    document.documentElement.dataset.bloodProfile = profile;
+    return selected;
+  }
 
   const browserScanCodes = Object.freeze({
     Escape: 0x01, Digit1: 0x02, Digit2: 0x03, Digit3: 0x04, Digit4: 0x05, Digit5: 0x06,
@@ -84,6 +108,11 @@
     runtimePromise = new Promise((resolve, reject) => {
       engine = globalThis.Module = {
         canvas: ctx.elements.canvas,
+        locateFile(path, prefix) {
+          if (path.endsWith('.wasm')) return profiles[profile].wasm;
+          if (path.endsWith('.data')) return profiles[profile].data;
+          return prefix + path;
+        },
         noInitialRun: true,
         print: (...args) => { console.log('[NBlood WASM]', ...args); ctx.log(args.join(' ')); },
         printErr: (...args) => {
@@ -108,7 +137,7 @@
           reject(new Error(`Blood stopped: ${reason}`));
         }
       };
-      loadScript('/blood.js').catch(reject);
+      loadScript(profiles[profile].script).catch(reject);
     });
     return runtimePromise;
   }
@@ -138,6 +167,7 @@
       throw new Error('Cryptic Passage was requested but its optional data is not installed in this container.');
     }
     const args = ['-game_dir=/game', '-noautoload', '-nosetup'];
+    if (profile === 'modernized') args.push('-cfg=modernized.cfg');
     if (campaign === 'cryptic') args.push('-ini=CRYPTIC.INI');
     if (!intro || autostart) args.push('-quick');
     if (!demos || autostart) args.push('-nodemo');
@@ -233,6 +263,8 @@
   globalThis.WasmGameAdapter = Object.freeze({
     async init(ctx) {
       context = ctx;
+      const requested = new URLSearchParams(location.search).get('profile');
+      applyProfile(ctx, requested || ctx.elements.graphicsProfile.value);
       diagnostics();
       document.documentElement.dataset.audioState = 'not-created';
       document.documentElement.dataset.persistence = 'not-started';
@@ -298,6 +330,9 @@
 
     async start(ctx) {
       if (started) return;
+      applyProfile(ctx, ctx.elements.graphicsProfile.value);
+      launchProfile = profile;
+      ctx.elements.graphicsProfile.disabled = true;
       void ctx.shell.resumeAudio();
       ctx.setLoading('Preparing Blood…', '', 5);
       const data = await ctx.dataClient.load(ownerData, {
@@ -317,6 +352,15 @@
       document.documentElement.dataset.persistence = 'loading';
       await ctx.persistence.attach(engine.FS, { root: ctx.persistence.root });
       document.documentElement.dataset.persistence = 'ready';
+      if (profile === 'modernized') {
+        // -cfg also selects separate *_cvars.cfg and *_settings.cfg files.
+        // Keep the existing save directory and never import/overwrite Classic.
+        const configPath = `${ctx.persistence.root}/modernized.cfg`;
+        if (!engine.FS.analyzePath(configPath).exists) {
+          engine.FS.writeFile(configPath, '[Screen Setup]\n');
+          ctx.persistence.markDirty();
+        }
+      }
       await mountOwnerData(ctx, data);
       started = true;
       diagnostics().running = true;
@@ -328,6 +372,7 @@
     },
 
     readEngineState() { return nativeState(); },
+    preferencesChanged(values, ctx) { applyProfile(ctx, values.qualityProfile); },
     readCaptureIntent() { return captureIntent(); },
     pointerMove(detail) {
       if (!started) return;
@@ -348,7 +393,11 @@
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
     },
     pointerButton(detail, event, ctx) {
-      if (!started || nativeState() === 'gameplay') return;
+      if (!started) return;
+      if (nativeState() === 'gameplay') {
+        engine?._Build_WasmPointerButton?.(detail.button, detail.pressed ? 1 : 0);
+        return;
+      }
       if (detail.button === 0 && detail.pressed && nativeState() === 'menu' && engine?._NBlood_WasmCaptureTarget?.()) {
         interactionCaptureIntent = true;
         ctx?.setEngineState?.('loading', { capture: true, event });

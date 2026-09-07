@@ -1,0 +1,26 @@
+diff --git a/source/build/src/baselayer.cpp b/source/build/src/baselayer.cpp
+--- a/source/build/src/baselayer.cpp
++++ b/source/build/src/baselayer.cpp
+@@ -310,6 +310,22 @@ void keyFlushChars(void)
+     g_keyAsciiPos = g_keyAsciiEnd = 0;
+ }
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" EMSCRIPTEN_KEEPALIVE int Build_WasmTextEvent(int32_t const code)
++{
++    // Browser scan-state delivery bypasses SDL's character path. Match its
++    // ASCII fallback, console routing and bounded FIFO without changing scans.
++    int const consoleScan = OSD_OSDKey();
++    if (code <= 0 || code > 127 || keyBufferFull() ||
++        ((unsigned)consoleScan < sizeof(g_keyAsciiTable) && code == g_keyAsciiTable[consoleScan]))
++        return 0;
++    if (!OSD_HandleChar(code))
++        return 2;
++    keyBufferInsert((char)code);
++    return 1;
++}
++#endif
++
+ const char *keyGetName(int32_t num) { return ((unsigned)num >= NUMKEYS) ? NULL : g_keyNameTable[num]; }
+ 
+ vec2_t  g_mousePos;

@@ -1,0 +1,19 @@
+diff --git a/source/build/src/polymost.cpp b/source/build/src/polymost.cpp
+--- a/source/build/src/polymost.cpp
++++ b/source/build/src/polymost.cpp
+@@ -930,9 +930,12 @@ void polymost_initdrawpoly(void)
+     glGenBuffers(1, &drawpolyVertsID);
+ 
+     // reset the sync objects, as old ones we had from any last GL context are gone now
+-    for (int i=0; i<ARRAY_SSIZE(drawpolyVertsSync); i++)
+-        if (glIsSync(drawpolyVertsSync[i]))
+-            glDeleteSync(drawpolyVertsSync[i]);
++    // GL 2 contexts and browser loaders may not expose sync objects. The
++    // non-persistent stream path needs no sync API, including during reset.
++    if (glinfo.sync)
++        for (int i=0; i<ARRAY_SSIZE(drawpolyVertsSync); i++)
++            if (glIsSync(drawpolyVertsSync[i]))
++                glDeleteSync(drawpolyVertsSync[i]);
+ 
+     Bmemset(drawpolyVertsSync, 0, sizeof(drawpolyVertsSync));
+ 

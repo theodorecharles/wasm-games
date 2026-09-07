@@ -6,7 +6,10 @@
   "scripts": {
     "build": "./scripts/build-web.sh",
     "manifest:data": "node scripts/generate-data-manifest.js",
-    "test:native": "node scripts/test-native-runtime.js web/dist",
+    "test:native": "node scripts/test-timing.js && node scripts/test-native-runtime.js web/dist && node scripts/test-native-runtime.js web/dist --adapter-keyboard && node scripts/test-native-runtime.js web/dist --pointer",
+    "test:gta": "node scripts/test-gta-runtime.js",
+    "test:nfs": "node scripts/test-nfs-runtime.js",
+    "test:nfs:pointer": "node scripts/test-nfs-runtime.js --pointer",
     "test": "./scripts/test-web.sh"
   }
 }

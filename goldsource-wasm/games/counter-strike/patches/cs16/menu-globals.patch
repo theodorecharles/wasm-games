@@ -1,0 +1,17 @@
+diff --git a/Utils.h b/Utils.h
+--- a/Utils.h
++++ b/Utils.h
+@@ -48,7 +48,13 @@
+ #define ASSERTSZ( f, sz )
+ #endif
+ 
++#if defined(__EMSCRIPTEN__)
++// CS client weapons export a different gpGlobals (globalvars_t *). Keep the
++// menu's ui_globalvars_t * local to this side module when using Emscripten's GOT.
++extern ui_globalvars_t *gpGlobals __attribute__((visibility("hidden")));
++#else
+ extern ui_globalvars_t		*gpGlobals;
++#endif
+ 
+ // exports
+ extern int UI_VidInit( void );

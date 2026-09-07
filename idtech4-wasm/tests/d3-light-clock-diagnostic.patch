@@ -1,0 +1,117 @@
+diff --git a/neo/game/PlayerView.cpp b/neo/game/PlayerView.cpp
+index 149b8292..84fa976d 100644
+--- a/neo/game/PlayerView.cpp
++++ b/neo/game/PlayerView.cpp
+@@ -432,6 +432,7 @@ idAngles idPlayerView::AngleOffset() const {
+ idPlayerView::SingleView
+ ==================
+ */
++extern void D3LightDiagnosticView(const renderView_t *view, int health, bool spectating);
+ void idPlayerView::SingleView( idUserInterface *hud, const renderView_t *view ) {
+ 
+ 	// normal rendering
+@@ -453,6 +454,7 @@ void idPlayerView::SingleView( idUserInterface *hud, const renderView_t *view )
+ 	hackedView.viewaxis = hackedView.viewaxis * ShakeAxis();
+ 
+ 	gameRenderWorld->RenderScene( &hackedView );
++	D3LightDiagnosticView(&hackedView, player->health, player->spectating);
+ 
+ 	if ( player->spectating ) {
+ 		return;
+diff --git a/neo/sound/snd_emitter.cpp b/neo/sound/snd_emitter.cpp
+index d4d096b0..b3f1cd95 100644
+--- a/neo/sound/snd_emitter.cpp
++++ b/neo/sound/snd_emitter.cpp
+@@ -1031,27 +1031,28 @@ this is called from the main thread by the material shader system
+ to allow lights and surface flares to vary with the sound amplitude
+ ===================
+ */
++extern float D3LightDiagnosticAmplitude(float amplitude);
+ float idSoundEmitterLocal::CurrentAmplitude( void ) {
+ 	if ( idSoundSystemLocal::s_constantAmplitude.GetFloat() >= 0.0f ) {
+-		return idSoundSystemLocal::s_constantAmplitude.GetFloat();
++		return D3LightDiagnosticAmplitude(idSoundSystemLocal::s_constantAmplitude.GetFloat());
+ 	}
+ 
+ 	if ( removeStatus > REMOVE_STATUS_WAITSAMPLEFINISHED ) {
+-		return 0.0;
++		return D3LightDiagnosticAmplitude(0.0f);
+ 	}
+ 
+ 	int localTime = soundSystemLocal.GetCurrent44kHzTime();
+ 
+ 	// see if we can use our cached value
+ 	if ( ampTime == localTime ) {
+-		return amplitude;
++		return D3LightDiagnosticAmplitude(amplitude);
+ 	}
+ 
+ 	// calculate a new value
+ 	ampTime = localTime;
+ 	amplitude = soundWorld->FindAmplitude( this, localTime, NULL, SCHANNEL_ANY, false );
+ 
+-	return amplitude;
++	return D3LightDiagnosticAmplitude(amplitude);
+ }
+ 
+ /*
+diff --git a/neo/sound/snd_system.cpp b/neo/sound/snd_system.cpp
+index 2b5614ea..7292b9b4 100644
+--- a/neo/sound/snd_system.cpp
++++ b/neo/sound/snd_system.cpp
+@@ -29,6 +29,46 @@ If you have questions concerning this license or the applicable additional terms
+ #include "sys/platform.h"
+ 
+ #include "sound/snd_local.h"
++#include "framework/Console.h"
++#include "renderer/RenderWorld.h"
++
++// TEST-ONLY: retained diagnostic image, never part of the production patch.
++static int d3LightMode = -1;
++static int d3LightSamples = 0;
++static int d3LightNonzero = 0;
++static float d3LightMax = 0.0f;
++static int d3LightLastRecord = -1000;
++float D3LightDiagnosticAmplitude(float amplitude) {
++	++d3LightSamples;
++	if (amplitude > 0.0f) ++d3LightNonzero;
++	if (amplitude > d3LightMax) d3LightMax = amplitude;
++	return d3LightMode == 0 ? 0.0f : amplitude;
++}
++static void D3LightZero_f(const idCmdArgs &) {
++	d3LightMode = 0;
++	d3LightLastRecord = -1000;
++	console->Close();
++}
++static void D3LightNormal_f(const idCmdArgs &) {
++	d3LightMode = -1;
++	d3LightLastRecord = -1000;
++	console->Close();
++}
++void D3LightDiagnosticView(const renderView_t *view, int health, bool spectating) {
++	const int now = Sys_Milliseconds();
++	if (view && now - d3LightLastRecord >= 500) {
++		d3LightLastRecord = now;
++		common->Printf("D3LIGHT {\"at\":%d,\"clock\":%d,\"mode\":%d,\"health\":%d,\"spectating\":%d,\"samples\":%d,\"nonzero\":%d,\"maxAmplitude\":%.6f,\"origin\":[%.6f,%.6f,%.6f],\"axis\":[%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f],\"fov\":[%.6f,%.6f]}\n",
++			now, soundSystemLocal.GetCurrent44kHzTime(), d3LightMode, health, int(spectating),
++			d3LightSamples, d3LightNonzero, d3LightMax,
++			view->vieworg[0], view->vieworg[1], view->vieworg[2],
++			view->viewaxis[0][0], view->viewaxis[0][1], view->viewaxis[0][2],
++			view->viewaxis[1][0], view->viewaxis[1][1], view->viewaxis[1][2],
++			view->viewaxis[2][0], view->viewaxis[2][1], view->viewaxis[2][2], view->fov_x, view->fov_y);
++	}
++	d3LightSamples = d3LightNonzero = 0;
++	d3LightMax = 0.0f;
++}
+ 
+ idCVar idSoundSystemLocal::s_noSound( "s_noSound", "0", CVAR_SOUND | CVAR_BOOL | CVAR_NOCHEAT, "" );
+ idCVar idSoundSystemLocal::s_device( "s_device", "default", CVAR_SOUND | CVAR_NOCHEAT | CVAR_ARCHIVE, "the audio device to use ('default' for the default audio device)" );
+@@ -440,6 +480,8 @@ void idSoundSystemLocal::Init() {
+ #endif
+ 
+ 	cmdSystem->AddCommand( "listSounds", ListSounds_f, CMD_FL_SOUND, "lists all sounds" );
++	cmdSystem->AddCommand("lightzero", D3LightZero_f, CMD_FL_SOUND, "TEST ONLY: zero material sound amplitude");
++	cmdSystem->AddCommand("lightnormal", D3LightNormal_f, CMD_FL_SOUND, "TEST ONLY: restore native material sound amplitude");
+ 	cmdSystem->AddCommand( "listSoundDecoders", ListSoundDecoders_f, CMD_FL_SOUND, "list active sound decoders" );
+ 	cmdSystem->AddCommand( "reloadSounds", SoundReloadSounds_f, CMD_FL_SOUND|CMD_FL_CHEAT, "reloads all sounds" );
+ 	//cmdSystem->AddCommand( "testSound", TestSound_f, CMD_FL_SOUND | CMD_FL_CHEAT, "tests a sound", idCmdSystem::ArgCompletion_SoundName );

@@ -1,0 +1,62 @@
+diff --git a/vendor/dosbox/src/gui/sdl_mapper.cpp b/vendor/dosbox/src/gui/sdl_mapper.cpp
+index 9d36068..1e24732 100644
+--- a/vendor/dosbox/src/gui/sdl_mapper.cpp
++++ b/vendor/dosbox/src/gui/sdl_mapper.cpp
+@@ -2151,6 +2151,37 @@ static bool MAPPER_LoadBinds(void) {
+ }
+ 
+ void MAPPER_CheckEvent(SDL_Event * event) {
++#if defined(__EMSCRIPTEN__)
++	// The adapter's synthetic keys use SDL 1.2 values. Emscripten's SDL 1
++	// compatibility headers use masked SDL scancodes for non-printable keys.
++	// Native SDL events already carry those values and a nonzero scancode.
++	if ((event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) &&
++	    event->key.keysym.scancode == 0) {
++		const int key = event->key.keysym.sym;
++		if (key >= 282 && key <= 293) {
++			event->key.keysym.sym = (SDLKey)(SDLK_F1 + key - 282);
++		} else {
++			switch (key) {
++			case 273: event->key.keysym.sym = SDLK_UP; break;
++			case 274: event->key.keysym.sym = SDLK_DOWN; break;
++			case 275: event->key.keysym.sym = SDLK_RIGHT; break;
++			case 276: event->key.keysym.sym = SDLK_LEFT; break;
++			case 277: event->key.keysym.sym = SDLK_INSERT; break;
++			case 278: event->key.keysym.sym = SDLK_HOME; break;
++			case 279: event->key.keysym.sym = SDLK_END; break;
++			case 280: event->key.keysym.sym = SDLK_PAGEUP; break;
++			case 281: event->key.keysym.sym = SDLK_PAGEDOWN; break;
++			case 303: event->key.keysym.sym = SDLK_RSHIFT; break;
++			case 304: event->key.keysym.sym = SDLK_LSHIFT; break;
++			case 305: event->key.keysym.sym = SDLK_RCTRL; break;
++			case 306: event->key.keysym.sym = SDLK_LCTRL; break;
++			case 307: event->key.keysym.sym = SDLK_RALT; break;
++			case 308: event->key.keysym.sym = SDLK_LALT; break;
++			default: break;
++			}
++		}
++	}
++#endif
+ 	for (CBindGroup_it it=bindgroups.begin();it!=bindgroups.end();it++) {
+ 		if ((*it)->CheckEvent(event)) return;
+ 	}
+@@ -2394,7 +2425,13 @@ void MAPPER_StartUp(Section * sec) {
+ 
+ 	usescancodes = false;
+ 
+-	if (section->Get_bool("usescancodes")) {
++	// Browser SDL has no X11 scancodes, and its key constants exceed the
++	// SDL 1.2 translation table. Use symbolic bindings even for saved configs.
++	if (section->Get_bool("usescancodes")
++#if defined(__EMSCRIPTEN__)
++	    && false
++#endif
++	) {
+ 		usescancodes=true;
+ 
+ 		/* Note: table has to be tested/updated for various OSs */
+@@ -2509,4 +2546,3 @@ void MAPPER_StartUp(Section * sec) {
+ 	mapper.filename = pp->realpath;
+ 	MAPPER_AddHandler(&MAPPER_Run,MK_f1,MMOD1,"mapper","Mapper");
+ }
+-

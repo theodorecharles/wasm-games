@@ -1,0 +1,16 @@
+{
+  "scope": "Actual native state wrappers/reset and SDK compatibility state, recorded WebGL uniforms; not GPU rendering",
+  "wrappersHash": "87fd2a69438e37fa99c210ba8f8c83eaff452ee4f3ad9720b4e93ea3e4927cf7",
+  "records": [
+    {
+      "negative": false,
+      "output": "{\"stateChecks\":340,\"sdkCompatibilityState\":true,\"nativeWrappers\":true,\"webglSinkOnly\":true}",
+      "log": "WARNING: using emscripten GL emulation. This is a collection of limited workarounds, do not expect it to work.\nWARNING: using emscripten GL emulation unsafe opts. If weirdness happens, try -sGL_UNSAFE_OPTS=0"
+    },
+    {
+      "negative": true,
+      "output": "",
+      "log": "WARNING: using emscripten GL emulation. This is a collection of limited workarounds, do not expect it to work.\nWARNING: using emscripten GL emulation unsafe opts. If weirdness happens, try -sGL_UNSAFE_OPTS=0\nalpha state mismatch: program=1 func=204 ref=0.25"
+    }
+  ]
+}

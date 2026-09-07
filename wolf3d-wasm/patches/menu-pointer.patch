@@ -1,0 +1,168 @@
+diff --git a/wl_menu.cpp b/wl_menu.cpp
+--- a/wl_menu.cpp
++++ b/wl_menu.cpp
+@@ -14,9 +14,21 @@
+     #include <unistd.h>
+ #endif
+ 
++#ifdef WOLF4SDL_WEB
++#include <emscripten/emscripten.h>
++#include "web/menu_pointer.h"
++#endif
+ #include "wl_def.h"
+ #pragma hdrstop
+ 
++#ifdef WOLF4SDL_WEB
++static WolfWebMenuPointer WebMenuPointer;
++extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserMenuPointer(int x, int y, int button, int down)
++{
++    WebMenuPointer.Event(x, y, button, down != 0);
++}
++#endif
++
+ extern int lastgamemusicoffset;
+ extern int numEpisodesMissing;
+ 
+@@ -3270,6 +3282,23 @@
+     lastBlinkTime = GetTimeCount ();
+     IN_ClearKeysDown ();
+ 
++#ifdef WOLF4SDL_WEB
++    WebMenuPointer.Begin();
++    // Menus draw at 320x200 in the upper part of the 320x240 backbuffer.
++    int pointerRight = 312;
++    int pointerRowSpan = 1;
++    if (item_i == &MainItems) pointerRight = MENU_X + MENU_W;
++    else if (item_i == &SndItems) pointerRight = SM_X + SM_W;
++    else if (item_i == &LSItems) pointerRight = LSM_X + LSM_W;
++    else if (item_i == &CtlItems) pointerRight = CTL_X + CTL_W;
++    else if (item_i == &NewItems) pointerRight = NM_X + NM_W;
++#ifndef SPEAR
++    else if (item_i == &NewEitems) {
++        pointerRight = NE_X + NE_W;
++        pointerRowSpan = 2;
++    }
++#endif
++#endif
+ 
+     do
+     {
+@@ -3341,6 +3370,17 @@
+         // GET INPUT
+         //
+         ReadAnyControl (&ci);
++#ifdef WOLF4SDL_WEB
++        const WolfWebMenuAction pointer = WebMenuPointer.Poll(item_i, items, pointerRight, pointerRowSpan);
++        if (pointer.hover >= 0 && pointer.hover != which)
++        {
++            EraseGun (item_i, items, x, y, which);
++            which = pointer.hover;
++            DrawGun (item_i, items, x, &y, which, basey, routine);
++        }
++        if (pointer.activate >= 0) { exit = 1; break; }
++        if (pointer.back) { exit = 2; break; }
++#endif
+         switch (ci.dir)
+         {
+                 ////////////////////////////////////////////////
+@@ -3422,6 +3462,9 @@
+     }
+     while (!exit);
+ 
++#ifdef WOLF4SDL_WEB
++    WebMenuPointer.End();
++#endif
+ 
+     IN_ClearKeysDown ();
+ 
+diff --git a/web/menu_pointer.h b/web/menu_pointer.h
+new file mode 100644
+--- /dev/null
++++ b/web/menu_pointer.h
+@@ -0,0 +1,86 @@
++#ifndef WOLF_WEB_MENU_POINTER_H
++#define WOLF_WEB_MENU_POINTER_H
++
++#include <atomic>
++#include <cstdint>
++
++// Main-thread pointer events cross into the blocking engine worker. A release
++// is latched as one atomic message, so a quick click cannot disappear between
++// native menu polls. A gesture must begin and end on the same enabled row.
++struct WolfWebMenuAction {
++    int hover = -1;
++    int activate = -1;
++    bool back = false;
++};
++
++class WolfWebMenuPointer {
++    std::atomic<bool> enabled{false};
++    std::atomic<uint32_t> generation{0};
++    std::atomic<uint64_t> position{0}, pressed{0};
++    std::atomic<uint64_t> click{0};
++
++    static int Pack(int x, int y) {
++        return x >= 0 && x < 320 && y >= 0 && y < 240 ? (y << 9) | x : -1;
++    }
++
++    template<class Info, class Item>
++    static int Hit(int point, const Info *info, const Item *items, int right, int rowSpan) {
++        if (point < 0) return -1;
++        const int x = point & 511, y = (point >> 9) & 255;
++        if (x < (info->x & ~7) || x >= right || y < info->y) return -1;
++        // Episode titles include a second text line, represented by an empty
++        // spacer item (except the final episode, which has no trailing item).
++        const int row = ((y - info->y) / (13 * rowSpan)) * rowSpan;
++        return row < info->amount && items[row].active ? row : -1;
++    }
++
++public:
++    void Begin() {
++        enabled.store(false);
++        generation.fetch_add(1);
++        position.store(0); pressed.store(0); click.store(0);
++        enabled.store(true);
++    }
++    void End() {
++        enabled.store(false);
++        position.store(0); pressed.store(0); click.store(0);
++    }
++    void Event(int x, int y, int button, bool down) {
++        if (button == -2) { pressed.store(0); click.store(0); return; }
++        if (!enabled.load()) return;
++        const uint64_t version = generation.load();
++        const int point = Pack(x, y);
++        position.store(point < 0 ? 0 : (version << 17) | uint64_t(point));
++        if (button == -1) return;
++        if (button != 0 && button != 2) return;
++        if (down) {
++            pressed.store(point < 0 ? 0 : (version << 19) | uint64_t(point | (button << 17)));
++            return;
++        }
++        const uint64_t start = pressed.exchange(0);
++        if (point < 0 || !start || (start >> 19) != version || ((start >> 17) & 3) != uint64_t(button)) return;
++        const uint64_t message = (version << 36) | (uint64_t(button) << 34) |
++            (uint64_t(start & 131071) << 17) | uint64_t(point);
++        uint64_t empty = 0;
++        click.compare_exchange_strong(empty, message);
++    }
++
++    template<class Info, class Item>
++    WolfWebMenuAction Poll(const Info *info, const Item *items, int right, int rowSpan = 1) {
++        WolfWebMenuAction action;
++        const uint64_t version = generation.load();
++        const uint64_t motion = position.exchange(0);
++        if ((motion >> 17) == version) action.hover = Hit(int(motion & 131071), info, items, right, rowSpan);
++        const uint64_t message = click.exchange(0);
++        if (!message || (message >> 36) != version) return action;
++        const int first = Hit(int((message >> 17) & 131071), info, items, right, rowSpan);
++        const int last = Hit(int(message & 131071), info, items, right, rowSpan);
++        if (((message >> 34) & 3) == 2) action.back = true;
++        else if (first >= 0 && first == last) {
++            action.hover = last;
++            action.activate = last;
++        }
++        return action;
++    }
++};
++#endif

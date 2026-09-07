@@ -2,6 +2,11 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+node "${repo_root}/scripts/test-prey-deferred-media.mjs"
+node "${repo_root}/scripts/test-prey-archive-cache.mjs"
+node "${repo_root}/scripts/test-d3-session-events.mjs"
+node "${repo_root}/scripts/test-d3-disconnect.mjs"
+node "${repo_root}/scripts/test-d3-persistence.mjs"
 work_root="${IDTECH4_WORK_ROOT:-${repo_root}/.work}"
 framework_dir="${WASM_GAME_FRAMEWORK_DIR:-${work_root}/wasm-game-framework}"
 doom_base_web="${work_root}/d3wasm/build-wasm"
@@ -35,6 +40,7 @@ install -m 0644 "${repo_root}/site/wasm-game.json" "${site}/wasm-game.json"
 install -m 0644 "${repo_root}/site/game-adapter.js" "${site}/game-adapter.js"
 
 install -m 0644 "${repo_root}/site/d3-worker.js" "${site}/d3-worker.js"
+install -m 0644 "${repo_root}/site/d3-managed-network.js" "${site}/d3-managed-network.js"
 install -m 0644 "${doom_base_web}/d3wasm.js" "${site}/dhewm3-base.js"
 install -m 0644 "${doom_base_web}/d3wasm.wasm" "${site}/dhewm3-base.wasm"
 install -m 0644 "${doom_roe_web}/d3wasm.js" "${site}/dhewm3-roe.js"
@@ -73,12 +79,16 @@ install -m 0644 "${metadata_dir}/wasm-game-framework.json" "${site}/wasm-game-fr
 
 node --check "${site}/game-adapter.js"
 node --check "${site}/d3-worker.js"
+node --check "${site}/d3-managed-network.js"
 node --check "${site}/q4-worker.js"
 node --check "${site}/prey-worker.js"
 node --check "${site}/dhewm3-base.js"
 node --check "${site}/dhewm3-roe.js"
 node --check "${site}/openQ4-client_wasm32.js"
 node --check "${site}/prey06.js"
+node "${repo_root}/scripts/test-q4-readback.mjs"
+node "${repo_root}/scripts/test-d3-image-accounting.mjs"
+node "${repo_root}/scripts/test-prey-default-images.mjs"
 node -e 'for (const path of process.argv.slice(1)) JSON.parse(fs.readFileSync(path, "utf8"))' \
   "${site}/wasm-game.json" "${site}/wasm-game-data.json" "${site}/baseoq4/mod.json"
 node -e '
@@ -96,6 +106,13 @@ for wasm in \
 done
 node "${repo_root}/scripts/test-wasm-memory.mjs" "${site}"
 node "${repo_root}/scripts/test-renderer-artifacts.mjs"
+node "${repo_root}/scripts/test-q4-legacy-shaders.mjs" "${work_root}/openq4/build/web"
+node "${repo_root}/scripts/test-q4-shader-inventory.mjs" "${site}"
+node "${repo_root}/scripts/test-q4-lighting.mjs" "${site}"
+node "${repo_root}/scripts/test-q4-position.mjs" "${site}"
+node "${repo_root}/scripts/test-q4-border-runtime.mjs"
+node "${repo_root}/scripts/test-q4-border-size.mjs"
+Q4_BORDER_PACKAGE="${site}" node "${repo_root}/scripts/test-q4-border-validation.mjs"
 test "$(md5sum "${site}/baseoq4/pak0.pk4" | awk '{print $1}')" = "17550cb028326cdf1cee440bc5d73d74"
 test "$(md5sum "${site}/baseoq4/pak1.pk4" | awk '{print $1}')" = "c3434e1d28bebdc367d6e50f3b1fda3a"
 test "$(stat -c '%s' "${site}/baseoq4/pak0.pk4")" = "4285437"
@@ -117,6 +134,7 @@ baseoq4/game-sp_wasm32.wasm
 baseoq4/mod.json
 baseoq4/pak0.pk4
 baseoq4/pak1.pk4
+d3-managed-network.js
 d3-worker.js
 dhewm3-base.js
 dhewm3-base.wasm
@@ -147,6 +165,7 @@ test "${actual_files}" = "${expected_files}"
 
 node "${repo_root}/scripts/test-adapter.mjs" "${site}"
 node "${repo_root}/scripts/test-workers.mjs" "${site}"
+node "${repo_root}/scripts/test-q4-device-artifact.mjs" "${site}"
 node "${framework_dir}/scripts/check-game-package.js" "${site}"
 
 printf 'Staged id Tech 4 family site at %s\n' "${site}"

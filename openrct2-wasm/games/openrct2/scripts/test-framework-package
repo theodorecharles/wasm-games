@@ -20,6 +20,12 @@ node --check web/media-transformer.mjs
 bash -n scripts/provision-gog-volume
 node scripts/test-audio-bridge.mjs
 node scripts/test-hot-cache.mjs
+node scripts/test-installation-objects.mjs
+OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-bundled-object-stamps.mjs
+OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-rct1-sprite-path.mjs
+OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-construction-ghost.mjs
+OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-browser-dialog.mjs
+OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-ride-music-abi.mjs
 node "$framework_root/scripts/check-game-package.js" "$site_root"
 wasm-validate --enable-threads "$build_root/openrct2.wasm"
 

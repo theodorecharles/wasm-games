@@ -1,0 +1,201 @@
+{
+  "scope": "Exact native declaration-registration/reparse block, folder discovery methods, image/sound BeginLevelLoad and ActuallyLoadImage. Fixture supplies tokenized definitions, in-memory file listings and CPU image/sample loaders; not the native lexer, ZIP reader, GPU, mixer or full-engine gameplay. Legacy refresh uses its original Reload(true), which only visits known files. Desktop control preserves original fallback behavior.",
+  "productionSHA256": "7c99afffff5d5262923197c10ce877528cf3620629fb3aeee56c177b9b2bd8f8",
+  "hasRefresh": true,
+  "results": [
+    {
+      "browser": true,
+      "cases": [
+        {
+          "label": "new sound file discovered",
+          "passed": true
+        },
+        {
+          "label": "registered folder list stays unique",
+          "passed": true
+        },
+        {
+          "label": "existing explicit identity retained",
+          "passed": true
+        },
+        {
+          "label": "implicit identity retained",
+          "passed": true
+        },
+        {
+          "label": "implicit default adopted and reparsed",
+          "passed": true
+        },
+        {
+          "label": "direct implicit adoption",
+          "passed": true
+        },
+        {
+          "label": "adoption links into owning file",
+          "passed": true
+        },
+        {
+          "label": "explicit cross-file duplicate rejected",
+          "passed": true
+        },
+        {
+          "label": "new explicit definition accepted",
+          "passed": true
+        },
+        {
+          "label": "same-file duplicate rejected",
+          "passed": true
+        },
+        {
+          "label": "existing explicit reload reparses",
+          "passed": true
+        },
+        {
+          "label": "reload does not cycle file list",
+          "passed": true
+        },
+        {
+          "label": "fallback image purged for retry",
+          "passed": true
+        },
+        {
+          "label": "valid and generated images retained",
+          "passed": true
+        },
+        {
+          "label": "image references reset",
+          "passed": true
+        },
+        {
+          "label": "successful 2D retry clears default flag",
+          "passed": true
+        },
+        {
+          "label": "successful cube retry clears default flag",
+          "passed": true
+        },
+        {
+          "label": "still missing image remains default",
+          "passed": true
+        },
+        {
+          "label": "purge-all behavior retained",
+          "passed": true
+        },
+        {
+          "label": "fallback sample purged for retry",
+          "passed": true
+        },
+        {
+          "label": "real sample retained",
+          "passed": true
+        },
+        {
+          "label": "sample references reset and allocator maintained",
+          "passed": true
+        },
+        {
+          "label": "sample purge-all behavior retained",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "browser": false,
+      "cases": [
+        {
+          "label": "new sound file discovered",
+          "passed": true
+        },
+        {
+          "label": "registered folder list stays unique",
+          "passed": true
+        },
+        {
+          "label": "existing explicit identity retained",
+          "passed": true
+        },
+        {
+          "label": "implicit identity retained",
+          "passed": true
+        },
+        {
+          "label": "implicit default adopted and reparsed",
+          "passed": true
+        },
+        {
+          "label": "direct implicit adoption",
+          "passed": true
+        },
+        {
+          "label": "adoption links into owning file",
+          "passed": true
+        },
+        {
+          "label": "explicit cross-file duplicate rejected",
+          "passed": true
+        },
+        {
+          "label": "new explicit definition accepted",
+          "passed": true
+        },
+        {
+          "label": "same-file duplicate rejected",
+          "passed": true
+        },
+        {
+          "label": "existing explicit reload reparses",
+          "passed": true
+        },
+        {
+          "label": "reload does not cycle file list",
+          "passed": true
+        },
+        {
+          "label": "fallback image purged for retry",
+          "passed": true
+        },
+        {
+          "label": "valid and generated images retained",
+          "passed": true
+        },
+        {
+          "label": "image references reset",
+          "passed": true
+        },
+        {
+          "label": "successful 2D retry clears default flag",
+          "passed": true
+        },
+        {
+          "label": "successful cube retry clears default flag",
+          "passed": true
+        },
+        {
+          "label": "still missing image remains default",
+          "passed": true
+        },
+        {
+          "label": "purge-all behavior retained",
+          "passed": true
+        },
+        {
+          "label": "fallback sample purged for retry",
+          "passed": true
+        },
+        {
+          "label": "real sample retained",
+          "passed": true
+        },
+        {
+          "label": "sample references reset and allocator maintained",
+          "passed": true
+        },
+        {
+          "label": "sample purge-all behavior retained",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

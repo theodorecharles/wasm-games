@@ -1,0 +1,38 @@
+{
+  "scope": "Adapter-only re-lock correction, unchanged native state engine. Complete staging passed; six packaged artifacts matched. Chrome acceptance recorded separately; no live service deployment.",
+  "patchSHA256": "2da663e55acdc39fec4342e50a307b686294ceb7aec54c50f3e5ff70bc6dda32",
+  "packaged": {
+    "game-adapter.js": "2468e117eff3d03d79d73faa0c75bdfae726248314158f3a8aecbcd652ec7659",
+    "openQ4-client_wasm32.js": "cc6dc74541294bc8d65f26694466c4827e4a2ba760425e874d7e4bb76aa05e2f",
+    "openQ4-client_wasm32.wasm": "4333d74fb4588dfb12396cad5f17856261f62232bce2f302408eca2577272ad2",
+    "q4-worker.js": "6f70c4dc7d513e29a52a25f2c1d0d28a3e84b717f56e51f10a1ab3c9ad1268b1",
+    "baseoq4/game-sp_wasm32.wasm": "fd06653d691281646875bba266fb28e1556078200572780378d6a3a56c0416a7",
+    "baseoq4/game-mp_wasm32.wasm": "802c0ddb06592f16e92fe854fd26ac31c6454de15ed57c700324f6a30226baca"
+  },
+  "image": {
+    "tag": "local/idtech4-wasm:quake4-capture-relock-candidate",
+    "id": "sha256:580da0e1e630a63fbb025a81a802e180157e0d5f65b412a5520ed091a40a85ff",
+    "container": "434ef54c45e4210203b1f8288a20d18865f50f006e2f068f79d86e26604b01f4",
+    "ports": {
+      "8088/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32875"
+        }
+      ]
+    }
+  },
+  "checks": {
+    "adapterVariants": 6,
+    "initialAdapterNegative": true,
+    "stageSite": "passed",
+    "nativeRebuilt": false,
+    "nativeStateCasesRerun": 24,
+    "controlFixtureSyntax": "passed"
+  },
+  "retainedPrevious": {
+    "image": "sha256:17dfe3132f8fc2caed7b15c9bdaa4c9a4772cb22281889425655ed8e0237c18e",
+    "container": "940a9f282418b63effeaa7f646d67432ab439120a30461271496e6f750df674d",
+    "stopped": true
+  }
+}

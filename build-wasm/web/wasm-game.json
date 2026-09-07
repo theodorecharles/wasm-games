@@ -2,7 +2,7 @@
   "id": "build-family",
   "title": "Build Engine WASM Suite",
   "kicker": "Native NBlood and EDuke32 source",
-  "description": "Choose Blood or Duke Nukem 3D and launch the classic Build Engine experience.",
+  "description": "Choose Blood or Duke Nukem 3D and launch the Build Engine experience.",
   "adapter": "/game-adapter.js",
   "preferencesNamespace": "build-family",
   "defaultVariant": "blood",
@@ -20,7 +20,7 @@
       "menuCursor": "none",
       "kicker": "Build Engine · NBlood native source",
       "engine": "NBlood / EDuke32 GPL source",
-      "description": "Classic Blood at fixed 800×600 with full pointer-lock mouse look.",
+      "description": "Blood with Classic or widescreen OpenGL Modernized rendering and full pointer-lock mouse look.",
       "loadingTitle": "Starting Blood…",
       "icon": "/blood.ico",
       "iconPixelated": true,
@@ -31,7 +31,7 @@
         "id": "/apps/build/blood",
         "name": "Blood",
         "shortName": "Blood",
-        "description": "Classic native-source Blood in the Build Engine WASM suite.",
+        "description": "Native-source Blood with Classic and Modernized rendering.",
         "themeColor": "#9d1717",
         "backgroundColor": "#000000",
         "icons": [
@@ -45,12 +45,13 @@
       "pixelated": true,
       "nativeManaged": false,
       "syncBackbuffer": false,
-      "graphics": false,
-      "advanced": false,
+      "graphics": true,
+      "advanced": true,
       "fps": false,
       "dynamicQuality": false,
       "profiles": [
-        { "value": "classic", "label": "Classic — 800×600 software renderer" }
+        { "value": "classic", "label": "Classic — 800×600 software renderer" },
+        { "value": "modernized", "label": "Modernized — 1280×720 OpenGL renderer" }
       ],
       "defaultProfile": "classic",
       "persistence": {
@@ -74,7 +75,7 @@
       "menuCursor": "native",
       "kicker": "Build Engine · EDuke32 native source",
       "engine": "EDuke32 GPL source",
-      "description": "Classic Duke Nukem 3D at fixed 800×600 with full pointer-lock mouse look.",
+      "description": "Duke Nukem 3D with Classic or widescreen OpenGL Modernized rendering and full pointer-lock mouse look.",
       "loadingTitle": "Starting Duke Nukem 3D…",
       "icon": "/duke3d.ico",
       "iconPixelated": true,
@@ -85,7 +86,7 @@
         "id": "/apps/build/duke3d",
         "name": "Duke Nukem 3D",
         "shortName": "Duke 3D",
-        "description": "Classic native-source Duke Nukem 3D in the Build Engine WASM suite.",
+        "description": "Native-source Duke Nukem 3D with Classic and Modernized rendering.",
         "themeColor": "#b42318",
         "backgroundColor": "#000000",
         "icons": [
@@ -99,12 +100,13 @@
       "pixelated": true,
       "nativeManaged": false,
       "syncBackbuffer": false,
-      "graphics": false,
-      "advanced": false,
+      "graphics": true,
+      "advanced": true,
       "fps": false,
       "dynamicQuality": false,
       "profiles": [
-        { "value": "classic", "label": "Classic — 800×600 software renderer" }
+        { "value": "classic", "label": "Classic — 800×600 software renderer" },
+        { "value": "modernized", "label": "Modernized — 1280×720 OpenGL renderer" }
       ],
       "defaultProfile": "classic",
       "persistence": {

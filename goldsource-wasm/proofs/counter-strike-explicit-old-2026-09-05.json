@@ -1,0 +1,18 @@
+{
+  "requestedUrl": "http://127.0.0.1:8017/?game=counter-strike&server=127.0.0.1:4392",
+  "selectedHostStopped": true,
+  "observed": {
+    "dataset": {
+      "goldsourceIdentity": "pending",
+      "goldsourceState": "menu",
+      "shellDataReady": "true",
+      "shellEngineState": "menu",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "browser",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "counter-strike"
+    },
+    "log": "[20:47:09] Console initialized.\n[20:47:09] Adding directory: /rodir/\n[20:47:09] Adding directory: ./\n[20:47:09] FS_AddGameHierarchy( valve )\n[20:47:09] Adding directory: /rodir/valve/\n[20:47:09] Adding directory: valve/\n[20:47:09] FS_AddGameHierarchy( cstrike )\n[20:47:09] Adding directory: /rodir/cstrike/\n[20:47:09] Adding directory: cstrike/downloaded/\n[20:47:09] Adding directory: cstrike/\n[20:47:09] Adding directory: cstrike/custom/\n[20:47:09] Touch_Init()\nError: could not load dynamic lib: /persistent/goldsource/counter-strike/filesystem_stdio.wasm\nError: ./artifacts/filesystem_stdio-VW4IQIS5.wasm: file not found, and synchronous loading of external files is not available\n[20:47:09] EXT: MOVETYPE_STEP Position History Based Lerping is enabled\n[20:47:09] Dll loaded for game \"Counter-Strike\"\n[20:47:09] ReGameDLL version: 5.30.0.0-dev\n[20:47:09] Loading renderer: webgl2 -> libref_webgl2.wasm\n[20:47:09] Trying safe opengl mode 0\n[20:47:09] bpp 24\n[20:47:09] Note: GL2_ShimInit: missing BufferStorage\n[20:47:09] Note: GL2_ShimInit: missing MapBufferRange, disabling incremental rendering\n[20:47:09] Note: GL2_ShimInit: config: ASYNC VAO CYCLE=4096 VER=310\n[20:47:09] \n[20:47:09] GL_VENDOR: WebKit\n[20:47:09] GL_RENDERER: WebKit WebGL\n[20:47:09] GL_VERSION: OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))\n[20:47:09] GL_MAX_TEXTURE_SIZE: 16384\n[20:47:09] GL_MAX_TEXTURE_UNITS_ARB: 32\n[20:47:09] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16.0\n[20:47:09] \n[20:47:09] MODE: 1424x1113\n[20:47:09] \n[20:47:09] Color 24 bits, Alpha 0 bits, Depth 24 bits, Stencil 8 bits\n[20:47:09] OpenGL Error: GL_INVALID_ENUM while uploading *default [2D]\n[20:47:09] UI_ApplyCustomColors: colors.lst not found\n[20:47:09] AVI: Not supported\n[20:47:09] Using SDL audio driver: emscripten @ 44100 Hz\n[20:47:10] Localize_AddToDict( resource/mainui_english.txt ): couldn't open file. Some strings will not be localized!.\n[20:47:10] Init: CS16Client ver. 3645 initialized.\n[20:47:10] execing valve.rc\n[20:47:10] Warning: Unknown command \"s_refgain\"\n[20:47:10] Warning: Unknown command \"s_refdelay\"\n[20:47:10] Warning: Unknown command \"s_occfactor\"\n[20:47:10] Warning: Unknown command \"s_verbwet\"\n[20:47:10] Warning: Unknown command \"s_distance\"\n[20:47:10] execing language.cfg\n[20:47:10] Warning: Unknown command \"sv_language\"\n[20:47:10] execing controller.cfg\n[20:47:10] Warning: Unknown command \"joyadvanced\"\n[20:47:10] Warning: Unknown command \"joyadvaxisx\"\n[20:47:10] Warning: Unknown command \"joyadvaxisy\"\n[20:47:10] Warning: Unknown command \"joyadvaxisr\"\n[20:47:10] Warning: Unknown command \"joyadvaxisz\"\n[20:47:10] Warning: Unknown command \"joysidesensitivity\"\n[20:47:10] Warning: Unknown command \"joyadvancedupdate\"\n[20:47:10] Error: Couldn't load media/valve.webm from packfile. Please extract it\n[20:47:10] Warning: Unknown command \"m_filter\"\n[20:47:10] Localize_AddToDict( resource/mainui_english.txt ): couldn't open file. Some strings will not be localized!.\n"
+  }
+}

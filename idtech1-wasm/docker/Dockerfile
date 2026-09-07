@@ -44,12 +44,15 @@ COPY --from=framework /opt/wasm-game-framework/ /opt/wasm-game-framework/
 COPY game-site/ /opt/game-site/
 COPY server/ /opt/idtech1-server/
 COPY zandronum/ /opt/zandronum/
+COPY classic-bots/ /opt/classic-bots/
 
 RUN cd /opt/idtech1-server && npm ci --omit=dev --ignore-scripts && \
     test "$(node -p "require('/opt/wasm-game-framework/package.json').version")" = "0.9.6" && \
+    grep -Fq 'setMenuCursor(mode)' /opt/shared-shell/wasm-game-framework.js && \
     test -x /usr/games/chocolate-server && \
     test "$(/usr/games/chocolate-server --version)" = "Chocolate Doom 3.1.1" && \
-    test -x /opt/zandronum/zandronum-server
+    test -x /opt/zandronum/zandronum-server && \
+    cd /opt/classic-bots && sha256sum -c binaries.sha256
 
 ARG GAME_VARIANT=suite
 ENV WASM_GAME_VARIANT=${GAME_VARIANT} \
@@ -57,6 +60,7 @@ ENV WASM_GAME_VARIANT=${GAME_VARIANT} \
     WASM_GAME_SITE_ROOT=/opt/game-site \
     WASM_GAME_FRAMEWORK_ROOT=/opt/wasm-game-framework \
     IDTECH1_CLASSIC_SERVER=/usr/games/chocolate-server \
+    IDTECH1_CLASSIC_BOT_ROOT=/opt/classic-bots \
     IDTECH1_ZANDRONUM_SERVER=/opt/zandronum/zandronum-server \
     IDTECH1_ZANDRONUM_ROOT=/opt/zandronum \
     KEEP_ALIVE=false \

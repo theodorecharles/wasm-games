@@ -1,0 +1,385 @@
+{
+  "scope": "Exact production image format/StorageSize functions with image-field and throwing-error surroundings. Covers the GL_RGBA selected by real 2D/cube uploads, legacy formats, invalid-format rejection and unloaded images. This is CPU accounting, not physical GPU allocation or full engine acceptance.",
+  "results": [
+    {
+      "engine": "d3wasm",
+      "sourceSHA256": "8900e2d1b8fac5861de9b063082ce95d80186596d49caa5fdc6d2d29d7c9ebef",
+      "cases": [
+        {
+          "label": "bits",
+          "format": 1,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 1,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 1,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 2,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 2,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 2,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 3,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 3,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 3,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 4,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 4,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 4,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 6408,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 6408,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 6408,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 32854,
+          "expected": 16,
+          "actual": 16,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 32854,
+          "expected": 10922,
+          "actual": 10922,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 32854,
+          "expected": 65536,
+          "actual": 65536,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 32855,
+          "expected": 16,
+          "actual": 16,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 32855,
+          "expected": 10922,
+          "actual": 10922,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 32855,
+          "expected": 65536,
+          "actual": 65536,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "invalid-format-still-rejected",
+          "format": 0,
+          "expected": 0,
+          "actual": -1,
+          "threw": true,
+          "passed": true
+        },
+        {
+          "label": "unloaded-invalid-format",
+          "format": 0,
+          "expected": 0,
+          "actual": 0,
+          "threw": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "engine": "prey-d3wasm",
+      "sourceSHA256": "8900e2d1b8fac5861de9b063082ce95d80186596d49caa5fdc6d2d29d7c9ebef",
+      "cases": [
+        {
+          "label": "bits",
+          "format": 1,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 1,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 1,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 2,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 2,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 2,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 3,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 3,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 3,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 4,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 4,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 4,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 6408,
+          "expected": 32,
+          "actual": 32,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 6408,
+          "expected": 21845,
+          "actual": 21845,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 6408,
+          "expected": 131072,
+          "actual": 131072,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 32854,
+          "expected": 16,
+          "actual": 16,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 32854,
+          "expected": 10922,
+          "actual": 10922,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 32854,
+          "expected": 65536,
+          "actual": 65536,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "bits",
+          "format": 32855,
+          "expected": 16,
+          "actual": 16,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "2d-64x64",
+          "format": 32855,
+          "expected": 10922,
+          "actual": 10922,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "cube-64x64",
+          "format": 32855,
+          "expected": 65536,
+          "actual": 65536,
+          "threw": false,
+          "passed": true
+        },
+        {
+          "label": "invalid-format-still-rejected",
+          "format": 0,
+          "expected": 0,
+          "actual": -1,
+          "threw": true,
+          "passed": true
+        },
+        {
+          "label": "unloaded-invalid-format",
+          "format": 0,
+          "expected": 0,
+          "actual": 0,
+          "threw": false,
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

@@ -9,6 +9,8 @@ if [[ -n "$namespace" ]]; then
     namespace="${namespace%/}/"
 fi
 
+"$repo_dir/scripts/test-web.sh"
+export WOLF3D_SKIP_BUILD=1
 "$repo_dir/scripts/build-image.sh" "${namespace}wolf3d-wasm:${tag}" wolf3d
 "$repo_dir/scripts/build-image.sh" "${namespace}spear-wasm:${tag}" spear
 

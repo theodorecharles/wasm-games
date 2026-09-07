@@ -1,0 +1,37 @@
+diff --git a/source/build/src/polymost.cpp b/source/build/src/polymost.cpp
+--- a/source/build/src/polymost.cpp
++++ b/source/build/src/polymost.cpp
+@@ -1766,6 +1766,25 @@ static void Polymost_SendTexToDriver(int32_t const doalloc,
+     }
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++    // WebGL accepts RGBA bytes, not desktop BGRA packed pixels. Keep the
++    // caller's buffer unchanged: uploadtexture still needs it for mipmaps.
++    coltype *rgba = nullptr;
++    coltype const *uploadPic = pic;
++    if (pic && texfmt == GL_BGRA)
++    {
++        size_t const count = (size_t)siz.x * siz.y;
++        rgba = (coltype *)Xmalloc(count * sizeof(coltype));
++        for (size_t i = 0; i < count; ++i)
++            rgba[i] = { pic[i].b, pic[i].g, pic[i].r, pic[i].a };
++        uploadPic = rgba;
++    }
++    if (doalloc & 1)
++        glTexImage2D(GL_TEXTURE_2D, level, intexfmt, siz.x,siz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, uploadPic);
++    else
++        glTexSubImage2D(GL_TEXTURE_2D, level, 0,0, siz.x,siz.y, GL_RGBA, GL_UNSIGNED_BYTE, uploadPic);
++    Xfree(rgba);
++#else
+ #if B_BIG_ENDIAN
+     GLenum type = GL_UNSIGNED_INT_8_8_8_8;
+ #else
+@@ -1776,6 +1795,7 @@ static void Polymost_SendTexToDriver(int32_t const doalloc,
+         glTexImage2D(GL_TEXTURE_2D, level, intexfmt, siz.x,siz.y, 0, texfmt, type, pic);
+     else
+         glTexSubImage2D(GL_TEXTURE_2D, level, 0,0, siz.x,siz.y, texfmt, type, pic);
++#endif
+ }
+ 
+ void uploadtexture(int32_t doalloc, vec2_t siz, int32_t texfmt,

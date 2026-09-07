@@ -1,0 +1,51 @@
+{
+  "scope": "Production NPOT detection/coordinate calculation and translated shaders through GLES pixel readback, not whole-game acceptance",
+  "hashes": {
+    "capability": "163d2f74cceb0a006025ac0d8626be73bf2b9fa4c9e6e20db00a1ac5643ef9f7",
+    "coordinates": "ba0e234a1cbd52b411b38f2ff508b3823242c5dfb05f7f23b24f96074296308a",
+    "vertex": "70b749e37c0110f36637c11f374d3af18d3decb9a3b0933add181c21c7be1619",
+    "fragment": "e86780e124f100fc863dda915a337e041ad94f1ed13888a8951bfd6b668e36c1"
+  },
+  "records": [
+    {
+      "variant": "browser",
+      "mode": "",
+      "expectedFailure": false,
+      "precisionLoss": false,
+      "output": "{\"capabilityChecks\":9,\"renderCases\":18,\"pixelChecks\":39960,\"renderer\":\"llvmpipe (LLVM 21.1.8, 256 bits)\"}",
+      "log": ""
+    },
+    {
+      "variant": "old-detection",
+      "mode": "",
+      "expectedFailure": true,
+      "precisionLoss": false,
+      "output": "",
+      "log": "NPOT capability mismatch"
+    },
+    {
+      "variant": "old-detection",
+      "mode": "render-only",
+      "expectedFailure": true,
+      "precisionLoss": false,
+      "output": "",
+      "log": "NPOT pixel mismatch: 5x7 atlas=0 byte=4 got=1 expected=12"
+    },
+    {
+      "variant": "old-sampler-precision",
+      "mode": "",
+      "expectedFailure": false,
+      "precisionLoss": false,
+      "output": "{\"capabilityChecks\":9,\"renderCases\":18,\"pixelChecks\":39960,\"renderer\":\"llvmpipe (LLVM 21.1.8, 256 bits)\"}",
+      "log": ""
+    },
+    {
+      "variant": "desktop",
+      "mode": "caps-only",
+      "expectedFailure": false,
+      "precisionLoss": false,
+      "output": "{\"capabilityChecks\":9,\"desktopPreserved\":true}",
+      "log": ""
+    }
+  ]
+}

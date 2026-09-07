@@ -20,10 +20,15 @@
     "repository": "https://github.com/theodorecharles/rtcw-wasm.git",
     "upstream": "https://github.com/iortcw/iortcw.git",
     "commit": "438e7d413b5f7277187c35b032eb0ef9093ae778",
-    "downstreamCommit": "e9782a8dcef5cf6b37f60713f7add55025d72a4e",
-    "downstreamTree": "256dd10dde2e7d7418bfa0d4c8c0caa570131577",
+    "downstreamCommit": "18c6ad4064e2fe83394ecfc488b75369e52953ed",
+    "downstreamTree": "6bad905a59f18b0d911ebdd9db3bdaed0cc27330",
     "downstreamCommitterName": "Ted Charles",
     "downstreamCommitterEmail": "me@tedcharles.net"
+  },
+  "rtcwGl4es": {
+    "repository": "https://github.com/ptitSeb/gl4es.git",
+    "commit": "535c4b21a18a38fe96b7dbe97add39ae04cdb0ac",
+    "reason": "Last revision before aa3e9dd broke negative viewport/scissor cache updates used by RTCW's 3D menus."
   },
   "wolfet": {
     "engineRepository": "https://github.com/theodorecharles/etlegacy.git",

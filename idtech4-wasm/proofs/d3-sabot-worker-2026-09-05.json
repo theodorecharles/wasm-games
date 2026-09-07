@@ -1,0 +1,15 @@
+{
+  "scope": "Exact candidate worker executed in a VM with the real pinned bot archive and real SHA-256. Tests MP-only mounting, SP/RoE isolation and fail-closed asset validation; not a renderer or full campaign test.",
+  "workerSHA256": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715",
+  "checks": [
+    "doom3-mp: exact mount/connect/persistence profile",
+    "doom3: exact mount/connect/persistence profile",
+    "roe: exact mount/connect/persistence profile",
+    "404: asset failure prevents engine startup",
+    "network: asset failure prevents engine startup",
+    "size: asset failure prevents engine startup",
+    "checksum: asset failure prevents engine startup",
+    "managed readiness is required before bot fetch"
+  ],
+  "passed": true
+}

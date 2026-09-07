@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "image": "sha256:5bec163905562b4455349e92c774eab83bb28c219d45a0bf2d4567b15f3cb0be",
+  "container": "dffaf24a3d363bc16b984af7bff64ac0c5864335459e79cc69e166ff272cf26e",
+  "previousImage": "sha256:408d66793b0f11c9a3a327ef41c0841800a27e468b3417e46e62384055cd110d",
+  "ready": [
+    "doom",
+    "doom2",
+    "tnt",
+    "plutonia",
+    "heretic",
+    "hexen",
+    "chex"
+  ],
+  "hashes": {
+    "/game-adapter.js": "472c5e296497c077049b45fd960390b08a95d7c46cd47b9e7095d632c3d9959c",
+    "/dist/zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+    "/dist/zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+    "/dist/zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b",
+    "/THIRD-PARTY-AUDIO.txt": "d1a869fe60d6bf923aaf2dc0093e95b61a8f2d037a1184e3135dcc79ab61e3d7",
+    "/dist/dr-libs-LICENSE.txt": "dd1c647e6f767f8ff4b2dfae0fed314726600a01e0cf1ef556afddd5fa96ff15",
+    "/dist/vorbis-LICENSE.txt": "ec1815db59fcd302846df949d7424876cb2e2dc5ed1606c5fb0b36787b1cf43a",
+    "/dist/ogg-LICENSE.txt": "d2ab5758336489da61c12cc5bb757da5339c4ae9001f9bb0562b4370249af814",
+    "/shared-shell/wasm-game-framework.js": "147c96b99f8db117a2b69dd71adadd027250f377ff23959f1e4404f96e96d0cf"
+  },
+  "cache": {
+    "/game-adapter.js": "no-cache",
+    "/dist/zandronum.js": "no-cache",
+    "/dist/zandronum.wasm": "no-cache",
+    "/dist/zandronum.pk3": "no-cache",
+    "/THIRD-PARTY-AUDIO.txt": "no-cache",
+    "/dist/dr-libs-LICENSE.txt": "no-cache",
+    "/dist/vorbis-LICENSE.txt": "no-cache",
+    "/dist/ogg-LICENSE.txt": "no-cache",
+    "/shared-shell/wasm-game-framework.js": "no-cache"
+  },
+  "nativeCasesMatchingLive": 25,
+  "privateDataStatus": 404,
+  "preservedBindsPortsRestart": true,
+  "otherContainersPreserved": 31,
+  "changedContainers": [
+    "wasm-idtech1"
+  ],
+  "imageAudit": {
+    "beforeFiles": 54,
+    "afterFiles": 58,
+    "changedFiles": [
+      "/opt/game-site/dist/zandronum.js",
+      "/opt/game-site/dist/zandronum.wasm"
+    ],
+    "addedFiles": [
+      "/opt/game-site/THIRD-PARTY-AUDIO.txt",
+      "/opt/game-site/dist/dr-libs-LICENSE.txt",
+      "/opt/game-site/dist/ogg-LICENSE.txt",
+      "/opt/game-site/dist/vorbis-LICENSE.txt"
+    ],
+    "removedFiles": []
+  },
+  "serverState": "sleeping",
+  "scope": "live HTTP/artifact/data-boundary/container audit; no Chrome or audible acceptance"
+}

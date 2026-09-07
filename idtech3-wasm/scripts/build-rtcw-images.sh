@@ -14,7 +14,8 @@ RTCW_SOURCE_COMMIT="$(node -p "require('$ROOT/sources.lock.json').rtcw.downstrea
 sh "$ROOT/scripts/prepare-source.sh" rtcw
 sh "$ROOT/scripts/fetch-rtcw-omnibot.sh"
 python3 "$ROOT/scripts/pack-rtcw-menus.py"
-"$SOURCE/scripts/build-web-sp.sh"
+GL4ES_PATH="$(bash "$ROOT/scripts/build-rtcw-gl4es.sh")" \
+  "$SOURCE/scripts/build-web-sp.sh"
 "$SOURCE/scripts/build-web-mp.sh"
 if [ -d "$OUTPUT" ]; then
   find "$OUTPUT" -mindepth 1 -depth -delete
@@ -23,6 +24,9 @@ mkdir -p "$OUTPUT"
 cp "$ROOT/games/rtcw/site/wasm-game.json" "$ROOT/games/rtcw/site/wasm-game-data.json" \
   "$ROOT/games/rtcw/site/framework-install.json" "$ROOT/games/rtcw/site/game-adapter.js" "$OUTPUT/"
 cp -a "$ROOT/games/rtcw/site/menus" "$OUTPUT/menus"
+mkdir -p "$OUTPUT/licenses"
+install -m 0644 "$SOURCE_ROOT/gl4es/LICENSE" "$OUTPUT/licenses/GL4ES.txt"
+cp "$ROOT/games/rtcw/site/THIRD-PARTY-NOTICES.txt" "$OUTPUT/"
 cp "$SOURCE/SP/misc/wolf.svg" "$OUTPUT/rtcw.svg"
 cp "$SOURCE/SP/misc/wolf512.png" "$OUTPUT/rtcw-512.png"
 install -m 0644 "$SOURCE/web/sp/client/sp/iowolfsp.js" "$OUTPUT/iowolfsp.js"

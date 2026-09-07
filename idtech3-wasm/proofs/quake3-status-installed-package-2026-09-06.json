@@ -1,0 +1,105 @@
+{
+  "observedAt": "2026-09-06T08:43:32.251Z",
+  "services": {
+    "baseline": {
+      "id": "83dea6db176a473bb20ee335e2db0b606ea3024bd97cc16a032e01f06dd7edaf",
+      "image": "sha256:ff911b81783f37cee202166deee52e0ec7d6fa40cf0f171dbbb886b8f736b7cd",
+      "startedAt": "2026-09-04T19:51:57.852773313Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    "candidate": {
+      "id": "dcbd0905fb9f0cdd5e67778ddf1745fee5f4d60619ce5d118a75e9ca0d54d946",
+      "image": "sha256:ea73d1bb7a5c7fae6e0a96101232f28dd8b56b7f1e19e7faeb1ab210d7c922cc",
+      "startedAt": "2026-09-06T06:02:55.857533742Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    "installed": {
+      "id": "2cc041e8dac3860e6e0019796d24a4842c498c8479f54fc5f93d30fcc2069388",
+      "image": "sha256:ea73d1bb7a5c7fae6e0a96101232f28dd8b56b7f1e19e7faeb1ab210d7c922cc",
+      "startedAt": "2026-09-06T08:36:57.100329253Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/quake3",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    }
+  },
+  "filesCompared": 53,
+  "unchangedFiles": 52,
+  "changed": [
+    {
+      "file": "/opt/game-site/game-adapter.js",
+      "before": {
+        "bytes": 24192,
+        "sha256": "b2e7650e85df49b0fbdd7bbf497d19b1c606c0ac7eea379860d6d9060a3b3d41"
+      },
+      "after": {
+        "bytes": 24489,
+        "sha256": "32af57eb6bb7901552d89340d3edf3fb2251295894dc8319da5b92676f443f82"
+      }
+    }
+  ],
+  "http": [
+    {
+      "relative": "framework-install.json",
+      "sha256": "eb9ff57711c2aeaf270979ea4e608cf8872153ea3698050215c0d3bcce840bc1"
+    },
+    {
+      "relative": "game-adapter.js",
+      "sha256": "32af57eb6bb7901552d89340d3edf3fb2251295894dc8319da5b92676f443f82"
+    },
+    {
+      "relative": "ioquake3.js",
+      "sha256": "2228d8240d4c4a1b4bd99b91a4b26330a0a5604427c1f724aaeac2ae256f0709"
+    },
+    {
+      "relative": "pwa-512.png",
+      "sha256": "cc2dc2c2baaa52cedf1d5e75dece2de62d860736faef98b299d516d615bcf9da"
+    },
+    {
+      "relative": "quake3-background.png",
+      "sha256": "8aa3a8897c1f79f717569dc58b78c4e244fd49b6bec8d9d830cbadb26447fbd4"
+    },
+    {
+      "relative": "quake3.ico",
+      "sha256": "ae0424bed40bb8415e4c1c0400b981cfe1535db27673ef141a3034683727df71"
+    },
+    {
+      "relative": "quake3.svg",
+      "sha256": "532a53f7759f6e42eadd1b92f5892ecf3dac7b654c75dd61f51bff1df6cb5c3a"
+    },
+    {
+      "relative": "qvm/cgame.qvm",
+      "sha256": "c24653ae52061777f6ca81bedb00e085b2f46ec3316c09bfda848c53c10f324f"
+    },
+    {
+      "relative": "qvm/ui.qvm",
+      "sha256": "69d1c982929411c2015a9cfa8f25435a500acf8151fd27cfcb6ffac68ce706d2"
+    },
+    {
+      "relative": "wasm-game-data.json",
+      "sha256": "4eb0051c672920cbb93eed28179c5f90e64a9f8ef9f574a6efa11f922f3646ea"
+    },
+    {
+      "relative": "wasm-game.json",
+      "sha256": "806b934b64a5b1c1cb2f37237d92435e4cb6bf701121a47347ed8406e4ff1198"
+    }
+  ]
+}

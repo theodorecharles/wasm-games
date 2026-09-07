@@ -1,0 +1,157 @@
+{
+  "observedAt": "2026-09-06T13:20:52.675Z",
+  "disposition": "isolated controls candidate; not installed",
+  "candidate": {
+    "name": "dosbox-wasd-v3-chrome-proof-20260906",
+    "image": "sha256:f27cffdaa831c1e8d2d45cf3a3cfe0d417f56dc4fa031170d17129c010c658c0",
+    "origin": "http://127.0.0.1:32956",
+    "readOnlyRoot": true,
+    "readOnlyData": true
+  },
+  "filesCompared": 27,
+  "unchangedFiles": 25,
+  "changed": [
+    {
+      "file": "/opt/game-site/game-adapter.js",
+      "before": {
+        "bytes": 13421,
+        "sha256": "545c4e01cd52f897f508773a43d8d796a6521567c0ddfb2a1f74c69bb59d83b7"
+      },
+      "after": {
+        "bytes": 21325,
+        "sha256": "325130ee7a69b10d89a89dd24ce0dcd96cd1a3e5aa5dcb3d835dc36ff5c09d61"
+      }
+    },
+    {
+      "file": "/opt/game-site/wasm-game.json",
+      "before": {
+        "bytes": 6855,
+        "sha256": "747582680412151f81a12aafb162def9d821931d00785bf017f6112e26e4ab52"
+      },
+      "after": {
+        "bytes": 7167,
+        "sha256": "10aee5bbac54a72d7367d1c352d211a4a22b6301cf9d20eccc7b30ce32e4f390"
+      }
+    }
+  ],
+  "added": [
+    {
+      "file": "/opt/game-site/browser-pointer.conf",
+      "bytes": 270,
+      "sha256": "46f73b4852cc229b0f79b617724b4fa703e9f3fab896380df337c04c8068ce81"
+    },
+    {
+      "file": "/opt/game-site/gta-sound.ini",
+      "bytes": 252,
+      "sha256": "b59397224a4e54bc87dcc3e5997f3bd69a3e2b1fe4eba17355a7556abb9d065a"
+    }
+  ],
+  "http": [
+    {
+      "relative": "assets/dosbox-192.png",
+      "sha256": "a7406797ad691320540db65b60c8a61264cf47b4717f7bbc14322504ce4e6e27"
+    },
+    {
+      "relative": "assets/dosbox-512.png",
+      "sha256": "05f259734a9dc2d08b11e7c025070b8b223ed9fd261f9a057ce161e1dee90c07"
+    },
+    {
+      "relative": "assets/dosbox.ico",
+      "sha256": "573c808bb08c08cca5ce45e527ed27de46e648ebced687142c3dec2f53f895ae"
+    },
+    {
+      "relative": "browser-pointer.conf",
+      "sha256": "46f73b4852cc229b0f79b617724b4fa703e9f3fab896380df337c04c8068ce81"
+    },
+    {
+      "relative": "dosbox.js",
+      "sha256": "f90ece402ce7e23e323281b55774d10f4dc8d6d2caa9b7fdf7f58935bdb3b104"
+    },
+    {
+      "relative": "dosbox.wasm",
+      "sha256": "70486266d6a794767154f2175f64f58b1f4dc8065d5f3a1fc21f269f38650dd3"
+    },
+    {
+      "relative": "game-adapter.js",
+      "sha256": "325130ee7a69b10d89a89dd24ce0dcd96cd1a3e5aa5dcb3d835dc36ff5c09d61"
+    },
+    {
+      "relative": "gta-sound.ini",
+      "sha256": "b59397224a4e54bc87dcc3e5997f3bd69a3e2b1fe4eba17355a7556abb9d065a"
+    },
+    {
+      "relative": "shared-shell/index.html",
+      "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18"
+    },
+    {
+      "relative": "shared-shell/wasm-game-bootstrap.js",
+      "sha256": "13bb7b72ca201e8adaa6dd189bb43b0d84871d2e3b1b9c148600d277f65dedae"
+    },
+    {
+      "relative": "shared-shell/wasm-game-framework.css",
+      "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+    },
+    {
+      "relative": "shared-shell/wasm-game-framework.js",
+      "sha256": "b3c8e473fd5dd1e24d50e714d5b1ccb0505516ea6184deaa9efbefdad071dddd"
+    },
+    {
+      "relative": "wasm-game-data.json",
+      "sha256": "0871cad61e0cf1b75411600ebc543488ddbca9a0def46e7bb0638d32cdfecc3e"
+    },
+    {
+      "relative": "wasm-game.json",
+      "sha256": "10aee5bbac54a72d7367d1c352d211a4a22b6301cf9d20eccc7b30ce32e4f390"
+    }
+  ],
+  "ready": [
+    {
+      "variant": "jill1",
+      "files": 28,
+      "ready": true
+    },
+    {
+      "variant": "jill2",
+      "files": 27,
+      "ready": true
+    },
+    {
+      "variant": "jill3",
+      "files": 34,
+      "ready": true
+    },
+    {
+      "variant": "jazz",
+      "files": 66,
+      "ready": true
+    },
+    {
+      "variant": "duke1",
+      "files": 55,
+      "ready": true
+    },
+    {
+      "variant": "duke2",
+      "files": 7,
+      "ready": true
+    },
+    {
+      "variant": "gta",
+      "files": 89,
+      "ready": true
+    },
+    {
+      "variant": "nfs",
+      "files": 360,
+      "ready": true
+    },
+    {
+      "variant": "simcity2000",
+      "files": 30,
+      "ready": true
+    }
+  ],
+  "rawDataRootsHidden": true,
+  "unchangedServices": 105,
+  "unchangedOwnerFiles": 696
+}

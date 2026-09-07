@@ -1,0 +1,348 @@
+{
+  "scope": "Actual packaged legacy and linked material shaders in a real EGL/GLES depth buffer; synthetic controls plus captured campaign geometry, not full campaign acceptance",
+  "wasmSha256": "acc83bd822c80b7c28e4868331c593951787ff69c823f3306062793c33532f62",
+  "jsSha256": "f5c0bd84e0ca004836ed08453a23c65476a076dac13b313b7641d0a8183cb01c",
+  "expectedMismatch": false,
+  "transformedForTest": false,
+  "borderShaderPrototype": true,
+  "capturedGeometrySource": "/home/ted/Development/wasm-games/idtech4-wasm/proofs/quake4-interaction-chrome-2026-09-05.json",
+  "captureScope": "First actual triangle/matrices/depth range per sampled draw; neutral test lighting, no campaign occluders/stencil/scissor/cull",
+  "driver": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+  "depthBits": 24,
+  "cases": [
+    {
+      "origin": 0,
+      "distance": 16.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 0,
+      "distance": 64.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 0,
+      "distance": 256.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 0,
+      "distance": 1024.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 128.125,
+      "distance": 16.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 128.125,
+      "distance": 64.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 128.125,
+      "distance": 256.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 128.125,
+      "distance": 1024.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 1024.125,
+      "distance": 16.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 1024.125,
+      "distance": 64.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 1024.125,
+      "distance": 256.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 1024.125,
+      "distance": 1024.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 8192.125,
+      "distance": 16.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 8192.125,
+      "distance": 64.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 8192.125,
+      "distance": 256.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 8192.125,
+      "distance": 1024.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 32768.125,
+      "distance": 16.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 32768.125,
+      "distance": 64.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 32768.125,
+      "distance": 256.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    },
+    {
+      "origin": 32768.125,
+      "distance": 1024.25,
+      "available": 968,
+      "accepted": 968,
+      "negativeControl": 0
+    }
+  ],
+  "capturedCases": [
+    {
+      "id": 1,
+      "available": 2124,
+      "accepted": 2124,
+      "negativeControl": 0
+    },
+    {
+      "id": 2,
+      "available": 1735,
+      "accepted": 1735,
+      "negativeControl": 0
+    },
+    {
+      "id": 3,
+      "available": 8,
+      "accepted": 8,
+      "negativeControl": 0
+    },
+    {
+      "id": 4,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 5,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 6,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 7,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 8,
+      "available": 142,
+      "accepted": 142,
+      "negativeControl": 0
+    },
+    {
+      "id": 9,
+      "available": 16,
+      "accepted": 16,
+      "negativeControl": 0
+    },
+    {
+      "id": 10,
+      "available": 5,
+      "accepted": 5,
+      "negativeControl": 0
+    },
+    {
+      "id": 11,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 12,
+      "available": 13,
+      "accepted": 13,
+      "negativeControl": 0
+    },
+    {
+      "id": 13,
+      "available": 2586,
+      "accepted": 2586,
+      "negativeControl": 0
+    },
+    {
+      "id": 14,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 15,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 16,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 17,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 18,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 19,
+      "available": 1336,
+      "accepted": 1336,
+      "negativeControl": 0
+    },
+    {
+      "id": 20,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 21,
+      "available": 872,
+      "accepted": 872,
+      "negativeControl": 0
+    },
+    {
+      "id": 22,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 23,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 24,
+      "available": 2124,
+      "accepted": 2124,
+      "negativeControl": 0
+    },
+    {
+      "id": 25,
+      "available": 0,
+      "accepted": 0,
+      "negativeControl": 0
+    },
+    {
+      "id": 26,
+      "available": 21,
+      "accepted": 21,
+      "negativeControl": 0
+    },
+    {
+      "id": 27,
+      "available": 68,
+      "accepted": 68,
+      "negativeControl": 0
+    },
+    {
+      "id": 28,
+      "available": 108,
+      "accepted": 108,
+      "negativeControl": 0
+    },
+    {
+      "id": 29,
+      "available": 267,
+      "accepted": 267,
+      "negativeControl": 0
+    },
+    {
+      "id": 30,
+      "available": 7,
+      "accepted": 7,
+      "negativeControl": 0
+    },
+    {
+      "id": 31,
+      "available": 1,
+      "accepted": 1,
+      "negativeControl": 0
+    },
+    {
+      "id": 32,
+      "available": 46,
+      "accepted": 46,
+      "negativeControl": 0
+    }
+  ]
+}

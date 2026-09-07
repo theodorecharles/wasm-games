@@ -1,3 +1,476 @@
+diff --git a/tools/build/emscripten_border_runtime.mjs b/tools/build/emscripten_border_runtime.mjs
+new file mode 100644
+index 0000000..d2ba1cb
+--- /dev/null
++++ b/tools/build/emscripten_border_runtime.mjs
+@@ -0,0 +1,169 @@
++// Border-sampling runtime. All methods forward to the supplied context;
++// build-time call-site routing, not mutation of a live browser context, owns it.
++export function createBorderRuntime(gl, transformShader, helper) {
++  const maxUnits = gl.getParameter(0x8b4d); // MAX_COMBINED_TEXTURE_IMAGE_UNITS
++  if (!Number.isInteger(maxUnits) || maxUnits < 1) throw Error('border runtime: texture unit limit unavailable');
++  const disabled = new Float32Array([0,0,0,1]);
++  const transparent = new Float32Array([0,0,0,0]);
++  let textures, targets, deletedTextures, deletedSamplers, programs, locations, units, samplerObjects, activeUnit, currentProgram, version;
++  const same = (a,b) => a && a.length === b.length && a.every((value,index) => value === b[index]);
++  function reset() {
++    textures = new WeakMap(); targets = new WeakMap(); programs = new WeakMap(); locations = new WeakMap();
++    deletedTextures = new WeakSet(); deletedSamplers = new WeakSet();
++    units = new Array(maxUnits).fill(null); samplerObjects = new Array(maxUnits).fill(null);
++    activeUnit = 0; currentProgram = null; version = 0;
++  }
++  reset();
++  function record(program) {
++    let value = programs.get(program);
++    if (!value) {
++      value = {linked:undefined, deleted:false, slots:null, uniformsDirty:true, version:-1};
++      programs.set(program,value);
++    }
++    return value;
++  }
++  function dirtyUniform(location) {
++    const owner = location && locations.get(location);
++    if (owner && owner.program === currentProgram) record(owner.program).uniformsDirty = true;
++  }
++  function reflect(program, state) {
++    const count = gl.getProgramParameter(program,0x8b86); // ACTIVE_UNIFORMS
++    state.slots = [];
++    for (let i=0; i<count; ++i) {
++      const uniform = gl.getActiveUniform(program,i);
++      if (!uniform || uniform.type !== 0x8b5e) continue; // SAMPLER_2D
++      const base = uniform.name.replace(/\[0\]$/, '');
++      const array = uniform.size > 1 || uniform.name.endsWith('[0]');
++      for (let element=0; element<uniform.size; ++element) {
++        const suffix = array ? `[${element}]` : '';
++        const sampler = gl.getUniformLocation(program,base+suffix);
++        if (sampler === null) continue;
++        state.slots.push({name:base+suffix, sampler,
++          info:gl.getUniformLocation(program,`q4bsInfo_${base}${suffix}`),
++          color:gl.getUniformLocation(program,`q4bsColor_${base}${suffix}`),
++          unit:null, uploadedInfo:null, uploadedColor:null});
++      }
++    }
++  }
++  function prepare() {
++    if (!currentProgram) return; // The real context retains ordinary GL errors.
++    const state = record(currentProgram);
++    if (!state.linked) throw Error('border runtime: drawing with an unlinked program');
++    if (state.version === version && !state.uniformsDirty) return;
++    if (!state.slots) reflect(currentProgram,state);
++    if (state.uniformsDirty) for (const slot of state.slots) {
++      slot.unit = gl.getUniform(currentProgram,slot.sampler);
++      if (!Number.isInteger(slot.unit) || slot.unit < 0 || slot.unit >= maxUnits) {
++        throw Error(`border runtime: invalid sampler unit for ${slot.name}`);
++      }
++    }
++    for (const slot of state.slots) {
++      const texture = units[slot.unit];
++      const metadata = texture && textures.get(texture);
++      const info = metadata ? metadata.info : disabled;
++      const color = metadata ? metadata.color : transparent;
++      if (info[0] && (slot.info === null || slot.color === null)) {
++        throw Error(`border runtime: ${slot.name} has no converted sampler metadata`);
++      }
++      if (info[0] && samplerObjects[slot.unit]) {
++        throw Error('border runtime: sampler-object overrides need explicit border integration');
++      }
++      if (slot.info !== null && !same(slot.uploadedInfo,info)) {
++        gl.uniform4fv(slot.info,info); slot.uploadedInfo = info;
++      }
++      if (slot.color !== null && !same(slot.uploadedColor,color)) {
++        gl.uniform4fv(slot.color,color); slot.uploadedColor = color;
++      }
++    }
++    state.uniformsDirty = false; state.version = version;
++  }
++  return {
++    gl, reset, prepare,
++    setTextureSampler(texture, info, color) {
++      if (!texture || typeof texture !== 'object' || deletedTextures.has(texture) || info.length !== 4 || color.length !== 4 ||
++          ![...info,...color].every(Number.isFinite) || ![0,1].includes(info[0]) ||
++          ![0,1,2].includes(info[1]) || !Number.isInteger(info[2]) || info[2] < 0 ||
++          info[3] < 1 || info[3] > 16) throw Error('border runtime: invalid texture sampler metadata');
++      const previous = textures.get(texture);
++      const next = {info:new Float32Array(info),color:new Float32Array(color)};
++      if (previous && same(previous.info,next.info) && same(previous.color,next.color)) return;
++      textures.set(texture,next); ++version;
++    },
++    shaderSource(shader, source) {
++      const type = gl.getShaderParameter(shader,0x8b4f); // SHADER_TYPE
++      const converted = transformShader(source,type === 0x8b31 ? 'vertex' : type === 0x8b30 ? 'fragment' : 'invalid',helper);
++      gl.shaderSource(shader,converted.source);
++    },
++    linkProgram(program) {
++      gl.linkProgram(program);
++      const state = record(program);
++      state.linked = !!gl.getProgramParameter(program,0x8b82);
++      if (state.linked) { state.slots = null; state.uniformsDirty = true; state.version = -1; }
++    },
++    useProgram(program) {
++      gl.useProgram(program);
++      if (program) {
++        const state = record(program);
++        if (state.linked === undefined) state.linked = !!gl.getProgramParameter(program,0x8b82);
++        if (!state.linked || (state.deleted && program !== currentProgram)) return;
++      }
++      currentProgram = program || null;
++    },
++    deleteProgram(program) {
++      gl.deleteProgram(program);
++      if (program) record(program).deleted = true;
++      // GL permits the current executable to survive deletion until unbound.
++    },
++    getUniformLocation(program, name) {
++      const location = gl.getUniformLocation(program,name);
++      if (location) locations.set(location,{program,name});
++      return location;
++    },
++    uniform1i(location,value) { gl.uniform1i(location,value); dirtyUniform(location); },
++    uniform1iv(...args) { gl.uniform1iv(...args); dirtyUniform(args[0]); },
++    activeTexture(unit) {
++      gl.activeTexture(unit);
++      const index = unit - 0x84c0;
++      if (Number.isInteger(index) && index >= 0 && index < maxUnits) activeUnit = index;
++    },
++    bindTexture(target, texture) {
++      gl.bindTexture(target,texture);
++      if (![0x0de1,0x8513,0x806f,0x8c1a].includes(target)) return;
++      if (texture) {
++        if (deletedTextures.has(texture)) return;
++        const originalTarget = targets.get(texture);
++        if (originalTarget && originalTarget !== target) return;
++        targets.set(texture,target);
++      }
++      if (target === 0x0de1 && units[activeUnit] !== (texture || null)) {
++        units[activeUnit] = texture || null; ++version;
++      }
++    },
++    deleteTexture(texture) {
++      gl.deleteTexture(texture);
++      if (!texture) return;
++      textures.delete(texture);
++      deletedTextures.add(texture);
++      // Keep target identity until collection; an old object must not become
++      // a differently typed texture merely because its numeric engine ID recurs.
++      for (let i=0; i<units.length; ++i) if (units[i] === texture) { units[i] = null; ++version; }
++    },
++    bindSampler(unit,sampler) {
++      gl.bindSampler(unit,sampler);
++      if (sampler && deletedSamplers.has(sampler)) return;
++      if (Number.isInteger(unit) && unit >= 0 && unit < maxUnits && samplerObjects[unit] !== (sampler || null)) {
++        samplerObjects[unit] = sampler || null; ++version;
++      }
++    },
++    deleteSampler(sampler) {
++      gl.deleteSampler(sampler);
++      if (!sampler) return;
++      deletedSamplers.add(sampler);
++      for (let i=0; i<samplerObjects.length; ++i) if (samplerObjects[i] === sampler) { samplerObjects[i] = null; ++version; }
++    },
++    drawElements(...args) { prepare(); gl.drawElements(...args); },
++    drawArrays(...args) { prepare(); gl.drawArrays(...args); },
++    drawElementsInstanced(...args) { prepare(); gl.drawElementsInstanced(...args); },
++    drawArraysInstanced(...args) { prepare(); gl.drawArraysInstanced(...args); }
++  };
++}
+diff --git a/tools/build/emscripten_border_shader.mjs b/tools/build/emscripten_border_shader.mjs
+new file mode 100644
+index 0000000..9f0af87
+--- /dev/null
++++ b/tools/build/emscripten_border_shader.mjs
+@@ -0,0 +1,210 @@
++// Transform source at the renderer's shader
++// submission boundary, not live browser shaders. Unsupported forms fail closed.
++function tokens(source) {
++  return [...source.matchAll(/\/\/[^\n]*|\/\*[\s\S]*?\*\/|^[ \t]*#(?:[^\n]*\\\r?\n)*[^\n]*(?:\n|$)|[A-Za-z_]\w*|\d+(?:\.\d*)?|[^\s]/gm)]
++    .filter(match => !match[0].startsWith('//') && !match[0].startsWith('/*') && !match[0].trimStart().startsWith('#'))
++    .map(match => ({value:match[0], start:match.index, end:match.index + match[0].length}));
++}
++
++function edits(source, replacements) {
++  for (const {start, end, value} of replacements.sort((a,b) => b.start - a.start)) {
++    source = source.slice(0, start) + value + source.slice(end);
++  }
++  return source;
++}
++
++function argumentsAt(ts, open) {
++  let depth=1, brackets=0, first=open+1;
++  const args=[];
++  for(let i=open+1;i<ts.length;++i){
++    if(ts[i].value==='(')++depth;
++    if(ts[i].value===')')--depth;
++    if(ts[i].value==='[')++brackets;
++    if(ts[i].value===']')--brackets;
++    if(!depth){if(i>first)args.push([first,i]);return{args,close:i};}
++    if(depth===1 && brackets===0 && ts[i].value===','){args.push([first,i]);first=i+1;}
++  }
++  throw Error('unclosed shader argument list');
++}
++
++const wrappers = `
++vec4 q4bsSample(sampler2D map, vec2 uv, vec4 info, vec4 border) {
++    if (info.x < 0.5) return texture(map, uv);
++    return Q4BorderAnisotropic(map, uv, border, int(info.y), dFdx(uv), dFdy(uv), int(info.z), info.w);
++}
++vec4 q4bsProjected(sampler2D map, vec3 uv, vec4 info, vec4 border) {
++    if (info.x < 0.5) return textureProj(map, uv);
++    return q4bsSample(map, uv.xy / uv.z, info, border);
++}
++vec4 q4bsProjected(sampler2D map, vec4 uv, vec4 info, vec4 border) {
++    if (info.x < 0.5) return textureProj(map, uv);
++    return q4bsSample(map, uv.xy / uv.w, info, border);
++}
++vec4 q4bsLod(sampler2D map, vec2 uv, float level, vec4 info, vec4 border) {
++    if (info.x < 0.5) return textureLod(map, uv, level);
++    return Q4BorderIsotropic(map, uv, border, int(info.y), level, int(info.z));
++}
++vec4 q4bsGradient(sampler2D map, vec2 uv, vec2 dx, vec2 dy, vec4 info, vec4 border) {
++    if (info.x < 0.5) return textureGrad(map, uv, dx, dy);
++    return Q4BorderAnisotropic(map, uv, border, int(info.y), dx, dy, int(info.z), info.w);
++}
++`;
++
++export function transformBorderShader(input, type, helper) {
++  if (type !== 'vertex' && type !== 'fragment') throw Error('unknown shader stage');
++  if (tokens(input).some(token => token.value.startsWith('q4bs'))) throw Error('border shader already transformed or reserved identifier collision');
++  const macroText = input.replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\\\r?\n/g, '');
++  if (/^\s*#\s*define\b[^\n]*\btexture(?:2D|Cube|Proj|Lod|Grad)?\s*\(/m.test(macroText)) {
++    throw Error('texture sampling in preprocessor macros needs explicit conversion');
++  }
++  const version = input.match(/^\s*#\s*version\s+([^\n]+)/m);
++  if (version && !['100', '110', '120', '130', '300 es'].includes(version[1].trim())) throw Error(`unsupported shader dialect ${version[1]}`);
++  const legacy = !version || version[1].trim() !== '300 es';
++  let source = input.replace(/^\s*#\s*version[^\n]*\n?/m, '');
++  const declarations = [];
++  if (legacy) {
++    const renames = {attribute:'in', varying:type === 'vertex' ? 'out' : 'in',
++      texture2D:'texture', textureCube:'texture', texture2DProj:'textureProj',
++      texture2DLodEXT:'textureLod', texture2DGradEXT:'textureGrad', gl_FragDepthEXT:'gl_FragDepth'};
++    if (type === 'fragment' && tokens(source).some(token => token.value === 'gl_FragColor')) {
++      renames.gl_FragColor = 'q4bsFragmentColor';
++      declarations.push('out vec4 q4bsFragmentColor;');
++    }
++    const mrtTokens=tokens(source),mrtEdits=[],mrtOutputs=new Set();
++    for(let i=0;i<mrtTokens.length;++i) if(mrtTokens[i].value==='gl_FragData'){
++      const index=mrtTokens[i+2]?.value;
++      if(type!=='fragment' || mrtTokens[i+1]?.value!=='[' || !/^[0-3]$/.test(index||'') || mrtTokens[i+3]?.value!==']') {
++        throw Error('legacy MRT requires a constant output index from 0 through 3');
++      }
++      if(renames.gl_FragColor)throw Error('mixed legacy fragment output forms');
++      mrtOutputs.add(index);
++      mrtEdits.push({start:mrtTokens[i].start,end:mrtTokens[i+3].end,value:`q4bsFragmentData${index}`});
++    }
++    source=edits(source,mrtEdits);
++    for(const index of [...mrtOutputs].sort())declarations.push(`layout(location=${index}) out vec4 q4bsFragmentData${index};`);
++    source = edits(source, tokens(source).filter(token => renames[token.value]).map(token => ({...token,value:renames[token.value]})));
++    source = source.replace(/^\s*#extension\s+(?:GL_OES_standard_derivatives|GL_EXT_shader_texture_lod)\s*:\s*(?:enable|require)\s*$/gm, '');
++    // The manual texel address and derivative arithmetic requires highp. Use
++    // matching default varying precision on both upgraded legacy stages.
++    source = source.replace(/\bprecision\s+(?:lowp|mediump)\s+float\s*;/g, 'precision highp float;');
++  }
++  const ts = tokens(source), samplers = new Map(), allSamplers = new Map();
++  for (let i = 0; i < ts.length; ++i) {
++    if (ts[i].value !== 'uniform') continue;
++    let j = i + 1;
++    if (['lowp','mediump','highp'].includes(ts[j]?.value)) ++j;
++    const samplerType = ts[j++]?.value;
++    if (!/^sampler/.test(samplerType || '')) continue;
++    const declared = [];
++    for (;;) {
++      const name = ts[j++]?.value;
++      if (!/^[A-Za-z_]\w*$/.test(name || '')) throw Error('malformed sampler declaration');
++      let suffix = '';
++      if (ts[j]?.value === '[') {
++        const start = ts[j].start;
++        while (ts[j] && ts[j].value !== ']') ++j;
++        if (!ts[j]) throw Error('unclosed sampler array');
++        suffix = source.slice(start, ts[j++].end);
++      }
++      allSamplers.set(name,samplerType);
++      if (samplerType === 'sampler2D') samplers.set(name, {name, suffix,
++        info:`q4bsInfo_${name}`, color:`q4bsColor_${name}`});
++      if (samplerType === 'sampler2D') declared.push(samplers.get(name));
++      if (ts[j]?.value === ';') {
++        for (const sampler of declared) sampler.declarationEnd = ts[j].end;
++        break;
++      }
++      if (ts[j++]?.value !== ',') throw Error('unsupported sampler declaration');
++    }
++  }
++  if (type === 'vertex' && samplers.size) throw Error('vertex-stage 2D border sampling needs explicit integration');
++  const replacements = [];
++  const functions=[],signatures=new Map(),declarationCalls=new Set();
++  let scopeDepth=0;
++  for(let i=0;i<ts.length;++i){
++    if(ts[i].value==='{')++scopeDepth;
++    if(ts[i].value==='}')--scopeDepth;
++    if(scopeDepth || ts[i+1]?.value!=='(' || !/^[A-Za-z_]\w*$/.test(ts[i-1]?.value||''))continue;
++    const parsed=argumentsAt(ts,i+1),after=ts[parsed.close+1]?.value;
++    if(!['{',';'].includes(after))continue;
++    const parameters=[];
++    for(const [index,[first,last]] of parsed.args.entries()){
++      const part=ts.slice(first,last),samplerAt=part.findIndex(token=>/^sampler/.test(token.value));
++      if(samplerAt<0)continue;
++      const samplerType=part[samplerAt].value,name=part[samplerAt+1]?.value;
++      if(!name || part.length!==samplerAt+2)throw Error('sampler parameter arrays need explicit integration');
++      parameters.push({index,name,type:samplerType,info:`q4bsInfo_${name}`,color:`q4bsColor_${name}`,suffix:''});
++    }
++    if(!parameters.length)continue;
++    declarationCalls.add(i);
++    const fn={name:ts[i].value,parameters,count:parsed.args.length,begin:ts[parsed.close+1].start,end:ts[parsed.close+1].start};
++    if(after==='{'){
++      let depth=1,j=parsed.close+2;
++      for(;j<ts.length && depth;++j){if(ts[j].value==='{')++depth;if(ts[j].value==='}')--depth;}
++      if(depth)throw Error('unclosed sampler function body');
++      fn.end=ts[j-1].end;
++    }
++    const shape=JSON.stringify([fn.count,parameters.map(p=>[p.index,p.type])]);
++    if(signatures.has(fn.name) && signatures.get(fn.name).shape!==shape)throw Error('overloaded sampler functions need explicit integration');
++    signatures.set(fn.name,{...fn,shape});functions.push(fn);
++    const borderParams=parameters.filter(p=>p.type==='sampler2D');
++    if(type==='vertex' && borderParams.length)throw Error('vertex-stage 2D border sampling needs explicit integration');
++    if(borderParams.length)replacements.push({start:ts[parsed.close].start,end:ts[parsed.close].start,
++      value:borderParams.map(p=>`, vec4 ${p.info}, vec4 ${p.color}`).join('')});
++  }
++  function resolveSampler(first,last,position){
++    const name=ts[first]?.value;
++    const fn=functions.find(fn=>position>fn.begin && position<fn.end);
++    const parameter=fn?.parameters.find(p=>p.name===name);
++    const samplerType=parameter?.type || allSamplers.get(name);
++    if(!samplerType)throw Error(`unresolved sampler argument ${name}`);
++    const metadata=parameter || samplers.get(name);
++    const expression=source.slice(ts[first].start,ts[last-1].end).trim();
++    const index=expression.slice(name.length);
++    if(index && (!metadata?.suffix || !/^\s*\[[\s\S]*\]\s*$/.test(index)))throw Error('unsupported sampler expression');
++    return{type:samplerType,metadata,index};
++  }
++  for(let i=0;i<ts.length;++i){
++    const fn=signatures.get(ts[i].value);
++    if(!fn || declarationCalls.has(i) || ts[i+1]?.value!=='(')continue;
++    const parsed=argumentsAt(ts,i+1);
++    if(parsed.args.length!==fn.count)throw Error('unsupported sampler function signature');
++    let extra='';
++    for(const parameter of fn.parameters){
++      const [first,last]=parsed.args[parameter.index];
++      const resolved=resolveSampler(first,last,ts[i].start);
++      if(resolved.type!==parameter.type)throw Error('sampler function argument type mismatch');
++      if(parameter.type==='sampler2D')extra+=`, ${resolved.metadata.info}${resolved.index}, ${resolved.metadata.color}${resolved.index}`;
++    }
++    if(extra)replacements.push({start:ts[parsed.close].start,end:ts[parsed.close].start,value:extra});
++  }
++  const calls = {texture:['q4bsSample',2], textureProj:['q4bsProjected',2],
++    textureLod:['q4bsLod',3], textureGrad:['q4bsGradient',4]};
++  let wrappedCalls = 0;
++  if (type === 'fragment') for (let i = 0; i < ts.length; ++i) {
++    const call = calls[ts[i].value];
++    if (!call || ts[i+1]?.value !== '(') continue;
++    const parsed=argumentsAt(ts,i+1);
++    if(!parsed.args.length)throw Error(`unsupported ${ts[i].value} signature`);
++    const [first,last]=parsed.args[0];
++    const resolved=resolveSampler(first,last,ts[i].start);
++    if(resolved.type!=='sampler2D')continue; // Cube/comparison sampling stays native.
++    if(parsed.args.length!==call[1])throw Error(`unsupported ${ts[i].value} signature`);
++    const sampler=resolved.metadata,index=resolved.index,end=parsed.close;
++    replacements.push({...ts[i], value:call[0]}, {start:ts[end].start, end:ts[end].start,
++      value:`, ${sampler.info}${index}, ${sampler.color}${index}`});
++    ++wrappedCalls;
++  }
++  const metadata = [...samplers.values()];
++  for (const sampler of metadata) replacements.push({start:sampler.declarationEnd, end:sampler.declarationEnd,
++    value:`\nuniform vec4 ${sampler.info}${sampler.suffix};\nuniform vec4 ${sampler.color}${sampler.suffix};\n`});
++  source = edits(source, replacements);
++  // Keep leading extension directives ahead of all declarations; keep sampler
++  // metadata beside its original declaration so array-size macros stay valid.
++  const headerEnd = tokens(source)[0]?.start || 0;
++  const headers = source.slice(0, headerEnd);
++  source = source.slice(headerEnd);
++  const prelude = '#version 300 es\n' + headers + '\nprecision highp float;\nprecision highp int;\n';
++  return {source:prelude + declarations.join('\n') + '\n' + (wrappedCalls ? helper + '\n' + wrappers : '') + source,
++    samplers:metadata, wrappedCalls, upgraded:legacy};
++}
+diff --git a/tools/build/emscripten_border_sampler.glsl b/tools/build/emscripten_border_sampler.glsl
+new file mode 100644
+index 0000000..4332abe
+--- /dev/null
++++ b/tools/build/emscripten_border_sampler.glsl
+@@ -0,0 +1,76 @@
++// Border-aware isotropic and multi-tap anisotropic sampling for WebGL 2.
++ivec2 Q4BorderSize(sampler2D map, int level) {
++    // Complete mip chains halve each dimension, rounding down to at least one.
++    // Query only the uniform base level: some software drivers incorrectly
++    // broadcast textureSize(map, varyingLevel) from the first fragment lane.
++    return max(textureSize(map, 0) >> level, ivec2(1));
++}
++
++vec4 Q4BorderTexel(sampler2D map, ivec2 texel, int level, vec4 border) {
++    ivec2 size = Q4BorderSize(map, level);
++    if (any(lessThan(texel, ivec2(0))) || any(greaterThanEqual(texel, size))) {
++        return border;
++    }
++    return texelFetch(map, texel, level);
++}
++
++vec4 Q4BorderLevel(sampler2D map, vec2 uv, int level, vec4 border, bool linearFilter) {
++    vec2 size = vec2(Q4BorderSize(map, level));
++    // Bound huge finite coordinates before float-to-int conversion. Anything
++    // beyond this interval has an entirely border-colored sampling footprint.
++    vec2 position = clamp(uv * size, vec2(-1.0), size + vec2(1.0));
++    if (!linearFilter) {
++        return Q4BorderTexel(map, ivec2(floor(position)), level, border);
++    }
++    position -= vec2(0.5);
++    ivec2 lower = ivec2(floor(position));
++    vec2 weight = fract(position);
++    vec4 top = mix(Q4BorderTexel(map, lower, level, border),
++                   Q4BorderTexel(map, lower + ivec2(1, 0), level, border), weight.x);
++    vec4 bottom = mix(Q4BorderTexel(map, lower + ivec2(0, 1), level, border),
++                      Q4BorderTexel(map, lower + ivec2(1, 1), level, border), weight.x);
++    return mix(top, bottom, weight.y);
++}
++
++vec4 Q4BorderIsotropic(sampler2D map, vec2 uv, vec4 border, int filterMode, float lod, int lastLevel) {
++    if (filterMode != 2) {
++        return Q4BorderLevel(map, uv, 0, border, filterMode == 1);
++    }
++    float clampedLod = clamp(lod, 0.0, float(lastLevel));
++    int lower = int(floor(clampedLod));
++    int upper = min(lower + 1, lastLevel);
++    return mix(Q4BorderLevel(map, uv, lower, border, true),
++               Q4BorderLevel(map, uv, upper, border, true), fract(clampedLod));
++}
++
++vec4 Q4BorderGradient(sampler2D map, vec2 uv, vec4 border, int filterMode,
++                      vec2 dx, vec2 dy, int lastLevel) {
++    vec2 size = vec2(textureSize(map, 0));
++    vec2 texelDx = dx * size, texelDy = dy * size;
++    float footprintSquared = max(dot(texelDx, texelDx), dot(texelDy, texelDy));
++    float lod = 0.5 * log2(max(footprintSquared, 0.000000000001));
++    return Q4BorderIsotropic(map, uv, border, filterMode, lod, lastLevel);
++}
++
++vec4 Q4BorderAnisotropic(sampler2D map, vec2 uv, vec4 border, int filterMode,
++                         vec2 dx, vec2 dy, int lastLevel, float maxAnisotropy) {
++    vec2 size = vec2(textureSize(map, 0));
++    float px = length(dx * size), py = length(dy * size);
++    float major = max(px, py), minor = min(px, py);
++    if (filterMode != 2 || maxAnisotropy <= 1.0 || major <= 1.0) {
++        return Q4BorderGradient(map, uv, border, filterMode, dx, dy, lastLevel);
++    }
++    // EXT_texture_filter_anisotropic's example kernel: select the major
++    // derivative, lower LOD according to the tap count, average samples within
++    // that footprint. The engine exposes integer settings from 1 through 16.
++    int taps = int(min(ceil(major / max(minor, 0.000001)), clamp(maxAnisotropy, 1.0, 16.0)));
++    float lod = log2(major / float(taps));
++    vec2 axis = px > py ? dx : dy;
++    vec4 sum = vec4(0.0);
++    for (int tap = 0; tap < 16; ++tap) {
++        if (tap >= taps) break;
++        float offset = float(tap + 1) / float(taps + 1) - 0.5;
++        sum += Q4BorderIsotropic(map, uv + axis * offset, border, filterMode, lod, lastLevel);
++    }
++    return sum / float(taps);
++}
 diff --git a/.dockerignore b/.dockerignore
 new file mode 100644
 index 0000000..3cfec68
@@ -498,16 +971,18 @@ index 0000000..64da49c
 +})();
 diff --git a/docker/q4-worker.js b/docker/q4-worker.js
 new file mode 100644
-index 0000000..50a5ad1
+index 0000000..6f12bd6
 --- /dev/null
 +++ b/docker/q4-worker.js
-@@ -0,0 +1,151 @@
+@@ -0,0 +1,167 @@
 +'use strict';
 +
 +let runtime = null;
 +let persistenceManager = null;
 +let started = false;
 +let failed = false;
++let nativeReady = false;
++let pageFocused = false;
 +
 +function post(type, text, extra) {
 +  self.postMessage({ type, text: text == null ? undefined : String(text), ...(extra || {}) });
@@ -523,6 +998,7 @@ index 0000000..50a5ad1
 +  if (started) return;
 +  started = true;
 +  failed = false;
++  pageFocused = message.focused === true;
 +  const { canvas, entries = [], variant, width, height, playerName, engineArguments = [], persistence = {} } = message;
 +  const multiplayer = variant === 'quake4-mp';
 +  try {
@@ -600,10 +1076,12 @@ index 0000000..50a5ad1
 +      print: line => post('log', line),
 +      printErr: line => post('log', `ERR: ${line}`),
 +      onRuntimeInitialized: () => {
++        nativeReady = true;
 +        void (async () => {
 +          await persistenceManager.attach(runtime.FS);
 +          post('persistence-ready', null, { root: persistenceManager.root, namespace: persistenceManager.namespace });
 +          post('status', 'Initializing the Quake 4 renderer and menus…');
++          call('Q4WASM_BrowserFocus', pageFocused ? 1 : 0);
 +          runtime.callMain(nativeArguments);
 +        })().catch(reason => {
 +          failed = true;
@@ -629,16 +1107,27 @@ index 0000000..50a5ad1
 +  }
 +}
 +
-+self.onerror = event => {
++self.onerror = (eventOrMessage, source, line, column, error) => {
 +  failed = true;
-+  const location = event.filename ? ` (${event.filename}:${event.lineno || 0}:${event.colno || 0})` : '';
-+  post('error', `${event.message || 'Uncaught worker error'}${location}`);
++  // WorkerGlobalScope.onerror normally receives five arguments, unlike the
++  // page's Worker.onerror ErrorEvent. Retain both forms and the native stack.
++  const event = typeof eventOrMessage === 'object' && eventOrMessage || null;
++  const exception = error || event?.error;
++  const filename = event?.filename || source;
++  const location = filename ? ` (${filename}:${event?.lineno || line || 0}:${event?.colno || column || 0})` : '';
++  const message = exception?.stack || exception?.message || event?.message || String(eventOrMessage || 'Uncaught worker error');
++  post('error', exception?.stack ? message : `${message}${location}`);
 +  return true;
 +};
 +
 +self.onmessage = event => {
 +  const message = event.data || {};
 +  if (message.type === 'start') { void launch(message); return; }
++  if (message.type === 'focus') {
++    pageFocused = message.focused === true;
++    if (nativeReady && !failed) call('Q4WASM_BrowserFocus', pageFocused ? 1 : 0);
++    return;
++  }
 +  if (message.type === 'persist') {
 +    void persistenceManager?.save().catch(error => post('log', `Save/config persistence warning: ${error?.message || error}`));
 +    return;
@@ -1202,7 +1691,7 @@ index 73c84cd..2227bfa 100644
  
  Changing either takes effect the next time fonts are loaded, so restart the game
 diff --git a/meson.build b/meson.build
-index 23f600d..f28febe 100644
+index 23f600d..70cc1d4 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -8,7 +8,7 @@ project(
@@ -1494,10 +1983,10 @@ index 23f600d..f28febe 100644
  if build_engine
    openq4_engine_sources += openq4_paks_generated_header
 +  if host_system == 'emscripten'
-+    # Emscripten has no OpenAL runtime. Keep the OpenAL ABI visible to the
-+    # common sound code while the browser audio bridge is brought up through
-+    # SDL3; this stub is a named temporary reduction, not audio parity.
-+    openq4_engine_sources += files('src/sys/stub/stub_openal.cpp')
++    # The engine runs in a worker, where AudioContext is unavailable. Keep
++    # OpenAL source/queue state here and render its commands on the page.
++    openq4_engine_sources += files('src/sys/emscripten/openal_emscripten.cpp')
++    openq4_engine_sources += files('src/sys/emscripten/webgl_compat.cpp')
 +  endif
  endif
  
@@ -1567,7 +2056,7 @@ index 23f600d..f28febe 100644
  linux_executable_pie = false
  linux_module_link_hardening_args = []
  linux_cross_dso_sanitizer_cpp_args = []
-@@ -994,6 +1079,34 @@ if host_system == 'linux'
+@@ -994,6 +1079,48 @@ if host_system == 'linux'
    linux_executable_pie = cpp.has_argument('-fPIE') and cc.has_argument('-fPIE') and cpp.has_link_argument('-pie')
  endif
  
@@ -1575,7 +2064,12 @@ index 23f600d..f28febe 100644
 +  # Browser executable: SDL3's Emscripten port owns the WebGL canvas and
 +  # browser audio bridge. MAIN_MODULE keeps the documented side-module path
 +  # available for the separately-built game WASM modules.
++  # Frame/loader error recovery throws idException and relies on normal C++
++  # unwinding in both the engine and game modules. The SDK otherwise removes
++  # catch handlers and aborts on the first recoverable native error.
++  shared_cpp_args += ['-fexceptions']
 +  engine_link_args += [
++    '-fexceptions',
 +    '-sUSE_SDL=3',
 +    '-sENVIRONMENT=worker',
 +    '-sOFFSCREENCANVAS_SUPPORT=1',
@@ -1597,12 +2091,34 @@ index 23f600d..f28febe 100644
 +  emscripten_gl_dynamic_link_fix = files('tools/build/emscripten_gl_dynamic_link_fix.js')
 +  engine_link_args += '--post-js=' + emscripten_gl_dynamic_link_fix[0].full_path()
 +  engine_link_depends += emscripten_gl_dynamic_link_fix
++  emscripten_legacy_gl_transform = files('tools/build/emscripten_legacy_gl_transform.mjs')
++  engine_link_args += ['--js-transform', 'node "' + emscripten_legacy_gl_transform[0].full_path() + '"']
++  engine_link_depends += emscripten_legacy_gl_transform
++  engine_link_depends += files(
++    'tools/build/emscripten_immediate_buffer.mjs',
++    'tools/build/emscripten_border_runtime.mjs',
++    'tools/build/emscripten_border_shader.mjs',
++    'tools/build/emscripten_border_sampler.glsl',
++  )
 +endif
 +
  if use_sdl3_backend
    shared_cpp_args += ['-DUSE_SDL3=1']
    shared_c_args += ['-DUSE_SDL3=1']
-@@ -1171,7 +1284,7 @@ if build_engine
+@@ -1133,6 +1260,12 @@ endif
+ 
+ engine_cpp_args = shared_cpp_args + common_header_cpp_args + ['-D__DOOM_DLL__'] + linux_cross_dso_sanitizer_cpp_args
+ engine_c_args = shared_c_args
++if host_system == 'emscripten'
++  # MAIN_MODULE is a relocatable Wasm module. Compile the executable objects
++  # as PIC too, including imported JS callbacks returned by the GL resolver.
++  engine_cpp_args += ['-fPIC']
++  engine_c_args += ['-fPIC']
++endif
+ # client-only flavor: module-only clients compile the loader/backend for the
+ # shed-renderer shape (dedicated and library targets stay static-shaped)
+ client_engine_cpp_args = engine_cpp_args
+@@ -1171,7 +1304,7 @@ if build_engine
      cpp_args: bse_cpp_args,
      c_args: bse_c_args,
      cpp_pch: pch_headers,
@@ -1611,7 +2127,7 @@ index 23f600d..f28febe 100644
      install: false,
    )
  
-@@ -1185,7 +1298,7 @@ if build_engine
+@@ -1185,7 +1318,7 @@ if build_engine
      cpp_args: engine_cpp_args,
      c_args: engine_c_args,
      cpp_pch: pch_headers,
@@ -1620,7 +2136,7 @@ index 23f600d..f28febe 100644
      install: false,
    )
  
-@@ -1198,7 +1311,7 @@ if build_engine
+@@ -1198,7 +1331,7 @@ if build_engine
      cpp_args: engine_cpp_args,
      c_args: engine_c_args,
      cpp_pch: pch_headers,
@@ -1629,7 +2145,7 @@ index 23f600d..f28febe 100644
      install: false,
    )
  endif
-@@ -1219,6 +1332,7 @@ if build_engine
+@@ -1219,6 +1352,7 @@ if build_engine
        cpp_pch: pch_headers,
        win_subsystem: 'windows',
        link_args: engine_link_args,
@@ -1637,7 +2153,7 @@ index 23f600d..f28febe 100644
        install: true,
        install_dir: install_root_dir,
      )
-@@ -1235,6 +1349,7 @@ if build_engine
+@@ -1235,6 +1369,7 @@ if build_engine
        objc_args: engine_objc_args,
        cpp_pch: pch_headers,
        link_args: engine_link_args,
@@ -1645,7 +2161,7 @@ index 23f600d..f28febe 100644
        install: true,
        install_dir: install_root_dir,
      )
-@@ -1249,86 +1364,92 @@ if build_engine
+@@ -1249,86 +1384,92 @@ if build_engine
        c_args: engine_c_args,
        cpp_pch: pch_headers,
        link_args: engine_link_args,
@@ -1811,7 +2327,7 @@ index 23f600d..f28febe 100644
    endif
  endif
  
-@@ -1371,6 +1492,11 @@ elif host_system == 'linux'
+@@ -1371,6 +1512,11 @@ elif host_system == 'linux'
    linux_game_module_export_map = files('tools/build/linux_game_module.map')
    game_module_link_args += '-Wl,--version-script=' + linux_game_module_export_map[0].full_path()
    game_module_link_depends += linux_game_module_export_map
@@ -1819,11 +2335,11 @@ index 23f600d..f28febe 100644
 +  # Game modules are intentionally emitted as Emscripten side modules during
 +  # the first platform bring-up. The browser client will later choose between
 +  # this ABI and a fully static game linkage after the engine target exists.
-+  game_module_link_args += ['-sSIDE_MODULE=1']
++  game_module_link_args += ['-sSIDE_MODULE=1', '-fexceptions']
  endif
  
  game_idlib_library = disabler()
-@@ -1390,7 +1516,7 @@ if build_engine or build_games
+@@ -1390,7 +1536,7 @@ if build_engine or build_games
      c_args: game_common_c_args,
      cpp_pch: game_idlib_pch_headers,
      override_options: game_target_override_options,
@@ -1832,7 +2348,7 @@ index 23f600d..f28febe 100644
      gnu_symbol_visibility: host_system == 'windows' ? 'default' : 'hidden',
      install: false,
    )
-@@ -1402,7 +1528,7 @@ if build_engine or build_games
+@@ -1402,7 +1548,7 @@ if build_engine or build_games
      c_args: game_common_c_args,
      cpp_pch: game_idlib_pch_headers,
      override_options: game_target_override_options,
@@ -1841,7 +2357,7 @@ index 23f600d..f28febe 100644
      gnu_symbol_visibility: host_system == 'windows' ? 'default' : 'hidden',
      install: false,
    )
-@@ -1441,7 +1567,7 @@ if build_engine and (build_renderer_gl or build_renderer_vk)
+@@ -1441,7 +1587,7 @@ if build_engine and (build_renderer_gl or build_renderer_vk)
      cpp_args: engine_cpp_args,
      c_args: engine_c_args,
      cpp_pch: pch_headers,
@@ -1850,7 +2366,7 @@ index 23f600d..f28febe 100644
      install: false,
    )
  endif
-@@ -1782,6 +1908,7 @@ summary(
+@@ -1782,6 +1928,7 @@ summary(
      'C++ standard': get_option('cpp_std'),
      'Platform backend requested': platform_backend_requested,
      'Platform backend': platform_backend,
@@ -1858,7 +2374,7 @@ index 23f600d..f28febe 100644
      'macOS graphics bridge': macos_graphics_bridge,
      'macOS OpenAL provider': macos_openal_provider,
      'OpenAL override root': openal_root_override == '' ? 'bundled/default' : openal_root_override,
-@@ -1806,7 +1933,7 @@ summary(
+@@ -1806,7 +1953,7 @@ summary(
      'OpenAL': openal_dep.found(),
      'stb_vorbis': stb_vorbis_dep.found(),
      'Precompiled headers': get_option('use_pch'),
@@ -2120,7 +2636,7 @@ index 0000000..0c5fdae
 +printf '  %s (%s bytes)\n' "${web_dir}/baseoq4/pak1.pk4" "$(stat -c '%s' "${web_dir}/baseoq4/pak1.pk4")"
 +printf 'Retail q4base PK4s are provisioned under /data and browser-cached by the framework; they are not copied into build/web.\n'
 diff --git a/src/framework/Common.cpp b/src/framework/Common.cpp
-index b4e73b7..2607c7b 100644
+index b4e73b7..22cda9a 100644
 --- a/src/framework/Common.cpp
 +++ b/src/framework/Common.cpp
 @@ -42,6 +42,16 @@ If you have questions concerning this license or the applicable additional terms
@@ -2140,7 +2656,19 @@ index b4e73b7..2607c7b 100644
  #define	MAX_PRINT_MSG_SIZE	4096
  #define MAX_WARNING_LIST	256
  
-@@ -2016,6 +2026,9 @@ void idCommonLocal::WriteConfigToFile( const char *filename ) {
+@@ -314,6 +324,11 @@ void openQ4_BeginPresentationFrame( void ) {
+ 	}
+ 
+ 	com_frameRealTime = Sys_Milliseconds();
++#if defined( __EMSCRIPTEN__ )
++	// There is no async timer thread in the worker build. Service the existing
++	// bounded, time-based tic scheduler on presentation frames, including wipes.
++	if ( common != NULL && common->IsInitialized() ) common->Async();
++#endif
+ }
+ 
+ // While the single-player loading-screen continue gate is waiting for input, the
+@@ -2016,6 +2031,9 @@ void idCommonLocal::WriteConfigToFile( const char *filename ) {
  	idKeyInput::WriteBindings( f );
  	cvarSystem->WriteFlaggedVariables( CVAR_ARCHIVE, "seta", f );
  	fileSystem->CloseFile( f );
@@ -2150,7 +2678,7 @@ index b4e73b7..2607c7b 100644
  }
  
  /*
-@@ -5881,7 +5894,9 @@ static const char *openQ4_SelectGameModuleBaseName( void ) {
+@@ -5881,7 +5899,9 @@ static const char *openQ4_SelectGameModuleBaseName( void ) {
  #endif
  }
  
@@ -2161,7 +2689,7 @@ index b4e73b7..2607c7b 100644
  	#define OPENQ4_MODULE_ARCH_TAG "x64"
  #elif defined( _M_IX86 ) || defined( __i386__ )
  	#define OPENQ4_MODULE_ARCH_TAG "x86"
-@@ -6325,6 +6340,7 @@ idCommonLocal::Init
+@@ -6325,6 +6345,7 @@ idCommonLocal::Init
  */
  void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  	try {
@@ -2169,7 +2697,7 @@ index b4e73b7..2607c7b 100644
  
  		// set interface pointers used by idLib
  		idLib::sys			= sys;
-@@ -6334,6 +6350,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
+@@ -6334,6 +6355,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  
  		// initialize idLib
  		idLib::Init();
@@ -2177,7 +2705,7 @@ index b4e73b7..2607c7b 100644
  
  		// clear warning buffer
  		ClearWarnings( GAME_NAME " initialization" );
-@@ -6346,6 +6363,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
+@@ -6346,6 +6368,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  			argv = args.GetArgs( &argc );
  		}
  		ParseCommandLine( argc, argv );
@@ -2185,7 +2713,7 @@ index b4e73b7..2607c7b 100644
  
  		// init console command system
  		cmdSystem->Init();
-@@ -6358,6 +6376,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
+@@ -6358,6 +6381,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  
  		// register all static CVars
  		idCVar::RegisterStaticVars();
@@ -2193,7 +2721,7 @@ index b4e73b7..2607c7b 100644
  
  		// print engine version
  		Printf( "%s\n", buildInfo.string );
-@@ -6367,6 +6386,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
+@@ -6367,6 +6391,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  
  		// init the console so we can take prints
  		console->Init();
@@ -2201,7 +2729,7 @@ index b4e73b7..2607c7b 100644
  
  		// get architecture info
  		Sys_Init();
-@@ -6387,6 +6407,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
+@@ -6387,6 +6412,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  
  		// init commands
  		InitCommands();
@@ -2209,7 +2737,7 @@ index b4e73b7..2607c7b 100644
  
  #ifdef ID_WRITE_VERSION
  		config_compressor = idCompressor::AllocArithmetic();
-@@ -6394,6 +6415,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
+@@ -6394,6 +6420,7 @@ void idCommonLocal::Init( int argc, const char **argv, const char *cmdline ) {
  
  		// game specific initialization
  		InitGame();
@@ -2289,353 +2817,32 @@ index 20426e4..666d357 100644
  }
  
  /*
-diff --git a/src/framework/Session.cpp b/src/framework/Session.cpp
-index 3588786..628532b 100644
---- a/src/framework/Session.cpp
-+++ b/src/framework/Session.cpp
-@@ -51,6 +51,10 @@ If you have questions concerning this license or the applicable additional terms
- #undef private
- #include "../imagetools/ImageTools.h"
+diff --git a/src/framework/Session_local.h b/src/framework/Session_local.h
+index 76d84fc..78a0762 100644
+--- a/src/framework/Session_local.h
++++ b/src/framework/Session_local.h
+@@ -255,6 +255,15 @@ public:
+ 	void				ClearWipe();
  
+ 	void				ShowLoadingGui();
 +#if defined( __EMSCRIPTEN__ )
-+#include <emscripten/emscripten.h>
-+#endif
-+
- idCVar	idSessionLocal::com_showAngles( "com_showAngles", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
- idCVar	idSessionLocal::com_minTics( "com_minTics", "1", CVAR_SYSTEM, "" );
- idCVar	idSessionLocal::com_showTics( "com_showTics", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
-@@ -6338,6 +6342,10 @@ bool idSessionLocal::SaveGame( const char *saveName, saveType_t saveType ) {
- 	common->Printf( "Saved '%s'\n", saveSlotName.c_str() );
- 	operationGuard.Complete();
- 
-+#if defined( __EMSCRIPTEN__ )
-+	EM_ASM( { self.idtech4PersistenceSave?.(); } );
-+#endif
-+
- 	return true;
- #endif
- }
-diff --git a/src/idlib/precompiled.h b/src/idlib/precompiled.h
-index 2944df2..d95a8c5 100644
---- a/src/idlib/precompiled.h
-+++ b/src/idlib/precompiled.h
-@@ -133,7 +133,45 @@ public:
- 
- #endif // _WINDOWS
- 
--#ifdef __linux__
-+#if defined(__EMSCRIPTEN__)
-+
-+// Emscripten supplies a POSIX-like libc without defining __linux__. Keep the
-+// idTech 4 ABI choices explicit instead of inheriting a desktop platform.
-+#include <stddef.h>
-+#include <limits.h>
-+#include <float.h>
-+
-+#define __WITH_PB__
-+#undef WIN32
-+#undef _XBOX
-+#undef _CONSOLE
-+#define _OPENGL
-+#define _LITTLE_ENDIAN
-+#define _CASE_SENSITIVE_FILESYSTEM
-+#define _USE_OPENAL
-+#ifndef Q4SDK
-+	#define Q4SDK_MD5R
-+#endif
-+#define NEWLINE "\n"
-+#define _GLVAS_SUPPPORT
-+#define RESTRICT
-+#define TIME_THIS_SCOPE(x)
-+#define ID_INLINE inline
-+#define ID_INLINE_EXTERN inline
-+#define ID_STATIC_TEMPLATE
-+
-+#ifndef ID_ALIGNMENTCHECKER_DEFINED
-+#define ID_ALIGNMENTCHECKER_DEFINED
-+class AlignmentChecker
-+{
-+public:
-+	static void UpdateCount(void const * const ptr) {}
-+	static void ClearCount() {}
-+	static void Print() {}
-+};
-+#endif
-+
-+#elif defined(__linux__)
- 
- // for offsetof
- #include <stddef.h>
-@@ -453,4 +491,3 @@ const float MAX_BOUND_SIZE = 65536.0f;
- #endif	/* __cplusplus */
- 
- #endif /* !__PRECOMPILED_H__ */
--
-diff --git a/src/renderer/OpenGL/gl_ContextSDL3.cpp b/src/renderer/OpenGL/gl_ContextSDL3.cpp
-index 04f37b9..0a4923d 100644
---- a/src/renderer/OpenGL/gl_ContextSDL3.cpp
-+++ b/src/renderer/OpenGL/gl_ContextSDL3.cpp
-@@ -591,7 +591,7 @@ void GLimp_DeactivateContext(void) {
- 	}
- }
- 
--#if defined(OPENQ4_SDL3_LINUX_HOST)
-+#if defined(OPENQ4_SDL3_LINUX_HOST) || defined(OPENQ4_SDL3_EMSCRIPTEN_HOST)
- typedef void ( *openQ4GlewProcAddress_t ) (void);
- 
- extern "C" openQ4GlewProcAddress_t OpenQ4_GlewGetProcAddress(const unsigned char *name) {
-diff --git a/src/renderer/draw_arb2.cpp b/src/renderer/draw_arb2.cpp
-index 8111f7c..1a57f7c 100644
---- a/src/renderer/draw_arb2.cpp
-+++ b/src/renderer/draw_arb2.cpp
-@@ -1947,6 +1947,11 @@ typedef struct {
- 	int				programGeneration;
- 	bool			programValid;
- 
-+#ifdef __EMSCRIPTEN__
-+	GLint			modelViewMatrix;
-+	GLint			projectionMatrix;
-+#endif
-+
- 	GLint			localLightOrigin;
- 	GLint			localViewOrigin;
- 	GLint			lightProjectionS;
-@@ -4628,6 +4633,40 @@ static void RB_ShadowMapPrintInfoLog( GLhandleARB object, const char *label, con
- 	Mem_Free( logBuffer );
- }
- 
-+#ifdef __EMSCRIPTEN__
-+static const char *q4wasmMaterialInteractionVertexShader =
-+	"#version 300 es\nprecision highp float;\n"
-+	"layout(location=0) in vec3 a_position; layout(location=2) in vec4 a_color;\n"
-+	"layout(location=8) in vec2 attr_TexCoord0; layout(location=9) in vec3 attr_Tangent;\n"
-+	"layout(location=10) in vec3 attr_Bitangent; layout(location=11) in vec3 attr_Normal;\n"
-+	"uniform mat4 uModelViewMatrix; uniform mat4 uProjectionMatrix; uniform vec4 uLocalLightOrigin; uniform vec4 uLocalViewOrigin;\n"
-+	"uniform vec4 uLightProjectionS; uniform vec4 uLightProjectionT; uniform vec4 uLightProjectionQ; uniform vec4 uLightFalloffS;\n"
-+	"uniform vec4 uBumpMatrixS; uniform vec4 uBumpMatrixT; uniform vec4 uDiffuseMatrixS; uniform vec4 uDiffuseMatrixT;\n"
-+	"uniform vec4 uSpecularMatrixS; uniform vec4 uSpecularMatrixT; uniform vec2 uVertexColorParams;\n"
-+	"out vec2 vBumpTexCoord; out vec2 vDiffuseTexCoord; out vec2 vSpecularTexCoord; out vec3 vLightProjectionTexCoord;\n"
-+	"out vec2 vLightFalloffTexCoord; out vec3 vLightVector; out vec3 vHalfAngleVector; out vec3 vVertexColor;\n"
-+	"vec3 tangentVector(vec3 v){return vec3(dot(attr_Tangent,v),dot(attr_Bitangent,v),dot(attr_Normal,v));}\n"
-+	"void main(){vec4 p=vec4(a_position,1.0);vec4 st=vec4(attr_TexCoord0,0.0,1.0);vec3 l=uLocalLightOrigin.xyz-p.xyz;vec3 v=uLocalViewOrigin.xyz-p.xyz;\n"
-+	"vLightVector=tangentVector(l);vHalfAngleVector=tangentVector(normalize(l)+normalize(v));\n"
-+	"vBumpTexCoord=vec2(dot(st,uBumpMatrixS),dot(st,uBumpMatrixT));vDiffuseTexCoord=vec2(dot(st,uDiffuseMatrixS),dot(st,uDiffuseMatrixT));\n"
-+	"vSpecularTexCoord=vec2(dot(st,uSpecularMatrixS),dot(st,uSpecularMatrixT));\n"
-+	"vLightProjectionTexCoord=vec3(dot(p,uLightProjectionS),dot(p,uLightProjectionT),dot(p,uLightProjectionQ));\n"
-+	"vLightFalloffTexCoord=vec2(dot(p,uLightFalloffS),0.5);vVertexColor=a_color.rgb*uVertexColorParams.x+vec3(uVertexColorParams.y);\n"
-+	"gl_Position=uProjectionMatrix*uModelViewMatrix*p;}\n";
-+
-+static const char *q4wasmMaterialInteractionFragmentShader =
-+	"#version 300 es\nprecision highp float;\n"
-+	"uniform sampler2D uBumpMap; uniform sampler2D uLightFalloffMap; uniform sampler2D uLightProjectionMap; uniform sampler2D uDiffuseMap; uniform sampler2D uSpecularMap;\n"
-+	"uniform vec4 uDiffuseColor; uniform vec4 uSpecularColor;\n"
-+	"in vec2 vBumpTexCoord; in vec2 vDiffuseTexCoord; in vec2 vSpecularTexCoord; in vec3 vLightProjectionTexCoord;\n"
-+	"in vec2 vLightFalloffTexCoord; in vec3 vLightVector; in vec3 vHalfAngleVector; in vec3 vVertexColor; out vec4 fragColor;\n"
-+	"void main(){vec3 n=texture(uBumpMap,vBumpTexCoord).agb*2.0-1.0;float d=max(dot(normalize(vLightVector),normalize(n)),0.0);\n"
-+	"float s=pow(max(dot(normalize(vHalfAngleVector),normalize(n)),0.0),16.0);\n"
-+	"vec3 light=texture(uLightFalloffMap,vLightFalloffTexCoord).rgb*textureProj(uLightProjectionMap,vLightProjectionTexCoord).rgb;\n"
-+	"vec3 diffuse=texture(uDiffuseMap,vDiffuseTexCoord).rgb*uDiffuseColor.rgb*d;vec3 specular=texture(uSpecularMap,vSpecularTexCoord).rgb*uSpecularColor.rgb*s;\n"
-+	"fragColor=vec4((diffuse+specular)*light*vVertexColor,0.0);}\n";
-+#endif
-+
- static bool RB_MaterialInteractionLoadProgram( void ) {
- 	static const char *programBaseName = "glprogs/material_interaction";
- 
-@@ -4648,6 +4687,10 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
- 	idStr vertexPath = idStr( programBaseName ) + ".vs";
- 	idStr fragmentPath = idStr( programBaseName ) + ".fs";
- 
-+#ifdef __EMSCRIPTEN__
-+	const GLcharARB *vertexSource = (const GLcharARB *)q4wasmMaterialInteractionVertexShader;
-+	const GLcharARB *fragmentSource = (const GLcharARB *)q4wasmMaterialInteractionFragmentShader;
-+#else
- 	char *vertexBuffer = NULL;
- 	char *fragmentBuffer = NULL;
- 	fileSystem->ReadFile( vertexPath.c_str(), (void **)&vertexBuffer, NULL );
-@@ -4664,18 +4707,21 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
- 		g_materialInteractionProgram.programValid = false;
- 		return false;
- 	}
-+	const GLcharARB *vertexSource = (const GLcharARB *)vertexBuffer;
-+	const GLcharARB *fragmentSource = (const GLcharARB *)fragmentBuffer;
++	bool IsBrowserLoadingContinueActive() const { return browserLoadingContinue; }
++	bool HandleBrowserLoadingContinueEvent( const sysEvent_t *event );
++	bool BrowserLoadingContinueFrame();
++	void FinishBrowserLoadingContinue();
++	bool browserLoadingContinue;
++	int browserLoadingContinueFrames;
++	int browserLoadingContinueStartTime;
 +#endif
  
- 	GLhandleARB vertexShader = glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
- 	GLhandleARB fragmentShader = glCreateShaderObjectARB( GL_FRAGMENT_SHADER_ARB );
--	const GLcharARB *vertexSource = (const GLcharARB *)vertexBuffer;
--	const GLcharARB *fragmentSource = (const GLcharARB *)fragmentBuffer;
- 	glShaderSourceARB( vertexShader, 1, &vertexSource, NULL );
- 	glShaderSourceARB( fragmentShader, 1, &fragmentSource, NULL );
- 	glCompileShaderARB( vertexShader );
- 	glCompileShaderARB( fragmentShader );
- 
-+#ifndef __EMSCRIPTEN__
- 	fileSystem->FreeFile( vertexBuffer );
- 	fileSystem->FreeFile( fragmentBuffer );
-+#endif
- 
- 	GLint status = GL_FALSE;
- 	glGetObjectParameterivARB( vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &status );
-@@ -4701,6 +4747,10 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
- 	GLhandleARB programObject = glCreateProgramObjectARB();
- 	glAttachObjectARB( programObject, vertexShader );
- 	glAttachObjectARB( programObject, fragmentShader );
-+#ifdef __EMSCRIPTEN__
-+	glBindAttribLocationARB( programObject, 0, "a_position" );
-+	glBindAttribLocationARB( programObject, 2, "a_color" );
-+#endif
- 	glBindAttribLocationARB( programObject, 8, "attr_TexCoord0" );
- 	glBindAttribLocationARB( programObject, 9, "attr_Tangent" );
- 	glBindAttribLocationARB( programObject, 10, "attr_Bitangent" );
-@@ -4726,6 +4776,10 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
- 	g_materialInteractionProgram.programGeneration = tr.videoRestartCount;
- 	g_materialInteractionProgram.programValid = true;
- 
-+#ifdef __EMSCRIPTEN__
-+	g_materialInteractionProgram.modelViewMatrix = glGetUniformLocationARB( programObject, "uModelViewMatrix" );
-+	g_materialInteractionProgram.projectionMatrix = glGetUniformLocationARB( programObject, "uProjectionMatrix" );
-+#endif
- 	g_materialInteractionProgram.localLightOrigin = glGetUniformLocationARB( programObject, "uLocalLightOrigin" );
- 	g_materialInteractionProgram.localViewOrigin = glGetUniformLocationARB( programObject, "uLocalViewOrigin" );
- 	g_materialInteractionProgram.lightProjectionS = glGetUniformLocationARB( programObject, "uLightProjectionS" );
-@@ -8501,6 +8555,13 @@ static void RB_MaterialInteractionSetEnhancementUniforms( const GLint normalScal
- }
- 
- static void RB_GLSLMaterial_DrawInteraction( const drawInteraction_t *din ) {
-+#ifdef __EMSCRIPTEN__
-+	GLfloat modelView[16], projection[16];
-+	glGetFloatv( GL_MODELVIEW_MATRIX, modelView );
-+	glGetFloatv( GL_PROJECTION_MATRIX, projection );
-+	glUniformMatrix4fv( g_materialInteractionProgram.modelViewMatrix, 1, GL_FALSE, modelView );
-+	glUniformMatrix4fv( g_materialInteractionProgram.projectionMatrix, 1, GL_FALSE, projection );
-+#endif
- 	glUniform4fvARB( g_materialInteractionProgram.localLightOrigin, 1, din->localLightOrigin.ToFloatPtr() );
- 	glUniform4fvARB( g_materialInteractionProgram.localViewOrigin, 1, din->localViewOrigin.ToFloatPtr() );
- 	glUniform4fvARB( g_materialInteractionProgram.lightProjectionS, 1, din->lightProjection[0].ToFloatPtr() );
-@@ -9836,8 +9897,10 @@ static bool RB_GLSLMaterial_CreateDrawInteractions( const drawSurf_t *surf, cons
- 
- 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHMASK | backEnd.depthFunc );
- 
-+#ifndef __EMSCRIPTEN__
- 	glDisable( GL_VERTEX_PROGRAM_ARB );
- 	glDisable( GL_FRAGMENT_PROGRAM_ARB );
-+#endif
- 	glUseProgramObjectARB( g_materialInteractionProgram.programObject );
- 
- 	if ( g_materialInteractionProgram.bumpMap >= 0 ) {
-@@ -9955,6 +10018,26 @@ static void RB_DrawMaterialInteractions( const drawSurf_t *surf ) {
- 		return;
- 	}
- 
-+#ifdef __EMSCRIPTEN__
-+	// ARB assembly cannot execute in WebGL. Route each CPU-addressable surface
-+	// through the validated GLSL ES program and fail closed for unsupported
-+	// generated geometry rather than binding a fake ARB identifier.
-+	static bool warnedUnsupportedSurface = false;
-+	for ( ; surf != NULL; surf = surf->nextOnLight ) {
-+		drawSurf_t singleSurf = *surf;
-+		singleSurf.nextOnLight = NULL;
-+		if ( RB_SurfaceEligibleForStockGLSLInteraction( &singleSurf ) &&
-+			 RB_GLSLMaterial_CreateDrawInteractions( &singleSurf, true ) ) {
-+			continue;
-+		}
-+		if ( !warnedUnsupportedSurface ) {
-+			warnedUnsupportedSurface = true;
-+			common->Warning( "WebGL2 interaction skipped generated or unavailable vertex geometry; an ES skinning path is still required" );
-+		}
-+	}
-+	return;
-+#endif
-+
- 	if ( RB_AppleGL21AutomaticInteractionPath() ) {
- 		// The Apple 2.1 driver corridor is intentionally decided per surface.
- 		// Ordinary stock geometry avoids the fragile ARB interaction program,
-@@ -10606,7 +10689,12 @@ static void RB_ShadowMapStencilFallbackFiltered( const drawSurf_t *primaryShadow
- 		}
- 		glClear( GL_STENCIL_BUFFER_BIT );
- 
--		if ( r_useShadowVertexProgram.GetBool() && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow fallback vertex program", true ) ) {
-+#ifdef __EMSCRIPTEN__
-+		const bool useShadowVertexProgram = false;
-+#else
-+		const bool useShadowVertexProgram = r_useShadowVertexProgram.GetBool();
-+#endif
-+		if ( useShadowVertexProgram && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow fallback vertex program", true ) ) {
- 			glEnable( GL_VERTEX_PROGRAM_ARB );
- 			RB_StencilShadowPass( primaryShadowSurfs );
- 			RB_StencilShadowPass( secondaryShadowSurfs );
-@@ -11811,7 +11899,12 @@ void RB_ARB2_DrawInteractions( void ) {
- 			glStencilFunc( GL_ALWAYS, 128, 255 );
- 		}
- 
--		if ( r_useShadowVertexProgram.GetBool() && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow vertex program", true ) ) {
-+#ifdef __EMSCRIPTEN__
-+		const bool useShadowVertexProgram = false;
-+#else
-+		const bool useShadowVertexProgram = r_useShadowVertexProgram.GetBool();
-+#endif
-+		if ( useShadowVertexProgram && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow vertex program", true ) ) {
- 			glEnable( GL_VERTEX_PROGRAM_ARB );
- 			RB_StencilShadowPass( vLight->globalShadows );
- 			RB_DrawMaterialInteractions( vLight->localInteractions );
-@@ -12372,16 +12465,25 @@ R_ReloadARBPrograms_f
- ==================
- */
- void R_ReloadARBPrograms_f( const idCmdArgs &args ) {
-+#ifndef __EMSCRIPTEN__
- 	int		i;
-+#endif
- 
- 	g_interactionShaderRescueWarned = false;
- 	R_RecordRendererStartupPhase( RENDERER_STARTUP_PHASE_R_RELOAD_ARB_PROGRAMS );
- 	common->Printf( "----- R_ReloadARBPrograms -----\n" );
-+#ifdef __EMSCRIPTEN__
-+	if ( !RB_MaterialInteractionLoadProgram() ) {
-+		common->Error( "WebGL2 GLSL ES interaction program failed readiness validation" );
-+	}
-+	common->Printf( "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped\n" );
-+#else
- 	for ( i = 0 ; progs[i].name[0] ; i++ ) {
- 		R_LoadARBProgram( i );
- 	}
- 	RB_RecordCurrentInteractionSelectionBreadcrumb();
- 	RB_ErrorIfDriverRequiredSimpleInteractionFailed();
-+#endif
- 	common->Printf( "-------------------------------\n" );
- 	if ( r_shaderReport.GetInteger() >= 1 ) {
- 		R_ReportShaderPrograms_f( idCmdArgs() );
-@@ -12466,11 +12568,25 @@ void R_ARB2_Init( void ) {
- 	common->Printf( "---------- R_ARB2_Init ----------\n" );
- 
- 	if ( !glConfig.backendCaps.hasFixedFunctionCompatibility ) {
-+#ifdef __EMSCRIPTEN__
-+		if ( glConfig.GLSLProgramAvailable ) {
-+			common->Printf( "WebGL2 GLSL ES path available.\n" );
-+			glConfig.allowARB2Path = true;
-+			return;
-+		}
-+#endif
- 		common->Printf( "Not available: OpenGL core profile does not expose the compatibility state required by the ARB2 bridge.\n" );
- 		return;
- 	}
- 
- 	if ( !glConfig.ARBVertexProgramAvailable || !glConfig.ARBFragmentProgramAvailable ) {
-+#ifdef __EMSCRIPTEN__
-+		if ( glConfig.GLSLProgramAvailable ) {
-+			common->Printf( "WebGL2 GLSL ES path available.\n" );
-+			glConfig.allowARB2Path = true;
-+			return;
-+		}
-+#endif
- 		common->Printf( "Not available.\n" );
- 		return;
- 	}
+ 	void				ScrubSaveGameFileName( idStr &saveFileName ) const;
+ 	idStr				GetAutoSaveName( const char *mapName ) const;
 diff --git a/src/sys/emscripten/emscripten_sdl3.cpp b/src/sys/emscripten/emscripten_sdl3.cpp
 new file mode 100644
-index 0000000..3151ea9
+index 0000000..e4c0432
 --- /dev/null
 +++ b/src/sys/emscripten/emscripten_sdl3.cpp
-@@ -0,0 +1,175 @@
+@@ -0,0 +1,183 @@
 +/*
 +===========================================================================
 +
@@ -2656,27 +2863,9 @@ index 0000000..3151ea9
 +
 +#include <emscripten/emscripten.h>
 +#include <emscripten/html5_webgl.h>
++#include "webgl_compat.h"
 +
-+// Emscripten's selector-based context helpers consult `document`, which does
-+// not exist in the dedicated engine worker. Create and resize the transferred
-+// OffscreenCanvas directly through Module.canvas instead.
-+EM_JS(int, Q4WASM_CreateDirectWebGLContext, (int alpha, int depth, int stencil, int samples), {
-+	if (!Module.canvas || typeof GL === 'undefined') return 0;
-+	var context = GL.createContext(Module.canvas, {
-+		alpha: !!alpha,
-+		depth: !!depth,
-+		stencil: !!stencil,
-+		antialias: samples > 1,
-+		majorVersion: 2,
-+		minorVersion: 0,
-+		premultipliedAlpha: false,
-+		preserveDrawingBuffer: false,
-+		enableExtensionsByDefault: true
-+	});
-+	if (context) GL.makeContextCurrent(context);
-+	return context | 0;
-+});
-+
++// Resize the transferred canvas directly: a worker has no document selectors.
 +EM_JS(int, Q4WASM_SetDirectCanvasSize, (int width, int height), {
 +	if (!Module.canvas || width < 1 || height < 1) return 0;
 +	Module.canvas.width = width;
@@ -2684,8 +2873,25 @@ index 0000000..3151ea9
 +	return 1;
 +});
 +
++// OffscreenCanvas has no SDL desktop window. The page owns focus and sends
++// lifecycle changes before native startup and whenever its focus changes.
++static bool s_browserPageFocused = false;
++static bool s_browserPointerCaptured = false;
++
 +#define OPENQ4_SDL3_EMSCRIPTEN_HOST 1
 +#include "../sdl3/sdl3_backend.cpp"
++
++extern "C" EMSCRIPTEN_KEEPALIVE void Q4WASM_BrowserFocus( int focused ) {
++	const bool next = focused != 0;
++	if ( s_browserPageFocused == next ) return;
++	s_browserPageFocused = next;
++	if ( common != NULL && common->IsInitialized() ) {
++		win32.activeApp = next;
++		if ( !next ) SDL3_ReleaseFocusInputState( Sys_Milliseconds() );
++		else s_sdlFocusInputReleased = false;
++		if ( session != NULL ) session->SetPlayingSoundWorld();
++	}
++}
 +
 +static idCVar sys_videoRam(
 +	"sys_videoRam",
@@ -2759,7 +2965,11 @@ index 0000000..3151ea9
 +}
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void Q4WASM_BrowserCapture( int captured ) {
-+	Sys_GrabMouseCursor( captured != 0 );
++	// The page reports actual pointer lock. Native per-frame grab requests must
++	// not pretend that a desktop SDL window acquired the browser's pointer.
++	s_browserPointerCaptured = captured != 0;
++	win32.mouseGrabbed = s_browserPointerCaptured;
++	win32.mouseReleased = !s_browserPointerCaptured;
 +}
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void Q4WASM_BrowserPointer( int x, int y, int relative ) {
@@ -2785,13 +2995,18 @@ index 0000000..3151ea9
 +}
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void Q4WASM_BrowserKey( int scan, int keycode, int down, int repeat ) {
-+	SDL_Event event = {};
-+	event.type = down ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
-+	event.key.down = down != 0;
-+	event.key.repeat = repeat != 0;
-+	event.key.scancode = static_cast<SDL_Scancode>( scan );
-+	event.key.key = keycode ? static_cast<SDL_Keycode>( keycode ) : SDL_GetKeyFromScancode( event.key.scancode, SDL_KMOD_NONE, false );
-+	SDL_PushEvent( &event );
++	(void)keycode;
++	(void)repeat;
++	// Like mouse buttons, page keyboard events enter the engine queues directly.
++	// The desktop SDL event pump rejects them because no SDL game window exists.
++	// Text characters arrive separately through Q4WASM_BrowserText.
++	const int key = SDL3_MapPhysicalScancode( static_cast<SDL_Scancode>( scan ) );
++	if ( key <= 0 || key >= K_LAST_KEY ) return;
++	const int eventTime = Sys_Milliseconds();
++	Sys_QueEvent( eventTime, SE_KEY, key, down != 0, 0, NULL );
++	const int controlChar = SDL3_MapControlChar( key, down != 0, SDL_KMOD_NONE );
++	if ( controlChar != 0 ) Sys_QueEvent( eventTime, SE_CHAR, controlChar, 0, 0, NULL );
++	SDL3_QueueKeyboardInput( key, down != 0, eventTime );
 +}
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void Q4WASM_BrowserText( int codepoint ) {
@@ -2811,38 +3026,2412 @@ index 0000000..3151ea9
 +	SDL3_SetUIViewport( 0, 0, width, height );
 +	return 1;
 +}
+diff --git a/src/framework/Session.cpp b/src/framework/Session.cpp
+index 3588786..c3c3fa8 100644
+--- a/src/framework/Session.cpp
++++ b/src/framework/Session.cpp
+@@ -51,6 +51,10 @@ If you have questions concerning this license or the applicable additional terms
+ #undef private
+ #include "../imagetools/ImageTools.h"
+ 
++#if defined( __EMSCRIPTEN__ )
++#include <emscripten/emscripten.h>
++#endif
++
+ idCVar	idSessionLocal::com_showAngles( "com_showAngles", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
+ idCVar	idSessionLocal::com_minTics( "com_minTics", "1", CVAR_SYSTEM, "" );
+ idCVar	idSessionLocal::com_showTics( "com_showTics", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
+@@ -128,11 +132,16 @@ static float Session_GetBlockingLoadFrameIntervalMsec( void ) {
+ }
+ 
+ static void Session_BeginBlockingLoadPresentationFrame( void ) {
++#if defined( __EMSCRIPTEN__ )
++	// Also service browser-owned simulation tics when presentation is uncapped.
++	openQ4_BeginPresentationFrame();
++#else
+ 	if ( Session_FindPresentationCap() > 0 ) {
+ 		openQ4_BeginPresentationFrame();
+ 	} else {
+ 		com_frameRealTime = Sys_Milliseconds();
+ 	}
++#endif
+ }
+ 
+ static const char *Session_GetFramePacingBoundName( openq4FramePacingBound_t boundMode ) {
+@@ -3564,6 +3573,11 @@ idSessionLocal::Clear
+ ===============
+ */
+ void idSessionLocal::Clear() {
++	#if defined( __EMSCRIPTEN__ )
++	browserLoadingContinue = false;
++	browserLoadingContinueFrames = 0;
++	browserLoadingContinueStartTime = 0;
++	#endif
+ 	
+ 	insideUpdateScreen = false;
+ 	insideExecuteMapChange = false;
+@@ -5146,6 +5160,11 @@ Exits with mapSpawned = false
+ ===============
+ */
+ void idSessionLocal::UnloadMap() {
++#if defined( __EMSCRIPTEN__ )
++	browserLoadingContinue = false;
++	browserLoadingContinueFrames = 0;
++	openQ4_SetLoadingContinueInputActive( false );
++#endif
+ 	StopPlayingRenderDemo();
+ 
+ 	if ( com_showFramePacing.GetInteger() >= 2 && framePacingStats.valid ) {
+@@ -5710,6 +5729,20 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
+ 			loadingSaveGame ? 1 : 0,
+ 			com_skipLoadingContinue.GetBool() ? 1 : 0 );
+ 	}
++#if defined( __EMSCRIPTEN__ )
++	// A worker cannot receive browser input or present its OffscreenCanvas
++	// while spinning inside the desktop wait loop. Keep the loaded map paused
++	// and handle this same Continue gate on subsequent browser frames.
++	if ( waitForSPContinue ) {
++		guiLoading->HandleNamedEvent( "FinishedLoading" );
++		guiLoading->StateChanged( common->GetPresentationTime() );
++		browserLoadingContinue = true;
++		browserLoadingContinueFrames = 0;
++		browserLoadingContinueStartTime = common->GetPresentationTime();
++		openQ4_SetLoadingContinueInputActive( true );
++		common->Printf( "[quake4-wasm] Loading continue gate ready\n" );
++	}
++#else
+ 	if ( waitForSPContinue ) {
+ 		Session_BeginBlockingLoadPresentationFrame();
+ 		guiLoading->HandleNamedEvent( "FinishedLoading" );
+@@ -5790,8 +5823,12 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
+ 		idKeyInput::ClearStates();
+ 		Sys_ClearInputEvents();
+ 	}
++#endif
+ 
+ 	// capture the current screen and start a wipe
++#if defined( __EMSCRIPTEN__ )
++	if ( !browserLoadingContinue )
++#endif
+ 	StartWipe( "gfx/wipes/fade_blend" );
+ 
+ 	usercmdGen->Clear();
+@@ -6338,6 +6375,10 @@ bool idSessionLocal::SaveGame( const char *saveName, saveType_t saveType ) {
+ 	common->Printf( "Saved '%s'\n", saveSlotName.c_str() );
+ 	operationGuard.Complete();
+ 
++#if defined( __EMSCRIPTEN__ )
++	EM_ASM( { self.idtech4PersistenceSave?.(); } );
++#endif
++
+ 	return true;
+ #endif
+ }
+@@ -6570,7 +6611,54 @@ bool idSessionLocal::DeleteGame( const char *saveName ) {
+ idSessionLocal::ProcessEvent
+ ===============
+ */
++#if defined( __EMSCRIPTEN__ )
++void idSessionLocal::FinishBrowserLoadingContinue() {
++	if ( !browserLoadingContinue ) return;
++	// Capture the loading screen before changing the draw policy to the map.
++	StartWipe( "gfx/wipes/fade_blend" );
++	browserLoadingContinue = false;
++	openQ4_SetLoadingContinueInputActive( false );
++	idKeyInput::ClearStates();
++	Sys_ClearInputEvents();
++	usercmdGen->Clear();
++	lastGameTic = latchedTicNumber = com_ticNumber;
++	SetPlayingSoundWorld();
++	soundSystem->SetMute( false );
++	common->Printf( "[quake4-wasm] Loading continue gate completed\n" );
++}
++
++bool idSessionLocal::HandleBrowserLoadingContinueEvent( const sysEvent_t *event ) {
++	if ( !browserLoadingContinue ) return false;
++	// At least one browser yield must precede acceptance. Discard the launch
++	// click and any input queued while synchronous map loading was in progress.
++	if ( browserLoadingContinueFrames >= 2 &&
++		( ( event->evType == SE_KEY && event->evValue2 && Session_IsLoadingContinueKey( event->evValue ) ) ||
++		  ( event->evType == SE_CHAR && Session_IsLoadingContinueChar( event->evValue ) ) ) ) {
++		FinishBrowserLoadingContinue();
++	}
++	return true;
++}
++
++bool idSessionLocal::BrowserLoadingContinueFrame() {
++	if ( !browserLoadingContinue ) return false;
++	if ( browserLoadingContinueFrames < 2 ) ++browserLoadingContinueFrames;
++	lastGameTic = latchedTicNumber = com_ticNumber;
++	Sys_GrabMouseCursor( false );
++	const int autoAdvance = idMath::ClampInt( 0, 60000, com_loadingContinueAutoAdvance.GetInteger() );
++	if ( autoAdvance > 0 && browserLoadingContinueFrames >= 2 &&
++		common->GetPresentationTime() - browserLoadingContinueStartTime >= autoAdvance ) {
++		FinishBrowserLoadingContinue();
++	} else if ( guiLoading ) {
++		guiLoading->StateChanged( common->GetPresentationTime() );
++	}
++	return true;
++}
++#endif
++
+ bool idSessionLocal::ProcessEvent( const sysEvent_t *event ) {
++#if defined( __EMSCRIPTEN__ )
++	if ( HandleBrowserLoadingContinueEvent( event ) ) return true;
++#endif
+ 	// hitting escape anywhere brings up the menu
+ 	if ( !guiActive && event->evType == SE_KEY && event->evValue2 == 1 &&
+ 		( event->evValue == K_ESCAPE || event->evValue == K_JOY7 || event->evValue == K_JOY8 ) ) {
+@@ -7036,7 +7124,11 @@ void idSessionLocal::Draw() {
+ 	float menuIntroBlackoutAlpha = 0.0f;
+ 	bool drawingFallbackLoadingScreen = false;
+ 
+-	if ( insideExecuteMapChange ) {
++	if ( insideExecuteMapChange
++#if defined( __EMSCRIPTEN__ )
++		|| browserLoadingContinue
++#endif
++	) {
+ 		if ( guiLoading ) {
+ 			guiLoading->Redraw( presentationTime );
+ 		}
+@@ -7271,6 +7363,9 @@ idSessionLocal::Frame
+ ===============
+ */
+ void idSessionLocal::Frame() {	
++#if defined( __EMSCRIPTEN__ )
++	if ( BrowserLoadingContinueFrame() ) return;
++#endif
+ 	soundSystem->Render();
+ 
+ 	// Editors that completely take over the game
+@@ -7365,7 +7460,7 @@ void idSessionLocal::Frame() {
+ 
+ 	if ( shouldWaitForGameTic ) {
+ 		const int waitStartMsec = Sys_Milliseconds();
+-#if defined( _WIN32 )
++#if defined( _WIN32 ) || defined( __EMSCRIPTEN__ )
+ 		// Demo / capture playback still consumes exact tics instead of repeated-state presentation.
+ 		while( 1 ) {
+ 			latchedTicNumber = com_ticNumber;
+@@ -7373,6 +7468,9 @@ void idSessionLocal::Frame() {
+ 				break;
+ 			}
+ 			Sys_Sleep( 1 );
++#if defined( __EMSCRIPTEN__ )
++			common->Async();
++#endif
+ 		}
+ #else
+ 		while( 1 ) {
+@@ -7795,6 +7893,9 @@ idSessionLocal::SetPlayingSoundWorld
+ */
+ void idSessionLocal::SetPlayingSoundWorld( idSoundWorld *soundWorld ) {
+ 	idSoundWorld *targetSoundWorld = soundWorld;
++#if defined( __EMSCRIPTEN__ )
++	if ( browserLoadingContinue ) targetSoundWorld = NULL;
++#endif
+ 
+ 	if ( targetSoundWorld != NULL && Session_ShouldSilenceAudioWhenUnfocused() ) {
+ 		targetSoundWorld = NULL;
+diff --git a/src/idlib/precompiled.h b/src/idlib/precompiled.h
+index 2944df2..d95a8c5 100644
+--- a/src/idlib/precompiled.h
++++ b/src/idlib/precompiled.h
+@@ -133,7 +133,45 @@ public:
+ 
+ #endif // _WINDOWS
+ 
+-#ifdef __linux__
++#if defined(__EMSCRIPTEN__)
++
++// Emscripten supplies a POSIX-like libc without defining __linux__. Keep the
++// idTech 4 ABI choices explicit instead of inheriting a desktop platform.
++#include <stddef.h>
++#include <limits.h>
++#include <float.h>
++
++#define __WITH_PB__
++#undef WIN32
++#undef _XBOX
++#undef _CONSOLE
++#define _OPENGL
++#define _LITTLE_ENDIAN
++#define _CASE_SENSITIVE_FILESYSTEM
++#define _USE_OPENAL
++#ifndef Q4SDK
++	#define Q4SDK_MD5R
++#endif
++#define NEWLINE "\n"
++#define _GLVAS_SUPPPORT
++#define RESTRICT
++#define TIME_THIS_SCOPE(x)
++#define ID_INLINE inline
++#define ID_INLINE_EXTERN inline
++#define ID_STATIC_TEMPLATE
++
++#ifndef ID_ALIGNMENTCHECKER_DEFINED
++#define ID_ALIGNMENTCHECKER_DEFINED
++class AlignmentChecker
++{
++public:
++	static void UpdateCount(void const * const ptr) {}
++	static void ClearCount() {}
++	static void Print() {}
++};
++#endif
++
++#elif defined(__linux__)
+ 
+ // for offsetof
+ #include <stddef.h>
+@@ -453,4 +491,3 @@ const float MAX_BOUND_SIZE = 65536.0f;
+ #endif	/* __cplusplus */
+ 
+ #endif /* !__PRECOMPILED_H__ */
+-
+diff --git a/src/renderer/Image_load.cpp b/src/renderer/Image_load.cpp
+index 1318250..1a71ffd 100644
+--- a/src/renderer/Image_load.cpp
++++ b/src/renderer/Image_load.cpp
+@@ -1001,6 +1001,13 @@ void R_BindTextureForDirectAccess( unsigned int target, int texnum ) {
+ // the next copy blit detaches a live render target's attachment.
+ static GLuint r_copyFramebufferFbo = 0;
+ static GLuint r_copyDepthbufferFbo = 0;
++#ifdef __EMSCRIPTEN__
++static GLuint r_copyColorResolveFbo = 0;
++static GLuint r_copyColorResolveTexture = 0;
++static int r_copyColorResolveWidth = 0;
++static int r_copyColorResolveHeight = 0;
++static GLenum r_copyColorResolveFormat = 0;
++#endif
+ 
+ /*
+ ====================
+@@ -1011,6 +1018,18 @@ old context is still current.
+ ====================
+ */
+ void R_PurgeFramebufferCopyFBOs( void ) {
++#ifdef __EMSCRIPTEN__
++	if ( r_copyColorResolveFbo != 0 ) {
++		glDeleteFramebuffers( 1, &r_copyColorResolveFbo );
++		r_copyColorResolveFbo = 0;
++	}
++	if ( r_copyColorResolveTexture != 0 ) {
++		glDeleteTextures( 1, &r_copyColorResolveTexture );
++		r_copyColorResolveTexture = 0;
++	}
++	r_copyColorResolveWidth = r_copyColorResolveHeight = 0;
++	r_copyColorResolveFormat = 0;
++#endif
+ 	if ( r_copyFramebufferFbo != 0 ) {
+ 		glDeleteFramebuffers( 1, &r_copyFramebufferFbo );
+ 		r_copyFramebufferFbo = 0;
+@@ -1036,6 +1055,103 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight ) {
+ 	opts.width = imageWidth;
+ 	opts.height = imageHeight;
+ 
++#ifdef __EMSCRIPTEN__
++	// CopyTexImage cannot convert the browser's RGB(A)8 backbuffer into an
++	// RGBA16F texture. WebGL2 color blits can convert normalized/float formats,
++	// but an MSAA resolve must first retain both source format and coordinates.
++	// Keep HDR destination storage and use a matching single-sample scratch
++	// image only when the actual source framebuffer is multisampled.
++	GLint previousReadFbo = 0, previousDrawFbo = 0;
++	glGetIntegerv( GL_READ_FRAMEBUFFER_BINDING, &previousReadFbo );
++	glGetIntegerv( GL_DRAW_FRAMEBUFFER_BINDING, &previousDrawFbo );
++	const GLuint sourceFbo = readingFromRenderTexture ? backEnd.renderTexture->GetDeviceHandle() : 0;
++	glBindFramebuffer( GL_READ_FRAMEBUFFER, sourceFbo );
++	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, sourceFbo );
++	GLint sourceReadBuffer = GL_BACK, sourceSamples = 0;
++	glGetIntegerv( GL_READ_BUFFER, &sourceReadBuffer );
++	glGetIntegerv( GL_SAMPLES, &sourceSamples );
++	glReadBuffer( readingFromRenderTexture ? readAttachment : GL_BACK );
++
++	const GLboolean scissorWasEnabled = glIsEnabled( GL_SCISSOR_TEST );
++	GLint previousScissorBox[4];
++	if ( scissorWasEnabled ) {
++		glGetIntegerv( GL_SCISSOR_BOX, previousScissorBox );
++		glDisable( GL_SCISSOR_TEST );
++	}
++
++	if ( sourceSamples > 0 ) {
++		GLenum resolveFormat, resolveDataFormat, resolveDataType;
++		int resolveWidth, resolveHeight;
++		if ( readingFromRenderTexture ) {
++			const idImage *sourceImage = backEnd.renderTexture->GetColorImage( 0 );
++			resolveFormat = sourceImage->internalFormat;
++			resolveDataFormat = sourceImage->dataFormat;
++			resolveDataType = sourceImage->dataType;
++			resolveWidth = sourceImage->opts.width;
++			resolveHeight = sourceImage->opts.height;
++		} else {
++			GLint alphaBits = 0;
++			glGetIntegerv( GL_ALPHA_BITS, &alphaBits );
++			resolveFormat = alphaBits > 0 ? GL_RGBA8 : GL_RGB8;
++			resolveDataFormat = alphaBits > 0 ? GL_RGBA : GL_RGB;
++			resolveDataType = GL_UNSIGNED_BYTE;
++			resolveWidth = glConfig.vidWidth;
++			resolveHeight = glConfig.vidHeight;
++		}
++		if ( r_copyColorResolveTexture == 0 ) {
++			glGenTextures( 1, &r_copyColorResolveTexture );
++		}
++		R_BindTextureForDirectAccess( GL_TEXTURE_2D, r_copyColorResolveTexture );
++		if ( r_copyColorResolveWidth != resolveWidth || r_copyColorResolveHeight != resolveHeight || r_copyColorResolveFormat != resolveFormat ) {
++			glTexImage2D( GL_TEXTURE_2D, 0, resolveFormat, resolveWidth, resolveHeight, 0, resolveDataFormat, resolveDataType, NULL );
++			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
++			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
++			r_copyColorResolveWidth = resolveWidth;
++			r_copyColorResolveHeight = resolveHeight;
++			r_copyColorResolveFormat = resolveFormat;
++		}
++		if ( r_copyColorResolveFbo == 0 ) {
++			glGenFramebuffers( 1, &r_copyColorResolveFbo );
++		}
++		glBindFramebuffer( GL_DRAW_FRAMEBUFFER, r_copyColorResolveFbo );
++		glFramebufferTexture2D( GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, r_copyColorResolveTexture, 0 );
++		glDrawBuffer( GL_COLOR_ATTACHMENT0 );
++		glBlitFramebuffer( x, y, x + imageWidth, y + imageHeight, x, y, x + imageWidth, y + imageHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST );
++		glBindFramebuffer( GL_READ_FRAMEBUFFER, r_copyColorResolveFbo );
++		glReadBuffer( GL_COLOR_ATTACHMENT0 );
++	}
++
++	R_BindTextureForDirectAccess( GL_TEXTURE_2D, texnum );
++	if ( needsStorageResize ) {
++		glTexImage2D( GL_TEXTURE_2D, 0, internalFormat != 0 ? internalFormat : GL_RGBA8, imageWidth, imageHeight, 0,
++			dataFormat != 0 ? dataFormat : GL_RGBA, dataType != 0 ? dataType : GL_UNSIGNED_BYTE, NULL );
++		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
++		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
++		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
++		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
++	}
++	if ( r_copyFramebufferFbo == 0 ) {
++		glGenFramebuffers( 1, &r_copyFramebufferFbo );
++	}
++	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, r_copyFramebufferFbo );
++	glFramebufferTexture2D( GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texnum, 0 );
++	glDrawBuffer( GL_COLOR_ATTACHMENT0 );
++	glBlitFramebuffer( x, y, x + imageWidth, y + imageHeight, 0, 0, imageWidth, imageHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST );
++	glFramebufferTexture2D( GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0 );
++
++	// Buffer selection belongs to each FBO. Restore the source's read selection
++	// before rebinding, and do not overwrite the previous draw FBO's MRT state.
++	glBindFramebuffer( GL_READ_FRAMEBUFFER, sourceFbo );
++	glReadBuffer( sourceReadBuffer );
++	glBindFramebuffer( GL_READ_FRAMEBUFFER, previousReadFbo );
++	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, previousDrawFbo );
++	if ( scissorWasEnabled ) {
++		glScissor( previousScissorBox[0], previousScissorBox[1], previousScissorBox[2], previousScissorBox[3] );
++		glEnable( GL_SCISSOR_TEST );
++	}
++	return;
++#endif
++
+ 	if ( readingFromRenderTexture && ( GLEW_EXT_framebuffer_blit || GLEW_ARB_framebuffer_object || GLEW_VERSION_3_0 ) ) {
+ 		GLint previousReadFbo = 0;
+ 		GLint previousDrawFbo = 0;
+@@ -1390,6 +1506,20 @@ int idImage::StorageSize() const {
+ 	if ( !IsLoaded() ) {
+ 		return 0;
+ 	}
++#if defined( __EMSCRIPTEN__ )
++	// Encoded cache metadata is retained when browser uploads expand to RGBA8.
++	// Account for the actual GPU storage, including all cube faces and mips.
++	if ( internalFormat == GL_RGBA8 ) {
++		int64 size = 0;
++		int width = opts.width, height = opts.textureType == TT_CUBIC ? opts.width : opts.height;
++		for ( int level = 0; level < opts.numLevels; ++level ) {
++			size += (int64)width * height * 4 * ( opts.textureType == TT_CUBIC ? 6 : 1 );
++			width = Max( 1, width >> 1 );
++			height = Max( 1, height >> 1 );
++		}
++		return size > 0x7fffffff ? 0x7fffffff : (int)size;
++	}
++#endif
+ 	int baseSize = opts.width * opts.height;
+ 	if ( opts.numLevels > 1 ) {
+ 		baseSize *= 4;
+@@ -1566,4 +1696,3 @@ void idImage::SetSamplerState( textureFilter_t tf, textureRepeat_t tr ) {
+ 	R_BindTextureForDirectAccess( ( opts.textureType == TT_CUBIC ) ? GL_TEXTURE_CUBE_MAP_EXT : GL_TEXTURE_2D, texnum );
+ 	SetTexParameters();
+ }
+-
+diff --git a/src/renderer/OpenGL/gl_Image.cpp b/src/renderer/OpenGL/gl_Image.cpp
+index 91870b2..c3b4657 100644
+--- a/src/renderer/OpenGL/gl_Image.cpp
++++ b/src/renderer/OpenGL/gl_Image.cpp
+@@ -35,6 +35,10 @@ Contains the Image implementation for OpenGL.
+ */
+ 
+ #include "../tr_local.h"
++#if defined( __EMSCRIPTEN__ )
++#include "../../imagetools/DXT/DXTCodec.h"
++#include "../../sys/emscripten/webgl_compat.h"
++#endif
+ 
+ #ifndef GL_SRGB8
+ #define GL_SRGB8 0x8C41
+@@ -75,6 +79,115 @@ static int R_CompressedTextureSizeInBytes( textureFormat_t format, int width, in
+ 	return (int)compressedSize;
+ }
+ 
++#if defined( __EMSCRIPTEN__ )
++// Keep opts.format/colorFormat as the encoded source layout. Only GPU storage
++// changes: cache files, mip sizes, and shader-side DXT5 normal/YCoCg decoding
++// must continue to describe the original data.
++static bool R_WebGLUsesRGBA8( const idImageOpts &opts, textureUsage_t usage ) {
++	switch ( opts.format ) {
++		case FMT_ALPHA:
++		case FMT_LUM8:
++		case FMT_INT8:
++		case FMT_L8A8:
++		case FMT_RGB565:
++		case FMT_XRGB8:
++			return true;
++		case FMT_RGBA8:
++		case FMT_DXT1:
++		case FMT_DXT5:
++			if ( opts.colorFormat == CFM_GREEN_ALPHA ||
++				( usage == TD_BUMP && opts.colorFormat != CFM_NORMAL_DXT5 ) ) {
++				return true; // WebGL has no texture swizzle state.
++			}
++			// WEBGL_compressed_texture_s3tc requires base dimensions divisible
++			// by four. Decode the entire mip chain if its base is incompatible.
++			return opts.format != FMT_RGBA8 && ( ( opts.width & 3 ) || ( opts.height & 3 ) );
++		default:
++			return false; // Preserve depth, floating point, and other storage.
++	}
++}
++
++static int R_WebGLRGBA8Size( int width, int height ) {
++	const int64 size = (int64)width * height * 4;
++	if ( width <= 0 || height <= 0 || size > 0x7fffffff ) {
++		idLib::Error( "Invalid WebGL upload dimensions %dx%d", width, height );
++	}
++	return (int)size;
++}
++
++static void R_WebGLConvertRGBA8( const idImageOpts &opts, textureUsage_t usage,
++	int width, int height, const void *pic, int pixelPitch, byte *rgba ) {
++	const byte *source = static_cast<const byte *>( pic );
++	const int pitch = pixelPitch != 0 ? pixelPitch : width;
++	if ( source == NULL || pitch < width || (int64)pitch * height * 4 > 0x7fffffff ) {
++		idLib::Error( "Invalid WebGL texture upload source/pitch" );
++	}
++	if ( opts.format == FMT_DXT1 || opts.format == FMT_DXT5 ) {
++		// Decode only actual blocks, then crop their padded edge texels. A
++		// subrectangle may have a source pitch wider than the uploaded region.
++		const int blockBytes = opts.format == FMT_DXT1 ? 8 : 16;
++		const int blocksPerRow = ( pitch + 3 ) / 4;
++		idDxtDecoder decoder;
++		for ( int by = 0; by < height; by += 4 ) {
++			for ( int bx = 0; bx < width; bx += 4 ) {
++				byte block[64];
++				const byte *encoded = source + ( ( by / 4 ) * blocksPerRow + bx / 4 ) * blockBytes;
++				if ( opts.format == FMT_DXT1 ) {
++					decoder.DecompressImageDXT1( encoded, block, 4, 4 );
++				} else {
++					// Raw channels, not DecompressNormalMapDXT5/YCoCg: the material
++					// shader still performs the original encoded-channel decoding.
++					decoder.DecompressImageDXT5( encoded, block, 4, 4 );
++				}
++				for ( int row = 0; row < Min( 4, height - by ); ++row ) {
++					memcpy( rgba + ( ( by + row ) * width + bx ) * 4, block + row * 16,
++						Min( 4, width - bx ) * 4 );
++				}
++			}
++		}
++	} else {
++		const int sourceBytes = opts.format == FMT_RGB565 || opts.format == FMT_L8A8 ? 2 :
++			( opts.format == FMT_RGBA8 || opts.format == FMT_XRGB8 ? 4 : 1 );
++		for ( int y = 0; y < height; ++y ) {
++			for ( int x = 0; x < width; ++x ) {
++				const byte *in = source + ( y * pitch + x ) * sourceBytes;
++				byte *out = rgba + ( y * width + x ) * 4;
++				switch ( opts.format ) {
++					case FMT_ALPHA:
++						out[0] = out[1] = out[2] = 255; out[3] = in[0]; break;
++					case FMT_LUM8:
++						out[0] = out[1] = out[2] = in[0]; out[3] = 255; break;
++					case FMT_INT8:
++						out[0] = out[1] = out[2] = out[3] = in[0]; break;
++					case FMT_L8A8:
++						out[0] = out[1] = out[2] = in[0]; out[3] = in[1]; break;
++					case FMT_RGB565: {
++						// BinaryImage stores the high byte first. UNPACK_SWAP_BYTES
++						// is unavailable in WebGL; decode that byte order explicitly.
++						const unsigned value = ( (unsigned)in[0] << 8 ) | in[1];
++						const unsigned r = value >> 11, g = ( value >> 5 ) & 63, b = value & 31;
++						out[0] = ( r << 3 ) | ( r >> 2 ); out[1] = ( g << 2 ) | ( g >> 4 );
++						out[2] = ( b << 3 ) | ( b >> 2 ); out[3] = 255; break;
++					}
++					case FMT_XRGB8:
++						memcpy( out, in, 3 ); out[3] = 255; break;
++					default:
++						memcpy( out, in, 4 ); break;
++				}
++			}
++		}
++	}
++	for ( int i = 0; i < width * height; ++i ) {
++		byte *out = rgba + i * 4;
++		if ( opts.colorFormat == CFM_GREEN_ALPHA ) {
++			out[3] = out[1]; out[0] = out[1] = out[2] = 255;
++		} else if ( usage == TD_BUMP && opts.colorFormat != CFM_NORMAL_DXT5 ) {
++			out[3] = out[0];
++		}
++	}
++}
++#endif
++
+ /*
+ ========================
+ idImage::SubImageUpload
+@@ -83,6 +196,33 @@ idImage::SubImageUpload
+ void idImage::SubImageUpload( int mipLevel, int x, int y, int z, int width, int height, const void * pic, int pixelPitch ) const {
+ 	assert( x >= 0 && y >= 0 && mipLevel >= 0 && width >= 0 && height >= 0 && mipLevel < opts.numLevels );
+ 
++#if defined( __EMSCRIPTEN__ )
++	if ( R_WebGLUsesRGBA8( opts, usage ) ) {
++		if ( width == 0 || height == 0 ) {
++			return;
++		}
++		if ( mipLevel < 0 || mipLevel >= opts.numLevels || mipLevel >= MAX_TEXTURE_LEVELS ||
++			x < 0 || y < 0 || (int64)x + width > Max( 1, opts.width >> mipLevel ) ||
++			(int64)y + height > Max( 1, opts.height >> mipLevel ) ) {
++			idLib::Error( "Invalid WebGL texture upload bounds for %s", GetName() );
++		}
++		idTempArray<byte> rgba( R_WebGLRGBA8Size( width, height ) );
++		R_WebGLConvertRGBA8( opts, usage, width, height, pic, pixelPitch, rgba.Ptr() );
++		const GLenum target = opts.textureType == TT_CUBIC ? GL_TEXTURE_CUBE_MAP_EXT : GL_TEXTURE_2D;
++		const GLenum uploadTarget = opts.textureType == TT_CUBIC ? GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + z : GL_TEXTURE_2D;
++		R_BindTextureForDirectAccess( target, texnum );
++		GLint previousAlignment = 4, previousRowLength = 0;
++		glGetIntegerv( GL_UNPACK_ALIGNMENT, &previousAlignment );
++		glGetIntegerv( GL_UNPACK_ROW_LENGTH, &previousRowLength );
++		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
++		glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
++		glTexSubImage2D( uploadTarget, mipLevel, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, rgba.Ptr() );
++		glPixelStorei( GL_UNPACK_ALIGNMENT, previousAlignment );
++		glPixelStorei( GL_UNPACK_ROW_LENGTH, previousRowLength );
++		return;
++	}
++#endif
++
+ 	int compressedSize = 0;
+ 
+ 	if ( IsCompressed() ) {
+@@ -174,6 +314,32 @@ void idImage::SetPixel( int mipLevel, int x, int y, const void * data, int dataS
+ idImage::SetTexParameters
+ ========================
+ */
++#if defined( __EMSCRIPTEN__ )
++static void R_WebGLSetBorderSampler( const idImageOpts &opts, textureUsage_t usage, unsigned int texture,
++    textureFilter_t filter, float anisotropy, const float *requested ) {
++	if ( opts.textureType != TT_2D ) {
++		idLib::Error( "Border sampler requires a 2D image" );
++	}
++	float color[4] = { requested[0], requested[1], requested[2], requested[3] };
++	// Materialize the desktop compatibility renderer's format expansion and
++	// texture swizzles just as WebGL uploads materialize ordinary texels.
++	if ( opts.colorFormat == CFM_GREEN_ALPHA || opts.format == FMT_ALPHA ) {
++		color[0] = color[1] = color[2] = 1.0f;
++		color[3] = 0.0f;
++	} else if ( usage == TD_BUMP && opts.colorFormat != CFM_NORMAL_DXT5 ) {
++		color[3] = color[0];
++	} else if ( opts.format == FMT_LUM8 || opts.format == FMT_XRGB8 || opts.format == FMT_RGB565 ||
++		opts.format == FMT_DEPTH || opts.format == FMT_DEPTH_STENCIL ) {
++		color[3] = 1.0f;
++	} else if ( opts.format == FMT_INT8 || opts.format == FMT_X16 ) {
++		color[3] = color[0];
++	}
++	const int filterMode = filter == TF_NEAREST ? 0 : ( filter == TF_DEFAULT && opts.numLevels > 1 ? 2 : 1 );
++	Q4WASM_SetBorderSampler( texture, 1, filterMode, Max( 0, opts.numLevels - 1 ),
++		anisotropy, color[0], color[1], color[2], color[3] );
++}
++#endif
++
+ void idImage::SetTexParameters() {
+ 	int target = GL_TEXTURE_2D;
+ 	switch ( opts.textureType ) {
+@@ -188,6 +354,8 @@ void idImage::SetTexParameters() {
+ 			return;
+ 	}
+ 
++#if !defined( __EMSCRIPTEN__ )
++	// Browser uploads have already materialized these swizzles in RGBA storage.
+ 	// Quake 4 normal maps are typically sampled from RGB, but some legacy ARB programs
+ 	// read Nx from alpha. Keep alpha in sync for TD_BUMP without altering RGB channels.
+ 	const bool duplicateBumpXToAlpha = ( usage == TD_BUMP && opts.colorFormat != CFM_NORMAL_DXT5 );
+@@ -250,6 +418,7 @@ void idImage::SetTexParameters() {
+ 	}
+ #endif
+ 
++#endif // !__EMSCRIPTEN__: desktop texture swizzle state
+ 	const bool hasMipChain = opts.numLevels > 1;
+ 
+ 	switch( filter ) {
+@@ -269,12 +438,13 @@ void idImage::SetTexParameters() {
+ 			common->FatalError( "%s: bad texture filter %d", GetName(), filter );
+ 	}
+ 
++	float samplerAnisotropy = 1.0f;
+ 	{
+ 		// only do aniso filtering on mip mapped images
+ 		if ( filter == TF_DEFAULT && hasMipChain ) {
+ 			const float requestedAniso = static_cast<float>( Max( 1, cvarSystem->GetCVarInteger( "image_anisotropy" ) ) );
+-			const float aniso = Min( requestedAniso, Max( 1.0f, glConfig.maxTextureAnisotropy ) );
+-			glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso );
++			samplerAnisotropy = Min( requestedAniso, Max( 1.0f, glConfig.maxTextureAnisotropy ) );
++			glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, samplerAnisotropy );
+ 		} else {
+ 			glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1 );
+ 		}
+@@ -285,6 +455,11 @@ void idImage::SetTexParameters() {
+ 	//}
+ 
+ 	// set the wrap/clamp modes
++#if defined( __EMSCRIPTEN__ )
++	if ( repeat != TR_CLAMP_TO_ZERO && repeat != TR_CLAMP_TO_ZERO_ALPHA ) {
++		Q4WASM_SetBorderSampler( texnum, 0, 0, 0, 1, 0, 0, 0, 0 );
++	}
++#endif
+ 	switch( repeat ) {
+ 		case TR_REPEAT:
+ 			glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_REPEAT );
+@@ -296,16 +471,28 @@ void idImage::SetTexParameters() {
+ 			break;
+ 		case TR_CLAMP_TO_ZERO: {
+ 			float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
++#if defined( __EMSCRIPTEN__ )
++			R_WebGLSetBorderSampler( opts, usage, texnum, filter, samplerAnisotropy, color );
++			glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
++			glTexParameterf( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
++#else
+ 			glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, color );
+ 			glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+ 			glTexParameterf( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
++#endif
+ 			}
+ 			break;
+ 		case TR_CLAMP_TO_ZERO_ALPHA: {
+ 			float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
++#if defined( __EMSCRIPTEN__ )
++			R_WebGLSetBorderSampler( opts, usage, texnum, filter, samplerAnisotropy, color );
++			glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
++			glTexParameterf( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
++#else
+ 			glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, color );
+ 			glTexParameterf( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+ 			glTexParameterf( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
++#endif
+ 			}
+ 			break;
+ 		case TR_CLAMP:
+@@ -331,6 +518,10 @@ void idImage::AllocImage() {
+ 	GL_CheckErrors();
+ 	PurgeImage();
+ 	storageGeneration++;
++	bool webglRGBA8 = false;
++#if defined( __EMSCRIPTEN__ )
++	webglRGBA8 = R_WebGLUsesRGBA8( opts, usage );
++#endif
+ 
+ 	// openQ4 still follows the stock Quake 4 renderer's legacy SDR lighting path.
+ 	// Enabling selective sRGB decode without a full renderer-wide linear workflow
+@@ -427,9 +618,17 @@ void idImage::AllocImage() {
+ 		dataType = GL_UNSIGNED_BYTE;
+ 		break;
+ 	case FMT_DEPTH:
++#ifdef __EMSCRIPTEN__
++		// WebGL rejects depth/UNSIGNED_BYTE even for a NULL allocation.
++		// Keep real depth storage for render targets and subsequent copies.
++		internalFormat = GL_DEPTH_COMPONENT24;
++		dataFormat = GL_DEPTH_COMPONENT;
++		dataType = GL_UNSIGNED_INT;
++#else
+ 		internalFormat = GL_DEPTH_COMPONENT;
+ 		dataFormat = GL_DEPTH_COMPONENT;
+ 		dataType = GL_UNSIGNED_BYTE;
++#endif
+ 		break;
+ 	case FMT_DEPTH_STENCIL:
+ 		internalFormat = GL_DEPTH24_STENCIL8;
+@@ -449,6 +648,11 @@ void idImage::AllocImage() {
+ 	default:
+ 		idLib::Error( "Unhandled image format %d in %s\n", opts.format, GetName() );
+ 	}
++	if ( webglRGBA8 ) {
++		internalFormat = GL_RGBA8;
++		dataFormat = GL_RGBA;
++		dataType = GL_UNSIGNED_BYTE;
++	}
+ 
+ 	// if we don't have a rendering context, just return after we
+ 	// have filled in the parms.  We must have the values set, or
+@@ -526,7 +730,7 @@ void idImage::AllocImage() {
+ 			// clear out any previous error
+ 			GL_CheckErrors();
+ 
+-			if ( IsCompressed() ) {
++			if ( IsCompressed() && !webglRGBA8 ) {
+ 				const int compressedSize = R_CompressedTextureSizeInBytes( opts.format, w, h );
+ 
+ 				// Even though the OpenGL specification allows the 'data' pointer to be NULL, for some
+diff --git a/src/renderer/OpenGL/gl_ContextSDL3.cpp b/src/renderer/OpenGL/gl_ContextSDL3.cpp
+index 04f37b9..c4c2e70 100644
+--- a/src/renderer/OpenGL/gl_ContextSDL3.cpp
++++ b/src/renderer/OpenGL/gl_ContextSDL3.cpp
+@@ -198,6 +198,19 @@ static void SDL3_MoveCompatibilityFallbacksToFront(rendererContextCandidate_t *c
+ }
+ 
+ static int SDL3_BuildGLContextCandidates(rendererContextCandidate_t *candidates, int maxCandidates) {
++#ifdef __EMSCRIPTEN__
++	// The browser window service creates WebGL2 (ES 3.0). Do not report a
++	// successful desktop 4.6 compatibility request that was never attempted.
++	if (candidates == NULL || maxCandidates <= 0) {
++		return 0;
++	}
++	memset(&candidates[0], 0, sizeof(candidates[0]));
++	candidates[0].major = 3;
++	candidates[0].profile = RENDERER_CONTEXT_PROFILE_ES;
++	candidates[0].explicitVersion = true;
++	idStr::Copynz(candidates[0].label, "3.0 es (WebGL2)", sizeof(candidates[0].label));
++	return 1;
++#else
+ 	const rendererTierPreference_t preference = RendererTierPreference_FromString(r_glTier.GetString());
+ 	const bool keepAutoCompatibility = preference == RENDERER_TIER_PREF_AUTO;
+ 	const int candidateCount = RendererContextLadder_Build(
+@@ -219,6 +232,7 @@ static int SDL3_BuildGLContextCandidates(rendererContextCandidate_t *candidates,
+ 	}
+ 
+ 	return candidateCount;
++#endif
+ }
+ 
+ static int SDL3_NormalizeMSAASampleFallback(const int samples) {
+@@ -591,7 +605,7 @@ void GLimp_DeactivateContext(void) {
+ 	}
+ }
+ 
+-#if defined(OPENQ4_SDL3_LINUX_HOST)
++#if defined(OPENQ4_SDL3_LINUX_HOST) || defined(OPENQ4_SDL3_EMSCRIPTEN_HOST)
+ typedef void ( *openQ4GlewProcAddress_t ) (void);
+ 
+ extern "C" openQ4GlewProcAddress_t OpenQ4_GlewGetProcAddress(const unsigned char *name) {
+diff --git a/src/renderer/Model_md5r.cpp b/src/renderer/Model_md5r.cpp
+index f824194..6f69e04 100644
+--- a/src/renderer/Model_md5r.cpp
++++ b/src/renderer/Model_md5r.cpp
+@@ -46,11 +46,14 @@ The Vulkan backend consumes the renderer's classic idDrawVert/index surface
+ contract. Packed MD5R light and shadow surfaces carry primitive-batch headers
+ and palette data that are not valid flat Vulkan draw geometry, so materialize
+ MD5R through the existing CPU-skinned/classic path at the model boundary.
+-OpenGL keeps the native packed path.
++WebGL likewise needs CPU-skinned surfaces: its GLSL lighting does not provide
++the ARB palette/projection programs used by packed stencil shadows. The classic
++path also builds the silhouette remap missing from packed dynamic surfaces.
++Desktop OpenGL keeps the native packed path.
+ ========================
+ */
+ static ID_INLINE bool R_MD5R_UsePackedRuntimeSurfaces() {
+-#if defined( OPENQ4_RENDERER_VK_MODULE )
++#if defined( OPENQ4_RENDERER_VK_MODULE ) || defined( __EMSCRIPTEN__ )
+ 	return false;
+ #else
+ 	return true;
+diff --git a/src/renderer/tr_turboshadow.cpp b/src/renderer/tr_turboshadow.cpp
+index 80e3d70..dfa2394 100644
+--- a/src/renderer/tr_turboshadow.cpp
++++ b/src/renderer/tr_turboshadow.cpp
+@@ -35,6 +35,18 @@ If you have questions concerning this license or the applicable additional terms
+ int	c_turboUsedVerts;
+ int c_turboUnusedVerts;
+ 
++bool R_UseShadowVertexProgram() {
++#if !defined( OPENQ4_RENDERER_VK_MODULE )
++	// The ARB2 renderer can use GLSL lighting without supporting the ARB
++	// assembly program that projects stencil volumes. Generation and drawing
++	// must agree: CPU caches already contain light-relative w=0 directions.
++	if ( !glConfig.ARBVertexProgramAvailable ) {
++		return false;
++	}
++#endif
++	return tr.backEndRendererHasVertexPrograms && r_useShadowVertexProgram.GetBool();
++}
++
+ #if defined( _MD5R_SUPPORT ) || defined( Q4SDK_MD5R )
+ static int R_CreateShadowCacheFromSilTraceVerts( idVec4 *vertexCache, int *vertRemap, const idVec3 &lightOrigin, const rvSilTraceVertT *silTraceVerts, int numVerts ) {
+ 	int outVerts = 0;
+@@ -201,7 +213,7 @@ static int R_CreatePackedTurboShadowCaps( const rvMD5RPrimBatch &primBatch, cons
+ 
+ srfTriangles_t *R_CreatePackedTurboShadowVolume( const idRenderEntityLocal *ent,
+ 		const srfTriangles_t *tri, const idRenderLightLocal *light, srfCullInfo_t &cullInfo ) {
+-	if ( tr.backEndRenderer != BE_ARB2 || !tr.backEndRendererHasVertexPrograms ) {
++	if ( tr.backEndRenderer != BE_ARB2 || !R_UseShadowVertexProgram() ) {
+ 		return NULL;
+ 	}
+ 
+@@ -679,9 +691,9 @@ srfTriangles_t *R_CreateTurboShadowVolumeForSurface( const idRenderEntityLocal *
+ 	}
+ #endif
+ 
+-	if ( tr.backEndRendererHasVertexPrograms && r_useShadowVertexProgram.GetBool() ) {
++	if ( R_UseShadowVertexProgram() ) {
+ 		return R_CreateVertexProgramTurboShadowVolume( ent, tri, light, cullInfo );
+ 	}
+ 
+ 	return R_CreateTurboShadowVolume( ent, tri, light, cullInfo );
+-}
+\ No newline at end of file
++}
+diff --git a/src/renderer/tr_local.h b/src/renderer/tr_local.h
+index f14effd..ff1d988 100644
+--- a/src/renderer/tr_local.h
++++ b/src/renderer/tr_local.h
+@@ -2040,6 +2040,8 @@ calling this function may modify "facing" based on culling
+ ============================================================
+ */
+ 
++bool R_UseShadowVertexProgram();
++
+ srfTriangles_t *R_CreateTurboShadowVolumeForSurface( const idRenderEntityLocal *ent,
+ 									 const srfTriangles_t *tri, const idRenderLightLocal *light,
+ 									 srfCullInfo_t &cullInfo );
+diff --git a/src/renderer/draw_common.cpp b/src/renderer/draw_common.cpp
+index 26aeab4..f10aeb2 100644
+--- a/src/renderer/draw_common.cpp
++++ b/src/renderer/draw_common.cpp
+@@ -7854,7 +7854,7 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
+ 	const srfTriangles_t	*tri;
+ 
+ 	// set the light position if we are using a vertex program to project the rear surfaces
+-	if ( tr.backEndRendererHasVertexPrograms && r_useShadowVertexProgram.GetBool() ) {
++	if ( R_UseShadowVertexProgram() ) {
+ 		if ( R_TriHasPrimBatchMesh( surf->geo ) ) {
+ 			rb_shadowLightOriginSpace = NULL;
+ 		} else if ( surf->space != rb_shadowLightOriginSpace ) {
+@@ -8538,16 +8538,29 @@ RB_STD_ForceAmbient
+ Lift the final scene toward a minimum brightness floor.
+ ==================
+ */
+-static void RB_STD_ForceAmbient( void ) {
++static bool RB_InteractionRescueActive( void ) {
++	if ( tr.backEndRenderer != BE_ARB2 ) {
++		return false;
++	}
++	if ( glConfig.disableARB2Interactions ) {
++		return true;
++	}
++#ifdef __EMSCRIPTEN__
++	// R_ReloadARBPrograms validates the GLSL ES interaction program and aborts
++	// on failure. Desktop ARB assembly is deliberately never uploaded here.
++	return false;
++#else
+ 	const bool useSimpleInteraction = !r_testARBProgram.GetBool() &&
+ 		( r_useSimpleInteraction.GetBool() || glConfig.preferSimpleInteraction );
+ 	const GLuint interactionVertexProgram = r_testARBProgram.GetBool() ? VPROG_TEST : ( useSimpleInteraction ? VPROG_SIMPLE_INTERACTION : VPROG_INTERACTION );
+ 	const GLuint interactionFragmentProgram = r_testARBProgram.GetBool() ? FPROG_TEST : ( useSimpleInteraction ? FPROG_SIMPLE_INTERACTION : FPROG_INTERACTION );
+-	const bool interactionRescueActive =
+-		tr.backEndRenderer == BE_ARB2 &&
+-		( glConfig.disableARB2Interactions ||
+-			!R_IsARBProgramValid( GL_VERTEX_PROGRAM_ARB, interactionVertexProgram ) ||
+-			!R_IsARBProgramValid( GL_FRAGMENT_PROGRAM_ARB, interactionFragmentProgram ) );
++	return !R_IsARBProgramValid( GL_VERTEX_PROGRAM_ARB, interactionVertexProgram ) ||
++		!R_IsARBProgramValid( GL_FRAGMENT_PROGRAM_ARB, interactionFragmentProgram );
++#endif
++}
++
++static void RB_STD_ForceAmbient( void ) {
++	const bool interactionRescueActive = RB_InteractionRescueActive();
+ 	const float ambientFloor = interactionRescueActive ? 0.20f : 0.0f;
+ 	const float ambient = idMath::ClampFloat( 0.0f, 1.0f, Max( r_forceAmbient.GetFloat(), ambientFloor ) );
+ 	if ( ambient <= 0.0f || !backEnd.viewDef->viewEntitys ) {
+diff --git a/src/renderer/RenderSystem_init.cpp b/src/renderer/RenderSystem_init.cpp
+index b2d3c2d..25c8c41 100644
+--- a/src/renderer/RenderSystem_init.cpp
++++ b/src/renderer/RenderSystem_init.cpp
+@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ 
+ #include "tr_local.h"
++#include "ScreenshotReadback.h"
+ #include "../imagetools/DXT/DXTCodec.h"
+ #include "CelShading.h"
+ #include "RendererBootstrap.h"
+@@ -187,9 +188,19 @@ static bool R_CanUseGLSLPrograms() {
+ 		return false;
+ 	}
+ 
++#ifndef __EMSCRIPTEN__
+ 	if ( !glConfig.ARBVertexProgramAvailable || !glConfig.ARBFragmentProgramAvailable ) {
+ 		return false;
+ 	}
++#else
++	// The browser interaction program is GLSL ES; it does not execute ARB
++	// assembly. Validate the actual ES context and shader inputs instead.
++	GLint vertexAttributes = 0;
++	glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &vertexAttributes );
++	if ( glConfig.backendCaps.glMajor < 3 || glConfig.maxTextureImageUnits < 5 || vertexAttributes < 12 ) {
++		return false;
++	}
++#endif
+ 
+ 	if ( !R_CheckGLSLProgramExtensions() ) {
+ 		return false;
+@@ -999,6 +1010,9 @@ static void R_CheckPortableExtensions( void ) {
+ 
+ 	GLCapabilityProbe_Build( glConfig.backendCaps, glConfig.version_string, glConfig.extensions_string );
+ 	glConfig.extensions_string = GLCapabilityProbe_ExtensionString();
++#ifdef __EMSCRIPTEN__
++	glConfig.glVersion = glConfig.backendCaps.glVersion;
++#endif
+ 
+ 	// GL_ARB_multitexture
+ 	glConfig.multitextureAvailable = R_CheckRequiredExtension( "GL_ARB_multitexture" );
+@@ -1012,12 +1026,21 @@ static void R_CheckPortableExtensions( void ) {
+ 		//if ( glConfig.maxTextureUnits > MAX_MULTITEXTURE_UNITS ) {
+ 		//	glConfig.maxTextureUnits = MAX_MULTITEXTURE_UNITS;
+ 		//}
++#ifdef __EMSCRIPTEN__
++		glConfig.maxTextureUnits = glConfig.backendCaps.maxTextureUnits;
++#else
+ 		glConfig.maxTextureUnits = 16; // jmarshall: OpenGL LIES
++#endif
+ 		if ( glConfig.maxTextureUnits < 2 ) {
+ 			glConfig.multitextureAvailable = false;	// shouldn't ever happen
+ 		}
++#ifdef __EMSCRIPTEN__
++		glConfig.maxTextureCoords = glConfig.backendCaps.maxTextureCoords;
++		glConfig.maxTextureImageUnits = glConfig.backendCaps.maxTextureImageUnits;
++#else
+ 		glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, (GLint*)&glConfig.maxTextureCoords);
+ 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, (GLint*)&glConfig.maxTextureImageUnits);
++#endif
+ 	}
+ 
+ 	glConfig.maxDrawBuffers = 1;
+@@ -1032,9 +1055,16 @@ static void R_CheckPortableExtensions( void ) {
+ 		( GLEW_EXT_texture_sRGB || glConfig.glVersion >= 2.1f );
+ 	glConfig.framebufferSRGBAvailable =
+ 		( GLEW_EXT_framebuffer_sRGB || GLEW_ARB_framebuffer_sRGB || glConfig.glVersion >= 3.0f );
++#ifdef __EMSCRIPTEN__
++	glConfig.framebufferSRGBAvailable = false;
++#endif
+ 
+ 	// GL_ARB_texture_env_combine
++#ifdef __EMSCRIPTEN__
++	glConfig.textureEnvCombineAvailable = R_CheckRequiredExtension( "GL_EXT_texture_env_combine" );
++#else
+ 	glConfig.textureEnvCombineAvailable = R_CheckRequiredExtension( "GL_ARB_texture_env_combine" );
++#endif
+ 
+ 	// GL_ARB_texture_cube_map
+ 	glConfig.cubeMapAvailable = R_CheckRequiredExtension( "GL_ARB_texture_cube_map" );
+@@ -1044,13 +1074,21 @@ static void R_CheckPortableExtensions( void ) {
+ 	}
+ 
+ 	// GL_ARB_texture_env_dot3
++#ifdef __EMSCRIPTEN__
++	glConfig.envDot3Available = R_CheckRequiredExtension( "GL_EXT_texture_env_dot3" );
++#else
+ 	glConfig.envDot3Available = R_CheckRequiredExtension( "GL_ARB_texture_env_dot3" );
++#endif
+ 
+ 	// GL_ARB_texture_env_add
+ 	glConfig.textureEnvAddAvailable = R_CheckExtension( "GL_ARB_texture_env_add" );
+ 
+ 	// GL_ARB_texture_non_power_of_two
++#ifdef __EMSCRIPTEN__
++	glConfig.textureNonPowerOfTwoAvailable = glConfig.backendCaps.contextCreated;
++#else
+ 	glConfig.textureNonPowerOfTwoAvailable = R_CheckExtension( "GL_ARB_texture_non_power_of_two" );
++#endif
+ 
+ 	// GL 1.3/GL_ARB_texture_compression + GL_S3_s3tc
+ 	// DRI drivers may have GL_ARB_texture_compression but no GL_EXT_texture_compression_s3tc
+@@ -1087,6 +1125,9 @@ static void R_CheckPortableExtensions( void ) {
+ 	// GL_EXT_texture_lod_bias
+ 	// The actual extension is broken as specificed, storing the state in the texture unit instead
+ 	// of the texture object.  The behavior in GL 1.4 is the behavior we use.
++#ifdef __EMSCRIPTEN__
++	glConfig.textureLODBiasAvailable = false;
++#else
+ 	if ( glConfig.glVersion >= 1.4 || R_CheckExtension( "GL_EXT_texture_lod" ) ) {
+ 		common->Printf( "...using %s\n", "GL_1.4_texture_lod_bias" );
+ 		glConfig.textureLODBiasAvailable = true;
+@@ -1094,6 +1135,7 @@ static void R_CheckPortableExtensions( void ) {
+ 		common->Printf( "X..%s not found\n", "GL_1.4_texture_lod_bias" );
+ 		glConfig.textureLODBiasAvailable = false;
+ 	}
++#endif
+ 
+ 	// GL_EXT_shared_texture_palette
+ 	glConfig.sharedTexturePaletteAvailable = R_CheckExtension( "GL_EXT_shared_texture_palette" );
+@@ -1173,6 +1215,10 @@ static void R_CheckPortableExtensions( void ) {
+ 	}
+ 
+ 	// ARB_vertex_program
++#ifdef __EMSCRIPTEN__
++	glConfig.ARBVertexProgramAvailable = false;
++	glConfig.ARBFragmentProgramAvailable = false;
++#else
+ 	glConfig.ARBVertexProgramAvailable = R_CheckRequiredExtension( "GL_ARB_vertex_program" );
+ 	if ( glConfig.ARBVertexProgramAvailable && !R_HasARBProgramEntryPoints() ) {
+ 		common->Printf( "X..GL_ARB_vertex_program entry points incomplete\n" );
+@@ -1192,6 +1238,7 @@ static void R_CheckPortableExtensions( void ) {
+ 		}
+ 	}
+ 
++#endif
+ 	// GL_ARB shader objects / GLSL
+ 	glConfig.GLSLProgramAvailable = R_CanUseGLSLPrograms();
+ 	glConfig.GLSL130Available = false;
+@@ -1215,6 +1262,12 @@ static void R_CheckPortableExtensions( void ) {
+ 	}
+ 
+ 	// check for minimum set
++#ifdef __EMSCRIPTEN__
++	if ( !glConfig.GLSLProgramAvailable ) {
++		R_RecordMissingRequiredOpenGLFeature( "WebGL2 GLSL ES entry points, five texture units and twelve vertex attributes" );
++		R_ErrorForMissingRequiredOpenGLFeatures();
++	}
++#endif
+ 	if ( !glConfig.multitextureAvailable || !glConfig.textureEnvCombineAvailable || !glConfig.cubeMapAvailable
+ 		|| !glConfig.envDot3Available ) {
+ 			R_ErrorForMissingRequiredOpenGLFeatures();
+@@ -2278,8 +2331,12 @@ If ref isn't specified, the full session UpdateScreen will be done.
+ ====================
+ */
+ void R_ReadTiledPixels( int width, int height, byte *buffer, renderView_t *ref = NULL ) {
++#if defined( __EMSCRIPTEN__ )
++	byte *temp = (byte *)R_StaticAlloc( glConfig.vidWidth * glConfig.vidHeight * 4 );
++#else
+ 	// include extra space for OpenGL padding to word boundaries
+ 	byte	*temp = (byte *)R_StaticAlloc( (glConfig.vidWidth+3) * glConfig.vidHeight * 3 );
++#endif
+ 
+ 	int	oldWidth = glConfig.vidWidth;
+ 	int oldHeight = glConfig.vidHeight;
+@@ -2337,7 +2394,17 @@ void R_ReadTiledPixels( int width, int height, byte *buffer, renderView_t *ref =
+ 				h = height - yo;
+ 			}
+ 
+-			glReadPixels( 0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, temp ); 
++#if defined( __EMSCRIPTEN__ )
++			R_ReadPixelsRGBA8Browser( 0, 0, w, h, temp );
++			for ( int y = 0; y < h; ++y ) {
++				byte *destination = buffer + ( ( yo + y ) * width + xo ) * 3;
++				const byte *source = temp + y * w * 4;
++				for ( int x = 0; x < w; ++x ) {
++					memcpy( destination + x * 3, source + x * 4, 3 );
++				}
++			}
++#else
++			glReadPixels( 0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, temp );
+ 
+ 			int	row = ( w * 3 + 3 ) & ~3;		// OpenGL pads to dword boundaries
+ 
+@@ -2345,6 +2412,7 @@ void R_ReadTiledPixels( int width, int height, byte *buffer, renderView_t *ref =
+ 				memcpy( buffer + ( ( yo + y )* width + xo ) * 3,
+ 					temp + y * row, w * 3 );
+ 			}
++#endif
+ 		}
+ 	}
+ 
+diff --git a/src/renderer/RendererCaps.cpp b/src/renderer/RendererCaps.cpp
+index 6a85474..f55e692 100644
+--- a/src/renderer/RendererCaps.cpp
++++ b/src/renderer/RendererCaps.cpp
+@@ -331,6 +331,8 @@ const char *RendererContextProfile_Name( rendererContextProfile_t profile ) {
+ 		return "compatibility";
+ 	case RENDERER_CONTEXT_PROFILE_CORE:
+ 		return "core";
++	case RENDERER_CONTEXT_PROFILE_ES:
++		return "es";
+ 	case RENDERER_CONTEXT_PROFILE_UNKNOWN:
+ 	default:
+ 		return "unknown";
+@@ -1102,6 +1104,40 @@ void GLCapabilityProbe_Build( renderBackendCaps_t &caps, const char *versionStri
+ 	rg_extensionTokens.Clear();
+ 	rg_extensionString.Clear();
+ 
++#ifdef __EMSCRIPTEN__
++	// WebGL2 is ES 3.0, not desktop GL 3.x. In particular it has no ARB
++	// assembly programs, mapped buffers or FRAMEBUFFER_SRGB enable switch.
++	GLCapabilityProbe_QueryInt( GL_MAJOR_VERSION, caps.glMajor );
++	GLCapabilityProbe_QueryInt( GL_MINOR_VERSION, caps.glMinor );
++	caps.contextCreated = caps.glMajor >= 3;
++	caps.glVersion = caps.glMajor + caps.glMinor * 0.1f;
++	caps.profile = RENDERER_CONTEXT_PROFILE_ES;
++	// This string includes both enabled WebGL extensions and the operations
++	// supplied by the linked legacy-GL software layer. Indexed GPU extension
++	// enumeration alone would discard the latter.
++	GLCapabilityProbe_AddLegacyExtensions( legacyExtensionsString );
++	caps.hasFixedFunctionCompatibility = glClientActiveTextureARB != NULL;
++	caps.hasARBShaderObjects = glCreateShaderObjectARB != NULL && glLinkProgramARB != NULL;
++	caps.hasGLSL = caps.contextCreated && caps.hasARBShaderObjects;
++	caps.hasVBO = glBindBufferARB != NULL && glBufferDataARB != NULL;
++	caps.hasFBO = glBindFramebuffer != NULL && glFramebufferTexture2D != NULL;
++	caps.hasUBO = glBindBufferBase != NULL && glUniformBlockBinding != NULL;
++	caps.hasVAO = glBindVertexArray != NULL;
++	caps.hasInstancing = glDrawElementsInstanced != NULL && glVertexAttribDivisor != NULL;
++	caps.hasTextureArrays = glTexImage3D != NULL;
++	caps.hasSync = glFenceSync != NULL && glClientWaitSync != NULL;
++	caps.hasSRGBTextures = caps.contextCreated;
++	GLCapabilityProbe_QueryInt( GL_MAX_TEXTURE_SIZE, caps.maxTextureSize );
++	GLCapabilityProbe_QueryInt( GL_MAX_TEXTURE_IMAGE_UNITS, caps.maxTextureImageUnits );
++	int vertexAttributes = 0;
++	GLCapabilityProbe_QueryInt( GL_MAX_VERTEX_ATTRIBS, vertexAttributes );
++	caps.maxTextureCoords = Min( caps.maxTextureImageUnits, Max( 0, vertexAttributes - 3 ) );
++	caps.maxTextureUnits = Min( caps.maxTextureCoords, MAX_MULTITEXTURE_UNITS );
++	GLCapabilityProbe_QueryInt( GL_MAX_DRAW_BUFFERS, caps.maxDrawBuffers );
++	GLCapabilityProbe_QueryInt( GL_MAX_COLOR_ATTACHMENTS, caps.maxColorAttachments );
++	caps.hasMRT = caps.maxDrawBuffers >= 4 && caps.maxColorAttachments >= 4;
++#else
++
+ 	caps.contextCreated = true;
+ 	caps.profile = RENDERER_CONTEXT_PROFILE_UNKNOWN;
+ 	caps.glVersion = versionString ? static_cast<float>( atof( versionString ) ) : 0.0f;
+@@ -1208,6 +1244,7 @@ void GLCapabilityProbe_Build( renderBackendCaps_t &caps, const char *versionStri
+ 		GLCapabilityProbe_QueryInt( GL_MAX_COLOR_ATTACHMENTS_EXT, caps.maxColorAttachments );
+ 	}
+ 	caps.hasMRT = caps.maxDrawBuffers >= 4 && caps.maxColorAttachments >= 4;
++#endif
+ }
+ 
+ static renderBackendCaps_t RendererTierSelect_TestCaps(
+diff --git a/src/renderer/RendererCaps.h b/src/renderer/RendererCaps.h
+index 4e50629..83c6250 100644
+--- a/src/renderer/RendererCaps.h
++++ b/src/renderer/RendererCaps.h
+@@ -39,7 +39,8 @@ enum rendererTierPreference_t {
+ enum rendererContextProfile_t {
+ 	RENDERER_CONTEXT_PROFILE_UNKNOWN = 0,
+ 	RENDERER_CONTEXT_PROFILE_COMPATIBILITY,
+-	RENDERER_CONTEXT_PROFILE_CORE
++	RENDERER_CONTEXT_PROFILE_CORE,
++	RENDERER_CONTEXT_PROFILE_ES
+ };
+ 
+ typedef struct rendererContextRequest_s {
+diff --git a/src/renderer/draw_arb2.cpp b/src/renderer/draw_arb2.cpp
+index 8111f7c..8c91694 100644
+--- a/src/renderer/draw_arb2.cpp
++++ b/src/renderer/draw_arb2.cpp
+@@ -1947,6 +1947,11 @@ typedef struct {
+ 	int				programGeneration;
+ 	bool			programValid;
+ 
++#ifdef __EMSCRIPTEN__
++	GLint			modelViewMatrix;
++	GLint			projectionMatrix;
++#endif
++
+ 	GLint			localLightOrigin;
+ 	GLint			localViewOrigin;
+ 	GLint			lightProjectionS;
+@@ -4628,6 +4633,262 @@ static void RB_ShadowMapPrintInfoLog( GLhandleARB object, const char *label, con
+ 	Mem_Free( logBuffer );
+ }
+ 
++#ifdef __EMSCRIPTEN__
++// GLSL ES port of the pinned pak0 material_interaction shaders. Keep the
++// stock/ambient/enhanced/cel/flat-diffuse equations intact; the real-driver
++// lighting regression compares these linked constants with the shipped files.
++static const char *q4wasmMaterialInteractionVertexShader =
++	"#version 300 es\n"
++	"precision highp float;\n"
++	"layout(location=0) in vec3 a_position; layout(location=2) in vec4 a_color;\n"
++	"uniform mat4 uModelViewMatrix; uniform mat4 uProjectionMatrix;\n"
++	"\n"
++	"layout(location=8) in vec2 attr_TexCoord0;\n"
++	"layout(location=9) in vec3 attr_Tangent;\n"
++	"layout(location=10) in vec3 attr_Bitangent;\n"
++	"layout(location=11) in vec3 attr_Normal;\n"
++	"\n"
++	"uniform vec4 uLocalLightOrigin;\n"
++	"uniform vec4 uLocalViewOrigin;\n"
++	"uniform vec4 uLightProjectionS;\n"
++	"uniform vec4 uLightProjectionT;\n"
++	"uniform vec4 uLightProjectionQ;\n"
++	"uniform vec4 uLightFalloffS;\n"
++	"uniform vec4 uBumpMatrixS;\n"
++	"uniform vec4 uBumpMatrixT;\n"
++	"uniform vec4 uDiffuseMatrixS;\n"
++	"uniform vec4 uDiffuseMatrixT;\n"
++	"uniform vec4 uSpecularMatrixS;\n"
++	"uniform vec4 uSpecularMatrixT;\n"
++	"uniform vec2 uVertexColorParams;\n"
++	"\n"
++	"out vec2 vBumpTexCoord;\n"
++	"out vec2 vDiffuseTexCoord;\n"
++	"out vec2 vSpecularTexCoord;\n"
++	"out vec4 vLightFalloffTexCoord;\n"
++	"out vec4 vLightProjectionTexCoord;\n"
++	"out vec3 vLightVector;\n"
++	"out vec3 vHalfAngleVector;\n"
++	"out vec3 vViewVector;\n"
++	"out vec3 vVertexColor;\n"
++	"\n"
++	"vec3 TangentSpaceVector( vec3 objectVector ) {\n"
++	"\treturn vec3(\n"
++	"\t\tdot( attr_Tangent, objectVector ),\n"
++	"\t\tdot( attr_Bitangent, objectVector ),\n"
++	"\t\tdot( attr_Normal, objectVector ) );\n"
++	"}\n"
++	"\n"
++	"void main() {\n"
++	"\tvec4 position = vec4(a_position, 1.0);\n"
++	"\tvec4 texCoord = vec4( attr_TexCoord0.xy, 0.0, 1.0 );\n"
++	"\n"
++	"\tvec3 toLight = uLocalLightOrigin.xyz - position.xyz;\n"
++	"\tvec3 toView = uLocalViewOrigin.xyz - position.xyz;\n"
++	"\n"
++	"\tvLightVector = TangentSpaceVector( toLight );\n"
++	"\tvHalfAngleVector = TangentSpaceVector( normalize( toLight ) + normalize( toView ) );\n"
++	"\tvViewVector = TangentSpaceVector( toView );\n"
++	"\n"
++	"\tvBumpTexCoord = vec2( dot( texCoord, uBumpMatrixS ), dot( texCoord, uBumpMatrixT ) );\n"
++	"\tvDiffuseTexCoord = vec2( dot( texCoord, uDiffuseMatrixS ), dot( texCoord, uDiffuseMatrixT ) );\n"
++	"\tvSpecularTexCoord = vec2( dot( texCoord, uSpecularMatrixS ), dot( texCoord, uSpecularMatrixT ) );\n"
++	"\n"
++	"\t// z is unused by the projected 2D lookup, so carry model-local height to\n"
++	"\t// the fragment stage without consuming another GL 2.1 out slot.\n"
++	"\tvLightFalloffTexCoord = vec4( dot( position, uLightFalloffS ), 0.5, position.z, 1.0 );\n"
++	"\tvLightProjectionTexCoord = vec4(\n"
++	"\t\tdot( position, uLightProjectionS ),\n"
++	"\t\tdot( position, uLightProjectionT ),\n"
++	"\t\t0.0,\n"
++	"\t\tdot( position, uLightProjectionQ ) );\n"
++	"\n"
++	"\tvVertexColor = a_color.rgb * uVertexColorParams.x + vec3( uVertexColorParams.y );\n"
++	"\n"
++	"\tgl_Position = uProjectionMatrix*uModelViewMatrix*position;\n"
++	"}\n";
++
++static const char *q4wasmMaterialInteractionFragmentShader =
++	"#version 300 es\n"
++	"precision highp float;\n"
++	"uniform sampler2D uBumpMap;\n"
++	"uniform sampler2D uLightFalloffMap;\n"
++	"uniform sampler2D uLightProjectionMap;\n"
++	"uniform sampler2D uDiffuseMap;\n"
++	"uniform sampler2D uSpecularMap;\n"
++	"\n"
++	"uniform vec4 uDiffuseColor;\n"
++	"uniform vec4 uSpecularColor;\n"
++	"uniform float uMaterialNormalScale;\n"
++	"uniform float uMaterialSpecularBoost;\n"
++	"uniform float uMaterialFresnel;\n"
++	"uniform float uStockInteraction;\n"
++	"uniform float uAmbientLight;\n"
++	"uniform samplerCube uAmbientNormalMap;\n"
++	"uniform vec4 uCelParams;\n"
++	"uniform vec4 uFlatDiffuseParams;\n"
++	"\n"
++	"in vec2 vBumpTexCoord;\n"
++	"in vec2 vDiffuseTexCoord;\n"
++	"in vec2 vSpecularTexCoord;\n"
++	"in vec4 vLightFalloffTexCoord;\n"
++	"in vec4 vLightProjectionTexCoord;\n"
++	"in vec3 vLightVector;\n"
++	"in vec3 vHalfAngleVector;\n"
++	"in vec3 vViewVector;\n"
++	"in vec3 vVertexColor;\n"
++	"\n"
++	"vec3 SafeNormalize( vec3 value ) {\n"
++	"\treturn value * inversesqrt( max( dot( value, value ), 1.0e-8 ) );\n"
++	"}\n"
++	"\n"
++	"// uFlatDiffuseParams = ( strength, local min Z, inverse height, upward phase ).\n"
++	"// A wrapped, feathered band avoids a visible reset when it reaches the top.\n"
++	"vec3 ApplyFlatDiffuseSweep( vec3 diffuse, float localZ ) {\n"
++	"\tif ( uFlatDiffuseParams.x <= 0.0 ) {\n"
++	"\t\treturn diffuse;\n"
++	"\t}\n"
++	"\tfloat height = clamp( ( localZ - uFlatDiffuseParams.y ) * uFlatDiffuseParams.z, 0.0, 1.0 );\n"
++	"\tfloat distanceToBand = abs( height - fract( uFlatDiffuseParams.w ) );\n"
++	"\tdistanceToBand = min( distanceToBand, 1.0 - distanceToBand );\n"
++	"\tfloat band = 1.0 - smoothstep( 0.045, 0.16, distanceToBand );\n"
++	"\treturn mix( diffuse, vec3( 1.0 ), uFlatDiffuseParams.x * band );\n"
++	"}\n"
++	"\n"
++	"// ---------------------------------------------------------------------------\n"
++	"// Cel banding. uCelParams is ( bandsEnabled, bandCount, hardSpecular, softness ).\n"
++	"// The same ladder is shared with R_CelQuantizeUnitValue on the CPU side.\n"
++	"// ---------------------------------------------------------------------------\n"
++	"\n"
++	"float CelSteps() {\n"
++	"\treturn max( uCelParams.y - 1.0, 1.0 );\n"
++	"}\n"
++	"\n"
++	"// Places a 0..1 value on the band ladder. uCelParams.w widens every boundary\n"
++	"// into a smoothstep centred exactly where the hard step would have landed, so\n"
++	"// the plateaus survive but the transition stops being one texel wide - which\n"
++	"// is what kept a terminator crawling across a curved surface as the camera\n"
++	"// moved. At 0 this is floor( value * steps + 0.5 ) / steps again, to the bit.\n"
++	"float CelLadder( float value ) {\n"
++	"\tfloat steps = CelSteps();\n"
++	"\tfloat scaled = value * steps;\n"
++	"\n"
++	"\tfloat softness = clamp( uCelParams.w, 0.0, 1.0 );\n"
++	"\tif ( softness <= 0.0 ) {\n"
++	"\t\treturn floor( scaled + 0.5 ) / steps;\n"
++	"\t}\n"
++	"\n"
++	"\t// floor( scaled ) names the band below this value and the boundary above it\n"
++	"\t// sits half a band away, so the blend window is centred on 0.5.\n"
++	"\tfloat lower = floor( scaled );\n"
++	"\tfloat halfWidth = softness * 0.5;\n"
++	"\tfloat blend = smoothstep( 0.5 - halfWidth, 0.5 + halfWidth, scaled - lower );\n"
++	"\n"
++	"\treturn ( lower + blend ) / steps;\n"
++	"}\n"
++	"\n"
++	"// Quantizes a light contribution without shifting its hue: the brightest\n"
++	"// channel picks the band and the others follow it. Black and overbright pass\n"
++	"// through untouched so unlit surfaces stay unlit and headroom is preserved.\n"
++	"vec3 CelQuantizeLight( vec3 light ) {\n"
++	"\tif ( uCelParams.x <= 0.5 ) {\n"
++	"\t\treturn light;\n"
++	"\t}\n"
++	"\n"
++	"\tfloat peak = max( max( light.r, light.g ), light.b );\n"
++	"\tif ( peak <= 0.0 || peak >= 1.0 ) {\n"
++	"\t\treturn light;\n"
++	"\t}\n"
++	"\n"
++	"\treturn light * ( CelLadder( peak ) / peak );\n"
++	"}\n"
++	"\n"
++	"// Collapses the specular falloff into flat plateaus on the same ladder, which\n"
++	"// is what gives cel highlights their hard edge.\n"
++	"float CelSpecularTerm( float term ) {\n"
++	"\tif ( uCelParams.x <= 0.5 || uCelParams.z <= 0.5 ) {\n"
++	"\t\treturn term;\n"
++	"\t}\n"
++	"\n"
++	"\treturn CelLadder( clamp( term, 0.0, 1.0 ) );\n"
++	"}\n"
++	"\n"
++	"vec3 DecodeLocalNormal( vec4 bumpSample ) {\n"
++	"\tvec2 localNormalXY = vec2( bumpSample.a, bumpSample.g ) * 2.0 - 1.0;\n"
++	"\tlocalNormalXY *= max( uMaterialNormalScale, 0.0 );\n"
++	"\n"
++	"\tfloat xyLengthSq = dot( localNormalXY, localNormalXY );\n"
++	"\tif ( xyLengthSq > 1.0 ) {\n"
++	"\t\tlocalNormalXY *= inversesqrt( xyLengthSq );\n"
++	"\t\txyLengthSq = 1.0;\n"
++	"\t}\n"
++	"\n"
++	"\tfloat encodedZ = max( bumpSample.b * 2.0 - 1.0, 0.0 );\n"
++	"\tfloat reconstructedZ = sqrt( max( 1.0 - xyLengthSq, 0.0 ) );\n"
++	"\treturn SafeNormalize( vec3( localNormalXY, mix( encodedZ, reconstructedZ, 0.75 ) ) );\n"
++	"}\n"
++	"\n"
++	"vec3 DecodeStockLocalNormal( vec4 bumpSample ) {\n"
++	"\treturn vec3( bumpSample.a, bumpSample.g, bumpSample.b ) * 2.0 - 1.0;\n"
++	"}\n"
++	"\n"
++	"float EnhancedSpecularTerm( vec3 halfAngle, vec3 viewDir, vec3 localNormal, vec3 specularSample ) {\n"
++	"\tfloat ndoth = max( dot( halfAngle, localNormal ), 0.0 );\n"
++	"\tfloat ndotv = max( dot( viewDir, localNormal ), 0.0 );\n"
++	"\tfloat gloss = clamp( max( max( specularSample.r, specularSample.g ), specularSample.b ), 0.0, 1.0 );\n"
++	"\tfloat specularPower = mix( 10.0, 40.0, gloss );\n"
++	"\tfloat fresnel = 1.0 + ( pow( 1.0 - ndotv, 5.0 ) * 2.0 * clamp( uMaterialFresnel, 0.0, 1.0 ) );\n"
++	"\treturn pow( ndoth, specularPower ) * max( uMaterialSpecularBoost, 0.0 ) * fresnel;\n"
++	"}\n"
++	"\n"
++	"float StockSpecularTerm( vec3 halfAngle, vec3 localNormal ) {\n"
++	"\tfloat specular = clamp( dot( halfAngle, localNormal ) * 4.0 - 3.0, 0.0, 1.0 );\n"
++	"\treturn specular * specular * 2.0;\n"
++	"}\n"
++	"\n"
++	"out vec4 fragColor;\n"
++	"\n"
++	"void main() {\n"
++	"\tvec4 bumpSample = texture( uBumpMap, vBumpTexCoord );\n"
++	"\tvec3 localNormal = ( uStockInteraction > 0.5 )\n"
++	"\t\t? DecodeStockLocalNormal( bumpSample )\n"
++	"\t\t: DecodeLocalNormal( bumpSample );\n"
++	"\n"
++	"\t// Stock ambient lights replace the normalization cube with the generated\n"
++	"\t// ambient cube. Sampling the actual image preserves its historical channel\n"
++	"\t// packing and quantization instead of reconstructing a subtly different\n"
++	"\t// direction from the renderer-side float.\n"
++	"\tvec3 ambientLightDir = texture( uAmbientNormalMap, vec3( 0.0, 0.0, 1.0 ) ).rgb * 2.0 - 1.0;\n"
++	"\tvec3 lightDir = ( uAmbientLight > 0.5 ) ? ambientLightDir : SafeNormalize( vLightVector );\n"
++	"\tfloat ndotl = max( dot( lightDir, localNormal ), 0.0 );\n"
++	"\n"
++	"\tvec3 light = vec3( ndotl );\n"
++	"\tlight *= textureProj( uLightFalloffMap, vLightFalloffTexCoord ).rgb;\n"
++	"\tlight *= textureProj( uLightProjectionMap, vLightProjectionTexCoord ).rgb;\n"
++	"\n"
++	"\tvec3 diffuse = texture( uDiffuseMap, vDiffuseTexCoord ).rgb * uDiffuseColor.rgb;\n"
++	"\tdiffuse = ApplyFlatDiffuseSweep( diffuse, vLightFalloffTexCoord.z );\n"
++	"\n"
++	"\tvec3 specularSample = texture( uSpecularMap, vSpecularTexCoord ).rgb;\n"
++	"\t// The stock ARB2 interaction reads the half-angle back through the\n"
++	"\t// normalization cube map before the specular term. The interpolated\n"
++	"\t// in is the sum of two unit vectors pushed through the tangent\n"
++	"\t// frame, so its magnitude reaches 2; feeding that straight into\n"
++	"\t// clamp( dot * 4 - 3 ) pins the term at 1 across most of the lit\n"
++	"\t// hemisphere and blows specular out on every stock surface. Normalize\n"
++	"\t// unconditionally, which is what the cube-map lookup did.\n"
++	"\tvec3 halfAngle = SafeNormalize( vHalfAngleVector );\n"
++	"\tvec3 viewDir = SafeNormalize( vViewVector );\n"
++	"\tfloat specularTerm = ( uStockInteraction > 0.5 )\n"
++	"\t\t? StockSpecularTerm( halfAngle, localNormal )\n"
++	"\t\t: EnhancedSpecularTerm( halfAngle, viewDir, localNormal, specularSample );\n"
++	"\tvec3 specular = specularSample * uSpecularColor.rgb * CelSpecularTerm( specularTerm );\n"
++	"\n"
++	"\tvec3 color = ( diffuse + specular ) * CelQuantizeLight( light ) * vVertexColor;\n"
++	"\tfragColor = vec4( color, 0.0 );\n"
++	"}\n";
++#endif
++
+ static bool RB_MaterialInteractionLoadProgram( void ) {
+ 	static const char *programBaseName = "glprogs/material_interaction";
+ 
+@@ -4648,6 +4909,10 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
+ 	idStr vertexPath = idStr( programBaseName ) + ".vs";
+ 	idStr fragmentPath = idStr( programBaseName ) + ".fs";
+ 
++#ifdef __EMSCRIPTEN__
++	const GLcharARB *vertexSource = (const GLcharARB *)q4wasmMaterialInteractionVertexShader;
++	const GLcharARB *fragmentSource = (const GLcharARB *)q4wasmMaterialInteractionFragmentShader;
++#else
+ 	char *vertexBuffer = NULL;
+ 	char *fragmentBuffer = NULL;
+ 	fileSystem->ReadFile( vertexPath.c_str(), (void **)&vertexBuffer, NULL );
+@@ -4664,18 +4929,21 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
+ 		g_materialInteractionProgram.programValid = false;
+ 		return false;
+ 	}
++	const GLcharARB *vertexSource = (const GLcharARB *)vertexBuffer;
++	const GLcharARB *fragmentSource = (const GLcharARB *)fragmentBuffer;
++#endif
+ 
+ 	GLhandleARB vertexShader = glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
+ 	GLhandleARB fragmentShader = glCreateShaderObjectARB( GL_FRAGMENT_SHADER_ARB );
+-	const GLcharARB *vertexSource = (const GLcharARB *)vertexBuffer;
+-	const GLcharARB *fragmentSource = (const GLcharARB *)fragmentBuffer;
+ 	glShaderSourceARB( vertexShader, 1, &vertexSource, NULL );
+ 	glShaderSourceARB( fragmentShader, 1, &fragmentSource, NULL );
+ 	glCompileShaderARB( vertexShader );
+ 	glCompileShaderARB( fragmentShader );
+ 
++#ifndef __EMSCRIPTEN__
+ 	fileSystem->FreeFile( vertexBuffer );
+ 	fileSystem->FreeFile( fragmentBuffer );
++#endif
+ 
+ 	GLint status = GL_FALSE;
+ 	glGetObjectParameterivARB( vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &status );
+@@ -4701,6 +4969,10 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
+ 	GLhandleARB programObject = glCreateProgramObjectARB();
+ 	glAttachObjectARB( programObject, vertexShader );
+ 	glAttachObjectARB( programObject, fragmentShader );
++#ifdef __EMSCRIPTEN__
++	glBindAttribLocationARB( programObject, 0, "a_position" );
++	glBindAttribLocationARB( programObject, 2, "a_color" );
++#endif
+ 	glBindAttribLocationARB( programObject, 8, "attr_TexCoord0" );
+ 	glBindAttribLocationARB( programObject, 9, "attr_Tangent" );
+ 	glBindAttribLocationARB( programObject, 10, "attr_Bitangent" );
+@@ -4726,6 +4998,10 @@ static bool RB_MaterialInteractionLoadProgram( void ) {
+ 	g_materialInteractionProgram.programGeneration = tr.videoRestartCount;
+ 	g_materialInteractionProgram.programValid = true;
+ 
++#ifdef __EMSCRIPTEN__
++	g_materialInteractionProgram.modelViewMatrix = glGetUniformLocationARB( programObject, "uModelViewMatrix" );
++	g_materialInteractionProgram.projectionMatrix = glGetUniformLocationARB( programObject, "uProjectionMatrix" );
++#endif
+ 	g_materialInteractionProgram.localLightOrigin = glGetUniformLocationARB( programObject, "uLocalLightOrigin" );
+ 	g_materialInteractionProgram.localViewOrigin = glGetUniformLocationARB( programObject, "uLocalViewOrigin" );
+ 	g_materialInteractionProgram.lightProjectionS = glGetUniformLocationARB( programObject, "uLightProjectionS" );
+@@ -8501,6 +8777,13 @@ static void RB_MaterialInteractionSetEnhancementUniforms( const GLint normalScal
+ }
+ 
+ static void RB_GLSLMaterial_DrawInteraction( const drawInteraction_t *din ) {
++#ifdef __EMSCRIPTEN__
++	GLfloat modelView[16], projection[16];
++	glGetFloatv( GL_MODELVIEW_MATRIX, modelView );
++	glGetFloatv( GL_PROJECTION_MATRIX, projection );
++	glUniformMatrix4fv( g_materialInteractionProgram.modelViewMatrix, 1, GL_FALSE, modelView );
++	glUniformMatrix4fv( g_materialInteractionProgram.projectionMatrix, 1, GL_FALSE, projection );
++#endif
+ 	glUniform4fvARB( g_materialInteractionProgram.localLightOrigin, 1, din->localLightOrigin.ToFloatPtr() );
+ 	glUniform4fvARB( g_materialInteractionProgram.localViewOrigin, 1, din->localViewOrigin.ToFloatPtr() );
+ 	glUniform4fvARB( g_materialInteractionProgram.lightProjectionS, 1, din->lightProjection[0].ToFloatPtr() );
+@@ -9836,8 +10119,10 @@ static bool RB_GLSLMaterial_CreateDrawInteractions( const drawSurf_t *surf, cons
+ 
+ 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHMASK | backEnd.depthFunc );
+ 
++#ifndef __EMSCRIPTEN__
+ 	glDisable( GL_VERTEX_PROGRAM_ARB );
+ 	glDisable( GL_FRAGMENT_PROGRAM_ARB );
++#endif
+ 	glUseProgramObjectARB( g_materialInteractionProgram.programObject );
+ 
+ 	if ( g_materialInteractionProgram.bumpMap >= 0 ) {
+@@ -9955,6 +10240,26 @@ static void RB_DrawMaterialInteractions( const drawSurf_t *surf ) {
+ 		return;
+ 	}
+ 
++#ifdef __EMSCRIPTEN__
++	// ARB assembly cannot execute in WebGL. Route each CPU-addressable surface
++	// through the validated GLSL ES program and fail closed for unsupported
++	// generated geometry rather than binding a fake ARB identifier.
++	static bool warnedUnsupportedSurface = false;
++	for ( ; surf != NULL; surf = surf->nextOnLight ) {
++		drawSurf_t singleSurf = *surf;
++		singleSurf.nextOnLight = NULL;
++		if ( RB_SurfaceEligibleForStockGLSLInteraction( &singleSurf ) &&
++			 RB_GLSLMaterial_CreateDrawInteractions( &singleSurf, true ) ) {
++			continue;
++		}
++		if ( !warnedUnsupportedSurface ) {
++			warnedUnsupportedSurface = true;
++			common->Warning( "WebGL2 interaction skipped generated or unavailable vertex geometry; an ES skinning path is still required" );
++		}
++	}
++	return;
++#endif
++
+ 	if ( RB_AppleGL21AutomaticInteractionPath() ) {
+ 		// The Apple 2.1 driver corridor is intentionally decided per surface.
+ 		// Ordinary stock geometry avoids the fragile ARB interaction program,
+@@ -10606,7 +10911,8 @@ static void RB_ShadowMapStencilFallbackFiltered( const drawSurf_t *primaryShadow
+ 		}
+ 		glClear( GL_STENCIL_BUFFER_BIT );
+ 
+-		if ( r_useShadowVertexProgram.GetBool() && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow fallback vertex program", true ) ) {
++		const bool useShadowVertexProgram = R_UseShadowVertexProgram();
++		if ( useShadowVertexProgram && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow fallback vertex program", true ) ) {
+ 			glEnable( GL_VERTEX_PROGRAM_ARB );
+ 			RB_StencilShadowPass( primaryShadowSurfs );
+ 			RB_StencilShadowPass( secondaryShadowSurfs );
+@@ -11811,7 +12117,8 @@ void RB_ARB2_DrawInteractions( void ) {
+ 			glStencilFunc( GL_ALWAYS, 128, 255 );
+ 		}
+ 
+-		if ( r_useShadowVertexProgram.GetBool() && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow vertex program", true ) ) {
++		const bool useShadowVertexProgram = R_UseShadowVertexProgram();
++		if ( useShadowVertexProgram && R_BindARBProgram( GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW, "stencil shadow vertex program", true ) ) {
+ 			glEnable( GL_VERTEX_PROGRAM_ARB );
+ 			RB_StencilShadowPass( vLight->globalShadows );
+ 			RB_DrawMaterialInteractions( vLight->localInteractions );
+@@ -12372,16 +12679,25 @@ R_ReloadARBPrograms_f
+ ==================
+ */
+ void R_ReloadARBPrograms_f( const idCmdArgs &args ) {
++#ifndef __EMSCRIPTEN__
+ 	int		i;
++#endif
+ 
+ 	g_interactionShaderRescueWarned = false;
+ 	R_RecordRendererStartupPhase( RENDERER_STARTUP_PHASE_R_RELOAD_ARB_PROGRAMS );
+ 	common->Printf( "----- R_ReloadARBPrograms -----\n" );
++#ifdef __EMSCRIPTEN__
++	if ( !RB_MaterialInteractionLoadProgram() ) {
++		common->Error( "WebGL2 GLSL ES interaction program failed readiness validation" );
++	}
++	common->Printf( "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped\n" );
++#else
+ 	for ( i = 0 ; progs[i].name[0] ; i++ ) {
+ 		R_LoadARBProgram( i );
+ 	}
+ 	RB_RecordCurrentInteractionSelectionBreadcrumb();
+ 	RB_ErrorIfDriverRequiredSimpleInteractionFailed();
++#endif
+ 	common->Printf( "-------------------------------\n" );
+ 	if ( r_shaderReport.GetInteger() >= 1 ) {
+ 		R_ReportShaderPrograms_f( idCmdArgs() );
+@@ -12466,11 +12782,25 @@ void R_ARB2_Init( void ) {
+ 	common->Printf( "---------- R_ARB2_Init ----------\n" );
+ 
+ 	if ( !glConfig.backendCaps.hasFixedFunctionCompatibility ) {
++#ifdef __EMSCRIPTEN__
++		if ( glConfig.GLSLProgramAvailable ) {
++			common->Printf( "WebGL2 GLSL ES path available.\n" );
++			glConfig.allowARB2Path = true;
++			return;
++		}
++#endif
+ 		common->Printf( "Not available: OpenGL core profile does not expose the compatibility state required by the ARB2 bridge.\n" );
+ 		return;
+ 	}
+ 
+ 	if ( !glConfig.ARBVertexProgramAvailable || !glConfig.ARBFragmentProgramAvailable ) {
++#ifdef __EMSCRIPTEN__
++		if ( glConfig.GLSLProgramAvailable ) {
++			common->Printf( "WebGL2 GLSL ES path available.\n" );
++			glConfig.allowARB2Path = true;
++			return;
++		}
++#endif
+ 		common->Printf( "Not available.\n" );
+ 		return;
+ 	}
+
+diff --git a/src/sys/emscripten/openal_emscripten.cpp b/src/sys/emscripten/openal_emscripten.cpp
+new file mode 100644
+index 0000000..82f576a
+--- /dev/null
++++ b/src/sys/emscripten/openal_emscripten.cpp
+@@ -0,0 +1,492 @@
++/*
++===========================================================================
++
++Browser OpenAL bridge for the Quake 4 WebAssembly client.
++
++The engine runs in a dedicated worker so rendering and synchronous owner-data
++access cannot stall the page.  WebAudio's AudioContext is window-only, which
++means Emscripten's regular OpenAL implementation cannot open a device there.
++This file keeps the small OpenAL state machine Quake 4 needs in the worker and
++forwards buffer/source commands to a WebAudio renderer owned by the page.
++
++===========================================================================
++*/
++
++#include <stddef.h>
++#define AL_ALEXT_PROTOTYPES
++#include <AL/alext.h>
++
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++
++// Emscripten's compact OpenAL headers declare plain C symbols and intentionally
++// omit the desktop OpenAL calling-convention decoration macros.
++#ifndef AL_API
++#define AL_API
++#endif
++#ifndef AL_APIENTRY
++#define AL_APIENTRY
++#endif
++#ifndef ALC_API
++#define ALC_API
++#endif
++#ifndef ALC_APIENTRY
++#define ALC_APIENTRY
++#endif
++
++#ifndef AL_API_NOEXCEPT
++#define AL_API_NOEXCEPT
++#endif
++#ifndef ALC_API_NOEXCEPT
++#define ALC_API_NOEXCEPT
++#endif
++
++namespace {
++
++static const int Q4WASM_MAX_AL_SOURCES = 512;
++static const int Q4WASM_MAX_AL_BUFFERS = 16384;
++static const int Q4WASM_MAX_AL_QUEUE = 32;
++
++struct q4wasmALBuffer_t {
++	bool alive;
++	int durationMsec;
++};
++
++struct q4wasmALSource_t {
++	bool alive;
++	bool playing;
++	bool paused;
++	bool stopped;
++	bool looping;
++	float gain;
++	float pitch;
++	ALuint buffer;
++	ALuint queue[Q4WASM_MAX_AL_QUEUE];
++	int queueCount;
++	double startedMsec;
++};
++
++static q4wasmALBuffer_t q4wasmBuffers[Q4WASM_MAX_AL_BUFFERS] = {};
++static q4wasmALSource_t q4wasmSources[Q4WASM_MAX_AL_SOURCES] = {};
++static ALenum q4wasmLastError = AL_NO_ERROR;
++static int q4wasmDeviceToken = 1;
++static int q4wasmContextToken = 1;
++static ALCcontext *q4wasmCurrentContext = NULL;
++static ALfloat q4wasmListenerGain = 1.0f;
++
++EM_JS( void, Q4WASM_AudioInit, (), {
++	postMessage( { type: 'audio-init' } );
++} );
++
++EM_JS( void, Q4WASM_AudioBufferData, ( int id, int format, const void *data, int size, int frequency ), {
++	const bytes = HEAPU8.slice( data, data + size );
++	postMessage( { type: 'audio-buffer', id, format, frequency, data: bytes.buffer }, [ bytes.buffer ] );
++} );
++
++EM_JS( void, Q4WASM_AudioDeleteBuffer, ( int id ), {
++	postMessage( { type: 'audio-delete-buffer', id } );
++} );
++
++EM_JS( void, Q4WASM_AudioCreateSource, ( int id ), {
++	postMessage( { type: 'audio-create-source', id } );
++} );
++
++EM_JS( void, Q4WASM_AudioDeleteSource, ( int id ), {
++	postMessage( { type: 'audio-delete-source', id } );
++} );
++
++EM_JS( void, Q4WASM_AudioSourceInt, ( int id, int param, int value ), {
++	postMessage( { type: 'audio-source-int', id, param, value } );
++} );
++
++EM_JS( void, Q4WASM_AudioSourceFloat, ( int id, int param, float value ), {
++	postMessage( { type: 'audio-source-float', id, param, value } );
++} );
++
++EM_JS( void, Q4WASM_AudioSourcePosition, ( int id, float x, float y, float z ), {
++	postMessage( { type: 'audio-source-position', id, x, y, z } );
++} );
++
++EM_JS( void, Q4WASM_AudioSourceQueue, ( int id, int count, const ALuint *buffers ), {
++	const values = Array.from( HEAPU32.subarray( buffers >> 2, ( buffers >> 2 ) + count ) );
++	postMessage( { type: 'audio-source-queue', id, buffers: values } );
++} );
++
++EM_JS( void, Q4WASM_AudioSourceUnqueue, ( int id, int count ), {
++	postMessage( { type: 'audio-source-unqueue', id, count } );
++} );
++
++EM_JS( void, Q4WASM_AudioSourceAction, ( int id, int action ), {
++	postMessage( { type: 'audio-source-action', id, action } );
++} );
++
++EM_JS( void, Q4WASM_AudioListenerFloat, ( int param, float value ), {
++	postMessage( { type: 'audio-listener-float', param, value } );
++} );
++
++EM_JS( void, Q4WASM_AudioListenerVector, ( int param, const ALfloat *values, int count ), {
++	postMessage( {
++		type: 'audio-listener-vector', param,
++		values: Array.from( HEAPF32.subarray( values >> 2, ( values >> 2 ) + count ) )
++	} );
++} );
++
++static q4wasmALSource_t *Q4WASM_Source( ALuint id ) {
++	if ( id == 0 || id >= Q4WASM_MAX_AL_SOURCES || !q4wasmSources[id].alive ) {
++		return NULL;
++	}
++	return &q4wasmSources[id];
++}
++
++static q4wasmALBuffer_t *Q4WASM_Buffer( ALuint id ) {
++	if ( id == 0 || id >= Q4WASM_MAX_AL_BUFFERS || !q4wasmBuffers[id].alive ) {
++		return NULL;
++	}
++	return &q4wasmBuffers[id];
++}
++
++static ALuint Q4WASM_AllocSource() {
++	for ( ALuint id = 1; id < Q4WASM_MAX_AL_SOURCES; ++id ) {
++		if ( !q4wasmSources[id].alive ) {
++			q4wasmSources[id] = q4wasmALSource_t();
++			q4wasmSources[id].alive = true;
++			q4wasmSources[id].gain = 1.0f;
++			q4wasmSources[id].pitch = 1.0f;
++			return id;
++		}
++	}
++	q4wasmLastError = AL_OUT_OF_MEMORY;
++	return 0;
++}
++
++static ALuint Q4WASM_AllocBuffer() {
++	for ( ALuint id = 1; id < Q4WASM_MAX_AL_BUFFERS; ++id ) {
++		if ( !q4wasmBuffers[id].alive ) {
++			q4wasmBuffers[id] = q4wasmALBuffer_t();
++			q4wasmBuffers[id].alive = true;
++			return id;
++		}
++	}
++	q4wasmLastError = AL_OUT_OF_MEMORY;
++	return 0;
++}
++
++static int Q4WASM_BufferDuration( ALuint id ) {
++	q4wasmALBuffer_t *buffer = Q4WASM_Buffer( id );
++	return buffer ? ( buffer->durationMsec > 1 ? buffer->durationMsec : 1 ) : 1;
++}
++
++static int Q4WASM_ProcessedBuffers( q4wasmALSource_t *source ) {
++	if ( source->stopped ) return source->queueCount;
++	if ( !source->playing || source->paused || source->queueCount == 0 ) {
++		return 0;
++	}
++	double elapsed = emscripten_get_now() - source->startedMsec;
++	int processed = 0;
++	while ( processed < source->queueCount ) {
++		const int duration = Q4WASM_BufferDuration( source->queue[processed] );
++		if ( elapsed < duration ) {
++			break;
++		}
++		elapsed -= duration;
++		processed++;
++	}
++	if ( processed == source->queueCount ) {
++		source->playing = false;
++		source->stopped = true;
++	}
++	return processed;
++}
++
++} // namespace
++
++extern "C" {
++
++AL_API ALenum AL_APIENTRY alGetError() AL_API_NOEXCEPT {
++	const ALenum error = q4wasmLastError;
++	q4wasmLastError = AL_NO_ERROR;
++	return error;
++}
++
++AL_API const ALchar *AL_APIENTRY alGetString( ALenum param ) AL_API_NOEXCEPT {
++	switch ( param ) {
++	case AL_VENDOR: return "wasm-games";
++	case AL_RENDERER: return "WebAudio bridge";
++	case AL_VERSION: return "1.1";
++	case AL_EXTENSIONS: return "";
++	default: return "";
++	}
++}
++
++AL_API ALint AL_APIENTRY alGetInteger( ALenum ) AL_API_NOEXCEPT {
++	return 0;
++}
++
++AL_API ALboolean AL_APIENTRY alIsExtensionPresent( const ALchar * ) AL_API_NOEXCEPT {
++	return AL_FALSE;
++}
++
++AL_API ALenum AL_APIENTRY alGetEnumValue( const ALchar * ) AL_API_NOEXCEPT {
++	return 0;
++}
++
++AL_API void AL_APIENTRY alGenSources( ALsizei count, ALuint *sources ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		sources[i] = Q4WASM_AllocSource();
++		if ( sources[i] != 0 ) {
++			Q4WASM_AudioCreateSource( sources[i] );
++		}
++	}
++}
++
++AL_API void AL_APIENTRY alDeleteSources( ALsizei count, const ALuint *sources ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		const ALuint id = sources[i];
++		if ( id > 0 && id < Q4WASM_MAX_AL_SOURCES && q4wasmSources[id].alive ) {
++			Q4WASM_AudioDeleteSource( id );
++			q4wasmSources[id] = q4wasmALSource_t();
++		}
++	}
++}
++
++AL_API ALboolean AL_APIENTRY alIsSource( ALuint id ) AL_API_NOEXCEPT {
++	return Q4WASM_Source( id ) ? AL_TRUE : AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alGenBuffers( ALsizei count, ALuint *buffers ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		buffers[i] = Q4WASM_AllocBuffer();
++	}
++}
++
++AL_API void AL_APIENTRY alDeleteBuffers( ALsizei count, const ALuint *buffers ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		const ALuint id = buffers[i];
++		if ( id > 0 && id < Q4WASM_MAX_AL_BUFFERS && q4wasmBuffers[id].alive ) {
++			Q4WASM_AudioDeleteBuffer( id );
++			q4wasmBuffers[id] = q4wasmALBuffer_t();
++		}
++	}
++}
++
++AL_API ALboolean AL_APIENTRY alIsBuffer( ALuint id ) AL_API_NOEXCEPT {
++	return Q4WASM_Buffer( id ) ? AL_TRUE : AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alBufferData( ALuint id, ALenum format, const ALvoid *data, ALsizei size, ALsizei frequency ) AL_API_NOEXCEPT {
++	q4wasmALBuffer_t *buffer = Q4WASM_Buffer( id );
++	if ( !buffer || !data || size <= 0 || frequency <= 0 ) {
++		q4wasmLastError = AL_INVALID_VALUE;
++		return;
++	}
++	const int channels = ( format == AL_FORMAT_STEREO8 || format == AL_FORMAT_STEREO16 ) ? 2 : 1;
++	const int bytesPerSample = ( format == AL_FORMAT_MONO8 || format == AL_FORMAT_STEREO8 ) ? 1 : 2;
++	const int frameBytes = channels * bytesPerSample;
++	const int frames = size / ( frameBytes > 1 ? frameBytes : 1 );
++	const int durationMsec = ( frames * 1000 ) / frequency;
++	buffer->durationMsec = durationMsec > 1 ? durationMsec : 1;
++	Q4WASM_AudioBufferData( id, format, data, size, frequency );
++}
++
++AL_API void AL_APIENTRY alSourcei( ALuint id, ALenum param, ALint value ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source ) return;
++	if ( param == AL_BUFFER ) {
++		source->buffer = value;
++		source->queueCount = 0;
++	} else if ( param == AL_LOOPING ) {
++		source->looping = value == AL_TRUE;
++	}
++	Q4WASM_AudioSourceInt( id, param, value );
++}
++
++AL_API void AL_APIENTRY alSourcef( ALuint id, ALenum param, ALfloat value ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( source ) {
++		if ( param == AL_GAIN ) source->gain = value;
++		if ( param == AL_PITCH ) source->pitch = value;
++		Q4WASM_AudioSourceFloat( id, param, value );
++	}
++}
++
++AL_API void AL_APIENTRY alGetSourcef( ALuint id, ALenum param, ALfloat *value ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !value || !source ) return;
++	*value = param == AL_GAIN ? source->gain : param == AL_PITCH ? source->pitch : 0.0f;
++}
++
++AL_API void AL_APIENTRY alSource3f( ALuint id, ALenum param, ALfloat x, ALfloat y, ALfloat z ) AL_API_NOEXCEPT {
++	if ( Q4WASM_Source( id ) && param == AL_POSITION ) {
++		Q4WASM_AudioSourcePosition( id, x, y, z );
++	}
++}
++
++AL_API void AL_APIENTRY alSource3i( ALuint, ALenum, ALint, ALint, ALint ) AL_API_NOEXCEPT {
++}
++
++AL_API void AL_APIENTRY alSourceQueueBuffers( ALuint id, ALsizei count, const ALuint *buffers ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source || !buffers || count <= 0 ) return;
++	const int available = Q4WASM_MAX_AL_QUEUE - source->queueCount;
++	const int appendCount = static_cast<int>( count ) < available ? static_cast<int>( count ) : available;
++	for ( int i = 0; i < appendCount; ++i ) {
++		source->queue[source->queueCount++] = buffers[i];
++	}
++	Q4WASM_AudioSourceQueue( id, appendCount, buffers );
++}
++
++AL_API void AL_APIENTRY alSourceUnqueueBuffers( ALuint id, ALsizei count, ALuint *buffers ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source || count <= 0 ) return;
++	const int removeCount = static_cast<int>( count ) < source->queueCount ? static_cast<int>( count ) : source->queueCount;
++	int removedDuration = 0;
++	for ( int i = 0; i < removeCount; ++i ) {
++		if ( buffers ) buffers[i] = source->queue[i];
++		removedDuration += Q4WASM_BufferDuration( source->queue[i] );
++	}
++	for ( int i = removeCount; i < source->queueCount; ++i ) {
++		source->queue[i - removeCount] = source->queue[i];
++	}
++	source->queueCount -= removeCount;
++	source->startedMsec += removedDuration;
++	Q4WASM_AudioSourceUnqueue( id, removeCount );
++}
++
++AL_API void AL_APIENTRY alGetSourcei( ALuint id, ALenum param, ALint *value ) AL_API_NOEXCEPT {
++	if ( !value ) return;
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source ) {
++		*value = 0;
++		return;
++	}
++	if ( param == AL_BUFFERS_PROCESSED ) {
++		*value = Q4WASM_ProcessedBuffers( source );
++		return;
++	}
++	if ( param == AL_SOURCE_TYPE ) {
++		*value = source->queueCount ? AL_STREAMING : source->buffer ? AL_STATIC : AL_UNDETERMINED;
++		return;
++	}
++	if ( param == AL_BUFFER ) { *value = source->buffer; return; }
++	if ( param == AL_BUFFERS_QUEUED ) { *value = source->queueCount + ( source->buffer ? 1 : 0 ); return; }
++	if ( param == AL_SOURCE_STATE ) {
++		if ( source->playing && !source->paused && source->queueCount == 0 && !source->looping ) {
++			if ( emscripten_get_now() - source->startedMsec >= Q4WASM_BufferDuration( source->buffer ) ) {
++				source->playing = false;
++			}
++		}
++		*value = source->paused ? AL_PAUSED : ( source->playing ? AL_PLAYING : AL_STOPPED );
++		return;
++	}
++	*value = 0;
++}
++
++AL_API void AL_APIENTRY alSourcePlay( ALuint id ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source ) return;
++	source->playing = true;
++	source->paused = false;
++	source->stopped = false;
++	source->startedMsec = emscripten_get_now();
++	Q4WASM_AudioSourceAction( id, 1 );
++}
++
++AL_API void AL_APIENTRY alSourceStop( ALuint id ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source ) return;
++	source->playing = false;
++	source->paused = false;
++	source->stopped = true;
++	Q4WASM_AudioSourceAction( id, 0 );
++}
++
++AL_API void AL_APIENTRY alSourcePause( ALuint id ) AL_API_NOEXCEPT {
++	q4wasmALSource_t *source = Q4WASM_Source( id );
++	if ( !source ) return;
++	source->playing = false;
++	source->paused = true;
++	Q4WASM_AudioSourceAction( id, 2 );
++}
++
++AL_API void AL_APIENTRY alListenerf( ALenum param, ALfloat value ) AL_API_NOEXCEPT {
++	if ( param == AL_GAIN ) q4wasmListenerGain = value;
++	Q4WASM_AudioListenerFloat( param, value );
++}
++
++AL_API void AL_APIENTRY alGetListenerf( ALenum param, ALfloat *value ) AL_API_NOEXCEPT {
++	if ( value ) *value = param == AL_GAIN ? q4wasmListenerGain : 0.0f;
++}
++
++AL_API ALboolean AL_APIENTRY alIsBufferFormatSupportedSOFT( ALenum ) AL_API_NOEXCEPT {
++	return AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alListenerfv( ALenum param, const ALfloat *values ) AL_API_NOEXCEPT {
++	if ( !values ) return;
++	Q4WASM_AudioListenerVector( param, values, param == AL_ORIENTATION ? 6 : 3 );
++}
++
++ALC_API ALCdevice *ALC_APIENTRY alcOpenDevice( const ALCchar * ) ALC_API_NOEXCEPT {
++	Q4WASM_AudioInit();
++	return reinterpret_cast<ALCdevice *>( &q4wasmDeviceToken );
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcCloseDevice( ALCdevice * ) ALC_API_NOEXCEPT {
++	return ALC_TRUE;
++}
++
++ALC_API ALCcontext *ALC_APIENTRY alcCreateContext( ALCdevice *device, const ALCint * ) ALC_API_NOEXCEPT {
++	return device ? reinterpret_cast<ALCcontext *>( &q4wasmContextToken ) : NULL;
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcMakeContextCurrent( ALCcontext *context ) ALC_API_NOEXCEPT {
++	q4wasmCurrentContext = context;
++	return ALC_TRUE;
++}
++
++ALC_API ALCcontext *ALC_APIENTRY alcGetCurrentContext() ALC_API_NOEXCEPT {
++	return q4wasmCurrentContext;
++}
++
++ALC_API void ALC_APIENTRY alcDestroyContext( ALCcontext *context ) ALC_API_NOEXCEPT {
++	if ( q4wasmCurrentContext == context ) q4wasmCurrentContext = NULL;
++}
++
++ALC_API void ALC_APIENTRY alcSuspendContext( ALCcontext * ) ALC_API_NOEXCEPT {
++}
++
++ALC_API void ALC_APIENTRY alcProcessContext( ALCcontext * ) ALC_API_NOEXCEPT {
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcIsExtensionPresent( ALCdevice *, const ALCchar * ) ALC_API_NOEXCEPT {
++	return ALC_FALSE;
++}
++
++ALC_API const ALCchar *ALC_APIENTRY alcGetString( ALCdevice *device, ALCenum param ) ALC_API_NOEXCEPT {
++	if ( param == ALC_DEVICE_SPECIFIER && device == NULL ) {
++		// A NULL-device query returns a list, not just a device name. The
++		// explicit NUL plus the literal terminator end this one-device list;
++		// otherwise Quake 4 walks adjacent constants into its GUI choices.
++		static const ALCchar deviceList[] = "WebAudio\0";
++		return deviceList;
++	}
++	if ( param == ALC_DEVICE_SPECIFIER || param == ALC_DEFAULT_DEVICE_SPECIFIER ) {
++		return "WebAudio";
++	}
++	return "";
++}
++
++ALC_API void ALC_APIENTRY alcGetIntegerv( ALCdevice *, ALCenum param, ALCsizei size, ALCint *values ) ALC_API_NOEXCEPT {
++	if ( values && size > 0 ) values[0] = ( param == ALC_MAJOR_VERSION || param == ALC_MINOR_VERSION ) ? 1 : 0;
++}
++
++ALC_API ALCenum ALC_APIENTRY alcGetError( ALCdevice * ) ALC_API_NOEXCEPT {
++	return ALC_NO_ERROR;
++}
++
++// MAIN_MODULE links Emscripten's native AL procedure table. It resolves core
++// API names to the bridge definitions above; optional extensions remain
++// unadvertised. Defining duplicate procedure tables here breaks that link.
++} // extern "C"
++
++#endif // __EMSCRIPTEN__
+diff --git a/src/sys/emscripten/webgl_compat.cpp b/src/sys/emscripten/webgl_compat.cpp
+new file mode 100644
+index 0000000..0deadcc
+--- /dev/null
++++ b/src/sys/emscripten/webgl_compat.cpp
+@@ -0,0 +1,169 @@
++// Compatibility operations used by openQ4's WebGL2 renderer.
++#include <string.h>
++#include <EGL/egl.h>
++#include <emscripten.h>
++#include <emscripten/html5_webgl.h>
++#include "webgl_compat.h"
++
++// The SDK's legacy glDrawBuffer aborts. WebGL2 implements single-target
++// selection with drawBuffers; retain its validation for unsupported desktop
++// targets (for example a front buffer), rather than ignoring the operation.
++EM_JS(void, Q4WASM_DrawBuffer, (unsigned int mode), {
++    GLctx.drawBuffers([mode]);
++});
++extern "C" void glDrawBuffer(unsigned int mode) { Q4WASM_DrawBuffer(mode); }
++
++// The image layer supplies the same sampler policy as desktop GL, including
++// legacy-format/swizzle expansion of border colors. SDK call-site routing
++// updates the matching shader uniforms before each draw.
++EM_JS(void, Q4WASM_SetBorderSampler, (unsigned int texture, int enabled, int filter, int lastLevel,
++    float anisotropy, float red, float green, float blue, float alpha), {
++    GLImmediate.q4Border.get(GLctx).setTextureSampler(GL.textures[texture],
++        [enabled, filter, lastLevel, anisotropy], [red, green, blue, alpha]);
++});
++
++// Keep the SDK's legacy attribute/matrix/shader preparation, but submit the
++// actual index type. Its stock DrawElements/flush path hard-codes uint16 even
++// for GPU index buffers; openQ4's glIndex_t is uint32.
++EM_JS(void, Q4WASM_DrawElements, (unsigned int mode, int count, unsigned int type, const void *indices), {
++    indices = indices >>> 0;
++    const bytes = type === 0x1401 ? 1 : type === 0x1403 ? 2 : type === 0x1405 ? 4 : 0;
++    if (!bytes || mode > 6) { GL.recordError(0x0500); return; }
++    if (count < 0 || indices % bytes) { GL.recordError(0x0501); return; }
++    if (!count) return;
++    const elementBuffer = GLctx.currentElementArrayBufferBinding;
++    const legacy = GLImmediate.totalEnabledClientAttributes > 0;
++    // Unbinding GL_ARRAY_BUFFER does not convert saved VBO array pointers to
++    // client-memory pointers. The build-time SDK transform records each binding.
++    const savedVboArrays = legacy && GLImmediate.enabledClientAttributes.every(
++        (enabled, index) => !enabled || GLImmediate.clientAttributes[index]?.bufferBinding);
++    const cpuVertices = legacy && !GLctx.currentArrayBufferBinding && !savedVboArrays;
++    let first = 0, last = count;
++    if (!elementBuffer) {
++        const size = count * bytes;
++        if (indices + size > HEAPU8.length) { GL.recordError(0x0502); return; }
++        if (size > GL.MAX_TEMP_BUFFER_SIZE) { GL.recordError(0x0505); return; }
++        if (cpuVertices) {
++            first = Infinity; last = 0;
++            const array = bytes === 4 ? HEAPU32 : bytes === 2 ? HEAPU16 : HEAPU8;
++            const offset = indices / bytes;
++            for (let i = 0; i < count; i++) {
++                const value = array[offset + i];
++                if (value === (bytes === 4 ? 0xFFFFFFFF : bytes === 2 ? 0xFFFF : 0xFF)) continue;
++                first = Math.min(first, value); last = Math.max(last, value + 1);
++            }
++            if (!last) return; // only fixed-index primitive restart markers
++            // Bound reads before the SDK can restride planar client arrays.
++            let packedSize = 0;
++            for (let i = 0; i < GLImmediate.NUM_ATTRIBUTES; i++) {
++                if (!GLImmediate.enabledClientAttributes[i]) continue;
++                const attr = GLImmediate.clientAttributes[i];
++                const width = attr.size * GL.byteSizeByType[attr.type - GL.byteSizeByTypeRoot];
++                const stride = attr.stride || width;
++                packedSize += (width + 3) & ~3;
++                if (attr.pointer + (last - 1) * stride + width > HEAPU8.length ||
++                    last * stride > GL.MAX_TEMP_BUFFER_SIZE || last * packedSize > GL.MAX_TEMP_BUFFER_SIZE) {
++                    GL.recordError(0x0505); return;
++                }
++            }
++        }
++    } else if (cpuVertices) {
++        // The engine pairs GPU index buffers with GPU vertices. Reading an
++        // unknown GPU index range cannot safely bound client-side pointers.
++        GL.recordError(0x0502); return;
++    }
++    if (legacy) {
++        GLImmediate.prepareClientAttributes(last, false);
++        GLImmediate.mode = mode;
++        if (cpuVertices) {
++            const start = GLImmediate.vertexPointer;
++            const size = last * GLImmediate.stride;
++            if (size > GL.MAX_TEMP_BUFFER_SIZE || start + size > HEAPU8.length) {
++                GLImmediate.mode = -1; GL.recordError(0x0505); return;
++            }
++            GLImmediate.firstVertex = first; GLImmediate.lastVertex = last;
++            GLImmediate.vertexData = HEAPF32.subarray(start / 4, (start + size) / 4);
++        }
++        GLImmediate.getRenderer().prepare();
++    }
++    try {
++        let offset = indices;
++        if (!elementBuffer) {
++            const size = count * bytes;
++            GLctx.bindBuffer(GLctx.ELEMENT_ARRAY_BUFFER, GL.getTempIndexBuffer(size));
++            // WebGL2's ranged upload preserves bytes and avoids copying the
++            // entire Wasm heap. No narrowing or rebasing of indices occurs.
++            GLctx.bufferSubData(GLctx.ELEMENT_ARRAY_BUFFER, 0, HEAPU8, indices, size);
++            offset = 0;
++        }
++        GLctx.drawElements(mode, count, type, offset);
++    } finally {
++        if (!elementBuffer) GLctx.bindBuffer(GLctx.ELEMENT_ARRAY_BUFFER, null);
++        if (legacy) GLImmediate.mode = -1;
++    }
++});
++extern "C" void glDrawElements(unsigned int mode, int count, unsigned int type, const void *indices) {
++    Q4WASM_DrawElements(mode, count, type, indices);
++}
++
++// Use the transferred OffscreenCanvas without document-based selectors.
++// This is also the context creation path exercised by the native regression.
++EM_JS(int, Q4WASM_CreateDirectWebGLContext, (int alpha, int depth, int stencil, int samples), {
++    if (!Module.canvas || typeof GL === 'undefined') return 0;
++    var context = GL.createContext(Module.canvas, {
++        alpha: !!alpha, depth: !!depth, stencil: !!stencil,
++        antialias: samples > 1, majorVersion: 2, minorVersion: 0,
++        premultipliedAlpha: false, preserveDrawingBuffer: false,
++        enableExtensionsByDefault: true
++    });
++    if (!context) return 0;
++    if (!GL.makeContextCurrent(context)) {
++        GL.deleteContext(context);
++        return 0;
++    }
++    // Direct worker contexts bypass Browser.createContext/eglCreateContext.
++    // Run the same SDK callbacks after making WebGL current: they initialize
++    // legacy colour, matrices, texture state and immediate/client-array data.
++    Module.ctx = GLctx;
++    Browser.useWebGL = true;
++    GLImmediate.q4Border.reset(GLctx);
++    Browser.moduleContextCreatedCallbacks.forEach(callback => callback());
++    return context | 0;
++});
++
++// Emscripten 6.0.6 implements glTexCoord2f for texture unit zero, but does
++// not expose glMultiTexCoord2f. Add each extra UV pair to the same immediate
++// vertex stream and attribute layout consumed by its real draw implementation.
++EM_JS( void, Q4WASM_MultiTexCoord2f, ( unsigned int target, float s, float t ), {
++    const unit = target - 0x84C0;
++    if (unit < 0 || unit >= GLImmediate.MAX_TEXTURES) {
++        GL.recordError(0x0500); // GL_INVALID_ENUM
++        return;
++    }
++    if (GLImmediate.mode < 0) {
++        GL.recordError(0x0502); // GL_INVALID_OPERATION: this path is begin/end only
++        return;
++    }
++    if (GLImmediate.vertexCounter + 2 > GLImmediate.vertexData.length) {
++        GL.recordError(0x0505); // GL_OUT_OF_MEMORY
++        return;
++    }
++    GLImmediate.vertexData[GLImmediate.vertexCounter++] = s;
++    GLImmediate.vertexData[GLImmediate.vertexCounter++] = t;
++    GLImmediate.addRendererComponent(GLImmediate.TEXTURE0 + unit, 2, GLctx.FLOAT);
++} );
++
++void *Q4WASM_GetGLProcAddress( const char *name ) {
++    if (!name || !name[0]) return NULL;
++    if (!strcmp(name, "glDrawBuffer")) return reinterpret_cast<void *>(glDrawBuffer);
++    if (!strcmp(name, "glDrawElements")) return reinterpret_cast<void *>(glDrawElements);
++    void *function = emscripten_webgl_get_proc_address(name);
++    if (function) return function;
++    if (!strcmp(name, "glMultiTexCoord2fARB") || !strcmp(name, "glMultiTexCoord2f")) {
++        return reinterpret_cast<void *>(Q4WASM_MultiTexCoord2f);
++    }
++    // eglGetProcAddress uses Emscripten's legacy resolver, including ARB/EXT
++    // aliases and client-array/shader-object wrappers. Exact core WebGL
++    // functions above take precedence over legacy extension aliases.
++    return reinterpret_cast<void *>(eglGetProcAddress(name));
++}
+diff --git a/src/sys/emscripten/webgl_compat.h b/src/sys/emscripten/webgl_compat.h
+new file mode 100644
+index 0000000..3b20b7e
+--- /dev/null
++++ b/src/sys/emscripten/webgl_compat.h
+@@ -0,0 +1,9 @@
++#ifndef OPENQ4_WEBGL_COMPAT_H
++#define OPENQ4_WEBGL_COMPAT_H
++
++void *Q4WASM_GetGLProcAddress( const char *name );
++extern "C" int Q4WASM_CreateDirectWebGLContext( int alpha, int depth, int stencil, int samples );
++extern "C" void Q4WASM_SetBorderSampler( unsigned int texture, int enabled, int filter, int lastLevel,
++    float anisotropy, float red, float green, float blue, float alpha );
++
++#endif
 diff --git a/src/sys/linux/main.cpp b/src/sys/linux/main.cpp
-index 4a4484b..5dc0cb7 100644
+index 4a4484b..fe36c05 100644
 --- a/src/sys/linux/main.cpp
 +++ b/src/sys/linux/main.cpp
-@@ -38,6 +38,11 @@ If you have questions concerning this license or the applicable additional terms
+@@ -38,6 +38,12 @@ If you have questions concerning this license or the applicable additional terms
  #include <sys/types.h>
  #include <fcntl.h>
  
 +#if defined(__EMSCRIPTEN__)
 +#include <emscripten.h>
 +#include "../../framework/Session_local.h"
++#include "../../ui/Window.h"
 +#endif
 +
  #ifdef ID_MCHECK
  #include <mcheck.h>
  #endif
-@@ -1062,12 +1067,30 @@ static void Sys_HandlePendingQuitSignal( void ) {
+@@ -1062,12 +1068,63 @@ static void Sys_HandlePendingQuitSignal( void ) {
  	common->Quit();
  }
  
 +#if defined(__EMSCRIPTEN__)
 +static int q4wasmLastBrowserState = -1;
++static int q4wasmLastResumeAvailable = -1;
++
++static bool Q4WASM_MainMenuCanResume() {
++	if ( !sessLocal.guiMainMenu || sessLocal.guiActive != sessLocal.guiMainMenu || sessLocal.guiTest ) return false;
++	idWindow *desktop = sessLocal.guiMainMenu->GetDesktop();
++	if ( !desktop || !sessLocal.guiMainMenu->GetStateInt( "ingame", "0" ) ) return false;
++	// These are real window variables, not GUI dictionary entries. Match the
++	// shipped mainmenu.gui onESC branch; submenus only navigate back one level.
++	const char *names[] = { "curr", "active", "video_check" };
++	for ( const char *name : names ) {
++		idWinVar *value = desktop->GetWinVarByName( name );
++		if ( !value || atof( value->c_str() ) != 0.0 ) return false;
++	}
++	return true;
++}
++
++static int Q4WASM_CurrentBrowserState() {
++	// Continue consumes events before the console or any GUI.
++	if ( sessLocal.IsBrowserLoadingContinueActive() ) return 4;
++	if ( console->Active() ) return 3;
++	if ( !sessLocal.IsMapSpawned() ) return 0;
++	return sessLocal.IsGUIActive() ? 2 : 1;
++}
 +
 +static void Q4WASM_ReportBrowserState( void ) {
-+	const int state = !sessLocal.IsMapSpawned() ? 0 : ( sessLocal.IsGUIActive() ? 2 : 1 );
-+	if ( state == q4wasmLastBrowserState ) {
++	const int state = Q4WASM_CurrentBrowserState();
++	const int resumeAvailable = sessLocal.IsMapSpawned() &&
++		( ( state == 4 && sessLocal.browserLoadingContinueFrames >= 2 ) ||
++		  ( state == 3 && !sessLocal.IsGUIActive() ) ||
++		  ( state == 2 && Q4WASM_MainMenuCanResume() ) );
++	if ( state == q4wasmLastBrowserState && resumeAvailable == q4wasmLastResumeAvailable ) {
 +		return;
 +	}
 +	q4wasmLastBrowserState = state;
++	q4wasmLastResumeAvailable = resumeAvailable;
 +	EM_ASM( {
-+		postMessage( { type: 'engine-state', state: $0 === 1 ? 'gameplay' : ($0 === 2 ? 'paused' : 'menu') } );
-+	}, state );
++		postMessage( {
++			type: 'engine-state',
++			state: $0 === 1 ? 'gameplay' : ($0 === 0 ? 'menu' : 'paused'),
++			inputMode: $0 === 1 ? 'gameplay' : ($0 === 3 ? 'console' : ($0 === 4 ? 'continue' : 'menu')),
++			resumeAvailable: $1 !== 0
++		} );
++	}, state, resumeAvailable );
 +}
 +#endif
 +
@@ -2858,7 +5447,7 @@ index 4a4484b..5dc0cb7 100644
  #ifdef ID_MCHECK
  	// must have -lmcheck linkage
  	mcheck( abrt_func );
-@@ -1075,7 +1098,10 @@ int main(int argc, const char **argv) {
+@@ -1075,7 +1132,10 @@ int main(int argc, const char **argv) {
  #endif
  	
  	Posix_EarlyInit( );
@@ -2870,7 +5459,7 @@ index 4a4484b..5dc0cb7 100644
  	Sys_ReportWaylandRuntime();
  	Sys_ShowSplash();
  #endif
-@@ -1085,15 +1111,31 @@ int main(int argc, const char **argv) {
+@@ -1085,15 +1145,31 @@ int main(int argc, const char **argv) {
  	} else {
  		common->Init( 0, NULL, NULL );
  	}
@@ -2961,7 +5550,7 @@ index 08827e4..8b82a6f 100644
  	#if defined( MSG_NOSIGNAL )
  	if ( ( nbytes = TEMP_FAILURE_RETRY( send( fd, data, size, MSG_NOSIGNAL ) ) ) == -1 ) {
 diff --git a/src/sys/sdl3/sdl3_backend.cpp b/src/sys/sdl3/sdl3_backend.cpp
-index 6e08295..f1237c1 100644
+index 6e08295..574d181 100644
 --- a/src/sys/sdl3/sdl3_backend.cpp
 +++ b/src/sys/sdl3/sdl3_backend.cpp
 @@ -22,7 +22,7 @@ along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
@@ -2973,7 +5562,67 @@ index 6e08295..f1237c1 100644
  #define OPENQ4_SDL3_POSIX_HOST 1
  #endif
  
-@@ -5677,6 +5677,10 @@ static void SDL3_ParmsFromWindowParms(const renderWindowParms_t *src, glimpParms
+@@ -555,6 +555,9 @@ static bool SDL3_IsNativeWaylandVideoDriver(void) {
+ }
+ 
+ bool Sys_SDL_IsGameWindowFocused(void) {
++#if defined( OPENQ4_SDL3_EMSCRIPTEN_HOST )
++	return s_browserPageFocused;
++#else
+ 	if (s_sdlAppInBackground || !s_sdlVideoReferenceHeld || s_sdlWindow == NULL) {
+ 		return false;
+ 	}
+@@ -562,6 +565,7 @@ bool Sys_SDL_IsGameWindowFocused(void) {
+ 	const SDL_WindowFlags flags = SDL_GetWindowFlags(s_sdlWindow);
+ 	return (flags & SDL_WINDOW_INPUT_FOCUS) != 0 &&
+ 		(flags & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED)) == 0;
++#endif
+ }
+ 
+ static bool SDL3_UseAbsoluteWindowPlacement(void) {
+@@ -678,10 +682,14 @@ static idUserInterface *SDL3_GetActiveMenuGui(void) {
+ }
+ 
+ static bool SDL3_IsMouseCaptured(void) {
++#if defined(OPENQ4_SDL3_EMSCRIPTEN_HOST)
++	return s_browserPointerCaptured;
++#else
+ 	if (!s_sdlWindow) {
+ 		return false;
+ 	}
+ 	return SDL_GetWindowRelativeMouseMode(s_sdlWindow) || SDL_GetWindowMouseGrab(s_sdlWindow);
++#endif
+ }
+ 
+ static void SDL3_SetMouseHintDefaults(void) {
+@@ -5182,6 +5190,13 @@ void IN_DeactivateMouseIfWindowed(void) {
+ }
+ 
+ void IN_Frame(void) {
++#if defined(OPENQ4_SDL3_EMSCRIPTEN_HOST)
++	// Focus and capture belong to the page, not the worker's direct GL context.
++	win32.activeApp = s_browserPageFocused;
++	win32.mouseGrabbed = s_browserPointerCaptured;
++	win32.mouseReleased = !s_browserPointerCaptured;
++	return;
++#endif
+ 	win32.mouseGrabbed = SDL3_IsMouseCaptured();
+ 
+ 	bool shouldGrab = true;
+@@ -5250,6 +5265,12 @@ void IN_Frame(void) {
+ }
+ 
+ void Sys_GrabMouseCursor(bool grabIt) {
++#if defined(OPENQ4_SDL3_EMSCRIPTEN_HOST)
++	// The shell reacts to native state and reports the actual capture result.
++	// A desktop grab request cannot grant or release browser pointer lock.
++	(void)grabIt;
++	return;
++#endif
+ #ifndef ID_DEDICATED
+ 	if (grabIt && !win32.activeApp) {
+ 		// Do not let the per-frame gameplay request consume the release marker;
+@@ -5677,6 +5698,10 @@ static void SDL3_ParmsFromWindowParms(const renderWindowParms_t *src, glimpParms
  }
  
  static void SDL3_ApplyFramebufferDesc(const renderFramebufferDesc_t *desc) {
@@ -2984,7 +5633,7 @@ index 6e08295..f1237c1 100644
  	SDL_GL_ResetAttributes();
  	(void)SDL_GL_SetAttribute(SDL_GL_RED_SIZE, desc->redBits);
  	(void)SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, desc->greenBits);
-@@ -5702,9 +5706,14 @@ static void SDL3_ApplyFramebufferDesc(const renderFramebufferDesc_t *desc) {
+@@ -5702,9 +5727,14 @@ static void SDL3_ApplyFramebufferDesc(const renderFramebufferDesc_t *desc) {
  	(void)SDL_GL_SetAttribute(
  		SDL_GL_CONTEXT_FLAGS,
  		desc->glDebugContext ? SDL_GL_CONTEXT_DEBUG_FLAG : 0);
@@ -2999,7 +5648,7 @@ index 6e08295..f1237c1 100644
  	SDL3_SetMouseHintDefaults();
  	Sys_SDL_ApplyVideoHintDefaults();
  
-@@ -5739,6 +5748,7 @@ static bool SDL3_WindowServices_PrepareWindowSystem(void) {
+@@ -5739,6 +5769,7 @@ static bool SDL3_WindowServices_PrepareWindowSystem(void) {
  
  	SDL3_InitDesktopMode();
  	return true;
@@ -3007,7 +5656,7 @@ index 6e08295..f1237c1 100644
  }
  
  // which API the live window was created for; a preserved window of the
-@@ -5786,6 +5796,22 @@ static void SDL3_PinBundledMoltenVKLibrary(void) {
+@@ -5786,6 +5817,22 @@ static void SDL3_PinBundledMoltenVKLibrary(void) {
  
  static bool SDL3_WindowServices_CreateWindowForFramebuffer(const renderFramebufferDesc_t *desc, const renderWindowParms_t *parms,
  														   renderModuleWindowInfo_t *outInfo, bool *outReusedPreservedWindow) {
@@ -3030,7 +5679,7 @@ index 6e08295..f1237c1 100644
  	const int requestedSurfaceKind = desc != NULL ? desc->surfaceKind : RENDER_SURFACE_GL;
  #if defined(OPENQ4_SDL3_DARWIN_HOST)
  	if (requestedSurfaceKind == RENDER_SURFACE_VULKAN) {
-@@ -5850,19 +5876,37 @@ static bool SDL3_WindowServices_CreateWindowForFramebuffer(const renderFramebuff
+@@ -5850,19 +5897,37 @@ static bool SDL3_WindowServices_CreateWindowForFramebuffer(const renderFramebuff
  
  	SDL3_FillWindowInfo(outInfo);
  	return true;
@@ -3068,7 +5717,7 @@ index 6e08295..f1237c1 100644
  }
  
  static void SDL3_WindowServices_RefreshNativeWindowHandles(renderModuleWindowInfo_t *outInfo) {
-@@ -5873,12 +5917,20 @@ static void SDL3_WindowServices_RefreshNativeWindowHandles(renderModuleWindowInf
+@@ -5873,12 +5938,20 @@ static void SDL3_WindowServices_RefreshNativeWindowHandles(renderModuleWindowInf
  }
  
  static void SDL3_WindowServices_NotifyWindowReady(void) {
@@ -3089,7 +5738,7 @@ index 6e08295..f1237c1 100644
  	s_teardownPreserveWindow = s_preserveWindowOnShutdown && s_sdlWindow != NULL;
  
  	SDL3_DisableWindowAspectSnap();
-@@ -5893,9 +5945,15 @@ static void SDL3_WindowServices_BeginWindowTeardown(void) {
+@@ -5893,9 +5966,15 @@ static void SDL3_WindowServices_BeginWindowTeardown(void) {
  		(void)SDL_StopTextInput(s_sdlWindow);
  		s_sdlTextInputActive = false;
  	}
@@ -3105,7 +5754,7 @@ index 6e08295..f1237c1 100644
  	if (s_sdlWindow && !s_teardownPreserveWindow) {
  		SDL_DestroyWindow(s_sdlWindow);
  		s_sdlWindow = NULL;
-@@ -5922,6 +5980,7 @@ static void SDL3_WindowServices_FinishWindowTeardown(void) {
+@@ -5922,6 +6001,7 @@ static void SDL3_WindowServices_FinishWindowTeardown(void) {
  
  	SDL3_ClearInputQueues();
  	s_teardownPreserveWindow = false;
@@ -3113,7 +5762,7 @@ index 6e08295..f1237c1 100644
  }
  
  static void SDL3_WindowServices_GetDesktopResolution(int *width, int *height) {
-@@ -5952,44 +6011,99 @@ static void SDL3_WindowServices_CountContextError(void) {
+@@ -5952,44 +6032,99 @@ static void SDL3_WindowServices_CountContextError(void) {
  }
  
  static void *SDL3_WindowServices_CreateGLContext(void) {
@@ -3213,7 +5862,7 @@ index 6e08295..f1237c1 100644
  	SDL_GLAttr sdlAttribute;
  	switch (attribute) {
  		case RENDER_GLATTR_CONTEXT_MAJOR_VERSION:	sdlAttribute = SDL_GL_CONTEXT_MAJOR_VERSION; break;
-@@ -6014,10 +6128,15 @@ static bool SDL3_WindowServices_GetGLAttribute(int attribute, int *outValue) {
+@@ -6014,10 +6149,15 @@ static bool SDL3_WindowServices_GetGLAttribute(int attribute, int *outValue) {
  		}
  	}
  	return true;
@@ -3222,7 +5871,7 @@ index 6e08295..f1237c1 100644
  
  static void *SDL3_WindowServices_GetGLProcAddress(const char *name) {
 +#if defined(OPENQ4_SDL3_EMSCRIPTEN_HOST)
-+	return emscripten_webgl_get_proc_address(name);
++	return Q4WASM_GetGLProcAddress(name);
 +#else
  	return (void *)SDL_GL_GetProcAddress(name);
 +#endif
@@ -3365,6 +6014,211 @@ index 0000000..e5ccae5
 +
 +if __name__ == "__main__":
 +    raise SystemExit(main(sys.argv))
+
+diff --git a/tools/build/emscripten_immediate_buffer.mjs b/tools/build/emscripten_immediate_buffer.mjs
+new file mode 100644
+--- /dev/null
++++ b/tools/build/emscripten_immediate_buffer.mjs
+@@ -0,0 +1,24 @@
++// SDK repair. Scope CPU immediate vertices independently of the
++// application's saved VBO binding, then restore it even if submission throws.
++import assert from 'node:assert/strict';
++export function repairImmediateBuffer(source) {
++  const expression=/var _emscripten_glEnd = \(\) => \{([\s\S]*?)\n    \};\n  _emscripten_glEnd\.sig/;
++  const matches=[...source.matchAll(new RegExp(expression.source,'g'))];
++  assert.equal(matches.length,1,'exactly one linked SDK glEnd seam');
++  assert.ok(!source.includes('q4ImmediateSavedArrayBuffer'),'do not apply twice');
++  return source.replace(expression,(_match,body)=>`var _emscripten_glEnd = () => {
++      // OpenQ4: glBegin/glEnd vertices always live in the SDK CPU stream.
++      const q4ImmediateSavedArrayBuffer = GLctx.currentArrayBufferBinding;
++      GLctx.currentArrayBufferBinding = 0;
++      GLImmediate.lastArrayBuffer = null;
++      try {${body}
++      } finally {
++        GLctx.currentArrayBufferBinding = q4ImmediateSavedArrayBuffer;
++        GLctx.bindBuffer(GLctx.ARRAY_BUFFER, GL.buffers[q4ImmediateSavedArrayBuffer] || null);
++        // The bound application VBO is not the prepared temporary stream.
++        GLImmediate.lastArrayBuffer = null;
++        GLImmediate.lastStride = -1;
++      }
++    };
++  _emscripten_glEnd.sig`);
++}
+diff --git a/tools/build/emscripten_legacy_gl_transform.mjs b/tools/build/emscripten_legacy_gl_transform.mjs
+new file mode 100644
+--- /dev/null
++++ b/tools/build/emscripten_legacy_gl_transform.mjs
+@@ -0,0 +1,170 @@
++#!/usr/bin/env node
++// Local corrections to Emscripten 6.0.6's LEGACY_GL_EMULATION renderer.
++// Run by emcc --js-transform before JS optimization, never against live shaders
++// or the installed SDK. Fail closed if an SDK upgrade changes these seams.
++import fs from 'node:fs';
++import { pathToFileURL } from 'node:url';
++import { repairImmediateBuffer } from './emscripten_immediate_buffer.mjs';
++
++export function repairLegacyNormalMatrix(source) {
++  function replace(original,replacement) {
++    if(source.split(original).length!==2)throw Error('Expected one SDK normal-matrix seam');
++    source=source.replace(original,replacement);
++  }
++  replace("source = source.replace(/gl_ModelViewMatrix/g, 'u_modelView');",
++    "source = source.replace(/\\bgl_NormalMatrix\\b/g, 'u_normalMatrix');\n" +
++    "            if (old != source) {\n" +
++    "              need_mm = 1;\n" +
++    "              source = 'uniform mat3 u_normalMatrix;\\n' + source;\n" +
++    "            }\n" +
++    "            old = source;\n" +
++    "            source = source.replace(/gl_ModelViewMatrix/g, 'u_modelView');");
++  replace("source.replace(/gl_Normal/g, 'a_normal');","source.replace(/\\bgl_Normal\\b/g, 'a_normal');");
++  replace('if (this.modelViewLocation && this.modelViewMatrixVersion != GLImmediate.matrixVersion[0/*m*/]) {',
++    'if ((this.modelViewLocation || this.normalMatrixLocation) && this.modelViewMatrixVersion != GLImmediate.matrixVersion[0/*m*/]) {');
++  replace('if (GLEmulation.lightEnabled) {\n                var tmpMVinv',
++    'if (this.normalMatrixLocation) {\n                var tmpMVinv');
++  return source;
++}
++
++export function installBorderGL(source) {
++  if (source.includes('q4Border:')) throw new Error('Border runtime already installed');
++  const hooks = ['shaderSource','linkProgram','useProgram','deleteProgram','getUniformLocation',
++    'uniform1i','uniform1iv','activeTexture','bindTexture','deleteTexture','bindSampler','deleteSampler',
++    'drawElements','drawArrays','drawElementsInstanced','drawArraysInstanced'];
++  for (const hook of hooks) {
++    const original = `GLctx.${hook}(`;
++    if (!source.includes(original)) throw new Error(`Missing SDK border hook ${hook}`);
++    source = source.replaceAll(original,`GLImmediate.q4Border.get(GLctx).${hook}(`);
++  }
++  const shader = fs.readFileSync(new URL('./emscripten_border_shader.mjs',import.meta.url),'utf8').replace(/^export /gm,'');
++  const runtime = fs.readFileSync(new URL('./emscripten_border_runtime.mjs',import.meta.url),'utf8').replace(/^export /gm,'');
++  const helper = fs.readFileSync(new URL('./emscripten_border_sampler.glsl',import.meta.url),'utf8');
++  const support = `(() => {\n${shader}\n${runtime}\nconst helper = ${JSON.stringify(helper)};\n` +
++    'const contexts = new WeakMap();\nreturn {\n' +
++    'get(gl) { let state = contexts.get(gl); if (!state) { state = createBorderRuntime(gl,transformBorderShader,helper); contexts.set(gl,state); } return state; },\n' +
++    'reset(gl) { contexts.delete(gl); }\n};\n})()';
++  const seam = 'var GLImmediate = {';
++  if (source.split(seam).length !== 2) throw new Error('Expected one GLImmediate border runtime seam');
++  return source.replace(seam,`${seam}\n  q4Border: ${support},`);
++}
++
++export function transformLegacyGL(source) {
++  function replaceOnce(pattern, replacement, label) {
++    const matches = [...source.matchAll(pattern)];
++    if (matches.length !== 1) {
++      throw new Error(`Emscripten legacy GL ${label}: expected one SDK seam, found ${matches.length}`);
++    }
++    source = source.replace(pattern, () => replacement);
++  }
++
++  replaceOnce(/return `\$\{func\}\(\$\{TEX_UNIT_UNIFORM_PREFIX\}\$\{texUnitID\}, \$\{texCoordExpr\}\.xy\)`;/g,
++    "// OpenQ4: cube lookups require three coordinates.\n" +
++    "          var components = texType == GL_TEXTURE_CUBE_MAP ? 'xyz' : 'xy';\n" +
++    '          return `${func}(${TEX_UNIT_UNIFORM_PREFIX}${texUnitID}, ${texCoordExpr}.${components})`;',
++    'texture coordinates');
++
++  replaceOnce(/var texLoadLines = '';[\s\S]*?return \[texLoadLines \+ lines\];/g,
++    '// OpenQ4: leave common-subexpression elimination to the GLSL compiler.\n' +
++    '          // The SDK regex hoist truncates matrix-multiplied texture calls at\n' +
++    '          // their inner closing parenthesis, generating invalid COMBINE shaders.\n' +
++    '          return [lines];', 'texture-load hoist');
++
++  replaceOnce(/texUnitUniformList \+= 'uniform sampler2D ' \+ uTexUnitPrefix \+ texUnit \+ ';\\n';/g,
++    '// OpenQ4: use the same target precedence as the texture lookup generator.\n' +
++    "                var samplerType = GLImmediate.TexEnvJIT.getTexUnitType(texUnit) == 0x8513 ? 'samplerCube' : 'sampler2D';\n" +
++    "                texUnitUniformList += 'uniform ' + samplerType + ' ' + uTexUnitPrefix + texUnit + ';\\n';",
++    'sampler declaration');
++
++  replaceOnce(/var arg2Var = `\$\{prefix\}colorSrc2`;\s+var arg2Type = getTypeFromCombineOp\(this\.colorOp\[2\]\);/g,
++    "// OpenQ4: RGB and alpha interpolation have distinct names and operand types.\n" +
++    "              var arg2Var = `${prefix}${isColor ? 'color' : 'alpha'}Src2`;\n" +
++    '              var arg2Type = getTypeFromCombineOp(opArr[2]);', 'interpolation operands');
++
++  replaceOnce(/GLImmediate\.modifiedClientAttributes = false;/g,
++    '// OpenQ4: renderer.prepare caches attribute bindings as well as stride.\n' +
++    '        // glBindBuffer updates lastArrayBuffer before prepare, so equal\n' +
++    '        // stride/matrices cannot prove that vertexAttribPointer is current.\n' +
++    '        // Consume the dirty layout and invalidate only the prepared-state\n' +
++    '        // fast path; unchanged draws and cached shader programs still reuse.\n' +
++    '        GLImmediate.lastStride = -1;\n' +
++    '        GLImmediate.modifiedClientAttributes = false;', 'client attribute cache');
++
++  replaceOnce(/attrib\.offset = 0;\s+}\s+GLImmediate\.modifiedClientAttributes = true;/g,
++    'attrib.offset = 0;\n' +
++    '        }\n' +
++    '        // Array pointers capture the buffer bound at pointer specification.\n' +
++    '        GLImmediate.clientAttributes[name].bufferBinding = GLctx.currentArrayBufferBinding;\n' +
++    '        GLImmediate.modifiedClientAttributes = true;', 'array pointer buffer capture');
++
++  replaceOnce(/if \(\(minStride != maxStride \|\| maxStride < bytes\) && !beginEnd\) {/g,
++    '// OpenQ4 sky coordinates use a separate, tightly packed VBO. GPU offsets\n' +
++    '        // must never enter the SDK client-memory restriding copy. Keep the\n' +
++    '        // existing CPU-array path; GPU-only arrays retain individual strides.\n' +
++    '        GLImmediate.vboClientAttributes = !beginEnd && attributes.length > 0 &&\n' +
++    '          attributes.every(attr => !!attr.bufferBinding);\n' +
++    '        if (GLImmediate.vboClientAttributes) {\n' +
++    '          for (var attr of attributes) attr.offset = attr.pointer;\n' +
++    '          var vertex = GLImmediate.clientAttributes[GLImmediate.VERTEX];\n' +
++    '          GLImmediate.stride = vertex.stride || vertex.sizeBytes;\n' +
++    '          GLImmediate.vertexPointer = 0;\n' +
++    '          GLImmediate.vertexCounter = GLImmediate.stride * count / 4;\n' +
++    '          return;\n' +
++    '        }\n' +
++    '        if ((minStride != maxStride || maxStride < bytes) && !beginEnd) {', 'GPU array layout');
++
++  replaceOnce(/if \(!GLctx\.currentArrayBufferBinding\) {\s+var start = GLImmediate\.firstVertex\*GLImmediate\.stride;/g,
++    'if (GLImmediate.vboClientAttributes) {\n' +
++    '              arrayBuffer = GLImmediate.clientAttributes[GLImmediate.VERTEX].bufferBinding;\n' +
++    '            } else if (!GLctx.currentArrayBufferBinding) {\n' +
++    '              var start = GLImmediate.firstVertex*GLImmediate.stride;', 'GPU renderer buffer selection');
++
++  replaceOnce(/if \(!GLctx\.currentArrayBufferBinding\) {\s+\/\/ Bind the array buffer and upload data after cleaning up the previous renderer/g,
++    'if (!GLImmediate.vboClientAttributes && !GLctx.currentArrayBufferBinding) {\n' +
++    '              // Bind the array buffer and upload data after cleaning up the previous renderer', 'GPU upload exclusion');
++
++  replaceOnce(/var clientAttributes = GLImmediate\.clientAttributes;\s+var posAttr = clientAttributes\[GLImmediate\.VERTEX\];/g,
++    'var clientAttributes = GLImmediate.clientAttributes;\n' +
++    '            var posAttr = clientAttributes[GLImmediate.VERTEX];\n' +
++    '            function bindClientAttribute(location, attribute, normalized) {\n' +
++    '              if (GLImmediate.vboClientAttributes) {\n' +
++    '                GLctx.bindBuffer(GLctx.ARRAY_BUFFER, GL.buffers[attribute.bufferBinding]);\n' +
++    '              }\n' +
++    '              GLctx.vertexAttribPointer(location, attribute.size, attribute.type, normalized,\n' +
++    '                GLImmediate.vboClientAttributes ? attribute.stride : GLImmediate.stride, attribute.offset);\n' +
++    '            }', 'individual array binder');
++
++  for (const [location, attribute, normalized] of [
++    ['this.positionLocation', 'posAttr', 'false'],
++    ['this.normalLocation', 'normalAttr', 'true'],
++    ['attribLoc', 'texAttr', 'false'],
++    ['this.colorLocation', 'colorAttr', 'true']
++  ]) {
++    const original = `GLctx.vertexAttribPointer(${location}, ${attribute}.size, ${attribute}.type, ${normalized}, GLImmediate.stride, ${attribute}.offset);`;
++    replaceOnce(new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
++      `bindClientAttribute(${location}, ${attribute}, ${normalized});`, `${attribute} VBO submission`);
++  }
++
++  replaceOnce(/};\s+this\.cleanup = function\(\) {/g,
++    '  if (GLImmediate.vboClientAttributes) {\n' +
++    '              // Preparing saved pointers must not change the application binding.\n' +
++    '              GLctx.bindBuffer(GLctx.ARRAY_BUFFER, GL.buffers[GLctx.currentArrayBufferBinding] || null);\n' +
++    '              GLImmediate.lastArrayBuffer = arrayBuffer;\n' +
++    '            }\n' +
++    '          };\n\n' +
++    '          this.cleanup = function() {', 'array binding restoration');
++
++  replaceOnce(/GLImmediate\.mode = mode;\s+if \(!GLctx\.currentArrayBufferBinding\) {\s+GLImmediate\.vertexData =/g,
++    'GLImmediate.mode = mode;\n' +
++    '      if (!GLImmediate.vboClientAttributes && !GLctx.currentArrayBufferBinding) {\n' +
++    '        GLImmediate.vertexData =', 'DrawArrays GPU pointers after unbind');
++  return installBorderGL(repairImmediateBuffer(repairLegacyNormalMatrix(source)));
++}
++
++if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
++  if (process.argv.length !== 3) throw new Error('usage: emscripten_legacy_gl_transform.mjs generated.js');
++  const filename = process.argv[2];
++  const transformed = transformLegacyGL(fs.readFileSync(filename, 'utf8'));
++  // No file mutation occurs until all expected SDK seams have been validated.
++  fs.writeFileSync(filename, transformed);
++}
 diff --git a/tools/build/emscripten_gl_dynamic_link_fix.js b/tools/build/emscripten_gl_dynamic_link_fix.js
 new file mode 100644
 index 0000000..d416b3a
@@ -3621,3 +6475,75 @@ index 0000000..9db5e2c
 +
 +[properties]
 +needs_exe_wrapper = true
+diff --git a/src/renderer/RenderSystem.cpp b/src/renderer/RenderSystem.cpp
+index a99e477..7718002 100644
+--- a/src/renderer/RenderSystem.cpp
++++ b/src/renderer/RenderSystem.cpp
+@@ -29,6 +29,7 @@ If you have questions concerning this license or the applicable additional terms
+ 
+ 
+ #include "tr_local.h"
++#include "ScreenshotReadback.h"
+ #include "Model_local.h"
+ #include "RendererMetrics.h"
+ #include "RendererUpload.h"
+@@ -1769,6 +1770,16 @@ void idRenderSystemLocal::CaptureRenderToFile( const char *fileName, bool fixAlp
+ 
+ 	glReadBuffer( GL_BACK );
+ 
++#if defined( __EMSCRIPTEN__ )
++	const int pixelCount = rc->width * rc->height;
++	byte *rgba = (byte *)R_StaticAlloc( pixelCount * 4 );
++	R_ReadPixelsRGBA8Browser( rc->x, rc->y, rc->width, rc->height, rgba );
++	tr.takingScreenshot = wasTakingScreenshot;
++	// Preserve the existing screenshot contract: the saved image is opaque.
++	for ( int i = 0; i < pixelCount; ++i ) rgba[ i * 4 + 3 ] = 0xff;
++	R_WriteTGA( fileName, rgba, rc->width, rc->height, true );
++	R_StaticFree( rgba );
++#else
+ 	// include extra space for OpenGL padding to word boundaries
+ 	int	c = ( rc->width + 3 ) * rc->height;
+ 	byte *data = (byte *)R_StaticAlloc( c * 3 );
+@@ -1789,6 +1800,7 @@ void idRenderSystemLocal::CaptureRenderToFile( const char *fileName, bool fixAlp
+ 
+ 	R_StaticFree( data );
+ 	R_StaticFree( data2 );
++#endif
+ }
+ 
+ 
+diff --git a/src/renderer/ScreenshotReadback.h b/src/renderer/ScreenshotReadback.h
+new file mode 100644
+--- /dev/null
++++ b/src/renderer/ScreenshotReadback.h
+@@ -0,0 +1,30 @@
++#ifndef OPENQ4_SCREENSHOT_READBACK_H
++#define OPENQ4_SCREENSHOT_READBACK_H
++
++#if defined( __EMSCRIPTEN__ )
++// WebGL does not guarantee RGB/UNSIGNED_BYTE readback. Read the normalized
++// display buffer as tightly packed RGBA8, independently of a prior pack/PBO
++// operation, then let each screenshot caller choose its output channel count.
++// Keep desktop/Vulkan capture on its existing RGB path.
++static void R_ReadPixelsRGBA8Browser( int x, int y, int width, int height, byte *pixels ) {
++	GLint alignment, rowLength, skipPixels, skipRows, packBuffer;
++	glGetIntegerv( GL_PACK_ALIGNMENT, &alignment );
++	glGetIntegerv( GL_PACK_ROW_LENGTH, &rowLength );
++	glGetIntegerv( GL_PACK_SKIP_PIXELS, &skipPixels );
++	glGetIntegerv( GL_PACK_SKIP_ROWS, &skipRows );
++	glGetIntegerv( GL_PIXEL_PACK_BUFFER_BINDING_ARB, &packBuffer );
++	glBindBufferARB( GL_PIXEL_PACK_BUFFER_ARB, 0 );
++	glPixelStorei( GL_PACK_ALIGNMENT, 1 );
++	glPixelStorei( GL_PACK_ROW_LENGTH, 0 );
++	glPixelStorei( GL_PACK_SKIP_PIXELS, 0 );
++	glPixelStorei( GL_PACK_SKIP_ROWS, 0 );
++	glReadPixels( x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
++	glPixelStorei( GL_PACK_ALIGNMENT, alignment );
++	glPixelStorei( GL_PACK_ROW_LENGTH, rowLength );
++	glPixelStorei( GL_PACK_SKIP_PIXELS, skipPixels );
++	glPixelStorei( GL_PACK_SKIP_ROWS, skipRows );
++	glBindBufferARB( GL_PIXEL_PACK_BUFFER_ARB, packBuffer );
++}
++#endif
++
++#endif

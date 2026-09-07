@@ -1,0 +1,53 @@
+{
+  "scope": "Production basic/extended shaders, all alpha comparisons, blended/unblended color and depth occlusion through GLES; not whole-game acceptance",
+  "records": [
+    {
+      "extended": false,
+      "mode": "fixed",
+      "negative": false,
+      "fragmentHash": "f4fc7ce7d2b7cb9addfd0bc98d8ff97c903de010a851f7697a0a3a81773fbd7a",
+      "output": "{\"alphaCases\":3840,\"colorChecks\":3840,\"depthChecks\":3840,\"renderer\":\"llvmpipe (LLVM 21.1.8, 256 bits)\"}",
+      "log": ""
+    },
+    {
+      "extended": false,
+      "mode": "missing-discard-color",
+      "negative": true,
+      "fragmentHash": "f4fc7ce7d2b7cb9addfd0bc98d8ff97c903de010a851f7697a0a3a81773fbd7a",
+      "output": "",
+      "log": "alpha color mismatch: func=200 alpha=0 ref=-1 enabled=1 blend=0 channel=0 got=255 expected=0"
+    },
+    {
+      "extended": false,
+      "mode": "missing-discard-depth",
+      "negative": true,
+      "fragmentHash": "f4fc7ce7d2b7cb9addfd0bc98d8ff97c903de010a851f7697a0a3a81773fbd7a",
+      "output": "",
+      "log": "alpha depth mismatch: func=200 alpha=0 ref=-1 enabled=1 blend=0 channel=0 got=255 expected=0"
+    },
+    {
+      "extended": true,
+      "mode": "fixed",
+      "negative": false,
+      "fragmentHash": "6f175caa4f4e502125e260fc01a8ea7339cb34edb00c24454ef4679ef1025a95",
+      "output": "{\"alphaCases\":3840,\"colorChecks\":3840,\"depthChecks\":3840,\"renderer\":\"llvmpipe (LLVM 21.1.8, 256 bits)\"}",
+      "log": ""
+    },
+    {
+      "extended": true,
+      "mode": "missing-discard-color",
+      "negative": true,
+      "fragmentHash": "6f175caa4f4e502125e260fc01a8ea7339cb34edb00c24454ef4679ef1025a95",
+      "output": "",
+      "log": "alpha color mismatch: func=200 alpha=0 ref=-1 enabled=1 blend=0 channel=0 got=255 expected=0"
+    },
+    {
+      "extended": true,
+      "mode": "missing-discard-depth",
+      "negative": true,
+      "fragmentHash": "6f175caa4f4e502125e260fc01a8ea7339cb34edb00c24454ef4679ef1025a95",
+      "output": "",
+      "log": "alpha depth mismatch: func=200 alpha=0 ref=-1 enabled=1 blend=0 channel=0 got=255 expected=0"
+    }
+  ]
+}

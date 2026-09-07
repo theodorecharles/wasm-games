@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-09-06T18:11:48.601Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 0,
+        "cssWidth": 0,
+        "height": 600,
+        "width": 800
+      }
+    ],
+    "fullscreen": null,
+    "log": " runtime  src| \n 0.0391s INFO| Using directory /home/web_user/.config/eduke32/\n 0.0403s INFO| Started at 2026-09-06 14:11:37.228\n 0.0408s INFO| EDuke32 r14377[HEAD]-f86390315\n 0.0411s INFO| Built Sep  6 2026 18:03:12, clang 24.0.0, 32-bit\n 0.0413s INFO| Application parameters: -game_dir /game -gamegrp DUKE3D.GRP -noautoload -nosetup -nologo\n 0.0415s INFO| Autoload disabled\n 0.0417s INFO| Using directory /game/\n 0.0440s INFO| Initializing SDL 2.32.10\n 0.0445s INFO| Using 'emscripten' video driver.\n 0.0448s  GFX| Detecting video modes for display 0 (0)...\n 0.0452s INFO| Searching for game data...\n 0.0702s INFO|  DUKE3D.GRP has checksum 0xbbc9ce44\n 0.0731s INFO| Using DUKE3D.GRP as main data file.\n 0.0793s  CON| Compiling: GAME.CON (99639 bytes)\n 0.0846s  CON| Including: DEFS.CON (28893 bytes)\n 0.0869s  CON| Including: USER.CON (36930 bytes)\n 0.0880s WARN| USER.CON:751: overwriting existing definition for sound #261 (hydro43.voc)\n 0.0888s  CON| GAME.CON: In state 'blimphitstate':\n 0.0891s WARN| GAME.CON:157: expected action, found define.\n 0.0901s  CON| GAME.CON: In actor 'ORGANTIC':\n 0.0903s WARN| GAME.CON:1923: found 'else' with no 'if'\n 0.0917s  CON| GAME.CON: In state 'pigshootenemystate':\n 0.0922s WARN| GAME.CON:2817: found 'else' with no 'if'\n 0.0930s WARN| Found 4 warning(s), 0 error(s).\n 0.0981s  CON| Compiled 53980 bytes in 18ms, v1.3D compatibility mode\n 0.2421s INFO| Initialized 96.0M cache\n 0.5943s INFO| Loaded DUKE.RTS\n 0.5950s INFO| Initializing console...\n 0.5975s INPT| No game controllers found.\n 0.6022s  GFX| Setting video mode 800x600 (32-bpp windowed).\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nWARNING: using emscripten GL immediate mode emulation. This is very limited in what it supports\nemscripten_set_main_loop_timing: Cannot set timing mode for main loop since a main loop does not exist! Call emscripten_set_main_loop first to set one up.\nTODO: glShadeModel\n 0.6437s WARN| OpenGL driver lacks the necessary functions to use caching.\n 0.6456s  GFX| OpenGL driver: WebKit WebGL OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))\n 0.6468s  GFX| OpenGL context: version 3.0\n 0.6474s  GFX| Refresh rate: 60.00Hz.\n 0.6487s   GL| Unable to use persistent stream buffers: required extensions missing.\nRuntimeError: null function\n    at duke3d.wasm.videoSetGameMode (http://127.0.0.1:32964/duke3d.wasm:wasm-function[1163]:0x18214e)\n    at duke3d.wasm.main (http://127.0.0.1:32964/duke3d.wasm:wasm-function[1474]:0x200f3a)\n    at __asyncify_wrapper_1474 (http://127.0.0.1:32964/duke3d.js:14688:16)\n    at http://127.0.0.1:32964/duke3d.js:471:12\n    at Object.callMain (http://127.0.0.1:32964/duke3d.js:16363:15)\n    at Object.start (http://127.0.0.1:32964/adapters/duke3d.js:272:20)\n",
+    "pointerLock": null,
+    "root": {
+      "audioState": "not-created",
+      "persistence": "ready",
+      "shellDataReady": "true",
+      "shellEngineState": "launcher",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmDataSource": "container",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "duke3d"
+    },
+    "url": "http://127.0.0.1:32964/?game=duke3d&proof=duke-polymost-sync"
+  }
+}

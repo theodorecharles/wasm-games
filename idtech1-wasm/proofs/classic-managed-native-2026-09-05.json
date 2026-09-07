@@ -1,0 +1,2718 @@
+{
+  "scope": "Installed-image native diagnostics; not Chrome or audible listening",
+  "image": "sha256:2f91f270c09d62957501c7ede74e60131bf1388d70150f809e98db3a655e0775",
+  "rawDirectory": "/tmp/idtech1-classic-managed.NY8E7w",
+  "tests": {
+    "managed-joins": {
+      "rawSha256": "5d9a362e222c84f6586323ccae726cb8035be251ee1c633506b3cb99829b042d",
+      "report": {
+        "passed": true,
+        "image": "local/idtech1-wasm:classic-managed-candidate",
+        "fromImage": true,
+        "results": [
+          {
+            "game": "doom",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582294386,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=57b4efce-721d-4c28-9e05-ea9836039ac2",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "doom",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5550.891759,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 689,
+              "nonzeroAudioCallbacks": 496,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "doom",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582314669,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=19a8ce09-70bb-45c1-96e4-7d662fc5266a",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "doom",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5548.880819,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 685,
+              "nonzeroAudioCallbacks": 495,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "doom2",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582334831,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=fe82249b-7c53-4410-a31e-7cd3455bac86",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "doom2",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5577.165918000001,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 689,
+              "nonzeroAudioCallbacks": 498,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "doom2",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582355127,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=6a36e894-470f-4541-bb41-0b8f9ed570f0",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "runtime": {
+              "passed": true,
+              "game": "doom2",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5549.204317000001,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 684,
+              "nonzeroAudioCallbacks": 494,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "tnt",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582374847,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "tnt",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=58600fcb-bb71-4bf1-99d9-682a9a1ba067",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "tnt",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5591.394698,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 690,
+              "nonzeroAudioCallbacks": 499,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "tnt",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582394661,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "tnt",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=b32a9edd-f805-437a-a6d7-d4f7fa93f669",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "runtime": {
+              "passed": true,
+              "game": "tnt",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5489.644012000001,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 687,
+              "nonzeroAudioCallbacks": 497,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "plutonia",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582414439,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "plutonia",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=73e9b588-1631-45c0-a336-e08068a41cdb",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "plutonia",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5561.744900000001,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 684,
+              "nonzeroAudioCallbacks": 485,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "plutonia",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582434132,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "plutonia",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=de4d24ef-376f-4866-a2bf-807bff4bc3e7",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "plutonia",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5581.265969,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 685,
+              "nonzeroAudioCallbacks": 485,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "heretic",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582454396,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "heretic",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=d7b74713-2ac6-4fab-a1a3-10d92faf4dd3",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "runtime": {
+              "passed": true,
+              "game": "heretic",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+                "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5531.610746,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 684,
+              "nonzeroAudioCallbacks": 494,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "heretic",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582474146,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "heretic",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=406d67dd-468c-4925-8e1c-0025c92a0eda",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "runtime": {
+              "passed": true,
+              "game": "heretic",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+                "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5256.732766,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 672,
+              "nonzeroAudioCallbacks": 482,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "hexen",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582494128,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "hexen",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=0de37266-7ffd-4a77-b1bc-a4d948330b59",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 8,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 36,
+                  "health": 100,
+                  "weapon": 0,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 36,
+                  "health": 100,
+                  "weapon": 0,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "hexen",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+                "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5804.273333,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 686,
+              "nonzeroAudioCallbacks": 495,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "hexen",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582514615,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "hexen",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=e27ddec2-f17d-4b36-b994-90a1fa437d0c",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 8,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "runtime": {
+              "passed": true,
+              "game": "hexen",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+                "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5533.048005,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 674,
+              "nonzeroAudioCallbacks": 483,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "chex",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582534883,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "chex",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=1416dcb8-38d8-44e2-810f-cc4680726c45",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "chex",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5529.852946,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 690,
+              "nonzeroAudioCallbacks": 499,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "game": "chex",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582554672,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "chex",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=8b3f3148-d202-40ab-98c4-5c94a8c38ed9",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "chex",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5539.655041999999,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 688,
+              "nonzeroAudioCallbacks": 497,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true
+          },
+          {
+            "twoHumanAdmission": true,
+            "countdown": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582574430,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=594ebefe-7b3d-4122-a5f3-82643d55751d",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "countdown",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": 1788582578428,
+              "botPlayers": []
+            },
+            "playing": {
+              "state": "running",
+              "humans": 2,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788582574430,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=594ebefe-7b3d-4122-a5f3-82643d55751d",
+              "peers": 2,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 4,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "peers": [
+              {
+                "passed": true,
+                "game": "doom2",
+                "profile": "original",
+                "artifactHashes": {
+                  "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                  "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                  "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+                },
+                "joinedMs": 5569.369115,
+                "consolePlayer": 2,
+                "samples": {
+                  "count": 13
+                },
+                "audioEnabled": true,
+                "audioCallbacks": 687,
+                "nonzeroAudioCallbacks": 497,
+                "messages": {
+                  "count": 12
+                },
+                "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+              },
+              {
+                "passed": true,
+                "game": "doom2",
+                "profile": "smooth",
+                "artifactHashes": {
+                  "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                  "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                  "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+                },
+                "joinedMs": 4562.2067449999995,
+                "consolePlayer": 3,
+                "samples": {
+                  "count": 13
+                },
+                "audioEnabled": true,
+                "audioCallbacks": 642,
+                "nonzeroAudioCallbacks": 496,
+                "messages": {
+                  "count": 12
+                },
+                "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+              }
+            ],
+            "idleCleanup": true
+          },
+          {
+            "terminated": "bot",
+            "failureCleanup": true,
+            "freshWake": true
+          },
+          {
+            "terminated": "server",
+            "failureCleanup": true,
+            "freshWake": true
+          }
+        ],
+        "scope": "Real isolated managed native bots and optional unchanged-Wasm WebSocket joins; not Chrome acceptance"
+      }
+    },
+    "missing-bots": {
+      "rawSha256": "6dad90d775bc238b31abd9478a1457a7a243c2537695598e712f7f5fa6381af8",
+      "report": {
+        "passed": true,
+        "image": "local/idtech1-wasm:classic-managed-candidate",
+        "fromImage": true,
+        "results": [
+          {
+            "missingBotBinary": true,
+            "failedStartupCleaned": true,
+            "attempt": 0
+          },
+          {
+            "missingBotBinary": true,
+            "failedStartupCleaned": true,
+            "attempt": 1
+          }
+        ],
+        "scope": "Real isolated managed native bots and optional unchanged-Wasm WebSocket joins; not Chrome acceptance"
+      }
+    },
+    "modernized-regression": {
+      "rawSha256": "fcaedb62e4913714d78f29f8256c2b3dc0a4bdb63d1fb75ba3e9646b72f167bb",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:classic-managed-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788582296182,
+              "startedAt": 1788582296182,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=4bfef26c-2fb0-4c43-a887-44e76bcb7985",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 949,
+            "presented": 952,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -4194304,
+              91226112
+            ],
+            "after": [
+              -4194304,
+              98620444
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 1,
+              "devices": 1,
+              "callbacks": 206,
+              "musicSamples": 176124,
+              "sfxSamples": 907216,
+              "voicesStarted": 17,
+              "voicesFinished": 16,
+              "activeVoices": 1,
+              "scheduledBuffers": 206,
+              "nonzeroBuffers": 86,
+              "maxQueuedSeconds": 0.16604739309524108
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    "native-combat": {
+      "rawSha256": "c465a263e77b70efdab6dfe5a01a28ae6d989723f366ea3446cc37eac42abf51",
+      "report": {
+        "passed": false,
+        "duration": 60000,
+        "cases": [
+          {
+            "passed": false,
+            "game": "doom",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "0a2741912feca9d6b8a5658fe3564a3b6196d05f58bbb81b6bc17ed293ab723d",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "error": "bots must acquire and attack a real opponent",
+            "results": [
+              {
+                "samples": {
+                  "count": 60
+                }
+              },
+              {
+                "samples": {
+                  "count": 60
+                }
+              }
+            ],
+            "scope": "failed native bot diagnostic; not Chrome acceptance",
+            "args": [
+              "doom"
+            ]
+          },
+          {
+            "passed": true,
+            "game": "doom2",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "0a2741912feca9d6b8a5658fe3564a3b6196d05f58bbb81b6bc17ed293ab723d",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "results": [
+              {
+                "slot": 0,
+                "moved": 1038,
+                "attacks": 12,
+                "attackTics": 351,
+                "frags": 7,
+                "deaths": 3,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              },
+              {
+                "slot": 1,
+                "moved": 1047,
+                "attacks": 10,
+                "attackTics": 386,
+                "frags": 3,
+                "deaths": 7,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              }
+            ],
+            "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance",
+            "args": [
+              "doom2"
+            ]
+          },
+          {
+            "passed": true,
+            "game": "tnt",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "0a2741912feca9d6b8a5658fe3564a3b6196d05f58bbb81b6bc17ed293ab723d",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "results": [
+              {
+                "slot": 0,
+                "moved": 1282,
+                "attacks": 9,
+                "attackTics": 380,
+                "frags": 2,
+                "deaths": 5,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              },
+              {
+                "slot": 1,
+                "moved": 924,
+                "attacks": 9,
+                "attackTics": 394,
+                "frags": 5,
+                "deaths": 2,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              }
+            ],
+            "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance",
+            "args": [
+              "tnt"
+            ]
+          },
+          {
+            "passed": true,
+            "game": "plutonia",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "0a2741912feca9d6b8a5658fe3564a3b6196d05f58bbb81b6bc17ed293ab723d",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "results": [
+              {
+                "slot": 0,
+                "moved": 2550,
+                "attacks": 1,
+                "attackTics": 34,
+                "frags": 0,
+                "deaths": 2,
+                "healthChanged": false,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              },
+              {
+                "slot": 1,
+                "moved": 1932,
+                "attacks": 2,
+                "attackTics": 39,
+                "frags": 2,
+                "deaths": 1,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              }
+            ],
+            "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance",
+            "args": [
+              "plutonia"
+            ]
+          },
+          {
+            "passed": true,
+            "game": "heretic",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "5f0e52cf059e0e1f033178d059bf634bcfe8266d6fc0a9cd5821523d8f74b473",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "results": [
+              {
+                "slot": 0,
+                "moved": 1816,
+                "attacks": 2,
+                "attackTics": 89,
+                "frags": 1,
+                "deaths": 0,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 61
+                }
+              },
+              {
+                "slot": 1,
+                "moved": 1883,
+                "attacks": 2,
+                "attackTics": 85,
+                "frags": 0,
+                "deaths": 1,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 61
+                }
+              }
+            ],
+            "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance",
+            "args": [
+              "heretic"
+            ]
+          },
+          {
+            "passed": true,
+            "game": "hexen",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "24d53edc7f882c68c0a19da6e2311ddd5eab57ac158ee1d668aeb423b290bc29",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "results": [
+              {
+                "slot": 0,
+                "moved": 2428,
+                "attacks": 3,
+                "attackTics": 74,
+                "frags": 1,
+                "deaths": 0,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 61
+                }
+              },
+              {
+                "slot": 1,
+                "moved": 2890,
+                "attacks": 3,
+                "attackTics": 94,
+                "frags": 0,
+                "deaths": 1,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 61
+                }
+              }
+            ],
+            "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance",
+            "args": [
+              "hexen"
+            ]
+          },
+          {
+            "passed": true,
+            "game": "chex",
+            "duration": 60000,
+            "artifactHashes": {
+              "bot": "0a2741912feca9d6b8a5658fe3564a3b6196d05f58bbb81b6bc17ed293ab723d",
+              "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+              "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+              "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+            },
+            "results": [
+              {
+                "slot": 0,
+                "moved": 1139,
+                "attacks": 3,
+                "attackTics": 117,
+                "frags": 1,
+                "deaths": 0,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              },
+              {
+                "slot": 1,
+                "moved": 1676,
+                "attacks": 3,
+                "attackTics": 124,
+                "frags": 0,
+                "deaths": 1,
+                "healthChanged": true,
+                "anyPlayerHealthChanged": true,
+                "samples": {
+                  "count": 60
+                }
+              }
+            ],
+            "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance",
+            "args": [
+              "chex"
+            ]
+          }
+        ],
+        "scope": "Isolated native clients/server; optional unchanged-Wasm peer with fake presentation. Not Chrome acceptance."
+      }
+    },
+    "doom-endurance": {
+      "rawSha256": "b480a2d39750e69b853469c132b202a3f83182b228fa174c43863f18b5f9cbd3",
+      "report": {
+        "passed": true,
+        "game": "doom",
+        "duration": 180000,
+        "artifactHashes": {
+          "bot": "0a2741912feca9d6b8a5658fe3564a3b6196d05f58bbb81b6bc17ed293ab723d",
+          "commandProducer": "78e762d43e41ba9bf1df853abc0c8e68bc52d7c0c5a0dc3cf07eaca89a84ff23",
+          "lobbyPolicy": "7f71229c4190899320dec64601dcf03935f3fd04736cea91592fa0746239cc66",
+          "build": "64cf00d0a5c50dd79a0c0c148877f177cff9ed6d20ce25e60a6e0cf104df695d"
+        },
+        "results": [
+          {
+            "slot": 0,
+            "moved": 2366,
+            "attacks": 14,
+            "attackTics": 457,
+            "frags": 3,
+            "deaths": 4,
+            "healthChanged": true,
+            "anyPlayerHealthChanged": true,
+            "samples": {
+              "count": 180
+            }
+          },
+          {
+            "slot": 1,
+            "moved": 3692,
+            "attacks": 12,
+            "attackTics": 428,
+            "frags": 4,
+            "deaths": 3,
+            "healthChanged": true,
+            "anyPlayerHealthChanged": true,
+            "samples": {
+              "count": 180
+            }
+          }
+        ],
+        "scope": "real native bot clients and Chocolate UDP server; optional shipped-Wasm peer; not Chrome acceptance"
+      }
+    },
+    "single-player-regression": {
+      "rawSha256": "3d099dbdd56459d98bf2fe442602b17db084056d776ee83887a0e513d91c802e",
+      "report": {
+        "scope": "Native Wasm, fake DOM/2D/audio destination. Not Chrome, GPU, or audible-output acceptance.",
+        "negativeControl": false,
+        "passed": true,
+        "cases": [
+          {
+            "game": "doom",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 330.440017,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 213,
+            "state": 1,
+            "beforeMove": {
+              "x": 1056,
+              "y": -3616
+            },
+            "afterMove": {
+              "x": 1055,
+              "y": -3468
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 212,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 263,
+            "nonzeroAudioCallbacks": 259,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 306.716501,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 169,
+            "state": 1,
+            "beforeMove": {
+              "x": 1056,
+              "y": -3616
+            },
+            "afterMove": {
+              "x": 1055,
+              "y": -3473
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 168,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 209,
+            "nonzeroAudioCallbacks": 207,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 324.749973,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 286,
+            "state": 1,
+            "beforeMove": {
+              "x": 1056,
+              "y": -3616
+            },
+            "afterMove": {
+              "x": 1055,
+              "y": -3473
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 286,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 263,
+            "nonzeroAudioCallbacks": 259,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 255.0183,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 230,
+            "state": 1,
+            "beforeMove": {
+              "x": 1056,
+              "y": -3616
+            },
+            "afterMove": {
+              "x": 1055,
+              "y": -3468
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1388314624,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 230,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 206,
+            "nonzeroAudioCallbacks": 204,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom2",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 356.35644299999996,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 203,
+            "state": 1,
+            "beforeMove": {
+              "x": -96,
+              "y": 784
+            },
+            "afterMove": {
+              "x": -96,
+              "y": 925
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 202,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 251,
+            "nonzeroAudioCallbacks": 247,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom2",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 313.821469,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 167,
+            "state": 1,
+            "beforeMove": {
+              "x": -96,
+              "y": 784
+            },
+            "afterMove": {
+              "x": -96,
+              "y": 930
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 166,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 207,
+            "nonzeroAudioCallbacks": 205,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom2",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 402.780175,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 278,
+            "state": 1,
+            "beforeMove": {
+              "x": -96,
+              "y": 784
+            },
+            "afterMove": {
+              "x": -96,
+              "y": 930
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 278,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 251,
+            "nonzeroAudioCallbacks": 247,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom2",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 400.136491,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 236,
+            "state": 1,
+            "beforeMove": {
+              "x": -96,
+              "y": 784
+            },
+            "afterMove": {
+              "x": -96,
+              "y": 925
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 236,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 209,
+            "nonzeroAudioCallbacks": 207,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "tnt",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 361.341014,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 204,
+            "state": 1,
+            "beforeMove": {
+              "x": -256,
+              "y": -248
+            },
+            "afterMove": {
+              "x": -256,
+              "y": -108
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 203,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 252,
+            "nonzeroAudioCallbacks": 248,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "tnt",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 306.26050799999996,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 167,
+            "state": 1,
+            "beforeMove": {
+              "x": -256,
+              "y": -248
+            },
+            "afterMove": {
+              "x": -256,
+              "y": -105
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 166,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 207,
+            "nonzeroAudioCallbacks": 205,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "tnt",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 374.690573,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 276,
+            "state": 1,
+            "beforeMove": {
+              "x": -256,
+              "y": -248
+            },
+            "afterMove": {
+              "x": -256,
+              "y": -105
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 276,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 251,
+            "nonzeroAudioCallbacks": 247,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "tnt",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 328.267469,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 229,
+            "state": 1,
+            "beforeMove": {
+              "x": -256,
+              "y": -248
+            },
+            "afterMove": {
+              "x": -256,
+              "y": -105
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 229,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 205,
+            "nonzeroAudioCallbacks": 203,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "plutonia",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 397.670653,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 204,
+            "state": 1,
+            "beforeMove": {
+              "x": -864,
+              "y": -96
+            },
+            "afterMove": {
+              "x": -712,
+              "y": -95
+            },
+            "beforeTurn": 0,
+            "afterTurn": 356515840,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 203,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 253,
+            "nonzeroAudioCallbacks": 249,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "plutonia",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 353.569391,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 167,
+            "state": 1,
+            "beforeMove": {
+              "x": -864,
+              "y": -96
+            },
+            "afterMove": {
+              "x": -721,
+              "y": -95
+            },
+            "beforeTurn": 0,
+            "afterTurn": 356515840,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 166,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 206,
+            "nonzeroAudioCallbacks": 194,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "plutonia",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 391.016778,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 276,
+            "state": 1,
+            "beforeMove": {
+              "x": -864,
+              "y": -96
+            },
+            "afterMove": {
+              "x": -716,
+              "y": -95
+            },
+            "beforeTurn": 0,
+            "afterTurn": 356515840,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 276,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 252,
+            "nonzeroAudioCallbacks": 248,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "plutonia",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 331.047633,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 228,
+            "state": 1,
+            "beforeMove": {
+              "x": -864,
+              "y": -96
+            },
+            "afterMove": {
+              "x": -724,
+              "y": -95
+            },
+            "beforeTurn": 0,
+            "afterTurn": 356515840,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 228,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 205,
+            "nonzeroAudioCallbacks": 193,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 412.50518300000005,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+              "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 206,
+            "state": 1,
+            "beforeMove": {
+              "x": 128,
+              "y": -944
+            },
+            "afterMove": {
+              "x": 127,
+              "y": -796
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1388314624,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 206,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 258,
+            "nonzeroAudioCallbacks": 253,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 443.95118099999996,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+              "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 162,
+            "state": 1,
+            "beforeMove": {
+              "x": 128,
+              "y": -944
+            },
+            "afterMove": {
+              "x": 127,
+              "y": -796
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 162,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 204,
+            "nonzeroAudioCallbacks": 202,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 401.46945800000003,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+              "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 302,
+            "state": 1,
+            "beforeMove": {
+              "x": 128,
+              "y": -944
+            },
+            "afterMove": {
+              "x": 127,
+              "y": -801
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 303,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 258,
+            "nonzeroAudioCallbacks": 253,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 411.253255,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+              "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 248,
+            "state": 1,
+            "beforeMove": {
+              "x": 128,
+              "y": -944
+            },
+            "afterMove": {
+              "x": 127,
+              "y": -801
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 249,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 203,
+            "nonzeroAudioCallbacks": 201,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 580.32388,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+              "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 212,
+            "state": 1,
+            "beforeMove": {
+              "x": -1088,
+              "y": 464
+            },
+            "afterMove": {
+              "x": -1088,
+              "y": 585
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 212,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 266,
+            "nonzeroAudioCallbacks": 259,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 590.526158,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+              "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 170,
+            "state": 1,
+            "beforeMove": {
+              "x": -1088,
+              "y": 464
+            },
+            "afterMove": {
+              "x": -1088,
+              "y": 586
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1388314624,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 170,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 213,
+            "nonzeroAudioCallbacks": 208,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 581.39919,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+              "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 308,
+            "state": 1,
+            "beforeMove": {
+              "x": -1088,
+              "y": 464
+            },
+            "afterMove": {
+              "x": -1088,
+              "y": 585
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 309,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 266,
+            "nonzeroAudioCallbacks": 258,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 593.85631,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+              "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 259,
+            "state": 1,
+            "beforeMove": {
+              "x": -1088,
+              "y": 464
+            },
+            "afterMove": {
+              "x": -1088,
+              "y": 586
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 260,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 212,
+            "nonzeroAudioCallbacks": 207,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "chex",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 326.50920299999996,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 205,
+            "state": 1,
+            "beforeMove": {
+              "x": -1216,
+              "y": -1344
+            },
+            "afterMove": {
+              "x": -1216,
+              "y": -1201
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 204,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 254,
+            "nonzeroAudioCallbacks": 250,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "chex",
+            "profile": "original",
+            "direct": true,
+            "startupMs": 275.566212,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 167,
+            "state": 1,
+            "beforeMove": {
+              "x": -1216,
+              "y": -1344
+            },
+            "afterMove": {
+              "x": -1216,
+              "y": -1193
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 166,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 207,
+            "nonzeroAudioCallbacks": 205,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "chex",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 315.24542900000006,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 278,
+            "state": 1,
+            "beforeMove": {
+              "x": -1216,
+              "y": -1344
+            },
+            "afterMove": {
+              "x": -1216,
+              "y": -1196
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 278,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 253,
+            "nonzeroAudioCallbacks": 249,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "chex",
+            "profile": "smooth",
+            "direct": true,
+            "startupMs": 265.08678199999997,
+            "startupState": 1,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 233,
+            "state": 1,
+            "beforeMove": {
+              "x": -1216,
+              "y": -1344
+            },
+            "afterMove": {
+              "x": -1216,
+              "y": -1201
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 233,
+            "audioEnabled": true,
+            "suspended": false,
+            "audioCallbacks": 207,
+            "nonzeroAudioCallbacks": 205,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 344.231854,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 214,
+            "state": 1,
+            "beforeMove": {
+              "x": 1056,
+              "y": -3616
+            },
+            "afterMove": {
+              "x": 1055,
+              "y": -3468
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 213,
+            "audioEnabled": true,
+            "suspended": true,
+            "audioCallbacks": 256,
+            "nonzeroAudioCallbacks": 256,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "profile": "smooth",
+            "direct": false,
+            "startupMs": 436.309386,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "b8af5a0d6cffd2960f8aa1e8495c9e1e9621e0aad575afc467b27fa4764c1335",
+              "wasm": "8b92cc6f26d7719e04883cf83238513b8ea60869b71241c1ba3a0fe43f8f5ef8",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 299,
+            "state": 1,
+            "beforeMove": {
+              "x": 128,
+              "y": -944
+            },
+            "afterMove": {
+              "x": 127,
+              "y": -801
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 300,
+            "audioEnabled": true,
+            "suspended": true,
+            "audioCallbacks": 249,
+            "nonzeroAudioCallbacks": 249,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 630.215251,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "603c9406950969c4f18a6dc50f3e7443bb5c534a3d21a684e83433954ebfdbce",
+              "wasm": "5988455de4ad3b3846a8f80e89acd399799e5b6076f662157e84f257f7ecba32",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 212,
+            "state": 1,
+            "beforeMove": {
+              "x": -1088,
+              "y": 464
+            },
+            "afterMove": {
+              "x": -1088,
+              "y": 585
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 212,
+            "audioEnabled": true,
+            "suspended": true,
+            "audioCallbacks": 258,
+            "nonzeroAudioCallbacks": 258,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          },
+          {
+            "game": "doom",
+            "profile": "original",
+            "direct": false,
+            "startupMs": 199.401906,
+            "startupState": 0,
+            "artifactHashes": {
+              "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+              "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+              "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+            },
+            "frames": 213,
+            "state": 1,
+            "beforeMove": {
+              "x": 1056,
+              "y": -3616
+            },
+            "afterMove": {
+              "x": 1055,
+              "y": -3473
+            },
+            "beforeTurn": 1073741824,
+            "afterTurn": 1430257664,
+            "attacking": 1,
+            "menuResume": true,
+            "presented": 212,
+            "audioEnabled": false,
+            "suspended": false,
+            "audioCallbacks": 0,
+            "nonzeroAudioCallbacks": 0,
+            "scope": "native Wasm with fake DOM and 2D presentation; not Chrome/render/audio acceptance"
+          }
+        ]
+      }
+    },
+    "relay-admission": {
+      "rawSha256": "2382250c84744fd1de23c261c3def88c57466197649400f7a249efabf768178a",
+      "report": {
+        "passed": true,
+        "image": "local/idtech1-wasm:classic-managed-candidate",
+        "fromImage": true,
+        "results": [
+          {
+            "game": "doom2",
+            "profile": "original",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788583331810,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=e23743e8-c632-48ab-b101-9caae3c6f585",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "runtime": {
+              "passed": true,
+              "game": "doom2",
+              "profile": "original",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5636.047571,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 692,
+              "nonzeroAudioCallbacks": 501,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true,
+            "lateRelayRejected": true,
+            "staleRelayRejected": true
+          },
+          {
+            "game": "doom2",
+            "profile": "smooth",
+            "playing": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788583352251,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=97f978df-d9b6-4395-96c2-50c0a9e240aa",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": [
+                {
+                  "slot": 0,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                },
+                {
+                  "slot": 1,
+                  "tic": 1,
+                  "health": 100,
+                  "weapon": 1,
+                  "attackTics": 0,
+                  "frags": 0,
+                  "deaths": 0
+                }
+              ]
+            },
+            "runtime": {
+              "passed": true,
+              "game": "doom2",
+              "profile": "smooth",
+              "artifactHashes": {
+                "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+              },
+              "joinedMs": 5608.332547999999,
+              "consolePlayer": 2,
+              "samples": {
+                "count": 13
+              },
+              "audioEnabled": true,
+              "audioCallbacks": 686,
+              "nonzeroAudioCallbacks": 495,
+              "messages": {
+                "count": 12
+              },
+              "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+            },
+            "idleCleanup": true,
+            "lateRelayRejected": true,
+            "staleRelayRejected": true
+          },
+          {
+            "twoHumanAdmission": true,
+            "countdown": {
+              "state": "running",
+              "humans": 1,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788583372047,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=5694254b-e8d4-4f63-8978-6e4afd13392c",
+              "peers": 1,
+              "bots": 2,
+              "matchPhase": "countdown",
+              "lobbyPlayers": 3,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": 1788583376046,
+              "botPlayers": []
+            },
+            "playing": {
+              "state": "running",
+              "humans": 2,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": null,
+              "startedAt": 1788583372047,
+              "map": null,
+              "error": null,
+              "mode": "classic",
+              "engine": "Chocolate Doom 3.1.1",
+              "variant": "doom2",
+              "connect": "1",
+              "wsPath": "/ws/classic?match=5694254b-e8d4-4f63-8978-6e4afd13392c",
+              "peers": 2,
+              "bots": 2,
+              "matchPhase": "playing",
+              "lobbyPlayers": 4,
+              "lobbyCapacity": 4,
+              "lobbyGraceMs": 3000,
+              "joinClosesAt": null,
+              "botPlayers": []
+            },
+            "peers": [
+              {
+                "passed": true,
+                "game": "doom2",
+                "profile": "original",
+                "artifactHashes": {
+                  "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                  "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                  "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+                },
+                "joinedMs": 5624.251819,
+                "consolePlayer": 2,
+                "samples": {
+                  "count": 13
+                },
+                "audioEnabled": true,
+                "audioCallbacks": 690,
+                "nonzeroAudioCallbacks": 500,
+                "messages": {
+                  "count": 12
+                },
+                "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+              },
+              {
+                "passed": true,
+                "game": "doom2",
+                "profile": "smooth",
+                "artifactHashes": {
+                  "js": "5b3603b284e00e0f8cfa15df2975af1b09b6577b64a5552f695d772bd331012a",
+                  "wasm": "92b5d25bb11d34131a8a68d9f3012e448da9ed0a125087dcb88c2fa399f6c598",
+                  "adapter": "2a0ce4d085a9f2ad67757b1405ca6e89b12761396649a61982cffb299042a9d7"
+                },
+                "joinedMs": 4557.313401,
+                "consolePlayer": 3,
+                "samples": {
+                  "count": 13
+                },
+                "audioEnabled": true,
+                "audioCallbacks": 642,
+                "nonzeroAudioCallbacks": 496,
+                "messages": {
+                  "count": 12
+                },
+                "scope": "unchanged Wasm and real managed WebSocket/UDP relay; fake DOM/2D/audio destination, not Chrome"
+              }
+            ],
+            "idleCleanup": true
+          },
+          {
+            "terminated": "bot",
+            "failureCleanup": true,
+            "freshWake": true
+          },
+          {
+            "terminated": "server",
+            "failureCleanup": true,
+            "freshWake": true
+          }
+        ],
+        "scope": "Real isolated managed native bots and optional unchanged-Wasm WebSocket joins; not Chrome acceptance"
+      }
+    }
+  }
+}

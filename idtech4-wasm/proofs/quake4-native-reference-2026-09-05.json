@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-05",
+  "scope": "Native desktop OpenGL reference at the browser-captured camera in game/airdefense1. Fresh map with auto-skipped cinematic, not restoration of the browser-local save and not a pixel-identical campaign-state comparison.",
+  "source": {
+    "engine": "268758e1e6ec102d52a24f0f6ab586aa4ff2d99e",
+    "game": "0c9c121ff337b1c6df129ecedcfe569e7c50c332",
+    "method": "Separate detached worktrees; no browser compatibility patches in native renderer. Built client and SP module using GCC 15.3 and system SDL3/OpenAL. Pinned pak0/pak1 reused."
+  },
+  "runtime": {
+    "directory": "/tmp/q4-native-reference.SFKCzE",
+    "script": "/tmp/q4-native-reference.SFKCzE/run-reference.sh",
+    "log": "/tmp/q4-native-reference.SFKCzE/run-wide.log",
+    "engineSHA256": "6eb906016c8a4f0ed1a59893fcc069acadfd73d70f360343bf390c90c01bed8d",
+    "gameSHA256": "3d357622b516bb66e1c2c9af643f2965bd1491503873d356e6bbe471d9e6f2a8",
+    "videoDriver": "offscreen",
+    "renderer": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+    "glVersion": "4.6 Compatibility Profile, Mesa 26.1.6-1",
+    "rendererPath": "ARB2 / LegacyGL2Compat",
+    "screenshotSize": [
+      1024,
+      580
+    ],
+    "camera": {
+      "origin": [
+        10325.03125,
+        -6962.77734375,
+        6.950801849365234
+      ],
+      "pitch": 0,
+      "yaw": 255,
+      "roll": 0,
+      "confirmation": "getviewpos reports (10325.03 -6962.78 6.95) -105.0"
+    },
+    "settings": {
+      "r_screenFraction": 85,
+      "r_shadows": 1,
+      "r_skipBump": 0,
+      "r_multiSamples": 2,
+      "com_machineSpec": 3
+    },
+    "exitCode": 0
+  },
+  "screenshot": {
+    "file": "quake4-native-reference-2026-09-05.png",
+    "sha256": "8001979d28dfd3530fec2428be09fed46d3f983a7ba8a31ab3ef24ce9f94219e",
+    "originalTgaSHA256": "d1500da828533fd7d35014258bf47cf1a28f1f09d39a7565c4b7283689e24160"
+  },
+  "findings": {
+    "rock": "The dark triangular opening under the sloping central rock is also present in native rendering; this specific shape is not evidence of a browser geometry hole.",
+    "background": "Native rendering has a bright cloudy sky and distant structures, while the comparable browser view is largely black above the wall. This narrows the remaining investigation to sky/background rendering.",
+    "limits": "Native screenshot is smaller with nearly matching aspect ratio, at a different campaign time with different dynamic actors/effects. No exact pixel comparison or full renderer acceptance.",
+    "warning": "SDL offscreen relative-mouse-mode warnings are expected for this native reference and are not browser input errors.",
+    "preservation": "Browser session stayed paused. Native captures and generated asset caches are under the isolated temporary directory; live services, browser settings and retail assets were not modified."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-09-06T21:32:15.743Z",
+  "scope": "Native Blood control diagnostic with primary/secondary permutations; not actual key delivery",
+  "sourceHash": "81545bc2c5323d8e0bc8b31133debee85d210ac0972dc06f71ce486773a02218",
+  "records": [
+    {
+      "target": "native",
+      "negative": false,
+      "output": "{\"checks\":512}",
+      "log": ""
+    },
+    {
+      "target": "native",
+      "negative": true,
+      "output": "",
+      "log": "binding-slot mask mismatch: present=1 slots=1 aim=0"
+    },
+    {
+      "target": "wasm",
+      "negative": false,
+      "output": "{\"checks\":512}",
+      "log": ""
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "output": "",
+      "log": "binding-slot mask mismatch: present=1 slots=1 aim=0"
+    }
+  ]
+}

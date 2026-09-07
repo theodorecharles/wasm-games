@@ -1,0 +1,7 @@
+# Local acceptance image only; not the production Dockerfile/staging path.
+ARG BASE_IMAGE=local/idtech4-wasm:doom3-managed-lifecycle-candidate
+FROM ${BASE_IMAGE}
+COPY native/ /opt/doom3-native/
+COPY site/ /opt/game-site/
+COPY server/ /opt/doom3-server/
+COPY notices/ /opt/doom3-sabot-notices/

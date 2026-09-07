@@ -1,0 +1,214 @@
+{
+  "scope": "Actual linked image allocator/upload tests; recording GL sink, not GPU acceptance",
+  "patchSha256": "ae49cffb7b1ede4620c6a009d437ebc201b5404af6faa3990ae42df95ddc0232",
+  "candidateImage": "sha256:21f2fc06c2d77571ebe3a2501948e2b984ff45b230b84d7a81f55002df83157b",
+  "engineJsSha256": "9a10546a6bb49b702e80a5fda2d30d0d4ccfd887d6eedb5b7c4c43e854d5c035",
+  "engineWasmSha256": "7a160c7dfe6b50be7570391f03fa4daebde3ee426809952b2e53c58ab77db752",
+  "negative": {
+    "scope": "Actual linked engine allocation/upload/DXT decoder; recording GL sink, not browser/GPU acceptance",
+    "wasmSha256": "2dc28ae94c79546d7c8b77c96771104b0c0ec4e3c32d0f350c7ad66913527ae8",
+    "baseline": false,
+    "depthBaseline": true,
+    "results": [
+      {
+        "label": "alpha clip lookup: white RGB, original alpha",
+        "passed": true
+      },
+      {
+        "label": "luminance: RGB replication, opaque alpha",
+        "passed": true
+      },
+      {
+        "label": "intensity lighting lookup: RGBA replication",
+        "passed": true
+      },
+      {
+        "label": "luminance-alpha: both channels preserved",
+        "passed": true
+      },
+      {
+        "label": "RGB565: big-endian source bytes",
+        "passed": true
+      },
+      {
+        "label": "XRGB8: discard source alpha only",
+        "passed": true
+      },
+      {
+        "label": "RGB normal: X duplicated into alpha",
+        "passed": true
+      },
+      {
+        "label": "green-alpha atlas: white RGB and green coverage",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: padded block cropped",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5: encoded alpha preserved",
+        "passed": true
+      },
+      {
+        "label": "compressed atlas: decode then green-alpha swizzle",
+        "passed": true
+      },
+      {
+        "label": "compressed RGB normal: decode then alpha-X swizzle",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: transparent selector preserved",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5 normal: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "thin YCoCg: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "valid DXT5 normal stays compressed",
+        "passed": true
+      },
+      {
+        "label": "floating-point storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "depth placeholder uses a WebGL-valid sized format and unsigned-int type",
+        "passed": false,
+        "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    [\n      3553,\n      0,\n+     6402,\n-     33190,\n      16,\n      16,\n      0,\n      6402,\n+     5121\n-     5125\n    ]\n  ]\n"
+      },
+      {
+        "label": "depth cube and mip allocations retain depth storage",
+        "passed": false,
+        "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    [\n      34069,\n      0,\n+     6402,\n-     33190,\n      8,\n      8,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34069,\n      1,\n+     6402,\n-     33190,\n      4,\n      4,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34069,\n      2,\n+     6402,\n-     33190,\n      2,\n      2,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34070,\n      0,\n+     6402,\n-     33190,\n      8,\n      8,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34070,\n      1,\n+     6402,\n-     33190,\n      4,\n      4,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34070,\n      2,\n+     6402,\n-     33190,\n      2,\n      2,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34071,\n      0,\n+     6402,\n-     33190,\n      8,\n      8,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34071,\n      1,\n+     6402,\n-     33190,\n      4,\n      4,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34071,\n      2,\n+     6402,\n-     33190,\n      2,\n      2,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34072,\n      0,\n+     6402,\n-     33190,\n      8,\n      8,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34072,\n      1,\n+     6402,\n-     33190,\n      4,\n      4,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34072,\n      2,\n+     6402,\n-     33190,\n      2,\n      2,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34073,\n      0,\n+     6402,\n-     33190,\n      8,\n      8,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34073,\n      1,\n+     6402,\n-     33190,\n      4,\n      4,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34073,\n      2,\n+     6402,\n-     33190,\n      2,\n      2,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34074,\n      0,\n+     6402,\n-     33190,\n      8,\n      8,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34074,\n      1,\n+     6402,\n-     33190,\n      4,\n      4,\n      0,\n      6402,\n+     5121\n-     5125\n    ],\n    [\n      34074,\n      2,\n+     6402,\n-     33190,\n      2,\n      2,\n      0,\n      6402,\n+     5121\n-     5125\n    ]\n  ]\n"
+      },
+      {
+        "label": "packed depth-stencil storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+        "passed": true
+      },
+      {
+        "label": "thin compressed chain uses RGBA at every mip",
+        "passed": true
+      },
+      {
+        "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+        "passed": true
+      }
+    ]
+  },
+  "positive": {
+    "scope": "Actual linked engine allocation/upload/DXT decoder; recording GL sink, not browser/GPU acceptance",
+    "wasmSha256": "7a160c7dfe6b50be7570391f03fa4daebde3ee426809952b2e53c58ab77db752",
+    "baseline": false,
+    "depthBaseline": false,
+    "results": [
+      {
+        "label": "alpha clip lookup: white RGB, original alpha",
+        "passed": true
+      },
+      {
+        "label": "luminance: RGB replication, opaque alpha",
+        "passed": true
+      },
+      {
+        "label": "intensity lighting lookup: RGBA replication",
+        "passed": true
+      },
+      {
+        "label": "luminance-alpha: both channels preserved",
+        "passed": true
+      },
+      {
+        "label": "RGB565: big-endian source bytes",
+        "passed": true
+      },
+      {
+        "label": "XRGB8: discard source alpha only",
+        "passed": true
+      },
+      {
+        "label": "RGB normal: X duplicated into alpha",
+        "passed": true
+      },
+      {
+        "label": "green-alpha atlas: white RGB and green coverage",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: padded block cropped",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5: encoded alpha preserved",
+        "passed": true
+      },
+      {
+        "label": "compressed atlas: decode then green-alpha swizzle",
+        "passed": true
+      },
+      {
+        "label": "compressed RGB normal: decode then alpha-X swizzle",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: transparent selector preserved",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5 normal: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "thin YCoCg: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "valid DXT5 normal stays compressed",
+        "passed": true
+      },
+      {
+        "label": "floating-point storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "depth placeholder uses a WebGL-valid sized format and unsigned-int type",
+        "passed": true
+      },
+      {
+        "label": "depth cube and mip allocations retain depth storage",
+        "passed": true
+      },
+      {
+        "label": "packed depth-stencil storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+        "passed": true
+      },
+      {
+        "label": "thin compressed chain uses RGBA at every mip",
+        "passed": true
+      },
+      {
+        "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+        "passed": true
+      }
+    ]
+  },
+  "sourceReconstruction": "All four prepared patch trees exactly match canonical patches",
+  "otherTests": "CPU shadows, native device GUI and exception unwinding, actual keyboard queues, GL compatibility, Continue/clock, audio, 24 real-driver generated shader links, staged package checks: PASS",
+  "unchanged": "JavaScript, SP/MP game Wasm, production worker, desktop FMT_DEPTH behavior, packed depth-stencil and floating-point formats",
+  "notCovered": "Depth framebuffer copies/blits/MSAA and full rendering acceptance are separate from allocation correctness.",
+  "liveDeployment": false
+}

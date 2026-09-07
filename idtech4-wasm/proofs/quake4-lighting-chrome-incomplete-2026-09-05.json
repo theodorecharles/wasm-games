@@ -1,0 +1,71 @@
+{
+  "date": "2026-09-05",
+  "scope": "Historical first-tab lighting-candidate startup attempt; campaign verification was interrupted by tab-control timeouts. A later fresh-tab campaign result is recorded separately.",
+  "followup": "quake4-lighting-chrome-2026-09-05.json",
+  "candidate": {
+    "image": "sha256:e654f4ff1261c92d752dad59e65588eb00d260210ab85678d94499f595cbe849",
+    "javascript": "11b15254ea517e1294f0435bd53bbfeeb235b1fd4652b81219e840d352e643ee",
+    "wasm": "81ba77f6d322dcf6f326420fa156518d826c9b2ac339e93dc2ef5b85e2a463c9",
+    "traceWorker": "0d983144091528a8c2e0fe2867e0091ce94e6e139a41d28f2ec44a9077dad0f4"
+  },
+  "url": "http://127.0.0.1:32873/?proof=quake4-lighting-2026-09-05",
+  "baseline": {
+    "audio": {
+      "buffers": 955,
+      "messages": 876983,
+      "sources": 96,
+      "starts": 270,
+      "state": "running"
+    },
+    "errors": [],
+    "states": [
+      {
+        "at": 70235.1,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 544646.1,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      }
+    ]
+  },
+  "lastPublishedCandidateStatus": {
+    "states": [
+      {
+        "at": 96679.4,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      }
+    ],
+    "errors": [],
+    "logs": [
+      {
+        "at": 95903.6,
+        "text": "Video memory: 2 GB"
+      },
+      {
+        "at": 95905.2,
+        "text": "Emscripten single-thread mode: async worker disabled; frame loop owns simulation ticks"
+      },
+      {
+        "at": 96224.4,
+        "text": "^3WARNING: ^1Loading non pre-cached sound decl main_menu"
+      }
+    ]
+  },
+  "verification": {
+    "native": "128/128 pixel comparisons exactly match shipped shader; 116 differed before.",
+    "browser": "Initialization reported native menu. No repaired-candidate campaign save restore or visual lighting acceptance is recorded.",
+    "timeouts": "The Load Game CUA step timed out; reacquiring the same tab for screenshot or DOM reads and claiming its freshly listed open-tab object also timed out. These do not establish an engine crash.",
+    "recovery": "Chrome running, installation, enabled extension and native-host manifest checks all pass. Approved fresh Chrome window opened. The old game tab remains inaccessible, but a subsequent agent-created blank tab responds immediately to creation, DOM inspection, candidate navigation and Play. This narrows the failure to the old tab; a plugin-wide failure is not established. Campaign verification continues in fresh tab 1938017615.",
+    "preservation": "Game tab was not deliberately reloaded/closed after the timeout. Container remains running without restart, and HTTP is healthy. No live service, retail asset or save changed."
+  }
+}

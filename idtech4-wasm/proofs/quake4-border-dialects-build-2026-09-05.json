@@ -1,0 +1,74 @@
+{
+  "scope": "Rebuilt shader-dialect border candidate. Native/offscreen gates and Chrome startup/natural intro/first-person rendering passed. Mouse capture failed; no full campaign or performance acceptance. No live deployment.",
+  "patchSHA256": "befc9d9867d840395d48226c2caa7b6731fb811c24c3ee4755527d1984431d86",
+  "preparedSources": {
+    "meson.build": "e1405558d026c3ebdf7dab602a6de3ec1ce70233c874b41420fcb15641e505ec",
+    "src/renderer/OpenGL/gl_Image.cpp": "52634fbabac245b61f397f01ea1d5a6b2c46fa87a3087d3ada82a7251853aa4d",
+    "src/sys/emscripten/webgl_compat.cpp": "9ab0ed028081d0616a95f35895d81e5c150c4c28fa461a16b3311963f818c474",
+    "src/sys/emscripten/webgl_compat.h": "19d6e123c10c1f0a9cf327b5220a5d8c35a220d082de1b71b764c708c210c874",
+    "tools/build/emscripten_legacy_gl_transform.mjs": "b4b8d59d90b60d92da8f538e60dedf3f03497311e38a71da901007de7437d963",
+    "tools/build/emscripten_border_runtime.mjs": "c94733446d34404263f17e46adf54c1e42872449c1a0d942338044f39abd5ec6",
+    "tools/build/emscripten_border_shader.mjs": "2937971c1897e13acccaeecbeed7995989b51e70eb9b48a0eaa1856a9c8c0f47",
+    "tools/build/emscripten_border_sampler.glsl": "00c5f19726f24e602d4a51845f442c998d0c336f0cb50f66fb619056bc5fcad3"
+  },
+  "packaged": {
+    "openQ4-client_wasm32.js": "154d33f8e46539d114fc82912f9e209dc93ed770f43d1cd1e42dfd45c5856899",
+    "openQ4-client_wasm32.wasm": "7ef1503878aa7f47c63f5d57a1ff127dcfd02146c9064a880a2904a6cc1f8084",
+    "baseoq4/game-sp_wasm32.wasm": "fd06653d691281646875bba266fb28e1556078200572780378d6a3a56c0416a7",
+    "baseoq4/game-mp_wasm32.wasm": "802c0ddb06592f16e92fe854fd26ac31c6454de15ed57c700324f6a30226baca",
+    "q4-worker.js": "6f70c4dc7d513e29a52a25f2c1d0d28a3e84b717f56e51f10a1ab3c9ad1268b1",
+    "game-adapter.js": "2e73f0a1ada41b2c8c43668d31c25166aed022c13c23a914dd8f2b5e6d3e2177"
+  },
+  "image": {
+    "tag": "local/idtech4-wasm:quake4-border-dialects-candidate",
+    "id": "sha256:c663601a9f4f3107183c775726a09521b5f661e74ed04452604eb12f2a58f441",
+    "container": "31faa98b5a34f5ffa0b76612ee5a9afabeec9cb2b102d778ea44244146050dd2",
+    "applicationStarted": true,
+    "chromeProof": "quake4-border-dialects-chrome-2026-09-05.json",
+    "ports": {
+      "8088/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32875"
+        }
+      ]
+    }
+  },
+  "checks": {
+    "exactPatchTrees": 4,
+    "shippedShaderPairs": 33,
+    "sourceComponents": false,
+    "componentShaderPairs": 12,
+    "shaderRejections": 7,
+    "normalMatrixUploads": 2,
+    "linkedImageSamplerFramebufferCases": 91,
+    "desktopAndGLESBorderComparisons": 4096,
+    "stageSite": "passed"
+  },
+  "previousFailedCandidate": {
+    "tag": "local/idtech4-wasm:quake4-border-candidate",
+    "id": "sha256:6de09954693415f068e94181b0068f64f07e5596fe8b5757909bce7eb6ddcc38",
+    "applicationStarted": true,
+    "startupFailure": "unsupported shader dialect 130",
+    "chromeProof": "quake4-border-initial-chrome-2026-09-05.json"
+  },
+  "retainedSky": {
+    "container": "4e9cc0c7b71f826abee21551c0c993cd00e808abc8ef5ee0497f5f52fea4f164",
+    "image": "sha256:001f0101946d32aa7f6af315765c1a0f4feb62cf2464ed6d902bea4f9df429cc",
+    "running": true,
+    "restarts": 0,
+    "ports": {
+      "8088/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32873"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "First-map rendering observed, not full campaign/performance or all shader-feature-variant acceptance.",
+    "Mouse capture attempt published captured:false and opened the native pause menu. Sustained movement and firing are unaccepted.",
+    "Blood deferred; RTCW unchanged."
+  ]
+}

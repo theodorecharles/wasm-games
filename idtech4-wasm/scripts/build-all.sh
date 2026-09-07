@@ -45,6 +45,14 @@ emcmake cmake -S "${work_root}/d3wasm/neo" -B "${work_root}/d3wasm/build-wasm-ro
   -DD3WASM_GAME=roe \
   -DD3WASM_D3XP_SOURCE_DIR="${work_root}/d3wasm-roe-game"
 cmake --build "${work_root}/d3wasm/build-wasm-roe" --parallel "${jobs}"
+node "${repo_root}/scripts/test-d3-input.mjs"
+node "${repo_root}/scripts/test-d3-mp-audio.mjs"
+D3_TRACE_BASE_SOURCE="${work_root}/d3wasm" D3_TRACE_ROE_SOURCE="${work_root}/d3wasm-roe-game" \
+  node "${repo_root}/scripts/test-d3-trace-cache.mjs"
+node "${repo_root}/scripts/test-d3-session-events.mjs"
+node "${repo_root}/scripts/test-d3-managed-network.mjs"
+node "${repo_root}/scripts/test-d3-network-native.mjs"
+node "${repo_root}/scripts/test-d3-status.mjs"
 Q4WASM_FRAMEWORK_DIR="${framework_dir}" \
 Q4WASM_WEB_BUILD_DIR="${work_root}/openq4/build/web-meson-${required_emscripten}" \
 OPENQ4_GAMELIBS_REPO="${work_root}/openq4-game" \
@@ -53,10 +61,24 @@ OPENQ4_MESON="${meson}" \
 JOBS="${jobs}" \
   "${work_root}/openq4/scripts/build-web.sh"
 
+node "${repo_root}/scripts/test-q4-gl.mjs"
+node "${repo_root}/scripts/test-q4-immediate-linked.mjs" "${work_root}/openq4/build/web/openQ4-client_wasm32.js"
+node "${repo_root}/scripts/test-q4-ambient-rescue.mjs"
+node "${repo_root}/scripts/test-q4-audio.mjs"
+node "${repo_root}/scripts/test-q4-continue.mjs"
+node "${repo_root}/scripts/test-q4-state.mjs"
+node "${repo_root}/scripts/test-q4-shadow.mjs" "${work_root}/openq4/build/web"
+Q4_FRAMEBUFFER_CASES=1 Q4_BORDER_IMAGE_CASES=1 node "${repo_root}/scripts/test-q4-images.mjs" "${work_root}/openq4/build/web"
+Q4_EXPECT_EXCEPTIONS=1 Q4_EXPECT_INPUT=1 node "${repo_root}/scripts/test-q4-device-gui.mjs" "${work_root}/openq4/build/web"
+
 emcmake cmake -S "${work_root}/prey-d3wasm/neo" -B "${work_root}/prey-d3wasm/build/web-d3wasm" -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DPREYWASM_CLIENT=ON \
   -DREPRODUCIBLE_BUILD=ON
 cmake --build "${work_root}/prey-d3wasm/build/web-d3wasm" --parallel "${jobs}"
+node "${repo_root}/scripts/test-prey-input.mjs"
+node "${repo_root}/scripts/test-prey-audio.mjs"
+node "${repo_root}/scripts/test-prey-trace-cache.mjs"
+node "${repo_root}/scripts/test-prey-quickload-prompt.mjs"
 
 "${repo_root}/scripts/stage-site.sh"

@@ -9,7 +9,14 @@
     "build": "npm run build:native && npm run build:web",
     "test:campaign-intros": "node scripts/test-campaign-intros-browser.mjs",
     "test:cs-bots": "node scripts/test-cs-bots-runtime.mjs",
-    "test": "node scripts/verify-site-contract.mjs && node scripts/test-adapter-contract.mjs && node scripts/test-cs-host-contract.mjs && node ${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}/scripts/check-game-package.js web"
+    "test:cs-recovery": "node scripts/test-cs-host-recovery.mjs",
+    "test:cs-bridge": "node scripts/test-cs-bridge-runtime.mjs",
+    "test:cs-endpoint": "node scripts/test-cs-endpoint-policy.mjs",
+    "test:owner-packaging": "python3 scripts/test-owner-packaging.py",
+    "test:save-hints": "node scripts/test-save-hints.mjs",
+    "test:cs-menu-globals": "node scripts/test-cs-menu-globals.mjs",
+    "test:cs-managed-menu": "node scripts/test-cs-managed-menu.mjs",
+    "test": "node scripts/verify-site-contract.mjs && node scripts/test-adapter-contract.mjs && node scripts/test-cs-endpoint-policy.mjs && node scripts/test-input-proof.mjs && node scripts/test-cs-host-contract.mjs && python3 scripts/test-owner-packaging.py && node scripts/test-save-hints.mjs && node scripts/test-cs-menu-globals.mjs && node scripts/test-cs-managed-menu.mjs && node ${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}/scripts/check-game-package.js web"
   },
   "dependencies": {
     "cs16-client": "0.1.2",

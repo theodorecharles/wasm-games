@@ -1,0 +1,204 @@
+{
+  "scope": "Actual linked engine texture allocation/upload/DXT decoding with recording GL sink; no browser/GPU acceptance implied",
+  "candidateImage": "sha256:e9db075cd19694fd5bc976cfd8ef78ba761364d941758f7a44a31ecadfa0cc14",
+  "engineJsSha256": "9a10546a6bb49b702e80a5fda2d30d0d4ccfd887d6eedb5b7c4c43e854d5c035",
+  "engineWasmSha256": "2dc28ae94c79546d7c8b77c96771104b0c0ec4e3c32d0f350c7ad66913527ae8",
+  "patchSha256": "3333f50265e53287ebd957815f276726e9d077254dcde253b4dd93a75883d41b",
+  "sourceReconstruction": "PASS all four trees",
+  "regressions": "PASS shadow geometry, device/GUI, exceptions/keyboard, GL, Continue/clock, audio, 24 real-driver legacy shader links and package checks",
+  "liveDeployment": false,
+  "results": [
+    {
+      "scope": "Actual linked engine allocation/upload/DXT decoder; recording GL sink, not browser/GPU acceptance",
+      "wasmSha256": "7c7c3ea597ecbe277e6c05f13346d84c2f1bde738c1921f8e7acf4a78ebaee2b",
+      "baseline": true,
+      "results": [
+        {
+          "label": "alpha clip lookup: white RGB, original alpha",
+          "passed": false,
+          "error": "GPU storage must be RGBA8\n\n32828 !== 32856\n"
+        },
+        {
+          "label": "luminance: RGB replication, opaque alpha",
+          "passed": false,
+          "error": "GPU storage must be RGBA8\n\n32832 !== 32856\n"
+        },
+        {
+          "label": "intensity lighting lookup: RGBA replication",
+          "passed": false,
+          "error": "GPU storage must be RGBA8\n\n32843 !== 32856\n"
+        },
+        {
+          "label": "luminance-alpha: both channels preserved",
+          "passed": false,
+          "error": "GPU storage must be RGBA8\n\n32837 !== 32856\n"
+        },
+        {
+          "label": "RGB565: big-endian source bytes",
+          "passed": false,
+          "error": "GPU storage must be RGBA8\n\n6407 !== 32856\n"
+        },
+        {
+          "label": "XRGB8: discard source alpha only",
+          "passed": false,
+          "error": "GPU storage must be RGBA8\n\n6407 !== 32856\n"
+        },
+        {
+          "label": "RGB normal: X duplicated into alpha",
+          "passed": false,
+          "error": "no unsupported texture swizzles"
+        },
+        {
+          "label": "green-alpha atlas: white RGB and green coverage",
+          "passed": false,
+          "error": "no unsupported texture swizzles"
+        },
+        {
+          "label": "thin DXT1: padded block cropped",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "thin DXT5: encoded alpha preserved",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "compressed atlas: decode then green-alpha swizzle",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "compressed RGB normal: decode then alpha-X swizzle",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "thin DXT1: transparent selector preserved",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "thin DXT5 normal: raw encoded channels retained",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "thin YCoCg: raw encoded channels retained",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'compressed-allocate'\n- 'allocate'\n"
+        },
+        {
+          "label": "valid DXT5 normal stays compressed",
+          "passed": true
+        },
+        {
+          "label": "floating-point storage unchanged",
+          "passed": true
+        },
+        {
+          "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+          "passed": false,
+          "error": "The expression evaluated to a falsy value:\n\n  assert.ok(allocated.every(call => call.name === 'allocate' && call.args[2] === 0x8058))\n"
+        },
+        {
+          "label": "thin compressed chain uses RGBA at every mip",
+          "passed": false,
+          "error": "The expression evaluated to a falsy value:\n\n  assert.ok(allocated.every(call => call.name === 'allocate' && call.args[2] === 0x8058))\n"
+        },
+        {
+          "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+          "passed": false,
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n-   255,\n    0,\n+   248,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n+   248,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n+   248,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n+   224,\n+   7,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n    0,\n-   255,\n-   255,\n    0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   255,\n-   0,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255,\n-   0,\n-   255\n  ]\n"
+        }
+      ]
+    },
+    {
+      "scope": "Actual linked engine allocation/upload/DXT decoder; recording GL sink, not browser/GPU acceptance",
+      "wasmSha256": "2dc28ae94c79546d7c8b77c96771104b0c0ec4e3c32d0f350c7ad66913527ae8",
+      "baseline": false,
+      "results": [
+        {
+          "label": "alpha clip lookup: white RGB, original alpha",
+          "passed": true
+        },
+        {
+          "label": "luminance: RGB replication, opaque alpha",
+          "passed": true
+        },
+        {
+          "label": "intensity lighting lookup: RGBA replication",
+          "passed": true
+        },
+        {
+          "label": "luminance-alpha: both channels preserved",
+          "passed": true
+        },
+        {
+          "label": "RGB565: big-endian source bytes",
+          "passed": true
+        },
+        {
+          "label": "XRGB8: discard source alpha only",
+          "passed": true
+        },
+        {
+          "label": "RGB normal: X duplicated into alpha",
+          "passed": true
+        },
+        {
+          "label": "green-alpha atlas: white RGB and green coverage",
+          "passed": true
+        },
+        {
+          "label": "thin DXT1: padded block cropped",
+          "passed": true
+        },
+        {
+          "label": "thin DXT5: encoded alpha preserved",
+          "passed": true
+        },
+        {
+          "label": "compressed atlas: decode then green-alpha swizzle",
+          "passed": true
+        },
+        {
+          "label": "compressed RGB normal: decode then alpha-X swizzle",
+          "passed": true
+        },
+        {
+          "label": "thin DXT1: transparent selector preserved",
+          "passed": true
+        },
+        {
+          "label": "thin DXT5 normal: raw encoded channels retained",
+          "passed": true
+        },
+        {
+          "label": "thin YCoCg: raw encoded channels retained",
+          "passed": true
+        },
+        {
+          "label": "valid DXT5 normal stays compressed",
+          "passed": true
+        },
+        {
+          "label": "floating-point storage unchanged",
+          "passed": true
+        },
+        {
+          "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+          "passed": true
+        },
+        {
+          "label": "thin compressed chain uses RGBA at every mip",
+          "passed": true
+        },
+        {
+          "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

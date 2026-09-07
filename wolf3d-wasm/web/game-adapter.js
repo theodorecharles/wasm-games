@@ -178,6 +178,12 @@
         document.documentElement.dataset.wolf3dControlsMask = String(mask);
         document.documentElement.dataset.wolf3dControlsValid = String(mask === 31);
       }
+      if (typeof engine?._WolfWasm_BrowserInputDiagnostics === 'function') {
+        document.documentElement.dataset.wolfInputFlags = String(engine._WolfWasm_BrowserInputDiagnostics(0));
+        document.documentElement.dataset.wolfKeyEdges = String(engine._WolfWasm_BrowserInputDiagnostics(1));
+        document.documentElement.dataset.wolfMouseEdges = String(engine._WolfWasm_BrowserInputDiagnostics(2));
+        document.documentElement.dataset.wolfMouseSample = String(engine._WolfWasm_BrowserInputDiagnostics(3));
+      }
       if (typeof engine?._WolfWasm_BrowserPreparedDigiSounds === 'function') {
         document.documentElement.dataset.wolfAudioPrepared = String(engine._WolfWasm_BrowserPreparedDigiSounds());
         document.documentElement.dataset.wolfAudioDigiStarts = String(engine._WolfWasm_BrowserDigiStarts());
@@ -216,11 +222,14 @@
         }))
       });
       ctx.elements.canvas.addEventListener('contextmenu', event => event.preventDefault());
-      // Browser Wolf4SDL has keyboard-only menus. The framework publishes
-      // captured movementX through pointerMove(); suppress SDL's parallel raw
-      // mouse path so released motion cannot navigate menus and locked deltas
-      // are never counted twice.
+      // The framework owns absolute menu coordinates and captured movementX.
+      // Suppress SDL's parallel raw motion so it cannot double-count deltas.
       ctx.elements.canvas.addEventListener('mousemove', event => event.stopImmediatePropagation(), true);
+      const cancelMenuPointer = () => engine?._WolfWasm_BrowserMenuPointer?.(0, 0, -2, 0);
+      for (const type of ['pointercancel', 'lostpointercapture']) {
+        ctx.elements.canvas.addEventListener(type, cancelMenuPointer);
+      }
+      window.addEventListener('blur', cancelMenuPointer);
       document.addEventListener('keyup', event => {
         if (!started || (event.key !== 'Enter' && event.key !== 'Escape')) return;
         queueMicrotask(() => synchronizeState(ctx, event, true));
@@ -271,8 +280,21 @@
     readEngineState() { return nativeState(); },
     readCaptureIntent() { return captureIntent(); },
     pointerMove(detail) {
-      if (!started || detail?.captured !== true || typeof engine?._WolfWasm_BrowserControllerMouse !== 'function') return;
-      engine._WolfWasm_BrowserControllerMouse(Math.round(detail.movementX || 0), 0);
+      if (!started) return;
+      if (detail?.captured === true) {
+        engine?._WolfWasm_BrowserControllerMouse?.(Math.round(detail.movementX || 0), 0);
+      } else if (['menu', 'paused'].includes(nativeState()) && detail?.inside !== false &&
+                 Number.isFinite(detail?.x) && Number.isFinite(detail?.y)) {
+        engine?._WolfWasm_BrowserMenuPointer?.(Math.floor(detail.x), Math.floor(detail.y), -1, 0);
+      }
+    },
+    pointerButton(detail) {
+      if (!started || detail?.captured === true || !['menu', 'paused'].includes(nativeState())) return;
+      if (detail?.inside === false || !Number.isFinite(detail?.x) || !Number.isFinite(detail?.y)) {
+        engine?._WolfWasm_BrowserMenuPointer?.(0, 0, -2, 0);
+        return;
+      }
+      engine?._WolfWasm_BrowserMenuPointer?.(Math.floor(detail.x), Math.floor(detail.y), Number(detail.button), detail.pressed ? 1 : 0);
     },
     captureLost(_detail, ctx) {
       if (started && performance.now() - lastEscapeAt > 750 &&
@@ -281,6 +303,7 @@
       persistentMount?.save().catch(error => ctx.log(error));
     },
     inputCaptureChanged(captured) {
+      engine?._WolfWasm_BrowserMenuPointer?.(0, 0, -2, 0);
       if (started && typeof engine?._WolfWasm_BrowserSetInputCaptured === 'function') {
         engine._WolfWasm_BrowserSetInputCaptured(captured ? 1 : 0);
       }

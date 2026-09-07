@@ -1,0 +1,49 @@
+{
+  "observedAt": "2026-09-06T21:41:18.235Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 801,
+        "cssWidth": 1424,
+        "height": 720,
+        "width": 1280
+      }
+    ],
+    "fullscreen": null,
+    "log": " runtime  src| \n 0.1064s INFO| Started at 2026-09-06 17:39:57.872\n 0.1078s INFO| NBlood r14377[HEAD]-f86390315\n 0.1082s INFO| [NBlood WASM] Engine initialization started\n 0.1085s INFO| Built Sep  6 2026 21:33:15, clang 24.0.0, 32-bit\n 0.1087s INFO| Autoload disabled\n 0.1093s INFO| Using directory /game/\n 0.1097s INFO| Using directory /home/web_user/.config/nblood/\n 0.1126s INFO| Initializing SDL 2.32.10\n 0.1151s INFO| Using 'emscripten' video driver.\n 0.1163s INFO| Using config file \"modernized.cfg\".\n 0.1221s INFO| Using \"nblood.pk3\" as main game data file.\n 0.1246s INFO| Initializing OSD...\n 0.1257s INFO| [NBlood WASM] Loading Blood resources from the virtual filesystem\n 0.1310s INFO| Initializing Build 3D engine\n 0.1317s INFO| [NBlood WASM] Initializing SDL browser renderer\n 0.1322s INFO| Initializing engine\n 0.1332s INFO| Loading palettes\n 0.1377s INFO| Loading translucency table\n 0.1386s INFO| Loading gamma correction table\n 0.1397s INFO| Creating standard color lookups\n 0.1400s INFO| Loading tiles\n 0.1633s INFO| Initialized 512.6M cache\n 0.1696s INFO| Loading blood_widescreen.def\n 0.2178s INFO| Loading blood.def\n 0.2482s INFO| Definitions file \"blood.def\" loaded in 31 ms.\n 0.2495s INFO| Loading cosine table\n 0.2502s INFO| Initializing view subsystem\n 0.2505s INFO| Initializing status bar\n 0.2516s INFO| Initializing dynamic fire\n 0.2557s INFO| Initializing weapon animations\n 0.2586s INFO| There are 4 demo(s) in the loop\n 0.2608s INFO| Loading control setup\n 0.2636s INFO| Initializing network users\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nregisterOrRemoveHandler: the target element for event handler registration does not exist, when processing the following event handler registration:\nWARNING: using emscripten GL immediate mode emulation. This is very limited in what it supports\nemscripten_set_main_loop_timing: Cannot set timing mode for main loop since a main loop does not exist! Call emscripten_set_main_loop first to set one up.\nTODO: glShadeModel\n 0.3146s INFO| [Build WASM] NPOT textures: 1 (OpenGL ES 3.0)\n 0.3153s WARN| OpenGL driver lacks the necessary functions to use caching.\nglUniform1f called with a nonexisting location ID -1!\nglUniform1f called with a nonexisting location ID -1!\n 0.3595s INFO| Opened texturecache as cache file.\n 0.4667s INFO| Initializing sound system\n 0.4671s INFO| [NBlood WASM] Initializing Web Audio through SDL\n 0.4697s INFO| [NBlood WASM] SDL audio device opened: 48000 Hz, 2 channel(s)\n 0.4742s INFO| Waiting for network players!\n 0.4756s INFO| [NBlood WASM] Starting browser game loop\n54.0780s INFO| Wrote modernized.cfg\n54.0796s INFO| Wrote modernized_cvars.cfg\n54.0798s INFO| [NBlood WASM] Configuration queued for persistent storage\n54.0814s INFO| [NBlood WASM] Starting level episode=0 map=0 name=\n54.0819s INFO| [NBlood WASM] Level start: previous level shut down\n54.0821s INFO| [NBlood WASM] Level start: initial network barrier complete\n54.1137s INFO| [NBlood WASM] Level start: single-player options and intro complete\n54.1160s INFO| [NBlood WASM] Level start: loading screen presented; loading map e1m1\n54.1209s INFO| [NBlood WASM] Level start: map database loaded\n54.1216s INFO| > Modern types erased: 0.\n54.1268s INFO| > This map *does not* provide modern features.\n54.1622s INFO| [NBlood WASM] Level start: cache preload complete\n54.1737s INFO| [NBlood WASM] Playing CD-audio replacement blood03.ogg\n54.1741s INFO| [NBlood WASM] Level start: music initialized\n54.1742s INFO| \n54.1744s INFO| [NBlood WASM] Level start: final network barrier complete\n54.1745s INFO| [NBlood WASM] Level loaded and playable: e1m1\n",
+    "pointerLock": null,
+    "root": {
+      "audioState": "running",
+      "bloodControlsMask": "31",
+      "bloodControlsValid": "true",
+      "bloodPlayerLook": "0,0,0,0",
+      "bloodProfile": "modernized",
+      "buildNativeClickState": "0",
+      "buildNativePointer": "640,360",
+      "buildNativePointerBits": "0",
+      "buildPointerDelta": "0,0",
+      "buildPointerDeltaEvents": "0",
+      "buildRenderBpp": "32",
+      "buildRenderMode": "3",
+      "buildRenderSize": "1280x720",
+      "campaign": "blood",
+      "demos": "false",
+      "gameplayInput": "true",
+      "inputMode": "0",
+      "intro": "false",
+      "level": "e1m1",
+      "persistence": "ready",
+      "playerPosition": "-14976,33280,-29360,0",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "none",
+      "simulationFrames": "770",
+      "wasmDataSource": "container",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "blood"
+    },
+    "url": "http://127.0.0.1:32989/?game=blood&profile=modernized"
+  }
+}

@@ -1,0 +1,728 @@
+{
+  "scope": "Source-derived wire class schema from actual Ninja-selected base game translation units; identical client/server class, hierarchy and snapshot implementations. Not a full runtime or browser test.",
+  "classes": 142,
+  "algorithmHashes": {
+    "game/gamesys/Class.cpp": "48ca13c8c9235c175e659758561a74a02f55c0ec626cf67a3820aa055c0a9e67",
+    "idlib/containers/Hierarchy.h": "d040159b5f2b9a910b44c6e17ab1548b37b306ce8f1ccabd3ae715dcfefc6fdd",
+    "game/Game_network.cpp": "801a682039312a0a4f2a7dddfff7f1d9fbf1ebf66a18e960a799683ada5a23d2"
+  },
+  "clientTranslationUnits": 68,
+  "serverTranslationUnits": 69,
+  "negativeControl": {
+    "removed": "idTestModel",
+    "serverPlayerType": 135,
+    "oldClientDecodesAs": "idAI"
+  },
+  "schema": [
+    {
+      "type": 0,
+      "name": "idClass",
+      "parent": "NULL"
+    },
+    {
+      "type": 1,
+      "name": "idThread",
+      "parent": "idClass"
+    },
+    {
+      "type": 2,
+      "name": "idPhysics",
+      "parent": "idClass"
+    },
+    {
+      "type": 3,
+      "name": "idPhysics_StaticMulti",
+      "parent": "idPhysics"
+    },
+    {
+      "type": 4,
+      "name": "idPhysics_Static",
+      "parent": "idPhysics"
+    },
+    {
+      "type": 5,
+      "name": "idPhysics_Base",
+      "parent": "idPhysics"
+    },
+    {
+      "type": 6,
+      "name": "idPhysics_RigidBody",
+      "parent": "idPhysics_Base"
+    },
+    {
+      "type": 7,
+      "name": "idPhysics_Parametric",
+      "parent": "idPhysics_Base"
+    },
+    {
+      "type": 8,
+      "name": "idPhysics_Actor",
+      "parent": "idPhysics_Base"
+    },
+    {
+      "type": 9,
+      "name": "idPhysics_Player",
+      "parent": "idPhysics_Actor"
+    },
+    {
+      "type": 10,
+      "name": "idPhysics_Monster",
+      "parent": "idPhysics_Actor"
+    },
+    {
+      "type": 11,
+      "name": "idPhysics_AF",
+      "parent": "idPhysics_Base"
+    },
+    {
+      "type": 12,
+      "name": "idForce",
+      "parent": "idClass"
+    },
+    {
+      "type": 13,
+      "name": "idForce_Spring",
+      "parent": "idForce"
+    },
+    {
+      "type": 14,
+      "name": "idForce_Field",
+      "parent": "idForce"
+    },
+    {
+      "type": 15,
+      "name": "idForce_Drag",
+      "parent": "idForce"
+    },
+    {
+      "type": 16,
+      "name": "idForce_Constant",
+      "parent": "idForce"
+    },
+    {
+      "type": 17,
+      "name": "idEntity",
+      "parent": "idClass"
+    },
+    {
+      "type": 18,
+      "name": "idWorldspawn",
+      "parent": "idEntity"
+    },
+    {
+      "type": 19,
+      "name": "idVacuumSeparatorEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 20,
+      "name": "idVacuumEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 21,
+      "name": "idTrigger",
+      "parent": "idEntity"
+    },
+    {
+      "type": 22,
+      "name": "idTrigger_Touch",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 23,
+      "name": "idTrigger_Timer",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 24,
+      "name": "idTrigger_Multi",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 25,
+      "name": "idTrigger_Hurt",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 26,
+      "name": "idTrigger_Fade",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 27,
+      "name": "idTrigger_EntityName",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 28,
+      "name": "idTrigger_Count",
+      "parent": "idTrigger"
+    },
+    {
+      "type": 29,
+      "name": "idTextEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 30,
+      "name": "idTarget",
+      "parent": "idEntity"
+    },
+    {
+      "type": 31,
+      "name": "idTarget_WaitForButton",
+      "parent": "idTarget"
+    },
+    {
+      "type": 32,
+      "name": "idTarget_Tip",
+      "parent": "idTarget"
+    },
+    {
+      "type": 33,
+      "name": "idTarget_Show",
+      "parent": "idTarget"
+    },
+    {
+      "type": 34,
+      "name": "idTarget_SetShaderTime",
+      "parent": "idTarget"
+    },
+    {
+      "type": 35,
+      "name": "idTarget_SetShaderParm",
+      "parent": "idTarget"
+    },
+    {
+      "type": 36,
+      "name": "idTarget_SetPrimaryObjective",
+      "parent": "idTarget"
+    },
+    {
+      "type": 37,
+      "name": "idTarget_SetModel",
+      "parent": "idTarget"
+    },
+    {
+      "type": 38,
+      "name": "idTarget_SetKeyVal",
+      "parent": "idTarget"
+    },
+    {
+      "type": 39,
+      "name": "idTarget_SetInfluence",
+      "parent": "idTarget"
+    },
+    {
+      "type": 40,
+      "name": "idTarget_SetGlobalShaderTime",
+      "parent": "idTarget"
+    },
+    {
+      "type": 41,
+      "name": "idTarget_SetFov",
+      "parent": "idTarget"
+    },
+    {
+      "type": 42,
+      "name": "idTarget_SessionCommand",
+      "parent": "idTarget"
+    },
+    {
+      "type": 43,
+      "name": "idTarget_RemoveWeapons",
+      "parent": "idTarget"
+    },
+    {
+      "type": 44,
+      "name": "idTarget_Remove",
+      "parent": "idTarget"
+    },
+    {
+      "type": 45,
+      "name": "idTarget_LockDoor",
+      "parent": "idTarget"
+    },
+    {
+      "type": 46,
+      "name": "idTarget_LightFadeOut",
+      "parent": "idTarget"
+    },
+    {
+      "type": 47,
+      "name": "idTarget_LightFadeIn",
+      "parent": "idTarget"
+    },
+    {
+      "type": 48,
+      "name": "idTarget_LevelTrigger",
+      "parent": "idTarget"
+    },
+    {
+      "type": 49,
+      "name": "idTarget_GiveSecurity",
+      "parent": "idTarget"
+    },
+    {
+      "type": 50,
+      "name": "idTarget_GiveEmail",
+      "parent": "idTarget"
+    },
+    {
+      "type": 51,
+      "name": "idTarget_Give",
+      "parent": "idTarget"
+    },
+    {
+      "type": 52,
+      "name": "idTarget_FadeSoundClass",
+      "parent": "idTarget"
+    },
+    {
+      "type": 53,
+      "name": "idTarget_FadeEntity",
+      "parent": "idTarget"
+    },
+    {
+      "type": 54,
+      "name": "idTarget_EndLevel",
+      "parent": "idTarget"
+    },
+    {
+      "type": 55,
+      "name": "idTarget_EnableStamina",
+      "parent": "idTarget"
+    },
+    {
+      "type": 56,
+      "name": "idTarget_EnableLevelWeapons",
+      "parent": "idTarget"
+    },
+    {
+      "type": 57,
+      "name": "idTarget_Damage",
+      "parent": "idTarget"
+    },
+    {
+      "type": 58,
+      "name": "idTarget_CallObjectFunction",
+      "parent": "idTarget"
+    },
+    {
+      "type": 59,
+      "name": "idSpring",
+      "parent": "idEntity"
+    },
+    {
+      "type": 60,
+      "name": "idSplinePath",
+      "parent": "idEntity"
+    },
+    {
+      "type": 61,
+      "name": "idSpawnableEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 62,
+      "name": "idSound",
+      "parent": "idEntity"
+    },
+    {
+      "type": 63,
+      "name": "idShaking",
+      "parent": "idEntity"
+    },
+    {
+      "type": 64,
+      "name": "idSecurityCamera",
+      "parent": "idEntity"
+    },
+    {
+      "type": 65,
+      "name": "idPlayerStart",
+      "parent": "idEntity"
+    },
+    {
+      "type": 66,
+      "name": "idPhantomObjects",
+      "parent": "idEntity"
+    },
+    {
+      "type": 67,
+      "name": "idPathCorner",
+      "parent": "idEntity"
+    },
+    {
+      "type": 68,
+      "name": "idLocationSeparatorEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 69,
+      "name": "idLocationEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 70,
+      "name": "idLiquid",
+      "parent": "idEntity"
+    },
+    {
+      "type": 71,
+      "name": "idLight",
+      "parent": "idEntity"
+    },
+    {
+      "type": 72,
+      "name": "idItemRemover",
+      "parent": "idEntity"
+    },
+    {
+      "type": 73,
+      "name": "idObjectiveComplete",
+      "parent": "idItemRemover"
+    },
+    {
+      "type": 74,
+      "name": "idItem",
+      "parent": "idEntity"
+    },
+    {
+      "type": 75,
+      "name": "idVideoCDItem",
+      "parent": "idItem"
+    },
+    {
+      "type": 76,
+      "name": "idPDAItem",
+      "parent": "idItem"
+    },
+    {
+      "type": 77,
+      "name": "idObjective",
+      "parent": "idItem"
+    },
+    {
+      "type": 78,
+      "name": "idMoveableItem",
+      "parent": "idItem"
+    },
+    {
+      "type": 79,
+      "name": "idMoveablePDAItem",
+      "parent": "idMoveableItem"
+    },
+    {
+      "type": 80,
+      "name": "idItemPowerup",
+      "parent": "idItem"
+    },
+    {
+      "type": 81,
+      "name": "idFuncSmoke",
+      "parent": "idEntity"
+    },
+    {
+      "type": 82,
+      "name": "idFuncRadioChatter",
+      "parent": "idEntity"
+    },
+    {
+      "type": 83,
+      "name": "idFuncPortal",
+      "parent": "idEntity"
+    },
+    {
+      "type": 84,
+      "name": "idStaticEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 85,
+      "name": "idFuncEmitter",
+      "parent": "idStaticEntity"
+    },
+    {
+      "type": 86,
+      "name": "idFuncSplat",
+      "parent": "idFuncEmitter"
+    },
+    {
+      "type": 87,
+      "name": "idFuncAASPortal",
+      "parent": "idEntity"
+    },
+    {
+      "type": 88,
+      "name": "idFuncAASObstacle",
+      "parent": "idEntity"
+    },
+    {
+      "type": 89,
+      "name": "idForceField",
+      "parent": "idEntity"
+    },
+    {
+      "type": 90,
+      "name": "idExplodable",
+      "parent": "idEntity"
+    },
+    {
+      "type": 91,
+      "name": "idEntityFx",
+      "parent": "idEntity"
+    },
+    {
+      "type": 92,
+      "name": "idTeleporter",
+      "parent": "idEntityFx"
+    },
+    {
+      "type": 93,
+      "name": "idMover",
+      "parent": "idEntity"
+    },
+    {
+      "type": 94,
+      "name": "idElevator",
+      "parent": "idMover"
+    },
+    {
+      "type": 95,
+      "name": "idEarthQuake",
+      "parent": "idEntity"
+    },
+    {
+      "type": 96,
+      "name": "idMover_Binary",
+      "parent": "idEntity"
+    },
+    {
+      "type": 97,
+      "name": "idPlat",
+      "parent": "idMover_Binary"
+    },
+    {
+      "type": 98,
+      "name": "idDoor",
+      "parent": "idMover_Binary"
+    },
+    {
+      "type": 99,
+      "name": "idDebris",
+      "parent": "idEntity"
+    },
+    {
+      "type": 100,
+      "name": "idDamagable",
+      "parent": "idEntity"
+    },
+    {
+      "type": 101,
+      "name": "idCursor3D",
+      "parent": "idEntity"
+    },
+    {
+      "type": 102,
+      "name": "idCombatNode",
+      "parent": "idEntity"
+    },
+    {
+      "type": 103,
+      "name": "idMultiModelAF",
+      "parent": "idEntity"
+    },
+    {
+      "type": 104,
+      "name": "idChain",
+      "parent": "idMultiModelAF"
+    },
+    {
+      "type": 105,
+      "name": "idCamera",
+      "parent": "idEntity"
+    },
+    {
+      "type": 106,
+      "name": "idCameraView",
+      "parent": "idCamera"
+    },
+    {
+      "type": 107,
+      "name": "idCameraAnim",
+      "parent": "idCamera"
+    },
+    {
+      "type": 108,
+      "name": "idBrittleFracture",
+      "parent": "idEntity"
+    },
+    {
+      "type": 109,
+      "name": "idMover_Periodic",
+      "parent": "idEntity"
+    },
+    {
+      "type": 110,
+      "name": "idRotater",
+      "parent": "idMover_Periodic"
+    },
+    {
+      "type": 111,
+      "name": "idRiser",
+      "parent": "idMover_Periodic"
+    },
+    {
+      "type": 112,
+      "name": "idPendulum",
+      "parent": "idMover_Periodic"
+    },
+    {
+      "type": 113,
+      "name": "idBobber",
+      "parent": "idMover_Periodic"
+    },
+    {
+      "type": 114,
+      "name": "idBeam",
+      "parent": "idEntity"
+    },
+    {
+      "type": 115,
+      "name": "idMoveable",
+      "parent": "idEntity"
+    },
+    {
+      "type": 116,
+      "name": "idBarrel",
+      "parent": "idMoveable"
+    },
+    {
+      "type": 117,
+      "name": "idExplodingBarrel",
+      "parent": "idBarrel"
+    },
+    {
+      "type": 118,
+      "name": "idProjectile",
+      "parent": "idEntity"
+    },
+    {
+      "type": 119,
+      "name": "idGuidedProjectile",
+      "parent": "idProjectile"
+    },
+    {
+      "type": 120,
+      "name": "idSoulCubeMissile",
+      "parent": "idGuidedProjectile"
+    },
+    {
+      "type": 121,
+      "name": "idBFGProjectile",
+      "parent": "idProjectile"
+    },
+    {
+      "type": 122,
+      "name": "idActivator",
+      "parent": "idEntity"
+    },
+    {
+      "type": 123,
+      "name": "idAnimatedEntity",
+      "parent": "idEntity"
+    },
+    {
+      "type": 124,
+      "name": "idWeapon",
+      "parent": "idAnimatedEntity"
+    },
+    {
+      "type": 125,
+      "name": "idTestModel",
+      "parent": "idAnimatedEntity"
+    },
+    {
+      "type": 126,
+      "name": "idAFEntity_Base",
+      "parent": "idAnimatedEntity"
+    },
+    {
+      "type": 127,
+      "name": "idAFEntity_Vehicle",
+      "parent": "idAFEntity_Base"
+    },
+    {
+      "type": 128,
+      "name": "idAFEntity_VehicleSixWheels",
+      "parent": "idAFEntity_Vehicle"
+    },
+    {
+      "type": 129,
+      "name": "idAFEntity_VehicleSimple",
+      "parent": "idAFEntity_Vehicle"
+    },
+    {
+      "type": 130,
+      "name": "idAFEntity_VehicleFourWheels",
+      "parent": "idAFEntity_Vehicle"
+    },
+    {
+      "type": 131,
+      "name": "idAFEntity_SteamPipe",
+      "parent": "idAFEntity_Base"
+    },
+    {
+      "type": 132,
+      "name": "idAFEntity_Gibbable",
+      "parent": "idAFEntity_Base"
+    },
+    {
+      "type": 133,
+      "name": "idAnimated",
+      "parent": "idAFEntity_Gibbable"
+    },
+    {
+      "type": 134,
+      "name": "idActor",
+      "parent": "idAFEntity_Gibbable"
+    },
+    {
+      "type": 135,
+      "name": "idPlayer",
+      "parent": "idActor"
+    },
+    {
+      "type": 136,
+      "name": "idAI",
+      "parent": "idActor"
+    },
+    {
+      "type": 137,
+      "name": "idAI_Vagary",
+      "parent": "idAI"
+    },
+    {
+      "type": 138,
+      "name": "idAFEntity_WithAttachedHead",
+      "parent": "idAFEntity_Gibbable"
+    },
+    {
+      "type": 139,
+      "name": "idAFEntity_Generic",
+      "parent": "idAFEntity_Gibbable"
+    },
+    {
+      "type": 140,
+      "name": "idAFEntity_ClawFourFingers",
+      "parent": "idAFEntity_Base"
+    },
+    {
+      "type": 141,
+      "name": "idAFAttachment",
+      "parent": "idAnimatedEntity"
+    }
+  ]
+}

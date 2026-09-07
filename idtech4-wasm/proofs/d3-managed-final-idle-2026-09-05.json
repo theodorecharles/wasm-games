@@ -1,0 +1,29 @@
+{
+  "scope": "After both Chrome native disconnects, the final packaged supervisor reaches idle sleep and removes its native child and disposable owner-pack session. Test-only idle timeout 90 seconds.",
+  "observedAt": "2026-09-05T21:25:32.306Z",
+  "status": {
+    "state": "sleeping",
+    "humans": 0,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": null,
+    "map": "game/mp/d3dm1",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": null,
+    "players": [],
+    "browserPeers": 0,
+    "bots": 0,
+    "botStatus": "not-installed",
+    "relay": {
+      "peers": 0,
+      "clientPackets": 9783,
+      "serverPackets": 2709
+    }
+  },
+  "resources": {
+    "nativePids": [],
+    "sessions": []
+  }
+}

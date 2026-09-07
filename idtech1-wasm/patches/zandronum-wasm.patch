@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5e86bbb..bbd8fb8 100644
+index 5e86bbb06..bbd8fb877 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -261,12 +261,12 @@ if ( NOT NO_SOUND )
@@ -18,7 +18,7 @@ index 5e86bbb..bbd8fb8 100644
  if( NOT CMAKE_CROSSCOMPILING )
  	export(TARGETS ${CROSS_EXPORTS} FILE "${CMAKE_BINARY_DIR}/ImportExecutables.cmake" )
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 65c675c..f75fa86 100644
+index 65c675c40..ee9897b02 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -681,10 +681,13 @@ else ( NOT NO_SOUND )
@@ -36,13 +36,18 @@ index 65c675c..f75fa86 100644
  if( WIN32 )
  	set ( ZDOOM_LIBS ${ZDOOM_LIBS} crypt32 )
  endif ( WIN32 )
-@@ -1475,6 +1478,27 @@ endif(${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+@@ -1475,6 +1478,32 @@ endif(${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
  
  # [BB] Added GeoIP, huffman & sqlite
  target_link_libraries( zdoom ${ZDOOM_LIBS} gdtoa dumb lzma GeoIP sqlite3 )
 +if( EMSCRIPTEN )
++	target_sources( zdoom PRIVATE "${ZANDRONUM_BROWSER_AUDIO_DIR}/browser_sound.cpp" "${ZANDRONUM_BROWSER_AUDIO_DIR}/decode.cpp" )
++	target_include_directories( zdoom PRIVATE "${DR_LIBS_INCLUDE_DIR}" )
++	target_compile_definitions( zdoom PRIVATE BROWSER_SOUND=1 )
++	target_compile_options( zdoom PRIVATE "SHELL:-sUSE_VORBIS=1" )
 +	target_compile_options( zdoom PRIVATE -fexceptions )
 +	target_link_options( zdoom PRIVATE
++		"SHELL:-sUSE_VORBIS=1"
 +		"SHELL:-fexceptions"
 +		"SHELL:-sASYNCIFY=1"
 +		"SHELL:-sMODULARIZE=1"
@@ -65,7 +70,7 @@ index 65c675c..f75fa86 100644
  	g_doom
  	g_heretic
 diff --git a/src/__autostart.cpp b/src/__autostart.cpp
-index ed9db38..8891552 100644
+index ed9db38ca..8891552e8 100644
 --- a/src/__autostart.cpp
 +++ b/src/__autostart.cpp
 @@ -88,11 +88,11 @@ void *YRegHead = 0;
@@ -86,7 +91,7 @@ index ed9db38..8891552 100644
  #else
  
 diff --git a/src/autosegs.h b/src/autosegs.h
-index f0546c5..6ad5eb4 100644
+index f0546c532..6ad5eb47b 100644
 --- a/src/autosegs.h
 +++ b/src/autosegs.h
 @@ -58,11 +58,30 @@ extern REGINFO MRegTail;
@@ -167,7 +172,7 @@ index f0546c5..6ad5eb4 100644
  
  #endif
 diff --git a/src/cmdlib.cpp b/src/cmdlib.cpp
-index a912e95..82f1d34 100644
+index a912e9552..82f1d342b 100644
 --- a/src/cmdlib.cpp
 +++ b/src/cmdlib.cpp
 @@ -7,7 +7,7 @@
@@ -189,7 +194,7 @@ index a912e95..82f1d34 100644
  //==========================================================================
  //
 diff --git a/src/d_main.cpp b/src/d_main.cpp
-index b5fea27..6cb2a29 100644
+index b5fea27ff..f2bfe360c 100644
 --- a/src/d_main.cpp
 +++ b/src/d_main.cpp
 @@ -36,6 +36,10 @@
@@ -203,7 +208,7 @@ index b5fea27..6cb2a29 100644
  #ifdef HAVE_FPU_CONTROL
  #include <fpu_control.h>
  #endif
-@@ -159,6 +163,63 @@ void DrawHUD();
+@@ -159,6 +163,74 @@ void DrawHUD();
  
  extern player_t *Player;
  
@@ -212,7 +217,18 @@ index b5fea27..6cb2a29 100644
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE int I_BrowserRuntimeState( void )
 +{
++	if ( menuactive != MENU_Off || ConsoleState == c_down || ConsoleState == c_falling )
++		return 0;
++	if ( paused ) return 2;
++	if ( gamestate == GS_INTERMISSION ) return 3;
 +	return gamestate == GS_LEVEL ? 1 : 0;
++}
++
++extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserOpenMenu( void )
++{
++	if ( I_BrowserRuntimeState( ) != 1 ) return;
++	M_StartControlPanel( true );
++	M_SetMenu( NAME_Mainmenu, -1 );
 +}
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE unsigned int I_BrowserFrameCount( void )
@@ -267,7 +283,7 @@ index b5fea27..6cb2a29 100644
  // MACROS ------------------------------------------------------------------
  
  // TYPES -------------------------------------------------------------------
-@@ -1375,6 +1436,10 @@ void D_DoomLoop ()
+@@ -1375,6 +1447,10 @@ void D_DoomLoop ()
  			}
  			D_ErrorCleanup ();
  		}
@@ -278,14 +294,14 @@ index b5fea27..6cb2a29 100644
  	}
  }
  
-@@ -3425,5 +3490,3 @@ void FStartupScreen::NetProgress(int) {}
+@@ -3425,5 +3501,3 @@ void FStartupScreen::NetProgress(int) {}
  void FStartupScreen::NetMessage(char const *,...) {}
  void FStartupScreen::NetDone(void) {}
  bool FStartupScreen::NetLoop(bool (*)(void *),void *) { return false; }
 -
 -
 diff --git a/src/dobject.h b/src/dobject.h
-index db7e5d4..8c4f109 100644
+index db7e5d4b5..8c4f1090a 100644
 --- a/src/dobject.h
 +++ b/src/dobject.h
 @@ -174,7 +174,7 @@ private: \
@@ -298,7 +314,7 @@ index db7e5d4..8c4f109 100644
  
  #define _IMP_PCLASS(cls,ptrs,create) \
 diff --git a/src/g_level.h b/src/g_level.h
-index 5428135..8e2995c 100644
+index 5428135b2..8e2995c19 100644
 --- a/src/g_level.h
 +++ b/src/g_level.h
 @@ -54,7 +54,7 @@ class FScanner;
@@ -311,7 +327,7 @@ index 5428135..8e2995c 100644
  
  struct FIntermissionDescriptor;
 diff --git a/src/g_mapinfo.cpp b/src/g_mapinfo.cpp
-index 27d7692..43438a6 100644
+index 27d76922f..43438a624 100644
 --- a/src/g_mapinfo.cpp
 +++ b/src/g_mapinfo.cpp
 @@ -2080,4 +2080,3 @@ void G_ParseMapInfo (const char *basemapinfo)
@@ -320,7 +336,7 @@ index 27d7692..43438a6 100644
  }
 -
 diff --git a/src/m_specialpaths.cpp b/src/m_specialpaths.cpp
-index c0f3fea..0b7590a 100644
+index c0f3feac9..0b7590a6c 100644
 --- a/src/m_specialpaths.cpp
 +++ b/src/m_specialpaths.cpp
 @@ -471,6 +471,11 @@ FString M_GetSavegamesPath()
@@ -344,7 +360,7 @@ index c0f3fea..0b7590a 100644
  
  //===========================================================================
 diff --git a/src/network.cpp b/src/network.cpp
-index 31f7f0e..195082d 100644
+index 31f7f0ec5..195082dc7 100644
 --- a/src/network.cpp
 +++ b/src/network.cpp
 @@ -72,6 +72,10 @@
@@ -552,7 +568,7 @@ index 31f7f0e..195082d 100644
  	// Decode the huffman-encoded message we received.
  	// [BB] Communication with the auth server is not Huffman-encoded.
 diff --git a/src/network/srp.cpp b/src/network/srp.cpp
-index d2f83f6..a1b64da 100644
+index d2f83f69e..a1b64dafd 100644
 --- a/src/network/srp.cpp
 +++ b/src/network/srp.cpp
 @@ -26,6 +26,58 @@
@@ -621,7 +637,7 @@ index d2f83f6..a1b64da 100644
 +
 +#endif
 diff --git a/src/resourcefiles/file_directory.cpp b/src/resourcefiles/file_directory.cpp
-index 4d20728..8b788e1 100644
+index 4d20728a1..8b788e18b 100644
 --- a/src/resourcefiles/file_directory.cpp
 +++ b/src/resourcefiles/file_directory.cpp
 @@ -41,7 +41,7 @@
@@ -647,8 +663,36 @@ index 4d20728..8b788e1 100644
  	return NULL;
  }
 -
+diff --git a/src/sdl/critsec.h b/src/sdl/critsec.h
+index a3d6210af..736891be2 100644
+--- a/src/sdl/critsec.h
++++ b/src/sdl/critsec.h
+@@ -9,6 +9,16 @@
+ #include "SDL_thread.h"
+ #include "i_system.h"
+ 
++#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
++// SDL's browser audio and MIDI callbacks run serially on the main thread.
++// These short queue operations do not yield; desktop SDL mutexes are absent.
++class FCriticalSection
++{
++public:
++	void Enter() {}
++	void Leave() {}
++};
++#else
+ class FCriticalSection
+ {
+ public:
+@@ -44,5 +54,6 @@ public:
+ private:
+ 	SDL_mutex *CritSec;
+ };
++#endif
+ 
+ #endif
 diff --git a/src/sdl/hardware.cpp b/src/sdl/hardware.cpp
-index 47f5410..57d11c9 100644
+index 47f5410aa..57d11c9de 100644
 --- a/src/sdl/hardware.cpp
 +++ b/src/sdl/hardware.cpp
 @@ -255,7 +255,7 @@ void I_ClosestResolution (int *width, int *height, int bits)
@@ -661,7 +705,7 @@ index 47f5410..57d11c9 100644
  
  static void FPSLimitNotify(sigval val)
 diff --git a/src/sdl/hardware.h b/src/sdl/hardware.h
-index 618941f..8336dfb 100644
+index 618941fe5..8336dfb11 100644
 --- a/src/sdl/hardware.h
 +++ b/src/sdl/hardware.h
 @@ -38,7 +38,12 @@
@@ -679,7 +723,7 @@ index 618941f..8336dfb 100644
  #include <mach/semaphore.h>
  #include <mach/task.h>
 diff --git a/src/sdl/i_input.cpp b/src/sdl/i_input.cpp
-index 5384a50..ee0a2e0 100644
+index 5384a50e9..6b2287c65 100644
 --- a/src/sdl/i_input.cpp
 +++ b/src/sdl/i_input.cpp
 @@ -20,6 +20,23 @@
@@ -706,7 +750,7 @@ index 5384a50..ee0a2e0 100644
  static void I_CheckGUICapture ();
  static void I_CheckNativeMouse ();
  
-@@ -509,3 +526,50 @@ void I_StartFrame ()
+@@ -509,3 +526,53 @@ void I_StartFrame ()
  
  	I_ProcessJoysticks();
  }
@@ -727,6 +771,8 @@ index 5384a50..ee0a2e0 100644
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserControllerKey( int keycode, int pressed )
 +{
++	// Browser hooks can change menus between native tics.
++	I_CheckGUICapture( );
 +	SDL_Event event;
 +	memset( &event, 0, sizeof( event ) );
 +	event.type = pressed ? SDL_KEYDOWN : SDL_KEYUP;
@@ -742,6 +788,7 @@ index 5384a50..ee0a2e0 100644
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void I_BrowserControllerButton( int button, int pressed )
 +{
++	I_CheckGUICapture( );
 +	SDL_Event event;
 +	memset( &event, 0, sizeof( event ) );
 +	event.type = pressed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
@@ -758,7 +805,7 @@ index 5384a50..ee0a2e0 100644
 +}
 +#endif
 diff --git a/src/sdl/i_system.cpp b/src/sdl/i_system.cpp
-index bca8189..25381a3 100644
+index bca8189dd..25381a371 100644
 --- a/src/sdl/i_system.cpp
 +++ b/src/sdl/i_system.cpp
 @@ -281,6 +281,12 @@ void I_HandleAlarm (int sig)
@@ -783,7 +830,7 @@ index bca8189..25381a3 100644
  
  // Returns the fractional amount of a tic passed since the most recent tic
 diff --git a/src/sdl/i_system.h b/src/sdl/i_system.h
-index f0d3999..f3ddff1 100644
+index f0d399930..f3ddff127 100644
 --- a/src/sdl/i_system.h
 +++ b/src/sdl/i_system.h
 @@ -152,6 +152,7 @@ int I_FindAttr (findstate_t *fileinfo);
@@ -802,7 +849,7 @@ index f0d3999..f3ddff1 100644
  
  #endif
 diff --git a/src/sdl/sdlvideo.cpp b/src/sdl/sdlvideo.cpp
-index 8e6d640..7f3409c 100644
+index 8e6d640be..7f3409c52 100644
 --- a/src/sdl/sdlvideo.cpp
 +++ b/src/sdl/sdlvideo.cpp
 @@ -14,6 +14,9 @@
@@ -859,8 +906,109 @@ index 8e6d640..7f3409c 100644
  	if(vid_maxfps && !cl_capfps)
  	{
  		SEMAPHORE_WAIT(FPSLimitSemaphore)
+diff --git a/src/sound/i_sound.cpp b/src/sound/i_sound.cpp
+index 0bc4fc20c..018a0d25d 100644
+--- a/src/sound/i_sound.cpp
++++ b/src/sound/i_sound.cpp
+@@ -71,6 +71,9 @@ extern HINSTANCE g_hInst;
+ #include "c_dispatch.h"
+ #include "i_system.h"
+ #include "i_sound.h"
++#ifdef BROWSER_SOUND
++SoundRenderer *I_CreateBrowserSoundRenderer();
++#endif
+ #include "i_music.h"
+ #include "m_argv.h"
+ #include "m_misc.h"
+@@ -248,7 +251,7 @@ public:
+ 
+ void I_InitSound ()
+ {
+-#ifdef NO_SOUND
++#if defined(NO_SOUND) && !defined(BROWSER_SOUND)
+ 	GSnd = new NullSoundRenderer;
+ 	I_InitMusic ();
+ #else
+@@ -263,7 +266,11 @@ void I_InitSound ()
+ 		return;
+ 	}
+ 
++#ifdef BROWSER_SOUND
++	GSnd = I_CreateBrowserSoundRenderer();
++#else
+ 	GSnd = new FMODSoundRenderer;
++#endif
+ 
+ 	if (!GSnd->IsValid ())
+ 	{
+diff --git a/src/sound/music_midi_base.cpp b/src/sound/music_midi_base.cpp
+index 40f231b4f..3c1f42353 100644
+--- a/src/sound/music_midi_base.cpp
++++ b/src/sound/music_midi_base.cpp
+@@ -19,6 +19,11 @@ static bool		nummididevicesset;
+ 
+ static void AddDefaultMidiDevices(FOptionValues *opt)
+ {
++#ifdef BROWSER_SOUND
++	FOptionValues::Pair &pair = opt->mValues[opt->mValues.Reserve(1)];
++	pair.Text = "OPL Synth Emulation";
++	pair.Value = -3.0;
++#else
+ 	int p;
+ 	FOptionValues::Pair *pair = &opt->mValues[opt->mValues.Reserve(NUM_DEF_DEVICES)];
+ #ifdef HAVE_FLUIDSYNTH
+@@ -36,7 +41,7 @@ static void AddDefaultMidiDevices(FOptionValues *opt)
+ 	pair[p+2].Value = -2.0;
+ 	pair[p+3].Text = "FMOD";
+ 	pair[p+3].Value = -1.0;
+-
++#endif
+ }
+ 
+ static void MIDIDeviceChanged(int newdev)
+@@ -195,14 +200,23 @@ CCMD (snd_listmididevices)
+ 
+ // Everything but Windows uses this code.
+ 
++#ifdef BROWSER_SOUND
++CUSTOM_CVAR(Int, snd_mididevice, -3, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
++#else
+ CUSTOM_CVAR(Int, snd_mididevice, -1, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
++#endif
+ {
++#ifdef BROWSER_SOUND
++	if (self != -3) self = -3;
++	MIDIDeviceChanged(self);
++#else
+ 	if (self < -5)
+ 		self = -5;
+ 	else if (self > -1)
+ 		self = -1;
+ 	else
+ 		MIDIDeviceChanged(self);
++#endif
+ }
+ 
+ void I_BuildMIDIMenuList (FOptionValues *opt)
+@@ -212,6 +226,9 @@ void I_BuildMIDIMenuList (FOptionValues *opt)
+ 
+ CCMD (snd_listmididevices)
+ {
++#ifdef BROWSER_SOUND
++	Printf("-3. Emulated OPL FM Synth (browser)\n");
++#else
+ #ifdef HAVE_FLUIDSYNTH
+ 	Printf("%s-5. FluidSynth\n", -5 == snd_mididevice ? TEXTCOLOR_BOLD : "");
+ #endif
+@@ -219,5 +236,6 @@ CCMD (snd_listmididevices)
+ 	Printf("%s-3. Emulated OPL FM Synth\n", -3 == snd_mididevice ? TEXTCOLOR_BOLD : "");
+ 	Printf("%s-2. TiMidity++\n", -2 == snd_mididevice ? TEXTCOLOR_BOLD : "");
+ 	Printf("%s-1. FMOD\n", -1 == snd_mididevice ? TEXTCOLOR_BOLD : "");
++#endif
+ }
+ #endif
 diff --git a/src/sound/music_midi_timidity.cpp b/src/sound/music_midi_timidity.cpp
-index 6337df4..ba89ec4 100644
+index 6337df474..ba89ec4d5 100644
 --- a/src/sound/music_midi_timidity.cpp
 +++ b/src/sound/music_midi_timidity.cpp
 @@ -8,7 +8,9 @@
@@ -882,8 +1030,24 @@ index 6337df4..ba89ec4 100644
  #else
  	if (WavePipe[0] != -1 && WavePipe[1] == -1 && Stream != NULL)
  	{
+diff --git a/src/sound/music_midistream.cpp b/src/sound/music_midistream.cpp
+index 07a642cf3..8892a19a3 100644
+--- a/src/sound/music_midistream.cpp
++++ b/src/sound/music_midistream.cpp
+@@ -205,6 +205,11 @@ void MIDIStreamer::CheckCaps(int tech)
+ 
+ EMidiDevice MIDIStreamer::SelectMIDIDevice(EMidiDevice device)
+ {
++#ifdef BROWSER_SOUND
++	// Desktop FMOD/TiMidity choices from a saved config cannot run here.
++	// OPL is native, ships with the engine, and needs no external soundfont.
++	return MDEV_OPL;
++#endif
+ 	/* MIDI are played as:
+ 		- OPL: 
+ 			- if explicitly selected by $mididevice 
 diff --git a/src/thingdef/thingdef.h b/src/thingdef/thingdef.h
-index 0d04ce2..bf44cfa 100644
+index 0d04ce212..bf44cfa15 100644
 --- a/src/thingdef/thingdef.h
 +++ b/src/thingdef/thingdef.h
 @@ -266,11 +266,11 @@ enum EDefinitionType
@@ -902,7 +1066,7 @@ index 0d04ce2..bf44cfa 100644
  
  
 diff --git a/src/zzautozend.cpp b/src/zzautozend.cpp
-index 6d7acfd..c71a602 100644
+index 6d7acfd04..c71a6023e 100644
 --- a/src/zzautozend.cpp
 +++ b/src/zzautozend.cpp
 @@ -60,11 +60,11 @@ void *YRegTail = 0;
@@ -923,7 +1087,7 @@ index 6d7acfd..c71a602 100644
  #else
  
 diff --git a/tools/lemon/CMakeLists.txt b/tools/lemon/CMakeLists.txt
-index 8fc99ac..b4669e2 100644
+index 8fc99acf0..b4669e2f7 100644
 --- a/tools/lemon/CMakeLists.txt
 +++ b/tools/lemon/CMakeLists.txt
 @@ -5,8 +5,10 @@ if( NOT CMAKE_CROSSCOMPILING )

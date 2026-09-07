@@ -1,0 +1,222 @@
+diff --git a/wl_main.cpp b/wl_main.cpp
+--- a/wl_main.cpp
++++ b/wl_main.cpp
+@@ -145,11 +145,33 @@
+ ====================
+ */
+ 
++#ifdef WOLF4SDL_WEB
++static const uint32_t WolfWebConfigVersion = 0x57424331u;
++
++static void WolfWebRestoreDirections(uint32_t configVersion)
++{
++    // Migrate only the exact layout once seeded by the browser port. New
++    // configs carry a trailing marker so intentionally customized WASD stays.
++    if (configVersion != WolfWebConfigVersion &&
++        dirscan[di_north] == sc_W && dirscan[di_east] == sc_D &&
++        dirscan[di_south] == sc_S && dirscan[di_west] == sc_A)
++    {
++        dirscan[di_north] = sc_UpArrow;
++        dirscan[di_east] = sc_RightArrow;
++        dirscan[di_south] = sc_DownArrow;
++        dirscan[di_west] = sc_LeftArrow;
++    }
++}
++#endif
++
+ void ReadConfig(void)
+ {
+     SDMode  sd;
+     SMMode  sm;
+     SDSMode sds;
++#ifdef WOLF4SDL_WEB
++    uint32_t configVersion = 0;
++#endif
+ 
+     char configpath[300];
+ 
+@@ -168,9 +190,8 @@
+         //
+         // valid config file
+         //
+-        word tmp;
+-        read(file,&tmp,sizeof(tmp));
+-        if(tmp!=0xfefa)
++        word tmp = 0;
++        if(read(file,&tmp,sizeof(tmp)) != sizeof(tmp) || tmp!=0xfefa)
+         {
+             close(file);
+             goto noconfig;
+@@ -197,6 +218,10 @@
+ 
+         read(file,&viewsize,sizeof(viewsize));
+         read(file,&mouseadjustment,sizeof(mouseadjustment));
++#ifdef WOLF4SDL_WEB
++        // The original config record is unchanged; older readers ignore this.
++        read(file,&configVersion,sizeof(configVersion));
++#endif
+ 
+         close(file);
+ 
+@@ -262,13 +287,7 @@
+     }
+ 
+ #ifdef WOLF4SDL_WEB
+-    // Older browser configs briefly persisted WASD in dirscan, which caused
+-    // A/D to turn as well as strafe. Keep the classic turning bindings stable
+-    // and let the dedicated browser WASD layer own movement.
+-    dirscan[di_north] = sc_UpArrow;
+-    dirscan[di_east] = sc_RightArrow;
+-    dirscan[di_south] = sc_DownArrow;
+-    dirscan[di_west] = sc_LeftArrow;
++    WolfWebRestoreDirections(configVersion);
+ #endif
+ 
+     SD_SetMusicMode (sm);
+@@ -324,6 +343,9 @@
+ 
+         write(file,&viewsize,sizeof(viewsize));
+         write(file,&mouseadjustment,sizeof(mouseadjustment));
++#ifdef WOLF4SDL_WEB
++        write(file,&WolfWebConfigVersion,sizeof(WolfWebConfigVersion));
++#endif
+ 
+         close(file);
+     }
+diff --git a/wl_menu.cpp b/wl_menu.cpp
+--- a/wl_menu.cpp
++++ b/wl_menu.cpp
+@@ -32,6 +32,16 @@
+ extern int lastgamemusicoffset;
+ extern int numEpisodesMissing;
+ 
++static void SaveBrowserConfig(void)
++{
++#ifdef WOLF4SDL_WEB
++    // A tab reload need not pass through native Quit. Write at accepted menu
++    // changes so the framework's tracked FS writes can reach IndexedDB early.
++    extern void WriteConfig(void);
++    WriteConfig();
++#endif
++}
++
+ //
+ // PRIVATE PROTOTYPES
+ //
+@@ -1353,6 +1363,7 @@
+                 }
+                 break;
+         }
++        if (which >= 0) SaveBrowserConfig();
+     }
+     while (which >= 0);
+ 
+@@ -1879,6 +1890,7 @@
+         {
+             case CTL_MOUSEENABLE:
+                 mouseenabled ^= 1;
++                SaveBrowserConfig();
+                 if(IN_IsInputGrabbed())
+                     IN_CenterMouse();
+                 DrawCtlScreen ();
+@@ -1888,6 +1900,7 @@
+ 
+             case CTL_JOYENABLE:
+                 joystickenabled ^= 1;
++                SaveBrowserConfig();
+                 DrawCtlScreen ();
+                 CusItems.curpos = -1;
+                 ShootSnd ();
+@@ -2027,7 +2040,10 @@
+         SD_PlaySound (ESCPRESSEDSND);
+     }
+     else
++    {
++        SaveBrowserConfig();
+         SD_PlaySound (SHOOTSND);
++    }
+ 
+     WaitKeyUp ();
+     MenuFadeOut ();
+@@ -2328,6 +2344,7 @@
+                                 }
+ 
+                             buttonmouse[result - 1] = order[which];
++                            SaveBrowserConfig();
+                             picked = 1;
+                             SD_PlaySound (SHOOTDOORSND);
+                         }
+@@ -2355,6 +2372,7 @@
+                             }
+ 
+                             buttonjoy[result - 1] = order[which];
++                            SaveBrowserConfig();
+                             picked = 1;
+                             SD_PlaySound (SHOOTDOORSND);
+                         }
+@@ -2364,6 +2382,7 @@
+                         if (LastScan && LastScan != sc_Escape)
+                         {
+                             buttonscan[order[which]] = LastScan;
++                            SaveBrowserConfig();
+                             picked = 1;
+                             ShootSnd ();
+                             IN_ClearKeysDown ();
+@@ -2374,6 +2393,7 @@
+                         if (LastScan && LastScan != sc_Escape)
+                         {
+                             dirscan[moveorder[which]] = LastScan;
++                            SaveBrowserConfig();
+                             picked = 1;
+                             ShootSnd ();
+                             IN_ClearKeysDown ();
+@@ -2908,6 +2928,7 @@
+         SD_PlaySound (SHOOTSND);
+         Message (STR_THINK "...");
+         NewViewSize (newview);
++        SaveBrowserConfig();
+     }
+ 
+     ShootSnd ();
+diff --git a/wl_play.cpp b/wl_play.cpp
+--- a/wl_play.cpp
++++ b/wl_play.cpp
+@@ -313,21 +313,31 @@
+ ===================
+ */
+ 
++#ifdef WOLF4SDL_WEB
++static boolean WolfWebHasKeyBinding(int key)
++{
++    for (int i = 0; i < 4; ++i)
++        if (dirscan[i] == key) return true;
++    for (int i = 0; i < NUMBUTTONS; ++i)
++        if (buttonscan[i] == key) return true;
++    return false;
++}
++#endif
++
+ void PollKeyboardMove (void)
+ {
+     int delta = buttonstate[bt_run] ? RUNMOVE * tics : BASEMOVE * tics;
+ 
+ #ifdef WOLF4SDL_WEB
+-    // Modern browser movement while preserving the original arrow keys for
+-    // turning. Do not also bind WASD through dirscan: that made W/S apply
+-    // movement twice and A/D both strafe and turn.
+-    if (IN_GameplayKeyDown(sc_W))
++    // WASD is a fallback, not a second action layered over a custom binding.
++    // Explicit movement/action bindings take precedence and are sampled once.
++    if (!WolfWebHasKeyBinding(sc_W) && IN_GameplayKeyDown(sc_W))
+         controly -= delta;
+-    if (IN_GameplayKeyDown(sc_S))
++    if (!WolfWebHasKeyBinding(sc_S) && IN_GameplayKeyDown(sc_S))
+         controly += delta;
+-    if (IN_GameplayKeyDown(sc_A))
++    if (!WolfWebHasKeyBinding(sc_A) && IN_GameplayKeyDown(sc_A))
+         buttonstate[bt_strafeleft] = true;
+-    if (IN_GameplayKeyDown(sc_D))
++    if (!WolfWebHasKeyBinding(sc_D) && IN_GameplayKeyDown(sc_D))
+         buttonstate[bt_straferight] = true;
+ #endif
+ 

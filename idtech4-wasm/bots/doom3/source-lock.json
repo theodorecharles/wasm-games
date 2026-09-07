@@ -1,0 +1,68 @@
+{
+  "status": "experimental-native-and-browser",
+  "nativeCommit": "31e877e7e4e691ed9f98603da9cd95ac59540cf3",
+  "browser": {
+    "commit": "48f8f65d1216db3ee0b11872bb3b413febadc669",
+    "basePatch": "patches/d3wasm-browser.patch",
+    "basePatchSHA256": "dd0c0514aae64840038f46e0c902a54620c4d2da14586a4e51e206cec42260cf",
+    "hooksPatch": "wasm-hooks.patch",
+    "hooksPatchSHA256": "d84102a6eae0e5c84bdbbc9451cc30e5688efaf8aa2bcba864c4c730789f1af2",
+    "nativePatchExcludes": ["neo/CMakeLists.txt", "neo/game/Game_local.cpp", "neo/game/gamesys/SysCmds.cpp"],
+    "emscripten": "6.0.6",
+    "expansion": {
+      "commit": "31e877e7e4e691ed9f98603da9cd95ac59540cf3",
+      "patch": "patches/d3wasm-roe-game.patch",
+      "patchSHA256": "3751642df85d680fe11cb67565f9abbfece645fda168eebae10bde81641da4cd"
+    }
+  },
+  "reference": {
+    "url": "https://github.com/glKarin/com.n0n3m4.diii4a.git",
+    "commit": "dea1eb9f122cfae042961cfc32a3474e59354589",
+    "files": {
+      "doom3/neo/game/bots/BotAI.cpp": "8f87ee864d2d8b44877b3e4a8f1a8359dfd0f639e1ab24ad87ee6f0270d0ced1",
+      "doom3/neo/game/bots/BotAI.h": "32f5d0d166db08d6d499ce1540c9b5d13629bb27c20e7a9e055b252ac4208e71",
+      "doom3/neo/game/bots/BotAI_cmd.cpp": "1a5dd00073d37d61222357b6e648fa2eaf851997279f471c65f96a68830a3ac7",
+      "doom3/neo/game/bots/BotAI_cfg.cpp": "a4c158c5636c515a5b5408f381c456676bb1fb4f4eb8eebad035a36bb01be0eb",
+      "doom3/neo/game/bots/BotAI_manager.cpp": "63313fd71ea013d54a795b02d38666bc90f6cc2ce691f2232ff3e79c47cbf06b",
+      "doom3/neo/game/bots/BotAASBuild.cpp": "46a5db32778e731ecb6d90279f006155c8bd2ced31b463f426fb0af4dba23743",
+      "doom3/neo/game/bots/BotAASBuild.h": "90ebab40bc20b58a317a9a7724fb1f076aa80c8f01551dee2c047cf2be46f2dc",
+      "doom3/neo/game/bots/BotSabot.cpp": "9335810096578cf5b26bc61af48a3d88b07a06bf499be23b1186eaf50d5fe800",
+      "doom3/neo/game/bots/BotSabot.h": "7d121aa3f7d0e72a5589ee7b9b0ad40cf93ed4ed8101e351728bf5e67776d4f6"
+    }
+  },
+  "assets": {
+    "path": "Q3E/src/main/assets/pak/doom3/d3_sabot_a7.pk4",
+    "bytes": 2399406,
+    "sha256": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+  },
+  "patch": "native-prototype.patch",
+  "patchSHA256": "d733209ac25acff3d5264ce787efda1cbb48b9f4dab101403c98657aeab6434e",
+  "populationPatch": "population.patch",
+  "populationPatchSHA256": "d0795f9068e5876c1f2bb13ff73d0308c999c153397451e17bb6bad90d57c012",
+  "votingPatch": "voting.patch",
+  "votingPatchSHA256": "2535e8321fb48f9e869a5dd29028d4e03a32cf970d8a96091b91887b608a769b",
+  "candidate": {
+    "baseImage": "local/idtech4-wasm:doom3-managed-lifecycle-candidate",
+    "baseImageID": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+    "runtimePatch": "browser-runtime.patch",
+    "runtimePatchSHA256": "cc0ddd76b529824d82a778bf6878ca83832fdf42798397f3ec4cffd69b72ec1c",
+    "runtimeInputs": {
+      "site/game-adapter.js": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+      "server/runtime.cjs": "d450dd4143a8ecd90bf70cdb1af0164d390ba9cfe0ea60dc878c14493ae236ce",
+      "site/d3-worker.js": "89490ca8a416aff4d2f3d3830693e044153db4bee420ef03beadb2791ca0a308"
+    },
+    "runtimeOutputs": {
+      "site/game-adapter.js": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+      "server/runtime.cjs": "5f7b2829def52cf320b8e73ab280451fd86bd1b30d1942e3d2e7576088ebf5ac",
+      "site/d3-worker.js": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715"
+    },
+    "artifacts": {
+      ".work/d3wasm-sabot/build-wasm/d3wasm.js": {"target": "site/dhewm3-base.js", "sha256": "eb453a3acd0f641f2f7a9099a169212df011fb23037d710ca9dfc937e513717e"},
+      ".work/d3wasm-sabot/build-wasm/d3wasm.wasm": {"target": "site/dhewm3-base.wasm", "sha256": "8089bfc68be9f50e26685a2b1cb80650ddb3be858d10174ae6dc46136a17d47a"},
+      ".work/d3wasm/build-wasm-roe/d3wasm.js": {"target": "site/dhewm3-roe.js", "sha256": "67df33948b89e95496767642eb279bb44a04cdb94301738d6a67b80463bf70b2"},
+      ".work/d3wasm/build-wasm-roe/d3wasm.wasm": {"target": "site/dhewm3-roe.wasm", "sha256": "fbf2936fa64bc0dbd8e6d1ca8ea883386d3bd477aa7ae32bb136c68109a20979"},
+      ".work/d3-managed-sabot/dhewm3ded": {"target": "native/dhewm3ded", "sha256": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c"},
+      ".work/d3-managed-sabot/base.so": {"target": "native/base.so", "sha256": "e7a8fcfbd78636defc2073a311e4ce8f6e0d4e33b7d96e01a2be5eab6071630c"}
+    }
+  }
+}

@@ -38,8 +38,10 @@ assert.equal(lock.quake3.downstreamCommitterDate, '2026-08-14T20:15:00-04:00');
 assert.equal(lock.quake3.downstreamCommitterName, 'Ted Charles');
 assert.equal(lock.quake3.downstreamCommitterEmail, 'me@tedcharles.net');
 assert.equal(lock.rtcw.commit, '438e7d413b5f7277187c35b032eb0ef9093ae778');
-assert.equal(lock.rtcw.downstreamCommit, 'e9782a8dcef5cf6b37f60713f7add55025d72a4e');
-assert.equal(lock.rtcw.downstreamTree, '256dd10dde2e7d7418bfa0d4c8c0caa570131577');
+assert.equal(lock.rtcw.downstreamCommit, '18c6ad4064e2fe83394ecfc488b75369e52953ed');
+assert.equal(lock.rtcw.downstreamTree, '6bad905a59f18b0d911ebdd9db3bdaed0cc27330');
+assert.equal(lock.rtcwGl4es.repository, 'https://github.com/ptitSeb/gl4es.git');
+assert.equal(lock.rtcwGl4es.commit, '535c4b21a18a38fe96b7dbe97add39ae04cdb0ac');
 assert.equal(lock.rtcw.downstreamCommitterName, 'Ted Charles');
 assert.equal(lock.rtcw.downstreamCommitterEmail, 'me@tedcharles.net');
 assert.deepEqual(lock.wolfet, {
@@ -125,7 +127,10 @@ const patchHashes = {
   'patches/rtcw/0015-Fix-rshook-colors-and-aim-snap.patch': 'aed8227f1e61d7f8cdcc907824b2670af3efe53313d4940c85911c935bc8d1c3',
   'patches/rtcw/0016-Draw-map-albedo-before-lightmaps-on-WebGL.patch': '62ee4ddae8e19a7ae4d1235ee9b5edacb8467d9dc7496711e54c8f19e3c7c072',
   'patches/rtcw/0017-Multiply-map-albedo-and-lightmaps-in-one-WebGL-shader.patch': '12e5ee24817105801d901cbd1129dcc5444b13c43e85e66f2cf86c4346ccde70',
-  'patches/rtcw/0018-Bind-WebGL-lightmaps-on-TMU1-and-use-BSP-lightmap-UVs.patch': '3edb35ac2a2d0046ed885c32ba1b1cb262864673e6b6062218d6f95cb53b4e6a'
+  'patches/rtcw/0018-Bind-WebGL-lightmaps-on-TMU1-and-use-BSP-lightmap-UVs.patch': '3edb35ac2a2d0046ed885c32ba1b1cb262864673e6b6062218d6f95cb53b4e6a',
+  'patches/rtcw/0019-Guard-browser-packet-drain-before-server-start.patch': 'd48af1ecad0741854a9e9a05ee926eb5d9fdc78590edd4212e6129a01048eb38',
+  'patches/rtcw/0020-Use-GL4ES-for-RTCW-SP-browser-rendering.patch': 'd3d7b91602d90355a6294b0ef4ea10cba336a5ede05f316afd074537877845e6',
+  'patches/rtcw/0021-Isolate-explicit-lightmap-client-array-state.patch': '3b608b48b95c9bbfa3cf674379b1036a59cfffb2a70edbbf542e65bb6b358dbe'
 };
 for (const [relative, expected] of Object.entries(patchHashes)) {
   const actual = crypto.createHash('sha256').update(fs.readFileSync(path.join(root, relative))).digest('hex');
@@ -281,7 +286,18 @@ assert.equal(rtcwGame.pointerLock, true);
 assert.equal(rtcwGame.pointerWidth, 640);
 assert.equal(rtcwGame.pointerHeight, 480);
 assert.equal(rtcwGame.displayMode, '4:3');
-assert.equal(rtcwGame.pointerFit, 'contain');
+// The native UI stretches its 640x480 coordinates in dynamic/paused views.
+// Contain maps a visible right-edge briefing button past x=640 on widescreens.
+assert.equal(rtcwGame.pointerFit, 'fill');
+const frameworkRuntime = require(path.join(framework.stdout.trim(), 'dist/wasm-game-framework.js'));
+for (const [width, height] of [[640, 480], [1925, 1179], [1179, 1925]]) {
+  const point = frameworkRuntime.mapPointerPoint(
+    { left: 0, top: 0, width, height }, width * 620 / 640, height * 469 / 480,
+    rtcwGame.pointerWidth, rtcwGame.pointerHeight, { fit: rtcwGame.pointerFit }
+  );
+  assert.ok(Math.abs(point.x - 620) < 0.001, 'briefing Continue x follows the drawn button');
+  assert.ok(Math.abs(point.y - 469) < 0.001, 'briefing Continue y follows the drawn button');
+}
 assert.equal(rtcwGame.graphics, true);
 assert.equal(rtcwGame.controller.mode, 'disabled');
 assert.equal(rtcwGame.variants['rtcw-sp'].persistence.root, '/persistent/rtcw-sp');
@@ -319,6 +335,8 @@ assert.match(rtcwMode, /RTCW_MODE/);
 assert.match(rtcwMode, /arcade/);
 assert.match(rtcwMode, /vanilla/);
 assert.match(read('games/rtcw/docker/Dockerfile.mp'), /RTCW_MODE=arcade/);
+assert.match(read('games/rtcw/docker/Dockerfile.mp'), /io\.wasm-game-framework\.version="\$\{FRAMEWORK_VERSION\}"/);
+assert.match(read('games/rtcw/docker/Dockerfile.mp'), /WASM_GAME_FRAMEWORK_VERSION=\$\{FRAMEWORK_VERSION\}/);
 assert.match(read('games/rtcw/server/supervisor.js'), /g_arcade/);
 assert.match(read('games/rtcw/server/supervisor.js'), /require\('\.\/mode'\)/);
 assert.match(rtcwAdapter, /\/ws/);
@@ -383,8 +401,21 @@ assert.match(read('patches/rtcw/0010-Fix-WebGL-black-world-software-mips-and-two
 assert.match(read('patches/rtcw/0011-Brighten-Emscripten-lightmaps-and-software-gamma.patch'), /r_gamma/);
 assert.match(read('patches/rtcw/0012-Fix-WebGL-lightmapped-world-sequential-TMU-and-RGBA-mips.patch'), /disabling multitexture on WebGL/);
 assert.match(read('patches/rtcw/0012-Fix-WebGL-lightmapped-world-sequential-TMU-and-RGBA-mips.patch'), /internalFormat = GL_RGBA/);
-assert.match(read('games/rtcw/site/game-adapter.js'), /r_ext_multitexture', '0'/);
-assert.match(read('games/rtcw/site/game-adapter.js'), /r_ignoreFastPath', '1'/);
+assert.match(read('games/rtcw/site/game-adapter.js'), /r_ext_multitexture', context.variant === 'rtcw-sp' \? '1' : '0'/);
+assert.match(read('games/rtcw/site/game-adapter.js'), /r_ignoreFastPath', context.variant === 'rtcw-sp' \? '0' : '1'/);
+const gl4esPatch = read('patches/rtcw/0020-Use-GL4ES-for-RTCW-SP-browser-rendering.patch');
+const gl4esAdditions = gl4esPatch.split('\n').filter(line => line.startsWith('+') && !line.startsWith('+++')).join('\n');
+assert.match(gl4esAdditions, /-sFULL_ES2=1/);
+assert.match(gl4esAdditions, /gl4es_GetProcAddress/);
+assert.match(gl4esAdditions, /initialize_gl4es/);
+assert.match(gl4esAdditions, /USE_OPENGLES=0 USE_BLOOM=0/);
+assert.match(gl4esAdditions, /GLimp_GL4ESExtensionSupported/);
+assert.doesNotMatch(gl4esAdditions, /LEGACY_GL_EMULATION|GLimp_Emscripten_ArrayElement/);
+assert.match(buildRTCW, /build-rtcw-gl4es\.sh/);
+assert.match(buildRTCW, /licenses\/GL4ES\.txt/);
+assert.match(read('scripts/build-rtcw-gl4es.sh'), /rtcwGl4es\.commit/);
+assert.match(read('scripts/build-rtcw-gl4es.sh'), /status --porcelain/);
+assert.match(read('games/rtcw/site/THIRD-PARTY-NOTICES.txt'), new RegExp(lock.rtcwGl4es.commit));
 assert.match(read('patches/rtcw/0013-Restore-world-albedo-and-wire-rshook-cgame-QVM.patch'), /CollapseMultitexture/);
 assert.match(read('patches/rtcw/0013-Restore-world-albedo-and-wire-rshook-cgame-QVM.patch'), /PERS_TEAM/);
 assert.match(read('patches/rtcw/0014-Draw-lightmaps-before-albedo-on-WebGL.patch'), /Lightmap first/);

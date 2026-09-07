@@ -1,5 +1,5 @@
 diff --git a/neo/CMakeLists.txt b/neo/CMakeLists.txt
-index 91395749494572706c1754e6041ce9bed4830dcd..60dd179940f79b445c82eec237bd4f868e551800 100644
+index 91395749494572706c1754e6041ce9bed4830dcd..cde4508174d4958a23d6efb4ac8f457817b6e4e1 100644
 --- a/neo/CMakeLists.txt
 +++ b/neo/CMakeLists.txt
 @@ -26,6 +26,7 @@ include(PackagePk4)
@@ -151,7 +151,7 @@ index 91395749494572706c1754e6041ce9bed4830dcd..60dd179940f79b445c82eec237bd4f86
 -		sys/glimp.cpp
 -	)
 +	if(PREYWASM_CLIENT)
-+		set(src_sys_core sys/glimp_emscripten.cpp)
++		set(src_sys_core sys/glimp_emscripten.cpp sys/openal_emscripten.cpp)
 +	else()
 +		set(src_sys_core sys/glimp.cpp)
 +	endif()
@@ -208,7 +208,7 @@ index 5c5fa12c1c9c5c5ce47c82d48f6441e43e60df72..74335b40f414ad79fd25bd28301e598f
  }
 -
 diff --git a/neo/framework/Common.cpp b/neo/framework/Common.cpp
-index a1d75164773ebcb223440f5cfc1be33d52a0cc88..70675510a70e77ac2ad5f5eb8e8587ea02d425d1 100644
+index a1d75164773ebcb223440f5cfc1be33d52a0cc88..f1e02aa1d04b0299f3cc0970a70e34bad25cdd52 100644
 --- a/neo/framework/Common.cpp
 +++ b/neo/framework/Common.cpp
 @@ -38,6 +38,10 @@ If you have questions concerning this license or the applicable additional terms
@@ -265,18 +265,47 @@ index a1d75164773ebcb223440f5cfc1be33d52a0cc88..70675510a70e77ac2ad5f5eb8e8587ea
  	// compilers
  	cmdSystem->AddCommand( "dmap", Dmap_f, CMD_FL_TOOL, "compiles a map", idCmdSystem::ArgCompletion_MapName );
  	cmdSystem->AddCommand( "renderbump", RenderBump_f, CMD_FL_TOOL, "renders a bump map", idCmdSystem::ArgCompletion_ModelName );
-@@ -2486,10 +2497,25 @@ void idCommonLocal::Frame( void ) {
+@@ -2452,6 +2463,9 @@ idCommonLocal::Frame
+ void idCommonLocal::Frame( void ) {
+ 	try {
+ 
++#ifdef PREYWASM_CLIENT
++		if ( preyWasmTraceMapFrames > 0 ) Printf( "[prey-wasm] common: events begin\n" );
++#endif
+ 		// pump all the events
+ 		Sys_GenerateEvents();
+ 
+@@ -2473,10 +2487,18 @@ void idCommonLocal::Frame( void ) {
+ 
+ 		eventLoop->RunEventLoop();
+ 
++#ifdef PREYWASM_CLIENT
++		if ( preyWasmTraceMapFrames > 0 ) Printf( "[prey-wasm] common: events complete, network begin\n" );
++#endif
++
+ 		com_frameTime = com_ticNumber * USERCMD_MSEC;
+ 
+ 		idAsyncNetwork::RunFrame();
+ 
++#ifdef PREYWASM_CLIENT
++		if ( preyWasmTraceMapFrames > 0 ) Printf( "[prey-wasm] common: network complete\n" );
++#endif
++
+ 		if ( idAsyncNetwork::IsActive() ) {
+ 			if ( idAsyncNetwork::serverDedicated.GetInteger() != 1 ) {
+ 				// DG: prepare new ImGui frame - I guess this is a good place, as all new events should be available?
+@@ -2486,10 +2508,25 @@ void idCommonLocal::Frame( void ) {
  				session->UpdateScreen( false );
  			}
  		} else {
 +#ifdef PREYWASM_CLIENT
-+			if ( com_frameNumber < 4 ) {
++			if ( com_frameNumber < 4 || preyWasmTraceMapFrames > 0 ) {
 +				Printf( "[prey-wasm] common frame %d: session begin\n", com_frameNumber );
 +			}
 +#endif
  			session->Frame();
 +#ifdef PREYWASM_CLIENT
-+			if ( com_frameNumber < 4 ) {
++			if ( com_frameNumber < 4 || preyWasmTraceMapFrames > 0 ) {
 +				Printf( "[prey-wasm] common frame %d: session complete, screen begin\n", com_frameNumber );
 +			}
 +#endif
@@ -284,14 +313,14 @@ index a1d75164773ebcb223440f5cfc1be33d52a0cc88..70675510a70e77ac2ad5f5eb8e8587ea
  			// normal, in-sequence screen update
  			session->UpdateScreen( false );
 +#ifdef PREYWASM_CLIENT
-+			if ( com_frameNumber < 4 ) {
++			if ( com_frameNumber < 4 || preyWasmTraceMapFrames > 0 ) {
 +				Printf( "[prey-wasm] common frame %d: screen complete\n", com_frameNumber );
 +			}
 +#endif
  		}
  
  		// report timing information
-@@ -2908,6 +2934,13 @@ void idCommonLocal::Init( int argc, char **argv ) {
+@@ -2908,6 +2945,13 @@ void idCommonLocal::Init( int argc, char **argv ) {
  	// we want to use the SDL event queue for dedicated servers. That
  	// requires video to be initialized, so we just use the dummy
  	// driver for headless boxen
@@ -305,7 +334,7 @@ index a1d75164773ebcb223440f5cfc1be33d52a0cc88..70675510a70e77ac2ad5f5eb8e8587ea
  #if SDL_VERSION_ATLEAST(3, 0, 0)
  	SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "dummy");
  #elif SDL_VERSION_ATLEAST(2, 0, 0)
-@@ -2933,6 +2966,7 @@ void idCommonLocal::Init( int argc, char **argv ) {
+@@ -2933,6 +2977,7 @@ void idCommonLocal::Init( int argc, char **argv ) {
  			Sys_Error("Error while initializing SDL: %s", SDL_GetError());
  		}
  	}
@@ -313,7 +342,7 @@ index a1d75164773ebcb223440f5cfc1be33d52a0cc88..70675510a70e77ac2ad5f5eb8e8587ea
  
  	Sys_InitThreads();
  
-@@ -3058,10 +3092,14 @@ void idCommonLocal::Init( int argc, char **argv ) {
+@@ -3058,10 +3103,14 @@ void idCommonLocal::Init( int argc, char **argv ) {
  		Sys_Error( "Error during initialization" );
  	}
  
@@ -329,31 +358,29 @@ index a1d75164773ebcb223440f5cfc1be33d52a0cc88..70675510a70e77ac2ad5f5eb8e8587ea
  
  
 diff --git a/neo/framework/FileSystem.cpp b/neo/framework/FileSystem.cpp
-index ec0865c95580c6e2baa79366b4f72da36c6e14e4..8dc52bb535921e9a6718ca1b74e9a859b3ee7301 100644
+index ec0865c95580c6e2baa79366b4f72da36c6e14e4..b55e285265b79da051577f474fc93bae2517b35d 100644
 --- a/neo/framework/FileSystem.cpp
 +++ b/neo/framework/FileSystem.cpp
 @@ -375,6 +375,7 @@ public:
  	virtual int				ValidateDownloadPakForChecksum( int checksum, char path[ MAX_STRING_CHARS ], bool isBinary );
  	virtual idFile *		MakeTemporaryFile( void );
  	virtual int				AddZipFile( const char *path );
-+	virtual bool			MountDeferredPaks( void );
++	virtual bool			MountDeferredPaks( bool &newlyMounted );
  	virtual findFile_t		FindFile( const char *path, bool scheduleAddons );
  	virtual int				GetNumMaps();
  	virtual const idDict *	GetMapDecl( int i );
-@@ -2171,6 +2172,21 @@ void idFileSystemLocal::AddGameDirectory( const char *path, const char *dir ) {
+@@ -2171,6 +2172,19 @@ void idFileSystemLocal::AddGameDirectory( const char *path, const char *dir ) {
  	pakfiles.Sort();
  
  	for ( i = 0; i < pakfiles.Num(); i++ ) {
 +#ifdef PREYWASM_CLIENT
-+		// pak001-pak004 contain the large gameplay/map payload.  Keep the blobs
-+		// available in WORKERFS, but don't parse their central directories until
-+		// a map is actually requested.
++		// Only defer map/model payloads. pak003 has sound declarations and menu
++		// audio; pak004 has console/font textures needed before the first map.
++		// The worker's bounded read cache makes their early indexing inexpensive.
 +		const bool ownerBaseDirectory = !idStr::Icmp( path, fs_basepath.GetString() ) &&
 +			!idStr::Icmp( dir, BASE_GAMEDIR );
 +		const bool deferredGameplayPak = !idStr::Icmp( pakfiles[i], "pak001.pk4" ) ||
-+			!idStr::Icmp( pakfiles[i], "pak002.pk4" ) ||
-+			!idStr::Icmp( pakfiles[i], "pak003.pk4" ) ||
-+			!idStr::Icmp( pakfiles[i], "pak004.pk4" );
++			!idStr::Icmp( pakfiles[i], "pak002.pk4" );
 +		if ( ownerBaseDirectory && deferredGameplayPak ) {
 +			common->Printf( "Deferred pk4 %s until first map load\n", pakfiles[i].c_str() );
 +			continue;
@@ -362,7 +389,7 @@ index ec0865c95580c6e2baa79366b4f72da36c6e14e4..8dc52bb535921e9a6718ca1b74e9a859
  		pakfile = BuildOSPath( path, dir, pakfiles[i] );
  		pak = LoadZipFile( pakfile );
  		if ( !pak ) {
-@@ -2186,6 +2202,75 @@ void idFileSystemLocal::AddGameDirectory( const char *path, const char *dir ) {
+@@ -2186,6 +2200,77 @@ void idFileSystemLocal::AddGameDirectory( const char *path, const char *dir ) {
  	}
  }
  
@@ -374,7 +401,8 @@ index ec0865c95580c6e2baa79366b4f72da36c6e14e4..8dc52bb535921e9a6718ca1b74e9a859
 +files are already local WORKERFS blobs; this only parses their zip directories.
 +===============
 +*/
-+bool idFileSystemLocal::MountDeferredPaks( void ) {
++bool idFileSystemLocal::MountDeferredPaks( bool &newlyMounted ) {
++	newlyMounted = false;
 +#ifndef PREYWASM_CLIENT
 +	return true;
 +#else
@@ -397,10 +425,10 @@ index ec0865c95580c6e2baa79366b4f72da36c6e14e4..8dc52bb535921e9a6718ca1b74e9a859
 +	}
 +
 +	const char *deferredNames[] = {
-+		"pak001.pk4", "pak002.pk4", "pak003.pk4", "pak004.pk4"
++		"pak001.pk4", "pak002.pk4"
 +	};
 +	common->Printf( "Mounting deferred Prey gameplay archives...\n" );
-+	for ( int i = 0; i < 4; ++i ) {
++	for ( int i = 0; i < sizeof( deferredNames ) / sizeof( deferredNames[0] ); ++i ) {
 +		idStr fullPath = BuildOSPath( fs_basepath.GetString(), BASE_GAMEDIR, deferredNames[i] );
 +		pack_t *pak = LoadZipFile( fullPath );
 +		if ( !pak ) {
@@ -430,6 +458,7 @@ index ec0865c95580c6e2baa79366b4f72da36c6e14e4..8dc52bb535921e9a6718ca1b74e9a859
 +	}
 +
 +	mounted = true;
++	newlyMounted = true;
 +	common->Printf( "Deferred Prey gameplay archives are ready\n" );
 +	return true;
 +#endif
@@ -471,7 +500,7 @@ index ec0865c95580c6e2baa79366b4f72da36c6e14e4..8dc52bb535921e9a6718ca1b74e9a859
  		if ( dynamic_cast<idFile_Permanent *>(bgl->f) ) {
  			// add the bgl to the background download list
 diff --git a/neo/framework/FileSystem.h b/neo/framework/FileSystem.h
-index 1781b2590cd004273ac2f6e6fed8501924391167..a2c63de95c6db4e814853e2003985f11451ec9bc 100644
+index 1781b2590cd004273ac2f6e6fed8501924391167..780fbfcb8fb701166ef0ee03ae081644a53565b9 100644
 --- a/neo/framework/FileSystem.h
 +++ b/neo/framework/FileSystem.h
 @@ -287,6 +287,10 @@ public:
@@ -480,13 +509,13 @@ index 1781b2590cd004273ac2f6e6fed8501924391167..a2c63de95c6db4e814853e2003985f11
  
 +							// Browser builds can defer the large retail gameplay archives until
 +							// the first map transition, keeping menu startup lightweight.
-+	virtual bool			MountDeferredPaks( void ) = 0;
++	virtual bool			MountDeferredPaks( bool &newlyMounted ) = 0;
 +
  							// look for a file in the loaded paks or the addon paks
  							// if the file is found in addons, FS's internal structures are ready for a reloadEngine
  	virtual findFile_t		FindFile( const char *path, bool scheduleAddons = false ) = 0;
 diff --git a/neo/framework/Session.cpp b/neo/framework/Session.cpp
-index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c34b9396d 100644
+index c707a019ff5674728cc365332142e6f71590dff0..353b130096b8cea8ada215bce9ae718896349614 100644
 --- a/neo/framework/Session.cpp
 +++ b/neo/framework/Session.cpp
 @@ -32,6 +32,10 @@ If you have questions concerning this license or the applicable additional terms
@@ -533,12 +562,13 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  	if ( com_ticNumber == 0 ) {
  		return;
  	}
-@@ -1443,6 +1466,12 @@ Exits with mapSpawned = true
+@@ -1443,6 +1466,13 @@ Exits with mapSpawned = true
  ===============
  */
  void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
 +#ifdef PREYWASM_CLIENT
-+	if ( !fileSystem->MountDeferredPaks() ) {
++	bool newlyMounted = false;
++	if ( !fileSystem->MountDeferredPaks( newlyMounted ) ) {
 +		common->Warning( "Prey gameplay archives could not be mounted" );
 +		return;
 +	}
@@ -546,7 +576,21 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  	int		i;
  	bool	reloadingSameMap;
  
-@@ -1622,6 +1651,7 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
+@@ -1500,6 +1530,13 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
+ 		renderSystem->BeginLevelLoad();
+ 		soundSystem->BeginLevelLoad();
+ 	}
++#ifdef PREYWASM_CLIENT
++	if ( newlyMounted ) {
++		// Refresh after unloading the old map and invalidating cached defaults,
++		// but before the loading GUI or new map can reference gameplay media.
++		declManager->ReloadFolders();
++	}
++#endif
+ 
+ #ifdef MUSICAL_LEVELLOADS
+ 	if ( g_levelloadmusic.GetBool() ) {
+@@ -1622,6 +1659,7 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
  
  	common->PrintWarnings();
  
@@ -554,7 +598,7 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  	if ( guiLoading && bytesNeededForMapLoad ) {
  		float pct = guiLoading->State().GetFloat( "map_loading" );
  		if ( pct < 0.0f ) {
-@@ -1638,6 +1668,12 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
+@@ -1638,6 +1676,12 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
  
  	// capture the current screen and start a wipe
  	StartWipe( "wipe2Material" );
@@ -567,11 +611,12 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  
  	usercmdGen->Clear();
  
-@@ -1671,7 +1707,15 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
+@@ -1671,7 +1715,16 @@ void idSessionLocal::ExecuteMapChange( bool noFadeWipe ) {
  
  	// we are valid for game draws now
  	mapSpawned = true;
 +#ifdef PREYWASM_CLIENT
++	preyWasmTraceMapFrames = 4;
 +	// SDL's browser queue may continuously expose its poll sentinel, so the
 +	// desktop drain-until-empty loop can prevent ExecuteMapChange from ever
 +	// returning. UsercmdGen::Clear above already releases all native actions;
@@ -583,7 +628,7 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  }
  
  /*
-@@ -1902,6 +1946,9 @@ bool idSessionLocal::SaveGame( const char *saveName, bool autosave, const char*
+@@ -1902,6 +1955,9 @@ bool idSessionLocal::SaveGame( const char *saveName, bool autosave, const char*
  
  	syncNextGameFrame = true;
  
@@ -593,7 +638,31 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  
  	return true;
  #endif
-@@ -2596,13 +2643,20 @@ void idSessionLocal::Frame() {
+@@ -2525,7 +2581,13 @@ void idSessionLocal::UpdateScreen( bool outOfSequence ) {
+ 	renderSystem->BeginFrame( renderSystem->GetScreenWidth(), renderSystem->GetScreenHeight() );
+ 
+ 	// draw everything
++#ifdef PREYWASM_CLIENT
++	if ( preyWasmTraceMapFrames > 0 ) common->Printf( "[prey-wasm] screen: draw begin\n" );
++#endif
+ 	Draw();
++#ifdef PREYWASM_CLIENT
++	if ( preyWasmTraceMapFrames > 0 ) common->Printf( "[prey-wasm] screen: draw complete, backend begin\n" );
++#endif
+ 
+ 	if ( com_speeds.GetBool() ) {
+ 		renderSystem->EndFrame( &time_frontend, &time_backend );
+@@ -2534,6 +2596,9 @@ void idSessionLocal::UpdateScreen( bool outOfSequence ) {
+ 	}
+ 
+ 	insideUpdateScreen = false;
++#ifdef PREYWASM_CLIENT
++	if ( preyWasmTraceMapFrames > 0 ) common->Printf( "[prey-wasm] screen: backend complete\n" );
++#endif
+ }
+ 
+ /*
+@@ -2596,13 +2661,20 @@ void idSessionLocal::Frame() {
  		minTic = latchedTicNumber;
  	}
  
@@ -619,18 +688,528 @@ index c707a019ff5674728cc365332142e6f71590dff0..8794829ec00af174fcb12f0a8ce7fc7c
  
  	if ( authEmitTimeout ) {
  		// waiting for a game auth
-@@ -3472,4 +3526,4 @@ void idSessionLocal::HideSubtitle( void ) const {
+@@ -3472,4 +3544,4 @@ void idSessionLocal::HideSubtitle( void ) const {
  	guiSubtitles->SetStateFloat( "subtitleAlpha3", 0 );
  	/*guiSubtitles->SetStateFloat( "subtitleAlpha4", 0 );
  	guiSubtitles->SetStateFloat( "subtitleAlpha5", 0 );*/
 -}
 \ No newline at end of file
 +}
+diff --git a/neo/sys/openal_emscripten.cpp b/neo/sys/openal_emscripten.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..c3e2abed98d1abe110798c7060593b947335fbb6
+--- /dev/null
++++ b/neo/sys/openal_emscripten.cpp
+@@ -0,0 +1,492 @@
++/*
++===========================================================================
++
++Browser OpenAL bridge for the Prey WebAssembly client.
++
++The engine runs in a dedicated worker so rendering and synchronous owner-data
++access cannot stall the page.  WebAudio's AudioContext is window-only, which
++means Emscripten's regular OpenAL implementation cannot open a device there.
++This file keeps the small OpenAL state machine Prey needs in the worker and
++forwards buffer/source commands to a WebAudio renderer owned by the page.
++
++===========================================================================
++*/
++
++#include <stddef.h>
++#define AL_ALEXT_PROTOTYPES
++#include <AL/alext.h>
++
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++
++// Emscripten's compact OpenAL headers declare plain C symbols and intentionally
++// omit the desktop OpenAL calling-convention decoration macros.
++#ifndef AL_API
++#define AL_API
++#endif
++#ifndef AL_APIENTRY
++#define AL_APIENTRY
++#endif
++#ifndef ALC_API
++#define ALC_API
++#endif
++#ifndef ALC_APIENTRY
++#define ALC_APIENTRY
++#endif
++
++#ifndef AL_API_NOEXCEPT
++#define AL_API_NOEXCEPT
++#endif
++#ifndef ALC_API_NOEXCEPT
++#define ALC_API_NOEXCEPT
++#endif
++
++namespace {
++
++static const int PREYWASM_MAX_AL_SOURCES = 512;
++static const int PREYWASM_MAX_AL_BUFFERS = 16384;
++static const int PREYWASM_MAX_AL_QUEUE = 32;
++
++struct preyWasmALBuffer_t {
++	bool alive;
++	int durationMsec;
++};
++
++struct preyWasmALSource_t {
++	bool alive;
++	bool playing;
++	bool paused;
++	bool stopped;
++	bool looping;
++	float gain;
++	float pitch;
++	ALuint buffer;
++	ALuint queue[PREYWASM_MAX_AL_QUEUE];
++	int queueCount;
++	double startedMsec;
++};
++
++static preyWasmALBuffer_t preyWasmBuffers[PREYWASM_MAX_AL_BUFFERS] = {};
++static preyWasmALSource_t preyWasmSources[PREYWASM_MAX_AL_SOURCES] = {};
++static ALenum preyWasmLastError = AL_NO_ERROR;
++static int preyWasmDeviceToken = 1;
++static int preyWasmContextToken = 1;
++static ALCcontext *preyWasmCurrentContext = NULL;
++static ALfloat preyWasmListenerGain = 1.0f;
++
++EM_JS( void, PREYWASM_AudioInit, (), {
++	postMessage( { type: 'audio-init' } );
++} );
++
++EM_JS( void, PREYWASM_AudioBufferData, ( int id, int format, const void *data, int size, int frequency ), {
++	const bytes = HEAPU8.slice( data, data + size );
++	postMessage( { type: 'audio-buffer', id, format, frequency, data: bytes.buffer }, [ bytes.buffer ] );
++} );
++
++EM_JS( void, PREYWASM_AudioDeleteBuffer, ( int id ), {
++	postMessage( { type: 'audio-delete-buffer', id } );
++} );
++
++EM_JS( void, PREYWASM_AudioCreateSource, ( int id ), {
++	postMessage( { type: 'audio-create-source', id } );
++} );
++
++EM_JS( void, PREYWASM_AudioDeleteSource, ( int id ), {
++	postMessage( { type: 'audio-delete-source', id } );
++} );
++
++EM_JS( void, PREYWASM_AudioSourceInt, ( int id, int param, int value ), {
++	postMessage( { type: 'audio-source-int', id, param, value } );
++} );
++
++EM_JS( void, PREYWASM_AudioSourceFloat, ( int id, int param, float value ), {
++	postMessage( { type: 'audio-source-float', id, param, value } );
++} );
++
++EM_JS( void, PREYWASM_AudioSourcePosition, ( int id, float x, float y, float z ), {
++	postMessage( { type: 'audio-source-position', id, x, y, z } );
++} );
++
++EM_JS( void, PREYWASM_AudioSourceQueue, ( int id, int count, const ALuint *buffers ), {
++	const values = Array.from( HEAPU32.subarray( buffers >> 2, ( buffers >> 2 ) + count ) );
++	postMessage( { type: 'audio-source-queue', id, buffers: values } );
++} );
++
++EM_JS( void, PREYWASM_AudioSourceUnqueue, ( int id, int count ), {
++	postMessage( { type: 'audio-source-unqueue', id, count } );
++} );
++
++EM_JS( void, PREYWASM_AudioSourceAction, ( int id, int action ), {
++	postMessage( { type: 'audio-source-action', id, action } );
++} );
++
++EM_JS( void, PREYWASM_AudioListenerFloat, ( int param, float value ), {
++	postMessage( { type: 'audio-listener-float', param, value } );
++} );
++
++EM_JS( void, PREYWASM_AudioListenerVector, ( int param, const ALfloat *values, int count ), {
++	postMessage( {
++		type: 'audio-listener-vector', param,
++		values: Array.from( HEAPF32.subarray( values >> 2, ( values >> 2 ) + count ) )
++	} );
++} );
++
++static preyWasmALSource_t *PREYWASM_Source( ALuint id ) {
++	if ( id == 0 || id >= PREYWASM_MAX_AL_SOURCES || !preyWasmSources[id].alive ) {
++		return NULL;
++	}
++	return &preyWasmSources[id];
++}
++
++static preyWasmALBuffer_t *PREYWASM_Buffer( ALuint id ) {
++	if ( id == 0 || id >= PREYWASM_MAX_AL_BUFFERS || !preyWasmBuffers[id].alive ) {
++		return NULL;
++	}
++	return &preyWasmBuffers[id];
++}
++
++static ALuint PREYWASM_AllocSource() {
++	for ( ALuint id = 1; id < PREYWASM_MAX_AL_SOURCES; ++id ) {
++		if ( !preyWasmSources[id].alive ) {
++			preyWasmSources[id] = preyWasmALSource_t();
++			preyWasmSources[id].alive = true;
++			preyWasmSources[id].gain = 1.0f;
++			preyWasmSources[id].pitch = 1.0f;
++			return id;
++		}
++	}
++	preyWasmLastError = AL_OUT_OF_MEMORY;
++	return 0;
++}
++
++static ALuint PREYWASM_AllocBuffer() {
++	for ( ALuint id = 1; id < PREYWASM_MAX_AL_BUFFERS; ++id ) {
++		if ( !preyWasmBuffers[id].alive ) {
++			preyWasmBuffers[id] = preyWasmALBuffer_t();
++			preyWasmBuffers[id].alive = true;
++			return id;
++		}
++	}
++	preyWasmLastError = AL_OUT_OF_MEMORY;
++	return 0;
++}
++
++static int PREYWASM_BufferDuration( ALuint id ) {
++	preyWasmALBuffer_t *buffer = PREYWASM_Buffer( id );
++	return buffer ? ( buffer->durationMsec > 1 ? buffer->durationMsec : 1 ) : 1;
++}
++
++static int PREYWASM_ProcessedBuffers( preyWasmALSource_t *source ) {
++	if ( source->stopped ) return source->queueCount;
++	if ( !source->playing || source->paused || source->queueCount == 0 ) {
++		return 0;
++	}
++	double elapsed = emscripten_get_now() - source->startedMsec;
++	int processed = 0;
++	while ( processed < source->queueCount ) {
++		const int duration = PREYWASM_BufferDuration( source->queue[processed] );
++		if ( elapsed < duration ) {
++			break;
++		}
++		elapsed -= duration;
++		processed++;
++	}
++	if ( processed == source->queueCount ) {
++		source->playing = false;
++		source->stopped = true;
++	}
++	return processed;
++}
++
++} // namespace
++
++extern "C" {
++
++AL_API ALenum AL_APIENTRY alGetError() AL_API_NOEXCEPT {
++	const ALenum error = preyWasmLastError;
++	preyWasmLastError = AL_NO_ERROR;
++	return error;
++}
++
++AL_API const ALchar *AL_APIENTRY alGetString( ALenum param ) AL_API_NOEXCEPT {
++	switch ( param ) {
++	case AL_VENDOR: return "wasm-games";
++	case AL_RENDERER: return "WebAudio bridge";
++	case AL_VERSION: return "1.1";
++	case AL_EXTENSIONS: return "";
++	default: return "";
++	}
++}
++
++AL_API ALint AL_APIENTRY alGetInteger( ALenum ) AL_API_NOEXCEPT {
++	return 0;
++}
++
++AL_API ALboolean AL_APIENTRY alIsExtensionPresent( const ALchar * ) AL_API_NOEXCEPT {
++	return AL_FALSE;
++}
++
++AL_API ALenum AL_APIENTRY alGetEnumValue( const ALchar * ) AL_API_NOEXCEPT {
++	return 0;
++}
++
++AL_API void AL_APIENTRY alGenSources( ALsizei count, ALuint *sources ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		sources[i] = PREYWASM_AllocSource();
++		if ( sources[i] != 0 ) {
++			PREYWASM_AudioCreateSource( sources[i] );
++		}
++	}
++}
++
++AL_API void AL_APIENTRY alDeleteSources( ALsizei count, const ALuint *sources ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		const ALuint id = sources[i];
++		if ( id > 0 && id < PREYWASM_MAX_AL_SOURCES && preyWasmSources[id].alive ) {
++			PREYWASM_AudioDeleteSource( id );
++			preyWasmSources[id] = preyWasmALSource_t();
++		}
++	}
++}
++
++AL_API ALboolean AL_APIENTRY alIsSource( ALuint id ) AL_API_NOEXCEPT {
++	return PREYWASM_Source( id ) ? AL_TRUE : AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alGenBuffers( ALsizei count, ALuint *buffers ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		buffers[i] = PREYWASM_AllocBuffer();
++	}
++}
++
++AL_API void AL_APIENTRY alDeleteBuffers( ALsizei count, const ALuint *buffers ) AL_API_NOEXCEPT {
++	for ( int i = 0; i < count; ++i ) {
++		const ALuint id = buffers[i];
++		if ( id > 0 && id < PREYWASM_MAX_AL_BUFFERS && preyWasmBuffers[id].alive ) {
++			PREYWASM_AudioDeleteBuffer( id );
++			preyWasmBuffers[id] = preyWasmALBuffer_t();
++		}
++	}
++}
++
++AL_API ALboolean AL_APIENTRY alIsBuffer( ALuint id ) AL_API_NOEXCEPT {
++	return PREYWASM_Buffer( id ) ? AL_TRUE : AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alBufferData( ALuint id, ALenum format, const ALvoid *data, ALsizei size, ALsizei frequency ) AL_API_NOEXCEPT {
++	preyWasmALBuffer_t *buffer = PREYWASM_Buffer( id );
++	if ( !buffer || !data || size <= 0 || frequency <= 0 ) {
++		preyWasmLastError = AL_INVALID_VALUE;
++		return;
++	}
++	const int channels = ( format == AL_FORMAT_STEREO8 || format == AL_FORMAT_STEREO16 ) ? 2 : 1;
++	const int bytesPerSample = ( format == AL_FORMAT_MONO8 || format == AL_FORMAT_STEREO8 ) ? 1 : 2;
++	const int frameBytes = channels * bytesPerSample;
++	const int frames = size / ( frameBytes > 1 ? frameBytes : 1 );
++	const int durationMsec = ( frames * 1000 ) / frequency;
++	buffer->durationMsec = durationMsec > 1 ? durationMsec : 1;
++	PREYWASM_AudioBufferData( id, format, data, size, frequency );
++}
++
++AL_API void AL_APIENTRY alSourcei( ALuint id, ALenum param, ALint value ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source ) return;
++	if ( param == AL_BUFFER ) {
++		source->buffer = value;
++		source->queueCount = 0;
++	} else if ( param == AL_LOOPING ) {
++		source->looping = value == AL_TRUE;
++	}
++	PREYWASM_AudioSourceInt( id, param, value );
++}
++
++AL_API void AL_APIENTRY alSourcef( ALuint id, ALenum param, ALfloat value ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( source ) {
++		if ( param == AL_GAIN ) source->gain = value;
++		if ( param == AL_PITCH ) source->pitch = value;
++		PREYWASM_AudioSourceFloat( id, param, value );
++	}
++}
++
++AL_API void AL_APIENTRY alGetSourcef( ALuint id, ALenum param, ALfloat *value ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !value || !source ) return;
++	*value = param == AL_GAIN ? source->gain : param == AL_PITCH ? source->pitch : 0.0f;
++}
++
++AL_API void AL_APIENTRY alSource3f( ALuint id, ALenum param, ALfloat x, ALfloat y, ALfloat z ) AL_API_NOEXCEPT {
++	if ( PREYWASM_Source( id ) && param == AL_POSITION ) {
++		PREYWASM_AudioSourcePosition( id, x, y, z );
++	}
++}
++
++AL_API void AL_APIENTRY alSource3i( ALuint, ALenum, ALint, ALint, ALint ) AL_API_NOEXCEPT {
++}
++
++AL_API void AL_APIENTRY alSourceQueueBuffers( ALuint id, ALsizei count, const ALuint *buffers ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source || !buffers || count <= 0 ) return;
++	const int available = PREYWASM_MAX_AL_QUEUE - source->queueCount;
++	const int appendCount = static_cast<int>( count ) < available ? static_cast<int>( count ) : available;
++	for ( int i = 0; i < appendCount; ++i ) {
++		source->queue[source->queueCount++] = buffers[i];
++	}
++	PREYWASM_AudioSourceQueue( id, appendCount, buffers );
++}
++
++AL_API void AL_APIENTRY alSourceUnqueueBuffers( ALuint id, ALsizei count, ALuint *buffers ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source || count <= 0 ) return;
++	const int removeCount = static_cast<int>( count ) < source->queueCount ? static_cast<int>( count ) : source->queueCount;
++	int removedDuration = 0;
++	for ( int i = 0; i < removeCount; ++i ) {
++		if ( buffers ) buffers[i] = source->queue[i];
++		removedDuration += PREYWASM_BufferDuration( source->queue[i] );
++	}
++	for ( int i = removeCount; i < source->queueCount; ++i ) {
++		source->queue[i - removeCount] = source->queue[i];
++	}
++	source->queueCount -= removeCount;
++	source->startedMsec += removedDuration;
++	PREYWASM_AudioSourceUnqueue( id, removeCount );
++}
++
++AL_API void AL_APIENTRY alGetSourcei( ALuint id, ALenum param, ALint *value ) AL_API_NOEXCEPT {
++	if ( !value ) return;
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source ) {
++		*value = 0;
++		return;
++	}
++	if ( param == AL_BUFFERS_PROCESSED ) {
++		*value = PREYWASM_ProcessedBuffers( source );
++		return;
++	}
++	if ( param == AL_SOURCE_TYPE ) {
++		*value = source->queueCount ? AL_STREAMING : source->buffer ? AL_STATIC : AL_UNDETERMINED;
++		return;
++	}
++	if ( param == AL_BUFFER ) { *value = source->buffer; return; }
++	if ( param == AL_BUFFERS_QUEUED ) { *value = source->queueCount + ( source->buffer ? 1 : 0 ); return; }
++	if ( param == AL_SOURCE_STATE ) {
++		if ( source->playing && !source->paused && source->queueCount == 0 && !source->looping ) {
++			if ( emscripten_get_now() - source->startedMsec >= PREYWASM_BufferDuration( source->buffer ) ) {
++				source->playing = false;
++			}
++		}
++		*value = source->paused ? AL_PAUSED : ( source->playing ? AL_PLAYING : AL_STOPPED );
++		return;
++	}
++	*value = 0;
++}
++
++AL_API void AL_APIENTRY alSourcePlay( ALuint id ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source ) return;
++	source->playing = true;
++	source->paused = false;
++	source->stopped = false;
++	source->startedMsec = emscripten_get_now();
++	PREYWASM_AudioSourceAction( id, 1 );
++}
++
++AL_API void AL_APIENTRY alSourceStop( ALuint id ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source ) return;
++	source->playing = false;
++	source->paused = false;
++	source->stopped = true;
++	PREYWASM_AudioSourceAction( id, 0 );
++}
++
++AL_API void AL_APIENTRY alSourcePause( ALuint id ) AL_API_NOEXCEPT {
++	preyWasmALSource_t *source = PREYWASM_Source( id );
++	if ( !source ) return;
++	source->playing = false;
++	source->paused = true;
++	PREYWASM_AudioSourceAction( id, 2 );
++}
++
++AL_API void AL_APIENTRY alListenerf( ALenum param, ALfloat value ) AL_API_NOEXCEPT {
++	if ( param == AL_GAIN ) preyWasmListenerGain = value;
++	PREYWASM_AudioListenerFloat( param, value );
++}
++
++AL_API void AL_APIENTRY alGetListenerf( ALenum param, ALfloat *value ) AL_API_NOEXCEPT {
++	if ( value ) *value = param == AL_GAIN ? preyWasmListenerGain : 0.0f;
++}
++
++AL_API ALboolean AL_APIENTRY alIsBufferFormatSupportedSOFT( ALenum ) AL_API_NOEXCEPT {
++	return AL_FALSE;
++}
++
++AL_API void AL_APIENTRY alListenerfv( ALenum param, const ALfloat *values ) AL_API_NOEXCEPT {
++	if ( !values ) return;
++	PREYWASM_AudioListenerVector( param, values, param == AL_ORIENTATION ? 6 : 3 );
++}
++
++ALC_API ALCdevice *ALC_APIENTRY alcOpenDevice( const ALCchar * ) ALC_API_NOEXCEPT {
++	PREYWASM_AudioInit();
++	return reinterpret_cast<ALCdevice *>( &preyWasmDeviceToken );
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcCloseDevice( ALCdevice * ) ALC_API_NOEXCEPT {
++	return ALC_TRUE;
++}
++
++ALC_API ALCcontext *ALC_APIENTRY alcCreateContext( ALCdevice *device, const ALCint * ) ALC_API_NOEXCEPT {
++	return device ? reinterpret_cast<ALCcontext *>( &preyWasmContextToken ) : NULL;
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcMakeContextCurrent( ALCcontext *context ) ALC_API_NOEXCEPT {
++	preyWasmCurrentContext = context;
++	return ALC_TRUE;
++}
++
++ALC_API ALCcontext *ALC_APIENTRY alcGetCurrentContext() ALC_API_NOEXCEPT {
++	return preyWasmCurrentContext;
++}
++
++ALC_API void ALC_APIENTRY alcDestroyContext( ALCcontext *context ) ALC_API_NOEXCEPT {
++	if ( preyWasmCurrentContext == context ) preyWasmCurrentContext = NULL;
++}
++
++ALC_API void ALC_APIENTRY alcSuspendContext( ALCcontext * ) ALC_API_NOEXCEPT {
++}
++
++ALC_API void ALC_APIENTRY alcProcessContext( ALCcontext * ) ALC_API_NOEXCEPT {
++}
++
++ALC_API ALCboolean ALC_APIENTRY alcIsExtensionPresent( ALCdevice *, const ALCchar * ) ALC_API_NOEXCEPT {
++	return ALC_FALSE;
++}
++
++ALC_API const ALCchar *ALC_APIENTRY alcGetString( ALCdevice *device, ALCenum param ) ALC_API_NOEXCEPT {
++	if ( param == ALC_DEVICE_SPECIFIER && device == NULL ) {
++		// A NULL-device query returns a list, not just a device name. The
++		// explicit NUL plus the literal terminator end this one-device list;
++		// otherwise Prey walks adjacent constants into its GUI choices.
++		static const ALCchar deviceList[] = "WebAudio\0";
++		return deviceList;
++	}
++	if ( param == ALC_DEVICE_SPECIFIER || param == ALC_DEFAULT_DEVICE_SPECIFIER ) {
++		return "WebAudio";
++	}
++	return "";
++}
++
++ALC_API void ALC_APIENTRY alcGetIntegerv( ALCdevice *, ALCenum param, ALCsizei size, ALCint *values ) ALC_API_NOEXCEPT {
++	if ( values && size > 0 ) values[0] = ( param == ALC_MAJOR_VERSION || param == ALC_MINOR_VERSION ) ? 1 : 0;
++}
++
++ALC_API ALCenum ALC_APIENTRY alcGetError( ALCdevice * ) ALC_API_NOEXCEPT {
++	return ALC_NO_ERROR;
++}
++
++// Emscripten supplies its native AL procedure table. It resolves core
++// API names to the bridge definitions above; optional extensions remain
++// unadvertised. Defining duplicate procedure tables here breaks that link.
++} // extern "C"
++
++#endif // __EMSCRIPTEN__
 diff --git a/neo/framework/Session_local.h b/neo/framework/Session_local.h
-index 3eab32d4e08a860e6824e5dfec1df7f927ddce18..322d52c012268962abc3f909e242bf0c0c269eeb 100644
+index 3eab32d4e08a860e6824e5dfec1df7f927ddce18..6258d7c457ce3cbfd7fae4f13743666e835484ea 100644
 --- a/neo/framework/Session_local.h
 +++ b/neo/framework/Session_local.h
-@@ -99,6 +99,10 @@ public:
+@@ -29,6 +29,11 @@ If you have questions concerning this license or the applicable additional terms
+ #ifndef __SESSIONLOCAL_H__
+ #define __SESSIONLOCAL_H__
+ 
++#ifdef PREYWASM_CLIENT
++// Bounded stage diagnostics, rearmed only when a map transition completes.
++extern int preyWasmTraceMapFrames;
++#endif
++
+ /*
+ 
+ IsConnectedToServer();
+@@ -99,6 +104,10 @@ public:
  	virtual void		Frame();
  
  	virtual bool		IsMultiplayer();
@@ -855,7 +1434,7 @@ index 296738cbe8f14c4c80c71b1011181423db89dbe0..3dcdaa8082e20b406f5cfd8c0c8874bb
  		memset( pics, 0, 6*sizeof(pics[0]) );
  	}
 diff --git a/neo/renderer/Image_init.cpp b/neo/renderer/Image_init.cpp
-index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dda2599bac 100644
+index b49496aca69f600e9694caa5ed0b036eb2b9be0d..83435b7374a7637b93af579438f3b50becf03f60 100644
 --- a/neo/renderer/Image_init.cpp
 +++ b/neo/renderer/Image_init.cpp
 @@ -31,6 +31,10 @@ If you have questions concerning this license or the applicable additional terms
@@ -977,7 +1556,24 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  
  /*
  ==================
-@@ -332,10 +344,12 @@ static void R_BorderClampImage( idImage *image ) {
+@@ -224,14 +236,8 @@ void idImage::MakeDefault() {
+ 	int		x, y;
+ 	byte	data[DEFAULT_SIZE][DEFAULT_SIZE][4];
+ 
+-	if( imgName != "_default" && globalImages->defaultImage->texnum != idImage::TEXTURE_NOT_LOADED ) {
+-		texnum = globalImages->defaultImage->texnum;
+-		uploadWidth = DEFAULT_SIZE;
+-		uploadHeight = DEFAULT_SIZE;
+-		type = TT_2D;
+-		defaulted = true;
+-		return;
+-	}
++	// Each image owns its texture: PurgeImage deletes it unconditionally.
++	// GenerateImage also initializes the format used by memory accounting.
+ 
+ 	// RGBA definitions
+ 	const byte PINK[4]  = { 255,   0, 255, 255 };
+@@ -332,10 +338,12 @@ static void R_BorderClampImage( idImage *image ) {
  		// can't call qglTexParameterfv yet
  		return;
  	}
@@ -993,7 +1589,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  }
  
  static void R_RGBA8Image( idImage *image ) {
-@@ -384,7 +398,7 @@ static void R_FlatNormalImage( idImage *image ) {
+@@ -384,7 +392,7 @@ static void R_FlatNormalImage( idImage *image ) {
  	byte	data[DEFAULT_SIZE][DEFAULT_SIZE][4];
  	int		i;
  
@@ -1002,7 +1598,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	int alpha = ( red == 0 ) ? 3 : 0;
  	// flat normal map for default bunp mapping
  	for ( i = 0 ; i < 4 ; i++ ) {
-@@ -401,7 +415,7 @@ static void R_AmbientNormalImage( idImage *image ) {
+@@ -401,7 +409,7 @@ static void R_AmbientNormalImage( idImage *image ) {
  	byte	data[DEFAULT_SIZE][DEFAULT_SIZE][4];
  	int		i;
  
@@ -1011,7 +1607,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	int alpha = ( red == 0 ) ? 3 : 0;
  	// flat normal map for default bunp mapping
  	for ( i = 0 ; i < 4 ; i++ ) {
-@@ -693,13 +707,13 @@ void R_FogImage( idImage *image ) {
+@@ -693,13 +701,13 @@ void R_FogImage( idImage *image ) {
  	byte	data[FOG_SIZE][FOG_SIZE][4];
  	int		b;
  
@@ -1032,7 +1628,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  
  	for (x=0 ; x<FOG_SIZE ; x++) {
  		for (y=0 ; y<FOG_SIZE ; y++) {
-@@ -715,7 +729,7 @@ for ( i = 0 ; i < 256 ; i++ ) {
+@@ -715,7 +723,7 @@ for ( i = 0 ; i < 256 ; i++ ) {
  			} else if ( b > 255 ) {
  				b = 255;
  			}
@@ -1041,7 +1637,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  			if ( x == 0 || x == FOG_SIZE-1 || y == 0 || y == FOG_SIZE-1 ) {
  				b = 255;		// avoid clamping issues
  			}
-@@ -917,7 +931,6 @@ static const filterName_t textureFilters[] = {
+@@ -917,7 +925,6 @@ static const filterName_t textureFilters[] = {
  	// if these are changed dynamically, it will force another ChangeTextureFilter
  	image_filter.ClearModified();
  	image_anisotropy.ClearModified();
@@ -1049,7 +1645,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  
  	string = image_filter.GetString();
  	for ( i = 0; i < 6; i++ ) {
-@@ -941,7 +954,6 @@ static const filterName_t textureFilters[] = {
+@@ -941,7 +948,6 @@ static const filterName_t textureFilters[] = {
  	} else if ( textureAnisotropy > glConfig.maxTextureAnisotropy ) {
  		textureAnisotropy = glConfig.maxTextureAnisotropy;
  	}
@@ -1057,7 +1653,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  
  	// change all the existing mipmap texture objects with default filtering
  
-@@ -954,11 +966,8 @@ static const filterName_t textureFilters[] = {
+@@ -954,11 +960,8 @@ static const filterName_t textureFilters[] = {
  		case TT_2D:
  			texEnum = GL_TEXTURE_2D;
  			break;
@@ -1070,7 +1666,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  			break;
  		}
  
-@@ -974,9 +983,6 @@ static const filterName_t textureFilters[] = {
+@@ -974,9 +977,6 @@ static const filterName_t textureFilters[] = {
  		if ( glConfig.anisotropicAvailable ) {
  			qglTexParameterf(texEnum, GL_TEXTURE_MAX_ANISOTROPY_EXT, globalImages->textureAnisotropy );
  		}
@@ -1080,7 +1676,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	}
  }
  
-@@ -985,7 +991,7 @@ static const filterName_t textureFilters[] = {
+@@ -985,7 +985,7 @@ static const filterName_t textureFilters[] = {
  idImage::Reload
  ===============
  */
@@ -1089,7 +1685,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	// always regenerate functional images
  	if ( generatorFunction ) {
  		common->DPrintf( "regenerating '%s'.\n", imgName.c_str() );
-@@ -1012,10 +1018,7 @@ void idImage::Reload( bool checkPrecompressed, bool force ) {
+@@ -1012,10 +1012,7 @@ void idImage::Reload( bool checkPrecompressed, bool force ) {
  
  	PurgeImage();
  
@@ -1101,7 +1697,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  }
  
  /*
-@@ -1034,20 +1037,17 @@ void R_ReloadImages_f( const idCmdArgs &args ) {
+@@ -1034,20 +1031,17 @@ void R_ReloadImages_f( const idCmdArgs &args ) {
  	int		i;
  	idImage	*image;
  	bool	all;
@@ -1122,7 +1718,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  		} else {
  			common->Printf( "USAGE: reloadImages <all>\n" );
  			return;
-@@ -1056,7 +1056,7 @@ void R_ReloadImages_f( const idCmdArgs &args ) {
+@@ -1056,7 +1050,7 @@ void R_ReloadImages_f( const idCmdArgs &args ) {
  
  	for ( i = 0 ; i < globalImages->images.Num() ; i++ ) {
  		image = globalImages->images[ i ];
@@ -1131,7 +1727,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	}
  }
  
-@@ -1097,9 +1097,7 @@ void R_ListImages_f( const idCmdArgs &args ) {
+@@ -1097,9 +1091,7 @@ void R_ListImages_f( const idCmdArgs &args ) {
  	int		totalSize;
  	int		count = 0;
  	int		matchTag = 0;
@@ -1141,7 +1737,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	bool	cached = false;
  	bool	uncached = false;
  	bool	failed = false;
-@@ -1112,12 +1110,8 @@ void R_ListImages_f( const idCmdArgs &args ) {
+@@ -1112,12 +1104,8 @@ void R_ListImages_f( const idCmdArgs &args ) {
  	if ( args.Argc() == 1 ) {
  
  	} else if ( args.Argc() == 2 ) {
@@ -1155,7 +1751,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  		} else if ( idStr::Icmp( args.Argv( 1 ), "unloaded" ) == 0 ) {
  			unloaded = true;
  		} else if ( idStr::Icmp( args.Argv( 1 ), "cached" ) == 0 ) {
-@@ -1145,7 +1139,7 @@ void R_ListImages_f( const idCmdArgs &args ) {
+@@ -1145,7 +1133,7 @@ void R_ListImages_f( const idCmdArgs &args ) {
  	}
  
  	if ( failed ) {
@@ -1164,7 +1760,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  		return;
  	}
  
-@@ -1159,26 +1153,16 @@ void R_ListImages_f( const idCmdArgs &args ) {
+@@ -1159,26 +1147,16 @@ void R_ListImages_f( const idCmdArgs &args ) {
  	for ( i = 0 ; i < globalImages->images.Num() ; i++ ) {
  		image = globalImages->images[ i ];
  
@@ -1193,7 +1789,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  			continue;
  		}
  
-@@ -1355,18 +1339,7 @@ void idImageManager::SetNormalPalette( void ) {
+@@ -1355,18 +1333,7 @@ void idImageManager::SetNormalPalette( void ) {
  	temptable[255*3+1] =
  	temptable[255*3+2] = 128;
  
@@ -1213,7 +1809,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  }
  
  /*
-@@ -1438,9 +1411,8 @@ idImage *idImageManager::ImageFromFunction( const char *_name, void (*generatorF
+@@ -1438,9 +1405,8 @@ idImage *idImageManager::ImageFromFunction( const char *_name, void (*generatorF
  	image->generatorFunction = generatorFunction;
  
  	if ( image_preload.GetBool() ) {
@@ -1224,7 +1820,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	}
  
  	return image;
-@@ -1498,9 +1470,6 @@ idImage	*idImageManager::ImageFromFile( const char *_name, textureFilter_t filte
+@@ -1498,9 +1464,6 @@ idImage	*idImageManager::ImageFromFile( const char *_name, textureFilter_t filte
  			if ( image->allowDownSize == allowDownSize && image->depth == depth ) {
  				// note that it is used this level load
  				image->levelLoadReferenced = true;
@@ -1234,7 +1830,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  				return image;
  			}
  
-@@ -1515,22 +1484,17 @@ idImage	*idImageManager::ImageFromFile( const char *_name, textureFilter_t filte
+@@ -1515,22 +1478,17 @@ idImage	*idImageManager::ImageFromFile( const char *_name, textureFilter_t filte
  			if ( image->allowDownSize == allowDownSize && image->depth == depth ) {
  				// the already created one is already the highest quality
  				image->levelLoadReferenced = true;
@@ -1260,7 +1856,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  			}
  			return image;
  		}
-@@ -1556,42 +1520,10 @@ idImage	*idImageManager::ImageFromFile( const char *_name, textureFilter_t filte
+@@ -1556,42 +1514,10 @@ idImage	*idImageManager::ImageFromFile( const char *_name, textureFilter_t filte
  
  	image->levelLoadReferenced = true;
  
@@ -1304,7 +1900,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  		declManager->MediaPrint( "%ix%i %s\n", image->uploadWidth, image->uploadHeight, image->imgName.c_str() );
  	} else {
  		declManager->MediaPrint( "%s\n", image->imgName.c_str() );
-@@ -1746,114 +1678,6 @@ void R_CombineCubeImages_f( const idCmdArgs &args ) {
+@@ -1746,114 +1672,6 @@ void R_CombineCubeImages_f( const idCmdArgs &args ) {
  	common->SetRefreshOnPrint( false );
  }
  
@@ -1419,7 +2015,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  /*
  ===============
  CheckCvars
-@@ -1861,11 +1685,10 @@ CheckCvars
+@@ -1861,11 +1679,10 @@ CheckCvars
  */
  void idImageManager::CheckCvars() {
  	// textureFilter stuff
@@ -1432,7 +2028,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  	}
  }
  
-@@ -1896,18 +1719,7 @@ BindNull
+@@ -1896,18 +1713,7 @@ BindNull
  ===============
  */
  void idImageManager::BindNull() {
@@ -1452,7 +2048,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  }
  
  /*
-@@ -1943,7 +1755,7 @@ void idImageManager::Init() {
+@@ -1943,7 +1749,7 @@ void idImageManager::Init() {
  	fogEnterImage = ImageFromFunction( "_fogEnter", R_FogEnterImage );
  	normalCubeMapImage = ImageFromFunction( "_normalCubeMap", makeNormalizeVectorCubeMap );
  	noFalloffImage = ImageFromFunction( "_noFalloff", R_CreateNoFalloffImage );
@@ -1461,7 +2057,21 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  
  	// cinematicImage is used for cinematic drawing
  	// scratchImage is used for screen wipes/doublevision etc..
-@@ -2017,9 +1829,9 @@ void idImageManager::EndLevelLoad() {
+@@ -1991,7 +1797,12 @@ void idImageManager::BeginLevelLoad() {
+ 			continue;
+ 		}
+ 
+-		if ( com_purgeAll.GetBool() ) {
++		if ( com_purgeAll.GetBool()
++#ifdef PREYWASM_CLIENT
++			// Retry early fallbacks now that deferred gameplay paks are mounted.
++			|| image->defaulted
++#endif
++		) {
+ 			image->PurgeImage();
+ 		}
+ 
+@@ -2017,9 +1828,9 @@ void idImageManager::EndLevelLoad() {
  	int			start = Sys_Milliseconds();
  
  	insideLevelLoad = false;
@@ -1474,7 +2084,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  
  	common->Printf( "----- idImageManager::EndLevelLoad -----\n" );
  
-@@ -2051,13 +1863,16 @@ void idImageManager::EndLevelLoad() {
+@@ -2051,13 +1862,16 @@ void idImageManager::EndLevelLoad() {
  			continue;
  		}
  
@@ -1494,7 +2104,7 @@ index b49496aca69f600e9694caa5ed0b036eb2b9be0d..862ce2869dcd7a20a92a9f658ae8b4dd
  		}
  	}
 diff --git a/neo/renderer/Image_load.cpp b/neo/renderer/Image_load.cpp
-index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01ec71f03f 100644
+index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..e68d1704b948415df4bb157342d1c4deaf248df9 100644
 --- a/neo/renderer/Image_load.cpp
 +++ b/neo/renderer/Image_load.cpp
 @@ -31,18 +31,6 @@ If you have questions concerning this license or the applicable additional terms
@@ -1516,7 +2126,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  int MakePowerOfTwo( int num ) {
  	int		pot;
-@@ -60,46 +48,15 @@ Used for determining memory utilization
+@@ -60,46 +48,16 @@ Used for determining memory utilization
  */
  int idImage::BitsForInternalFormat( int internalFormat ) const {
  	switch ( internalFormat ) {
@@ -1529,6 +2139,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	case 3:
 -		return 32;		// on some future hardware, this may actually be 24, but be conservative
  	case 4:
++	case GL_RGBA: // The GLES upload paths use unsized RGBA with unsigned bytes.
  		return 32;
 -	case GL_LUMINANCE8:
 -		return 8;
@@ -1564,7 +2175,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	default:
  		common->Error( "R_BitsForInternalFormat: BAD FORMAT:%i", internalFormat );
  	}
-@@ -163,18 +120,6 @@ void idImage::UploadCompressedNormalMap( int width, int height, const byte *rgba
+@@ -163,18 +121,6 @@ void idImage::UploadCompressedNormalMap( int width, int height, const byte *rgba
  			}
  		}
  	}
@@ -1583,7 +2194,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  }
  
  
-@@ -200,173 +145,6 @@ static byte	mipBlendColors[16][4] = {
+@@ -200,173 +146,6 @@ static byte	mipBlendColors[16][4] = {
  	{0,0,255,128},
  };
  
@@ -1757,7 +2368,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  /*
  ==================
  SetImageFilterAndRepeat
-@@ -399,9 +177,6 @@ void idImage::SetImageFilterAndRepeat() const {
+@@ -399,9 +178,6 @@ void idImage::SetImageFilterAndRepeat() const {
  			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1 );
  		}
  	}
@@ -1767,7 +2378,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  	// set the wrap/clamp modes
  	switch( repeat ) {
-@@ -410,8 +185,11 @@ void idImage::SetImageFilterAndRepeat() const {
+@@ -410,8 +186,11 @@ void idImage::SetImageFilterAndRepeat() const {
  		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
  		break;
  	case TR_CLAMP_TO_BORDER:
@@ -1781,7 +2392,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		break;
  	case TR_CLAMP_TO_ZERO:
  	case TR_CLAMP_TO_ZERO_ALPHA:
-@@ -558,7 +336,7 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
+@@ -558,7 +337,7 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
  	qglGenTextures( 1, &texnum );
  
  	// select proper internal format before we resample
@@ -1790,7 +2401,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  	// copy or resample data as appropriate for first MIP level
  	if ( ( scaled_width == width ) && ( scaled_height == height ) ) {
-@@ -653,9 +431,7 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
+@@ -653,9 +432,7 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
  	// swap the red and alpha for rxgb support
  	// do this even on tga normal maps so we only have to use
  	// one fragment program
@@ -1801,7 +2412,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		for ( int i = 0; i < scaled_width * scaled_height * 4; i += 4 ) {
  			scaledBuffer[ i + 3 ] = scaledBuffer[ i ];
  			scaledBuffer[ i ] = 0;
-@@ -665,19 +441,7 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
+@@ -665,19 +442,7 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
  	Bind();
  
  
@@ -1822,7 +2433,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  	// create and upload the mip map levels, which we do in all cases, even if we don't think they are needed
  	int		miplevel;
-@@ -708,12 +472,8 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
+@@ -708,12 +473,8 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
  		}
  
  		// upload the mip map
@@ -1835,7 +2446,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	}
  
  	if ( scaledBuffer != 0 ) {
-@@ -726,141 +486,6 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
+@@ -726,141 +487,6 @@ void idImage::GenerateImage( const byte *pic, int width, int height,
  	GL_CheckErrors();
  }
  
@@ -1977,7 +2588,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  /*
  ====================
  GenerateCubeImage
-@@ -891,17 +516,13 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
+@@ -891,17 +517,13 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
  		return;
  	}
  
@@ -1996,7 +2607,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  	// don't bother with downsample for now
  	scaled_width = width;
-@@ -913,22 +534,22 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
+@@ -913,22 +535,22 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
  	Bind();
  
  	// no other clamp mode makes sense
@@ -2027,7 +2638,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		break;
  	default:
  		common->FatalError( "R_CreateImage: bad texture filter" );
-@@ -937,7 +558,7 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
+@@ -937,7 +559,7 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
  	// upload the base level
  	// FIXME: support GL_COLOR_INDEX8_EXT?
  	for ( i = 0 ; i < 6 ; i++ ) {
@@ -2036,7 +2647,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  			GL_RGBA, GL_UNSIGNED_BYTE, pic[i] );
  	}
  
-@@ -955,7 +576,7 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
+@@ -955,7 +577,7 @@ void idImage::GenerateCubeImage( const byte *pic[6], int size,
  		for ( i = 0 ; i < 6 ; i++ ) {
  			byte	*shrunken;
  
@@ -2045,7 +2656,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  				scaled_width / 2, scaled_height / 2, 0,
  				GL_RGBA, GL_UNSIGNED_BYTE, shrunk[i] );
  
-@@ -1035,602 +656,6 @@ int	idImage::NumLevelsForImageSize( int width, int height ) const {
+@@ -1035,602 +657,6 @@ int	idImage::NumLevelsForImageSize( int width, int height ) const {
  	return numLevels;
  }
  
@@ -2648,7 +3259,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  /*
  ===============
  ActuallyLoadImage
-@@ -1639,7 +664,7 @@ Absolutely every image goes through this path
+@@ -1639,9 +665,13 @@ Absolutely every image goes through this path
  On exit, the idImage will have a valid OpenGL texture number that can be bound
  ===============
  */
@@ -2656,8 +3267,14 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
 +void	idImage::ActuallyLoadImage( bool fromBackEnd ) {
  	int		width, height;
  	byte	*pic;
++#ifdef PREYWASM_CLIENT
++	// A successful retry must no longer be treated as a missing image.
++	defaulted = false;
++#endif
  
-@@ -1649,16 +674,6 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
+ 	// this is the ONLY place generatorFunction will ever be called
+ 	if ( generatorFunction ) {
+@@ -1649,16 +679,6 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
  		return;
  	}
  
@@ -2674,7 +3291,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	//
  	// load the image from disk
  	//
-@@ -1675,7 +690,6 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
+@@ -1675,7 +695,6 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
  		}
  
  		GenerateCubeImage( (const byte **)pics, width, filter, allowDownSize, depth );
@@ -2682,7 +3299,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  		for ( int i = 0 ; i < 6 ; i++ ) {
  			if ( pics[i] ) {
-@@ -1685,13 +699,6 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
+@@ -1685,13 +704,6 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
  	} else {
  		// see if we have a pre-generated image file that is
  		// already image processed and compressed
@@ -2696,7 +3313,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  		R_LoadImageProgram( imgName, &pic, &width, &height, &timestamp, &depth );
  
-@@ -1700,19 +707,7 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
+@@ -1700,19 +712,7 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
  			MakeDefault();
  			return;
  		}
@@ -2717,7 +3334,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		// build a hash for checking duplicate image files
  		// NOTE: takes about 10% of image load times (SD)
  		// may not be strictly necessary, but some code uses it, so let's leave it in
-@@ -1720,12 +715,8 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
+@@ -1720,12 +720,8 @@ void	idImage::ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd )
  
  		GenerateImage( pic, width, height, filter, allowDownSize, repeat, depth );
  		timestamp = timestamp;
@@ -2730,7 +3347,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	}
  }
  
-@@ -1741,13 +732,6 @@ void idImage::PurgeImage() {
+@@ -1741,13 +737,6 @@ void idImage::PurgeImage() {
  		qglDeleteTextures( 1, &texnum );	// this should be the ONLY place it is ever called!
  		texnum = TEXTURE_NOT_LOADED;
  	}
@@ -2744,7 +3361,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  }
  
  /*
-@@ -1758,36 +742,11 @@ Automatically enables 2D mapping, cube mapping, or 3D texturing if needed
+@@ -1758,36 +747,11 @@ Automatically enables 2D mapping, cube mapping, or 3D texturing if needed
  ==============
  */
  void idImage::Bind() {
@@ -2782,7 +3399,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	}
  
  
-@@ -1795,49 +754,11 @@ void idImage::Bind() {
+@@ -1795,49 +759,11 @@ void idImage::Bind() {
  	frameUsed = backEnd.frameCount;
  	bindCount++;
  
@@ -2834,7 +3451,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	}
  }
  
-@@ -1850,36 +771,11 @@ do any enable / disable changes
+@@ -1850,36 +776,11 @@ do any enable / disable changes
  ==============
  */
  void idImage::BindFragment() {
@@ -2872,7 +3489,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	}
  
  
-@@ -1890,12 +786,8 @@ void idImage::BindFragment() {
+@@ -1890,12 +791,8 @@ void idImage::BindFragment() {
  	// bind the texture
  	if ( type == TT_2D ) {
  		qglBindTexture( GL_TEXTURE_2D, texnum );
@@ -2886,7 +3503,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	}
  }
  
-@@ -1922,7 +814,8 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
+@@ -1922,7 +819,8 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
  	GetDownsize( imageWidth, imageHeight );
  	GetDownsize( potWidth, potHeight );
  
@@ -2896,7 +3513,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  
  	// only resize if the current dimensions can't hold it at all,
  	// otherwise subview renderings could thrash this
-@@ -1931,7 +824,7 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
+@@ -1931,7 +829,7 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
  		uploadWidth = potWidth;
  		uploadHeight = potHeight;
  		if ( potWidth == imageWidth && potHeight == imageHeight ) {
@@ -2905,7 +3522,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		} else {
  			byte	*junk;
  			// we need to create a dummy image with power of two dimensions,
-@@ -1939,12 +832,8 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
+@@ -1939,12 +837,8 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
  			// this might be a 16+ meg allocation, which could fail on _alloca
  			junk = (byte *)Mem_Alloc( potWidth * potHeight * 4 );
  			memset( junk, 0, potWidth * potHeight * 4 );		//!@#
@@ -2920,7 +3537,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  			Mem_Free( junk );
  
  			qglCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight );
-@@ -2039,22 +928,21 @@ void idImage::UploadScratch( const byte *data, int cols, int rows ) {
+@@ -2039,22 +933,21 @@ void idImage::UploadScratch( const byte *data, int cols, int rows ) {
  
  			// upload the base level
  			for ( i = 0 ; i < 6 ; i++ ) {
@@ -2947,7 +3564,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	} else {
  		// otherwise, it is a 2D image
  		if ( type != TT_2D ) {
-@@ -2068,7 +956,7 @@ void idImage::UploadScratch( const byte *data, int cols, int rows ) {
+@@ -2068,7 +961,7 @@ void idImage::UploadScratch( const byte *data, int cols, int rows ) {
  		if ( cols != uploadWidth || rows != uploadHeight ) {
  			uploadWidth = cols;
  			uploadHeight = rows;
@@ -2956,7 +3573,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		} else {
  			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
  			// it and don't try and do a texture compression
-@@ -2111,9 +999,6 @@ int idImage::StorageSize() const {
+@@ -2111,9 +1004,6 @@ int idImage::StorageSize() const {
  	case TT_2D:
  		baseSize = uploadWidth*uploadHeight;
  		break;
@@ -2966,7 +3583,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	case TT_CUBIC:
  		baseSize = 6 * uploadWidth*uploadHeight;
  		break;
-@@ -2135,9 +1020,7 @@ Print
+@@ -2135,9 +1025,7 @@ Print
  ==================
  */
  void idImage::Print() const {
@@ -2977,7 +3594,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  		common->Printf( "F" );
  	} else {
  		common->Printf( " " );
-@@ -2147,9 +1030,6 @@ void idImage::Print() const {
+@@ -2147,9 +1035,6 @@ void idImage::Print() const {
  	case TT_2D:
  		common->Printf( " " );
  		break;
@@ -2987,7 +3604,7 @@ index 6f2f0532726735b670eb9cf5db6fea69f2c9f653..09031be15d67ac69f0a1d04f15123f01
  	case TT_CUBIC:
  		common->Printf( "C" );
  		break;
-@@ -2179,64 +1059,17 @@ void idImage::Print() const {
+@@ -2179,64 +1064,17 @@ void idImage::Print() const {
  	}
  
  	switch ( internalFormat ) {
@@ -17494,7 +18111,7 @@ index 0000000000000000000000000000000000000000..d4741831b57a44d01c6282f95a8e5162
 +	return GLimp_SetScreenParms( parms ) ? 1 : 0;
 +}
 diff --git a/neo/sys/linux/main.cpp b/neo/sys/linux/main.cpp
-index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560076e7ebf 100644
+index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..7744abb2bdc860c5ab2e8b4332e03e04382fcc16 100644
 --- a/neo/sys/linux/main.cpp
 +++ b/neo/sys/linux/main.cpp
 @@ -39,6 +39,13 @@ If you have questions concerning this license or the applicable additional terms
@@ -17511,12 +18128,13 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
  
  
  #undef snprintf // no, I don't want to use idStr::snPrintf() here.
-@@ -384,9 +391,109 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
+@@ -384,9 +391,152 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
  main
  ===============
  */
 +#ifdef PREYWASM_CLIENT
 +static int d3wasmLastBrowserState = -1;
++int preyWasmTraceMapFrames = 0;
 +
 +static int PREYWASM_CurrentBrowserState( void ) {
 +	if ( !sessLocal.IsMapSpawned() ) {
@@ -17571,13 +18189,52 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
 +	SDL_PushEvent( &event );
 +}
 +
++static SDL_Keycode PREYWASM_BrowserKeycode( int scan, int key ) {
++	// SDL key identities are unshifted even under Shift/Caps Lock. The page
++	// supplies event.key (which can be uppercase); text keeps its original
++	// case through the separate BrowserText event. Preserve layout remapping.
++	if ( key >= 'A' && key <= 'Z' ) key += 'a' - 'A';
++	if ( key != 0 ) return static_cast<SDL_Keycode>( key );
++	const SDL_Keycode mapped = SDL_GetKeyFromScancode( static_cast<SDL_Scancode>( scan ) );
++	if ( mapped != SDLK_UNKNOWN ) return mapped;
++	// Direct worker WebGL does not initialize SDL video, so SDL's layout map
++	// is empty. Preserve page-provided layout characters above; recover the
++	// unshifted physical key when the page sends only a scancode. Text input
++	// still arrives separately through PREYWASM_BrowserText.
++	if ( scan >= SDL_SCANCODE_A && scan <= SDL_SCANCODE_Z ) return SDLK_a + scan - SDL_SCANCODE_A;
++	if ( scan >= SDL_SCANCODE_1 && scan <= SDL_SCANCODE_9 ) return SDLK_1 + scan - SDL_SCANCODE_1;
++	switch ( scan ) {
++		case SDL_SCANCODE_0: return SDLK_0;
++		case SDL_SCANCODE_RETURN: return SDLK_RETURN;
++		case SDL_SCANCODE_ESCAPE: return SDLK_ESCAPE;
++		case SDL_SCANCODE_BACKSPACE: return SDLK_BACKSPACE;
++		case SDL_SCANCODE_TAB: return SDLK_TAB;
++		case SDL_SCANCODE_SPACE: return SDLK_SPACE;
++		case SDL_SCANCODE_MINUS: return SDLK_MINUS;
++		case SDL_SCANCODE_EQUALS: return SDLK_EQUALS;
++		case SDL_SCANCODE_LEFTBRACKET: return SDLK_LEFTBRACKET;
++		case SDL_SCANCODE_RIGHTBRACKET: return SDLK_RIGHTBRACKET;
++		case SDL_SCANCODE_BACKSLASH: return SDLK_BACKSLASH;
++		case SDL_SCANCODE_NONUSHASH: return SDLK_HASH;
++		case SDL_SCANCODE_SEMICOLON: return SDLK_SEMICOLON;
++		case SDL_SCANCODE_APOSTROPHE: return SDLK_QUOTE;
++		case SDL_SCANCODE_GRAVE: return SDLK_BACKQUOTE;
++		case SDL_SCANCODE_COMMA: return SDLK_COMMA;
++		case SDL_SCANCODE_PERIOD: return SDLK_PERIOD;
++		case SDL_SCANCODE_SLASH: return SDLK_SLASH;
++		case SDL_SCANCODE_DELETE: return SDLK_DELETE;
++		default: return SDL_SCANCODE_TO_KEYCODE( scan );
++	}
++}
++
 +extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserKey( int scan, int key, int down, int repeat ) {
++	if ( scan <= SDL_SCANCODE_UNKNOWN || scan >= SDL_NUM_SCANCODES ) return;
 +	SDL_Event event = {};
 +	event.type = down ? SDL_KEYDOWN : SDL_KEYUP;
 +	event.key.state = down ? SDL_PRESSED : SDL_RELEASED;
 +	event.key.repeat = repeat ? 1 : 0;
 +	event.key.keysym.scancode = static_cast<SDL_Scancode>( scan );
-+	event.key.keysym.sym = key ? static_cast<SDL_Keycode>( key ) : SDL_GetKeyFromScancode( event.key.keysym.scancode );
++	event.key.keysym.sym = PREYWASM_BrowserKeycode( scan, key );
 +	SDL_PushEvent( &event );
 +}
 +
@@ -17594,7 +18251,7 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE void PREYWASM_BrowserFrame( void ) {
 +	static int preyWasmTraceFrames = 0;
-+	const bool preyWasmTraceFrame = preyWasmTraceFrames < 4;
++	const bool preyWasmTraceFrame = preyWasmTraceFrames < 4 || preyWasmTraceMapFrames > 0;
 +	if ( preyWasmTraceFrame ) common->Printf( "[prey-wasm] frame %d: begin\n", preyWasmTraceFrames );
 +	// The native async thread is intentionally folded into the browser frame.
 +	// This is enough for the single-thread checkpoint and keeps the browser event
@@ -17606,6 +18263,9 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
 +	PREYWASM_ReportBrowserState();
 +	if ( preyWasmTraceFrame ) common->Printf( "[prey-wasm] frame %d: complete\n", preyWasmTraceFrames );
 +	preyWasmTraceFrames++;
++	if ( preyWasmTraceFrame && preyWasmTraceMapFrames > 0 ) {
++		preyWasmTraceMapFrames--;
++	}
 +}
 +#endif
 +
@@ -17623,7 +18283,7 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
  	if (getuid() == 0) {
  		printf("Doom 3 shouldn't be run as root! Backing out to save your ass. If\n");
  		printf("you really know what you're doing, edit neo/sys/linux/main.cpp and remove\n");
-@@ -394,6 +501,7 @@ int main(int argc, char **argv) {
+@@ -394,6 +544,7 @@ int main(int argc, char **argv) {
  
  		return 1;
  	}
@@ -17631,7 +18291,7 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
  	// fallback path to the binary for systems without /proc
  	// while not 100% reliable, its good enough
  	if (argc > 0) {
-@@ -404,11 +512,17 @@ int main(int argc, char **argv) {
+@@ -404,11 +555,17 @@ int main(int argc, char **argv) {
  	}
  
  	SetExecutablePath(path_exe);
@@ -17649,7 +18309,7 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
  
  	// some ladspa-plugins (that may be indirectly loaded by doom3 if they're
  	// used by alsa) call setlocale(LC_ALL, ""); This sets LC_ALL to $LANG or
-@@ -417,7 +531,21 @@ int main(int argc, char **argv) {
+@@ -417,7 +574,21 @@ int main(int argc, char **argv) {
  	// so set $LC_ALL to "C".
  	setenv("LC_ALL", "C", 1);
  
@@ -17671,7 +18331,7 @@ index ce9e733a3a44e56e7ef1ade758a156d6a42855d0..1a8912c3c902699f10b9610264987560
  
  	if ( argc > 1 ) {
  		common->Init( argc-1, &argv[1] );
-@@ -425,8 +553,13 @@ int main(int argc, char **argv) {
+@@ -425,8 +596,13 @@ int main(int argc, char **argv) {
  		common->Init( 0, NULL );
  	}
  
@@ -17907,3 +18567,183 @@ index 34a904b005d013994d4411f143b2a446b6034c63..f7736433469974bb077c4acdb392fe76
 -}
 \ No newline at end of file
 +}
+diff --git a/neo/framework/DeclManager.h b/neo/framework/DeclManager.h
+index aaa1c66b0fbbfdfadaf9205ce71340fd03cac52d..dce4d5f4581d6070330d56113c6e64af76a1d543 100644
+--- a/neo/framework/DeclManager.h
++++ b/neo/framework/DeclManager.h
+@@ -261,6 +261,10 @@ public:
+ 	virtual void			Init( void ) = 0;
+ 	virtual void			Shutdown( void ) = 0;
+ 	virtual void			Reload( bool force ) = 0;
++#ifdef PREYWASM_CLIENT
++	// Discover declaration files that became visible after deferred pak mounting.
++	virtual void			ReloadFolders() = 0;
++#endif
+ 	//HUMANHEAD rww
+ 	virtual void			ReloadType( int declType ) = 0;
+ 	//HUMANHEAD END
+diff --git a/neo/framework/DeclManager.cpp b/neo/framework/DeclManager.cpp
+index edabea46c6a885f9c64a3f7476b1a6e1cb5dcf75..7d4b19a1ad54b83ff0a45085971d4d6e6ecca16f 100644
+--- a/neo/framework/DeclManager.cpp
++++ b/neo/framework/DeclManager.cpp
+@@ -181,6 +181,9 @@ public:
+ 	virtual void				Init( void );
+ 	virtual void				Shutdown( void );
+ 	virtual void				Reload( bool force );
++#ifdef PREYWASM_CLIENT
++	virtual void				ReloadFolders();
++#endif
+ 	virtual void				ReloadType( int declType ) {}
+ 	virtual void				BeginLevelLoad();
+ 	virtual void				EndLevelLoad();
+@@ -731,6 +734,17 @@ int idDeclFile::LoadAndParse() {
+ 		newDecl = declManagerLocal.FindTypeWithoutParsing( identifiedType, name, false );
+ 		if ( newDecl ) {
+ 			// update the existing copy
++#ifdef PREYWASM_CLIENT
++			// Startup can have parsed an implicit fallback before its real file
++			// became visible. Preserve the decl's identity and adopt it into this
++			// file's reload list. Implicit decls are not linked into a file list.
++			if ( newDecl->sourceFile == declManagerLocal.GetImplicitDeclFile() ) {
++				newDecl->sourceFile = this;
++				newDecl->redefinedInReload = false;
++				newDecl->nextInFile = this->decls;
++				this->decls = newDecl;
++			}
++#endif
+ 			if ( newDecl->sourceFile != this || newDecl->redefinedInReload ) {
+ 				if ( decl_warn_duplicates.GetBool() ) {
+ 					src.Warning( "%s '%s' previously defined at %s:%i", declManagerLocal.GetDeclNameFromType( identifiedType ),
+@@ -915,6 +929,17 @@ void idDeclManagerLocal::Reload( bool force ) {
+ 	}
+ }
+ 
++#ifdef PREYWASM_CLIENT
++void idDeclManagerLocal::ReloadFolders() {
++	// Reload() only visits known files; deferred paks add entirely new files.
++	for ( int i = 0; i < declFolders.Num(); i++ ) {
++		idDeclFolder *folder = declFolders[i];
++		RegisterDeclFolder( folder->folder, folder->extension, folder->defaultType );
++	}
++	common->Printf( "Deferred Prey declaration folders refreshed\n" );
++}
++#endif
++
+ /*
+ ===================
+ idDeclManagerLocal::BeginLevelLoad
+diff --git a/neo/sound/snd_cache.cpp b/neo/sound/snd_cache.cpp
+index 346d7e7c4feb9138d32b33a16e870f5187e0fd2a..ad67c37359852a8ca3a25aeda7253db90d9f43fc 100644
+--- a/neo/sound/snd_cache.cpp
++++ b/neo/sound/snd_cache.cpp
+@@ -164,7 +164,12 @@ void idSoundCache::BeginLevelLoad() {
+ 			continue;
+ 		}
+ 
+-		if ( com_purgeAll.GetBool() ) {
++		if ( com_purgeAll.GetBool()
++#ifdef PREYWASM_CLIENT
++			// Early menu references may have cached a missing deferred sample.
++			|| sample->defaultSound
++#endif
++		) {
+ 			sample->PurgeSoundSample();
+ 		}
+ 
+diff --git a/neo/game/gamesys/SaveGame.cpp b/neo/game/gamesys/SaveGame.cpp
+index 8ced35da..ce7c58c5 100644
+--- a/neo/game/gamesys/SaveGame.cpp
++++ b/neo/game/gamesys/SaveGame.cpp
+@@ -861,7 +861,7 @@ void idRestoreGame::RestoreObjects( void ) {
+ 	ReadSoundCommands();
+ 
+ 	// read trace models
+-	idClipModel::RestoreTraceModels( this );
++	gameLocal.clip.RestoreTraceModels( this );
+ 
+ 	// restore all the objects
+ 	for( i = 1; i < objects.Num(); i++ ) {
+@@ -1683,4 +1683,3 @@ void idRestoreGame::ReadStringList( idList<idStr> &list ) {
+ 		list.Append( tmp );
+ 	}
+ }
+-
+diff --git a/neo/game/physics/Clip.cpp b/neo/game/physics/Clip.cpp
+index a8542dcc..fe22cb51 100644
+--- a/neo/game/physics/Clip.cpp
++++ b/neo/game/physics/Clip.cpp
+@@ -818,6 +818,16 @@ void idClip::Shutdown( void ) {
+ 	delete[] clipSectors;
+ 	clipSectors = NULL;
+ 
++	FreeTraceModels();
++	clipLinkAllocator.Shutdown();
++}
++
++/*
++===============
++idClip::FreeTraceModels
++===============
++*/
++void idClip::FreeTraceModels( void ) {
+ 	// free the trace model used for the temporaryClipModel
+ 	if ( temporaryClipModel.traceModelIndex != -1 ) {
+ 		idClipModel::FreeTraceModel( temporaryClipModel.traceModelIndex );
+@@ -830,7 +840,21 @@ void idClip::Shutdown( void ) {
+ 		defaultClipModel.traceModelIndex = -1;
+ 	}
+ 
+-	clipLinkAllocator.Shutdown();
++}
++
++/*
++===============
++idClip::RestoreTraceModels
++===============
++*/
++void idClip::RestoreTraceModels( idRestoreGame *savefile ) {
++	// Init created a default model before the saved cache is read. These two
++	// clip-owned models are not restored with the entities: release their old
++	// references before replacing the cache, then reacquire the default by
++	// shape. Saved indices may differ and must remain intact for the entities.
++	FreeTraceModels();
++	idClipModel::RestoreTraceModels( savefile );
++	defaultClipModel.LoadModel( idTraceModel( idBounds( idVec3( 0, 0, 0 ) ).Expand( 8 ) ) );
+ }
+ 
+ /*
+diff --git a/neo/game/physics/Clip.h b/neo/game/physics/Clip.h
+index f0d8d89d..b926a4cc 100644
+--- a/neo/game/physics/Clip.h
++++ b/neo/game/physics/Clip.h
+@@ -272,6 +272,7 @@ public:
+ 
+ 	void					Init( void );
+ 	void					Shutdown( void );
++	void					RestoreTraceModels( idRestoreGame *savefile );
+ 
+ 	// clip versus the rest of the world
+ 	bool					Translation( trace_t &results, const idVec3 &start, const idVec3 &end,
+@@ -364,6 +365,7 @@ private:
+ 
+ private:
+ 	struct clipSector_s *	CreateClipSectors_r( const int depth, const idBounds &bounds, idVec3 &maxSector );
++	void					FreeTraceModels( void );
+ #if !_HH_CLIP_FASTSECTORS //HUMANHEAD rww
+ 	void					ClipModelsTouchingBounds_r( const struct clipSector_s *node, struct listParms_s &parms ) const;
+ #endif //HUMANHEAD END
+diff --git a/neo/framework/Session.cpp b/neo/framework/Session.cpp
+--- a/neo/framework/Session.cpp
++++ b/neo/framework/Session.cpp
+@@ -2153,7 +2153,10 @@
+ 		keyMaterial[0] = '\0';
+ 		key[0] = '\0';
+ 		bool keywide;
+-		common->MaterialKeyForBinding( "loadgame", keyMaterial, key, keywide ); // FIXME: this should work but it doesnt!
++		// The shipped binding includes "quick". Keep bare loadgame bindings
++		// working too, without mistaking named-save bindings for quickload.
++		const char *loadBinding = idKeyInput::NumBinds( "loadgame quick" ) ? "loadgame quick" : "loadgame";
++		common->MaterialKeyForBinding( loadBinding, keyMaterial, key, keywide );
+ 		material = keyMaterial;
+ 		guiGameStatus->SetStateInt( "messagetype", 2 );
+ 		if ( material ) {

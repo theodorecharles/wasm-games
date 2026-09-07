@@ -1,0 +1,392 @@
+{
+  "scope": "Production native browser-state classification/publication compiled to Wasm with recording session/window/console surroundings. GUI scripts and full native main are not run by this fixture.",
+  "sourceSHA256": "8d6d5de1996f7e1bdc81c942ce77905b4b50984f145a311894686654945545ee",
+  "menuSHA256": "a632b7f91d1bcb8d8d49cda2d2e8d6d6c3eae5cd55a95980b3f3a36d5374a825",
+  "cases": [
+    {
+      "label": "no-map-menu",
+      "expected": {
+        "state": "menu",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "no-map-menu",
+        "type": "engine-state",
+        "state": "menu",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "no-map-console",
+      "expected": {
+        "state": "paused",
+        "inputMode": "console",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "no-map-console",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "console",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "gameplay",
+      "expected": {
+        "state": "gameplay",
+        "inputMode": "gameplay",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "gameplay",
+        "type": "engine-state",
+        "state": "gameplay",
+        "inputMode": "gameplay",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "gameplay-console",
+      "expected": {
+        "state": "paused",
+        "inputMode": "console",
+        "resumeAvailable": true
+      },
+      "actual": {
+        "label": "gameplay-console",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "console",
+        "resumeAvailable": true
+      },
+      "passed": true
+    },
+    {
+      "label": "console-over-menu",
+      "expected": {
+        "state": "paused",
+        "inputMode": "console",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "console-over-menu",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "console",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "root-pause-menu",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": true
+      },
+      "actual": {
+        "label": "root-pause-menu",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": true
+      },
+      "passed": true
+    },
+    {
+      "label": "load-submenu",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "load-submenu",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "save-submenu",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "save-submenu",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "settings-submenu",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "settings-submenu",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "menu-animation",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "menu-animation",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "menu-logo-video",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "menu-logo-video",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "unknown-menu-schema",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "unknown-menu-schema",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "menu-no-ingame-flag",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "menu-no-ingame-flag",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "missing-desktop",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "missing-desktop",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "message-box",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "message-box",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "test-gui",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "test-gui",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "continue-stale-input-guard",
+      "expected": {
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "continue-stale-input-guard",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "continue-ready",
+      "expected": {
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": true
+      },
+      "actual": {
+        "label": "continue-ready",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": true
+      },
+      "passed": true
+    },
+    {
+      "label": "continue-before-console",
+      "expected": {
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": true
+      },
+      "actual": {
+        "label": "continue-before-console",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": true
+      },
+      "passed": true
+    },
+    {
+      "label": "continue-without-map",
+      "expected": {
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "continue-without-map",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "continue",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "return-gameplay",
+      "expected": {
+        "state": "gameplay",
+        "inputMode": "gameplay",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "return-gameplay",
+        "type": "engine-state",
+        "state": "gameplay",
+        "inputMode": "gameplay",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "cache-root-ready",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": true
+      },
+      "actual": {
+        "label": "cache-root-ready",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": true
+      },
+      "passed": true
+    },
+    {
+      "label": "cache-root-animation",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "actual": {
+        "label": "cache-root-animation",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": false
+      },
+      "passed": true
+    },
+    {
+      "label": "cache-root-ready-again",
+      "expected": {
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": true
+      },
+      "actual": {
+        "label": "cache-root-ready-again",
+        "type": "engine-state",
+        "state": "paused",
+        "inputMode": "menu",
+        "resumeAvailable": true
+      },
+      "passed": true
+    }
+  ],
+  "unexpected": []
+}

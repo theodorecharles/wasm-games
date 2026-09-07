@@ -1,0 +1,51 @@
+{
+  "scope": "Exact native/Wasm SABot snapshot read/write methods, actual idBitMsg declarations/used methods and actual usercmd_t compiled on native ASan/UBSan and Wasm SAFE_HEAP/UBSan. Game state/error handling is a fixture; this is not a full network or browser malformed-packet test.",
+  "sourceHashes": {
+    "idlib/BitMsg.cpp": "0a73aa14c824bde22f8c4996844ec7e5ee42ad2cee56364d949e8dd81d7f2b89",
+    "idlib/BitMsg.h": "cdb8bc977f9bb44b640511026931275a08b9399321c475be9f4af8cbf74a568c",
+    "framework/UsercmdGen.h": "3d372298ce28256578458c321cca6619c582c420d80c361afc114e75fb0538f4",
+    "game/bots/BotAI.cpp": "7d313687996a46c37a3d499dcfe4846795cc4f146874b33f523e14e616d4ecc2",
+    "game/Game_network.cpp": "cb3cc34cadfc9ea48d58a5e2c2c8ac261346cac97a998781d38ffe0b1290b11b"
+  },
+  "extractedSHA256": "603361f5e8ffe24ddcd0b98fcc9521e173249606a38230b06fa472258fdbb2d2",
+  "results": [
+    {
+      "target": "native",
+      "sanitizers": [
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all"
+      ],
+      "checks": 59797,
+      "roundTrips": 256,
+      "bitTruncations": 3993,
+      "invalidSlotsOrDuplicates": 34,
+      "fuzzed": 10000,
+      "passed": true
+    },
+    {
+      "target": "wasm",
+      "sanitizers": [
+        "-fexceptions",
+        "-sDISABLE_EXCEPTION_CATCHING=0",
+        "-sENVIRONMENT=node",
+        "-sEXIT_RUNTIME=1",
+        "-sASSERTIONS=2",
+        "-sSAFE_HEAP=1",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all"
+      ],
+      "checks": 59797,
+      "roundTrips": 256,
+      "bitTruncations": 3993,
+      "invalidSlotsOrDuplicates": 34,
+      "fuzzed": 10000,
+      "passed": true
+    }
+  ],
+  "negativeControl": {
+    "upstreamReader": true,
+    "exitCode": 1,
+    "output": "{\"emptyPrefixRejected\":false}"
+  },
+  "passed": true
+}

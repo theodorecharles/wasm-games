@@ -1,0 +1,25 @@
+diff --git a/src/openrct2-ui/UiContext.Linux.cpp b/src/openrct2-ui/UiContext.Linux.cpp
+index 88437b574..b410cb519 100644
+--- a/src/openrct2-ui/UiContext.Linux.cpp
++++ b/src/openrct2-ui/UiContext.Linux.cpp
+@@ -400,6 +400,12 @@ namespace OpenRCT2::Ui
+     private:
+         static DialogType GetDialogApp(std::string* executablePath)
+         {
++    #ifdef __EMSCRIPTEN__
++            // The browser worker cannot spawn desktop dialog applications.
++            // Report that capability as absent and use the built-in UI.
++            (void)executablePath;
++            return DialogType::none;
++    #else
+             // Prefer zenity as it offers more required features, e.g., overwrite
+             // confirmation and selecting only existing files.
+             // OpenRCT2 will fall back to an SDL pop-up if the user has neither.
+@@ -412,6 +418,7 @@ namespace OpenRCT2::Ui
+                 return DialogType::kdialog;
+             }
+             return DialogType::none;
++    #endif
+         }
+ 
+         static std::vector<std::string> GetKDialogFilterString(const std::vector<FileDialogDesc::Filter>& filters)

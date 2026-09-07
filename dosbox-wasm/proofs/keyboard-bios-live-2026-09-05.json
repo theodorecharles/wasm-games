@@ -1,0 +1,856 @@
+{
+  "scope": "Production Wasm native event queue and actual DOS BIOS diagnostic. All lowercase and Shift-uppercase letters, digits, arrows, Escape, Backspace and Enter. Not Chrome held-key/gameplay acceptance.",
+  "keyboardOnly": true,
+  "artifacts": [
+    {
+      "file": "dosbox.js",
+      "sha256": "f90ece402ce7e23e323281b55774d10f4dc8d6d2caa9b7fdf7f58935bdb3b104"
+    },
+    {
+      "file": "dosbox.wasm",
+      "sha256": "70486266d6a794767154f2175f64f58b1f4dc8065d5f3a1fc21f269f38650dd3"
+    }
+  ],
+  "cases": [
+    {
+      "code": 276,
+      "shift": false,
+      "expected": [
+        0,
+        75
+      ],
+      "actual": [
+        0,
+        75
+      ]
+    },
+    {
+      "code": 275,
+      "shift": false,
+      "expected": [
+        0,
+        77
+      ],
+      "actual": [
+        0,
+        77
+      ]
+    },
+    {
+      "code": 273,
+      "shift": false,
+      "expected": [
+        0,
+        72
+      ],
+      "actual": [
+        0,
+        72
+      ]
+    },
+    {
+      "code": 274,
+      "shift": false,
+      "expected": [
+        0,
+        80
+      ],
+      "actual": [
+        0,
+        80
+      ]
+    },
+    {
+      "code": 27,
+      "shift": false,
+      "expected": [
+        27,
+        1
+      ],
+      "actual": [
+        27,
+        1
+      ]
+    },
+    {
+      "code": 97,
+      "shift": false,
+      "expected": [
+        97,
+        30
+      ],
+      "actual": [
+        97,
+        30
+      ]
+    },
+    {
+      "code": 8,
+      "shift": false,
+      "expected": [
+        8,
+        14
+      ],
+      "actual": [
+        8,
+        14
+      ]
+    },
+    {
+      "code": 13,
+      "shift": false,
+      "expected": [
+        13,
+        28
+      ],
+      "actual": [
+        13,
+        28
+      ]
+    },
+    {
+      "code": 97,
+      "shift": false,
+      "expected": [
+        97,
+        30
+      ],
+      "actual": [
+        97,
+        30
+      ]
+    },
+    {
+      "code": 98,
+      "shift": false,
+      "expected": [
+        98,
+        48
+      ],
+      "actual": [
+        98,
+        48
+      ]
+    },
+    {
+      "code": 99,
+      "shift": false,
+      "expected": [
+        99,
+        46
+      ],
+      "actual": [
+        99,
+        46
+      ]
+    },
+    {
+      "code": 100,
+      "shift": false,
+      "expected": [
+        100,
+        32
+      ],
+      "actual": [
+        100,
+        32
+      ]
+    },
+    {
+      "code": 101,
+      "shift": false,
+      "expected": [
+        101,
+        18
+      ],
+      "actual": [
+        101,
+        18
+      ]
+    },
+    {
+      "code": 102,
+      "shift": false,
+      "expected": [
+        102,
+        33
+      ],
+      "actual": [
+        102,
+        33
+      ]
+    },
+    {
+      "code": 103,
+      "shift": false,
+      "expected": [
+        103,
+        34
+      ],
+      "actual": [
+        103,
+        34
+      ]
+    },
+    {
+      "code": 104,
+      "shift": false,
+      "expected": [
+        104,
+        35
+      ],
+      "actual": [
+        104,
+        35
+      ]
+    },
+    {
+      "code": 105,
+      "shift": false,
+      "expected": [
+        105,
+        23
+      ],
+      "actual": [
+        105,
+        23
+      ]
+    },
+    {
+      "code": 106,
+      "shift": false,
+      "expected": [
+        106,
+        36
+      ],
+      "actual": [
+        106,
+        36
+      ]
+    },
+    {
+      "code": 107,
+      "shift": false,
+      "expected": [
+        107,
+        37
+      ],
+      "actual": [
+        107,
+        37
+      ]
+    },
+    {
+      "code": 108,
+      "shift": false,
+      "expected": [
+        108,
+        38
+      ],
+      "actual": [
+        108,
+        38
+      ]
+    },
+    {
+      "code": 109,
+      "shift": false,
+      "expected": [
+        109,
+        50
+      ],
+      "actual": [
+        109,
+        50
+      ]
+    },
+    {
+      "code": 110,
+      "shift": false,
+      "expected": [
+        110,
+        49
+      ],
+      "actual": [
+        110,
+        49
+      ]
+    },
+    {
+      "code": 111,
+      "shift": false,
+      "expected": [
+        111,
+        24
+      ],
+      "actual": [
+        111,
+        24
+      ]
+    },
+    {
+      "code": 112,
+      "shift": false,
+      "expected": [
+        112,
+        25
+      ],
+      "actual": [
+        112,
+        25
+      ]
+    },
+    {
+      "code": 113,
+      "shift": false,
+      "expected": [
+        113,
+        16
+      ],
+      "actual": [
+        113,
+        16
+      ]
+    },
+    {
+      "code": 114,
+      "shift": false,
+      "expected": [
+        114,
+        19
+      ],
+      "actual": [
+        114,
+        19
+      ]
+    },
+    {
+      "code": 115,
+      "shift": false,
+      "expected": [
+        115,
+        31
+      ],
+      "actual": [
+        115,
+        31
+      ]
+    },
+    {
+      "code": 116,
+      "shift": false,
+      "expected": [
+        116,
+        20
+      ],
+      "actual": [
+        116,
+        20
+      ]
+    },
+    {
+      "code": 117,
+      "shift": false,
+      "expected": [
+        117,
+        22
+      ],
+      "actual": [
+        117,
+        22
+      ]
+    },
+    {
+      "code": 118,
+      "shift": false,
+      "expected": [
+        118,
+        47
+      ],
+      "actual": [
+        118,
+        47
+      ]
+    },
+    {
+      "code": 119,
+      "shift": false,
+      "expected": [
+        119,
+        17
+      ],
+      "actual": [
+        119,
+        17
+      ]
+    },
+    {
+      "code": 120,
+      "shift": false,
+      "expected": [
+        120,
+        45
+      ],
+      "actual": [
+        120,
+        45
+      ]
+    },
+    {
+      "code": 121,
+      "shift": false,
+      "expected": [
+        121,
+        21
+      ],
+      "actual": [
+        121,
+        21
+      ]
+    },
+    {
+      "code": 122,
+      "shift": false,
+      "expected": [
+        122,
+        44
+      ],
+      "actual": [
+        122,
+        44
+      ]
+    },
+    {
+      "code": 97,
+      "shift": true,
+      "expected": [
+        65,
+        30
+      ],
+      "actual": [
+        65,
+        30
+      ]
+    },
+    {
+      "code": 98,
+      "shift": true,
+      "expected": [
+        66,
+        48
+      ],
+      "actual": [
+        66,
+        48
+      ]
+    },
+    {
+      "code": 99,
+      "shift": true,
+      "expected": [
+        67,
+        46
+      ],
+      "actual": [
+        67,
+        46
+      ]
+    },
+    {
+      "code": 100,
+      "shift": true,
+      "expected": [
+        68,
+        32
+      ],
+      "actual": [
+        68,
+        32
+      ]
+    },
+    {
+      "code": 101,
+      "shift": true,
+      "expected": [
+        69,
+        18
+      ],
+      "actual": [
+        69,
+        18
+      ]
+    },
+    {
+      "code": 102,
+      "shift": true,
+      "expected": [
+        70,
+        33
+      ],
+      "actual": [
+        70,
+        33
+      ]
+    },
+    {
+      "code": 103,
+      "shift": true,
+      "expected": [
+        71,
+        34
+      ],
+      "actual": [
+        71,
+        34
+      ]
+    },
+    {
+      "code": 104,
+      "shift": true,
+      "expected": [
+        72,
+        35
+      ],
+      "actual": [
+        72,
+        35
+      ]
+    },
+    {
+      "code": 105,
+      "shift": true,
+      "expected": [
+        73,
+        23
+      ],
+      "actual": [
+        73,
+        23
+      ]
+    },
+    {
+      "code": 106,
+      "shift": true,
+      "expected": [
+        74,
+        36
+      ],
+      "actual": [
+        74,
+        36
+      ]
+    },
+    {
+      "code": 107,
+      "shift": true,
+      "expected": [
+        75,
+        37
+      ],
+      "actual": [
+        75,
+        37
+      ]
+    },
+    {
+      "code": 108,
+      "shift": true,
+      "expected": [
+        76,
+        38
+      ],
+      "actual": [
+        76,
+        38
+      ]
+    },
+    {
+      "code": 109,
+      "shift": true,
+      "expected": [
+        77,
+        50
+      ],
+      "actual": [
+        77,
+        50
+      ]
+    },
+    {
+      "code": 110,
+      "shift": true,
+      "expected": [
+        78,
+        49
+      ],
+      "actual": [
+        78,
+        49
+      ]
+    },
+    {
+      "code": 111,
+      "shift": true,
+      "expected": [
+        79,
+        24
+      ],
+      "actual": [
+        79,
+        24
+      ]
+    },
+    {
+      "code": 112,
+      "shift": true,
+      "expected": [
+        80,
+        25
+      ],
+      "actual": [
+        80,
+        25
+      ]
+    },
+    {
+      "code": 113,
+      "shift": true,
+      "expected": [
+        81,
+        16
+      ],
+      "actual": [
+        81,
+        16
+      ]
+    },
+    {
+      "code": 114,
+      "shift": true,
+      "expected": [
+        82,
+        19
+      ],
+      "actual": [
+        82,
+        19
+      ]
+    },
+    {
+      "code": 115,
+      "shift": true,
+      "expected": [
+        83,
+        31
+      ],
+      "actual": [
+        83,
+        31
+      ]
+    },
+    {
+      "code": 116,
+      "shift": true,
+      "expected": [
+        84,
+        20
+      ],
+      "actual": [
+        84,
+        20
+      ]
+    },
+    {
+      "code": 117,
+      "shift": true,
+      "expected": [
+        85,
+        22
+      ],
+      "actual": [
+        85,
+        22
+      ]
+    },
+    {
+      "code": 118,
+      "shift": true,
+      "expected": [
+        86,
+        47
+      ],
+      "actual": [
+        86,
+        47
+      ]
+    },
+    {
+      "code": 119,
+      "shift": true,
+      "expected": [
+        87,
+        17
+      ],
+      "actual": [
+        87,
+        17
+      ]
+    },
+    {
+      "code": 120,
+      "shift": true,
+      "expected": [
+        88,
+        45
+      ],
+      "actual": [
+        88,
+        45
+      ]
+    },
+    {
+      "code": 121,
+      "shift": true,
+      "expected": [
+        89,
+        21
+      ],
+      "actual": [
+        89,
+        21
+      ]
+    },
+    {
+      "code": 122,
+      "shift": true,
+      "expected": [
+        90,
+        44
+      ],
+      "actual": [
+        90,
+        44
+      ]
+    },
+    {
+      "code": 49,
+      "shift": false,
+      "expected": [
+        49,
+        2
+      ],
+      "actual": [
+        49,
+        2
+      ]
+    },
+    {
+      "code": 50,
+      "shift": false,
+      "expected": [
+        50,
+        3
+      ],
+      "actual": [
+        50,
+        3
+      ]
+    },
+    {
+      "code": 51,
+      "shift": false,
+      "expected": [
+        51,
+        4
+      ],
+      "actual": [
+        51,
+        4
+      ]
+    },
+    {
+      "code": 52,
+      "shift": false,
+      "expected": [
+        52,
+        5
+      ],
+      "actual": [
+        52,
+        5
+      ]
+    },
+    {
+      "code": 53,
+      "shift": false,
+      "expected": [
+        53,
+        6
+      ],
+      "actual": [
+        53,
+        6
+      ]
+    },
+    {
+      "code": 54,
+      "shift": false,
+      "expected": [
+        54,
+        7
+      ],
+      "actual": [
+        54,
+        7
+      ]
+    },
+    {
+      "code": 55,
+      "shift": false,
+      "expected": [
+        55,
+        8
+      ],
+      "actual": [
+        55,
+        8
+      ]
+    },
+    {
+      "code": 56,
+      "shift": false,
+      "expected": [
+        56,
+        9
+      ],
+      "actual": [
+        56,
+        9
+      ]
+    },
+    {
+      "code": 57,
+      "shift": false,
+      "expected": [
+        57,
+        10
+      ],
+      "actual": [
+        57,
+        10
+      ]
+    },
+    {
+      "code": 48,
+      "shift": false,
+      "expected": [
+        48,
+        11
+      ],
+      "actual": [
+        48,
+        11
+      ]
+    }
+  ]
+}

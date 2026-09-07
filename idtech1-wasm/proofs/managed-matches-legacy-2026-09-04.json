@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "negativeControl": true,
+  "image": "local/idtech1-wasm:opl-startup-candidate",
+  "supervisorFromImage": true,
+  "results": [
+    {
+      "expectedStaleSelection": true,
+      "requested": "heretic",
+      "received": {
+        "state": "running",
+        "humans": 0,
+        "keepAlive": false,
+        "idleTimeoutMs": 2000,
+        "idleSince": 1788567368792,
+        "startedAt": 1788567368791,
+        "map": null,
+        "error": null,
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "variant": "doom",
+        "connect": "127.0.0.1:10666",
+        "wsPath": "/ws/zandronum",
+        "peers": 0,
+        "bots": 2
+      }
+    }
+  ],
+  "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+}

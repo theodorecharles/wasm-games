@@ -1,0 +1,224 @@
+{
+  "scope": "Sampling-component acceptance: unchanged same-footprint native GL/GLES oracle plus independent CPU mip/border/GLSL-derivative contract and broken-sampler negative controls. Raw vendor-exact status retained; not renderer/campaign/Chrome acceptance.",
+  "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+  "anisotropy": 16,
+  "packagedJsSHA256": "622d3a034d40e03d5f7b2d35ca25c40fb40102604a9390dee10e64e2186b8837",
+  "helperSHA256": "582ff67bbe204a32226df63852271a8607cd05f99598c543daa2721d81aaeeb3",
+  "rawVendorStatus": 0,
+  "rawVendorSummary": {
+    "rejected-wrap-default-repeat": {
+      "cases": 128,
+      "mismatches": 128,
+      "maximumChannelDifference": 240
+    },
+    "edge-substitution": {
+      "cases": 128,
+      "mismatches": 128,
+      "maximumChannelDifference": 228
+    },
+    "hard-outside-cutoff": {
+      "cases": 128,
+      "mismatches": 120,
+      "maximumChannelDifference": 171
+    },
+    "isotropic-sampling-prototype": {
+      "cases": 128,
+      "mismatches": 64,
+      "maximumChannelDifference": 129
+    },
+    "anisotropic-sampling-prototype": {
+      "cases": 128,
+      "nativeKernelMismatches": 0,
+      "nativeKernelMaximumChannelDifference": 1,
+      "vendorMismatches": 64,
+      "vendorMaximumChannelDifference": 143
+    },
+    "gles-anisotropic-sampling-prototype": {
+      "cases": 128,
+      "nativeKernelMismatches": 0,
+      "nativeKernelMaximumChannelDifference": 1,
+      "vendorMismatches": 64,
+      "vendorMaximumChannelDifference": 143
+    }
+  },
+  "cpu": [
+    {
+      "name": "production",
+      "contexts": [
+        {
+          "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.2",
+          "policies": [
+            {
+              "derivatives": "fine",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 0,
+              "maximum": 1
+            },
+            {
+              "derivatives": "coarse",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 74,
+              "maximum": 6
+            }
+          ],
+          "accepted": {
+            "derivatives": "fine",
+            "pixels": 1936,
+            "channels": 7744,
+            "mismatches": 0,
+            "maximum": 1
+          }
+        },
+        {
+          "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+          "policies": [
+            {
+              "derivatives": "fine",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 0,
+              "maximum": 1
+            },
+            {
+              "derivatives": "coarse",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 75,
+              "maximum": 6
+            }
+          ],
+          "accepted": {
+            "derivatives": "fine",
+            "pixels": 1936,
+            "channels": 7744,
+            "mismatches": 0,
+            "maximum": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "base-mip-only",
+      "contexts": [
+        {
+          "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.2",
+          "policies": [
+            {
+              "derivatives": "fine",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 2451,
+              "maximum": 151
+            },
+            {
+              "derivatives": "coarse",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 2451,
+              "maximum": 151
+            }
+          ],
+          "accepted": {
+            "derivatives": "fine",
+            "pixels": 1936,
+            "channels": 7744,
+            "mismatches": 2451,
+            "maximum": 151
+          }
+        },
+        {
+          "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+          "policies": [
+            {
+              "derivatives": "fine",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 2451,
+              "maximum": 151
+            },
+            {
+              "derivatives": "coarse",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 2451,
+              "maximum": 151
+            }
+          ],
+          "accepted": {
+            "derivatives": "fine",
+            "pixels": 1936,
+            "channels": 7744,
+            "mismatches": 2451,
+            "maximum": 151
+          }
+        }
+      ]
+    },
+    {
+      "name": "edge-substitution",
+      "contexts": [
+        {
+          "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.2",
+          "policies": [
+            {
+              "derivatives": "fine",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 7653,
+              "maximum": 228
+            },
+            {
+              "derivatives": "coarse",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 7660,
+              "maximum": 228
+            }
+          ],
+          "accepted": {
+            "derivatives": "fine",
+            "pixels": 1936,
+            "channels": 7744,
+            "mismatches": 7653,
+            "maximum": 228
+          }
+        },
+        {
+          "driver": "llvmpipe (LLVM 20.1.2, 256 bits)",
+          "version": "OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2",
+          "policies": [
+            {
+              "derivatives": "fine",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 7654,
+              "maximum": 228
+            },
+            {
+              "derivatives": "coarse",
+              "pixels": 1936,
+              "channels": 7744,
+              "mismatches": 7661,
+              "maximum": 228
+            }
+          ],
+          "accepted": {
+            "derivatives": "fine",
+            "pixels": 1936,
+            "channels": 7744,
+            "mismatches": 7654,
+            "maximum": 228
+          }
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

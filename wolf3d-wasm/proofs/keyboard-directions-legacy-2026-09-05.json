@@ -1,0 +1,185 @@
+{
+  "scope": "Exact production PollKeyboardMove and four browser ReadConfig direction assignments, with fixture keyboard/control fields seeded with old persisted WASD direction bindings. Both native variant defines. Not full configuration I/O, actor physics or Chrome held-key acceptance.",
+  "legacyDirections": true,
+  "sourceSHA256": "87a2e68fc14cf2b52899aede0e7c849316be93c288623a444939a1f3ba8e54a2",
+  "results": [
+    {
+      "variant": "wolf3d",
+      "cases": [
+        {
+          "label": "W-forward-once",
+          "controlx": 0,
+          "controly": -70,
+          "passed": false
+        },
+        {
+          "label": "S-backward-once",
+          "controlx": 0,
+          "controly": 70,
+          "passed": false
+        },
+        {
+          "label": "A-strafe-not-turn",
+          "controlx": -35,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "D-strafe-not-turn",
+          "controlx": 35,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "left-arrow-turn",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "right-arrow-turn",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "up-arrow-forward",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "down-arrow-backward",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "W-run",
+          "controlx": 0,
+          "controly": -140,
+          "passed": false
+        },
+        {
+          "label": "A-run-still-no-turn",
+          "controlx": -210,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "W-plus-A",
+          "controlx": -35,
+          "controly": -70,
+          "passed": false
+        },
+        {
+          "label": "W-plus-S-cancel",
+          "controlx": 0,
+          "controly": 0,
+          "passed": true
+        },
+        {
+          "label": "released-keys",
+          "controlx": 0,
+          "controly": 0,
+          "passed": true
+        },
+        {
+          "label": "multi-tic-forward",
+          "controlx": 0,
+          "controly": -210,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "variant": "spear",
+      "cases": [
+        {
+          "label": "W-forward-once",
+          "controlx": 0,
+          "controly": -70,
+          "passed": false
+        },
+        {
+          "label": "S-backward-once",
+          "controlx": 0,
+          "controly": 70,
+          "passed": false
+        },
+        {
+          "label": "A-strafe-not-turn",
+          "controlx": -35,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "D-strafe-not-turn",
+          "controlx": 35,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "left-arrow-turn",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "right-arrow-turn",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "up-arrow-forward",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "down-arrow-backward",
+          "controlx": 0,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "W-run",
+          "controlx": 0,
+          "controly": -140,
+          "passed": false
+        },
+        {
+          "label": "A-run-still-no-turn",
+          "controlx": -210,
+          "controly": 0,
+          "passed": false
+        },
+        {
+          "label": "W-plus-A",
+          "controlx": -35,
+          "controly": -70,
+          "passed": false
+        },
+        {
+          "label": "W-plus-S-cancel",
+          "controlx": 0,
+          "controly": 0,
+          "passed": true
+        },
+        {
+          "label": "released-keys",
+          "controlx": 0,
+          "controly": 0,
+          "passed": true
+        },
+        {
+          "label": "multi-tic-forward",
+          "controlx": 0,
+          "controly": -210,
+          "passed": false
+        }
+      ]
+    }
+  ]
+}

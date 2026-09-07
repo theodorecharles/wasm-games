@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "image": "sha256:05fab450190b6a00126a0832c9c1ba4a2ef283345d2f8449b5aa02fc134803a8",
+  "tag": "local/idtech4-wasm:prey-accounting-candidate",
+  "container": "1e9e692dd676fd2c749f1bf7a9e724c33413d4dc78da175bdbd1680d14d27daa",
+  "url": "http://127.0.0.1:32877/",
+  "patches": {
+    "d3wasm": "f9cc0d4dc91cdf5e8bc2af4af88d72d84ea240fe33863a50141f969052fcbc2e",
+    "prey": "5e9095bd7eeb83441ab1e9c72330a57a6a3885b80d3e8eccdcffd0ee8ddddb86"
+  },
+  "artifacts": [
+    {
+      "file": "prey06.js",
+      "stagedSHA256": "395b12cee7a62146692c98389ab4d1a51177da59ddb108526807aa3cf1256f3f",
+      "imageSHA256": "395b12cee7a62146692c98389ab4d1a51177da59ddb108526807aa3cf1256f3f"
+    },
+    {
+      "file": "prey06.wasm",
+      "stagedSHA256": "ade969a2cc4911650b5d5ffaa1798a82debfe8a7f24f24a08613743686c11cb5",
+      "imageSHA256": "ade969a2cc4911650b5d5ffaa1798a82debfe8a7f24f24a08613743686c11cb5"
+    },
+    {
+      "file": "dhewm3-base.js",
+      "stagedSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc",
+      "imageSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc"
+    },
+    {
+      "file": "dhewm3-base.wasm",
+      "stagedSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f",
+      "imageSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f"
+    },
+    {
+      "file": "dhewm3-roe.js",
+      "stagedSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab",
+      "imageSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab"
+    },
+    {
+      "file": "dhewm3-roe.wasm",
+      "stagedSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce",
+      "imageSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3",
+      "imageSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3"
+    },
+    {
+      "file": "prey-worker.js",
+      "stagedSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1",
+      "imageSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1"
+    }
+  ],
+  "checks": {
+    "nativeAccountingCases": 46,
+    "legacyFailures": 6,
+    "repairedFailures": 0,
+    "exactPatchTrees": 4,
+    "fullStaging": true
+  },
+  "scope": "Three rebuilt clients and matching packaged artifacts; only isolated Prey service runs this image. Browser acceptance is separate."
+}

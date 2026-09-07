@@ -1,0 +1,15 @@
+Zandronum browser audio uses its native OPL synthesizer and an SDL PCM mixer.
+
+Additional audio decoders:
+
+dr_libs (dr_wav and dr_flac), David Reid
+https://github.com/mackron/dr_libs
+Pinned source: dfe8377631000664666519fdb83da193fd8037f4
+License alternatives reproduced in /dist/dr-libs-LICENSE.txt.
+
+libvorbis 1.3.7 and libogg 1.3.5, Xiph.Org Foundation
+https://xiph.org/vorbis/ and https://xiph.org/ogg/
+Built by the pinned Emscripten 6.0.6 port recipes with archive hash verification.
+Licenses reproduced in /dist/vorbis-LICENSE.txt and /dist/ogg-LICENSE.txt.
+
+No desktop FMOD binary or third-party soundfont is included in this backend.

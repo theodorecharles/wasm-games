@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "image": "sha256:04e41a70727078d605e9c6530e905eb3179533a6e3650437518c01dccc3c0f0a",
+  "tag": "local/idtech4-wasm:prey-default-images-candidate",
+  "container": "5b77c9915f8fb06da01cdb7809eb758bf8f7b58094c9d1830024865746afd40f",
+  "url": "http://127.0.0.1:32877/",
+  "patches": {
+    "d3wasm": "f9cc0d4dc91cdf5e8bc2af4af88d72d84ea240fe33863a50141f969052fcbc2e",
+    "prey": "298593777d72c2c5e1184a68dab97475527a87cacfd25c669533debeac6fab7a"
+  },
+  "artifacts": [
+    {
+      "file": "prey06.js",
+      "stagedSHA256": "395b12cee7a62146692c98389ab4d1a51177da59ddb108526807aa3cf1256f3f",
+      "imageSHA256": "395b12cee7a62146692c98389ab4d1a51177da59ddb108526807aa3cf1256f3f"
+    },
+    {
+      "file": "prey06.wasm",
+      "stagedSHA256": "608790e4f3ac6a23b56b248439519e0acf542e8062d29cdde66202100063e589",
+      "imageSHA256": "608790e4f3ac6a23b56b248439519e0acf542e8062d29cdde66202100063e589"
+    },
+    {
+      "file": "dhewm3-base.js",
+      "stagedSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc",
+      "imageSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc"
+    },
+    {
+      "file": "dhewm3-base.wasm",
+      "stagedSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f",
+      "imageSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f"
+    },
+    {
+      "file": "dhewm3-roe.js",
+      "stagedSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab",
+      "imageSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab"
+    },
+    {
+      "file": "dhewm3-roe.wasm",
+      "stagedSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce",
+      "imageSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3",
+      "imageSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3"
+    },
+    {
+      "file": "prey-worker.js",
+      "stagedSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1",
+      "imageSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1"
+    }
+  ],
+  "checks": {
+    "nativeAccountingCases": 46,
+    "defaultOwnershipCases": 11,
+    "defaultOwnershipLegacyFailures": 7,
+    "repairedFailures": 0,
+    "exactPatchTrees": 4,
+    "fullStaging": true
+  },
+  "mounts": [
+    {
+      "Source": "/var/lib/docker/volumes/b9e51bf345afafdcd5ec5eaeca66c676b26e7e90f6724dd70c138d85241284e7/_data",
+      "Destination": "/data",
+      "RW": true
+    },
+    {
+      "Source": "/home/ted/wasm-game-data/prey/base",
+      "Destination": "/data/prey/base",
+      "RW": false
+    }
+  ],
+  "scope": "Isolated Prey ownership follow-up, with matching packaged artifacts. Prior accounting image/container retained stopped; live games unchanged. Browser acceptance is separate."
+}

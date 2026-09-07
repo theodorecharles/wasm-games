@@ -1,0 +1,146 @@
+diff --git a/server/runtime.cjs b/server/runtime.cjs
+index 179e56c..987d9cb 100644
+--- a/server/runtime.cjs
++++ b/server/runtime.cjs
+@@ -4,7 +4,9 @@ const fsp = require('node:fs/promises');
+ const os = require('node:os');
+ const path = require('node:path');
+ const {spawn} = require('node:child_process');
++const crypto = require('node:crypto');
+ const {queryStatus} = require('./status.cjs');
++const {createSabotRoster} = require('./sabot-roster.cjs');
+ 
+ function createManagedRuntime(options) {
+   const env = options.environment || process.env;
+@@ -16,10 +18,12 @@ function createManagedRuntime(options) {
+   const map = env.D3_MANAGED_MAP || 'game/mp/d3dm1';
+   if (!/^game\/mp\/d3dm[1-5]$/.test(map)) throw new Error('Unsupported managed Doom 3 map.');
+   let roster = null;
++  const botPack = path.join(options.siteRoot, 'bots/d3_sabot_a7.pk4');
+   let active = null;
+   let browserPeers = 0;
+   const log = options.log || (line => process.stdout.write(line + '\n'));
+   const alive = handle => handle.child.exitCode === null && handle.child.signalCode === null && !handle.spawnError;
++  const botReady = bots => bots?.fresh && bots.target === Math.max(0, Math.min(2, 8 - bots.humans)) && bots.players.length === bots.target;
+ 
+   async function stop(handle) {
+     if (handle.stopping) return handle.stopping;
+@@ -56,24 +60,34 @@ function createManagedRuntime(options) {
+         await fsp.mkdir(path.dirname(target), {recursive: true});
+         await fsp.symlink(data.filePath(policy), target);
+       }
++      const botBytes = await fsp.readFile(botPack);
++      if (botBytes.length !== 2399406 || crypto.createHash('sha256').update(botBytes).digest('hex') !== 'b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff') throw new Error('Invalid pinned bot assets.');
++      await fsp.symlink(botPack, path.join(workdir, 'base/zz_sabot.pk4'));
+       const args = ['+set', 'fs_basepath', workdir, '+set', 'fs_cdpath', workdir,
+         '+set', 'fs_savepath', path.join(workdir, 'save'), '+set', 'fs_configpath', path.join(workdir, 'save'),
+         '+set', 'net_ip', '127.0.0.1', '+set', 'net_port', String(options.port),
+         '+set', 'net_LANServer', '1', '+set', 'si_pure', '0',
+         '+set', 'si_name', 'Browser Doom 3 Deathmatch', '+set', 'si_gameType', 'deathmatch',
+         '+set', 'si_maxPlayers', '8', '+set', 'si_warmup', '0',
+-        '+set', 'si_map', map, '+spawnServer'];
++        '+set', 'harm_g_autoGenAASFileInMPGame', '0',
++        '+set', 'harm_si_autoFillBots', '2',
++        '+set', 'si_map', map, '+spawnServer', '+sabot', 'status'];
+       const child = spawn(path.join(options.nativeRoot, 'dhewm3ded'), args, {
+-        cwd: workdir, stdio: ['ignore', 'pipe', 'pipe'], env
++        cwd: workdir, stdio: ['pipe', 'pipe', 'pipe'], env
+       });
+-      handle = {child, workdir, output: '', stopping: null, pollTimer: null, spawnError: null};
++      handle = {child, workdir, output: '', stopping: null, pollTimer: null, spawnError: null,
++        bots: createSabotRoster({requirePopulation: true})};
+       active = handle;
++      child.stdin.on('error', error => log(`Doom 3 bot control: ${error.message}`));
+       const capture = chunk => {
+         handle.output = (handle.output + chunk).slice(-65536);
+         log(`[doom3ded] ${String(chunk).trimEnd()}`);
+       };
+-      child.stdout.on('data', capture);
++      child.stdout.on('data', chunk => { capture(chunk); handle.bots.push(chunk); });
+       child.stderr.on('data', capture);
++      const requestBotStatus = () => {
++        if (!handle.stopping && child.stdin.writable && child.stdin.writableLength < 1024) child.stdin.write('sabot status\n');
++      };
+       child.once('error', error => { handle.spawnError = error; });
+       child.once('exit', (code, signal) => {
+         log(`Doom 3 dedicated exited code=${code} signal=${signal || '-'}`);
+@@ -83,18 +97,26 @@ function createManagedRuntime(options) {
+       });
+       const deadline = Date.now() + Math.max(1000, Number(env.D3_START_TIMEOUT_MS) || 45000);
+       let lastError;
++      let lastBotRequest = Date.now();
+       while (Date.now() < deadline) {
+         if (!alive(handle)) throw handle.spawnError || new Error('Doom 3 dedicated exited before readiness.');
++        if (Date.now() - lastBotRequest >= 1000) { requestBotStatus(); lastBotRequest = Date.now(); }
+         try {
+           roster = await queryStatus({port: options.port, timeoutMs: 500});
+           if (roster.map !== map || roster.gameType.toLowerCase() !== 'deathmatch') throw new Error('Doom 3 started the wrong match.');
++          if (!botReady(handle.bots.snapshot())) throw new Error('Waiting for the native bot population.');
+           lifecycle.observeHumans(browserPeers);
+           let failures = 0;
+           let polling = false;
+           handle.pollTimer = setInterval(async () => {
+             if (polling || handle.stopping) return;
+             polling = true;
+-            try { roster = await queryStatus({port: options.port}); failures = 0; }
++            requestBotStatus();
++            try {
++              roster = await queryStatus({port: options.port});
++              if (!botReady(handle.bots.snapshot())) throw new Error('The expected native bot population is not reporting.');
++              failures = 0;
++            }
+             catch (error) {
+               log(`Doom 3 status: ${error.message}`);
+               if (++failures >= 3 && !handle.stopping) void lifecycle.sleep('dedicated status unavailable').catch(error => log(error.message));
+@@ -121,9 +143,17 @@ function createManagedRuntime(options) {
+     wake: () => lifecycle.wake(),
+     sleep: reason => lifecycle.sleep(reason),
+     observePeers(count) { browserPeers = count; lifecycle.observeHumans(count); },
+-    status: () => ({...lifecycle.status(), map, connect: '127.0.0.1:27666',
+-      protocol: roster?.protocol || null, players: roster?.players || [],
+-      browserPeers, bots: 0, botStatus: 'not-installed'}),
++    status() {
++      const state = lifecycle.status();
++      const bots = active?.bots.snapshot();
++      const botPlayers = bots?.players || [];
++      return {...state, map: roster?.map || map, connect: '127.0.0.1:27666',
++        protocol: roster?.protocol || null, players: roster?.players || [], browserPeers,
++        bots: botPlayers.length, botPlayers, botUpdatedAt: bots?.updatedAt ?? null,
++        botTarget: bots?.target ?? null, nativeHumans: bots?.humans ?? null,
++        botStatus: state.state === 'sleeping' ? 'sleeping' : state.state === 'failed' ? 'failed'
++          : botReady(bots) ? 'ready' : state.state === 'running' ? 'unavailable' : 'starting'};
++    },
+     async shutdown() {
+       // A wake in flight must finish/fail before sleeping; the framework's
+       // generic sleep() does not wait for pendingWake on its own.
+diff --git a/site/d3-worker.js b/site/d3-worker.js
+index a5927c9..72d74e7 100644
+--- a/site/d3-worker.js
++++ b/site/d3-worker.js
+@@ -31,6 +31,17 @@ async function launch(message) {
+         onError: error => post('log', error),
+         onClose: () => post('log', 'Doom 3 managed connection closed; use native reconnect to rejoin.')});
+     }
++    const mountedEntries = entries.slice();
++    if (variant === 'doom3-mp') {
++      post('status', 'Loading multiplayer bots…');
++      const response = await fetch('/bots/d3_sabot_a7.pk4');
++      if (!response.ok) throw new Error(`Bot assets unavailable (${response.status}).`);
++      const blob = await response.blob();
++      if (blob.size !== 2399406) throw new Error('Unexpected bot asset size.');
++      const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), b => b.toString(16).padStart(2, '0')).join('');
++      if (digest !== 'b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff') throw new Error('Bot asset checksum mismatch.');
++      mountedEntries.push({path: 'base/zz_sabot.pk4', file: blob});
++    }
+     // Emscripten's SDL screen-size shim reads the Window-only `screen` global.
+     // Supply its worker equivalent from the framework-owned OffscreenCanvas.
+     if (!self.screen) {
+@@ -105,7 +116,7 @@ async function launch(message) {
+       locateFile: path => new URL(path.endsWith('.wasm') ? `dhewm3-${roe ? 'roe' : 'base'}.wasm` : path, self.location.href).href,
+       preRun: [() => {
+         FS.mkdir('/owner-data');
+-        FS.mount(WORKERFS, { blobs: entries.map(entry => ({ name: entry.path, data: entry.file })) }, '/owner-data');
++        FS.mount(WORKERFS, { blobs: mountedEntries.map(entry => ({ name: entry.path, data: entry.file })) }, '/owner-data');
+       }],
+       print: line => post('log', line),
+       printErr: line => post('log', `ERR: ${line}`),

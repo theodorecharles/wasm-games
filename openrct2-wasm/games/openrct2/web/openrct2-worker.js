@@ -42,6 +42,57 @@ function ensureDirectory(FS, directory) {
   }
 }
 
+async function stampBundledObjects(FS) {
+  // The preload package has no source mtimes: MEMFS assigns Date.now() on
+  // every launch. Native FileIndex checks whole-second mtimes, so those
+  // otherwise identical objects invalidate the persisted index each time.
+  // Give only bundled, indexed files stable content-derived version stamps.
+  // Keep native path/size/date validation and all private/user mtimes intact.
+  const stats = { files: 0, bytes: 0 };
+  async function visit(directory) {
+    for (const name of FS.readdir(directory)) {
+      if (name === '.' || name === '..') continue;
+      const path = `${directory}/${name}`;
+      const stat = FS.lstat(path);
+      if (FS.isDir(stat.mode)) {
+        await visit(path);
+      } else if (FS.isFile(stat.mode) && /\.(dat|pob|json|parkobj)$/i.test(name)) {
+        const bytes = FS.readFile(path);
+        const digest = await crypto.subtle.digest('SHA-256', bytes);
+        // FileIndex's date checksum is 32-bit. Preserve all 32 stamp bits in
+        // seconds; FS.utime takes milliseconds. Zero is a valid timestamp.
+        const seconds = new DataView(digest).getUint32(0, false);
+        FS.utime(path, stat.atime.getTime(), seconds * 1000);
+        stats.files++;
+        stats.bytes += bytes.byteLength;
+      }
+    }
+  }
+  await visit('/OpenRCT2/object');
+  return stats;
+}
+
+function mountInstallationObjects(FS, workerFs, groups, hotCache) {
+  // Native ObjectRepository indexes OpenRCT2/object and user/object, not the
+  // original RCT2 ObjData directory. Self-contained private .parkobj additions
+  // need an indexed mount too; leave the original DAT/image source untouched.
+  const files = groups.filter(group => group.directory === 'ObjData')
+    .flatMap(group => group.files).filter(file => /\.parkobj$/i.test(file.name));
+  if (!files.length) return 0;
+  const names = new Set();
+  for (const file of files) {
+    if (!file.name || /[/\\]/.test(file.name) || names.has(file.name)) {
+      throw new Error(`Invalid or duplicate installation object: ${file.name}`);
+    }
+    names.add(file.name);
+  }
+  const root = '/OpenRCT2/object/installed';
+  ensureDirectory(FS, root);
+  const mounted = FS.mount(workerFs, { files }, root);
+  hotCache.markTree(mounted);
+  return files.length;
+}
+
 function stateName(value) {
   if (value === 1) return 'menu';
   if (value === 2) return 'gameplay';
@@ -172,6 +223,10 @@ async function launch(message) {
     }
     installEventShims(canvas);
 
+    // Run before mounting any private installation or persistent user files.
+    const bundledObjects = await stampBundledObjects(runtime.FS);
+    post('log', `[openrct2-wasm] Stable content timestamps applied to ${bundledObjects.files} bundled index files (${bundledObjects.bytes} bytes)`);
+
     const hotCacheModule = await import('/openrct2-hot-cache.mjs');
     const workerFs = runtime.FS.filesystems.WORKERFS;
     const hotCache = hotCacheModule.createWorkerFsHotCache(workerFs, detail => {
@@ -186,6 +241,8 @@ async function launch(message) {
       const mountRoot = runtime.FS.mount(workerFs, { files: group.files }, root);
       if (hotCacheModule.shouldCacheDirectory(group.directory)) hotCache.markTree(mountRoot);
     }
+    const installedObjects = mountInstallationObjects(runtime.FS, workerFs, groups, hotCache);
+    if (installedObjects) post('log', `[openrct2-wasm] ${installedObjects} private installation park objects mounted for native indexing`);
 
     persistenceManager = self.WasmGameFramework.createPersistenceManager({
       namespace: persistence.namespace,

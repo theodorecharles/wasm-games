@@ -11,7 +11,7 @@ const repo = path.resolve(__dirname, '..');
 const crispySource = execFileSync(path.join(repo, 'scripts', 'fetch-crispy-source.sh'), {
   encoding: 'utf8'
 }).trim();
-const source = fs.readFileSync(path.join(repo, 'web/game-adapter.js'), 'utf8');
+const source = fs.readFileSync(process.env.IDTECH1_TEST_ADAPTER || path.join(repo, 'web/game-adapter.js'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 const modernVariants = new Set(['doom', 'doom2', 'tnt', 'plutonia', 'heretic', 'hexen', 'chex']);
@@ -77,12 +77,17 @@ assert.doesNotMatch(source, /createPersistentFs/,
 
 async function exercise(variant, requestedProfile, options = {}) {
   let nativeState = 0;
+  let waitingForLaunch = options.deathmatch && requestedProfile !== 'modernized' ? 1 : 0;
   let openMenuCalls = 0;
   const nativeResizes = [];
   const stateChanges = [];
   const displayChanges = [];
+  const cursorChanges = [];
   const intervals = [];
   const documentListeners = new Map();
+  const dispatchDocument = (type, event) => {
+    for (const listener of documentListeners.get(type) || []) listener(event);
+  };
   let shellState = 'launcher';
   let resumeAudioCalls = 0;
   let now = 1000;
@@ -119,6 +124,7 @@ async function exercise(variant, requestedProfile, options = {}) {
     FS,
     callMain(args) { lifecycle.push(['main', Array.from(args)]); },
     _I_BrowserRuntimeState: () => nativeState,
+    _I_BrowserWaitingLaunch: () => waitingForLaunch,
     _I_BrowserOpenMenu() { openMenuCalls += 1; nativeState = 0; },
     _I_BrowserResizeViewport(width, height) {
       nativeResizes.push([width, height]);
@@ -150,14 +156,34 @@ async function exercise(variant, requestedProfile, options = {}) {
     dynamicRow: { hidden: false },
     description: { textContent: '', hidden: true }
   };
+  let deathmatchButton;
+  const wakeRequests = [];
+  if (options.deathmatch) {
+    elements.form = { requestSubmit() {} };
+    elements.play = { addEventListener() {}, insertAdjacentElement(_position, button) { deathmatchButton = button; } };
+  }
   const sandbox = {
+    URL,
     URLSearchParams,
     TextEncoder,
     console,
     location: { search: '', href: 'http://localhost/' },
     queueMicrotask,
     performance: { now: () => now },
-    fetch: async target => {
+    fetch: async (target, init) => {
+      if (String(target) === '/wake') {
+        assert.equal(init.method, 'POST', 'every deathmatch selection must send metadata');
+        const metadata = JSON.parse(init.body);
+        wakeRequests.push(metadata);
+        return { ok: !options.wakeError, status: options.wakeError ? 409 : 200,
+          json: async () => options.wakeError ? { error: 'Deathmatch is busy' } : {
+            state: 'running', variant: options.wrongVariant ? 'wrong-game' : variant,
+            mode: requestedProfile === 'modernized' ? 'modernized' : 'classic',
+            wsPath: `/ws/${requestedProfile === 'modernized' ? 'zandronum' : 'classic'}?match=test-session`,
+            connect: requestedProfile === 'modernized' ? '127.0.0.1:10666' : '1', peers: 0
+          }
+        };
+      }
       if (String(target) === '/wasm-game-data.json') {
         return { ok: true, json: async () => dataManifest };
       }
@@ -168,14 +194,18 @@ async function exercise(variant, requestedProfile, options = {}) {
       head: {
         appendChild(script) {
           if (script.src.includes('dsda-doom')) sandbox.createDsdaDoom = async () => engine;
+          else if (script.src.includes('zandronum')) sandbox.createZandronum = async () => engine;
           else if (script.src.includes('heretic')) sandbox.createCrispyHeretic = async () => engine;
           else if (script.src.includes('hexen')) sandbox.createCrispyHexen = async () => engine;
           else sandbox.createCrispyDoom = async () => engine;
           script.onload();
         }
       },
-      createElement: () => ({}),
-      addEventListener(type, listener) { documentListeners.set(type, listener); }
+      createElement: () => ({ addEventListener(type, callback) { this[type] = callback; } }),
+      addEventListener(type, listener) {
+        if (!documentListeners.has(type)) documentListeners.set(type, []);
+        documentListeners.get(type).push(listener);
+      }
     },
     window: {
       innerWidth: 1280, innerHeight: 720,
@@ -219,6 +249,7 @@ async function exercise(variant, requestedProfile, options = {}) {
     shell: {
       engineState: () => shellState,
       setDisplay(display) { displayChanges.push(display); },
+      setMenuCursor(mode) { cursorChanges.push(mode); },
       async resumeAudio() { resumeAudioCalls += 1; },
       resize() {}
     },
@@ -231,7 +262,17 @@ async function exercise(variant, requestedProfile, options = {}) {
   };
 
   await adapter.init(context);
+  if (options.deathmatch) deathmatchButton.click();
   assert.equal(canvas.id, 'canvas', `${variant} binds the framework canvas to SDL2's native selector`);
+  if (options.classicConfig) {
+    const configPath = `/persistent/idtech1/${variant}/default.cfg`;
+    files.add(configPath);
+    fileData.set(configPath, options.classicConfig);
+    if (options.classicBackup) {
+      files.add(`${configPath}.pre-scancode-fix`);
+      fileData.set(`${configPath}.pre-scancode-fix`, options.classicBackup);
+    }
+  }
   if (requestedProfile === 'modernized') {
     const configPath = `/persistent/idtech1/${variant}/dsda-doom.cfg`;
     files.add(configPath);
@@ -251,7 +292,72 @@ async function exercise(variant, requestedProfile, options = {}) {
       fileData.set(versionPath, '2\n');
     }
   }
+  if (options.wakeError || options.wrongVariant) {
+    await assert.rejects(adapter.start(context), options.wakeError ? /Deathmatch is busy/ : /did not select/);
+    assert.equal(lifecycle.length, 0, 'invalid match must fail before loading a native client');
+    return;
+  }
   await adapter.start(context);
+  assert.equal(cursorChanges.at(-1), requestedProfile === 'modernized'
+    ? (options.deathmatch ? 'native' : 'browser') : 'none');
+  // All engines already have SDL physical input. Only Zandronum needs the
+  // captured relative-motion shim; no engine should reinject physical keys.
+  const bridgedMotion = requestedProfile === 'modernized' && options.deathmatch;
+  const keyStart = controllerKeys.length;
+  const buttonStart = controllerButtons.length;
+  const wheelStart = controllerWheels.length;
+  for (const key of ['w', 'Enter', 'Escape']) {
+    dispatchDocument('keydown', { key, target: canvas });
+    dispatchDocument('keyup', { key, target: canvas });
+  }
+  for (const button of [0, 1, 2]) {
+    dispatchDocument('pointerdown', { button, target: canvas });
+    dispatchDocument('pointerup', { button, target: canvas });
+  }
+  dispatchDocument('wheel', { deltaY: -100, target: canvas });
+  assert.equal(controllerKeys.length - keyStart, 0,
+    `${variant}/${requestedProfile} physical keys have only one input owner`);
+  assert.equal(controllerButtons.length - buttonStart, 0,
+    `${variant}/${requestedProfile} physical mouse buttons have only one input owner`);
+  assert.equal(controllerWheels.length - wheelStart, 0,
+    `${variant}/${requestedProfile} physical wheel has only one input owner`);
+  const mouseStart = controllerMouse.length;
+  sandbox.document.pointerLockElement = canvas;
+  dispatchDocument('pointermove', { target: canvas, movementX: 13, movementY: -2 });
+  assert.deepEqual(controllerMouse.slice(mouseStart), bridgedMotion ? [[13, -2]] : [],
+    'captured relative motion has exactly one engine-specific owner');
+  sandbox.document.pointerLockElement = null;
+  await Promise.resolve();
+  now += 3000;
+  if (options.deathmatch) {
+    assert.deepEqual(wakeRequests, [{ engine: requestedProfile === 'modernized' ? 'zandronum' : 'classic',
+      variant, profile: requestedProfile }]);
+    assert.equal(lifecycle[1][0], 'main');
+    const args = lifecycle[1][1];
+    assert.ok(args.includes('-connect'));
+    assert.ok(args.some(value => value.includes('?match=test-session')),
+      'the native client must receive the selected match identifier');
+    assert.equal(fileData.has('/zandronum.pk3'), requestedProfile === 'modernized');
+    nativeState = 1;
+    if (requestedProfile !== 'modernized') {
+      assert.equal(args[args.indexOf('-nodes') + 1], '0', 'native bot controller owns the joining window');
+      assert.ok(!args.includes('-nosound') && !args.includes('-nomusic'), 'Classic network audio remains enabled');
+      assert.equal(adapter.readEngineState(), 'menu', 'the waiting lobby is not gameplay');
+      waitingForLaunch = 0;
+      for (const callback of intervals) callback();
+      assert.equal(stateChanges.at(-1).state, 'gameplay');
+      assert.equal(stateChanges.at(-1).capture, true, 'attempt capture only when the actual match starts');
+    }
+    adapter.controllerFrame({ deltaMs: 16, actions: { forward: 1, attack: 1 } });
+    assert.ok(controllerKeys.some(([key, pressed]) => key === 119 && pressed === 1),
+      'physical SDL ownership must not disable gamepad movement');
+    assert.ok(controllerButtons.some(([button, pressed]) => button === 1 && pressed === 1),
+      'physical SDL ownership must not disable gamepad firing');
+    adapter.controllerChanged({ connected: false, selection: 'disabled', activeIndex: null });
+    assert.ok(controllerButtons.some(([button, pressed]) => button === 1 && pressed === 0),
+      'gamepad disconnect still releases attack');
+    return;
+  }
   assert.equal(lifecycle[0][0], 'restore', `${variant} restores persistence before native main`);
   assert.equal(lifecycle[1][0], 'main', `${variant} starts native main after persistence restore`);
   assert.ok(lifecycle[1][1].includes(`/persistent/idtech1/${variant}`),
@@ -294,8 +400,19 @@ async function exercise(variant, requestedProfile, options = {}) {
   } else {
     const classic = fileData.get(`/persistent/idtech1/${variant}/default.cfg`);
     const profile = fileData.get('/profiles/crispy.cfg');
-    assert.match(classic, /key_up 119/, `${variant} defaults classic forward movement to W`);
-    assert.match(classic, /key_strafeleft 97/, `${variant} defaults classic left strafe to A`);
+    if (options.customClassic) {
+      assert.equal(classic, options.classicConfig, 'customized classic layouts must remain byte-identical');
+      assert.equal(fileData.has(`/persistent/idtech1/${variant}/default.cfg.pre-scancode-fix`), false);
+    } else {
+      assert.match(classic, /key_up\s+17/, `${variant} encodes W as DOS scan code 17`);
+      assert.match(classic, /key_strafeleft\s+30/, `${variant} encodes A as DOS scan code 30`);
+      assert.match(classic, /key_use\s+57/, `${variant} encodes Space as DOS scan code 57`);
+      if (options.classicConfig) {
+        assert.match(classic, /mouse_sensitivity 42/, 'migration preserves unrelated preferences');
+        assert.equal(fileData.get(`/persistent/idtech1/${variant}/default.cfg.pre-scancode-fix`),
+          options.classicBackup || options.classicConfig, 'migration preserves the original backup');
+      }
+    }
     assert.match(classic, /novert 1/, `${variant} keeps classic vertical mouse movement disabled`);
     if (requestedProfile === 'original') {
       assert.match(profile, /crispy_hires 0/, `${variant} preserves the Original low-resolution renderer`);
@@ -333,7 +450,7 @@ async function exercise(variant, requestedProfile, options = {}) {
   nativeState = 0;
   intervals.at(-1)();
   const delayedKeyEvent = { key: 'Enter' };
-  documentListeners.get('keyup')(delayedKeyEvent);
+  dispatchDocument('keyup', delayedKeyEvent);
   await Promise.resolve();
   nativeState = 1;
   intervals.at(-1)();
@@ -344,7 +461,7 @@ async function exercise(variant, requestedProfile, options = {}) {
   nativeState = 1;
   shellState = 'menu';
   const keyEvent = { key: 'Escape' };
-  documentListeners.get('keyup')(keyEvent);
+  dispatchDocument('keyup', keyEvent);
   await Promise.resolve();
   assert.deepEqual(stateChanges.at(-1), { state: 'gameplay', capture: true, event: keyEvent },
     `${variant} requests capture when keyboard Resume returns to gameplay`);
@@ -368,7 +485,7 @@ async function exercise(variant, requestedProfile, options = {}) {
   assert.ok(controllerButtons.some(([button, pressed]) => button === 1 && pressed === 1),
     `${variant} maps controller attack into the native mouse queue`);
   assert.ok(controllerMouse.some(([dx]) => dx > 0), `${variant} maps right-stick look into native mouse motion`);
-  assert.equal(controllerMouse.every(([, dy]) => dy === 0), true,
+  assert.equal(controllerMouse.slice(mouseStart + (bridgedMotion ? 1 : 0)).every(([, dy]) => dy === 0), true,
     `${variant} never maps right-stick movement into vertical Doom look`);
   assert.equal(controllerWheels.at(-1), 1, `${variant} maps weapon cycling into a native wheel event`);
   adapter.controllerChanged({ connected: false, selection: 'auto', activeIndex: null }, context);
@@ -378,7 +495,7 @@ async function exercise(variant, requestedProfile, options = {}) {
   nativeState = 1;
   shellState = 'gameplay';
   now += 100;
-  documentListeners.get('keydown')({ key: 'Escape' });
+  dispatchDocument('keydown', { key: 'Escape' });
   adapter.captureLost({}, context);
   assert.equal(openMenuCalls, 1, `${variant} does not inject a second menu action after Escape`);
   await Promise.resolve();
@@ -412,18 +529,30 @@ async function exercise(variant, requestedProfile, options = {}) {
   assert.equal(config.persistence.root, '/persistent/idtech1/{variant}');
   assert.deepEqual(Object.keys(config.variants), Object.keys(dataManifest.variants));
   assert.equal(Object.keys(config.variants).length, 7);
+  const legacyClassic = 'key_up 119\nkey_down 115\nkey_strafeleft 97\nkey_straferight 100\n' +
+    'key_left 113\nkey_right 101\nkey_use 32\nmouse_sensitivity 42\nnovert 1\n';
   for (const [variant, policy] of Object.entries(config.variants)) {
     assert.equal(policy.pwa.icons.length, 2, `${variant} supplies both PWA icon sizes`);
     assert.ok(policy.icon, `${variant} supplies launcher/favicon artwork`);
     assert.equal(dataManifest.variants[variant].files.every(file => file.validator), true);
     await exercise(variant, 'original');
     await exercise(variant, 'smooth');
+    for (const profile of ['original', 'smooth', 'modernized']) {
+      await exercise(variant, profile, { deathmatch: true });
+    }
+    await exercise(variant, 'original', { classicConfig: legacyClassic });
+    await exercise(variant, 'smooth', { classicConfig: legacyClassic.replaceAll('\n', '\r\n'),
+      classicBackup: 'earlier backup must not be overwritten\n' });
+    await exercise(variant, 'smooth', { classicConfig: legacyClassic.replace('key_up 119', 'key_up 18'),
+      customClassic: true });
     if (modernVariants.has(variant)) {
       assert.equal(policy.resizeTransition, 'immediate');
       await exercise(variant, 'modernized');
       await exercise(variant, 'modernized', { migrated: true });
     }
   }
+  await exercise('doom', 'modernized', { deathmatch: true, wakeError: true });
+  await exercise('doom', 'modernized', { deathmatch: true, wrongVariant: true });
   console.log('Verified all 7 id Tech 1 variants across controller, persistence, profile, state, capture, resize, PWA, and data-cache contracts.');
 })().catch(error => {
   console.error(error);

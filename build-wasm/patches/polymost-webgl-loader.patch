@@ -1,0 +1,36 @@
+diff --git a/source/glad/src/glad.c b/source/glad/src/glad.c
+--- a/source/glad/src/glad.c
++++ b/source/glad/src/glad.c
+@@ -46,6 +46,14 @@
+ #include <string.h>
+ #include <glad/glad.h>
+ 
++#ifdef __EMSCRIPTEN__
++/* These SDK emulation functions exist, but are absent from its proc table. */
++extern void browser_glFogf(GLenum, GLfloat) __asm__("glFogf");
++extern void browser_glFogfv(GLenum, const GLfloat *) __asm__("glFogfv");
++extern void browser_glFogi(GLenum, GLint) __asm__("glFogi");
++extern void browser_glFogiv(GLenum, const GLint *) __asm__("glFogiv");
++#endif
++
+ static void* get_proc(const char *namez);
+ 
+ #if defined(_WIN32) || defined(__CYGWIN__)
+@@ -1288,6 +1296,12 @@ static void load_GL_VERSION_1_0(GLADloadproc load) {
+ 	glad_glFogfv = (PFNGLFOGFVPROC)load("glFogfv");
+ 	glad_glFogi = (PFNGLFOGIPROC)load("glFogi");
+ 	glad_glFogiv = (PFNGLFOGIVPROC)load("glFogiv");
++#ifdef __EMSCRIPTEN__
++	glad_glFogf = browser_glFogf;
++	glad_glFogfv = browser_glFogfv;
++	glad_glFogi = browser_glFogi;
++	glad_glFogiv = browser_glFogiv;
++#endif
+ 	glad_glLightf = (PFNGLLIGHTFPROC)load("glLightf");
+ 	glad_glLightfv = (PFNGLLIGHTFVPROC)load("glLightfv");
+ 	glad_glLighti = (PFNGLLIGHTIPROC)load("glLighti");
+@@ -2332,4 +2346,3 @@ int gladLoadGLES2Loader(GLADloadproc load) {
+ 	load_GL_KHR_robustness(load);
+ 	return GLVersion.major != 0 || GLVersion.minor != 0;
+ }
+-

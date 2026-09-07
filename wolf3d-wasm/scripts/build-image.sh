@@ -11,6 +11,12 @@ case "$variant" in
     *) printf 'Unknown Wolf4SDL variant: %s (expected wolf3d or spear).\n' "$variant" >&2; exit 2 ;;
 esac
 
-"$repo_dir/build-web.sh"
+"$repo_dir/scripts/test-web.sh"
+if [[ -z "${WASM_GAME_FRAMEWORK_IMAGE:-}" ]]; then
+    WASM_GAME_FRAMEWORK_IMAGE=wasm-game-framework:0.9.6
+    "$framework_dir/scripts/build-base-image.sh" "$WASM_GAME_FRAMEWORK_IMAGE"
+    export WASM_GAME_FRAMEWORK_IMAGE
+fi
 "$framework_dir/scripts/build-static-image.sh" "$repo_dir/.work/dist" "$image" "$variant"
+node "$repo_dir/scripts/test-image-package.mjs" "$image" "$variant"
 "$repo_dir/scripts/test-http.sh" "$image" "$variant"

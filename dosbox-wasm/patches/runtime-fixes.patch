@@ -50,32 +50,34 @@ index 3859e7b6733f3b22072f16446c665c52a9d841fe..a8ec0e62bb78b28b462f0265452af726
  	LOG(LOG_PAGING,LOG_NORMAL)("Left PageFault for %x queue %d",lin_addr,pf_queue.used);
  	memcpy(&lflags,&old_lflags,sizeof(LazyFlags));
 diff --git a/vendor/dosbox/src/dosbox.cpp b/vendor/dosbox/src/dosbox.cpp
-index edee31a32c3de911a0006c1954f5318a96a30cd1..269a05314c3b0dfe50f370418743a71948dadfdc 100644
+index edee31a..68313ef 100644
 --- a/vendor/dosbox/src/dosbox.cpp
 +++ b/vendor/dosbox/src/dosbox.cpp
-@@ -22,6 +22,9 @@
+@@ -22,6 +22,10 @@
  #include <stdarg.h>
  #include <stdio.h>
  #include <string.h>
 +#if defined(__EMSCRIPTEN__)
 +#include <emscripten.h>
++#include "wasm_timing.h"
 +#endif
  #include <unistd.h>
  #include "dosbox.h"
  #include "debug.h"
-@@ -115,6 +118,11 @@ void SHELL_Init(void);
+@@ -115,6 +119,12 @@ void SHELL_Init(void);
  void INT10_Init(Section*);
  
  static LoopHandler * loop;
 +#if defined(__EMSCRIPTEN__)
 +static Bit32u wasm_machine_slices = 0;
 +static Bit32u wasm_last_yield = 0;
++static WasmIdleAccounting wasm_idle;
 +int wasm_nosleep_lock = 0;
 +#endif
  
  bool SDLNetInited;
  
-@@ -128,6 +136,17 @@ void increaseticks();
+@@ -128,6 +138,19 @@ void increaseticks();
  
  static Bitu Normal_Loop(void) {
  	Bits ret;
@@ -87,13 +89,15 @@ index edee31a32c3de911a0006c1954f5318a96a30cd1..269a05314c3b0dfe50f370418743a719
 +	const Bit32u wasm_now = GetTicks();
 +	if (!wasm_nosleep_lock && (Bit32u)(wasm_now - wasm_last_yield) >= 10) {
 +		wasm_last_yield = wasm_now;
++		const double yieldStart = emscripten_get_now();
 +		emscripten_sleep(1);
++		wasm_idle.AddYield(yieldStart, emscripten_get_now());
 +	}
 +#endif
  	while (1) {
  		if (PIC_RunQueue()) {
  			ret = (*cpudecoder)();
-@@ -151,7 +170,12 @@ static Bitu Normal_Loop(void) {
+@@ -151,10 +174,18 @@ static Bitu Normal_Loop(void) {
  }
  
  //For trying other delays
@@ -106,7 +110,46 @@ index edee31a32c3de911a0006c1954f5318a96a30cd1..269a05314c3b0dfe50f370418743a719
  
  void increaseticks() { //Make it return ticksRemain and set it in the function above to remove the global variable.
  	if (GCC_UNLIKELY(ticksLocked)) { // For Fast Forward Mode
-@@ -314,9 +338,18 @@ void DOSBOX_RunMachine(void){
++#if defined(__EMSCRIPTEN__)
++		wasm_idle.Reset();
++#endif
+ 		ticksRemain=5;
+ 		/* Reset any auto cycle guessing for this frame */
+ 		ticksLast = GetTicks();
+@@ -172,6 +203,12 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
+ 	ticksScheduled += ticksAdded;
+ 	if (ticksNew <= ticksLast) { //lower should not be possible, only equal.
+ 		ticksAdded = 0;
++#if defined(__EMSCRIPTEN__)
++		// The browser yields only at the safe outer loop. Track this idle
++		// interval instead of pretending a no-op wrap_delay slept for 1 ms.
++		wasm_idle.BeginIdle(emscripten_get_now());
++		return;
++#else
+ 
+ 		if (!CPU_CycleAutoAdjust || CPU_SkipCycleAutoAdjust || sleep1count < 3) {
+ 			wrap_delay(1);
+@@ -196,6 +233,7 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
+ 		if (ticksDone < 0)
+ 			ticksDone = 0;
+ 		return; //0
++#endif
+ 
+ 		// If we do work this tick and sleep till the next tick, then ticksDone is decreased, 
+ 		// despite the fact that work was done as well in this tick. Maybe make it depend on an extra parameter.
+@@ -210,6 +248,11 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
+ 	ticksRemain = ticksNew-ticksLast;
+ 	ticksLast = ticksNew;
+ 	ticksDone += ticksRemain;
++#if defined(__EMSCRIPTEN__)
++	wasm_idle.EndIdle(emscripten_get_now());
++	ticksDone -= wasm_idle.ConsumeMilliseconds();
++	if (ticksDone < 0) ticksDone = 0;
++#endif
+ 	if ( ticksRemain > 20 ) {
+ //		LOG(LOG_MISC,LOG_ERROR)("large remain %d",ticksRemain);
+ 		ticksRemain = 20;
+@@ -314,9 +357,18 @@ void DOSBOX_RunMachine(void){
  	Bitu ret;
  	do {
  		ret=(*loop)();
@@ -125,6 +168,19 @@ index edee31a32c3de911a0006c1954f5318a96a30cd1..269a05314c3b0dfe50f370418743a719
  static void DOSBOX_UnlockSpeed( bool pressed ) {
  	static bool autoadjust = false;
  	if (pressed) {
+@@ -338,6 +390,12 @@ static void DOSBOX_UnlockSpeed( bool pressed ) {
+ 	}
+ }
+ 
++#if defined(__EMSCRIPTEN__)
++extern "C" EMSCRIPTEN_KEEPALIVE Bit32s DOSBox_WasmCpuCycles(void) {
++	return CPU_CycleMax;
++}
++#endif
++
+ static void DOSBOX_RealInit(Section * sec) {
+ 	Section_prop * section=static_cast<Section_prop *>(sec);
+ 	/* Initialize some dosbox internals */
 diff --git a/vendor/dosbox/src/gui/sdlmain.cpp b/vendor/dosbox/src/gui/sdlmain.cpp
 index 75aab73f69bd3ff29b4d2ad9a641f4134aa22803..166224d3c9974b8236260bd150c5af592187db9b 100644
 --- a/vendor/dosbox/src/gui/sdlmain.cpp
@@ -361,4 +417,43 @@ index 87baac6f219f3d98392d9f1dbd857333da4aef41..16ffeee6b9c5aa7a2816b18e3a47b91e
 +
  static void MIXER_Stop(Section* sec) {
  }
+ 
+diff --git a/vendor/dosbox/include/wasm_timing.h b/vendor/dosbox/include/wasm_timing.h
+new file mode 100644
+--- /dev/null
++++ b/vendor/dosbox/include/wasm_timing.h
+@@ -0,0 +1,33 @@
++/* Browser idle-time accounting for DOSBox's automatic cycle governor.
++ * This file is part of DOSBox and is licensed under GPL-2.0-or-later. */
++#ifndef DOSBOX_WASM_TIMING_H
++#define DOSBOX_WASM_TIMING_H
++
++class WasmIdleAccounting {
++public:
++	WasmIdleAccounting() : idleStart(-1.0), pending(0.0) {}
++	void Reset() { idleStart = -1.0; pending = 0.0; }
++	void BeginIdle(double now) {
++		if (idleStart < 0.0) idleStart = now;
++	}
++	void EndIdle(double now) {
++		if (idleStart >= 0.0) {
++			if (now > idleStart) pending += now - idleStart;
++			idleStart = -1.0;
++		}
++	}
++	void AddYield(double start, double end) {
++		// A yield during an idle interval is already included by EndIdle.
++		if (idleStart < 0.0 && end > start) pending += end - start;
++	}
++	int ConsumeMilliseconds() {
++		const int whole = static_cast<int>(pending);
++		pending -= whole;
++		return whole;
++	}
++private:
++	double idleStart;
++	double pending;
++};
++
++#endif
  

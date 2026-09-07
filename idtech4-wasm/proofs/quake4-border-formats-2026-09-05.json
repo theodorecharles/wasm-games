@@ -1,0 +1,688 @@
+{
+  "scope": "Native desktop GL verification of black border colors after legacy format expansion and texture swizzles, for both compatibility/core-style allocations. Not engine execution or browser acceptance.",
+  "fixtureSHA256": "2186c12722311572b98a61850b8eb9f5ba9084534a807d90583b83ad552e1af4",
+  "driver": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+  "version": "4.6 (Compatibility Profile) Mesa 26.1.6-1",
+  "cases": [
+    {
+      "format": "rgba8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        102
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgba8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        102
+      ],
+      "passed": true
+    },
+    {
+      "format": "xrgb8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "xrgb8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgb565",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        66,
+        129,
+        189,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgb565",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        66,
+        129,
+        189,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-luminance8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-luminance8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-luminance-alpha8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-luminance-alpha8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-intensity8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-intensity8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-alpha8-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "center": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-alpha8-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "center": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-alpha8-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "center": [
+        255,
+        255,
+        255,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-alpha8-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "center": [
+        255,
+        255,
+        255,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-luminance8-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-luminance8-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-luminance-alpha8-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-luminance-alpha8-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-intensity8-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "core-intensity8-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "green-alpha-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "center": [
+        255,
+        255,
+        255,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "green-alpha-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "center": [
+        255,
+        255,
+        255,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgb-normal-swizzle",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgb-normal-swizzle",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgba16f",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        102
+      ],
+      "passed": true
+    },
+    {
+      "format": "rgba16f",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        128,
+        191,
+        102
+      ],
+      "passed": true
+    },
+    {
+      "format": "srgb8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        13,
+        55,
+        132,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "srgb8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        13,
+        55,
+        132,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "srgb8-alpha8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        13,
+        55,
+        132,
+        102
+      ],
+      "passed": true
+    },
+    {
+      "format": "srgb8-alpha8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        13,
+        55,
+        132,
+        102
+      ],
+      "passed": true
+    },
+    {
+      "format": "depth24",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "depth24",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "depth24-stencil8",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "depth24-stencil8",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-intensity16",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-intensity16",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-luminance-alpha16",
+      "requestedAlpha": 0,
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "format": "compat-luminance-alpha16",
+      "requestedAlpha": 1,
+      "border": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "center": [
+        64,
+        64,
+        64,
+        128
+      ],
+      "passed": true
+    }
+  ]
+}

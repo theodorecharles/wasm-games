@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-04T23:33:21.253Z",
+  "imageId": "sha256:a108d96bbddf632160cef0d597ef4c87dcf1927fa4d0eaa5f1f9237493d00997",
+  "nativeOnly": true,
+  "expectedBehavior": "automatic-recovery",
+  "requestedBots": 4,
+  "mapChecks": [
+    {
+      "map": "de_dust",
+      "models": 219
+    },
+    {
+      "map": "cs_italy",
+      "models": 280
+    },
+    {
+      "map": "de_dust2",
+      "models": 214
+    },
+    {
+      "map": "de_dust",
+      "models": 219
+    },
+    {
+      "map": "cs_italy",
+      "models": 280
+    },
+    {
+      "map": "de_dust2",
+      "models": 214
+    }
+  ],
+  "recoveryCycles": [
+    {
+      "cycle": 1,
+      "nativeServerRunning": true,
+      "restarts": 1,
+      "botsReconnected": 4
+    },
+    {
+      "cycle": 2,
+      "nativeServerRunning": true,
+      "restarts": 2,
+      "botsReconnected": 4
+    }
+  ],
+  "explicitStopRemainsStopped": true,
+  "explicitStartRestoresStoppedHost": true,
+  "passed": true
+}

@@ -1,0 +1,223 @@
+{
+  "scope": "Read-only observation after both packaged Chrome clients used native DISCONNECT; no forced stop. The 90-second idle lifecycle must remove native process, own temporary session and bot roster.",
+  "samples": [
+    {
+      "observedAt": 1788648313520,
+      "state": "running",
+      "humans": 0,
+      "keepAlive": false,
+      "idleTimeoutMs": 90000,
+      "idleSince": 1788648234212,
+      "startedAt": 1788647874280,
+      "map": "game/mp/d3dm1",
+      "error": null,
+      "connect": "127.0.0.1:27666",
+      "protocol": "1.42",
+      "players": [],
+      "browserPeers": 0,
+      "bots": 2,
+      "botPlayers": [
+        {
+          "time": 430656,
+          "slot": 30,
+          "health": 100,
+          "spectating": 0,
+          "origin": [
+            -210.884,
+            832.873,
+            -127.75
+          ],
+          "buttons": 2,
+          "move": [
+            126,
+            0,
+            0
+          ],
+          "weapon": 3,
+          "frags": -2
+        },
+        {
+          "time": 430656,
+          "slot": 31,
+          "health": 100,
+          "spectating": 0,
+          "origin": [
+            381.464,
+            1704.815,
+            -199.75
+          ],
+          "buttons": 2,
+          "move": [
+            120,
+            -38,
+            0
+          ],
+          "weapon": 1,
+          "frags": 4
+        }
+      ],
+      "botUpdatedAt": 1788648304333,
+      "botStatus": "ready",
+      "relay": {
+        "peers": 0,
+        "clientPackets": 32243,
+        "serverPackets": 8816
+      }
+    },
+    {
+      "observedAt": 1788648318525,
+      "state": "running",
+      "humans": 0,
+      "keepAlive": false,
+      "idleTimeoutMs": 90000,
+      "idleSince": 1788648234212,
+      "startedAt": 1788647874280,
+      "map": "game/mp/d3dm1",
+      "error": null,
+      "connect": "127.0.0.1:27666",
+      "protocol": "1.42",
+      "players": [],
+      "browserPeers": 0,
+      "bots": 2,
+      "botPlayers": [
+        {
+          "time": 440656,
+          "slot": 30,
+          "health": 100,
+          "spectating": 0,
+          "origin": [
+            -812.067,
+            1157.583,
+            -126.75
+          ],
+          "buttons": 2,
+          "move": [
+            127,
+            0,
+            0
+          ],
+          "weapon": 3,
+          "frags": -1
+        },
+        {
+          "time": 440656,
+          "slot": 31,
+          "health": -20,
+          "spectating": 0,
+          "origin": [
+            -754.474,
+            1394.364,
+            -115.879
+          ],
+          "buttons": 3,
+          "move": [
+            0,
+            0,
+            0
+          ],
+          "weapon": 2,
+          "frags": 4
+        }
+      ],
+      "botUpdatedAt": 1788648314333,
+      "botStatus": "ready",
+      "relay": {
+        "peers": 0,
+        "clientPackets": 32243,
+        "serverPackets": 8816
+      }
+    },
+    {
+      "observedAt": 1788648323530,
+      "state": "running",
+      "humans": 0,
+      "keepAlive": false,
+      "idleTimeoutMs": 90000,
+      "idleSince": 1788648234212,
+      "startedAt": 1788647874280,
+      "map": "game/mp/d3dm1",
+      "error": null,
+      "connect": "127.0.0.1:27666",
+      "protocol": "1.42",
+      "players": [],
+      "browserPeers": 0,
+      "bots": 2,
+      "botPlayers": [
+        {
+          "time": 445664,
+          "slot": 30,
+          "health": 91,
+          "spectating": 0,
+          "origin": [
+            -1040.083,
+            543.433,
+            -319.75
+          ],
+          "buttons": 3,
+          "move": [
+            73,
+            -12,
+            0
+          ],
+          "weapon": 3,
+          "frags": -1
+        },
+        {
+          "time": 445664,
+          "slot": 31,
+          "health": 64,
+          "spectating": 0,
+          "origin": [
+            -1096.813,
+            402.351,
+            -119.749
+          ],
+          "buttons": 2,
+          "move": [
+            3,
+            1,
+            0
+          ],
+          "weapon": 1,
+          "frags": 4
+        }
+      ],
+      "botUpdatedAt": 1788648319342,
+      "botStatus": "ready",
+      "relay": {
+        "peers": 0,
+        "clientPackets": 32243,
+        "serverPackets": 8816
+      }
+    },
+    {
+      "observedAt": 1788648328534,
+      "state": "sleeping",
+      "humans": 0,
+      "keepAlive": false,
+      "idleTimeoutMs": 90000,
+      "idleSince": null,
+      "startedAt": null,
+      "map": "game/mp/d3dm1",
+      "error": null,
+      "connect": "127.0.0.1:27666",
+      "protocol": null,
+      "players": [],
+      "browserPeers": 0,
+      "bots": 0,
+      "botPlayers": [],
+      "botUpdatedAt": null,
+      "botStatus": "sleeping",
+      "relay": {
+        "peers": 0,
+        "clientPackets": 32243,
+        "serverPackets": 8816
+      }
+    }
+  ],
+  "resources": {
+    "processes": [],
+    "sessions": []
+  },
+  "passed": true
+}

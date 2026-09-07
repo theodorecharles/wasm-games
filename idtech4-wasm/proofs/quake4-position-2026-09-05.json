@@ -1,0 +1,455 @@
+{
+  "scope": "Hypothesis comparison, not a renderer fix. Production position expressions remain unchanged.",
+  "finding": "No position/depth mismatch reproduced in 20 synthetic translated-world cases on either native EGL/GLES or Chrome WebGL2. Each accepted all 968 visible samples; deliberate depth perturbations rejected all samples.",
+  "limitations": "Axis-aligned synthetic triangles and translations, not captured campaign geometry or a proof that all shader invariance issues are absent.",
+  "native": {
+    "scope": "Actual packaged legacy and linked material shaders rendered through a real EGL/GLES depth buffer; synthetic world coordinates, not Chrome acceptance",
+    "wasmSha256": "7a160c7dfe6b50be7570391f03fa4daebde3ee426809952b2e53c58ab77db752",
+    "jsSha256": "9a10546a6bb49b702e80a5fda2d30d0d4ccfd887d6eedb5b7c4c43e854d5c035",
+    "baseline": false,
+    "transformedForTest": false,
+    "driver": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+    "depthBits": 24,
+    "cases": [
+      {
+        "origin": 0,
+        "distance": 16.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 0,
+        "distance": 64.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 0,
+        "distance": 256.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 0,
+        "distance": 1024.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 128.125,
+        "distance": 16.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 128.125,
+        "distance": 64.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 128.125,
+        "distance": 256.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 128.125,
+        "distance": 1024.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 1024.125,
+        "distance": 16.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 1024.125,
+        "distance": 64.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 1024.125,
+        "distance": 256.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 1024.125,
+        "distance": 1024.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 8192.125,
+        "distance": 16.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 8192.125,
+        "distance": 64.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 8192.125,
+        "distance": 256.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 8192.125,
+        "distance": 1024.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 32768.125,
+        "distance": 16.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 32768.125,
+        "distance": 64.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 32768.125,
+        "distance": 256.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      },
+      {
+        "origin": 32768.125,
+        "distance": 1024.25,
+        "available": 968,
+        "accepted": 968,
+        "negativeControl": 0
+      }
+    ]
+  },
+  "chrome": {
+    "depthBits": 24,
+    "error": 0,
+    "jsSha256": "9a10546a6bb49b702e80a5fda2d30d0d4ccfd887d6eedb5b7c4c43e854d5c035",
+    "results": [
+      {
+        "cases": [
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          }
+        ],
+        "modelFirst": false
+      },
+      {
+        "cases": [
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 0
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 128.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 1024.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 8192.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 16.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 64.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 256.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          },
+          {
+            "accepted": 968,
+            "available": 968,
+            "distance": 1024.25,
+            "negativeControl": 0,
+            "origin": 32768.125
+          }
+        ],
+        "modelFirst": true
+      }
+    ],
+    "scope": "Actual packaged shader pair in Chrome WebGL 2; synthetic coordinates, not campaign acceptance",
+    "wasmSha256": "7a160c7dfe6b50be7570391f03fa4daebde3ee426809952b2e53c58ab77db752"
+  }
+}

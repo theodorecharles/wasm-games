@@ -27,13 +27,28 @@ fi
 framework_image="wasm-game-framework:0.9.6"
 "${framework_dir}/scripts/build-base-image.sh" "${framework_image}"
 
+native_toolchain="local/idtech4-managed-native-toolchain:bookworm"
+docker build -f "${repo_root}/server/Dockerfile.native-toolchain" -t "${native_toolchain}" "${repo_root}/server"
+docker run --rm --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=${repo_root}/..,dst=/src" \
+  --mount "type=bind,src=${work_root},dst=/src/idtech4-wasm/.work" \
+  -e IDTECH4_WORK_ROOT=/src/idtech4-wasm/.work \
+  "${native_toolchain}" bash scripts/build-d3-managed-native.sh
+node "${repo_root}/scripts/test-d3-class-schema.mjs"
+
 for variant in suite doom3 doom3-mp roe quake4 quake4-mp prey; do
   if [[ "${variant}" == suite ]]; then
     image="${image_repo}:${image_tag}"
   else
     image="${image_repo}:${variant}-${image_tag}"
   fi
-  WASM_GAME_FRAMEWORK_IMAGE="${framework_image}" \
-    "${framework_dir}/scripts/build-static-image.sh" "${site}" "${image}" "${variant}"
+  if [[ "${variant}" == suite || "${variant}" == doom3-mp ]]; then
+    docker build -f "${repo_root}/Dockerfile.mp" \
+      --build-arg "FRAMEWORK_IMAGE=${framework_image}" --build-arg "GAME_VARIANT=${variant}" \
+      -t "${image}" "${repo_root}"
+  else
+    WASM_GAME_FRAMEWORK_IMAGE="${framework_image}" \
+      "${framework_dir}/scripts/build-static-image.sh" "${site}" "${image}" "${variant}"
+  fi
 done
 printf 'Built id Tech 4 suite and six locked images.\n'

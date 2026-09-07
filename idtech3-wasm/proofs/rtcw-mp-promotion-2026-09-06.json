@@ -1,0 +1,54 @@
+{
+  "observedAt": "2026-09-06T08:10:10.469Z",
+  "before": {
+    "name": "/wasm-rtcw-mp",
+    "id": "799e603ab67b24b6163969e9bd67e0e0ad8da9a44f84fb3de999e95c410d19d2",
+    "image": "sha256:49c767bb52ad27762d91c500ba1c4cf6f1d294e816964ed3bc28a9d48476ec64",
+    "startedAt": "2026-09-04T20:59:30.05204434Z",
+    "restarts": 0,
+    "status": "running",
+    "mounts": [
+      {
+        "type": "bind",
+        "source": "/home/ted/wasm-game-data/rtcw",
+        "destination": "/data",
+        "rw": true
+      }
+    ]
+  },
+  "installed": {
+    "name": "/wasm-rtcw-mp",
+    "id": "b194297c1ffd5895a40b870366142ab40e66a491e93bf95cdff4c66f4acb714f",
+    "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+    "startedAt": "2026-09-06T08:06:54.661299486Z",
+    "restarts": 0,
+    "status": "running",
+    "mounts": [
+      {
+        "type": "bind",
+        "source": "/home/ted/wasm-game-data/rtcw",
+        "destination": "/data",
+        "rw": true
+      }
+    ]
+  },
+  "unchangedContainers": 94,
+  "singlePlayer": {
+    "name": "/wasm-rtcw-sp",
+    "id": "0cae221aacf7a4e780eb05b7679bf75047c2f9fd40c399d6ad637b6fe846d7f5",
+    "image": "sha256:e6cc9c2be15c9009450dd341e7c25fefc04e868a6ed60be195e5ac6479a6c759",
+    "startedAt": "2026-09-04T20:59:30.05162676Z",
+    "restarts": 0,
+    "status": "running",
+    "mounts": [
+      {
+        "type": "bind",
+        "source": "/home/ted/wasm-game-data/rtcw",
+        "destination": "/data",
+        "rw": true
+      }
+    ]
+  },
+  "dataMountPreserved": true,
+  "comparison": "Exact IDs, images, starts, restart counts, status and mounts; mounts sorted by destination."
+}

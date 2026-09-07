@@ -1,0 +1,67 @@
+{
+  "scope": "Native Wasm, fake DOM/2D/audio destination. Not Chrome, GPU, or audible-output acceptance.",
+  "negativeControl": true,
+  "passed": true,
+  "cases": [
+    {
+      "game": "doom",
+      "profile": "original",
+      "expectedDeadlock": true,
+      "artifactHashes": {
+        "js": "6f960929bbc618d933640fb0daf7c2cb7a204bbcbeed64eee2707645bb8d51f5",
+        "wasm": "5846f0e47b64be1f83fde1310e00e45d233aad7c3345180961bc94a005177388",
+        "adapter": "fd7046736c9a437202e407c2f4db5cca3f3e7ffdf2dd45503d80ef9e8c76ef81"
+      },
+      "frames": 0,
+      "audioCallbacks": 0,
+      "elapsedMs": 5001.435529,
+      "lastMessages": [
+        " copies under certain conditions. See the source for more information.",
+        "===========================================================================",
+        "I_Init: Setting up machine state.",
+        "I_SDL_InitSound: use_libsamplerate=1, but libsamplerate support not compiled in."
+      ],
+      "scope": "negative control: original native Wasm hangs before OPL initialization"
+    },
+    {
+      "game": "heretic",
+      "profile": "original",
+      "expectedDeadlock": true,
+      "artifactHashes": {
+        "js": "0fd4e2fdfcab6a737b91e23f4e6499c37b21af7d80a7f3d15d38d1e7c863a40b",
+        "wasm": "9ac55420c1104266853f8b9ad0bbdd35808e2b76ff9577140e7e95d55d0a2b01",
+        "adapter": "fd7046736c9a437202e407c2f4db5cca3f3e7ffdf2dd45503d80ef9e8c76ef81"
+      },
+      "frames": 0,
+      "audioCallbacks": 0,
+      "elapsedMs": 5003.242531000001,
+      "lastMessages": [
+        " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute",
+        " copies under certain conditions. See the source for more information.",
+        "===========================================================================",
+        "I_SDL_InitSound: use_libsamplerate=1, but libsamplerate support not compiled in."
+      ],
+      "scope": "negative control: original native Wasm hangs before OPL initialization"
+    },
+    {
+      "game": "hexen",
+      "profile": "original",
+      "expectedDeadlock": true,
+      "artifactHashes": {
+        "js": "c68d882cbe839dd444ca33f712e81d9376f19806469ed1256b8ea347d7e17ca4",
+        "wasm": "a75c3e849c53e9bae5186fd066a009e2ede081db6d247954991dfd53abac412f",
+        "adapter": "fd7046736c9a437202e407c2f4db5cca3f3e7ffdf2dd45503d80ef9e8c76ef81"
+      },
+      "frames": 0,
+      "audioCallbacks": 0,
+      "elapsedMs": 5004.279189,
+      "lastMessages": [
+        "S_InitScript",
+        "SN_InitSequenceScript: Registering sound sequences.",
+        "I_Init: Setting up machine state.",
+        "I_SDL_InitSound: use_libsamplerate=1, but libsamplerate support not compiled in."
+      ],
+      "scope": "negative control: original native Wasm hangs before OPL initialization"
+    }
+  ]
+}

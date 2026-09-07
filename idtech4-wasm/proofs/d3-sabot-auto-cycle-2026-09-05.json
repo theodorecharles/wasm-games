@@ -1,0 +1,1415 @@
+{
+  "scope": "Real native SABot AI/script/physics, no browser or human-client acceptance; no injected movement/combat.",
+  "sourceCommit": "31e877e7e4e691ed9f98603da9cd95ac59540cf3",
+  "botReferenceCommit": "dea1eb9f122cfae042961cfc32a3474e59354589",
+  "packSHA256": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff",
+  "serverSHA256": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+  "gameSHA256": "31cb90aae4900cd5062d96bcfb1d5840caadda9055c392a24622d917162cf7ad",
+  "map": "game/mp/d3dm1",
+  "cycle": true,
+  "automatic": true,
+  "wallTimeMs": 70309,
+  "exitCode": 0,
+  "behavior": [
+    {
+      "slot": 30,
+      "samples": 24,
+      "gameTimeMs": 15616,
+      "maxDisplacement": 2167.8245179730297,
+      "healthValues": [
+        100
+      ],
+      "attackSamples": 0,
+      "fragValues": [
+        0
+      ],
+      "weapons": [
+        1,
+        3
+      ]
+    },
+    {
+      "slot": 31,
+      "samples": 24,
+      "gameTimeMs": 15616,
+      "maxDisplacement": 2691.1968265829237,
+      "healthValues": [
+        100
+      ],
+      "attackSamples": 0,
+      "fragValues": [
+        0
+      ],
+      "weapons": [
+        1,
+        7,
+        3
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "phase": 0,
+      "map": "game/mp/d3dm1",
+      "firstLiveTime": 1728,
+      "movement": [
+        {
+          "slot": 30,
+          "samples": 3,
+          "maxDisplacement": 793.2347084545657
+        },
+        {
+          "slot": 31,
+          "samples": 3,
+          "maxDisplacement": 561.7409019975313
+        }
+      ],
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "map": "game/mp/d3dm2",
+      "firstLiveTime": 1536,
+      "movement": [
+        {
+          "slot": 30,
+          "samples": 3,
+          "maxDisplacement": 416.4436758134287
+        },
+        {
+          "slot": 31,
+          "samples": 3,
+          "maxDisplacement": 856.9852374767024
+        }
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "map": "game/mp/d3dm3",
+      "firstLiveTime": 1600,
+      "movement": [
+        {
+          "slot": 30,
+          "samples": 3,
+          "maxDisplacement": 810.195474206688
+        },
+        {
+          "slot": 31,
+          "samples": 3,
+          "maxDisplacement": 268.4941810803355
+        }
+      ],
+      "passed": true
+    },
+    {
+      "phase": 3,
+      "map": "game/mp/d3dm4",
+      "firstLiveTime": 1392,
+      "movement": [
+        {
+          "slot": 30,
+          "samples": 3,
+          "maxDisplacement": 651.901887667922
+        },
+        {
+          "slot": 31,
+          "samples": 3,
+          "maxDisplacement": 993.3747717402531
+        }
+      ],
+      "passed": true
+    },
+    {
+      "phase": 4,
+      "map": "game/mp/d3dm5",
+      "firstLiveTime": 1520,
+      "movement": [
+        {
+          "slot": 30,
+          "samples": 3,
+          "maxDisplacement": 776.3293060679855
+        },
+        {
+          "slot": 31,
+          "samples": 3,
+          "maxDisplacement": 280.6086245752257
+        }
+      ],
+      "passed": true
+    },
+    {
+      "phase": 5,
+      "map": "game/mp/d3dm1",
+      "firstLiveTime": 1392,
+      "movement": [
+        {
+          "slot": 30,
+          "samples": 9,
+          "maxDisplacement": 1605.976693075276
+        },
+        {
+          "slot": 31,
+          "samples": 9,
+          "maxDisplacement": 1153.6794257283955
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "frames": [
+    {
+      "time": 0,
+      "bots": 0,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 1728,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 3728,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 5728,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 0,
+      "bots": 0,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 1536,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 3536,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 5536,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 0,
+      "bots": 0,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 1600,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 3600,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 5600,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 0,
+      "bots": 0,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 1392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 3392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 5392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 0,
+      "bots": 0,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 1520,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 3520,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 5520,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 0,
+      "bots": 0,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 1392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 3392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 5392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 7392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 9392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 11392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 13392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 15392,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 17344,
+      "bots": 2,
+      "humans": 0,
+      "target": 2,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    }
+  ],
+  "samples": [
+    {
+      "time": 1728,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -873.524,
+        126.018,
+        -383.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 1728,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -61.972,
+        1116.141,
+        -319.75
+      ],
+      "buttons": 2,
+      "move": [
+        112,
+        -59,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 3728,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1071.179,
+        598.93,
+        -319.75
+      ],
+      "buttons": 2,
+      "move": [
+        107,
+        -67,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 3728,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        453.034,
+        1027.905,
+        -383.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -2,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 5728,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1208.898,
+        795.153,
+        -121.064
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 5728,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        309.419,
+        699.577,
+        -383.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        2,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 0
+    },
+    {
+      "time": 1536,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        782.7,
+        -738.142,
+        24.25
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -8,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 1536,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -478.48,
+        27.485,
+        192.25
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 3536,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        813.21,
+        -326.61,
+        -31.749
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        14,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 3536,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        32.69,
+        197.862,
+        192.25
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 5536,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        958.969,
+        -377.353,
+        -31.749
+      ],
+      "buttons": 2,
+      "move": [
+        123,
+        28,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 5536,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        124.463,
+        636.487,
+        192.25
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm2",
+      "phase": 1
+    },
+    {
+      "time": 1600,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        592.991,
+        416.863,
+        304.25
+      ],
+      "buttons": 2,
+      "move": [
+        105,
+        70,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 1600,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        752.232,
+        -405.39,
+        145.585
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 3600,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        1013.289,
+        192.654,
+        304.25
+      ],
+      "buttons": 2,
+      "move": [
+        125,
+        -21,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 3600,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        947.875,
+        -230.325,
+        201.845
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 5600,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        1162.29,
+        -159.605,
+        304.25
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        14,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 5600,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        720.714,
+        -493.507,
+        304.251
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 7,
+      "frags": 0,
+      "map": "game/mp/d3dm3",
+      "phase": 2
+    },
+    {
+      "time": 1392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -877.29,
+        -865.749,
+        128.25
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 1392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -135.253,
+        -1564.716,
+        -95.75
+      ],
+      "buttons": 2,
+      "move": [
+        121,
+        -33,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 3392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -779.793,
+        -507.385,
+        128.25
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -4,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 3392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -53.908,
+        -1116.193,
+        0.251
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -5,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 5392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -454.04,
+        -371.316,
+        91.216
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -15,
+        0
+      ],
+      "weapon": 3,
+      "frags": 0,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 5392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        8.982,
+        -586.568,
+        0.251
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm4",
+      "phase": 3
+    },
+    {
+      "time": 1520,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -200.74,
+        191.349,
+        136.25
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        1,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 1520,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1457.376,
+        166.828,
+        83.209
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 3520,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -502.396,
+        441.654,
+        200.251
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -13,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 3520,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1659.133,
+        157.478,
+        96.25
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 5520,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -790.462,
+        693.125,
+        192.25
+      ],
+      "buttons": 2,
+      "move": [
+        118,
+        -45,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 5520,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1301.477,
+        -66.124,
+        96.25
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm5",
+      "phase": 4
+    },
+    {
+      "time": 1392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        0.347,
+        -532.957,
+        -165.242
+      ],
+      "buttons": 2,
+      "move": [
+        117,
+        46,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 1392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -704.923,
+        1198.092,
+        -127.525
+      ],
+      "buttons": 2,
+      "move": [
+        118,
+        44,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 3392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -92.762,
+        -355.711,
+        -162.199
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -11,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 3392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1029.773,
+        1378.446,
+        -127.304
+      ],
+      "buttons": 2,
+      "move": [
+        121,
+        -36,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 5392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -544.436,
+        -132.88,
+        -127.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -1,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 5392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -494.607,
+        1379.773,
+        -127.738
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -2,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 7392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -975.406,
+        52.658,
+        -127.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 7392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -50.739,
+        1669.822,
+        -127.752
+      ],
+      "buttons": 2,
+      "move": [
+        98,
+        -80,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 9392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -1195.448,
+        539.067,
+        -165.252
+      ],
+      "buttons": 2,
+      "move": [
+        124,
+        24,
+        0
+      ],
+      "weapon": 3,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 9392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        224.751,
+        1636.48,
+        -199.75
+      ],
+      "buttons": 2,
+      "move": [
+        99,
+        -78,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 11392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -156.878,
+        747.078,
+        -319.75
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 11392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -2.461,
+        283.576,
+        -161.932
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 13392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        137.362,
+        1051.025,
+        -319.75
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 13392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -106.286,
+        790.399,
+        -127.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        -3,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 15392,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        518.746,
+        851.601,
+        -383.75
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 15392,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -407.835,
+        1043.374,
+        -127.75
+      ],
+      "buttons": 2,
+      "move": [
+        126,
+        0,
+        0
+      ],
+      "weapon": 3,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 17344,
+      "slot": 30,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        103.79,
+        759.582,
+        -383.75
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 1,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    },
+    {
+      "time": 17344,
+      "slot": 31,
+      "health": 100,
+      "spectating": 0,
+      "origin": [
+        -278.078,
+        1540.985,
+        -127.75
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 3,
+      "frags": 0,
+      "map": "game/mp/d3dm1",
+      "phase": 5
+    }
+  ],
+  "output": "dhewm3 1.5.1pre.1304 linux-x86_64 Sep  5 2026 21:55:04 using SDL v2.26.5\nterminal support disabled: stdin is not a tty\npid: 1\n63584 MB System Memory\nfound interface lo - loopback\ndoom using MMX & SSE & SSE2 for SIMD processing\nenabling Flush-To-Zero mode\nenabling Denormals-Are-Zero mode\n----- Initializing File System -----\nLoaded pk4 /session/base/pak000.pk4 with checksum 0x28d208f1\nLoaded pk4 /session/base/pak001.pk4 with checksum 0x40244be0\nLoaded pk4 /session/base/pak002.pk4 with checksum 0xc51ecdcd\nLoaded pk4 /session/base/pak003.pk4 with checksum 0xcd79d028\nLoaded pk4 /session/base/pak004.pk4 with checksum 0x765e4f8b\nLoaded pk4 /session/base/pak005.pk4 with checksum 0x8ffc3621\nLoaded pk4 /session/base/pak006.pk4 with checksum 0x95b65ab\nLoaded pk4 /session/base/pak007.pk4 with checksum 0x666bdb3c\nLoaded pk4 /session/base/pak008.pk4 with checksum 0x23ae5993\nLoaded pk4 /session/base/zz_sabot.pk4 with checksum 0xf7f5a36\nCurrent search path:\n/session/save/base\n/session/base\n/session/base/zz_sabot.pk4 (24 files)\n/session/base/pak008.pk4 (3 files)\n/session/base/pak007.pk4 (38 files)\n/session/base/pak006.pk4 (48 files)\n/session/base/pak005.pk4 (63 files)\n/session/base/pak004.pk4 (5137 files)\n/session/base/pak003.pk4 (4676 files)\n/session/base/pak002.pk4 (6120 files)\n/session/base/pak001.pk4 (8972 files)\n/session/base/pak000.pk4 (2698 files)\nAddon pk4s:\n----- Initializing Decls -----\nDetected\n\t63584 MB of System memory\n\nThis system qualifies for Ultra quality!\n5206 strings read from strings/english.lang\nCouldn't open journal files\nexecing editor.cfg\nexecing default.cfg\ncouldn't exec dhewm.cfg\ncouldn't exec autoexec.cfg\n5206 strings read from strings/english.lang\n----- Initializing OpenAL -----\nSetup OpenAL device and context\nOpenAL vendor: \nOpenAL renderer: \nOpenAL version: \nOpenAL: EFX extension not found\nOpenAL: found 256 hardware voices\nOpening IP socket: 127.0.0.1:27666\nloaded game library '/native/base.so'.\ngame using MMX & SSE & SSE2 for SIMD processing\nFlush-To-Zero mode is already enabled\nDenormals-Are-Zero mode is already enabled\n----- Initializing Game -----\ngamename: baseDOOM-1\ngamedate: Sep  5 2026\nInitializing event system\n...521 event definitions\nInitializing class hierarchy\n...144 classes, 850272 bytes for event callbacks\nInitializing scripts\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 8: redefinition of 'SABOT_NEXT_ENEMY_LOOK'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 9: redefinition of 'SABOT_NEXT_GOAL_CHOOSE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 11: redefinition of 'SABOT_NEXT_AIM'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 14: redefinition of 'SABOT_REACT_TO_ENEMY'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 15: redefinition of 'SABOT_REACT_TO_ENEMY_SOUND'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 16: redefinition of 'SABOT_REACT_FIRE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 18: redefinition of 'SABOT_ENEMY_LOST_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 19: redefinition of 'SABOT_SUBGOAL_LOST_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 21: redefinition of 'SABOT_CHASE_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 22: redefinition of 'SABOT_HOLD_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 24: redefinition of 'SABOT_CHECK_MOVE_DISTANCE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 27: redefinition of 'SABOT_STRAFE_MIN'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 28: redefinition of 'SABOT_STRAFE_MAX'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 31: redefinition of 'SABOT_FOLLOWDIST_MAX'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 32: redefinition of 'SABOT_FOLLOWDIST_MIN'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 34: redefinition of 'SABOT_GOAL_NONE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 35: redefinition of 'SABOT_GOAL_MOVE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 36: redefinition of 'SABOT_GOAL_HOLD'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 37: redefinition of 'SABOT_GOAL_FOLLOW'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 38: redefinition of 'SABOT_GOAL_ATTACK'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 40: redefinition of 'SABOT_ROLE_ROAM'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 41: redefinition of 'SABOT_ROLE_OFFENCE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 42: redefinition of 'SABOT_ROLE_DEFENCE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 51: redefinition of 'SABOT_ITEMTYPE_WEAPON'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 52: redefinition of 'SABOT_ITEMTYPE_AMMO'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 53: redefinition of 'SABOT_ITEMTYPE_POWERUP'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 54: redefinition of 'SABOT_ITEMTYPE_ITEM'\nCompiled 'monster_demon_archvile': 271 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 83, 13904 bytes\n  Statements: 76484, 3059360 bytes\n   Functions: 2267, 339844 bytes\n   Variables: 181440 bytes\n    Mem used: 5011728 bytes\n Static data: 4214344 bytes\n   Allocated: 5956044 bytes\n Thread size: 14056 bytes\nBotAI initialized: available=1\n...7 aas types\n----- Initializing Session -----\nCouldn't read ../base/doomkey.\nCouldn't read ../base/xpkey.\nDetected\n\t63584 MB of System memory\n\nThis system qualifies for Ultra quality!\n----- Warnings -----\nduring dhewm 3 initialization...\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 11: redefinition of 'SABOT_NEXT_AIM'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 14: redefinition of 'SABOT_REACT_TO_ENEMY'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 15: redefinition of 'SABOT_REACT_TO_ENEMY_SOUND'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 16: redefinition of 'SABOT_REACT_FIRE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 18: redefinition of 'SABOT_ENEMY_LOST_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 19: redefinition of 'SABOT_SUBGOAL_LOST_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 21: redefinition of 'SABOT_CHASE_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 22: redefinition of 'SABOT_HOLD_TIME'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 24: redefinition of 'SABOT_CHECK_MOVE_DISTANCE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 27: redefinition of 'SABOT_STRAFE_MIN'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 28: redefinition of 'SABOT_STRAFE_MAX'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 31: redefinition of 'SABOT_FOLLOWDIST_MAX'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 32: redefinition of 'SABOT_FOLLOWDIST_MIN'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 34: redefinition of 'SABOT_GOAL_NONE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 35: redefinition of 'SABOT_GOAL_MOVE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 36: redefinition of 'SABOT_GOAL_HOLD'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 37: redefinition of 'SABOT_GOAL_FOLLOW'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 38: redefinition of 'SABOT_GOAL_ATTACK'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 40: redefinition of 'SABOT_ROLE_ROAM'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 41: redefinition of 'SABOT_ROLE_OFFENCE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 42: redefinition of 'SABOT_ROLE_DEFENCE'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 51: redefinition of 'SABOT_ITEMTYPE_WEAPON'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 52: redefinition of 'SABOT_ITEMTYPE_AMMO'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 53: redefinition of 'SABOT_ITEMTYPE_POWERUP'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 54: redefinition of 'SABOT_ITEMTYPE_ITEM'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 8: redefinition of 'SABOT_NEXT_ENEMY_LOOK'\nWARNING: file /session/base/zz_sabot.pk4/script/bot_sabot_a8.script, line 9: redefinition of 'SABOT_NEXT_GOAL_CHOOSE'\n27 warnings\n\nType 'help' for dedicated server info.\n\n----- Game Map Shutdown -----\nServer spawned on port 27666.\n----- Game Map Shutdown -----\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/gameover.gui.\nreloading guis/msg.gui.\nreloading guis/takeNotes.gui.\nreloading guis/intro.gui.\n----- Map Initialization -----\nMap: game/mp/d3dm1\nglprogs/heatHaze.vfpglprogs/heatHaze.vfpWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\nglprogs/heatHazeWithMask.vfpglprogs/heatHazeWithMask.vfpWARNING: material 'textures/sfx/vp1' had stage with no image\n----- Game Map Init -----\ncollision data:\n   272 models\n 15786 vertices (369 KB)\n 28000 edges (984 KB)\n 11451 polygons (849 KB)\n  2348 brushes (328 KB)\n  8298 nodes (388 KB)\n 23566 polygon refs (368 KB)\n  8330 brush refs (130 KB)\n  8269 internal edges\n  1138 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  3419 KB total memory used\n21 msec to load collision data.\nmap bounds are (5216.0, 4168.0, 4418.0)\nmax clip sector is (326.0, 260.5, 276.1)\n    1 KB passage memory used to build PVS\n    1 msec to calculate PVS\n   32 areas\n   72 portals\n    9 areas visible on average\n  128 bytes PVS data\n[Load AAS]\nloading maps/game/mp/d3dm1.aas48\n[Load AAS]\nloading maps/game/mp/d3dm1.aas96\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_guardian\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_mancubus\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_sabaoth\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_cyberdemon\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm1.script': 8 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 77753, 3110120 bytes\n   Functions: 2291, 342740 bytes\n   Variables: 183256 bytes\n    Mem used: 5080296 bytes\n Static data: 4214344 bytes\n   Allocated: 5974060 bytes\n Thread size: 14056 bytes\nloaded collision model models/mapobjects/steve_temp/map10_hell_smoke.lwo\nloaded collision model models/mapobjects/shipping_crates/shipping_crates.lwo\nloaded collision model models/mapobjects/steve_temp/map10_hell2.lwo\nglprogs/heatHazeWithMaskAndVertex.vfpglprogs/heatHazeWithMaskAndVertex.vfpWARNING: material 'textures/sfx/vpring3' had stage with no image\nloaded collision model models/mapobjects/enpro/dm_laser_b.lwo\nloaded collision model models/mapobjects/enpro/dm_laser_c.lwo\nloaded collision model models/mapobjects/doors/smalldoor.lwo\nloaded collision model models\\mapobjects\\com\\snail\\snailclawhand.lwo\nloaded collision model models/mapobjects/com/snail/snailcomp.lwo\nloaded collision model models/mapobjects/utility/trapbra/trapbra.lwo\nloaded collision model models/mapobjects/cpu/cpufloorinsert2.lwo\nloaded collision model models/mapobjects/enpro/dm_cylinder.lwo\nremoved 2 degenerate triangles\nloaded collision model models/mapobjects/utility/tecknob1/tecknob1.lwo\nloaded collision model models/mapobjects/com/com_twist.ase\nloaded collision model models/mapobjects/doors/techdoor1/techdr1frame.lwo\nloaded collision model models/mapobjects/cpu/heater.lwo\nloaded collision model models/mapobjects/cpu/heater2.lwo\nloaded collision model models/mapobjects/cpu/boxmonitor1.lwo\nloaded collision model models/mapobjects/skmachines/skcube.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2frame.lwo\nloaded collision model models/outdoors/dm/dm_outside.lwo\nloaded collision model models/mapobjects/doors/cpudoor2.lwo\nloaded collision model models/mapobjects/com/snail/snailshell1.lwo\nloaded collision model models/mapobjects/enpro/dm_cylinderdisc.lwo\nloaded collision model models/mapobjects/enpro/dm_laser_a.lwo\nloaded collision model models/mapobjects/enpro/dm_laser_d.lwo\nloaded collision model models/mapobjects/guiobjects/techdrpanel1/techdrpanel1.lwo\nloaded collision model models/mapobjects/cpu/cpudecotrim.lwo\nloaded collision model models/mapobjects/cpu/cpumaze1.lwo\nloaded collision model models/mapobjects/com/snail/snailshell2.lwo\nloaded collision model models/mapobjects/com/snail/snailshell3.lwo\nloaded collision model models/mapobjects/enpro/dm_cylinder_spectrum.lwo\nloaded collision model models/mapobjects/com/snail/snailclawfinger.lwo\nloaded collision model models/mapobjects/teleporter/teleporter_exit.lwo\nloaded collision model models/mapobjects/steve_temp/map10_hellpipe.ASE\nloaded collision model models/mapobjects/steve_temp/map10_hellpanel.ASE\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb.ase\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb_broken.ase\nloaded collision model models/mapobjects/lab/diamondbox/diamondbox_sm.lwo\nloaded collision model models/mapobjects/doors/techdoor1/techdr1lft.lwo\nloaded collision model models/mapobjects/doors/techdoor1/techdr1rt.lwo\nloaded collision model models/mapobjects/doors/cpudoor2r.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2lft.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2rt.lwo\nloaded collision model models/mapobjects/base/misc/emerlight.ase\nloaded collision model models/mapobjects/steve_temp/map10_hell1.lwo\nloaded collision model models/mapobjects/teleporter/telecolon.lwo\nloaded collision model models/mapobjects/steve_temp/map10_hell3.lwo\nloaded collision model models/mapobjects/swinglights/swinglight1a.lwo\n...887 entities spawned, 0 inhibited\n\n12 spawns (5 initials)\n==== Processing events ====\n[Load AAS]\nloading maps/game/mp/d3dm1.botaas48\ndone.\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\n----- idRenderModelManagerLocal::EndLevelLoad -----\n    0 models purged from previous level,   565 models kept.\n   472 msec to load game/mp/d3dm1\n----- Warnings -----\nduring game/mp/d3dm1...\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\nWARNING: material 'textures/sfx/vp1' had stage with no image\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'textures/sfx/vpring3' had stage with no image\n6 warnings\nnet_LANServer is enabled. Not sending heartbeats\nSABOT_FRAME {\"time\":0,\"bots\":0,\"humans\":0,\"target\":2}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[31]: inUse(0), clientID(0), entityNum(0), selected(0)\nBot slots: used(0)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(0)\ngameLocal.numClients: connected(0)\nclient 31 connected.\nSpawnBotPlayer: 31\nloaded collision model models/weapons/shell1/mshell_lo.lwo\nloaded collision model models/weapons/shell1/sshell_bigger.lwo\nSpawn bot: botID=31\nServer: [BOT31] Kevin Cloud (4) joined the game.\n\nAdd bot: botID=31\nclient 30 connected.\nSpawnBotPlayer: 30\nSpawn bot: botID=30\nServer: [BOT30] Ron Ridge (8) joined the game.\n\nAdd bot: botID=30\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nSABOT_FRAME {\"time\":1728,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":1728,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-873.524,126.018,-383.750],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":1728,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-61.972,1116.141,-319.750],\"buttons\":2,\"move\":[112,-59,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ron Ridge (8))\n\t31: Bot([BOT31] Kevin Cloud (4))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Kevin Cloud (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\n\t30: Bot([BOT30] Ron Ridge (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\nSABOT_FRAME {\"time\":3728,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":3728,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-1071.179,598.930,-319.750],\"buttons\":2,\"move\":[107,-67,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":3728,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[453.034,1027.905,-383.750],\"buttons\":2,\"move\":[126,-2,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ron Ridge (8))\n\t31: Bot([BOT31] Kevin Cloud (4))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Kevin Cloud (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\n\t30: Bot([BOT30] Ron Ridge (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\nSABOT_FRAME {\"time\":5728,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":5728,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-1208.898,795.153,-121.064],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":5728,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[309.419,699.577,-383.750],\"buttons\":2,\"move\":[126,2,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ron Ridge (8))\n\t31: Bot([BOT31] Kevin Cloud (4))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Kevin Cloud (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\n\t30: Bot([BOT30] Ron Ridge (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\ncom_asyncInput cannot be changed in multiplayer.\n----- Game Map Shutdown -----\nRelease bot slot: botID=30\nFree bot: botID=30\nUnlink bot: botID=30\nRelease bot slot: botID=31\nFree bot: botID=31\nUnlink bot: botID=31\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/msg.gui.\nreloading guis/takeNotes.gui.\nreloading guis/intro.gui.\nreloading guis/map/d3dm1.gui.\nreloading guis/weapons/plasmagun.gui.\nreloading guis/weapons/machinegun.gui.\nreloading guis/screens/cpu_one.gui.\nreloading guis/screens/malfunction.gui.\nreloading guis/screens/cpu_two.gui.\nreloading guis/screens/cpu_top.gui.\nreloading guis/screens/cpu_top2.gui.\nreloading guis/screens/cpu_three.gui.\nreloading guis/controlpanels/hydropower.gui.\nreloading guis/controlpanels/epd1a.gui.\nreloading guis/multiplayer/lightswitch_parm.gui.\nreloading guis/screens/cpu_six.gui.\nreloading guis/weapons/chaingun.gui.\nreloading guis/scoreboard.gui.\nreloading guis/spectate.gui.\nreloading guis/chat.gui.\nreloading guis/mpmain.gui.\nreloading guis/mpmsgmode.gui.\nreloading guis/lvlmaps/genericmap.gui.\nreloading guis/mphud.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/weapons/bfg.gui.\n----- Map Initialization -----\nMap: game/mp/d3dm2\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\n----- Game Map Init -----\ncollision data:\n   160 models\n 17250 vertices (404 KB)\n 32555 edges (1144 KB)\n 14073 polygons (1038 KB)\n  2721 brushes (382 KB)\n  6514 nodes (305 KB)\n 26049 polygon refs (407 KB)\n  8334 brush refs (130 KB)\n 11113 internal edges\n  1027 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  3812 KB total memory used\n23 msec to load collision data.\nmap bounds are (2184.0, 2536.0, 656.0)\nmax clip sector is (136.5, 79.3, 82.0)\n    1 KB passage memory used to build PVS\n    0 msec to calculate PVS\n   34 areas\n   86 portals\n   12 areas visible on average\n  272 bytes PVS data\n[Load AAS]\nloading maps/game/mp/d3dm2.aas48\n[Load AAS]\nloading maps/game/mp/d3dm2.aas96\n[Load AAS]\nloading maps/game/mp/d3dm2.aas_guardian\n[Load AAS]\nloading maps/game/mp/d3dm2.aas_mancubus\n[Load AAS]\nloading maps/game/mp/d3dm2.aas_sabaoth\n[Load AAS]\nloading maps/game/mp/d3dm2.aas_cyberdemon\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm2.script': 1 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 76555, 3062200 bytes\n   Functions: 2277, 341000 bytes\n   Variables: 181584 bytes\n    Mem used: 5018344 bytes\n Static data: 4214344 bytes\n   Allocated: 5959856 bytes\n Thread size: 14056 bytes\nloaded collision model models/mapobjects/shipping_crates/shipping_crates3.lwo\nloaded collision model models/mapobjects/utility/tecknob1/tecknob1.lwo\nWARNING: material 'textures/sfx/vpring3' had stage with no image\nloaded collision model models/mapobjects/cpu/boxmonitor1.lwo\nloaded collision model models/mapobjects/skmachines/skceilingdisc.lwo\nloaded collision model models/mapobjects/doors/deldoor1/deldoor1frm.lwo\nloaded collision model models/outdoors/dm/terrain_d3dm2_small_sd.lwo\nloaded collision model models/mapobjects/cpu/cpudisc.lwo\nloaded collision model models/mapobjects/utility/inhaler/inhaler.lwo\nloaded collision model models/mapobjects/utility/vent/vent.lwo\nloaded collision model models/mapobjects/cpu/cpudesk2.lwo\nloaded collision model models/mapobjects/lab/serverrack1/serverrack_sized.lwo\nloaded collision model models/mapobjects/shipping_crates/shipping_crates.lwo\nloaded collision model models/mapobjects/skmachines/skcube.lwo\nloaded collision model models/mapobjects/doors/deldoor1/deldoor1.lwo\n...480 entities spawned, 0 inhibited\n\n13 spawns (4 initials)\n==== Processing events ====\n[Load AAS]\nloading maps/game/mp/d3dm2.botaas48\ndone.\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\n----- idRenderModelManagerLocal::EndLevelLoad -----\n   54 models purged from previous level,   413 models kept.\n   217 msec to load game/mp/d3dm2\n----- Warnings -----\nduring game/mp/d3dm2...\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'textures/sfx/vpring3' had stage with no image\n5 warnings\nnet_LANServer is enabled. Not sending heartbeats\nSABOT_FRAME {\"time\":0,\"bots\":0,\"humans\":0,\"target\":2}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm2.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(0), clientID(-1), entityNum(-1), selected(0)\n\t[31]: inUse(0), clientID(-1), entityNum(-1), selected(0)\nBot slots: used(0)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(0)\ngameLocal.numClients: connected(0)\nclient 31 connected.\nSpawnBotPlayer: 31\nloaded collision model models/weapons/shell1/mshell_lo.lwo\nloaded collision model models/weapons/shell1/sshell_bigger.lwo\nSpawn bot: botID=31\n[BOT31] Ethan Peterson (8) is ready!\n\nServer: [BOT31] Ethan Peterson (8) joined the game.\n\nAdd bot: botID=31\nclient 30 connected.\nSpawnBotPlayer: 30\nSpawn bot: botID=30\n[BOT30] Henry Nelson (4) is ready!\n\nServer: [BOT30] Henry Nelson (4) joined the game.\n\nAdd bot: botID=30\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nWARNING: idClipModel::Handle: clip model 0 on 'player32' (1f) is not a collision or trace model\nSABOT_FRAME {\"time\":1536,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":1536,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[782.700,-738.142,24.250],\"buttons\":2,\"move\":[126,-8,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":1536,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-478.480,27.485,192.250],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm2.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(516), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(513), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Henry Nelson (4))\n\t31: Bot([BOT31] Ethan Peterson (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Ethan Peterson (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Henry Nelson (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\nSABOT_FRAME {\"time\":3536,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":3536,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[813.210,-326.610,-31.749],\"buttons\":2,\"move\":[126,14,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":3536,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[32.690,197.862,192.250],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm2.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(516), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(513), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Henry Nelson (4))\n\t31: Bot([BOT31] Ethan Peterson (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Ethan Peterson (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Henry Nelson (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\nSABOT_FRAME {\"time\":5536,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":5536,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[958.969,-377.353,-31.749],\"buttons\":2,\"move\":[123,28,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":5536,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[124.463,636.487,192.250],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm2.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(516), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(513), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Henry Nelson (4))\n\t31: Bot([BOT31] Ethan Peterson (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Ethan Peterson (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Henry Nelson (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\ncom_asyncInput cannot be changed in multiplayer.\n----- Game Map Shutdown -----\nRelease bot slot: botID=30\nFree bot: botID=30\nUnlink bot: botID=30\nRelease bot slot: botID=31\nFree bot: botID=31\nUnlink bot: botID=31\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/msg.gui.\nreloading guis/takeNotes.gui.\nreloading guis/intro.gui.\nreloading guis/map/d3dm1.gui.\nreloading guis/weapons/plasmagun.gui.\nreloading guis/weapons/machinegun.gui.\nreloading guis/screens/cpu_one.gui.\nreloading guis/screens/malfunction.gui.\nreloading guis/screens/cpu_top.gui.\nreloading guis/controlpanels/epd1a.gui.\nreloading guis/screens/cpu_six.gui.\nreloading guis/weapons/chaingun.gui.\nreloading guis/scoreboard.gui.\nreloading guis/spectate.gui.\nreloading guis/chat.gui.\nreloading guis/mpmain.gui.\nreloading guis/mpmsgmode.gui.\nreloading guis/lvlmaps/genericmap.gui.\nreloading guis/mphud.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm2.gui.\nreloading guis/controlpanels/efc.gui.\nreloading guis/screens/scan4.gui.\nreloading guis/screens/scan5a.gui.\nreloading guis/screens/scan1.gui.\nreloading guis/controlpanels/epd1b.gui.\nreloading guis/screens/cpu_four.gui.\nreloading guis/multiplayer/powerup_dispenser.gui.\nreloading guis/screens/malfunction7.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/weapons/bfg.gui.\n----- Map Initialization -----\nMap: game/mp/d3dm3\nWARNING: material 'textures/glass/glass2' had stage with no image\n----- Game Map Init -----\ncollision data:\n   159 models\n 20282 vertices (475 KB)\n 36294 edges (1275 KB)\n 15066 polygons (1116 KB)\n  3013 brushes (426 KB)\n  7859 nodes (368 KB)\n 31791 polygon refs (496 KB)\n 10474 brush refs (163 KB)\n 10651 internal edges\n  1595 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  4322 KB total memory used\n26 msec to load collision data.\nmap bounds are (2186.4, 1856.0, 1456.0)\nmax clip sector is (136.6, 116.0, 91.0)\n    1 KB passage memory used to build PVS\n    0 msec to calculate PVS\n   39 areas\n   94 portals\n   16 areas visible on average\n  312 bytes PVS data\n[Load AAS]\nloading maps/game/mp/d3dm3.aas48\n[Load AAS]\nloading maps/game/mp/d3dm3.aas96\n[Load AAS]\nloading maps/game/mp/d3dm3.aas_guardian\n[Load AAS]\nloading maps/game/mp/d3dm3.aas_mancubus\n[Load AAS]\nloading maps/game/mp/d3dm3.aas_sabaoth\n[Load AAS]\nloading maps/game/mp/d3dm3.aas_cyberdemon\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm3.script': 5 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 77297, 3091880 bytes\n   Functions: 2297, 343388 bytes\n   Variables: 182824 bytes\n    Mem used: 5060208 bytes\n Static data: 4214344 bytes\n   Allocated: 5972188 bytes\n Thread size: 14056 bytes\nloaded collision model models/mapobjects/swinglights/swinglight1a.lwo\nWARNING: material 'textures/sfx/vpring3' had stage with no image\nloaded collision model models/mapobjects/doors/techdoor1/techdr1frame.lwo\nloaded collision model models/mapobjects/utility/vent/vent.lwo\nloaded collision model models/mapobjects/skmachines/skcube.lwo\nloaded collision model models/mapobjects/utility/inhaler/inhaler.lwo\nloaded collision model models/mapobjects/doors/techdoor1/techdr1rt.lwo\nloaded collision model models/mapobjects/doors/techdoor1/techdr1lft.lwo\nloaded collision model models/mapobjects/lights/klaxon/klaxon.lwo\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb.ASE\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb_broken.ase\nloaded collision model models/mapobjects/base/misc/emerlight.ase\nloaded collision model models/mapobjects/com/modconsole1.lwo\nloaded collision model models/mapobjects/com/modconsole3.lwo\nloaded collision model models/mapobjects/guiobjects/alphalabcon/alphalabcon.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2frame.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2rt.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2lft.lwo\n...592 entities spawned, 0 inhibited\n\nWARNING: location entity 'info_location_5' overlaps 'info_location_1'\n15 spawns (9 initials)\n==== Processing events ====\n[Load AAS]\nloading maps/game/mp/d3dm3.botaas48\ndone.\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\n----- idRenderModelManagerLocal::EndLevelLoad -----\n   13 models purged from previous level,   462 models kept.\n   228 msec to load game/mp/d3dm3\n----- Warnings -----\nduring game/mp/d3dm3...\nWARNING: location entity 'info_location_5' overlaps 'info_location_1'\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\nWARNING: material 'textures/glass/glass2' had stage with no image\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'textures/sfx/vpring3' had stage with no image\n6 warnings\nnet_LANServer is enabled. Not sending heartbeats\nSABOT_FRAME {\"time\":0,\"bots\":0,\"humans\":0,\"target\":2}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm3.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(0), clientID(-1), entityNum(-1), selected(0)\n\t[31]: inUse(0), clientID(-1), entityNum(-1), selected(0)\nBot slots: used(0)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(0)\ngameLocal.numClients: connected(0)\nclient 31 connected.\nSpawnBotPlayer: 31\nloaded collision model models/weapons/shell1/mshell_lo.lwo\nloaded collision model models/weapons/shell1/sshell_bigger.lwo\nSpawn bot: botID=31\nServer: [BOT31] Gregg Brandenburg (8) joined the game.\n\nAdd bot: botID=31\nclient 30 connected.\nSpawnBotPlayer: 30\nSpawn bot: botID=30\nServer: [BOT30] Quake (4) joined the game.\n\nAdd bot: botID=30\nSABOT_FRAME {\"time\":1600,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":1600,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[592.991,416.863,304.250],\"buttons\":2,\"move\":[105,70,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":1600,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[752.232,-405.390,145.585],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm3.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(628), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(625), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Quake (4))\n\t31: Bot([BOT31] Gregg Brandenburg (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Gregg Brandenburg (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Quake (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\nSABOT_FRAME {\"time\":3600,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":3600,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[1013.289,192.654,304.250],\"buttons\":2,\"move\":[125,-21,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":3600,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[947.875,-230.325,201.845],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm3.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(628), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(625), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Quake (4))\n\t31: Bot([BOT31] Gregg Brandenburg (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Gregg Brandenburg (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Quake (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\nSABOT_FRAME {\"time\":5600,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":5600,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[1162.290,-159.605,304.250],\"buttons\":2,\"move\":[126,14,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":5600,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[720.714,-493.507,304.251],\"buttons\":2,\"move\":[127,0,0],\"weapon\":7,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm3.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(628), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(625), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Quake (4))\n\t31: Bot([BOT31] Gregg Brandenburg (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Gregg Brandenburg (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Quake (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\ncom_asyncInput cannot be changed in multiplayer.\n----- Game Map Shutdown -----\nRelease bot slot: botID=30\nFree bot: botID=30\nUnlink bot: botID=30\nRelease bot slot: botID=31\nFree bot: botID=31\nUnlink bot: botID=31\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/msg.gui.\nreloading guis/takeNotes.gui.\nreloading guis/intro.gui.\nreloading guis/map/d3dm1.gui.\nreloading guis/weapons/plasmagun.gui.\nreloading guis/weapons/machinegun.gui.\nreloading guis/screens/cpu_one.gui.\nreloading guis/screens/cpu_top.gui.\nreloading guis/screens/cpu_six.gui.\nreloading guis/weapons/chaingun.gui.\nreloading guis/scoreboard.gui.\nreloading guis/spectate.gui.\nreloading guis/chat.gui.\nreloading guis/mpmain.gui.\nreloading guis/mpmsgmode.gui.\nreloading guis/lvlmaps/genericmap.gui.\nreloading guis/mphud.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm2.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm3.gui.\nreloading guis/screens/cpu_four.gui.\nreloading guis/screens/cpu_two.gui.\nreloading guis/multiplayer/fragchamber_console.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/weapons/bfg.gui.\n----- Map Initialization -----\nMap: game/mp/d3dm4\n----- Game Map Init -----\ncollision data:\n   263 models\n 28721 vertices (673 KB)\n 49597 edges (1743 KB)\n 20194 polygons (1495 KB)\n  3395 brushes (483 KB)\n 11629 nodes (545 KB)\n 42304 polygon refs (661 KB)\n 13173 brush refs (205 KB)\n 14218 internal edges\n  1275 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  5807 KB total memory used\n36 msec to load collision data.\nmap bounds are (4528.0, 3933.9, 2752.0)\nmax clip sector is (283.0, 245.9, 172.0)\n    1 KB passage memory used to build PVS\n    0 msec to calculate PVS\n   38 areas\n   86 portals\n   10 areas visible on average\n  304 bytes PVS data\n[Load AAS]\nloading maps/game/mp/d3dm4.aas48\n[Load AAS]\nloading maps/game/mp/d3dm4.aas96\n[Load AAS]\nloading maps/game/mp/d3dm4.aas_guardian\n[Load AAS]\nloading maps/game/mp/d3dm4.aas_mancubus\n[Load AAS]\nloading maps/game/mp/d3dm4.aas_sabaoth\n[Load AAS]\nloading maps/game/mp/d3dm4.aas_cyberdemon\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm4.script': 2 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 76775, 3071000 bytes\n   Functions: 2280, 341348 bytes\n   Variables: 181744 bytes\n    Mem used: 5030768 bytes\n Static data: 4214344 bytes\n   Allocated: 5963492 bytes\n Thread size: 14056 bytes\nloaded collision model models/mapobjects/caves/caverns_sl128_on.lwo\nloaded collision model models/mapobjects/swinglights/saucerlamp/saucerlamp.lwo\nWARNING: material 'textures/sfx/vpring3' had stage with no image\nloaded collision model models/mapobjects/washroom/airtank.lwo\nloaded collision model models/mapobjects/doors/mcitydoor2L.lwo\nloaded collision model models/outdoors/d3dm4/d3dm4a.lwo\nloaded collision model models/mapobjects/shipping_crates/shipping_crates2.lwo\nloaded collision model models/mapobjects/caves/cavcross/cavcross.lwo\nloaded collision model models/mapobjects/doors/cavedoor2/cavedoor2frm.lwo\nloaded collision model models/mapobjects/mcity/mcwall1.lwo\nloaded collision model models/mapobjects/doors/mcdoor2frame.lwo\nloaded collision model models/mapobjects/guiobjects/techdrpanel1/techdrpanel1.lwo\nWARNING: Couldn't load gui: '1.000000 0.000000 0.000000'\nloaded collision model models/mapobjects/teleporter/telecolon.lwo\nWARNING: Couldn't load gui: '1.000000 0.000000 0.000000'\nWARNING: Couldn't load gui: '1.000000 0.000000 0.000000'\nloaded collision model models/mapobjects/filler/tbox8.ase\nloaded collision model models/mapobjects/utility/vent/vent.lwo\nloaded collision model models/mapobjects/doors/cavedoor2/cavedoor2.lwo\nloaded collision model models/mapobjects/doors/mcitydoor2R.lwo\nremoved 2 degenerate triangles\nloaded collision model models/mapobjects/utility/tecknob1/tecknob1.lwo\nloaded collision model models/outdoors/d3dm4/d3dm4_b.lwo\nloaded collision model models/outdoors/d3dm4/d3dm4_c.lwo\n...779 entities spawned, 0 inhibited\n\n12 spawns (5 initials)\n==== Processing events ====\n[Load AAS]\nloading maps/game/mp/d3dm4.botaas48\ndone.\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\n----- idRenderModelManagerLocal::EndLevelLoad -----\n   26 models purged from previous level,   647 models kept.\n    2 new models loaded in   0.0 seconds\n   333 msec to load game/mp/d3dm4\n----- Warnings -----\nduring game/mp/d3dm4...\nWARNING: Couldn't load gui: '1.000000 0.000000 0.000000'\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'textures/sfx/vpring3' had stage with no image\n5 warnings\nnet_LANServer is enabled. Not sending heartbeats\nSABOT_FRAME {\"time\":0,\"bots\":0,\"humans\":0,\"target\":2}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm4.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(0), clientID(-1), entityNum(-1), selected(0)\n\t[31]: inUse(0), clientID(-1), entityNum(-1), selected(0)\nBot slots: used(0)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(0)\ngameLocal.numClients: connected(0)\nclient 31 connected.\nSpawnBotPlayer: 31\nloaded collision model models/weapons/shell1/mshell_lo.lwo\nloaded collision model models/weapons/shell1/sshell_bigger.lwo\nSpawn bot: botID=31\n[BOT31] Sergeant Kelly (3) is ready!\n\nServer: [BOT31] Sergeant Kelly (3) joined the game.\n\nAdd bot: botID=31\nclient 30 connected.\nSpawnBotPlayer: 30\nSpawn bot: botID=30\n[BOT30] Thomas Franks (7) is ready!\n\nServer: [BOT30] Thomas Franks (7) joined the game.\n\nAdd bot: botID=30\nSABOT_FRAME {\"time\":1392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":1392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-877.290,-865.749,128.250],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":1392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-135.253,-1564.716,-95.750],\"buttons\":2,\"move\":[121,-33,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm4.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(815), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(812), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Thomas Franks (7))\n\t31: Bot([BOT31] Sergeant Kelly (3))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Sergeant Kelly (3)) -> level=3, fov=45.000000, aim rate=0.100000, find radius=400.000000\n\t30: Bot([BOT30] Thomas Franks (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\nSABOT_FRAME {\"time\":3392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":3392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-779.793,-507.385,128.250],\"buttons\":2,\"move\":[126,-4,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":3392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-53.908,-1116.193,0.251],\"buttons\":2,\"move\":[126,-5,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm4.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(815), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(812), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Thomas Franks (7))\n\t31: Bot([BOT31] Sergeant Kelly (3))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Sergeant Kelly (3)) -> level=3, fov=45.000000, aim rate=0.100000, find radius=400.000000\n\t30: Bot([BOT30] Thomas Franks (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\nSABOT_FRAME {\"time\":5392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":5392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-454.040,-371.316,91.216],\"buttons\":2,\"move\":[126,-15,0],\"weapon\":3,\"frags\":0}\nSABOT_SAMPLE {\"time\":5392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[8.982,-586.568,0.251],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm4.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(815), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(812), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Thomas Franks (7))\n\t31: Bot([BOT31] Sergeant Kelly (3))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Sergeant Kelly (3)) -> level=3, fov=45.000000, aim rate=0.100000, find radius=400.000000\n\t30: Bot([BOT30] Thomas Franks (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\ncom_asyncInput cannot be changed in multiplayer.\n----- Game Map Shutdown -----\nRelease bot slot: botID=30\nFree bot: botID=30\nUnlink bot: botID=30\nRelease bot slot: botID=31\nFree bot: botID=31\nUnlink bot: botID=31\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/msg.gui.\nreloading guis/takeNotes.gui.\nreloading guis/intro.gui.\nreloading guis/map/d3dm1.gui.\nreloading guis/weapons/plasmagun.gui.\nreloading guis/weapons/machinegun.gui.\nreloading guis/screens/cpu_one.gui.\nreloading guis/screens/cpu_top.gui.\nreloading guis/screens/cpu_six.gui.\nreloading guis/weapons/chaingun.gui.\nreloading guis/scoreboard.gui.\nreloading guis/spectate.gui.\nreloading guis/chat.gui.\nreloading guis/mpmain.gui.\nreloading guis/mpmsgmode.gui.\nreloading guis/lvlmaps/genericmap.gui.\nreloading guis/mphud.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm2.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm3.gui.\nreloading guis/screens/cpu_four.gui.\nreloading guis/screens/cpu_two.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm4.gui.\nreloading guis/screens/malfunction6.gui.\nreloading guis/screens/malfunction.gui.\nreloading guis/screens/malfunction7.gui.\nreloading guis/screens/cpu_three.gui.\nreloading guis/screens/cpu_eight.gui.\nreloading guis/multiplayer/lightswitch_parm.gui.\nreloading guis/screens/cpu_top2.gui.\nreloading guis/screens/powerout.gui.\nreloading guis/screens/malfunction2a.gui.\nreloading guis/screens/sm3.gui.\nreloading guis/screens/cpu_uac.gui.\nreloading guis/screens/laptop.gui.\nreloading guis/multiplayer/lightswitch_parm.gui.\nreloading guis/multiplayer/lightswitch_parm.gui.\nreloading guis/doors/uac_general.gui.\nreloading guis/screens/scan2dirt.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/weapons/bfg.gui.\n----- Map Initialization -----\nMap: game/mp/d3dm5\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\n----- Game Map Init -----\ncollision data:\n   304 models\n 17823 vertices (417 KB)\n 30159 edges (1060 KB)\n 12126 polygons (898 KB)\n  2462 brushes (345 KB)\n  5698 nodes (267 KB)\n 23277 polygon refs (363 KB)\n  7493 brush refs (117 KB)\n  9369 internal edges\n  1564 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  3470 KB total memory used\n20 msec to load collision data.\nmap bounds are (2296.0, 2056.0, 816.0)\nmax clip sector is (71.8, 128.5, 102.0)\n    1 KB passage memory used to build PVS\n    1 msec to calculate PVS\n   32 areas\n   70 portals\n   11 areas visible on average\n  128 bytes PVS data\n[Load AAS]\nloading maps/game/mp/d3dm5.aas48\n[Load AAS]\nloading maps/game/mp/d3dm5.aas96\n[Load AAS]\nloading maps/game/mp/d3dm5.aas_guardian\n[Load AAS]\nloading maps/game/mp/d3dm5.aas_mancubus\n[Load AAS]\nloading maps/game/mp/d3dm5.aas_sabaoth\n[Load AAS]\nloading maps/game/mp/d3dm5.aas_cyberdemon\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm5.script': 9 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 77870, 3114800 bytes\n   Functions: 2328, 347992 bytes\n   Variables: 185168 bytes\n    Mem used: 5103880 bytes\n Static data: 4214344 bytes\n   Allocated: 5994072 bytes\n Thread size: 14056 bytes\nWARNING: material 'textures/sfx/vpring3' had stage with no image\nloaded collision model models/mapobjects/swinglights/swinglight1a.lwo\nloaded collision model models/mapobjects/utility/binplug/binplug_c.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2lft.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2rt.lwo\nloaded collision model models/mapobjects/cpu/comrack.lwo\nloaded collision model models/mapobjects/shutter/shutter_big.lwo\nloaded collision model models/mapobjects/lab/fridge1/sd/fridge1_nodoor.lwo\nloaded collision model models/mapobjects/utility/vent/vent.lwo\nloaded collision model models/mapobjects/guiobjects/techdrpanel1/techdrpanel1.lwo\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb.ASE\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb_broken.ASE\nloaded collision model models/mapobjects/base/misc/emerlight.ase\nloaded collision model models/mapobjects/filler/sodamachine.lwo\nloaded collision model models/mapobjects/cpu/pullhandle.lwo\nloaded collision model models/mapobjects/skmachines/skcube.lwo\nloaded collision model models/mapobjects/cpu/heater2.lwo\nloaded collision model models/mapobjects/shutter/shutter_small.lwo\nloaded collision model models/mapobjects/doors/mcdoor2frame.lwo\nloaded collision model models/mapobjects/doors/mcitydoor2L.lwo\nloaded collision model models/mapobjects/doors/mcitydoor2R.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2frame.lwo\nloaded collision model models/mapobjects/guiobjects/flatmonitor/flatmonitor.lwo\n...771 entities spawned, 0 inhibited\n\n13 spawns (6 initials)\n==== Processing events ====\n[Load AAS]\nloading maps/game/mp/d3dm5.botaas48\ndone.\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\n----- idRenderModelManagerLocal::EndLevelLoad -----\n   24 models purged from previous level,   687 models kept.\n    2 new models loaded in   0.0 seconds\n   241 msec to load game/mp/d3dm5\n----- Warnings -----\nduring game/mp/d3dm5...\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'textures/sfx/vpring3' had stage with no image\n5 warnings\nnet_LANServer is enabled. Not sending heartbeats\nSABOT_FRAME {\"time\":0,\"bots\":0,\"humans\":0,\"target\":2}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm5.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(0), clientID(-1), entityNum(-1), selected(0)\n\t[31]: inUse(0), clientID(-1), entityNum(-1), selected(0)\nBot slots: used(0)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(0)\ngameLocal.numClients: connected(0)\nclient 31 connected.\nSpawnBotPlayer: 31\nloaded collision model models/weapons/shell1/mshell_lo.lwo\nloaded collision model models/weapons/shell1/sshell_bigger.lwo\nSpawn bot: botID=31\nServer: [BOT31] Ethan Peterson (8) joined the game.\n\nAdd bot: botID=31\nclient 30 connected.\nSpawnBotPlayer: 30\nSpawn bot: botID=30\nServer: [BOT30] Dusty Welch (4) joined the game.\n\nAdd bot: botID=30\nSABOT_FRAME {\"time\":1520,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":1520,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-200.740,191.349,136.250],\"buttons\":2,\"move\":[126,1,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":1520,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-1457.376,166.828,83.209],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm5.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(807), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(804), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Dusty Welch (4))\n\t31: Bot([BOT31] Ethan Peterson (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Ethan Peterson (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Dusty Welch (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\nSABOT_FRAME {\"time\":3520,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":3520,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-502.396,441.654,200.251],\"buttons\":2,\"move\":[126,-13,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":3520,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-1659.133,157.478,96.250],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm5.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(807), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(804), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Dusty Welch (4))\n\t31: Bot([BOT31] Ethan Peterson (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Ethan Peterson (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Dusty Welch (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\nSABOT_FRAME {\"time\":5520,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":5520,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-790.462,693.125,192.250],\"buttons\":2,\"move\":[118,-45,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":5520,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-1301.477,-66.124,96.250],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm5.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(807), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(804), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Dusty Welch (4))\n\t31: Bot([BOT31] Ethan Peterson (8))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Ethan Peterson (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t30: Bot([BOT30] Dusty Welch (4)) -> level=4, fov=60.000000, aim rate=0.100000, find radius=500.000000\ncom_asyncInput cannot be changed in multiplayer.\n----- Game Map Shutdown -----\nRelease bot slot: botID=30\nFree bot: botID=30\nUnlink bot: botID=30\nRelease bot slot: botID=31\nFree bot: botID=31\nUnlink bot: botID=31\nreloading guis/mainmenu.gui.\nreloading guis/restart.gui.\nreloading guis/msg.gui.\nreloading guis/takeNotes.gui.\nreloading guis/intro.gui.\nreloading guis/map/d3dm1.gui.\nreloading guis/weapons/plasmagun.gui.\nreloading guis/weapons/machinegun.gui.\nreloading guis/screens/cpu_one.gui.\nreloading guis/screens/cpu_top.gui.\nreloading guis/weapons/chaingun.gui.\nreloading guis/scoreboard.gui.\nreloading guis/spectate.gui.\nreloading guis/chat.gui.\nreloading guis/mpmain.gui.\nreloading guis/mpmsgmode.gui.\nreloading guis/lvlmaps/genericmap.gui.\nreloading guis/mphud.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm2.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm3.gui.\nreloading guis/screens/cpu_two.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm4.gui.\nreloading guis/screens/cpu_three.gui.\nreloading guis/screens/cpu_top2.gui.\nreloading guis/screens/cpu_uac.gui.\nreloading guis/doors/uac_general.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/map/d3dm5.gui.\nreloading guis/multiplayer/windshutter.gui.\nreloading guis/multiplayer/generator.gui.\nreloading guis/screens/sm1.gui.\nreloading guis/multiplayer/windshutter.gui.\nreloading guis/controlpanels/epd1a.gui.\nreloading guis/controlpanels/epd1b.gui.\nreloading guis/screens/cpu_uacoffline.gui.\nreloading guis/marscity/comm2.gui.\nreloading guis/marscity/comm1mp.gui.\nreloading guis/mpmain.gui.\nreloading guis/netmenu.gui.\nreloading guis/weapons/bfg.gui.\n----- Map Initialization -----\nMap: game/mp/d3dm1\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\nWARNING: material 'textures/sfx/vp1' had stage with no image\n----- Game Map Init -----\ncollision data:\n   272 models\n 15786 vertices (369 KB)\n 28000 edges (984 KB)\n 11451 polygons (849 KB)\n  2348 brushes (328 KB)\n  8298 nodes (388 KB)\n 23566 polygon refs (368 KB)\n  8330 brush refs (130 KB)\n  8269 internal edges\n  1138 sharp edges\n     0 contained polygons removed\n     0 polygons merged\n  3419 KB total memory used\n20 msec to load collision data.\nmap bounds are (5216.0, 4168.0, 4418.0)\nmax clip sector is (326.0, 260.5, 276.1)\n    1 KB passage memory used to build PVS\n    0 msec to calculate PVS\n   32 areas\n   72 portals\n    9 areas visible on average\n  128 bytes PVS data\n[Load AAS]\nloading maps/game/mp/d3dm1.aas48\n[Load AAS]\nloading maps/game/mp/d3dm1.aas96\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_guardian\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_mancubus\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_sabaoth\n[Load AAS]\nloading maps/game/mp/d3dm1.aas_cyberdemon\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm1.script': 7 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 77753, 3110120 bytes\n   Functions: 2291, 342740 bytes\n   Variables: 183256 bytes\n    Mem used: 5080296 bytes\n Static data: 4214344 bytes\n   Allocated: 5974060 bytes\n Thread size: 14056 bytes\nloaded collision model models/mapobjects/steve_temp/map10_hell_smoke.lwo\nloaded collision model models/mapobjects/shipping_crates/shipping_crates.lwo\nloaded collision model models/mapobjects/steve_temp/map10_hell2.lwo\nWARNING: material 'textures/sfx/vpring3' had stage with no image\nloaded collision model models/mapobjects/enpro/dm_laser_b.lwo\nloaded collision model models/mapobjects/enpro/dm_laser_c.lwo\nloaded collision model models/mapobjects/doors/smalldoor.lwo\nloaded collision model models\\mapobjects\\com\\snail\\snailclawhand.lwo\nloaded collision model models/mapobjects/com/snail/snailcomp.lwo\nloaded collision model models/mapobjects/utility/trapbra/trapbra.lwo\nloaded collision model models/mapobjects/cpu/cpufloorinsert2.lwo\nloaded collision model models/mapobjects/enpro/dm_cylinder.lwo\nremoved 2 degenerate triangles\nloaded collision model models/mapobjects/utility/tecknob1/tecknob1.lwo\nloaded collision model models/mapobjects/com/com_twist.ase\nloaded collision model models/mapobjects/doors/techdoor1/techdr1frame.lwo\nloaded collision model models/mapobjects/cpu/heater.lwo\nloaded collision model models/mapobjects/cpu/heater2.lwo\nloaded collision model models/mapobjects/cpu/boxmonitor1.lwo\nloaded collision model models/mapobjects/skmachines/skcube.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2frame.lwo\nloaded collision model models/outdoors/dm/dm_outside.lwo\nloaded collision model models/mapobjects/doors/cpudoor2.lwo\nloaded collision model models/mapobjects/com/snail/snailshell1.lwo\nloaded collision model models/mapobjects/enpro/dm_cylinderdisc.lwo\nloaded collision model models/mapobjects/enpro/dm_laser_a.lwo\nloaded collision model models/mapobjects/enpro/dm_laser_d.lwo\nloaded collision model models/mapobjects/guiobjects/techdrpanel1/techdrpanel1.lwo\nloaded collision model models/mapobjects/cpu/cpudecotrim.lwo\nloaded collision model models/mapobjects/cpu/cpumaze1.lwo\nloaded collision model models/mapobjects/com/snail/snailshell2.lwo\nloaded collision model models/mapobjects/com/snail/snailshell3.lwo\nloaded collision model models/mapobjects/enpro/dm_cylinder_spectrum.lwo\nloaded collision model models/mapobjects/com/snail/snailclawfinger.lwo\nloaded collision model models/mapobjects/teleporter/teleporter_exit.lwo\nloaded collision model models/mapobjects/steve_temp/map10_hellpipe.ASE\nloaded collision model models/mapobjects/steve_temp/map10_hellpanel.ASE\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb.ase\nloaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb_broken.ase\nloaded collision model models/mapobjects/lab/diamondbox/diamondbox_sm.lwo\nloaded collision model models/mapobjects/doors/techdoor1/techdr1lft.lwo\nloaded collision model models/mapobjects/doors/techdoor1/techdr1rt.lwo\nloaded collision model models/mapobjects/doors/cpudoor2r.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2lft.lwo\nloaded collision model models/mapobjects/doors/techdoor2/techdr2rt.lwo\nloaded collision model models/mapobjects/base/misc/emerlight.ase\nloaded collision model models/mapobjects/steve_temp/map10_hell1.lwo\nloaded collision model models/mapobjects/teleporter/telecolon.lwo\nloaded collision model models/mapobjects/steve_temp/map10_hell3.lwo\nloaded collision model models/mapobjects/swinglights/swinglight1a.lwo\n...887 entities spawned, 0 inhibited\n\n12 spawns (5 initials)\n==== Processing events ====\n[Load AAS]\nloading maps/game/mp/d3dm1.botaas48\ndone.\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\n----- idRenderModelManagerLocal::EndLevelLoad -----\n   21 models purged from previous level,   600 models kept.\n    7 new models loaded in   0.0 seconds\n   363 msec to load game/mp/d3dm1\n----- Warnings -----\nduring game/mp/d3dm1...\nWARNING: material 'models/characters/male_npc/marine/h_mp1_invis' had stage with no image\nWARNING: material 'models/characters/male_npc/marine/mp1_invis' had stage with no image\nWARNING: material 'textures/glass/outdoor_glass1' had stage with no image\nWARNING: material 'textures/sfx/vp1' had stage with no image\nWARNING: material 'textures/sfx/vppinch_bfgbolt' had stage with no image\nWARNING: material 'textures/sfx/vpring3' had stage with no image\n6 warnings\nnet_LANServer is enabled. Not sending heartbeats\nSABOT_FRAME {\"time\":0,\"bots\":0,\"humans\":0,\"target\":2}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(0), clientID(-1), entityNum(-1), selected(0)\n\t[31]: inUse(0), clientID(-1), entityNum(-1), selected(0)\nBot slots: used(0)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(0)\ngameLocal.numClients: connected(0)\nclient 31 connected.\nSpawnBotPlayer: 31\nloaded collision model models/weapons/shell1/mshell_lo.lwo\nloaded collision model models/weapons/shell1/sshell_bigger.lwo\nSpawn bot: botID=31\n[BOT31] Patrick Thomas (5) is ready!\n\nServer: [BOT31] Patrick Thomas (5) joined the game.\n\nAdd bot: botID=31\nclient 30 connected.\nSpawnBotPlayer: 30\nSpawn bot: botID=30\n[BOT30] Ray Gerhardt (1) is ready!\n\nServer: [BOT30] Ray Gerhardt (1) joined the game.\n\nAdd bot: botID=30\nSABOT_FRAME {\"time\":1392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":1392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[0.347,-532.957,-165.242],\"buttons\":2,\"move\":[117,46,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":1392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-704.923,1198.092,-127.525],\"buttons\":2,\"move\":[118,44,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ray Gerhardt (1))\n\t31: Bot([BOT31] Patrick Thomas (5))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Patrick Thomas (5)) -> level=5, fov=75.000000, aim rate=0.100000, find radius=600.000000\n\t30: Bot([BOT30] Ray Gerhardt (1)) -> level=1, fov=10.000000, aim rate=0.100000, find radius=-1.000000\nSABOT_FRAME {\"time\":3392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":3392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-92.762,-355.711,-162.199],\"buttons\":2,\"move\":[126,-11,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":3392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-1029.773,1378.446,-127.304],\"buttons\":2,\"move\":[121,-36,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ray Gerhardt (1))\n\t31: Bot([BOT31] Patrick Thomas (5))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Patrick Thomas (5)) -> level=5, fov=75.000000, aim rate=0.100000, find radius=600.000000\n\t30: Bot([BOT30] Ray Gerhardt (1)) -> level=1, fov=10.000000, aim rate=0.100000, find radius=-1.000000\nSABOT_FRAME {\"time\":5392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":5392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-544.436,-132.880,-127.750],\"buttons\":2,\"move\":[126,-1,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":5392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-494.607,1379.773,-127.738],\"buttons\":2,\"move\":[126,-2,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ray Gerhardt (1))\n\t31: Bot([BOT31] Patrick Thomas (5))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Patrick Thomas (5)) -> level=5, fov=75.000000, aim rate=0.100000, find radius=600.000000\n\t30: Bot([BOT30] Ray Gerhardt (1)) -> level=1, fov=10.000000, aim rate=0.100000, find radius=-1.000000\nSABOT_FRAME {\"time\":7392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":7392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-975.406,52.658,-127.750],\"buttons\":2,\"move\":[126,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":7392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-50.739,1669.822,-127.752],\"buttons\":2,\"move\":[98,-80,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ray Gerhardt (1))\n\t31: Bot([BOT31] Patrick Thomas (5))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Patrick Thomas (5)) -> level=5, fov=75.000000, aim rate=0.100000, find radius=600.000000\n\t30: Bot([BOT30] Ray Gerhardt (1)) -> level=1, fov=10.000000, aim rate=0.100000, find radius=-1.000000\nSABOT_FRAME {\"time\":9392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":9392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-1195.448,539.067,-165.252],\"buttons\":2,\"move\":[124,24,0],\"weapon\":3,\"frags\":0}\nSABOT_SAMPLE {\"time\":9392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[224.751,1636.480,-199.750],\"buttons\":2,\"move\":[99,-78,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(923), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(920), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Ray Gerhardt (1))\n\t31: Bot([BOT31] Patrick Thomas (5))\ngameLocal.numClients: connected(2)\n\t31: Bot([BOT31] Patrick Thomas (5)) -> level=5, fov=75.000000, aim rate=0.100000, find radius=600.000000\n\t30: Bot([BOT30] Ray Gerhardt (1)) -> level=1, fov=10.000000, aim rate=0.100000, find radius=-1.000000\n----- Game Map Restart -----\nFree bot: botID=31\nUnlink bot: botID=31\nFree bot: botID=30\nUnlink bot: botID=30\nEntering doom_main()\nExiting doom_main()\nSpawning entities\ng_skill cannot be changed in multiplayer.\ng_gravity cannot be changed in multiplayer.\nCompiled '/session/save/base/maps/game/mp/d3dm1.script': 7 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 84, 14008 bytes\n  Statements: 77753, 3110120 bytes\n   Functions: 2291, 342740 bytes\n   Variables: 183256 bytes\n    Mem used: 5080296 bytes\n Static data: 4214344 bytes\n   Allocated: 5974060 bytes\n Thread size: 14056 bytes\n...887 entities spawned, 0 inhibited\n\n12 spawns (5 initials)\n==== Processing events ====\nSpawn bot: botID=30\nSpawn bot: botID=31\nSABOT_FRAME {\"time\":11392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":11392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[-156.878,747.078,-319.750],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":11392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-2.461,283.576,-161.932],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(920), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(923), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Andy Chang (8))\n\t31: Bot([BOT31] Greg O'Brian (7))\ngameLocal.numClients: connected(2)\n\t30: Bot([BOT30] Andy Chang (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t31: Bot([BOT31] Greg O'Brian (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\nSABOT_FRAME {\"time\":13392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":13392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[137.362,1051.025,-319.750],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":13392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-106.286,790.399,-127.750],\"buttons\":2,\"move\":[126,-3,0],\"weapon\":1,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(920), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(923), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Andy Chang (8))\n\t31: Bot([BOT31] Greg O'Brian (7))\ngameLocal.numClients: connected(2)\n\t30: Bot([BOT30] Andy Chang (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t31: Bot([BOT31] Greg O'Brian (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\nSABOT_FRAME {\"time\":15392,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":15392,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[518.746,851.601,-383.750],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":15392,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-407.835,1043.374,-127.750],\"buttons\":2,\"move\":[126,0,0],\"weapon\":3,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(920), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(923), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Andy Chang (8))\n\t31: Bot([BOT31] Greg O'Brian (7))\ngameLocal.numClients: connected(2)\n\t30: Bot([BOT30] Andy Chang (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t31: Bot([BOT31] Greg O'Brian (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\nSABOT_FRAME {\"time\":17344,\"bots\":2,\"humans\":0,\"target\":2}\nSABOT_SAMPLE {\"time\":17344,\"slot\":30,\"health\":100,\"spectating\":0,\"origin\":[103.790,759.582,-383.750],\"buttons\":2,\"move\":[127,0,0],\"weapon\":1,\"frags\":0}\nSABOT_SAMPLE {\"time\":17344,\"slot\":31,\"health\":100,\"spectating\":0,\"origin\":[-278.078,1540.985,-127.750],\"buttons\":2,\"move\":[127,0,0],\"weapon\":3,\"frags\":0}\nSABot(a7)\ngame is multiplayer: 1\ngame is server: 1\ngame is client: 0\nBot available: 1\nBot enabled: 1\nBot slots: total(31)\nBot AAS: total(7)\n\t6: maps/game/mp/d3dm1.botaas48\nBot AAS loaded: 1\n\t[1]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[2]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[3]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[4]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[5]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[6]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[7]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[8]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[9]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[10]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[11]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[12]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[13]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[14]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[15]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[16]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[17]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[18]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[19]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[20]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[21]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[22]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[23]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[24]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[25]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[26]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[27]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[28]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[29]: inUse(0), clientID(0), entityNum(0), selected(0)\n\t[30]: inUse(1), clientID(30), entityNum(920), selected(0)\n\t[31]: inUse(1), clientID(31), entityNum(923), selected(0)\nBot slots: used(2)\nBot defs: total(5)\n\t0: bot_sabot\n\t1: bot_sabot_a8\n\t2: bot_sabot_tinman\n\t3: bot_sabot_fluffy\n\t4: bot_sabot_blackstar\ngameLocal.numClients: total(32)\n\t0: <NULL>\n\t1: <NULL>\n\t2: <NULL>\n\t3: <NULL>\n\t4: <NULL>\n\t5: <NULL>\n\t6: <NULL>\n\t7: <NULL>\n\t8: <NULL>\n\t9: <NULL>\n\t10: <NULL>\n\t11: <NULL>\n\t12: <NULL>\n\t13: <NULL>\n\t14: <NULL>\n\t15: <NULL>\n\t16: <NULL>\n\t17: <NULL>\n\t18: <NULL>\n\t19: <NULL>\n\t20: <NULL>\n\t21: <NULL>\n\t22: <NULL>\n\t23: <NULL>\n\t24: <NULL>\n\t25: <NULL>\n\t26: <NULL>\n\t27: <NULL>\n\t28: <NULL>\n\t29: <NULL>\n\t30: Bot([BOT30] Andy Chang (8))\n\t31: Bot([BOT31] Greg O'Brian (7))\ngameLocal.numClients: connected(2)\n\t30: Bot([BOT30] Andy Chang (8)) -> level=8, fov=150.000000, aim rate=1.000000, find radius=1000.000000\n\t31: Bot([BOT31] Greg O'Brian (7)) -> level=7, fov=120.000000, aim rate=0.500000, find radius=800.000000\n----- Game Map Shutdown -----\nRelease bot slot: botID=30\nFree bot: botID=30\nUnlink bot: botID=30\nRelease bot slot: botID=31\nFree bot: botID=31\nUnlink bot: botID=31\n----- Game Map Shutdown -----\nidRenderSystem::Shutdown()\n----- Game Shutdown -----\n----- Game Map Shutdown -----\nShutdown event system\n",
+  "errors": "",
+  "passed": true
+}

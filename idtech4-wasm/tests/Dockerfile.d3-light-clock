@@ -1,0 +1,4 @@
+# TEST-ONLY amplitude/camera diagnostic, never a production candidate.
+FROM local/idtech4-wasm:doom3-sabot-candidate-v7
+COPY d3wasm.js /opt/game-site/dhewm3-base.js
+COPY d3wasm.wasm /opt/game-site/dhewm3-base.wasm

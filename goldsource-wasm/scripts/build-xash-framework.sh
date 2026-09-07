@@ -34,7 +34,8 @@ cleanup() {
 trap cleanup EXIT
 
 cp -a "${source_dir}" "${build_context}/source"
-for patch_file in "${repo_dir}"/patches/*.patch; do
+for patch_name in xash-framework-contract.patch xash-no-quit.patch xash-save-hints.patch; do
+  patch_file="${repo_dir}/patches/${patch_name}"
   git -C "${build_context}/source" apply --check "${patch_file}"
   git -C "${build_context}/source" apply "${patch_file}"
 done

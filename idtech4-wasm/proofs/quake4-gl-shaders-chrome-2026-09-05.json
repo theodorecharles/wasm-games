@@ -1,0 +1,348 @@
+{
+  "scope": "Actual Chrome restored first-person scene in isolated shader candidate with test-only WebGL tracing wrapper",
+  "candidateImage": "sha256:2b2a54ac87595ca75b1918c23f0e2170c4acf3bc836886d4992112020ba6681e",
+  "engineJsSha256": "35b89da4d03f5345d939d367d3798a70f41a0cf35ef297d701e493b89e757465",
+  "engineWasmSha256": "7c7c3ea597ecbe277e6c05f13346d84c2f1bde738c1921f8e7acf4a78ebaee2b",
+  "diagnosticWorkerSha256": "0168aee4d496263c5e8c031fe89c23f600997f231c93d424c23db1c5ecd4efe2",
+  "save": "q4shadowdiag20260905",
+  "restoredAfterReload": true,
+  "visible": "First-person pistol/crosshair and health 72; world still black",
+  "shaderLinkFailuresObserved": 0,
+  "invalidProgramAttributeOrDrawCallsObserved": 0,
+  "renderingAccepted": false,
+  "liveDeployment": false,
+  "resolutionComparison": {
+    "original": 85,
+    "originalReadAt": 227983.2,
+    "temporary": 100,
+    "temporarySetAt": 242335.1,
+    "observedAtNativeResolution": "World still black; pistol/crosshair/HUD visible",
+    "restored": 85,
+    "restoreCommandAt": 280401.6,
+    "restoredValueConfirmedAt": 306973.9
+  },
+  "restoredGameplayStateAt": 162096.5,
+  "finalAudioScheduling": {
+    "state": "running",
+    "buffers": 955,
+    "sources": 79,
+    "starts": 79,
+    "messages": 36699,
+    "listeningAccepted": false
+  },
+  "errors": [],
+  "keys": [
+    "schemaVersion",
+    "proofId",
+    "variant",
+    "startedAt",
+    "lifecycle",
+    "states",
+    "logs",
+    "input",
+    "workerMessages",
+    "audio",
+    "persistence",
+    "errors"
+  ],
+  "logs": [
+    {
+      "at": 162056,
+      "text": "8 warnings"
+    },
+    {
+      "at": 162176.6,
+      "text": "^3WARNING: ^1Loading non pre-cached entityDef decl ammo_types"
+    },
+    {
+      "at": 162232.2,
+      "text": "idRenderWorld::GenerateAllInteractions, msec = 10, staticAllocCount = 0."
+    },
+    {
+      "at": 162232.5,
+      "text": "interactionTable size: 2609124 bytes"
+    },
+    {
+      "at": 162232.6,
+      "text": "30095 interaction take 3370640 bytes"
+    },
+    {
+      "at": 162286.6,
+      "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+    }
+  ],
+  "traces": [
+    {
+      "at": 52911.4,
+      "text": "[q4-gl-trace] WebGL call tracing enabled (diagnostic only)"
+    },
+    {
+      "args": [
+        3553,
+        36418,
+        6403
+      ],
+      "at": 52982.3,
+      "error": 1280,
+      "method": "texParameteri",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texParameteri] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexParameteri (http://127.0.0.1:32873/openQ4-client_wasm32.js:20801:59)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12659]:0x6a4504\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a5128\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436d10\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7474]:0x435ed4\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93"
+    },
+    {
+      "args": [
+        3553,
+        36419,
+        6404
+      ],
+      "at": 52983.6,
+      "error": 1280,
+      "method": "texParameteri",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texParameteri] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexParameteri (http://127.0.0.1:32873/openQ4-client_wasm32.js:20801:59)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12659]:0x6a4516\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a5128\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436d10\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7474]:0x435ed4\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        32828,
+        2,
+        1,
+        0,
+        6406,
+        5121,
+        null
+      ],
+      "at": 52984.4,
+      "error": 1281,
+      "method": "texImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:20774:13)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a50a0\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436d10\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7476]:0x43604d\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1984dc"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        0,
+        0,
+        2,
+        1,
+        6406,
+        5121,
+        "[object Uint8Array]",
+        75271872
+      ],
+      "at": 52985.2,
+      "error": 1282,
+      "method": "texSubImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texSubImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexSubImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:20828:17)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12655]:0x6a4091\n    at invoke_viiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39682:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436e4d\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7476]:0x43604d\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1984dc"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        32843,
+        64,
+        16,
+        0,
+        6409,
+        5121,
+        null
+      ],
+      "at": 52986.7,
+      "error": 1281,
+      "method": "texImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:20774:13)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a50a0\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436d10\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7477]:0x436182\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1984dc"
+    },
+    {
+      "args": [
+        3553,
+        4100,
+        0
+      ],
+      "at": 52988.1,
+      "error": 1280,
+      "method": "texParameterf",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texParameterf] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexParameterfv (http://127.0.0.1:32873/openQ4-client_wasm32.js:20797:13)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12659]:0x6a47f4\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a5128\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436d10\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7477]:0x436182\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93"
+    },
+    {
+      "args": [
+        3553,
+        10242,
+        33069
+      ],
+      "at": 52989.1,
+      "error": 1280,
+      "method": "texParameterf",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texParameterf] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexParameterf (http://127.0.0.1:32873/openQ4-client_wasm32.js:20791:59)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12659]:0x6a4808\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a5128\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436d10\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7477]:0x436182\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        0,
+        0,
+        64,
+        16,
+        6409,
+        5121,
+        "[object Uint8Array]",
+        82789320
+      ],
+      "at": 52990.1,
+      "error": 1282,
+      "method": "texSubImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as texSubImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glTexSubImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:20828:17)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12655]:0x6a4091\n    at invoke_viiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39682:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7486]:0x436e4d\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7477]:0x436182\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43ec68\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1984dc"
+    },
+    {
+      "args": [
+        3312,
+        1
+      ],
+      "at": 53028,
+      "error": 1280,
+      "method": "pixelStorei",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as pixelStorei] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glPixelStorei (http://127.0.0.1:32873/openQ4-client_wasm32.js:20475:13)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12655]:0x6a3fbf\n    at invoke_viiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39682:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7500]:0x43b27b\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43f3b2\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1984dc\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)"
+    },
+    {
+      "args": [
+        3312,
+        0
+      ],
+      "at": 53030.1,
+      "error": 1280,
+      "method": "pixelStorei",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as pixelStorei] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glPixelStorei (http://127.0.0.1:32873/openQ4-client_wasm32.js:20475:13)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12655]:0x6a40ad\n    at invoke_viiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39682:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7500]:0x43b27b\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7530]:0x43f3b2\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7404]:0x42d53a\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[10538]:0x58fc93\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1984dc\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        34842,
+        0,
+        0,
+        1280,
+        720,
+        0
+      ],
+      "at": 53191.6,
+      "error": 1282,
+      "method": "copyTexImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as copyTexImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCopyTexImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18710:80)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7518]:0x43cc3f\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[11911]:0x646e4e\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12206]:0x66dbc2\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12208]:0x66e47b\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9502]:0x566524\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9500]:0x5662c1\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2077]:0x197ebf\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2082]:0x1985bb"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1280,
+        720
+      ],
+      "at": 53204.3,
+      "error": 1281,
+      "method": "copyTexSubImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as copyTexSubImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCopyTexSubImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18713:83)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7518]:0x43cc7d\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[11911]:0x646e4e\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12206]:0x66dbc2\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12208]:0x66e47b\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9502]:0x566524\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9500]:0x5662c1\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2077]:0x197ebf\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1280,
+        720
+      ],
+      "at": 53500.7,
+      "error": 1281,
+      "method": "copyTexSubImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as copyTexSubImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCopyTexSubImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18713:83)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7518]:0x43cc7d\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[11911]:0x646e4e\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12206]:0x66dbc2\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12208]:0x66e47b\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9502]:0x566524\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9500]:0x5662c1\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[2077]:0x197ebf\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        33779,
+        512,
+        2,
+        0,
+        "[object Uint8Array]",
+        81227768,
+        2048
+      ],
+      "at": 55860.6,
+      "error": 1282,
+      "method": "compressedTexImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as compressedTexImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCompressedTexImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18670:15)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a5026\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7500]:0x43b0f8\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7431]:0x4305a1\n    at invoke_iiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39483:36)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7650]:0x44ffe3\n    at invoke_iiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39472:36)"
+    },
+    {
+      "args": [
+        3553,
+        1,
+        33779,
+        256,
+        1,
+        0,
+        "[object Uint8Array]",
+        81227768,
+        1024
+      ],
+      "at": 55862.8,
+      "error": 1282,
+      "method": "compressedTexImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as compressedTexImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCompressedTexImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18670:15)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12660]:0x6a5026\n    at invoke_vi (http://127.0.0.1:32873/openQ4-client_wasm32.js:39229:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7500]:0x43b0f8\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7431]:0x4305a1\n    at invoke_iiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39483:36)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7650]:0x44ffe3\n    at invoke_iiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39472:36)"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        0,
+        0,
+        512,
+        2,
+        33779,
+        "[object Uint8Array]",
+        81224928,
+        2048
+      ],
+      "at": 55864.7,
+      "error": 1282,
+      "method": "compressedTexSubImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as compressedTexSubImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCompressedTexSubImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18692:15)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12655]:0x6a4013\n    at invoke_viiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39682:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7500]:0x43b27b\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7431]:0x4305a1\n    at invoke_iiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39483:36)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7650]:0x44ffe3\n    at invoke_iiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39472:36)"
+    },
+    {
+      "args": [
+        3553,
+        1,
+        0,
+        0,
+        256,
+        1,
+        33779,
+        "[object Uint8Array]",
+        81231256,
+        1024
+      ],
+      "at": 55866.5,
+      "error": 1282,
+      "method": "compressedTexSubImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as compressedTexSubImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCompressedTexSubImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18692:15)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12655]:0x6a4013\n    at invoke_viiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39682:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7500]:0x43b27b\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7431]:0x4305a1\n    at invoke_iiiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39483:36)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7650]:0x44ffe3\n    at invoke_iiiiiiii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39472:36)"
+    },
+    {
+      "args": [
+        3553,
+        0,
+        34842,
+        0,
+        0,
+        1408,
+        797,
+        0
+      ],
+      "at": 67414.4,
+      "error": 1282,
+      "method": "copyTexImage2D",
+      "stack": "Error: WebGL operation\n    at context.<computed> [as copyTexImage2D] (http://127.0.0.1:32873/q4-worker.js:46:52)\n    at _emscripten_glCopyTexImage2D (http://127.0.0.1:32873/openQ4-client_wasm32.js:18710:80)\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[7518]:0x43cc3f\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[11911]:0x646e4e\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12206]:0x66dbc2\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[12208]:0x66e47b\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9502]:0x566524\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[9500]:0x5662c1\n    at http://127.0.0.1:32873/openQ4-client_wasm32.wasm:wasm-function[4217]:0x27d7df\n    at invoke_vii (http://127.0.0.1:32873/openQ4-client_wasm32.js:39207:29)"
+    }
+  ]
+}

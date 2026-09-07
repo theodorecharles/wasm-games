@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "image": "sha256:8571367ae10dae7267c67a28dfdf4031eaf588ee622e1171c9286be2ff5e1e6d",
+  "tag": "local/idtech4-wasm:prey-menu-cache-candidate",
+  "container": "cbc952395c1acbcacf23d6809bf6d27e6abc69247449d36885694b72ea994ad7",
+  "url": "http://127.0.0.1:32877/",
+  "preyPatchSHA256": "8de2c5170b32158362e5271f9e2bb28b37d5ccc77aeeb8afb5ea73637f47d56b",
+  "artifacts": [
+    {
+      "file": "prey06.js",
+      "stagedSHA256": "5f1d5a4dc782b83d90f8da2ba77b71d33356d5f4f2891d4e51f712ce85b03d46",
+      "imageSHA256": "5f1d5a4dc782b83d90f8da2ba77b71d33356d5f4f2891d4e51f712ce85b03d46"
+    },
+    {
+      "file": "prey06.wasm",
+      "stagedSHA256": "951f5b9c721257e9a1536c7b8df1bbb372f56f42a3b4a82c43522a84275261d7",
+      "imageSHA256": "951f5b9c721257e9a1536c7b8df1bbb372f56f42a3b4a82c43522a84275261d7"
+    },
+    {
+      "file": "dhewm3-base.js",
+      "stagedSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc",
+      "imageSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc"
+    },
+    {
+      "file": "dhewm3-base.wasm",
+      "stagedSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f",
+      "imageSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f"
+    },
+    {
+      "file": "dhewm3-roe.js",
+      "stagedSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab",
+      "imageSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab"
+    },
+    {
+      "file": "dhewm3-roe.wasm",
+      "stagedSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce",
+      "imageSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "a1a1377e46664c42d90e25880d66a034ca5c28828c4a82925c9288cc58d96733",
+      "imageSHA256": "a1a1377e46664c42d90e25880d66a034ca5c28828c4a82925c9288cc58d96733"
+    },
+    {
+      "file": "prey-worker.js",
+      "stagedSHA256": "9b6b92afa8f2c8954164aaab468b07d5a46501eb6064875470c19410406ba868",
+      "imageSHA256": "9b6b92afa8f2c8954164aaab468b07d5a46501eb6064875470c19410406ba868"
+    }
+  ],
+  "checks": {
+    "inputTextCases": 43,
+    "inputLegacyFailures": 3,
+    "archiveCacheCases": 65,
+    "tinyReadsBefore": 10000,
+    "tinyReadsAfter": 1,
+    "deferredMediaCases": 46,
+    "clientBuild": true,
+    "exactPatchTrees": 4,
+    "fullStaging": true
+  },
+  "scope": "Only isolated Prey test service; sound/font paks available at menu initialization, bounded worker read cache and uppercase SDL identity correction. Owner archives read-only; previous candidate retained stopped; live services unchanged. Chrome evidence separate."
+}

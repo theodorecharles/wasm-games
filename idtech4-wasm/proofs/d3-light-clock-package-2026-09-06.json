@@ -1,0 +1,66 @@
+{
+  "scope": "TEST-ONLY images; same v7 base, nine checked image files, diagnostic pair differs only in Wasm. Legacy source equals current v7 plus exactly the three-file diagnostic and mixer-removal patches. No promotion or full rendering acceptance.",
+  "candidateImage": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+  "results": {
+    "fixed": {
+      "tag": "local/idtech4-wasm:doom3-light-clock-diagnostic-20260906",
+      "image": "sha256:05b5e75ed163207a27f2516bbd135e307053884d8c264073d2556583ffda5f35",
+      "verifiedImageFiles": {
+        "/opt/game-site/game-adapter.js": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+        "/opt/doom3-server/runtime.cjs": "5f7b2829def52cf320b8e73ab280451fd86bd1b30d1942e3d2e7576088ebf5ac",
+        "/opt/game-site/d3-worker.js": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715",
+        "/opt/game-site/dhewm3-base.js": "ea4bdafa0e11e0e7db63a61ec5b45d92fe942dd0ccb7eb70762001ceb6843a80",
+        "/opt/game-site/dhewm3-base.wasm": "8cb4e99e3f90e85bd57d04ac4392f973367e7f7a0ebd1c510a4440ca9fda3236",
+        "/opt/doom3-native/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+        "/opt/doom3-native/base.so": "e7a8fcfbd78636defc2073a311e4ce8f6e0d4e33b7d96e01a2be5eab6071630c",
+        "/opt/doom3-server/sabot-roster.cjs": "ad35dfb451140cef5c7556a8f86d457a5317ea6416f1ea82d0917e134254d070",
+        "/opt/game-site/bots/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+      },
+      "changedFromCandidate": [
+        "/opt/game-site/dhewm3-base.js",
+        "/opt/game-site/dhewm3-base.wasm"
+      ]
+    },
+    "legacy": {
+      "tag": "local/idtech4-wasm:doom3-light-clock-legacy-diagnostic-20260906",
+      "image": "sha256:8f36361851c221d76968c7668a3fbcce72a254e4417a9bec99d383b99ec288bd",
+      "verifiedImageFiles": {
+        "/opt/game-site/game-adapter.js": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+        "/opt/doom3-server/runtime.cjs": "5f7b2829def52cf320b8e73ab280451fd86bd1b30d1942e3d2e7576088ebf5ac",
+        "/opt/game-site/d3-worker.js": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715",
+        "/opt/game-site/dhewm3-base.js": "ea4bdafa0e11e0e7db63a61ec5b45d92fe942dd0ccb7eb70762001ceb6843a80",
+        "/opt/game-site/dhewm3-base.wasm": "b93eb908e560357f1b09cebf954abb65a00f654c6e860b28bbdc7dc43d5a4c5c",
+        "/opt/doom3-native/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+        "/opt/doom3-native/base.so": "e7a8fcfbd78636defc2073a311e4ce8f6e0d4e33b7d96e01a2be5eab6071630c",
+        "/opt/doom3-server/sabot-roster.cjs": "ad35dfb451140cef5c7556a8f86d457a5317ea6416f1ea82d0917e134254d070",
+        "/opt/game-site/bots/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+      },
+      "changedFromCandidate": [
+        "/opt/game-site/dhewm3-base.js",
+        "/opt/game-site/dhewm3-base.wasm"
+      ]
+    }
+  },
+  "changedBetweenDiagnostics": [
+    "/opt/game-site/dhewm3-base.wasm"
+  ],
+  "checkedSourceFiles": 529,
+  "sourceHashes": {
+    "neo/framework/Common.cpp": "abd3694433be1acd914cc80629a9b90d400535f7de288d1c7f7319f4e31de70d",
+    "neo/game/PlayerView.cpp": "4c23500bdacde15be61b594cdbdc5d72b667370ce61d488f8d49a22029850427",
+    "neo/sound/snd_emitter.cpp": "fe83ce0870ffb91823289a3723c158c5a441f6e033e555a2e662c5334a9a1235",
+    "neo/sound/snd_system.cpp": "55cc96a8fe611c2e67503dca742c134cae5893b44cbb6b4927ce19328f0ccac2"
+  },
+  "patches": {
+    "tests/d3-light-clock-diagnostic.patch": "fc27a25a04b1c127de9a30c0866f3cb644651a00ea24ac79cc3a6a8241677d80",
+    "tests/d3-light-clock-legacy.patch": "6d08d767b9a4a27d185d32b3af2447a7eb5f763c031bb878922927463d66b919"
+  },
+  "unchangedCandidateArtifacts": {
+    ".work/d3wasm-sabot/build-wasm/d3wasm.js": "eb453a3acd0f641f2f7a9099a169212df011fb23037d710ca9dfc937e513717e",
+    ".work/d3wasm-sabot/build-wasm/d3wasm.wasm": "26b27ed91f8a9b7143f2cfeb083dbeac8b5f4f15b2c9bf9f0a978c942677fc8c",
+    ".work/d3-managed-sabot/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+    ".work/d3-managed-sabot/base.so": "e7a8fcfbd78636defc2073a311e4ce8f6e0d4e33b7d96e01a2be5eab6071630c"
+  },
+  "deployed": false,
+  "passed": true
+}

@@ -1,0 +1,92 @@
+{
+  "observedAt": "2026-09-06T21:39:57.595Z",
+  "scope": "Four native modules, complete staged/installed/HTTP identity, actual base-image shell identity and canonical build/test completion; not Chrome gameplay",
+  "candidate": {
+    "container": "build-family-current-proof-20260906",
+    "port": 32989,
+    "id": "d0b301b0114b9a31d061a7b5f5e67deb17111ec861dc3f08b162bc5f61b492bb",
+    "image": "sha256:b50185ae5750bfa4d571ddcb7677b07af8b01f33000b0e3573f995a68f5e6500",
+    "startedAt": "2026-09-06T21:38:47.083221307Z"
+  },
+  "compile": {
+    "id": "dd08f558c411b0b84c68c578b3a9d3b7726a8f43ce881c63bee8159b51099bb2",
+    "image": "sha256:9bc6c7b128b567c4001321ef4167356b672e8129673991f6aec946ba53a393e0",
+    "startedAt": "2026-09-06T21:31:21.20970516Z",
+    "finishedAt": "2026-09-06T21:33:32.746783346Z",
+    "exitCode": 0
+  },
+  "sourceTree": "4a724072809f49588749b7b51e6d761c551933de",
+  "ready": {
+    "blood": true,
+    "duke3d": true
+  },
+  "nativeModules": 4,
+  "siteFiles": 26,
+  "files": {
+    "duke3d.wasm": "a8db5d93b558ad233c2e746e9995c551e8fc3acdcfb68998df426a9b2ed9ca2c",
+    "duke3d-512.png": "80d9295bb1fbd5eb86ce97d968b0ffa274c3de4a5eb7bc6d430637b96438fdd5",
+    "duke3d-192.png": "54ea299ea6cb15753aa021f05037004a430d3a880fb492df2db9060d11e50d58",
+    "blood-512.png": "86ad833c0028d8f4f1bd314d08874367151c748e3b6203921b2f179f64d32438",
+    "blood-modernized.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07",
+    "wasm-game-data.json": "9741b8b79405e68f8bc3832a7d8e8a17431b34707732e41695cf173355be6350",
+    "wasm-game.json": "b8bd1b0da078447d2939c428d9f56677b2ab3829377e36c33f376c3e2beb0ea9",
+    "blood-192.png": "b76352429c33f79367f5b95d1a986334a9311c8c52b4558614749c7b22fabe36",
+    "duke3d.ico": "4708652b53a33e63cb19d20dfde2ed2dac77eb5714f1bc043c5e40a82d523e46",
+    "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07",
+    "blood-modernized.wasm": "34301371b21e8dc456f2ed6c02a019f51a5e745178069454bc718f140b6ff878",
+    "shared-shell/wasm-game-bootstrap.js": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33",
+    "shared-shell/wasm-game-framework.json": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+    "shared-shell/index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+    "shared-shell/wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+    "shared-shell/wasm-game-framework.js": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+    "blood-modernized.js": "3f5865f0aa9c75b88e83c9b6ddd5b36ec4a414d3f848b0906662c21d07cbdb5e",
+    "adapters/duke3d.js": "5b0e244deb5276970ede0265a1f3d4eca854871c1addb9ae32c3c5deb997fbeb",
+    "adapters/blood.js": "767007aa13c217c4308ebd0e313a839d52a7e8eb8ef06c077e1967eedc135d36",
+    "duke3d.js": "deeccb8c2090c461403afb8ef6f0da5835847f18302c9ac293a4943c11596153",
+    "blood.ico": "3d9898759116062978f639a498e515a37c0eed2645d8f8c2e4280cb5c55fab2b",
+    "duke3d-modernized.js": "f62ac732ed40a9284c775221cbffe74837987b924e7b257e624f6772f232f24a",
+    "blood.js": "8f7fdba4a00af6b7a35e8db66a6776e676a28f8e5bc5e475cdd401dc57313296",
+    "blood.wasm": "feb734e2dafe539002f447185c3572640ae01b29f16728fe9126222856d7d14e",
+    "game-adapter.js": "d595bd83bba32b69b127d7c8d62bcce90e6e647ef335a7296c488282d6b7c934",
+    "duke3d-modernized.wasm": "15fcde433608e2dd6249a23a21a7db51dd90a026f532881ffbe239a0081fa5b7"
+  },
+  "http": {
+    "adapters/blood.js": "767007aa13c217c4308ebd0e313a839d52a7e8eb8ef06c077e1967eedc135d36",
+    "adapters/duke3d.js": "5b0e244deb5276970ede0265a1f3d4eca854871c1addb9ae32c3c5deb997fbeb",
+    "blood-192.png": "b76352429c33f79367f5b95d1a986334a9311c8c52b4558614749c7b22fabe36",
+    "blood-512.png": "86ad833c0028d8f4f1bd314d08874367151c748e3b6203921b2f179f64d32438",
+    "blood-modernized.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07",
+    "blood-modernized.js": "3f5865f0aa9c75b88e83c9b6ddd5b36ec4a414d3f848b0906662c21d07cbdb5e",
+    "blood-modernized.wasm": "34301371b21e8dc456f2ed6c02a019f51a5e745178069454bc718f140b6ff878",
+    "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07",
+    "blood.ico": "3d9898759116062978f639a498e515a37c0eed2645d8f8c2e4280cb5c55fab2b",
+    "blood.js": "8f7fdba4a00af6b7a35e8db66a6776e676a28f8e5bc5e475cdd401dc57313296",
+    "blood.wasm": "feb734e2dafe539002f447185c3572640ae01b29f16728fe9126222856d7d14e",
+    "duke3d-192.png": "54ea299ea6cb15753aa021f05037004a430d3a880fb492df2db9060d11e50d58",
+    "duke3d-512.png": "80d9295bb1fbd5eb86ce97d968b0ffa274c3de4a5eb7bc6d430637b96438fdd5",
+    "duke3d-modernized.js": "f62ac732ed40a9284c775221cbffe74837987b924e7b257e624f6772f232f24a",
+    "duke3d-modernized.wasm": "15fcde433608e2dd6249a23a21a7db51dd90a026f532881ffbe239a0081fa5b7",
+    "duke3d.ico": "4708652b53a33e63cb19d20dfde2ed2dac77eb5714f1bc043c5e40a82d523e46",
+    "duke3d.js": "deeccb8c2090c461403afb8ef6f0da5835847f18302c9ac293a4943c11596153",
+    "duke3d.wasm": "a8db5d93b558ad233c2e746e9995c551e8fc3acdcfb68998df426a9b2ed9ca2c",
+    "game-adapter.js": "d595bd83bba32b69b127d7c8d62bcce90e6e647ef335a7296c488282d6b7c934",
+    "wasm-game-data.json": "9741b8b79405e68f8bc3832a7d8e8a17431b34707732e41695cf173355be6350",
+    "wasm-game.json": "b8bd1b0da078447d2939c428d9f56677b2ab3829377e36c33f376c3e2beb0ea9"
+  },
+  "shell": {
+    "index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+    "wasm-game-framework.js": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+    "wasm-game-bootstrap.js": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33",
+    "wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548"
+  },
+  "logs": {
+    "/tmp/build-family-compile-20260906.log": "691b80f05a6b9548974bd57d14b2acc53ca69248f76195f39a75fa8ac7a146ce",
+    "/tmp/build-family-web-tests-20260906-02.log": "07d97e380d42525cfd6927fb8a50d3149d69d5683346ce5c5e60880218925860",
+    "/tmp/build-family-static-tests-20260906.log": "e7083d86177b6cf4fbf374e1406b763bf9d59a6511743003169b9b8fb5bc8a9d",
+    "/tmp/build-family-framework-tests-20260906.log": "d029846b02411b97efa4f919a6f5fd74fe4ea2309e4ef0ea803a2daeb23ca7c0"
+  },
+  "bothOwnerMountsReadOnly": true,
+  "drawObserverPresent": false,
+  "liveBloodUnchanged": true,
+  "deployed": false
+}

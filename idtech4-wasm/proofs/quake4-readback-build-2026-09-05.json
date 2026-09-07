@@ -1,0 +1,41 @@
+{
+  "scope": "Browser screenshot/save-preview native readback repair. Complete staging and exact patch verification pass; six packaged artifacts match. Chrome new-save/restore acceptance separately scoped; no live service deployment.",
+  "patchSHA256": "8139dae66aad534ab51bc2652a1df4998db9742dda140e962c7e7efa2efc987e",
+  "packaged": {
+    "game-adapter.js": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3",
+    "openQ4-client_wasm32.js": "cc6dc74541294bc8d65f26694466c4827e4a2ba760425e874d7e4bb76aa05e2f",
+    "openQ4-client_wasm32.wasm": "621a9856013abb6eab614646e119dd81907272b4561ae4c6831d9a600edf4961",
+    "q4-worker.js": "6f70c4dc7d513e29a52a25f2c1d0d28a3e84b717f56e51f10a1ab3c9ad1268b1",
+    "baseoq4/game-sp_wasm32.wasm": "fd06653d691281646875bba266fb28e1556078200572780378d6a3a56c0416a7",
+    "baseoq4/game-mp_wasm32.wasm": "802c0ddb06592f16e92fe854fd26ac31c6454de15ed57c700324f6a30226baca"
+  },
+  "image": {
+    "tag": "local/idtech4-wasm:quake4-readback-candidate",
+    "id": "sha256:df094f94983cd04aee5125f0fc5e1ffe8fab4f044d85bd3ec03379d05354366f",
+    "container": "7aadc14d52f832d636e51e6a41482420c3a80c27121cea1bd87f4629a3cf2522",
+    "ports": {
+      "8088/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32875"
+        }
+      ]
+    }
+  },
+  "checks": {
+    "glesReadbackCases": 60,
+    "desktopReadbackCases": 3,
+    "legacyGlesFailures": 60,
+    "exactPatchTrees": 4,
+    "stageSite": "passed",
+    "nativeRebuilt": true,
+    "adapterUnchanged": true,
+    "nativeBranchesUnchangedFromPin": true,
+    "readbackTestSHA256": "b3601d05dd46d1a5f0a53ba785fa5d18b2af1e1d419e68a78f2fbfd0f9ea5695"
+  },
+  "retainedPrevious": {
+    "image": "sha256:fe1ce9f372401adfec272da63fe9eabbbd463c4bdca4972261adec090a695ec9",
+    "container": "4a42ed636733704e2200bfd76bc164dba1cdbf12916261f0ed522db29d787444",
+    "stopped": true
+  }
+}

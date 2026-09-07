@@ -8,10 +8,11 @@ commit="7775ef82d1e9dfd50eb9d2824acefaeff7247458"
 patch_files=(
   "${repo_dir}/patches/crispy-browser.patch"
   "${repo_dir}/patches/crispy-cooperative-main-loop.patch"
+  "${repo_dir}/patches/crispy-multiplayer-telemetry.patch"
   "${repo_dir}/patches/crispy-lobby-telemetry.patch"
   "${repo_dir}/patches/crispy-websocket.patch"
-  "${repo_dir}/patches/crispy-multiplayer-telemetry.patch"
   "${repo_dir}/patches/crispy-browser-sleep.patch"
+  "${repo_dir}/patches/crispy-opl-browser-wait.patch"
 )
 
 if [[ ! -d "${source_dir}/.git" ]]; then
@@ -40,8 +41,11 @@ grep -Fq 'I_BrowserSetMainLoop(H2_RunFrame)' "${source_dir}/src/hexen/h2_main.c"
 grep -Fq 'I_BrowserPlayerCount' "${source_dir}/src/i_browser.c"
 grep -Fq 'net_websockets_module.InitClient' "${source_dir}/src/d_loop.c"
 grep -Fq 'emscripten_sleep(timeout > 0 ? timeout : 10)' "${source_dir}/textscreen/txt_sdl.c"
+if ! git -C "${source_dir}" apply --reverse --check "${repo_dir}/patches/crispy-opl-browser-wait.patch"; then
+  echo "Crispy source is missing the OPL startup wait repair; prepare a fresh source directory." >&2
+  exit 1
+fi
 
-# Do not retain upstream Markdown in ignored build trees.
-find "${source_dir}" -type f -name '*.md' -delete
+# Preserve upstream documentation, licenses, and any source-local instructions.
 
 printf '%s\n' "${source_dir}"

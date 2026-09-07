@@ -1,0 +1,611 @@
+{
+  "scope": "Exact polymost_initdrawpoly method under native ASan/UBSan and Wasm SAFE_HEAP/UBSan; GL recorders test capability-guarded sync cleanup, stream/persistent allocation, existing buffer disposal and reset state. Not real driver rendering or browser acceptance.",
+  "sourceSHA256": "2769b4e9dfe5591d66559b5774bc08fcf48bda1ea24d124a9cddce3e545dfed2",
+  "fixtureSHA256": "6439b8805c371c3c47eaf9c5660edbfbae247c2b50c4518e7cc8a54eda5a8123",
+  "results": [
+    {
+      "target": "native",
+      "negative": false,
+      "productionSHA256": "17a05f12b210acd77c4fb7066d69d006accbd127f220bd4863565ed9fd79f1cb",
+      "cases": [
+        {
+          "case": 0,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 1,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 2,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 3,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 4,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 5,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 6,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 7,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 8,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 9,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 10,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 11,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 12,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 13,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 14,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 15,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": false,
+      "productionSHA256": "17a05f12b210acd77c4fb7066d69d006accbd127f220bd4863565ed9fd79f1cb",
+      "cases": [
+        {
+          "case": 0,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 1,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 2,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 3,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 4,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 5,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 6,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 7,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 8,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 9,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 10,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 11,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 12,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 13,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 14,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 15,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        }
+      ]
+    },
+    {
+      "target": "native",
+      "negative": true,
+      "productionSHA256": "bab379a777858734ab79284dfcb3190a77d5f9211156fdb15bb0f87e7a577e4b",
+      "cases": [
+        {
+          "case": 0,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 1,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 2,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 3,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 4,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 5,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 6,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 7,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 8,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 9,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 10,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 11,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 12,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 13,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 14,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 15,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "productionSHA256": "bab379a777858734ab79284dfcb3190a77d5f9211156fdb15bb0f87e7a577e4b",
+      "cases": [
+        {
+          "case": 0,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 1,
+          "sync": false,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 2,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 3,
+          "sync": false,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 4,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 5,
+          "sync": false,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 6,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 7,
+          "sync": false,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": false,
+          "unsupportedCalls": 5
+        },
+        {
+          "case": 8,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 9,
+          "sync": true,
+          "storage": false,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 10,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 11,
+          "sync": true,
+          "storage": false,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 12,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 13,
+          "sync": true,
+          "storage": true,
+          "requested": false,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 14,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": false,
+          "passed": true,
+          "unsupportedCalls": 0
+        },
+        {
+          "case": 15,
+          "sync": true,
+          "storage": true,
+          "requested": true,
+          "oldBuffer": true,
+          "passed": true,
+          "unsupportedCalls": 0
+        }
+      ]
+    }
+  ]
+}

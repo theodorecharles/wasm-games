@@ -4,6 +4,7 @@ set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source_dir="$(${repo_dir}/scripts/fetch-zandronum-source.sh)"
 zstd_source="$(${repo_dir}/scripts/fetch-zstd-source.sh)"
+dr_libs_source="$(bash "${repo_dir}/scripts/fetch-audio-decoders.sh")"
 native_build="${ZANDRONUM_NATIVE_BUILD_DIR:-${repo_dir}/.work/zandronum-native}"
 wasm_build="${ZANDRONUM_WASM_BUILD_DIR:-${repo_dir}/.work/zandronum-wasm}"
 zstd_build="${ZSTD_WASM_BUILD_DIR:-${repo_dir}/.work/zstd-wasm}"
@@ -41,12 +42,19 @@ if [[ ! -s "${native_build}/ImportExecutables.cmake" || ! -x "${native_build}/za
     cmake --build "${native_build}" --parallel "${jobs}" --target zdoom
 fi
 
+# These ALL targets are not dependencies of zdoom. A clean build must generate
+# its support packs explicitly instead of relying on a previous desktop build.
+cmake --build "${native_build}" --parallel "${jobs}" \
+    --target pk3 brightmaps_pk3 skulltag_actors_pk3
+
 emcmake cmake -S "${zstd_source}/build/cmake" -B "${zstd_build}" \
     -DCMAKE_BUILD_TYPE=Release \
     -DZSTD_BUILD_PROGRAMS=OFF -DZSTD_BUILD_TESTS=OFF \
     -DZSTD_BUILD_SHARED=OFF -DZSTD_BUILD_STATIC=ON
 cmake --build "${zstd_build}" --parallel "${jobs}"
 
+# NO_SOUND keeps the desktop FMOD/voice-chat dependencies disabled. The
+# browser-only target enables BROWSER_SOUND and links the real SDL/OPL mixer.
 emcmake cmake -S "${source_dir}" -B "${wasm_build}" \
     -DCMAKE_BUILD_TYPE=Release \
     -DFORCE_CROSSCOMPILE=ON \
@@ -59,7 +67,9 @@ emcmake cmake -S "${source_dir}" -B "${wasm_build}" \
     -DSDL_INCLUDE_DIR="${sdl_include}" \
     -DSDL_LIBRARY='-sUSE_SDL=1' \
     -DZSTD_INCLUDE_DIR="${zstd_source}/lib" \
-    -DZSTD_LIBRARY="${zstd_build}/lib/libzstd.a"
+    -DZSTD_LIBRARY="${zstd_build}/lib/libzstd.a" \
+    -DZANDRONUM_BROWSER_AUDIO_DIR="${repo_dir}/wasm/zandronum-audio" \
+    -DDR_LIBS_INCLUDE_DIR="${dr_libs_source}"
 cmake --build "${wasm_build}" --parallel "${jobs}" --target zdoom
 
 mkdir -p "${dist_dir}"
@@ -68,6 +78,10 @@ install -m 0644 "${wasm_build}/zandronum.wasm" "${dist_dir}/zandronum.wasm"
 for asset in zandronum.pk3 brightmaps.pk3 skulltag_actors.pk3; do
     install -m 0644 "${native_build}/${asset}" "${dist_dir}/${asset}"
 done
+install -m 0644 "${dr_libs_source}/LICENSE" "${dist_dir}/dr-libs-LICENSE.txt"
+port_cache="${EM_CACHE:-${emscripten_root}/cache}/ports"
+install -m 0644 "${port_cache}/vorbis/libvorbis-1.3.7/COPYING" "${dist_dir}/vorbis-LICENSE.txt"
+install -m 0644 "${port_cache}/ogg/libogg-1.3.5/COPYING" "${dist_dir}/ogg-LICENSE.txt"
 
 node --check "${dist_dir}/zandronum.js"
 test "$(od -An -tx1 -N4 "${dist_dir}/zandronum.wasm" | tr -d ' \n')" = "0061736d"

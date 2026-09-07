@@ -16,6 +16,16 @@ trap cleanup EXIT
 
 node "${repo_dir}/scripts/verify-site-contract.js"
 node "${repo_dir}/scripts/test-adapter-contract.js"
+node "${repo_dir}/scripts/test-classic-udp.mjs"
+node --check "${repo_dir}/scripts/test-classic-bots.mjs"
+node --check "${repo_dir}/scripts/test-classic-bot-matrix.mjs"
+node --check "${repo_dir}/scripts/test-managed-classic.mjs"
+node --check "${repo_dir}/server/classic-match.js"
+node --check "${repo_dir}/server/supervisor.js"
+bash -n "${repo_dir}/scripts/build-classic-bots.sh"
+bash -n "${repo_dir}/scripts/build-images.sh"
+node "${repo_dir}/scripts/test-crispy-source.mjs"
+node "${repo_dir}/scripts/test-zandronum-source.mjs"
 node "${repo_dir}/scripts/test-data-validator.mjs" --write-fixtures "${data_dir}/fixtures"
 node "${framework_dir}/scripts/check-game-package.js" "${repo_dir}/web"
 WASM_GAME_SITE_ROOT="${repo_dir}/web" \
@@ -37,6 +47,11 @@ curl -fsS "http://127.0.0.1:${port}/app.webmanifest?variant=doom" | grep -Fq '/a
 curl -fsS "http://127.0.0.1:${port}/app.webmanifest?variant=heretic" | grep -Fq '/assets/heretic-512.png'
 curl -fsS "http://127.0.0.1:${port}/service-worker.js" | grep -Fq 'wasm-game-shell-0.9.6'
 curl -fsS "http://127.0.0.1:${port}/data-validator.mjs" | grep -Fq 'validateIdTech1Data'
+for notice in THIRD-PARTY-AUDIO.txt dist/dr-libs-LICENSE.txt dist/vorbis-LICENSE.txt dist/ogg-LICENSE.txt; do
+    test -s "${repo_dir}/web/${notice}"
+    curl -fsS "http://127.0.0.1:${port}/${notice}" -o "${data_dir}/audio-notice.txt"
+    cmp "${repo_dir}/web/${notice}" "${data_dir}/audio-notice.txt"
+done
 curl -fsS "http://127.0.0.1:${port}/game-data/status?variant=doom2" | grep -Fq '"ready":false'
 test "$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}/data/DOOM2.WAD")" = "404"
 test "$(curl -sS -o "${data_dir}/wrong-response.json" -w '%{http_code}' -X PUT \
@@ -48,4 +63,4 @@ curl -fsS -X PUT --data-binary "@${data_dir}/fixtures/doom2-valid.wad" \
 curl -fsS "http://127.0.0.1:${port}/game-data/status?variant=doom2" | grep -Fq '"ready":true'
 curl -fsS "http://127.0.0.1:${port}/game-data/files/iwad?variant=doom2" -o "${data_dir}/served-doom2.wad"
 cmp "${data_dir}/fixtures/doom2-valid.wad" "${data_dir}/served-doom2.wad"
-echo "Verified framework 0.9.6 document, PWA/fullscreen shell, structural validator upload/status/download, and private /data boundary."
+echo "Verified framework 0.9.6 document, PWA/fullscreen shell, audio notices, structural validator upload/status/download, and private /data boundary."

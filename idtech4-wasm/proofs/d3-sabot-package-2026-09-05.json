@@ -1,0 +1,28 @@
+{
+  "scope": "Isolated local acceptance image containing exact bot-enabled native/Wasm artifacts, MP-only archive mounting and bounded actual bot telemetry. No registry push, live service replacement or public redistribution acceptance.",
+  "image": "sha256:2f82f01019546dbc0ac92e7daf6728e8c9f049d17166b247d4aa605ff2449213",
+  "tag": "local/idtech4-wasm:doom3-sabot-candidate-v2",
+  "baseImage": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+  "inputs": {
+    "server/runtime.cjs": "d450dd4143a8ecd90bf70cdb1af0164d390ba9cfe0ea60dc878c14493ae236ce",
+    "site/d3-worker.js": "89490ca8a416aff4d2f3d3830693e044153db4bee420ef03beadb2791ca0a308",
+    ".work/d3wasm-sabot/build-wasm/d3wasm.js": "eb9d2134f7a7240f237457462b706008c87c4d462c4e197d1693ff9e7dabc771",
+    ".work/d3wasm-sabot/build-wasm/d3wasm.wasm": "fdd4ee90802bf84adebd00c6fcab2e5edf8e2ea5054f633962592ce1011fc7b2",
+    ".work/d3-managed-sabot/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+    ".work/d3-managed-sabot/base.so": "c28dfbc14dd7668391d1a6df49585a91b16f0823d4436a538b52c30219edf769",
+    "bots/doom3/browser-runtime.patch": "5fd3aa21bcfd0d119dbbd31293a36c4d8ef76a6e3513f5dc974eb3af1a729054",
+    ".work/idtech4a-bot-reference/Q3E/src/main/assets/pak/doom3/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+  },
+  "verifiedImageFiles": {
+    "/opt/doom3-server/runtime.cjs": "a9aa7672bd7e4f7de24a174a1714dbb867d59047dd5009822b55164b09245721",
+    "/opt/game-site/d3-worker.js": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715",
+    "/opt/game-site/dhewm3-base.js": "eb9d2134f7a7240f237457462b706008c87c4d462c4e197d1693ff9e7dabc771",
+    "/opt/game-site/dhewm3-base.wasm": "fdd4ee90802bf84adebd00c6fcab2e5edf8e2ea5054f633962592ce1011fc7b2",
+    "/opt/doom3-native/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+    "/opt/doom3-native/base.so": "c28dfbc14dd7668391d1a6df49585a91b16f0823d4436a538b52c30219edf769",
+    "/opt/doom3-server/sabot-roster.cjs": "7cc8bd5d7b0c5120b641b914b84613402bd6f22a3f0ad590b0136adde14bcf5a",
+    "/opt/game-site/bots/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+  },
+  "rosterSHA256": "7cc8bd5d7b0c5120b641b914b84613402bd6f22a3f0ad590b0136adde14bcf5a",
+  "passed": true
+}

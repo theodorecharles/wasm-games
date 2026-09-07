@@ -57,7 +57,9 @@ for (const key of variants) {
   assert.equal(variant.fps, false);
   assert.equal(variant.dynamicQuality, false);
   assert.equal(variant.controller.mode, 'disabled');
-  assert.deepEqual(variant.profiles.map(profile => profile.value), ['classic']);
+  assert.deepEqual(variant.profiles.map(profile => profile.value), ['classic', 'modernized']);
+  assert.equal(variant.graphics, true);
+  assert.equal(variant.advanced, true, 'the containing Advanced section must expose the selector');
   assert.equal(variant.defaultProfile, 'classic');
   assert.match(variant.description, /full pointer-lock mouse look/);
   assert.match(variant.pwa.id, /^\/apps\/build\//);
@@ -117,4 +119,4 @@ for (const source of [bloodAdapter, dukeAdapter]) {
   assert.match(source, /preservePaths: true/);
 }
 
-console.log('Verified framework 0.9.6, persistence, disabled controllers, cursor policy, family dispatch, fixed classic profiles, PWA metadata, and exact data contracts.');
+console.log('Verified framework 0.9.6, persistence, disabled controllers, cursor policy, family dispatch, Classic/Modernized profiles for both games, PWA metadata, and exact data contracts.');

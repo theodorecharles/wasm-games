@@ -1,0 +1,378 @@
+{
+  "scope": "Actual Chrome on exact isolated v8: native v7 save slots load twice; newly named v8 saves survive full page reload and restore the same coordinates; pause/resume and normal quit complete without the reproduced trace-cache warning. Names, dates, previews, health/ammo and rendered world are visually inspected, not OCR-validated here. Typed-record fixture, exact source/package and no-MP-wake lifecycle evidence are linked. Not arbitrary older saves, full campaigns, held controls/capture, listening or live deployment acceptance.",
+  "results": [
+    {
+      "variant": "sp",
+      "map": "game/mars_city1",
+      "position": [
+        1267,
+        -1501,
+        68.25,
+        180
+      ],
+      "oldRestoredAt": "2026-09-06T12:10:31.118Z",
+      "repeatedAt": "2026-09-06T12:12:04.730Z",
+      "newSavedAt": "2026-09-06T12:14:17.464Z",
+      "pageReloadAt": "2026-09-06T12:14:27.410Z",
+      "newRestoredAt": "2026-09-06T12:18:01.110Z",
+      "quitAt": "2026-09-06T12:23:41.578Z",
+      "baselineWarnings": 2,
+      "repairedWarnings": 0
+    },
+    {
+      "variant": "roe",
+      "map": "game/erebus1",
+      "position": [
+        4456,
+        6888,
+        481.16,
+        180
+      ],
+      "oldRestoredAt": "2026-09-06T12:10:31.198Z",
+      "repeatedAt": "2026-09-06T12:12:04.797Z",
+      "newSavedAt": "2026-09-06T12:14:17.534Z",
+      "pageReloadAt": "2026-09-06T12:14:27.477Z",
+      "newRestoredAt": "2026-09-06T12:18:01.178Z",
+      "quitAt": "2026-09-06T12:23:41.652Z",
+      "baselineWarnings": 2,
+      "repairedWarnings": 0
+    }
+  ],
+  "checkedStagesPerVariant": 18,
+  "files": {
+    "d3-v8-sp-launcher-2026-09-06.json": {
+      "bytes": 349,
+      "sha256": "37eae497f1a38090d8fdccc8d8e3a56621fef9fcfb987279aecb7f34824531ef"
+    },
+    "d3-v8-sp-launcher-2026-09-06.jpg": {
+      "bytes": 26635,
+      "sha256": "d6efb253b1be8e54187cc4f2320c8c14adf5fc5ad6c4b3076b5b844569d23a99"
+    },
+    "d3-v8-sp-ready-menu-2026-09-06.json": {
+      "bytes": 4638,
+      "sha256": "4fc71d0b76dbd0c27f2b2031b570c657491f7f3ee45481264fedf1c2378c0f0e"
+    },
+    "d3-v8-sp-ready-menu-2026-09-06.jpg": {
+      "bytes": 117006,
+      "sha256": "fe0405939fa7060ff568f3ecd466715b791015b3f308c62ab14862d584d45d57"
+    },
+    "d3-v8-sp-old-slot-2026-09-06.json": {
+      "bytes": 4639,
+      "sha256": "0598073a6987a24dfb5d2123216ffda23e4b4208d516fc0bbb49af9ac94987e9"
+    },
+    "d3-v8-sp-old-slot-2026-09-06.jpg": {
+      "bytes": 89318,
+      "sha256": "4db95e05cd23e2ca4034a960f30f8d1d516d3d6891efae31cb59550fe2d6533e"
+    },
+    "d3-v8-sp-old-restored-2026-09-06.json": {
+      "bytes": 13525,
+      "sha256": "ac8b0da7d37e72bd11e32734d71af4475c772b67d0ac39abfb8bf75eae907628"
+    },
+    "d3-v8-sp-old-restored-2026-09-06.jpg": {
+      "bytes": 47191,
+      "sha256": "bb38b2e6c281f0c40a26d4fd30481e96d793c492e9c6ce2310acabbdd24c3339"
+    },
+    "d3-v8-sp-old-position-2026-09-06.json": {
+      "bytes": 13562,
+      "sha256": "c9af8df0760cf7ad0b2a62c313dca5221329d3e0d6350c7b6472c6c15b8cf21e"
+    },
+    "d3-v8-sp-old-position-2026-09-06.jpg": {
+      "bytes": 102218,
+      "sha256": "f68df156d8f19aa096f01a1d2fbc73b2271fbdc9d4a45f8001b056c5e3035fb6"
+    },
+    "d3-v8-sp-repeat-slot-2026-09-06.json": {
+      "bytes": 13562,
+      "sha256": "4a0eef080cc705a3302b03424086f4551cbcb46ed5f8d29de27cfa0718957120"
+    },
+    "d3-v8-sp-repeat-slot-2026-09-06.jpg": {
+      "bytes": 91653,
+      "sha256": "88c762b341eb8bb90956f5daa4bf783b2cb627722c254ea621618430749bdec9"
+    },
+    "d3-v8-sp-repeat-restored-2026-09-06.json": {
+      "bytes": 18892,
+      "sha256": "5bf95a9eaa770e1bf715b064c22900e035fc60ded461c32be3f0745e9dd4ce49"
+    },
+    "d3-v8-sp-repeat-restored-2026-09-06.jpg": {
+      "bytes": 47285,
+      "sha256": "c9defbdfe1aab1657744d19fc5b7e82c83f2e5680aa55b3873ae22b71d9dbdf6"
+    },
+    "d3-v8-sp-repeat-position-2026-09-06.json": {
+      "bytes": 18928,
+      "sha256": "bb58c0dc6778781541b9da45a72b7dd71f24f6e4ce9eafcffc5a72cdce7a42a6"
+    },
+    "d3-v8-sp-repeat-position-2026-09-06.jpg": {
+      "bytes": 122590,
+      "sha256": "48763af9f70396cfa42a563d2afe184015c20cb5f80a081730b40bcfc493f9b3"
+    },
+    "d3-v8-sp-save-name-2026-09-06.json": {
+      "bytes": 18928,
+      "sha256": "d4efe773ece109a56c81f8801653ebef4e6e6e02e397673cae4f17528a04a6d1"
+    },
+    "d3-v8-sp-save-name-2026-09-06.jpg": {
+      "bytes": 88099,
+      "sha256": "405d38f7d6758d877b188f7dcab1b560a1b010a1648794c328bd91fbc7852e5e"
+    },
+    "d3-v8-sp-saved-2026-09-06.json": {
+      "bytes": 18928,
+      "sha256": "f13dcf70a51c556223a8d2dc296053a293f7c33e332ac16825306e3ab2cfaec7"
+    },
+    "d3-v8-sp-saved-2026-09-06.jpg": {
+      "bytes": 89731,
+      "sha256": "e36940305e0b99492491f36a419b1cea7ab1525157b7dd5bdd8bcdc1fd1ea861"
+    },
+    "d3-v8-sp-reload-launcher-2026-09-06.json": {
+      "bytes": 349,
+      "sha256": "ddb957e1e9b33457650155aa9d15774f1f355e6877df90311408b1a048866e5a"
+    },
+    "d3-v8-sp-reload-launcher-2026-09-06.jpg": {
+      "bytes": 26635,
+      "sha256": "d6efb253b1be8e54187cc4f2320c8c14adf5fc5ad6c4b3076b5b844569d23a99"
+    },
+    "d3-v8-sp-reload-menu-2026-09-06.json": {
+      "bytes": 4639,
+      "sha256": "70dce9f763e1b1ffc190f233e11238f134814bf3095a576a63bbe034eade972b"
+    },
+    "d3-v8-sp-reload-menu-2026-09-06.jpg": {
+      "bytes": 116790,
+      "sha256": "c78acd09aa7a8ab75e1d9ae6a412752e67ca9f11c0d31244dbb7578d68c028f1"
+    },
+    "d3-v8-sp-new-slot-2026-09-06.json": {
+      "bytes": 4639,
+      "sha256": "ddb859370c29ecf4ef875a3728bc6988c06265c1854787860fe2132187685b20"
+    },
+    "d3-v8-sp-new-slot-2026-09-06.jpg": {
+      "bytes": 91420,
+      "sha256": "451f3371984ecb9370bd77017636a4aac500e37b4534d21bd8452f8693be6b40"
+    },
+    "d3-v8-sp-new-restored-2026-09-06.json": {
+      "bytes": 13525,
+      "sha256": "fba9fa50450632836d82d8459b1c54e45096e1bf03dfbf7208131a5fe23dc242"
+    },
+    "d3-v8-sp-new-restored-2026-09-06.jpg": {
+      "bytes": 47429,
+      "sha256": "153f23b26d54229af45fc6bd50b938f17fee336c556daeb2220494c1c98763c0"
+    },
+    "d3-v8-sp-new-position-2026-09-06.json": {
+      "bytes": 13561,
+      "sha256": "8c1702082bbe00b0fa3667d68422964bc8303a7073033570e7f025ac274ac9ee"
+    },
+    "d3-v8-sp-new-position-2026-09-06.jpg": {
+      "bytes": 102158,
+      "sha256": "e9b2bc695f5431c2cd45d6e18d8da6cd75381f7fb730733f8c4d3716ab0e4392"
+    },
+    "d3-v8-sp-final-pause-2026-09-06.json": {
+      "bytes": 13561,
+      "sha256": "aaa723fcebb2b587f476a14405e7e77ec5b177946d78e84bf2627a8fd7c26b79"
+    },
+    "d3-v8-sp-final-pause-2026-09-06.jpg": {
+      "bytes": 115754,
+      "sha256": "5e2b45e21c75a7f91d4f59317f529942aa26636bbc427857159db95975e61ff2"
+    },
+    "d3-v8-sp-final-resume-2026-09-06.json": {
+      "bytes": 13565,
+      "sha256": "7ee2faf6e575b34f5460d031391e44d6bf96d003a83ed1386bf2bec4f5e26071"
+    },
+    "d3-v8-sp-final-resume-2026-09-06.jpg": {
+      "bytes": 47003,
+      "sha256": "3b4c0d9c67625668faa2d4bcf8ed30a9958483d907a326571331e39665973b0e"
+    },
+    "d3-v8-sp-quit-menu-2026-09-06.json": {
+      "bytes": 13591,
+      "sha256": "1676bda523859a121e10fe98aebd9197b3eff1bcbb3dd57c52f522a50b2ed1f6"
+    },
+    "d3-v8-sp-quit-menu-2026-09-06.jpg": {
+      "bytes": 117107,
+      "sha256": "53eea0e37c2a397a0aab115bd95326ce9177ee8bb13c5c34aa9fcd2e5c3024ac"
+    },
+    "d3-v7-sp-second-position-2026-09-06.json": {
+      "bytes": 19132,
+      "sha256": "e65f590b49a3c4f99497831fb50933d886f87a464637d52b91b27c5f0629cd3b"
+    },
+    "d3-v7-sp-quit-menu-2026-09-06.json": {
+      "bytes": 19235,
+      "sha256": "046bd8b8f22fb111dee31018c6807c6a60026d9dc1e0b653298b319d4f4f181f"
+    },
+    "d3-v8-roe-launcher-2026-09-06.json": {
+      "bytes": 347,
+      "sha256": "9373a4ee365cf41a30b1262b7adf8c37c85d877ce525daa08aece87845ed03f9"
+    },
+    "d3-v8-roe-launcher-2026-09-06.jpg": {
+      "bytes": 32737,
+      "sha256": "13d562a127367003d499bb067f80d33dd5ac03bf214567824306d807ad2c344c"
+    },
+    "d3-v8-roe-ready-visible-2026-09-06.json": {
+      "bytes": 20827,
+      "sha256": "40f595c902154a00b6e20f7c30aaecc3966dace440310cc91a47275bc608c344"
+    },
+    "d3-v8-roe-ready-visible-2026-09-06.jpg": {
+      "bytes": 116836,
+      "sha256": "3430437dcc467805917d07ddc38aa071b693ba6394cb76da40fb5ed41f832c73"
+    },
+    "d3-v8-roe-old-slot-2026-09-06.json": {
+      "bytes": 20828,
+      "sha256": "a22ee01a01193a19f0704b938320f8790a43b7d9ba80e06d7c4f3d48eca3c448"
+    },
+    "d3-v8-roe-old-slot-2026-09-06.jpg": {
+      "bytes": 91082,
+      "sha256": "ef6e7f93349398c9dd970c7df553a8467d3ed0da8fe15b9a3791b1c93f65a6b6"
+    },
+    "d3-v8-roe-old-restored-2026-09-06.json": {
+      "bytes": 29441,
+      "sha256": "b85ea0519dc2d3d7bce42c53c3a96ad4461c7918299a78f470481a17d30a58df"
+    },
+    "d3-v8-roe-old-restored-2026-09-06.jpg": {
+      "bytes": 118486,
+      "sha256": "9db24e44c98263081e8e16df193b7909daf53fc9fe56b23284346633f2f5d24e"
+    },
+    "d3-v8-roe-old-position-2026-09-06.json": {
+      "bytes": 29477,
+      "sha256": "9031ab3a7ce45a9d254bd07f1b2069405cc4cccdca55e2c8217bc9b30c2e7e6d"
+    },
+    "d3-v8-roe-old-position-2026-09-06.jpg": {
+      "bytes": 161833,
+      "sha256": "e4060cb095e72c373d50cb6969dfbbe5c453e3a9962c56f522f7e775ddc32861"
+    },
+    "d3-v8-roe-repeat-slot-2026-09-06.json": {
+      "bytes": 29477,
+      "sha256": "5834ae92f63750907aacd08d0f9fc03b0ca6208d2b14039183f2e353ab12879f"
+    },
+    "d3-v8-roe-repeat-slot-2026-09-06.jpg": {
+      "bytes": 90455,
+      "sha256": "f15b38c7a50c9d6b2b985da4fd4c0ea8733dc71fb29e99b23402d907d36bb0ca"
+    },
+    "d3-v8-roe-repeat-restored-2026-09-06.json": {
+      "bytes": 32797,
+      "sha256": "d70113c158028c9961ea59945c030136f08e1db60ab688e7d6ebf6950abc792b"
+    },
+    "d3-v8-roe-repeat-restored-2026-09-06.jpg": {
+      "bytes": 119379,
+      "sha256": "ad633346b3dd7dd079be4382edd99cc5c0ce5181a258c341a01501108105d52f"
+    },
+    "d3-v8-roe-repeat-position-2026-09-06.json": {
+      "bytes": 32833,
+      "sha256": "88e87104ea6c43cfdd2aa0d44f81f5875bf1b42670f590efedc04cb88ab7a22e"
+    },
+    "d3-v8-roe-repeat-position-2026-09-06.jpg": {
+      "bytes": 164511,
+      "sha256": "71c3bf7034e7a21c409b1a39aec8e78238c2a9e65787a5bc5543f8c10a98da15"
+    },
+    "d3-v8-roe-save-name-2026-09-06.json": {
+      "bytes": 32834,
+      "sha256": "929795a9cc62001b200dee777bd03355bbcef43845ebe3bb79d2ade322a4e203"
+    },
+    "d3-v8-roe-save-name-2026-09-06.jpg": {
+      "bytes": 89811,
+      "sha256": "41a2d3c7e42f835265161d8b6d1589a43ececfeea0ac8d123292acbada283712"
+    },
+    "d3-v8-roe-saved-2026-09-06.json": {
+      "bytes": 32834,
+      "sha256": "6d2206cc80fcc7c9109e1cd1d3e1d25327e412f90c528144b09650d2318e9e0e"
+    },
+    "d3-v8-roe-saved-2026-09-06.jpg": {
+      "bytes": 93394,
+      "sha256": "0bb31b9c3d530e898a80a4dcb310723d9ca36f7e6c9eabf894084a5bb59ca7ce"
+    },
+    "d3-v8-roe-reload-launcher-2026-09-06.json": {
+      "bytes": 347,
+      "sha256": "448ce201d9121a756c9c15d35818bce2cd244bdb93e72af095d90577fe904ec6"
+    },
+    "d3-v8-roe-reload-launcher-2026-09-06.jpg": {
+      "bytes": 30092,
+      "sha256": "548b92447dec8ad20803c9d5261771e33ec4a55cac5a6ef9cf85877b3e38e2c0"
+    },
+    "d3-v8-roe-reload-menu-2026-09-06.json": {
+      "bytes": 20828,
+      "sha256": "5ad508cbfa88884388a231a772aa67f475dfaa13253e319ab83d3afd7e662b8d"
+    },
+    "d3-v8-roe-reload-menu-2026-09-06.jpg": {
+      "bytes": 119187,
+      "sha256": "8b96c96db93a61d75a23925445e274fd1b977542512fc60a22ebae0fd41a46ac"
+    },
+    "d3-v8-roe-new-slot-2026-09-06.json": {
+      "bytes": 20828,
+      "sha256": "32bbeb40e383b12acc3d0f68df2bd4f65143fdfc18ef3a1a10ca06d84f8fe6ce"
+    },
+    "d3-v8-roe-new-slot-2026-09-06.jpg": {
+      "bytes": 93642,
+      "sha256": "4d44189a73e57b6c219d267f45efc48160c22ff9b7dc70248f928d064eef4072"
+    },
+    "d3-v8-roe-new-restored-2026-09-06.json": {
+      "bytes": 29441,
+      "sha256": "8aa6c9f593f439bb464cec5b576c1ee56b19b85e68d75cae848fef506be9fcdd"
+    },
+    "d3-v8-roe-new-restored-2026-09-06.jpg": {
+      "bytes": 119231,
+      "sha256": "288943739dc1ff24b1f85a074659841397e60b664aa6f301bbc3915342e7f850"
+    },
+    "d3-v8-roe-new-position-2026-09-06.json": {
+      "bytes": 29477,
+      "sha256": "53c6bc2c64e5555ecbed88706210955b6f8faf7dc976f45b1006643ebd6c54a6"
+    },
+    "d3-v8-roe-new-position-2026-09-06.jpg": {
+      "bytes": 161520,
+      "sha256": "59a4d9bf44a61d707d9b1d74c9f3e0781666396c599b7805fbc2fab485f16f05"
+    },
+    "d3-v8-roe-final-pause-2026-09-06.json": {
+      "bytes": 29477,
+      "sha256": "482469bde33048e1bc4b80041c95819eaef657caf3d822f868ccd743e0b17f62"
+    },
+    "d3-v8-roe-final-pause-2026-09-06.jpg": {
+      "bytes": 114068,
+      "sha256": "f119e079952d4bf36e78be9f1c22d4dab414c0b790221353febf841dd344514e"
+    },
+    "d3-v8-roe-final-resume-2026-09-06.json": {
+      "bytes": 29481,
+      "sha256": "6f8269fd88e9e99812c9d2777822918f1ba18aa7448b59f10aeb0eeb97e31388"
+    },
+    "d3-v8-roe-final-resume-2026-09-06.jpg": {
+      "bytes": 118361,
+      "sha256": "7970ff9151521ef0cc65ab55f0e035cfe31e33c28778a6f241ab11a3c1103fdf"
+    },
+    "d3-v8-roe-quit-menu-2026-09-06.json": {
+      "bytes": 29507,
+      "sha256": "c1dff18c30f260a4153e45d4d577baaa933eb52455aac427959ed257e194baf9"
+    },
+    "d3-v8-roe-quit-menu-2026-09-06.jpg": {
+      "bytes": 120629,
+      "sha256": "74a8279a8805c45699a006e6d2bf01997fd22c9949c9b0ca1b08a84df42279a6"
+    },
+    "d3-v7-roe-second-position-2026-09-06.json": {
+      "bytes": 33038,
+      "sha256": "8c238643140b210a3cb8a22437e2126bd5610c99b973955934456f1d1cc91ce3"
+    },
+    "d3-v7-roe-quit-menu-2026-09-06.json": {
+      "bytes": 33141,
+      "sha256": "9ff60630398caaedb3a8265bcc1f6e6865ff8f8801687e73abe6ff38ef414c74"
+    },
+    "d3-trace-cache-package-2026-09-06.json": {
+      "bytes": 3105,
+      "sha256": "e2a072041e77652d1a0eb4259a222e5926563bcade7015b62b2e559361e684c6"
+    },
+    "d3-trace-cache-campaign-package-2026-09-06.json": {
+      "bytes": 9001,
+      "sha256": "75a2e34f89aaa2dc2f24094dde73cfe00216a369f713e6b44c4b576969e03025"
+    },
+    "d3-trace-cache-final-package-2026-09-06.json": {
+      "bytes": 9001,
+      "sha256": "72b39c19f4555b8867ad61d7bdbe2aedb06986d3ab7246f18318a9f212d15404"
+    },
+    "d3-trace-cache-fixture-2026-09-06.json": {
+      "bytes": 13292,
+      "sha256": "a52cbf20cd67bb0c75d64cf8290b74650d1869079c7a3c436cf564024694722e"
+    },
+    "d3-trace-cache-fresh-source-2026-09-06.json": {
+      "bytes": 4589,
+      "sha256": "3846c36dc8aacf2e4e613b1080d630b1e0f7d503e2df4d846ef62d2864c84f2d"
+    },
+    "d3-trace-cache-http-2026-09-06.json": {
+      "bytes": 2609,
+      "sha256": "0a5f58dd4312ff4a949fde28ea28c23799acc2b3c355487f2e2c45600015a3c0"
+    },
+    "d3-trace-cache-image-delta-2026-09-06.json": {
+      "bytes": 976,
+      "sha256": "d7966897c3fdd096d7ca6592c803418e9dd0ff88201028f50c975ec068034ede"
+    }
+  },
+  "deployed": false,
+  "passed": true
+}

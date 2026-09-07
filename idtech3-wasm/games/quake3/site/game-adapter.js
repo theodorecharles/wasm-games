@@ -228,6 +228,10 @@
         pointerLocked: document.pointerLockElement === context.elements.canvas
       });
       reportedEngineState = next;
+      // The native main menu survives disconnects. Retire the browser-owned
+      // JOINING label only after a real snapshot reaches gameplay, otherwise
+      // returning to that menu incorrectly still looks like a pending join.
+      if (next === 'gameplay') setCvar('ui_joinGameStatus', '');
       if (engineTransitions.length < 32) engineTransitions.push(transition);
       context.log(`[engine state] ${transition.from || 'initial'} -> ${next}`);
     }

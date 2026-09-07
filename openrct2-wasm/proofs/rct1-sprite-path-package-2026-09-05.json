@@ -1,0 +1,166 @@
+{
+  "observedAt": "2026-09-06T03:20:00.781Z",
+  "oldOrigin": "http://127.0.0.1:32935",
+  "candidateOrigin": "http://127.0.0.1:32937",
+  "sourceCommit": "4a7ee146caab8888eb31e56a33c0559db89b17bd",
+  "patchSha256": "def3c4374426f8a48f05ad51aa5cde1cf3b78fac80f31e96ffe7e5ec56a5452c",
+  "files": [
+    {
+      "name": "data-validator.mjs",
+      "bytes": 3531,
+      "sha256": "496a7a1be513e34db1c9a81edad4fe4faffebbae665506fc34c8470fde960124",
+      "changed": false
+    },
+    {
+      "name": "game-adapter.js",
+      "bytes": 15535,
+      "sha256": "c7db01c8189f0ac9ca64ffe870a4de78175185d4c6e7e8f730075032a91317cd",
+      "changed": false
+    },
+    {
+      "name": "index.html",
+      "bytes": 5025,
+      "sha256": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+      "changed": false
+    },
+    {
+      "name": "media-transformer.mjs",
+      "bytes": 6097,
+      "sha256": "685024dd36cfb6224c5a603a6ed4830d3afe5f13cc12a0adc05f16664380d55e",
+      "changed": false
+    },
+    {
+      "name": "openrct2-192.png",
+      "bytes": 26407,
+      "sha256": "9e0ea4583bd2f38cb87ca48aa020e7deea39591321f6caae4e702cdfaafc2a9e",
+      "changed": false
+    },
+    {
+      "name": "openrct2-512.png",
+      "bytes": 62282,
+      "sha256": "14547c761454ddaeaed45a798d33d7354105e9d47095ab240bd131385f27ecec",
+      "changed": false
+    },
+    {
+      "name": "openrct2-audio-bridge.mjs",
+      "bytes": 7661,
+      "sha256": "bbbae94e85313a3ecabbfeb63a8617d9b6a1caa32705dbf7003eeeb531dd82f5",
+      "changed": false
+    },
+    {
+      "name": "openrct2-hot-cache.mjs",
+      "bytes": 2262,
+      "sha256": "932cd97f5ffcda2c8401d5756f50fd9f5187d5cf70840fb7befa5bd1e64351da",
+      "changed": false
+    },
+    {
+      "name": "openrct2-worker.js",
+      "bytes": 12238,
+      "sha256": "46d7827b3ad34c2d856bf57ed492589e398073b2d99f7a47e43e000ee2e38eaa",
+      "changed": false
+    },
+    {
+      "name": "openrct2.ico",
+      "bytes": 75978,
+      "sha256": "a353c39a961398b0d0157733330d907768d30a0fcade9e2dc72284b1ddffffbd",
+      "changed": false
+    },
+    {
+      "name": "runtime/openrct2.data",
+      "bytes": 82277246,
+      "sha256": "67d5eb15e5b656782492409c31241d4451bda0dff6ea9de845c94050a22b74a8",
+      "changed": false
+    },
+    {
+      "name": "runtime/openrct2.js",
+      "bytes": 594184,
+      "sha256": "0a692b738549c4c8babe3053a1994c7260f04fb95ad4500ca5af4360c6589c8a",
+      "changed": true
+    },
+    {
+      "name": "runtime/openrct2.wasm",
+      "bytes": 15335092,
+      "sha256": "6d94191b54b5ebfc9286fa667d062a0006fadb04508c3433f5d41e82793b34a0",
+      "changed": true
+    },
+    {
+      "name": "wasm-game-bootstrap.js",
+      "bytes": 25701,
+      "sha256": "7c6b91d5f1fa69c7132f39b576f77e6b26b9d4ec461e81c0bda9f6f53d52eb33",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-data.json",
+      "bytes": 947,
+      "sha256": "12ec142324fdb62cf51d30b6d07848f279416a09719b688ffea2b513ceec9274",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-framework.css",
+      "bytes": 10498,
+      "sha256": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-framework.js",
+      "bytes": 128979,
+      "sha256": "22f01caae7014140a282cf915a44b2d6fee5ec63868f6ab9d3a0e7b9e2c5e6e1",
+      "changed": false
+    },
+    {
+      "name": "wasm-game-framework.json",
+      "bytes": 427,
+      "sha256": "f8362e3d603c07e4bcd1b19abb442bd8c947c1f67c765e6fac4d2035f8dfb449",
+      "changed": false
+    },
+    {
+      "name": "wasm-game.json",
+      "bytes": 2103,
+      "sha256": "a932ccf704cfa1fb1d353f17244302e22538eaabb5ac7a43b6d2ca0f83a31850",
+      "changed": false
+    }
+  ],
+  "data": {
+    "configured": true,
+    "namespace": "openrct2-installation",
+    "version": "openrct-installation-v2",
+    "ready": true,
+    "files": [],
+    "fixedReady": true,
+    "mediaLibrary": {
+      "configured": true,
+      "namespace": "openrct2-installation",
+      "version": "openrct-installation-v2",
+      "ready": true,
+      "minimumEntries": 1,
+      "launcherVisibleWhenReady": false,
+      "entries": [
+        {
+          "id": "c198ff7ec1c45e01be311b1906e75c66",
+          "label": "RollerCoaster Tycoon 1 + 2",
+          "fileCount": 2975,
+          "totalSize": 1228645759,
+          "createdAt": "2026-08-15T14:57:11.235Z",
+          "metadata": {
+            "format": "openrct-directory-tree",
+            "fileCount": 2975,
+            "rct1": true
+          }
+        }
+      ],
+      "limits": {
+        "maxEntries": 1,
+        "maxFilesPerEntry": 4096,
+        "maxFileBytes": 1073741824,
+        "maxEntryBytes": 3221225472,
+        "maxBrowserCacheBytes": 3221225472
+      }
+    },
+    "variant": "default",
+    "variants": [
+      "default"
+    ],
+    "setupTokenRequired": false
+  },
+  "acceptance": "Exact served/staged bytes and private boundaries only; native source tests and Chrome scenario/save checks are separate."
+}

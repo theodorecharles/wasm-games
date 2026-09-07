@@ -1,0 +1,371 @@
+{
+  "scope": "Retained actual Chrome DOM/native telemetry, matched camera/health guards, both native map roundtrips and natural-idle cleanup. Screenshots are manually inspected and hashed, not an automated pixel oracle. Test-only amplitude zero is distinct from the unmodified-amplitude legacy mixer negative control.",
+  "pair": [
+    {
+      "observedAt": "2026-09-06T11:06:51.639Z",
+      "view": {
+        "at": 95999,
+        "clock": 3620864,
+        "mode": -1,
+        "health": 33,
+        "spectating": 0,
+        "samples": 192,
+        "nonzero": 192,
+        "maxAmplitude": 1.295727,
+        "origin": [
+          -486.929321,
+          -47.699879,
+          260.250977
+        ],
+        "axis": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "starts": 12428
+    },
+    {
+      "observedAt": "2026-09-06T11:06:51.803Z",
+      "view": {
+        "at": 96480,
+        "clock": 3641344,
+        "mode": 0,
+        "health": 33,
+        "spectating": 0,
+        "samples": 192,
+        "nonzero": 192,
+        "maxAmplitude": 1.306112,
+        "origin": [
+          -486.929321,
+          -47.699879,
+          260.250977
+        ],
+        "axis": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "starts": 12440
+    },
+    {
+      "observedAt": "2026-09-06T11:06:51.945Z",
+      "view": {
+        "at": 96626,
+        "clock": 3649536,
+        "mode": -1,
+        "health": 33,
+        "spectating": 0,
+        "samples": 192,
+        "nonzero": 192,
+        "maxAmplitude": 1.303359,
+        "origin": [
+          -486.929321,
+          -47.699879,
+          260.250977
+        ],
+        "axis": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "starts": 12464
+    }
+  ],
+  "legacy": [
+    {
+      "observedAt": "2026-09-06T11:11:07.154Z",
+      "view": {
+        "at": 49810,
+        "clock": 61440,
+        "mode": -1,
+        "health": 100,
+        "spectating": 0,
+        "samples": 90,
+        "nonzero": 90,
+        "maxAmplitude": 1.271611,
+        "origin": [
+          296,
+          708,
+          68.267296
+        ],
+        "axis": [
+          0.707107,
+          0.707107,
+          0,
+          -0.707107,
+          0.707107,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "clockTail": [
+        61440,
+        61440,
+        61440,
+        61440,
+        61440,
+        61440,
+        61440,
+        61440
+      ]
+    },
+    {
+      "observedAt": "2026-09-06T11:13:30.459Z",
+      "view": {
+        "at": 193130,
+        "clock": 135168,
+        "mode": -1,
+        "health": 100,
+        "spectating": 0,
+        "samples": 90,
+        "nonzero": 0,
+        "maxAmplitude": 0,
+        "origin": [
+          296,
+          708,
+          68.267296
+        ],
+        "axis": [
+          0.707107,
+          0.707107,
+          0,
+          -0.707107,
+          0.707107,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "clockTail": [
+        135168,
+        135168,
+        135168,
+        135168,
+        135168,
+        135168,
+        135168,
+        135168
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "observedAt": "2026-09-06T11:16:34.878Z",
+      "view": {
+        "at": 28158,
+        "clock": 589824,
+        "mode": -1,
+        "health": 100,
+        "spectating": 0,
+        "samples": 87,
+        "nonzero": 87,
+        "maxAmplitude": 1.301413,
+        "origin": [
+          800,
+          -832,
+          92.267296
+        ],
+        "axis": [
+          0,
+          1,
+          0,
+          -1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "clockTail": [
+        430080,
+        454656,
+        475136,
+        499712,
+        520192,
+        544768,
+        565248,
+        589824
+      ],
+      "starts": 1136
+    },
+    {
+      "observedAt": "2026-09-06T11:17:17.854Z",
+      "view": {
+        "at": 71272,
+        "clock": 2121728,
+        "mode": -1,
+        "health": 100,
+        "spectating": 0,
+        "samples": 24,
+        "nonzero": 24,
+        "maxAmplitude": 0.63093,
+        "origin": [
+          92,
+          836,
+          -315.75
+        ],
+        "axis": [
+          0,
+          -1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "clockTail": [
+        1961984,
+        1986560,
+        2007040,
+        2031616,
+        2052096,
+        2076672,
+        2097152,
+        2121728
+      ],
+      "starts": 4815
+    },
+    {
+      "observedAt": "2026-09-06T11:17:38.801Z",
+      "view": {
+        "at": 92162,
+        "clock": 2756608,
+        "mode": -1,
+        "health": 100,
+        "spectating": 0,
+        "samples": 30,
+        "nonzero": 30,
+        "maxAmplitude": 0.819118,
+        "origin": [
+          800,
+          -832,
+          92.267326
+        ],
+        "axis": [
+          0,
+          1,
+          0,
+          -1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "fov": [
+          90.59317,
+          73.739792
+        ]
+      },
+      "clockTail": [
+        2596864,
+        2621440,
+        2641920,
+        2666496,
+        2686976,
+        2711552,
+        2732032,
+        2756608
+      ],
+      "starts": 6544
+    }
+  ],
+  "cameraGuardNegativeControls": [
+    "dead player rejected",
+    "moved camera rejected"
+  ],
+  "limitations": [
+    "legacy return screenshot coincides with beginning of native match-start restart",
+    "roundtrips use different cameras between legacy and repaired clients",
+    "no full-map, held-input, listening or production acceptance"
+  ],
+  "deployed": false,
+  "fullRenderingAccepted": false,
+  "hashes": {
+    "d3-light-clock-pair-normal-2026-09-06.json": "a45b4c097cd3f4d2f1fcdf6ce43ededc1901e70cb2e5934343b98b5921948575",
+    "d3-light-clock-pair-normal-2026-09-06.jpg": "ef0b7bd7eb67f6380072ff56a91b604c1362879e88b55777209f9d02d83c7d69",
+    "d3-light-clock-pair-zero-2026-09-06.json": "b7121a25914befc18f277bdd4c8b691421d3dbb4c34ddc2cf02461a7a5528fe0",
+    "d3-light-clock-pair-zero-2026-09-06.jpg": "1a433e1c45e61b1c30ff7a1653e8c389d73475d9bdd716d7cacc8ff6d364465a",
+    "d3-light-clock-pair-restored-2026-09-06.json": "a5b5f0d3343833dff52636a99673cd8e3e934c6071146cb38bf0dbc798ef4cba",
+    "d3-light-clock-pair-restored-2026-09-06.jpg": "82cc1a47712894b850f95c58a84bf3f4dbcef3757fb4516906d746951721e24a",
+    "d3-light-clock-legacy-first-2026-09-06.json": "4b0bef7add76b8904528eae8e5e6910c3e4f48a88fe50984550e0067e047b040",
+    "d3-light-clock-legacy-first-2026-09-06.jpg": "f6c15704bdf2cdfe47b2371fe14dad58d606303f1edbf7a14a00286c5b4c234d",
+    "d3-light-clock-legacy-return-2026-09-06.json": "0667897fcdd23398c6b2295f7fb4c7ebc6f0c59d9c4cc82862d59bff5a11e5dd",
+    "d3-light-clock-legacy-return-2026-09-06.jpg": "9d52c0643e8a996d5a462bee5d0cf124298f1099d5f2fc54b61456055e8f9260",
+    "d3-light-clock-fixed-delta-2026-09-06.json": "7f770a3263b4038e52da238014441d045912c28892cc4bab57b7c1171a21b530",
+    "d3-light-clock-fixed-delta-2026-09-06.jpg": "38502e356fdf312f776403e3ec686d24e2359faf3404515dee8ace23d0c7d89f",
+    "d3-light-clock-fixed-tomiko-2026-09-06.json": "5e54a1d745ce4ad5d0acf4e7d991c0a30f586f647675d44b446c3d8577f2e522",
+    "d3-light-clock-fixed-tomiko-2026-09-06.jpg": "49e15714b1282a86fe64f9a0f736161912d5bdaa62857eeeb060a0bbd20639bc",
+    "d3-light-clock-fixed-return-2026-09-06.json": "91d494718e8d2e1d18ef928a82bd4042a816800df5f7c1feb60a75fdb21712b8",
+    "d3-light-clock-fixed-return-2026-09-06.jpg": "58ee674fa37119a7e9c634faeb301adf2a8e3d5f95d49ef16c9542ae6bd7937d",
+    "d3-light-clock-package-2026-09-06.json": "b989759c236022f3cd82dcb74fda153e52d01b622e1c145233dedc54f6cc8430",
+    "d3-light-clock-legacy-vote-status-2026-09-06.json": "f80f4f937890a056568ba6c65cf55fb4a342c4d900e18ab89bdeaa91262993ae",
+    "d3-light-clock-legacy-return-status-2026-09-06.json": "8e91e434187437f77ac12ad67b93f6d7c6d5c1a521b9ef4a8da22863123013f0",
+    "d3-light-clock-legacy-disconnect-2026-09-06.json": "4ddd3f7a4c0dac24e41d21a0cd3b146060c11ad9bed55bd899bd5f29bf239146",
+    "d3-light-clock-legacy-disconnect-2026-09-06.jpg": "a3db2bd98e48bd011e2745e8f58c4ad657c758a7415a14e0b98d8e45f6a554b9",
+    "d3-light-clock-legacy-final-idle-2026-09-06.json": "218283544e9eef445e42c25b7882ba8ccc7033a8134ce2bc0069b8edce538ead",
+    "d3-light-clock-fixed-start-status-2026-09-06.json": "95e756233bf47334a10d7637587a56766503d3c7a7186ad11ff074c984d6f27c",
+    "d3-light-clock-fixed-tomiko-status-2026-09-06.json": "42cbf64ecc980fd8fd9b815879eaab5a24e57166d920489e7979b0337fc03fea",
+    "d3-light-clock-fixed-return-status-2026-09-06.json": "fb11245611629a805cebd147ff138412c7b240ed5b8839f3de5f0a9611fdb1d0",
+    "d3-light-clock-fixed-disconnect-2026-09-06.json": "6e817042e1fc99a9ac3947a1509625cdf8758758e95d80c80b7c1778414b83ce",
+    "d3-light-clock-fixed-disconnect-2026-09-06.jpg": "22d1c4dbf40c9f26b1d18667ef3cc66a64fa47fad675fa002797006aaa2087a9",
+    "d3-light-clock-fixed-final-idle-2026-09-06.json": "d6f042292bf680a925102ebcc051ca4f6fb19482955550a56451b2483af23964"
+  },
+  "passed": true
+}

@@ -1,0 +1,84 @@
+{
+  "checkedAt": "2026-09-06T04:58:19.615Z",
+  "scratch": "/tmp/openrct2-object-stamps-fMshdS",
+  "bundled": {
+    "files": 2484,
+    "bytes": 47647079
+  },
+  "cases": [
+    {
+      "name": "old-launch-clock-rebuild",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "stable-content-reload",
+      "expectRebuild": false,
+      "output": "native index round trip passed: rebuilt=0 created=0"
+    },
+    {
+      "name": "same-size-content-change",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "old-to-new-one-time-rebuild",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "size-change",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "private-mtime-change",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "object-added",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2487"
+    },
+    {
+      "name": "object-removed",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2485"
+    },
+    {
+      "name": "object-renamed",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "user-mtime-change",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "language-change",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "version-change",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "corrupt-header",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    },
+    {
+      "name": "truncated-index",
+      "expectRebuild": true,
+      "output": "native index round trip passed: rebuilt=1 created=2486"
+    }
+  ],
+  "nativeClassSha256": "61784a5eb5aced4c71b8beeaffa15a35a7d25b884f8c8830071ea0eb15c83ba6",
+  "workerSha256": "cce88f7fbf3e08252612cc1876ecb7789cadb05ad64a7daeefbaf0ba2a605a87",
+  "packageSha256": "67d5eb15e5b656782492409c31241d4451bda0dff6ea9de845c94050a22b74a8",
+  "scope": "Exact worker function and all 2484 public preload object payloads; complete unchanged native FileIndex class with controlled scanner/item/job dependencies and real index-file round trips. Existing 32-bit invalidation is retained, not a collision-free content-addressed cache. Actual Chrome is separate."
+}

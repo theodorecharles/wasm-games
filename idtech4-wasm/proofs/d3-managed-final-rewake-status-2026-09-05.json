@@ -1,0 +1,33 @@
+{
+  "scope": "Native reconnect entered through Chrome wakes a new managed dedicated process after confirmed idle cleanup, completes handshake and rejoins as FinalMarineA.",
+  "observedAt": "2026-09-05T21:26:54.455Z",
+  "previousStartedAt": 1788643261591,
+  "status": {
+    "state": "running",
+    "humans": 1,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": 1788643566781,
+    "map": "game/mp/d3dm1",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "FinalMarineA"
+      }
+    ],
+    "browserPeers": 1,
+    "bots": 0,
+    "botStatus": "not-installed",
+    "relay": {
+      "peers": 1,
+      "clientPackets": 12651,
+      "serverPackets": 3498
+    }
+  }
+}

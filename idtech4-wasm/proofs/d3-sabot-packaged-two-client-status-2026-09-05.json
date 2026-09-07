@@ -1,0 +1,75 @@
+{
+  "state": "running",
+  "humans": 2,
+  "keepAlive": false,
+  "idleTimeoutMs": 90000,
+  "idleSince": null,
+  "startedAt": 1788647874280,
+  "map": "game/mp/d3dm1",
+  "error": null,
+  "connect": "127.0.0.1:27666",
+  "protocol": "1.42",
+  "players": [
+    {
+      "slot": 0,
+      "ping": 0,
+      "rate": 16000,
+      "name": "PackMarineA"
+    },
+    {
+      "slot": 1,
+      "ping": 15,
+      "rate": 16000,
+      "name": "PackMarineB"
+    }
+  ],
+  "browserPeers": 2,
+  "bots": 2,
+  "botPlayers": [
+    {
+      "time": 150624,
+      "slot": 30,
+      "health": 97,
+      "spectating": 0,
+      "origin": [
+        -145.278,
+        945.197,
+        -319.749
+      ],
+      "buttons": 2,
+      "move": [
+        127,
+        0,
+        0
+      ],
+      "weapon": 3,
+      "frags": 1
+    },
+    {
+      "time": 150624,
+      "slot": 31,
+      "health": 35,
+      "spectating": 0,
+      "origin": [
+        -0.043,
+        -869.203,
+        -324.646
+      ],
+      "buttons": 2,
+      "move": [
+        0,
+        0,
+        0
+      ],
+      "weapon": 6,
+      "frags": 2
+    }
+  ],
+  "botUpdatedAt": 1788648024297,
+  "botStatus": "ready",
+  "relay": {
+    "peers": 2,
+    "clientPackets": 10317,
+    "serverPackets": 2855
+  }
+}

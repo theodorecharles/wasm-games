@@ -1,0 +1,125 @@
+diff --git a/neo/game/Game_local.cpp b/neo/game/Game_local.cpp
+index bae355a..2ac3ad6 100644
+--- a/neo/game/Game_local.cpp
++++ b/neo/game/Game_local.cpp
+@@ -2265,6 +2265,11 @@ gameReturn_t idGameLocal::RunFrame( const usercmd_t *clientCmds ) {
+ 		// set the user commands for this frame
+ 		memcpy( usercmds, clientCmds, numClients * sizeof( usercmds[ 0 ] ) );
+ 
++#ifdef MOD_BOTS
++		// Reconcile bot capacity before player PVS/active-entity traversal.
++		botAi::MaintainPopulation();
++#endif
++
+ 		// free old smoke particles
+ 		smokeParticles->FreeSmokes();
+ 
+diff --git a/neo/game/bots/BotAI.h b/neo/game/bots/BotAI.h
+index 2dbf43c..2941150 100644
+--- a/neo/game/bots/BotAI.h
++++ b/neo/game/bots/BotAI.h
+@@ -123,6 +123,9 @@ public:
+     static idCVar           harm_si_autoFillBots;
+     static idCVar           harm_g_autoGenAASFileInMPGame;
+ 
++    static int             PopulationTarget(int requested, int maximum, int humans);
++    static void            MaintainPopulation(void);
++
+     static void				Addbot_f( const idCmdArgs &args );
+     static void				Removebot_f( const idCmdArgs &args );
+ 
+diff --git a/neo/game/bots/BotAI_cmd.cpp b/neo/game/bots/BotAI_cmd.cpp
+index ebf62a3..ffb8522 100644
+--- a/neo/game/bots/BotAI_cmd.cpp
++++ b/neo/game/bots/BotAI_cmd.cpp
+@@ -460,12 +460,14 @@ int botAi::CheckRestClients(int num)
+ void botAi::Cmd_BotInfo_f(const idCmdArgs& args)
+ {
+     // Read-only native-runtime evidence; no scripted movement or combat.
+-    int liveBrains = 0;
++    int liveBrains = 0, humans = 0;
+     for (int i = 0; i < MAX_CLIENTS; ++i) {
+         idPlayer *player = FindBotClient(i);
+         if (player && player->IsBotAvailable()) ++liveBrains;
++        if (player && !player->IsBot()) ++humans;
+     }
+-    gameLocal.Printf("SABOT_FRAME {\"time\":%d,\"bots\":%d}\n", gameLocal.time, liveBrains);
++    const int target = PopulationTarget(harm_si_autoFillBots.GetInteger(), gameLocal.serverInfo.GetInt("si_maxPlayers"), humans);
++    gameLocal.Printf("SABOT_FRAME {\"time\":%d,\"bots\":%d,\"humans\":%d,\"target\":%d}\n", gameLocal.time, liveBrains, humans, target);
+     for (int i = 0; i < MAX_CLIENTS; ++i) {
+         idPlayer *player = FindBotClient(i);
+         if (!player || !player->IsBotAvailable()) continue;
+@@ -475,6 +477,9 @@ void botAi::Cmd_BotInfo_f(const idCmdArgs& args)
+             gameLocal.time, i, player->health, player->spectating, origin.x, origin.y, origin.z,
+             cmd.buttons, cmd.forwardmove, cmd.rightmove, cmd.upmove, player->currentWeapon, gameLocal.mpGame.GetBotProbeFrags(i));
+     }
++    // Quiet status may not fill libc's pipe buffer before the next poll.
++    fflush(stdout);
++    if (args.Argc() > 1 && !idStr::Icmp(args.Argv(1), "status")) return;
+     gameLocal.Printf("SABot(a7)\n");
+     gameLocal.Printf("game is multiplayer: %d\n", gameLocal.isMultiplayer);
+     gameLocal.Printf("game is server: %d\n", gameLocal.isServer);
+diff --git a/neo/game/bots/BotAI_manager.cpp b/neo/game/bots/BotAI_manager.cpp
+index 29dcde5..8af4ec7 100644
+--- a/neo/game/bots/BotAI_manager.cpp
++++ b/neo/game/bots/BotAI_manager.cpp
+@@ -22,6 +22,59 @@ void botAi::UpdateUI(void)
+     }
+ }
+ 
++
++// A zero setting leaves explicit/manual bot commands alone. Positive settings
++// request that many bots; -1 fills the configured match capacity. Humans always
++// have priority, including spectators who still occupy a network-client slot.
++int botAi::PopulationTarget(int requested, int maximum, int humans)
++{
++    if (requested == 0) return -1;
++    const int capacity = Min(Max(maximum, 0), MAX_CLIENTS);
++    const int room = Max(0, capacity - Max(0, humans));
++    const int wanted = requested < 0 ? BOT_MAX_BOTS : Min(requested, BOT_MAX_BOTS);
++    return Min(wanted, room);
++}
++
++void botAi::MaintainPopulation(void)
++{
++    if (!BOT_ENABLED() || harm_si_autoFillBots.GetInteger() == 0) return;
++
++    int humans = 0, liveBots = 0;
++    for (int slot = 0; slot < MAX_CLIENTS; ++slot) {
++        idPlayer *player = FindBotClient(slot);
++        if (!player) continue;
++        if (!player->IsBot()) ++humans;
++        else if (player->IsBotAvailable()) ++liveBots;
++        else RemoveBot(slot); // Do not count an orphan body as a working bot.
++    }
++    const int target = PopulationTarget(harm_si_autoFillBots.GetInteger(),
++        gameLocal.serverInfo.GetInt("si_maxPlayers"), humans);
++
++    // Removal is immediate; never remove a human and never exceed capacity
++    // while waiting for the next bounded spawn retry.
++    for (int slot = BOT_START_INDEX; liveBots > target && slot < MAX_CLIENTS; ++slot) {
++        idPlayer *player = FindBotClient(slot);
++        if (player && player->IsBotAvailable() && RemoveBot(slot)) --liveBots;
++    }
++    if (liveBots >= target) return;
++
++    // Map time can reset. Retry missing navigation/definitions at most once a
++    // second, rather than spamming warnings/spawns every engine frame.
++    static int lastAttempt = -1000;
++    if (gameLocal.time >= lastAttempt &&
++        static_cast<unsigned int>(gameLocal.time) - static_cast<unsigned int>(lastAttempt) < 1000u) return;
++    lastAttempt = gameLocal.time;
++    if (!AllowBotOperation()) return;
++
++    idStrList definitions;
++    const int count = GetBotDefs(definitions);
++    if (count <= 0) return;
++    while (liveBots < target) {
++        const int index = gameLocal.random.RandomInt(count);
++        if (AddBot(definitions[index]) < 0) break;
++        ++liveBots;
++    }
++}
+ bool botAi::GenerateAAS(void)
+ {
+     int i;

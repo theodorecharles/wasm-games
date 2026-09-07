@@ -1,0 +1,156 @@
+{
+  "scope": "Retained actual Chrome: baseline trace image creates two distinct quicksaves, expires/confirms quickload, restores newest position, diagnostically triggers the real endlevel path to the second map, and quickloads back. Repaired image visibly labels the prompt f9 (manual screenshot inspection), expires/confirms it, loads both older quicksaves and the prior-image second-map autosave, quickloads back, pauses/resumes/quits. Seven SaveGame loads and one diagnostic new-map load across two images, no cleanup warnings. Screenshots are hashed, not OCR/pixel-tested. No normal campaign, held movement, capture, listening, ring-wrap/oldest overwrite or deployment acceptance.",
+  "pairs": 39,
+  "baselineImage": "sha256:73534e2ca76cd98ea89ab904fe13aeeb65139fdb0ac8b49cb05a53f6202d1ffd",
+  "repairedImage": "sha256:41d07774c9a0e43859437cc9278dc7bd035e6b0c0cc3219da34259a218e63685",
+  "original": [
+    -282,
+    -340,
+    68.25,
+    180
+  ],
+  "newest": [
+    -282,
+    -356,
+    68.5,
+    180
+  ],
+  "baselineLoads": [
+    {
+      "milliseconds": 14409,
+      "map": "game/roadhouse"
+    },
+    {
+      "milliseconds": 303,
+      "map": "game/roadhouse"
+    },
+    {
+      "milliseconds": 17534,
+      "map": "game/feedingtowera.map"
+    },
+    {
+      "milliseconds": 6818,
+      "map": "game/roadhouse"
+    }
+  ],
+  "repairedLoads": [
+    {
+      "milliseconds": 14574,
+      "map": "game/roadhouse"
+    },
+    {
+      "milliseconds": 313,
+      "map": "game/roadhouse"
+    },
+    {
+      "milliseconds": 16368,
+      "map": "game/feedingtowera.map"
+    },
+    {
+      "milliseconds": 6823,
+      "map": "game/roadhouse"
+    }
+  ],
+  "confirmationMilliseconds": {
+    "baseline": 85.5,
+    "baselineCrossMap": 92.30000000004657,
+    "repaired": 78.20000000001164,
+    "repairedCrossMap": 75.5
+  },
+  "f5TapMilliseconds": [
+    1.2999999999883585,
+    0.7999999999883585
+  ],
+  "retainedSaveSlots": 6,
+  "cleanupWarnings": 0,
+  "files": {
+    "proofs/prey-lifecycle-launch-2026-09-06.json": "09dbfd4346a77b6cfdda25a7e595d568beb639a254299862e66b9f0806740e3c",
+    "proofs/prey-lifecycle-launch-2026-09-06.jpg": "3b9157bb351b74232230f9f3b9bc0c919f85f21c35dc9834f2536225abc9a9e5",
+    "proofs/prey-lifecycle-initial-list-2026-09-06.json": "9cfe7ef464bd5bd06d963b32878de7a79b6be084316b91cb9a97ecbaca5aba43",
+    "proofs/prey-lifecycle-initial-list-2026-09-06.jpg": "a4ba29e7713e682b772aef533e4ea848f0cddebc9a0908fd19c475977d20b8bf",
+    "proofs/prey-lifecycle-original-world-2026-09-06.json": "a9b6ba7144488897c40f759bc3c9d705480e95494dd74a907b6e843a36a657ac",
+    "proofs/prey-lifecycle-original-world-2026-09-06.jpg": "fd45ad5653103e590cc77e6152e58e61aa522eb59285db919bff9327dd19a2a6",
+    "proofs/prey-lifecycle-bindings-2026-09-06.json": "bb3ee1b5420d272e07e3e6b8aadfc0824fa6156e28216e61ac2047d81b397bcd",
+    "proofs/prey-lifecycle-bindings-2026-09-06.jpg": "bcbe7b6b63ce30e0c6f9a8114efc9cf7efa4764f5516cb0b0f12d9910053150f",
+    "proofs/prey-lifecycle-first-quicksave-2026-09-06.json": "161af0374613d460150d3b630d26d7e2162c1e6cd1a674f12ea7abeff9bb650a",
+    "proofs/prey-lifecycle-first-quicksave-2026-09-06.jpg": "0e944e63a7c347e34cee70887e794db0682a581f3bbc6d04ccf999352d489f8c",
+    "proofs/prey-lifecycle-second-position-2026-09-06.json": "908467fec4cd661d4fa53e91462cd0136b4c6b59ce2fc4a45a0be802aacd9613",
+    "proofs/prey-lifecycle-second-position-2026-09-06.jpg": "d01d7096e8e91519a842aeeea253bb9229083ec9b906d532a5e10c2b8570f13d",
+    "proofs/prey-lifecycle-second-quicksave-2026-09-06.json": "8e1d6736524fba0604bcda6cfdfd3b9ec292cfff75db1a18202e9b54bd550b30",
+    "proofs/prey-lifecycle-second-quicksave-2026-09-06.jpg": "ce61204ca48119bba5111d52caceff2d70a400065bdd0898891216374dad5f46",
+    "proofs/prey-lifecycle-comparison-position-2026-09-06.json": "ba556477a6e4ad4d72d9545868590b86da3d90c64c18efbee5c534a9bf075e30",
+    "proofs/prey-lifecycle-comparison-position-2026-09-06.jpg": "7ebd375ef532acfa5ddebb327ebb1996114ecc4825fa1dfe6a19f2d6da13e0ff",
+    "proofs/prey-lifecycle-quickload-prompt-2026-09-06.json": "6ece59f2f6e6f7b71d3c24693584cd581a4a39b7285aea33545d7d003b35da97",
+    "proofs/prey-lifecycle-quickload-prompt-2026-09-06.jpg": "d3c836b5476d995bcf2010e751376e0d5c6d58941388562df52862d10f82eeec",
+    "proofs/prey-lifecycle-quickload-expired-2026-09-06.json": "8440024e8de66415b3cfc1624c5bc7108dab42ec6bb925202cd09b8572c24695",
+    "proofs/prey-lifecycle-quickload-expired-2026-09-06.jpg": "3b66d377bbd04a24f6193bc194d900c590ac4551a5c1a6bf416ca108d83ff6f4",
+    "proofs/prey-lifecycle-quickload-confirm-2026-09-06.json": "94f270bb36b19634497898c56d3c7592deb1a671162e9c7e62a85ecddb2de79b",
+    "proofs/prey-lifecycle-quickload-confirm-2026-09-06.jpg": "d9ab4108a00a38c379686599172f36e936a207ede6c727c90ce3faecddb76163",
+    "proofs/prey-lifecycle-quickload-world-2026-09-06.json": "d1b577b6e643249a7117b6041bb5871fa272ca6f3748595bda2f4cee72334390",
+    "proofs/prey-lifecycle-quickload-world-2026-09-06.jpg": "a950078831daedf4ab50fb3c95513e3201e66158ee5b7f9074b3bdfd7b3aaf9d",
+    "proofs/prey-lifecycle-quickload-position-2026-09-06.json": "a34760c6f60bf230aa80c3b95068924af936ff22bbfabd263a0da9d41c4d2453",
+    "proofs/prey-lifecycle-quickload-position-2026-09-06.jpg": "27d36e78d43826879b16435b0f08e1e328fa1d65192f4532905ef9a1ed9d717f",
+    "proofs/prey-lifecycle-next-map-intro-2026-09-06.json": "caac3c122831d39ccb0223ad6b3c6e12bda309de2b95f112382f8bcf8ab4241d",
+    "proofs/prey-lifecycle-next-map-intro-2026-09-06.jpg": "8fe6031ab953a2154a969a9516c60fb85aea730bdc057d04331478633bf975bf",
+    "proofs/prey-lifecycle-next-map-scene-2026-09-06.json": "dd2d50b8d275909933b35a809c9c197cacb83a497c8fa5c6cb9c847b75050ec7",
+    "proofs/prey-lifecycle-next-map-scene-2026-09-06.jpg": "e7bf05a681d5a61dd689aa158415323e593c4fc1bb30728b468c23b2f7f32a21",
+    "proofs/prey-lifecycle-crossmap-prompt-2026-09-06.json": "93d927938035a5baec48ee5d2a15af48fc8637f7154163dab121004066061015",
+    "proofs/prey-lifecycle-crossmap-prompt-2026-09-06.jpg": "280d0a349cbcec25df6a1ab76065b1ce031af07ae1fc6bd4e886a9e6d27ea00c",
+    "proofs/prey-lifecycle-crossmap-world-2026-09-06.json": "2942c4e01fa12c6c5558954a4830ffaebfe3690737a1321693e14d08ca098bbb",
+    "proofs/prey-lifecycle-crossmap-world-2026-09-06.jpg": "c4e21704bf997091adf590f1e7a9c6a05347f1260ef15e107585176dd2f21e48",
+    "proofs/prey-lifecycle-crossmap-position-2026-09-06.json": "0e54a6624f278df03be32c478651e1af7ede1739f391cf72c44495c7cd6a885a",
+    "proofs/prey-lifecycle-crossmap-position-2026-09-06.jpg": "67c0ec101e3f34a55be92e882ad2b5f9c0ff04e650f6bdc5ca47f161f4c6816f",
+    "proofs/prey-lifecycle-final-list-2026-09-06.json": "c111c5d78461af3bd4cc2c725522544f6e549dc237f4612f4b2f4634165dfe3e",
+    "proofs/prey-lifecycle-final-list-2026-09-06.jpg": "a369ebfc2ec6fe167c2f4feabe843d15b9a2b8a55b1f7d44da0f55e16e0d1bb5",
+    "proofs/prey-lifecycle-quick-preview-2026-09-06.json": "77c58d46db016b115c1c4f5b98ebaad6a89267591e3024edf61628906124aa4b",
+    "proofs/prey-lifecycle-quick-preview-2026-09-06.jpg": "e993b15ce356fd1e3093e8e575103ba15f8b74556784985f353f51b832fc4c3b",
+    "proofs/prey-lifecycle-quit-2026-09-06.json": "996ee024dbc6966cc6db97dd329f520908aa21862b6545b4c265ee9bde5a8026",
+    "proofs/prey-lifecycle-quit-2026-09-06.jpg": "d0d36f35a003f996e31697ef253b3af2637250861f56bc24484423f1d35476be",
+    "proofs/prey-quickload-launch-2026-09-06.json": "3140b70659ca7dc6045f25c40a72899d7995bbbbdd095e5497473b48c9286dff",
+    "proofs/prey-quickload-launch-2026-09-06.jpg": "3b9157bb351b74232230f9f3b9bc0c919f85f21c35dc9834f2536225abc9a9e5",
+    "proofs/prey-quickload-old-preview-2026-09-06.json": "3bceefe782da37920401f99962d82f444985597402a7d93bfbe6b7db2f24c750",
+    "proofs/prey-quickload-old-preview-2026-09-06.jpg": "5d9fc8a0f141c14ab25335a4c3eff1f833f34a4c176394a1b55a395cc1e77eb2",
+    "proofs/prey-quickload-old-world-2026-09-06.json": "3cb9217bd599c526da22398fccaa005dc657cdbc6b43fa50e4320248d0b37aa3",
+    "proofs/prey-quickload-old-world-2026-09-06.jpg": "9ee4822d8fffe4c21dc4adc42ab8a03e17a9c9e4b8eadab590a11df3ec8741bd",
+    "proofs/prey-quickload-old-position-2026-09-06.json": "a01dd09e6e951b67002911b894bdd84516203afccc4512ea0ac47953a8500658",
+    "proofs/prey-quickload-old-position-2026-09-06.jpg": "ea8ec8be7e123a03717de2ab21a3e38ebb3802a361791e75daba9af4233beddb",
+    "proofs/prey-quickload-prompt-2026-09-06.json": "0001f6e04eec39d024ae03be0a64235c3338532695cace793cbf29bb0face8be",
+    "proofs/prey-quickload-prompt-2026-09-06.jpg": "235d74fd697bb5270749ef5eefb1093dea075150a6a0710af1ef1c6b623b9bcf",
+    "proofs/prey-quickload-expired-2026-09-06.json": "9e21a8a9a33e59e4f357bd425b83df923798d783442e6e38414932ddd2767c47",
+    "proofs/prey-quickload-expired-2026-09-06.jpg": "f9ba0e9c52ef12e53d20371e663ebfd77a0db9f73fdd555c62330a3b0fc87ecd",
+    "proofs/prey-quickload-confirm-2026-09-06.json": "612ffafef5e38f6a7e11dec0a4fb3efe5e2b476e474923f63009d6eb3f67b5f6",
+    "proofs/prey-quickload-confirm-2026-09-06.jpg": "da5356d5a23d9a0b11a08b5869133d0dbfcdb72a66cb80003159b364c5325417",
+    "proofs/prey-quickload-world-2026-09-06.json": "889fef3be1e36af9238d5bd09d4ee9b136475c46aeef57339226561c56b7334d",
+    "proofs/prey-quickload-world-2026-09-06.jpg": "004065f006eeb812f998b3674d5228a566e902cc17c5d88fff26b5891fe22b4f",
+    "proofs/prey-quickload-position-2026-09-06.json": "738d9eb5aa2ac630ba8f8b8ba8ef1c169303c6c64ba2e2c97a326ff8eb6da29b",
+    "proofs/prey-quickload-position-2026-09-06.jpg": "230039cd6b476ced28da69e04569cc319a8ec82553a8035b27566442af0676e4",
+    "proofs/prey-quickload-autosave-preview-2026-09-06.json": "68ccc87e3866ec45c1104f875131f3879be0d60f6b08acfaae6b355dce0474fc",
+    "proofs/prey-quickload-autosave-preview-2026-09-06.jpg": "4da90d60269c166a614fc1650b219170d9fc8398bf3c14c8c9c52b6a398c9ed4",
+    "proofs/prey-quickload-autosave-world-2026-09-06.json": "5db899a4830493579cfe6ef50ce1a34a7374faf7e98d5ab88c130808c1169506",
+    "proofs/prey-quickload-autosave-world-2026-09-06.jpg": "2ad376c800f2505e60133fe0577d3b57c418b03b6d584eac8a026b3ca849e596",
+    "proofs/prey-quickload-autosave-loaded-2026-09-06.json": "1e2522f94915954acf668a35a6993a90557475d46128aacac0b1ca643631f1aa",
+    "proofs/prey-quickload-autosave-loaded-2026-09-06.jpg": "1096f3410676f1d82a150818dcd0f0c351c1a777820e94c7014257d337f0ef8a",
+    "proofs/prey-quickload-crossmap-prompt-2026-09-06.json": "9405e04d1ef836603ed1839eb5f94743416bc1d404e8a3ecb9660fbc81aff1bf",
+    "proofs/prey-quickload-crossmap-prompt-2026-09-06.jpg": "3410f8db2904c7d75fdb979ec0cea402aced0c1b922b4ffad63e806add0da675",
+    "proofs/prey-quickload-crossmap-world-2026-09-06.json": "07fb3c05380aaaafea298f9af03b4e8faeb116dfa55d35fc51ae811d57c251e3",
+    "proofs/prey-quickload-crossmap-world-2026-09-06.jpg": "1047300195bbecbae03eea61b85073ffb9f4996ce32c40d907380807f900e6d3",
+    "proofs/prey-quickload-crossmap-position-2026-09-06.json": "f5347139a9142e951bc45e91240350f9ede6631c784123e8bcec7ffef61b2a1a",
+    "proofs/prey-quickload-crossmap-position-2026-09-06.jpg": "f4e2d7a8d26671ee0b37233adb825cdda689f0cb3733a6e2ba77b86407e61f16",
+    "proofs/prey-quickload-final-pause-2026-09-06.json": "d19bcfd52584d464149b9461687cf2e875d70ec9bcd1c59c892247e87e0026ae",
+    "proofs/prey-quickload-final-pause-2026-09-06.jpg": "6c23d25d4e9f6f67b835c9eaa4ae2a3688de3ebee06495b1f3cf9c336a1f80a1",
+    "proofs/prey-quickload-final-resume-2026-09-06.json": "46ecd7221a480767a535fb3ec0a3621d95aba929fe044f8d213973f959949733",
+    "proofs/prey-quickload-final-resume-2026-09-06.jpg": "0bdc8bde85f57608b489ccf8c358ebcfc2769f17b23d0ab4856cb0f81647ba40",
+    "proofs/prey-quickload-final-quit-2026-09-06.json": "12c13e3c6eba4910df7b746fc457bbef5a0397bfe20ff8eb23a236d2fe0525f5",
+    "proofs/prey-quickload-final-quit-2026-09-06.jpg": "4e7fecaa6b07e6ad97853537cf433a400be7b4f01d5b698b77c5d9a164ad219e",
+    "proofs/prey-trace-cache-package-2026-09-06.json": "07afb87ac8b1bf4d335fba7304a5bb104001fae52dd26d044eefaa2999aad216",
+    "proofs/prey-quickload-package-2026-09-06.json": "944318c67b74241d195d2819ba71847a14ce457946147bf1db9443c7f4cb3b89",
+    "proofs/prey-quickload-prompt-native-2026-09-06.json": "4efc5fbdc2779b6ba396a633cc0ffe4a11afe4348d16252d5dfc98f5b1d842f4",
+    "proofs/prey-quickload-prompt-legacy-2026-09-06.json": "3a6a0a7dc821f9a0da9f225de225197e3635d4581527d0c70d32f6241390e140",
+    "proofs/prey-quickload-source-2026-09-06.json": "71d4fe3166e68e64df355a15bd2a44c884c3f28bd39d2f2d52d77b1f30d6a923",
+    "proofs/prey-quickload-candidate-2026-09-06.Dockerfile": "abd8d82ccbc1430f11c21b5019eb20ca57689a09e57188fc38390139a14965b4",
+    "scripts/test-prey-quickload-prompt.mjs": "4467a641ff265e8e4936bfa5e32558387d827412dd7113e7e2edd3c110ec522b",
+    "scripts/test-prey-quickload-package.mjs": "a0f95caa6e9ba1961d0d8c3f9458e2502c4286e441a780e306ae8bf3593a5db1",
+    "scripts/test-prey-quickload-evidence.mjs": "b83b2e267fde8b43b78c9d66040858790c255cca350c6195dfacccd2bd038c81",
+    "tests/prey-quickload-prompt.cpp": "01c485414ac19580d38259cd044259eb54f1803a1fe0f83e89f153c01d7d044f"
+  }
+}

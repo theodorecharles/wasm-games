@@ -1,0 +1,1625 @@
+{
+  "observedAt": "2026-09-06T23:00:58.422Z",
+  "scope": "Extracted full native SDL event processing, held/edge sampling, keyboard/mouse gameplay polls, focus/capture loss and frame consumption with an SDL queue fixture under UBSan. Browser/desktop branches and two failing old-behavior controls. Not real Chrome capture or held-key acceptance.",
+  "productionSha256": "b44df53f57af44c633e86c56a7ec9cb54a197dc0e873219cb306c2268b127d3f",
+  "results": {
+    "wolf3d": {
+      "cases": 81,
+      "failures": 0,
+      "checks": [
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-edge",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-held-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-run-forward-chord",
+          "passed": true
+        },
+        {
+          "label": "no-next-frame-ghost-movement",
+          "passed": true
+        },
+        {
+          "label": "quick-W-A-strafe-chord",
+          "passed": true
+        },
+        {
+          "label": "quick-two-button-chord",
+          "passed": true
+        },
+        {
+          "label": "menu-transition-discards-edges",
+          "passed": true
+        },
+        {
+          "label": "focus-loss-clears-keys-and-edges",
+          "passed": true
+        },
+        {
+          "label": "capture-loss-discards-mouse-edge",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "invalid-key-bounds",
+          "passed": true
+        }
+      ]
+    },
+    "spear": {
+      "cases": 81,
+      "failures": 0,
+      "checks": [
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-edge",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-held-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-run-forward-chord",
+          "passed": true
+        },
+        {
+          "label": "no-next-frame-ghost-movement",
+          "passed": true
+        },
+        {
+          "label": "quick-W-A-strafe-chord",
+          "passed": true
+        },
+        {
+          "label": "quick-two-button-chord",
+          "passed": true
+        },
+        {
+          "label": "menu-transition-discards-edges",
+          "passed": true
+        },
+        {
+          "label": "focus-loss-clears-keys-and-edges",
+          "passed": true
+        },
+        {
+          "label": "capture-loss-discards-mouse-edge",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "invalid-key-bounds",
+          "passed": true
+        }
+      ]
+    },
+    "desktop": {
+      "cases": 73,
+      "failures": 0,
+      "checks": [
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-edge",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-held-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-run-forward-chord",
+          "passed": true
+        },
+        {
+          "label": "no-next-frame-ghost-movement",
+          "passed": true
+        },
+        {
+          "label": "invalid-key-bounds",
+          "passed": true
+        }
+      ]
+    },
+    "missing-key-edge": {
+      "cases": 81,
+      "failures": 13,
+      "checks": [
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-edge",
+          "passed": false
+        },
+        {
+          "label": "normalized-right-control-held-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-run-forward-chord",
+          "passed": false
+        },
+        {
+          "label": "no-next-frame-ghost-movement",
+          "passed": true
+        },
+        {
+          "label": "quick-W-A-strafe-chord",
+          "passed": false
+        },
+        {
+          "label": "quick-two-button-chord",
+          "passed": true
+        },
+        {
+          "label": "menu-transition-discards-edges",
+          "passed": true
+        },
+        {
+          "label": "focus-loss-clears-keys-and-edges",
+          "passed": true
+        },
+        {
+          "label": "capture-loss-discards-mouse-edge",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "invalid-key-bounds",
+          "passed": true
+        }
+      ]
+    },
+    "missing-mouse-edge": {
+      "cases": 81,
+      "failures": 7,
+      "checks": [
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "quick-key-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-key-gameplay-sample",
+          "passed": true
+        },
+        {
+          "label": "quick-key-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-key-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-key-release",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-edge",
+          "passed": true
+        },
+        {
+          "label": "normalized-right-control-held-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": false
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": false
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-held-state-released",
+          "passed": true
+        },
+        {
+          "label": "quick-mouse-remapped-sample",
+          "passed": false
+        },
+        {
+          "label": "quick-mouse-game-action",
+          "passed": false
+        },
+        {
+          "label": "quick-mouse-consumed-once",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-survives-frame",
+          "passed": true
+        },
+        {
+          "label": "held-mouse-release",
+          "passed": true
+        },
+        {
+          "label": "quick-run-forward-chord",
+          "passed": true
+        },
+        {
+          "label": "no-next-frame-ghost-movement",
+          "passed": true
+        },
+        {
+          "label": "quick-W-A-strafe-chord",
+          "passed": true
+        },
+        {
+          "label": "quick-two-button-chord",
+          "passed": false
+        },
+        {
+          "label": "menu-transition-discards-edges",
+          "passed": true
+        },
+        {
+          "label": "focus-loss-clears-keys-and-edges",
+          "passed": true
+        },
+        {
+          "label": "capture-loss-discards-mouse-edge",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "non-game-events-do-not-leak",
+          "passed": true
+        },
+        {
+          "label": "invalid-key-bounds",
+          "passed": true
+        }
+      ]
+    }
+  }
+}

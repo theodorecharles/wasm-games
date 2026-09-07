@@ -1,0 +1,16 @@
+diff --git a/neo/framework/Common.cpp b/neo/framework/Common.cpp
+--- a/neo/framework/Common.cpp
++++ b/neo/framework/Common.cpp
+@@ -2154,12 +2154,6 @@ void idCommonLocal::Frame(void) {
+   idAsyncNetwork::RunFrame();
+ 
+   if ( idAsyncNetwork::IsActive()) {
+-    // Network play skips Session::Frame and its inline sound update. Keep
+-    // the default mixer running here; async modes already mix in Async().
+-    if ( com_asyncSound.GetInteger() == 0 ) {
+-      soundSystem->AsyncUpdate( Sys_Milliseconds() );
+-    }
+-
+     //if (idAsyncNetwork::serverDedicated.GetInteger() != 1) {
+     session->GuiFrameEvents();            // EMTERPRETIFY function (might yields)
+     session->UpdateScreen(false);

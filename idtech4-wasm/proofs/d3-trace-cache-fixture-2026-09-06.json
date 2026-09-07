@@ -1,0 +1,526 @@
+{
+  "scope": "Exact base/RoE cache, LoadModel, clip cleanup/restore methods and extracted Init/entity-reference/SaveGame-call blocks compiled on host with address/undefined sanitizers and Emscripten with SAFE_HEAP. Nine typed-record save scenarios each repeat three loads; fresh shutdown and original warning guard also checked. Old SaveGame entry point is the negative control. Existing cache serialization methods remain byte-identical to pinned upstream source. Dependencies model save records and ownership, not collision math, binary save compatibility or full gameplay.",
+  "results": [
+    {
+      "variant": "base",
+      "target": "native",
+      "negative": false,
+      "clipSHA256": "fce9156b29bacb2689e34f73fbf86d398c8a8c03675b46edc531975b7281e7b0",
+      "saveSHA256": "c4782043ab0190c911d58050129ecd92fac7020587b9686bad7e77803f7f53fa",
+      "productionSHA256": "ccdfef16fbbee8ed7a1a53a7fc5cd65eab9d9e49c9912d749208484ee5d74f21",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "base",
+      "target": "wasm",
+      "negative": false,
+      "clipSHA256": "fce9156b29bacb2689e34f73fbf86d398c8a8c03675b46edc531975b7281e7b0",
+      "saveSHA256": "c4782043ab0190c911d58050129ecd92fac7020587b9686bad7e77803f7f53fa",
+      "productionSHA256": "ccdfef16fbbee8ed7a1a53a7fc5cd65eab9d9e49c9912d749208484ee5d74f21",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "base",
+      "target": "native",
+      "negative": true,
+      "clipSHA256": "fce9156b29bacb2689e34f73fbf86d398c8a8c03675b46edc531975b7281e7b0",
+      "saveSHA256": "c4782043ab0190c911d58050129ecd92fac7020587b9686bad7e77803f7f53fa",
+      "productionSHA256": "90abfa4507931834c7ce647261ae1e2b6faf819b05d7e84a9cdfa3d65a65a6db",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "base",
+      "target": "wasm",
+      "negative": true,
+      "clipSHA256": "fce9156b29bacb2689e34f73fbf86d398c8a8c03675b46edc531975b7281e7b0",
+      "saveSHA256": "c4782043ab0190c911d58050129ecd92fac7020587b9686bad7e77803f7f53fa",
+      "productionSHA256": "90abfa4507931834c7ce647261ae1e2b6faf819b05d7e84a9cdfa3d65a65a6db",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "roe",
+      "target": "native",
+      "negative": false,
+      "clipSHA256": "f77f4c703920e24f6b6cee6cdbd34c9f4d2442943524630cef2349e7c7b8bdab",
+      "saveSHA256": "cbf83b3b76e4dfb55b4b77c576f0e71e77d30790b9f4531441fd78ea5abf017e",
+      "productionSHA256": "ccdfef16fbbee8ed7a1a53a7fc5cd65eab9d9e49c9912d749208484ee5d74f21",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "roe",
+      "target": "wasm",
+      "negative": false,
+      "clipSHA256": "f77f4c703920e24f6b6cee6cdbd34c9f4d2442943524630cef2349e7c7b8bdab",
+      "saveSHA256": "cbf83b3b76e4dfb55b4b77c576f0e71e77d30790b9f4531441fd78ea5abf017e",
+      "productionSHA256": "ccdfef16fbbee8ed7a1a53a7fc5cd65eab9d9e49c9912d749208484ee5d74f21",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "roe",
+      "target": "native",
+      "negative": true,
+      "clipSHA256": "f77f4c703920e24f6b6cee6cdbd34c9f4d2442943524630cef2349e7c7b8bdab",
+      "saveSHA256": "cbf83b3b76e4dfb55b4b77c576f0e71e77d30790b9f4531441fd78ea5abf017e",
+      "productionSHA256": "90abfa4507931834c7ce647261ae1e2b6faf819b05d7e84a9cdfa3d65a65a6db",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "variant": "roe",
+      "target": "wasm",
+      "negative": true,
+      "clipSHA256": "f77f4c703920e24f6b6cee6cdbd34c9f4d2442943524630cef2349e7c7b8bdab",
+      "saveSHA256": "cbf83b3b76e4dfb55b4b77c576f0e71e77d30790b9f4531441fd78ea5abf017e",
+      "productionSHA256": "90abfa4507931834c7ce647261ae1e2b6faf819b05d7e84a9cdfa3d65a65a6db",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

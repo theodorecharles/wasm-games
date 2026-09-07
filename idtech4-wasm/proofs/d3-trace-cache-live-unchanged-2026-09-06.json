@@ -1,0 +1,28 @@
+{
+  "scope": "Read-only current image, start time and restart check against the previously recorded protected live Doom 3 SP/MP and RTCW SP baselines; isolated v8 tests did not replace/restart these services.",
+  "observedAt": "2026-09-06T12:26:05.656Z",
+  "results": [
+    {
+      "container": "wasm-doom3",
+      "image": "sha256:33332d439c122bf55e0140bafbf5bbdf54857c9fb2003100c60920d9b9320ba7",
+      "startedAt": "2026-09-03T21:52:26.394043134Z",
+      "restartCount": 0,
+      "status": "running"
+    },
+    {
+      "container": "wasm-doom3-mp",
+      "image": "sha256:a7188ef7ad469833b9e8280d7d1ec2ae49cfe79a0d3fca825482dad10f7656da",
+      "startedAt": "2026-09-03T21:52:26.358189164Z",
+      "restartCount": 0,
+      "status": "running"
+    },
+    {
+      "container": "wasm-rtcw-sp",
+      "image": "sha256:e6cc9c2be15c9009450dd341e7c25fefc04e868a6ed60be195e5ac6479a6c759",
+      "startedAt": "2026-09-04T20:59:30.05162676Z",
+      "restartCount": 0,
+      "status": "running"
+    }
+  ],
+  "passed": true
+}

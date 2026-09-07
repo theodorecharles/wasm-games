@@ -1,0 +1,167 @@
+{
+  "scope": "Production atomic menu-pointer mailbox and hit testing with native-style menu descriptors, including all lines of episode titles. Tests quick clicks, enabled rows, bounds, cancellation and transitions. Legacy mode uses the preceding one-row episode call. Not full native UI, concurrent scheduling or browser acceptance.",
+  "legacy": true,
+  "sourceSHA256": "88e9b39994850c3c92123fa09091ae25f1609e5473ebec339ab52c85e9361ea2",
+  "cases": [
+    {
+      "label": "inactive-click-ignored",
+      "passed": true
+    },
+    {
+      "label": "hover-sound",
+      "passed": true
+    },
+    {
+      "label": "stationary-pointer-does-not-override-keyboard",
+      "passed": true
+    },
+    {
+      "label": "short-click-latched",
+      "passed": true
+    },
+    {
+      "label": "click-consumed-once",
+      "passed": true
+    },
+    {
+      "label": "down-does-not-activate",
+      "passed": true
+    },
+    {
+      "label": "release-activates",
+      "passed": true
+    },
+    {
+      "label": "drag-between-rows-cancels",
+      "passed": true
+    },
+    {
+      "label": "orphan-release-ignored",
+      "passed": true
+    },
+    {
+      "label": "disabled-save-row",
+      "passed": true
+    },
+    {
+      "label": "read-color-active-row",
+      "passed": true
+    },
+    {
+      "label": "left-boundary",
+      "passed": true
+    },
+    {
+      "label": "outside-left",
+      "passed": true
+    },
+    {
+      "label": "right-inside",
+      "passed": true
+    },
+    {
+      "label": "right-exclusive",
+      "passed": true
+    },
+    {
+      "label": "above-list",
+      "passed": true
+    },
+    {
+      "label": "below-list",
+      "passed": true
+    },
+    {
+      "label": "lower-backbuffer-bar",
+      "passed": true
+    },
+    {
+      "label": "negative-coordinates",
+      "passed": true
+    },
+    {
+      "label": "outside-backbuffer",
+      "passed": true
+    },
+    {
+      "label": "middle-button-ignored",
+      "passed": true
+    },
+    {
+      "label": "right-button-back",
+      "passed": true
+    },
+    {
+      "label": "mismatched-buttons",
+      "passed": true
+    },
+    {
+      "label": "cancel-discards-press",
+      "passed": true
+    },
+    {
+      "label": "cancel-discards-pending-click",
+      "passed": true
+    },
+    {
+      "label": "menu-change-discards-held-gesture",
+      "passed": true
+    },
+    {
+      "label": "menu-change-discards-queued-click",
+      "passed": true
+    },
+    {
+      "label": "transition-motion-discarded",
+      "passed": true
+    },
+    {
+      "label": "episode-spaced-row",
+      "passed": true
+    },
+    {
+      "label": "episode-caption-selects-title",
+      "passed": false
+    },
+    {
+      "label": "episode-last-caption-without-spacer-item",
+      "passed": false
+    },
+    {
+      "label": "episode-bottom-exclusive",
+      "passed": true
+    },
+    {
+      "label": "episode-next-title-boundary",
+      "passed": true
+    },
+    {
+      "label": "episode-previous-caption-boundary",
+      "passed": false
+    },
+    {
+      "label": "episode-caption-hover",
+      "passed": false
+    },
+    {
+      "label": "episode-title-to-caption-click",
+      "passed": false
+    },
+    {
+      "label": "episode-caption-to-next-title-cancels",
+      "passed": true
+    },
+    {
+      "label": "episode-disabled-title",
+      "passed": true
+    },
+    {
+      "label": "episode-disabled-caption",
+      "passed": true
+    },
+    {
+      "label": "episode-native-unavailable-selection-preserved",
+      "passed": false
+    }
+  ]
+}

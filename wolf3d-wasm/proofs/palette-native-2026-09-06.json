@@ -1,0 +1,715 @@
+{
+  "observedAt": "2026-09-06T22:21:32.679Z",
+  "scope": "Extracted native palette/set-color/clear functions under UBSan with an indexed SDL surface fixture; desktop path preserved, two preceding-behavior negatives fail. Actual browser rendering requires separate Chrome checks.",
+  "productionSha256": "fb0c2dae0fec3dd5cc0513c3c915235ab3472bfc2e9477baab45d40299985577",
+  "results": {
+    "web": {
+      "cases": 44,
+      "failures": 0,
+      "checks": [
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "display-recolored-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "display-recolored-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-color-visible-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "failed-lock-does-not-unlock",
+          "passed": true
+        },
+        {
+          "label": "failed-lock-does-not-unlock",
+          "passed": true
+        }
+      ]
+    },
+    "desktop": {
+      "cases": 39,
+      "failures": 0,
+      "checks": [
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        }
+      ]
+    },
+    "missing-repaint": {
+      "cases": 44,
+      "failures": 6,
+      "checks": [
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "display-recolored-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": false
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "display-recolored-without-new-draw",
+          "passed": false
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": false
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-color-visible-without-new-draw",
+          "passed": false
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": true
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": true
+        },
+        {
+          "label": "failed-lock-does-not-unlock",
+          "passed": false
+        },
+        {
+          "label": "failed-lock-does-not-unlock",
+          "passed": false
+        }
+      ]
+    },
+    "canvas-only-clear": {
+      "cases": 44,
+      "failures": 6,
+      "checks": [
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "display-recolored-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "display-recolored-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "full-native-palette-copied",
+          "passed": true
+        },
+        {
+          "label": "correct-physical-or-logical-palette",
+          "passed": true
+        },
+        {
+          "label": "forced-indexed-repaint-only",
+          "passed": true
+        },
+        {
+          "label": "truecolor-blit-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-color-visible-without-new-draw",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "single-native-color-copied",
+          "passed": true
+        },
+        {
+          "label": "single-indexed-color-presented",
+          "passed": true
+        },
+        {
+          "label": "single-truecolor-path-preserved",
+          "passed": true
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": false
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": false
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": false
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": false
+        },
+        {
+          "label": "clear-correct-backend",
+          "passed": false
+        },
+        {
+          "label": "clear-indexed-pixels-and-padding",
+          "passed": false
+        },
+        {
+          "label": "failed-lock-does-not-unlock",
+          "passed": true
+        },
+        {
+          "label": "failed-lock-does-not-unlock",
+          "passed": true
+        }
+      ]
+    }
+  }
+}

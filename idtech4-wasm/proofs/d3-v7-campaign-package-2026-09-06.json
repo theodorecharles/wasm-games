@@ -1,0 +1,212 @@
+{
+  "scope": "Exact immutable v7 package and HTTP bytes in isolated SP/RoE containers; owner archives are read-only and no multiplayer process, session or relay packet is present. Does not inspect browser storage or prove gameplay/save restoration.",
+  "observedAt": "2026-09-06T11:36:00.863Z",
+  "results": [
+    {
+      "variant": "doom3",
+      "container": "d3-sp-v7-save-proof-20260906",
+      "port": 32953,
+      "observedAt": "2026-09-06T11:36:00.524Z",
+      "image": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+      "startedAt": "2026-09-06T11:25:29.027027143Z",
+      "restartCount": 0,
+      "readOnlyRoot": true,
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/home/ted/wasm-game-data/doom3",
+          "Destination": "/data",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "imageFiles": {
+        "/opt/game-site/game-adapter.js": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+        "/opt/doom3-server/runtime.cjs": "5f7b2829def52cf320b8e73ab280451fd86bd1b30d1942e3d2e7576088ebf5ac",
+        "/opt/game-site/d3-worker.js": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715",
+        "/opt/game-site/dhewm3-base.js": "eb453a3acd0f641f2f7a9099a169212df011fb23037d710ca9dfc937e513717e",
+        "/opt/game-site/dhewm3-base.wasm": "26b27ed91f8a9b7143f2cfeb083dbeac8b5f4f15b2c9bf9f0a978c942677fc8c",
+        "/opt/doom3-native/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+        "/opt/doom3-native/base.so": "e7a8fcfbd78636defc2073a311e4ce8f6e0d4e33b7d96e01a2be5eab6071630c",
+        "/opt/doom3-server/sabot-roster.cjs": "ad35dfb451140cef5c7556a8f86d457a5317ea6416f1ea82d0917e134254d070",
+        "/opt/game-site/bots/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff",
+        "/opt/game-site/dhewm3-roe.js": "67df33948b89e95496767642eb279bb44a04cdb94301738d6a67b80463bf70b2",
+        "/opt/game-site/dhewm3-roe.wasm": "cebd7078d223026613d39c2d6c829d712a6d00a585339ba4251d0f5288de2527",
+        "/opt/game-site/wasm-game.json": "7f9d58289cb99377a4c0fc8c4cdd0178881a0a3308f69336d70ad5191cf8ac5c",
+        "/opt/game-site/wasm-game-data.json": "3391ee48a278b331e26bbbe4004c5d8f667bca8f7e226268e0622ce861999989"
+      },
+      "httpFiles": {
+        "/opt/game-site/game-adapter.js": {
+          "bytes": 34803,
+          "sha256": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a"
+        },
+        "/opt/game-site/d3-worker.js": {
+          "bytes": 8909,
+          "sha256": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715"
+        },
+        "/opt/game-site/dhewm3-base.js": {
+          "bytes": 252568,
+          "sha256": "eb453a3acd0f641f2f7a9099a169212df011fb23037d710ca9dfc937e513717e"
+        },
+        "/opt/game-site/dhewm3-base.wasm": {
+          "bytes": 6722813,
+          "sha256": "26b27ed91f8a9b7143f2cfeb083dbeac8b5f4f15b2c9bf9f0a978c942677fc8c"
+        },
+        "/opt/game-site/bots/d3_sabot_a7.pk4": {
+          "bytes": 2399406,
+          "sha256": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+        },
+        "/opt/game-site/dhewm3-roe.js": {
+          "bytes": 517635,
+          "sha256": "67df33948b89e95496767642eb279bb44a04cdb94301738d6a67b80463bf70b2"
+        },
+        "/opt/game-site/dhewm3-roe.wasm": {
+          "bytes": 8027621,
+          "sha256": "cebd7078d223026613d39c2d6c829d712a6d00a585339ba4251d0f5288de2527"
+        },
+        "/opt/game-site/wasm-game.json": {
+          "bytes": 5547,
+          "sha256": "7f9d58289cb99377a4c0fc8c4cdd0178881a0a3308f69336d70ad5191cf8ac5c"
+        },
+        "/opt/game-site/wasm-game-data.json": {
+          "bytes": 37226,
+          "sha256": "3391ee48a278b331e26bbbe4004c5d8f667bca8f7e226268e0622ce861999989"
+        }
+      },
+      "status": {
+        "state": "sleeping",
+        "humans": 0,
+        "keepAlive": false,
+        "idleTimeoutMs": 90000,
+        "idleSince": null,
+        "startedAt": null,
+        "map": "game/mp/d3dm1",
+        "error": null,
+        "connect": "127.0.0.1:27666",
+        "protocol": null,
+        "players": [],
+        "browserPeers": 0,
+        "bots": 0,
+        "botPlayers": [],
+        "botUpdatedAt": null,
+        "botTarget": null,
+        "nativeHumans": null,
+        "botStatus": "sleeping",
+        "relay": {
+          "peers": 0,
+          "clientPackets": 0,
+          "serverPackets": 0
+        }
+      },
+      "resources": {
+        "sessions": [],
+        "nativeProcesses": []
+      }
+    },
+    {
+      "variant": "roe",
+      "container": "d3-roe-v7-save-proof-20260906",
+      "port": 32954,
+      "observedAt": "2026-09-06T11:36:00.863Z",
+      "image": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+      "startedAt": "2026-09-06T11:25:29.178621254Z",
+      "restartCount": 0,
+      "readOnlyRoot": true,
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/home/ted/wasm-game-data/doom3",
+          "Destination": "/data",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "imageFiles": {
+        "/opt/game-site/game-adapter.js": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+        "/opt/doom3-server/runtime.cjs": "5f7b2829def52cf320b8e73ab280451fd86bd1b30d1942e3d2e7576088ebf5ac",
+        "/opt/game-site/d3-worker.js": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715",
+        "/opt/game-site/dhewm3-base.js": "eb453a3acd0f641f2f7a9099a169212df011fb23037d710ca9dfc937e513717e",
+        "/opt/game-site/dhewm3-base.wasm": "26b27ed91f8a9b7143f2cfeb083dbeac8b5f4f15b2c9bf9f0a978c942677fc8c",
+        "/opt/doom3-native/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+        "/opt/doom3-native/base.so": "e7a8fcfbd78636defc2073a311e4ce8f6e0d4e33b7d96e01a2be5eab6071630c",
+        "/opt/doom3-server/sabot-roster.cjs": "ad35dfb451140cef5c7556a8f86d457a5317ea6416f1ea82d0917e134254d070",
+        "/opt/game-site/bots/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff",
+        "/opt/game-site/dhewm3-roe.js": "67df33948b89e95496767642eb279bb44a04cdb94301738d6a67b80463bf70b2",
+        "/opt/game-site/dhewm3-roe.wasm": "cebd7078d223026613d39c2d6c829d712a6d00a585339ba4251d0f5288de2527",
+        "/opt/game-site/wasm-game.json": "7f9d58289cb99377a4c0fc8c4cdd0178881a0a3308f69336d70ad5191cf8ac5c",
+        "/opt/game-site/wasm-game-data.json": "3391ee48a278b331e26bbbe4004c5d8f667bca8f7e226268e0622ce861999989"
+      },
+      "httpFiles": {
+        "/opt/game-site/game-adapter.js": {
+          "bytes": 34803,
+          "sha256": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a"
+        },
+        "/opt/game-site/d3-worker.js": {
+          "bytes": 8909,
+          "sha256": "8a8d11f99ac2668660007afbf3114e5caee9e3945f42df6737bda827e37b4715"
+        },
+        "/opt/game-site/dhewm3-base.js": {
+          "bytes": 252568,
+          "sha256": "eb453a3acd0f641f2f7a9099a169212df011fb23037d710ca9dfc937e513717e"
+        },
+        "/opt/game-site/dhewm3-base.wasm": {
+          "bytes": 6722813,
+          "sha256": "26b27ed91f8a9b7143f2cfeb083dbeac8b5f4f15b2c9bf9f0a978c942677fc8c"
+        },
+        "/opt/game-site/bots/d3_sabot_a7.pk4": {
+          "bytes": 2399406,
+          "sha256": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+        },
+        "/opt/game-site/dhewm3-roe.js": {
+          "bytes": 517635,
+          "sha256": "67df33948b89e95496767642eb279bb44a04cdb94301738d6a67b80463bf70b2"
+        },
+        "/opt/game-site/dhewm3-roe.wasm": {
+          "bytes": 8027621,
+          "sha256": "cebd7078d223026613d39c2d6c829d712a6d00a585339ba4251d0f5288de2527"
+        },
+        "/opt/game-site/wasm-game.json": {
+          "bytes": 5547,
+          "sha256": "7f9d58289cb99377a4c0fc8c4cdd0178881a0a3308f69336d70ad5191cf8ac5c"
+        },
+        "/opt/game-site/wasm-game-data.json": {
+          "bytes": 37226,
+          "sha256": "3391ee48a278b331e26bbbe4004c5d8f667bca8f7e226268e0622ce861999989"
+        }
+      },
+      "status": {
+        "state": "sleeping",
+        "humans": 0,
+        "keepAlive": false,
+        "idleTimeoutMs": 90000,
+        "idleSince": null,
+        "startedAt": null,
+        "map": "game/mp/d3dm1",
+        "error": null,
+        "connect": "127.0.0.1:27666",
+        "protocol": null,
+        "players": [],
+        "browserPeers": 0,
+        "bots": 0,
+        "botPlayers": [],
+        "botUpdatedAt": null,
+        "botTarget": null,
+        "nativeHumans": null,
+        "botStatus": "sleeping",
+        "relay": {
+          "peers": 0,
+          "clientPackets": 0,
+          "serverPackets": 0
+        }
+      },
+      "resources": {
+        "sessions": [],
+        "nativeProcesses": []
+      }
+    }
+  ],
+  "deployed": false,
+  "passed": true
+}

@@ -32,6 +32,10 @@
   let wakeClient = null;
   let joinPending = false;
   let joinPromise = null;
+  let captureFrame = 0;
+  let captureGesture = 0;
+  let captureKey = '';
+  let capturePointer = false;
 
   function cleanName(value) {
     return String(value || 'Player').replace(/[^A-Za-z0-9 _-]/g, '').trim().slice(0, 32) || 'Player';
@@ -92,6 +96,31 @@
     return state;
   }
 
+  function cancelCaptureCheck() {
+    captureGesture += 1;
+    if (captureFrame) window.cancelAnimationFrame(captureFrame);
+    captureFrame = 0;
+  }
+
+  function captureAfterNativeFrame(event) {
+    cancelCaptureCheck();
+    const gesture = captureGesture;
+    const deadline = performance.now() + 2000;
+    const check = () => {
+      captureFrame = 0;
+      if (gesture !== captureGesture || performance.now() > deadline ||
+          document.visibilityState === 'hidden') return;
+      const state = nativeState();
+      const ready = nativeCaptureIntent() && (state === 'loading' || state === 'gameplay');
+      synchronizeState(event, ready);
+      if (ready || state === 'crashed' || state === 'launcher') return;
+      captureFrame = window.requestAnimationFrame(check);
+    };
+    // SDL may consume the DOM event on a later engine frame. Keep the actual
+    // gesture briefly, but never capture merely because a menu item was clicked.
+    queueMicrotask(check);
+  }
+
   function profileArguments(values) {
     const level = QUALITY_LEVELS[values.qualityProfile] ?? QUALITY_LEVELS.balanced;
     return [
@@ -118,8 +147,8 @@
       '+set', 'r_allowResize', '1',
       '+set', 'r_colorbits', '32',
       '+set', 'r_texturebits', '32',
-      '+set', 'r_ext_multitexture', '0',
-      '+set', 'r_ignoreFastPath', '1',
+      '+set', 'r_ext_multitexture', context.variant === 'rtcw-sp' ? '1' : '0',
+      '+set', 'r_ignoreFastPath', context.variant === 'rtcw-sp' ? '0' : '1',
       '+set', 'r_lightmap', '0',
       '+set', 'r_greyscale', '0',
       '+set', 'r_textureMode', 'GL_LINEAR_MIPMAP_LINEAR',
@@ -347,14 +376,27 @@
       document.addEventListener('keydown', event => {
         if (!started) return;
         if (event.key === 'Escape') lastEscapeAt = performance.now();
-        if (event.key === 'Enter' && nativeState() === 'menu') engineFunction('ArmCaptureIntent')?.();
+        const state = nativeState();
+        if ((event.key === 'Enter' && (state === 'menu' || state === 'paused')) ||
+            (event.key === 'Escape' && state === 'paused')) {
+          captureKey = event.key;
+          engineFunction('ArmCaptureIntent')?.();
+        } else if (event.key === 'Escape') {
+          captureKey = '';
+          cancelCaptureCheck();
+        }
       }, true);
       document.addEventListener('keyup', event => {
         if (!started || (event.key !== 'Enter' && event.key !== 'Escape')) return;
-        queueMicrotask(() => synchronizeState(event, true));
+        if (captureKey === event.key) captureAfterNativeFrame(event);
+        else queueMicrotask(() => synchronizeState(event, false));
+        captureKey = '';
       });
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') writeConfiguration(true);
+        if (document.visibilityState === 'hidden') {
+          cancelCaptureCheck();
+          writeConfiguration(true);
+        }
       });
       window.addEventListener('pagehide', () => writeConfiguration(true));
     },
@@ -425,13 +467,21 @@
       document.documentElement.dataset.rtcwMenuPointer = `${Math.round(detail.x)}x${Math.round(detail.y)}`;
     },
     pointerButton(detail, event) {
-      if (!started || detail.button !== 0 || !detail.pressed || nativeState() !== 'menu') return;
-      if (context.variant === 'rtcw-mp') {
+      if (!started || detail.button !== 0) return;
+      if (!detail.pressed) {
+        if (capturePointer) captureAfterNativeFrame(event);
+        capturePointer = false;
+        return;
+      }
+      const state = nativeState();
+      if (state !== 'menu' && state !== 'paused') return;
+      if (context.variant === 'rtcw-mp' && state === 'menu') {
         if (!engineFunction('JoinTarget')?.()) return;
+        capturePointer = true;
         return beginManagedJoin(event);
       }
+      capturePointer = true;
       engineFunction('ArmCaptureIntent')?.();
-      queueMicrotask(() => synchronizeState(event, true));
     },
     captureLost(_detail, nextContext) {
       if (!started) return;
@@ -443,6 +493,7 @@
       nextContext?.setEngineState?.(nativeState());
     },
     inputCaptureChanged(captured) {
+      if (captured) cancelCaptureCheck();
       engineFunction('SetInputCaptured')?.(captured ? 1 : 0);
       document.documentElement.dataset.rtcwPointerLocked = String(Boolean(captured));
     },

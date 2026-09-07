@@ -1,0 +1,42 @@
+{
+  "scope": "Exact native/Wasm vote-start and vote-check methods with actual enums; fixture entities and notification/execution APIs. Native ASan/UBSan and Wasm SAFE_HEAP/UBSan. Not a Chrome map-vote or full-map transition proof.",
+  "sourceSHA256": "a54de08bc1ccba587cb988702219d7232362a428ddc1f9ca997062c7d7eddabc",
+  "results": [
+    {
+      "target": "native",
+      "mode": "bots",
+      "checks": 16258,
+      "cases": 989,
+      "passed": true
+    },
+    {
+      "target": "native",
+      "mode": "human-only",
+      "checks": 17,
+      "cases": 4,
+      "passed": true
+    },
+    {
+      "target": "wasm",
+      "mode": "bots",
+      "checks": 16258,
+      "cases": 989,
+      "passed": true
+    },
+    {
+      "target": "wasm",
+      "mode": "human-only",
+      "checks": 17,
+      "cases": 4,
+      "passed": true
+    }
+  ],
+  "negativeControl": {
+    "exactV3Methods": true,
+    "exitCode": 1,
+    "output": {
+      "twoHumansTwoBotsVotePassed": false
+    }
+  },
+  "passed": true
+}

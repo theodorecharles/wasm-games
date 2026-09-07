@@ -1,0 +1,10 @@
+FROM emscripten/emsdk@sha256:be96eff5810e42c632f3f8b795388a6b596e4fb21ec28b9e1fb1bc49bb3b1eef
+
+# Native code generators / server used by the canonical Zandronum cross-build.
+# Browser clients still use the pinned Emscripten SDK and source patches.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config libsdl1.2-dev libssl-dev libzstd-dev libbz2-dev libjpeg-dev \
+    zlib1g-dev libsqlite3-dev && rm -rf /var/lib/apt/lists/*
+
+# Pinned SDK port recipes/hash checks own the Ogg/Vorbis source versions.
+RUN embuilder build vorbis

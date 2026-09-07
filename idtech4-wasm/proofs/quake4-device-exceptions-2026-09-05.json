@@ -1,0 +1,42 @@
+{
+  "date": "2026-09-05",
+  "scope": "Actual linked native Wasm main and test-only side modules; no GPU, main loop or retail assets",
+  "negativeDeviceAndLexer": {
+    "engineWasmSha256": "a452475f94505ebfffd67ae858028fb3dad7b010a9b5dfb046ee326555ecdae1",
+    "countAtSafetyCap": 10000,
+    "terminated": false,
+    "scannedBytes": 235531,
+    "firstNames": ["WebAudio", "prints a Audio", "asyncio", "glOrtho", "echo", "/proc/cpuinfo", "internal - cause a sync down of game-modified userinfo", "GL_ATI_meminfo"],
+    "containsMultilineEngineHelp": true,
+    "nativeChoiceLexerResult": -1,
+    "testExitCode": 1
+  },
+  "negativeExceptions": {
+    "engineWasmSha256": "798690dd2119873f76ca47b3a5defa833eadb39d5c1741b019330ec8eaf3a527",
+    "deviceListAndLexerPassed": true,
+    "failure": "Exception thrown, but exception catching is not enabled",
+    "testExitCode": 1
+  },
+  "positive": {
+    "engineWasmSha256": "82ec8b4f5ca3d7ca33d8a0168db87d9994a14a2a18a1c02217324317479f39f8",
+    "count": 1,
+    "terminated": true,
+    "scannedBytes": 9,
+    "names": ["WebAudio"],
+    "firstNewline": null,
+    "nativeChoiceLexerResult": 2,
+    "defaultAndOpenedDeviceNamesPassed": true,
+    "mainSideModuleIdExceptionCatchPassed": true,
+    "destructorUnwoundExactlyOnce": true,
+    "testExitCode": 0
+  },
+  "fullEngineSpMpBuildPassed": true,
+  "projectCppCompileCommandsWithExceptions": 749,
+  "exactSourceTreesVerified": 4,
+  "glFocusAndAudioTestsPassed": true,
+  "stagingAndSixVariantPackageChecksPassed": true,
+  "imageId": "sha256:2894633c6bda2d9592df928a9b9887bc1d19902cad95f940d936e718a8a2a6f2",
+  "canonicalPatchSha256": "eaacd9084d88f956576b14dfc3f77ab9cc59ba7d837ff50d26eb79535f8b6e2c",
+  "deployed": false,
+  "browserAcceptance": "Recorded separately; these native tests do not prove gameplay, GPU rendering or audible output"
+}

@@ -102,4 +102,5 @@ case "$TARGET" in
   *) echo "usage: $0 quake3|rtcw|all" >&2; exit 2 ;;
 esac
 
-find "$SOURCE_ROOT" -type f -name '*.md' -delete
+# Keep the pinned source trees intact. The lcc compiler uses .md files as
+# machine descriptions (including dagcheck.md); they are build inputs.

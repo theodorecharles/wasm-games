@@ -1,0 +1,46 @@
+{
+  "scope": "Native-state and deferred-capture candidate. Built, exact-patch verified, native/adapter/staging gates passed. Chrome acceptance in progress; no live service deployment.",
+  "patchSHA256": "2da663e55acdc39fec4342e50a307b686294ceb7aec54c50f3e5ff70bc6dda32",
+  "nativeStateSourceSHA256": "8d6d5de1996f7e1bdc81c942ce77905b4b50984f145a311894686654945545ee",
+  "packaged": {
+    "openQ4-client_wasm32.js": "cc6dc74541294bc8d65f26694466c4827e4a2ba760425e874d7e4bb76aa05e2f",
+    "openQ4-client_wasm32.wasm": "4333d74fb4588dfb12396cad5f17856261f62232bce2f302408eca2577272ad2",
+    "game-adapter.js": "77799c1786556d3995f9d8ec238ccdfc730250cabb6a326435efca4c639b9d6a",
+    "q4-worker.js": "6f70c4dc7d513e29a52a25f2c1d0d28a3e84b717f56e51f10a1ab3c9ad1268b1",
+    "baseoq4/game-sp_wasm32.wasm": "fd06653d691281646875bba266fb28e1556078200572780378d6a3a56c0416a7",
+    "baseoq4/game-mp_wasm32.wasm": "802c0ddb06592f16e92fe854fd26ac31c6454de15ed57c700324f6a30226baca"
+  },
+  "image": {
+    "tag": "local/idtech4-wasm:quake4-capture-candidate",
+    "id": "sha256:17dfe3132f8fc2caed7b15c9bdaa4c9a4772cb22281889425655ed8e0237c18e",
+    "container": "940a9f282418b63effeaa7f646d67432ab439120a30461271496e6f750df674d",
+    "ports": {
+      "8088/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32875"
+        }
+      ]
+    }
+  },
+  "checks": {
+    "nativeStateCases": 24,
+    "adapterVariants": 6,
+    "shippedShaderPairs": 33,
+    "generatedShaderPairs": 24,
+    "lightingCases": 128,
+    "depthCases": 20,
+    "runtimeCases": 26,
+    "stageSite": "passed",
+    "exactPatchTrees": 4
+  },
+  "retainedPrevious": {
+    "image": "sha256:c663601a9f4f3107183c775726a09521b5f661e74ed04452604eb12f2a58f441",
+    "container": "31faa98b5a34f5ffa0b76612ee5a9afabeec9cb2b102d778ea44244146050dd2",
+    "stopped": true
+  },
+  "limitations": [
+    "Chrome input, sustained movement/firing and performance acceptance remain open.",
+    "Blood deferred; RTCW and live services untouched."
+  ]
+}

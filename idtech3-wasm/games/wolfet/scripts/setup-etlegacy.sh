@@ -13,11 +13,6 @@ ETJS_SLOT_PATCH="$ROOT/patches/etlegacy-human-slot.patch"
 ETJS_UI_PATCH="$ROOT/patches/etlegacy-etjs-ui.patch"
 ETH32_SRC="$ROOT/eth32nix"
 
-cleanup_upstream_markdown() {
-  [ ! -d "$ETLEGACY_DIR" ] || find "$ETLEGACY_DIR" -type f -name '*.md' -delete
-}
-trap cleanup_upstream_markdown EXIT
-
 if ! command -v git >/dev/null 2>&1; then
   echo "git is required" >&2
   exit 1

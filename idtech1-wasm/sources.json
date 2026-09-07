@@ -2,6 +2,13 @@
   "schemaVersion": 1,
   "sources": [
     {
+      "name": "dr_libs",
+      "repository": "https://github.com/mackron/dr_libs.git",
+      "commit": "dfe8377631000664666519fdb83da193fd8037f4",
+      "status": "pinned-upstream",
+      "patches": []
+    },
+    {
       "name": "chocolate-doom-server",
       "repository": "https://github.com/chocolate-doom/chocolate-doom.git",
       "commit": "410d96855b5df5410ff591a90efeafa889119224",
@@ -14,7 +21,13 @@
       "repository": "https://github.com/theodorecharles/idtech1-wasm.git",
       "commit": "7775ef82d1e9dfd50eb9d2824acefaeff7247458",
       "patches": [
-        "patches/crispy-browser.patch"
+        "patches/crispy-browser.patch",
+        "patches/crispy-cooperative-main-loop.patch",
+        "patches/crispy-multiplayer-telemetry.patch",
+        "patches/crispy-lobby-telemetry.patch",
+        "patches/crispy-websocket.patch",
+        "patches/crispy-browser-sleep.patch",
+        "patches/crispy-opl-browser-wait.patch"
       ]
     },
     {

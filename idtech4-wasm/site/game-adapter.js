@@ -61,9 +61,11 @@
   let state = 'menu';
   let inputMode = 'menu';
   let resumeAvailable = false;
+  let pendingResumeGesture = null;
   let captured = false;
   let lastResize = null;
   let lifecycleBound = false;
+  let forwardsBrowserFocus = false;
   const controllerHeldKeys = new Set();
   const controllerHeldButtons = new Set();
   const forwardedPointerButtons = new Set();
@@ -82,6 +84,7 @@
     startedAt: new Date().toISOString(),
     lifecycle: [],
     states: [],
+    capture: [],
     logs: [],
     input: {
       keyDown: 0, keyUp: 0, text: 0,
@@ -490,7 +493,7 @@
   }
 
   function acceptsUncapturedPointer() {
-    return inputMode === 'menu' || inputMode === 'console';
+    return inputMode === 'menu' || inputMode === 'console' || inputMode === 'continue';
   }
 
   function releaseForwardedPointerButtons() {
@@ -508,12 +511,32 @@
   function honorKeyboardResumeGesture(ctx, event) {
     if (!resumeAvailable) return;
     const exitsMenu = inputMode === 'menu' && event.code === 'Escape';
-    const exitsConsole = inputMode === 'console' && (event.code === 'Escape' || event.code === 'Backquote');
-    if (!exitsMenu && !exitsConsole) return;
+    const exitsConsole = inputMode === 'console' &&
+      (event.code === 'Backquote' || event.code === 'Escape');
+    const continues = forwardsBrowserFocus && inputMode === 'continue' &&
+      !['CapsLock', 'ScrollLock', 'PrintScreen', 'AltRight'].includes(event.code);
+    if (!exitsMenu && !exitsConsole && !continues) return;
+    if (forwardsBrowserFocus) {
+      // Quake 4's menu has an exit animation. Wait for its actual gameplay
+      // report before capturing; an intermediate paused report must not undo
+      // an optimistic request. The browser owns activation/re-lock permission.
+      pendingResumeGesture = event;
+      return;
+    }
     state = 'gameplay';
     inputMode = 'gameplay';
     resumeAvailable = false;
     ctx.setEngineState('gameplay', { capture: true, event });
+  }
+
+  function noteCaptureEvent(kind, event) {
+    if (!proof) return;
+    appendProof(proof.capture, {
+      at: proofNow(), kind, trusted: event?.isTrusted === true,
+      locked: Boolean(document.pointerLockElement),
+      focused: pageHasFocus(), active: globalThis.navigator?.userActivation?.isActive ?? null,
+      state, inputMode, message: String(event?.message || '')
+    }, 100);
   }
 
   function setControllerKey(scan, down) {
@@ -550,17 +573,37 @@
     if (lifecycleBound) return;
     lifecycleBound = true;
     const flush = () => { if (started) post({ type: 'persist' }); };
+    const focus = focused => {
+      if (forwardsBrowserFocus && !focused) pendingResumeGesture = null;
+      if (started && forwardsBrowserFocus) post({ type: 'focus', focused });
+    };
     document.addEventListener('visibilitychange', () => {
+      focus(pageHasFocus());
       if (document.visibilityState === 'hidden') flush();
     });
+    globalThis.addEventListener?.('focus', () => focus(pageHasFocus()));
+    globalThis.addEventListener?.('blur', () => focus(false));
     globalThis.addEventListener?.('pagehide', flush);
     globalThis.addEventListener?.('beforeunload', flush);
   }
 
+  function pageHasFocus() {
+    return document.visibilityState !== 'hidden' && document.hasFocus();
+  }
+
   function bindInput(ctx) {
+    if (proof) {
+      document.addEventListener('pointerlockchange', event => noteCaptureEvent('change', event));
+      document.addEventListener('pointerlockerror', event => noteCaptureEvent('error', event));
+    }
     document.addEventListener('keydown', event => {
       resumeAudioBridge();
-      if (!started || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (forwardsBrowserFocus && !event.repeat) pendingResumeGesture = null;
+      // CTRL/ALT are also native game bindings. Their own keydown events
+      // already carry the modifier flag; only suppress modified *other*
+      // keys so browser shortcuts still work. Meta remains browser-owned.
+      const physicalModifier = ['ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'].includes(event.code);
+      if (!started || event.metaKey || ((event.ctrlKey || event.altKey) && !physicalModifier)) return;
       const scan = keyScan(event.code);
       if (!scan) return;
       post({ type: 'key', scan, key: event.key.length === 1 ? event.key.charCodeAt(0) : 0, down: true, repeat: event.repeat });
@@ -597,6 +640,7 @@
     async init(ctx) {
       const descriptor = engines[ctx.variant];
       if (!descriptor) throw new Error(`Unsupported id Tech 4 variant: ${ctx.variant}`);
+      forwardsBrowserFocus = descriptor.worker === '/q4-worker.js';
       if (proof) proof.variant = ctx.variant;
       publishProof();
       noteLifecycle('init', { variant: ctx.variant });
@@ -621,7 +665,9 @@
       if (started) return;
       const descriptor = engines[ctx.variant];
       noteLifecycle('start-requested');
-      if (descriptor.worker === '/d3-worker.js') audioBridge ||= createAudioBridge();
+      if (descriptor.worker === '/d3-worker.js' || descriptor.worker === '/q4-worker.js' || descriptor.worker === '/prey-worker.js') {
+        audioBridge ||= createAudioBridge();
+      }
       resumeAudioBridge();
       void ctx.shell.resumeAudio();
       ctx.setLoading(`Preparing ${descriptor.label}…`, '', 5);
@@ -640,6 +686,19 @@
         source: document.documentElement.dataset.wasmDataSource,
         entries: data.entries.length
       });
+      if (ctx.variant === 'doom3-mp') {
+        ctx.setLoading('Starting Doom 3 multiplayer…', '', 85);
+        const response = await fetch('/api/doom3/wake', {
+          method: 'POST', credentials: 'same-origin', cache: 'no-store',
+          signal: AbortSignal.timeout(60000)
+        });
+        if (!response.ok) throw new Error(`Doom 3 match startup failed with HTTP ${response.status}.`);
+        const match = await response.json();
+        if (match.state !== 'running' || match.connect !== '127.0.0.1:27666') {
+          throw new Error('Doom 3 managed match is not ready.');
+        }
+        noteLifecycle('managed-match-ready', {map: match.map});
+      }
       ctx.setLoading(`Starting ${descriptor.label}…`, '', 90);
       const canvas = ctx.elements.canvas;
       const offscreen = canvas.transferControlToOffscreen();
@@ -664,8 +723,19 @@
           resumeAvailable = message.resumeAvailable === true;
           if (message.type === 'ready') ctx.setLoading('', '', 100);
           ctx.showRuntime(state);
+          if (forwardsBrowserFocus && state === 'gameplay' && pendingResumeGesture) {
+            const gesture = pendingResumeGesture;
+            pendingResumeGesture = null;
+            noteCaptureEvent('resume-request', gesture);
+            // Inactive transient activation does not by itself prohibit a
+            // re-lock after an API release. Let the browser decide permission.
+            ctx.setEngineState('gameplay', { capture: true, event: gesture });
+          } else if (state === 'menu') {
+            pendingResumeGesture = null;
+          }
         }
         if (message.type === 'error') {
+          pendingResumeGesture = null;
           state = 'crashed';
           ctx.log(`ERROR: ${message.text}`);
           ctx.setEngineState('crashed');
@@ -673,6 +743,7 @@
         }
       };
       worker.onerror = event => {
+        pendingResumeGesture = null;
         state = 'crashed';
         if (proof) appendProof(proof.errors, { at: proofNow(), text: String(event.message || 'Worker error') }, 100);
         ctx.setEngineState('crashed');
@@ -686,6 +757,8 @@
       noteLifecycle('worker-started', { worker: descriptor.worker, width, height });
       worker.postMessage({
         type: 'start', canvas: offscreen, variant: ctx.variant,
+        ...(ctx.variant === 'doom3-mp' ? {managedMultiplayer: true} : {}),
+        ...(forwardsBrowserFocus ? { focused: pageHasFocus() } : {}),
         entries: data.entries.map(entry => ({ path: entry.policy.mountName || entry.policy.path, file: entry.file })),
         width, height, playerName: preferences.playerName,
         engineArguments: profileArguments[preferences.qualityProfile] || profileArguments.high,
@@ -712,14 +785,20 @@
         post({ type: 'pointer-absolute', x: detail.x, y: detail.y });
       }
     },
-    pointerButton(detail) {
+    pointerButton(detail, event) {
       if (!started) return;
       resumeAudioBridge();
       const button = Number(detail.button) || 0;
       const down = Boolean(detail.pressed);
+      if (forwardsBrowserFocus && down) pendingResumeGesture = null;
       const wasForwarded = forwardedPointerButtons.has(button);
       if (!captured && !acceptsUncapturedPointer() && !(wasForwarded && !down)) return;
       forwardPointerButton(button, down, detail.x, detail.y);
+      if (forwardsBrowserFocus && !down && resumeAvailable && event) {
+        // A root-menu click may resume or enter a submenu. Only a following
+        // native gameplay transition authorizes the pending capture request.
+        pendingResumeGesture = event;
+      }
     },
     controllerFrame(detail) {
       if (!started || !detail.actions) return;

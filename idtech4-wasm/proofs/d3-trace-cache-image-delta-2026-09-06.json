@@ -1,0 +1,25 @@
+{
+  "scope": "Thirteen audited v7/v8 package files; only the base and RoE Wasm binaries differ. JavaScript, worker, adapter, manifests, native server and bots are unchanged.",
+  "before": "sha256:a7afa362d4012ae13b7bb1b81b99287e8f4d12ae24a4d5b7431ca17f4a260007",
+  "after": "sha256:3298bacc93ff78339f24e005be1839857bc46ad89d83544c7adcf5ca3e11cac3",
+  "changed": [
+    "/opt/game-site/dhewm3-base.wasm",
+    "/opt/game-site/dhewm3-roe.wasm"
+  ],
+  "compared": [
+    "/opt/game-site/game-adapter.js",
+    "/opt/doom3-server/runtime.cjs",
+    "/opt/game-site/d3-worker.js",
+    "/opt/game-site/dhewm3-base.js",
+    "/opt/game-site/dhewm3-base.wasm",
+    "/opt/doom3-native/dhewm3ded",
+    "/opt/doom3-native/base.so",
+    "/opt/doom3-server/sabot-roster.cjs",
+    "/opt/game-site/bots/d3_sabot_a7.pk4",
+    "/opt/game-site/dhewm3-roe.js",
+    "/opt/game-site/dhewm3-roe.wasm",
+    "/opt/game-site/wasm-game.json",
+    "/opt/game-site/wasm-game-data.json"
+  ],
+  "passed": true
+}

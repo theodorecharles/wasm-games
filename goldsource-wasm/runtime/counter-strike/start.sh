@@ -5,7 +5,7 @@ container_name="${CS_CONTAINER_NAME:-wasm-games-counter-strike-host}"
 runtime_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 image="${CS_SERVER_IMAGE:-wasm-games/counter-strike-yapb:4.4.957}"
 base_image="${CS_BASE_IMAGE:-yohimik/cs-web-server@sha256:1618f2cf059f2f5857f09701846767ce4089efcc41d776a47acdfa6f994ccda2}"
-bridge_port="${CS_BRIDGE_PORT:-4190}"
+bridge_port="${CS_BRIDGE_PORT:-4192}"
 webrtc_port="${CS_WEBRTC_PORT:-4191}"
 public_ip="${CS_PUBLIC_IP:-127.0.0.1}"
 map_name="${CS_MAP:-de_dust2}"
@@ -28,12 +28,19 @@ if ! docker image inspect "${image}" >/dev/null 2>&1; then
 fi
 
 if docker container inspect "${container_name}" >/dev/null 2>&1; then
+  if [[ "$(docker inspect --format '{{.State.Status}}' "${container_name}")" == exited ]]; then
+    if [[ "$(docker inspect --format '{{.Config.Image}}' "${container_name}")" != "${image}" ]]; then
+      printf 'Existing Counter-Strike container uses another image; inspect it before replacing or restarting it.\n' >&2
+      exit 1
+    fi
+    docker start "${container_name}"
+  fi
   printf 'Counter-Strike host %s already exists.\n' "${container_name}"
   docker ps --filter "name=^/${container_name}$" --format '{{.Names}} {{.Status}}'
   exit 0
 fi
 
-docker run --rm -d \
+docker run --restart unless-stopped -d \
   --name "${container_name}" \
   --platform linux/386 \
   -p "${bridge_port}:${bridge_port}/tcp" \

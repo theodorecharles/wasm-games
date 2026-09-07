@@ -1,0 +1,53 @@
+diff --git a/source/build/src/glbuild.cpp b/source/build/src/glbuild.cpp
+--- a/source/build/src/glbuild.cpp
++++ b/source/build/src/glbuild.cpp
+@@ -31,6 +31,10 @@
+ BuildGLState gl;
+ GLuint samplerObjectIDs[NUM_SAMPLERS];
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" void build_webglSyncAlphaTest(void);
++#endif
++
+ void buildgl_outputDebugMessage(uint8_t severity, const char* format, ...)
+ {
+     if (!glinfo.debugoutput || r_polymostDebug < severity)
+@@ -107,6 +111,9 @@ void buildgl_setAlphaFunc(GLenum func, GLfloat ref)
+         return;
+ 
+     glAlphaFunc(func, ref);
++#ifdef __EMSCRIPTEN__
++    build_webglSyncAlphaTest();
++#endif
+     inthash_add(&gl.state[0], GL_ALPHA_TEST_FUNC, func, 1);
+     inthash_add(&gl.state[0], GL_ALPHA_TEST_REF, *(int32_t *)&ref, 1);
+ }
+@@ -117,6 +124,9 @@ void buildgl_setEnabled(GLenum key)
+         return;
+ 
+     glEnable(key);
++#ifdef __EMSCRIPTEN__
++    if (key == GL_ALPHA_TEST) build_webglSyncAlphaTest();
++#endif
+ 
+     inthash_add(&gl.state[0], key, GL_TRUE, 1);
+ }
+@@ -127,6 +137,9 @@ void buildgl_setDisabled(GLenum key)
+         return;
+ 
+     glDisable(key);
++#ifdef __EMSCRIPTEN__
++    if (key == GL_ALPHA_TEST) build_webglSyncAlphaTest();
++#endif
+ 
+     inthash_add(&gl.state[0], key, GL_FALSE, 1);
+ }
+@@ -134,5 +147,8 @@ void buildgl_setDisabled(GLenum key)
+ void buildgl_useShaderProgram(uint32_t shaderID)
+ {
+     glUseProgram(shaderID);
++#ifdef __EMSCRIPTEN__
++    build_webglSyncAlphaTest();
++#endif
+     gl.currentShaderProgramID = shaderID;
+ }

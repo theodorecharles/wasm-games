@@ -1,0 +1,110 @@
+{
+  "scope": "Renderer JavaScript texture/program state and forwarding component tests against a recording GL sink; no GPU or Chrome acceptance.",
+  "runtimeSHA256": "c94733446d34404263f17e46adf54c1e42872449c1a0d942338044f39abd5ec6",
+  "results": [
+    {
+      "name": "first draw resolves metadata and preserves border alpha",
+      "passed": true
+    },
+    {
+      "name": "unchanged draw has no extra GL queries or uploads",
+      "passed": true
+    },
+    {
+      "name": "binding a different texture updates sampler parameters",
+      "passed": true
+    },
+    {
+      "name": "equal metadata on another texture reuses uniforms",
+      "passed": true
+    },
+    {
+      "name": "bound texture changes refresh only changed uniforms",
+      "passed": true
+    },
+    {
+      "name": "unrelated texture unit does not upload or query uniforms",
+      "passed": true
+    },
+    {
+      "name": "sampler uniform reassignment changes the consumed unit",
+      "passed": true
+    },
+    {
+      "name": "metadata arrays are copied and cannot mutate cached uniforms",
+      "passed": true
+    },
+    {
+      "name": "unbind clears previously enabled border handling",
+      "passed": true
+    },
+    {
+      "name": "texture deletion clears every tracked unit",
+      "passed": true
+    },
+    {
+      "name": "reused numeric texture name does not inherit old metadata",
+      "passed": true
+    },
+    {
+      "name": "deleted texture object cannot replace a valid binding",
+      "passed": true
+    },
+    {
+      "name": "switching programs preserves each program cache",
+      "passed": true
+    },
+    {
+      "name": "successful relink resets locations, units and uploads",
+      "passed": true
+    },
+    {
+      "name": "uniform arrays use the SDK ranged uniform1iv inputs",
+      "passed": true
+    },
+    {
+      "name": "cube bindings do not replace the 2D binding",
+      "passed": true
+    },
+    {
+      "name": "invalid active-unit and target rebinding leave tracked state intact",
+      "passed": true
+    },
+    {
+      "name": "unconverted sampler with a border texture fails closed",
+      "passed": true
+    },
+    {
+      "name": "sampler-object overrides do not silently ignore border state",
+      "passed": true
+    },
+    {
+      "name": "deleting a sampler object removes its override",
+      "passed": true
+    },
+    {
+      "name": "failed link stops metadata drawing without submitting a draw",
+      "passed": true
+    },
+    {
+      "name": "deleted current program retains its executable until unbound",
+      "passed": true
+    },
+    {
+      "name": "instanced and non-indexed draws prepare the same state",
+      "passed": true
+    },
+    {
+      "name": "shader conversion is wired without mutating the context method",
+      "passed": true
+    },
+    {
+      "name": "invalid metadata is rejected before changing valid state",
+      "passed": true
+    },
+    {
+      "name": "new-context reset drops old texture and program metadata",
+      "passed": true
+    }
+  ]
+}

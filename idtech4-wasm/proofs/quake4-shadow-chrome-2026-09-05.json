@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-05",
+  "browser": "Chrome via browser skill",
+  "url": "http://127.0.0.1:32873/?proof=quake4-shadow-retest-2026-09-05",
+  "imageId": "sha256:311d643220a2df70458e3cf447bec9db1b7b376207662e4251ff5139d9d4dfed",
+  "engineWasmSha256": "7c7c3ea597ecbe277e6c05f13346d84c2f1bde738c1921f8e7acf4a78ebaee2b",
+  "canonicalPatchSha256": "54ebd9b76f71ad3fe78a7ee38aa74865f746bf382d7cbd8e5f8fe4368e87dd8d",
+  "continueReadyAt": 150502.1,
+  "autosaveAt": 150700.4,
+  "enterDownAt": 170371.2,
+  "enterUpAt": 170372.3,
+  "continueCompletedAt": 170380,
+  "noCinematicSkipInput": true,
+  "oldShadowCrashCleared": true,
+  "workerErrors": [],
+  "visualMilestones": [
+    "Native menu and Continue screen",
+    "Moving textured space debris and publisher title",
+    "Transport interior with moving textured/lit marines, but large black areas and missing/incorrectly shaded surfaces",
+    "Natural cinematic completes to a rendered first-person pistol, crosshair and health 72 HUD; world mostly black"
+  ],
+  "audioAtFirstPerson": {"state": "running", "buffers": 957, "messages": 820688, "sources": 96, "starts": 403},
+  "shadowComparison": {
+    "originalValue": 1,
+    "temporaryDisableAt": 506597.8,
+    "result": "World remains black; weapon and HUD visible",
+    "restoredValue": 1,
+    "restoredAt": 564586.2
+  },
+  "nativeGraphicsDiagnostics": {
+    "setting": "r_ignoreGLErrors 0",
+    "observedAt": [622675.6, 622675.8, 622675.9],
+    "repeatingErrors": ["GL_INVALID_OPERATION", "GL_INVALID_VALUE", "GL_INVALID_VALUE"],
+    "callSitesIdentified": false,
+    "restoredSetting": "r_ignoreGLErrors 1",
+    "restoredAt": 772632.2
+  },
+  "vertexCacheDiagnostic": {
+    "at": 855461.8,
+    "mode": "ARB_vertex_buffer_object memory (FAST)",
+    "indexBuffersUsed": false
+  },
+  "diagnosticSave": {"name": "q4shadowdiag20260905", "savedAt": 911577.5, "crossReloadRestoreTested": false},
+  "console": {
+    "backquoteToggleWorks": true,
+    "physicalCharacterKeysWork": true,
+    "browserTextInsertionReachesNative": false,
+    "shellIncorrectlyStillReportsGameplay": true
+  },
+  "worldRenderingAccepted": false,
+  "sustainedGameplayAccepted": false,
+  "audibleListeningAccepted": false,
+  "persistenceRestoreAccepted": false,
+  "deployed": false
+}

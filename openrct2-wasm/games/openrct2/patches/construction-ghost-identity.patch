@@ -1,0 +1,46 @@
+diff --git a/src/openrct2/world/Entrance.cpp b/src/openrct2/world/Entrance.cpp
+index 5ade4db5d..27f8887dd 100644
+--- a/src/openrct2/world/Entrance.cpp
++++ b/src/openrct2/world/Entrance.cpp
+@@ -41,6 +41,10 @@ CoordsXYZD gParkEntranceGhostPosition = { 0, 0, 0, 0 };
+ 
+ CoordsXYZD gRideEntranceExitGhostPosition;
+ StationIndex gRideEntranceExitGhostStationIndex;
++// The selected construction tool may change before the old ghost is removed.
++// Keep the placed ghost's identity separate from the next requested placement.
++static RideId _rideEntranceExitGhostRideIndex = RideId::GetNull();
++static int32_t _rideEntranceExitGhostType = ENTRANCE_TYPE_RIDE_ENTRANCE;
+ 
+ static money64 RideEntranceExitPlaceGhost(
+     RideId rideIndex, const CoordsXY& entranceExitCoords, Direction direction, uint8_t placeType, StationIndex stationNum)
+@@ -92,8 +96,8 @@ void RideEntranceExitPlaceProvisionalGhost()
+     if (_currentTrackSelectionFlags.has(TrackSelectionFlag::entranceOrExit))
+     {
+         RideEntranceExitPlaceGhost(
+-            _currentRideIndex, gRideEntranceExitGhostPosition, gRideEntranceExitGhostPosition.direction,
+-            gRideEntranceExitPlaceType, gRideEntranceExitGhostStationIndex);
++            _rideEntranceExitGhostRideIndex, gRideEntranceExitGhostPosition, gRideEntranceExitGhostPosition.direction,
++            _rideEntranceExitGhostType, gRideEntranceExitGhostStationIndex);
+     }
+ }
+ 
+@@ -102,8 +106,8 @@ void RideEntranceExitRemoveGhost()
+     if (_currentTrackSelectionFlags.has(TrackSelectionFlag::entranceOrExit))
+     {
+         auto rideEntranceExitRemove = GameActions::RideEntranceExitRemoveAction(
+-            gRideEntranceExitGhostPosition, _currentRideIndex, gRideEntranceExitGhostStationIndex,
+-            gRideEntranceExitPlaceType == ENTRANCE_TYPE_RIDE_EXIT);
++            gRideEntranceExitGhostPosition, _rideEntranceExitGhostRideIndex, gRideEntranceExitGhostStationIndex,
++            _rideEntranceExitGhostType == ENTRANCE_TYPE_RIDE_EXIT);
+ 
+         rideEntranceExitRemove.SetFlags({ CommandFlag::ghost, CommandFlag::allowDuringPaused });
+         GameActions::Execute(&rideEntranceExitRemove, getGameState());
+@@ -127,6 +131,8 @@ money64 RideEntranceExitPlaceGhost(
+         gRideEntranceExitGhostPosition.y = entranceExitCoords.y;
+         gRideEntranceExitGhostPosition.direction = direction;
+         gRideEntranceExitGhostStationIndex = stationNum;
++        _rideEntranceExitGhostRideIndex = ride.id;
++        _rideEntranceExitGhostType = placeType;
+     }
+     return result;
+ }

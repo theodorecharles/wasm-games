@@ -1,0 +1,892 @@
+{
+  "observedAt": "2026-09-06T16:42:58.977Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 1057,
+        "cssWidth": 1424,
+        "height": 1057,
+        "width": 1424
+      }
+    ],
+    "fullscreen": null,
+    "log": "Save/config persistence restored at /save/prey.\n[prey-wasm] native main entered\n[prey-wasm] executable path initialized\n[prey-wasm] save path initialized\n[prey-wasm] initializing platform signal seam\n[prey-wasm] SDL browser event queue initialized\n[prey-wasm] entering common initialization\nbrowser threading: cooperative single-thread primitives\nPrey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10\nSDL video driver: (null)\nLogging console output to /home/web_user/.local/share/prey06/qconsolelog.txt\nterminal support enabled ( use +set in_tty 0 to disable )\npid: 42\n2048 MB System Memory\nbrowser networking: loopback interface only\n----- Initializing File System -----\nLoaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2\nLoaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14\nLoaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08\nLoaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c\nLoaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede\nDeferred pk4 pak001.pk4 until first map load\nDeferred pk4 pak002.pk4 until first map load\nLoaded pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe\nLoaded pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380\nLoaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190\nLoaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397\nLoaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193\nLoaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5\nCurrent search path:\n/save/prey/base\n/owner-data/base\n/owner-data/base/pak040.pk4 (468 files)\n/owner-data/base/pak020.pk4 (23 files)\n/owner-data/base/pak006.pk4 (108 files)\n/owner-data/base/pak005.pk4 (10 files)\n/owner-data/base/pak004.pk4 (3739 files)\n/owner-data/base/pak003.pk4 (4111 files)\n/owner-data/base/pak000.pk4 (3318 files)\n/owner-data/base/game03.pk4 (2 files)\n/owner-data/base/game02.pk4 (10 files)\n/owner-data/base/game01.pk4 (2 files)\n/owner-data/base/game00.pk4 (2 files)\ngame DLL: 0x0 in pak: 0x0\nAddon pk4s:\nbrowser filesystem: background reads run cooperatively\n----- Initializing Decls -----\n2661 strings read from strings/english001.lang\n[prey-wasm] EndFrame: begin\nCouldn't open journal files\n[prey-wasm] EndFrame: begin\nCouldn't exec editor.cfg - file does not exist.\nexecing default.cfg\nexecing prey06.cfg\nCouldn't exec autoexec.cfg - file does not exist.\n2661 strings read from strings/english001.lang\n[prey-wasm] EndFrame: begin\n----- Initializing OpenAL -----\nSetup OpenAL device and context\nOpenAL vendor: wasm-games\nOpenAL renderer: WebAudio bridge\nOpenAL version: 1.1\nOpenAL: EFX extension not found\nOpenAL: found 256 hardware voices\n[prey-wasm] EndFrame: begin\nWARNING: Failed to load master servers list\n\n[prey-wasm] EndFrame: begin\n----- Initializing OpenGL -----\n[prey-wasm] creating worker WebGL 1 / GLES2 context\n[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1057\nOpenGL vendor: WebKit\nOpenGL renderer: WebKit WebGL\nOpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))\n...using GL_EXT_texture_filter_anisotropic\n   maxTextureAnisotropy: 16.000000\n----- R_ReloadGLSLPrograms -----\nLoading main interaction shader\nLoading main interaction shader (Phong) \nLoading default diffuse shader\nLoading skybox cubemap shader\nLoading reflection cubemap shader\nLoading diffuse cubemap shader\nLoading Zfill shader\nLoading Zfill shader (Clip plane version)\nLoading Fog shader\nLoading BlendLight shader\nLoading Stencil shadow shader\n-------------------------------\nInit Vertex Cache\nusing GLSL renderSystem\nWill apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)\n----- OpenGL Initialization complete-----\n[prey-wasm] EndFrame: begin\n[prey-wasm] EndFrame: GUI emitted\n[prey-wasm] EndFrame: issuing backend\n[prey-wasm] backend: begin\n[prey-wasm] backend: command 0 begin\n[prey-wasm] backend: command 0 complete\n[prey-wasm] backend: command 2 begin\n[prey-wasm] backend: command 2 complete\n[prey-wasm] backend: command 1 begin\n[prey-wasm] backend: command 1 complete\n[prey-wasm] backend: command 4 begin\n[prey-wasm] backend: command 4 complete\n[prey-wasm] backend: complete\n[prey-wasm] EndFrame: backend complete\n[prey-wasm] EndFrame: frame toggled\n[prey-wasm] EndFrame: vertex cache retired\n----- Initializing Game -----\ngamename: basePrey-1\ngamedate: Jan 11 2026\nInitializing event system\n...1028 event definitions\nInitializing class hierarchy\n...366 classes, 2130016 bytes for event callbacks\nInitializing scripts\nCompiled 'script/prey_main.script': 713 ms\n----- Compile stats -----\nMemory usage:\n     Strings: 58, 6800 bytes\n  Statements: 92650, 1853000 bytes\n   Functions: 2987, 352692 bytes\n   Variables: 411160 bytes\n    Mem used: 3782148 bytes\n Static data: 3617736 bytes\n   Allocated: 5129776 bytes\n Thread size: 13224 bytes\n...11 aas types\n----- Initializing Session -----\nWARNING: Couldn't load image: _menushot\nWARNING: Couldn't load image: models/mapobjects/skybox/sun1\n----- Warnings -----\nduring Prey initialization...\nWARNING: Couldn't load image: _menushot\nWARNING: Couldn't load image: models/mapobjects/skybox/sun1\nWARNING: Failed to load master servers list\n\n----- 3 warnings -----\n[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump\n[prey-wasm] archive read cache: {\"requests\":127070,\"hits\":123347,\"backingReads\":4811,\"residentBytes\":720896,\"maxBytes\":1048576}\n[prey-wasm] frame 0: begin\n[prey-wasm] frame 0: async complete\n[prey-wasm] common frame 0: session begin\n[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4\n[prey-wasm] common frame 0: session complete, screen begin\n[prey-wasm] common frame 0: screen complete\n[prey-wasm] frame 0: common frame complete\n[prey-wasm] frame 0: complete\n[prey-wasm] frame 1: begin\n[prey-wasm] frame 1: async complete\n[prey-wasm] common frame 1: session begin\n[prey-wasm] common frame 1: session complete, screen begin\n[prey-wasm] common frame 1: screen complete\n[prey-wasm] frame 1: common frame complete\n[prey-wasm] frame 1: complete\n[prey-wasm] frame 2: begin\n[prey-wasm] frame 2: async complete\n[prey-wasm] common frame 2: session begin\n[prey-wasm] common frame 2: session complete, screen begin\n[prey-wasm] common frame 2: screen complete\n[prey-wasm] frame 2: common frame complete\n[prey-wasm] frame 2: complete\n[prey-wasm] frame 3: begin\n[prey-wasm] frame 3: async complete\n[prey-wasm] common frame 3: session begin\n[prey-wasm] common frame 3: session complete, screen begin\n[prey-wasm] common frame 3: screen complete\n[prey-wasm] frame 3: common frame complete\n[prey-wasm] frame 3: complete\n[prey-wasm] AnimPortalIn guiTime=2160 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=4208 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=6256 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=8304 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=10352 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=12400 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=14448 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=16512 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=18576 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=20640 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=22688 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=24736 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=26784 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=28848 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=30912 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=32976 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=35040 timeLine=0 noTime=0 events=4\n[prey-wasm] AnimPortalIn guiTime=37120 timeLine=0 noTime=0 events=4\n",
+    "pointerLock": null,
+    "proof": {
+      "audio": {
+        "buffers": 13,
+        "messages": 29579,
+        "sources": 256,
+        "starts": 407,
+        "state": "running"
+      },
+      "capture": [],
+      "errors": [],
+      "input": {
+        "captureChanges": 0,
+        "events": [
+          {
+            "at": 48759.8,
+            "type": "pointer-absolute",
+            "x": 141.98675496688742,
+            "y": 269.6083254439715
+          },
+          {
+            "at": 48761.1,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 48762.5,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          }
+        ],
+        "keyDown": 0,
+        "keyUp": 0,
+        "pointerAbsolute": 1,
+        "pointerDown": 1,
+        "pointerDx": 0,
+        "pointerDy": 0,
+        "pointerRelative": 0,
+        "pointerUp": 1,
+        "text": 0
+      },
+      "lifecycle": [
+        {
+          "at": 121.9,
+          "name": "init",
+          "variant": "prey"
+        },
+        {
+          "at": 132.2,
+          "files": 13,
+          "name": "initialized"
+        },
+        {
+          "at": 18773.9,
+          "name": "start-requested"
+        },
+        {
+          "at": 18794.5,
+          "entries": 13,
+          "name": "data-ready",
+          "source": "cache"
+        },
+        {
+          "at": 18794.8,
+          "height": 1057,
+          "name": "worker-started",
+          "width": 1424,
+          "worker": "/prey-worker.js"
+        }
+      ],
+      "logs": [
+        {
+          "at": 18875.8,
+          "text": "[prey-wasm] native main entered"
+        },
+        {
+          "at": 18875.9,
+          "text": "[prey-wasm] executable path initialized"
+        },
+        {
+          "at": 18875.9,
+          "text": "[prey-wasm] save path initialized"
+        },
+        {
+          "at": 18876,
+          "text": "[prey-wasm] initializing platform signal seam"
+        },
+        {
+          "at": 18876,
+          "text": "[prey-wasm] SDL browser event queue initialized"
+        },
+        {
+          "at": 18876.1,
+          "text": "[prey-wasm] entering common initialization"
+        },
+        {
+          "at": 18876.2,
+          "text": "browser threading: cooperative single-thread primitives"
+        },
+        {
+          "at": 18876.2,
+          "text": "Prey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10"
+        },
+        {
+          "at": 18876.3,
+          "text": "SDL video driver: (null)"
+        },
+        {
+          "at": 18876.3,
+          "text": "Logging console output to /home/web_user/.local/share/prey06/qconsolelog.txt"
+        },
+        {
+          "at": 18876.4,
+          "text": "terminal support enabled ( use +set in_tty 0 to disable )"
+        },
+        {
+          "at": 18876.5,
+          "text": "pid: 42"
+        },
+        {
+          "at": 18876.6,
+          "text": "2048 MB System Memory"
+        },
+        {
+          "at": 18876.6,
+          "text": "browser networking: loopback interface only"
+        },
+        {
+          "at": 18876.7,
+          "text": "----- Initializing File System -----"
+        },
+        {
+          "at": 18877.8,
+          "text": "Loaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2"
+        },
+        {
+          "at": 18878.9,
+          "text": "Loaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14"
+        },
+        {
+          "at": 18880.5,
+          "text": "Loaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08"
+        },
+        {
+          "at": 18883.3,
+          "text": "Loaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c"
+        },
+        {
+          "at": 18973.2,
+          "text": "Loaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede"
+        },
+        {
+          "at": 18973.9,
+          "text": "Deferred pk4 pak001.pk4 until first map load"
+        },
+        {
+          "at": 18974.1,
+          "text": "Deferred pk4 pak002.pk4 until first map load"
+        },
+        {
+          "at": 19119.6,
+          "text": "Loaded pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe"
+        },
+        {
+          "at": 19246.9,
+          "text": "Loaded pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380"
+        },
+        {
+          "at": 19253.6,
+          "text": "Loaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190"
+        },
+        {
+          "at": 19255.3,
+          "text": "Loaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397"
+        },
+        {
+          "at": 19255.7,
+          "text": "Loaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193"
+        },
+        {
+          "at": 19266.6,
+          "text": "Loaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5"
+        },
+        {
+          "at": 19267.2,
+          "text": "Current search path:"
+        },
+        {
+          "at": 19267.4,
+          "text": "/save/prey/base"
+        },
+        {
+          "at": 19267.6,
+          "text": "/owner-data/base"
+        },
+        {
+          "at": 19267.7,
+          "text": "/owner-data/base/pak040.pk4 (468 files)"
+        },
+        {
+          "at": 19267.8,
+          "text": "/owner-data/base/pak020.pk4 (23 files)"
+        },
+        {
+          "at": 19268,
+          "text": "/owner-data/base/pak006.pk4 (108 files)"
+        },
+        {
+          "at": 19268.1,
+          "text": "/owner-data/base/pak005.pk4 (10 files)"
+        },
+        {
+          "at": 19268.2,
+          "text": "/owner-data/base/pak004.pk4 (3739 files)"
+        },
+        {
+          "at": 19268.3,
+          "text": "/owner-data/base/pak003.pk4 (4111 files)"
+        },
+        {
+          "at": 19268.5,
+          "text": "/owner-data/base/pak000.pk4 (3318 files)"
+        },
+        {
+          "at": 19268.6,
+          "text": "/owner-data/base/game03.pk4 (2 files)"
+        },
+        {
+          "at": 19268.7,
+          "text": "/owner-data/base/game02.pk4 (10 files)"
+        },
+        {
+          "at": 19268.9,
+          "text": "/owner-data/base/game01.pk4 (2 files)"
+        },
+        {
+          "at": 19269,
+          "text": "/owner-data/base/game00.pk4 (2 files)"
+        },
+        {
+          "at": 19269.2,
+          "text": "game DLL: 0x0 in pak: 0x0"
+        },
+        {
+          "at": 19269.3,
+          "text": "Addon pk4s:"
+        },
+        {
+          "at": 19269.5,
+          "text": "browser filesystem: background reads run cooperatively"
+        },
+        {
+          "at": 19270.3,
+          "text": "----- Initializing Decls -----"
+        },
+        {
+          "at": 19693.6,
+          "text": "2661 strings read from strings/english001.lang"
+        },
+        {
+          "at": 19733.1,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 19737.3,
+          "text": "Couldn't open journal files"
+        },
+        {
+          "at": 19737.9,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 19738.1,
+          "text": "Couldn't exec editor.cfg - file does not exist."
+        },
+        {
+          "at": 19738.2,
+          "text": "execing default.cfg"
+        },
+        {
+          "at": 19738.8,
+          "text": "execing prey06.cfg"
+        },
+        {
+          "at": 19739.6,
+          "text": "Couldn't exec autoexec.cfg - file does not exist."
+        },
+        {
+          "at": 19746.1,
+          "text": "2661 strings read from strings/english001.lang"
+        },
+        {
+          "at": 19746.7,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 19746.9,
+          "text": "----- Initializing OpenAL -----"
+        },
+        {
+          "at": 19747,
+          "text": "Setup OpenAL device and context"
+        },
+        {
+          "at": 19747.4,
+          "text": "OpenAL vendor: wasm-games"
+        },
+        {
+          "at": 19747.5,
+          "text": "OpenAL renderer: WebAudio bridge"
+        },
+        {
+          "at": 19747.7,
+          "text": "OpenAL version: 1.1"
+        },
+        {
+          "at": 19747.8,
+          "text": "OpenAL: EFX extension not found"
+        },
+        {
+          "at": 19749.7,
+          "text": "OpenAL: found 256 hardware voices"
+        },
+        {
+          "at": 19749.8,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 19750,
+          "text": "WARNING: Failed to load master servers list"
+        },
+        {
+          "at": 19750.3,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 19750.4,
+          "text": "----- Initializing OpenGL -----"
+        },
+        {
+          "at": 19750.5,
+          "text": "[prey-wasm] creating worker WebGL 1 / GLES2 context"
+        },
+        {
+          "at": 19777.5,
+          "text": "[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1057"
+        },
+        {
+          "at": 19778.1,
+          "text": "OpenGL vendor: WebKit"
+        },
+        {
+          "at": 19778.4,
+          "text": "OpenGL renderer: WebKit WebGL"
+        },
+        {
+          "at": 19778.6,
+          "text": "OpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))"
+        },
+        {
+          "at": 19778.8,
+          "text": "...using GL_EXT_texture_filter_anisotropic"
+        },
+        {
+          "at": 19778.9,
+          "text": "   maxTextureAnisotropy: 16.000000"
+        },
+        {
+          "at": 19779.1,
+          "text": "----- R_ReloadGLSLPrograms -----"
+        },
+        {
+          "at": 19779.3,
+          "text": "Loading main interaction shader"
+        },
+        {
+          "at": 19781.8,
+          "text": "Loading main interaction shader (Phong) "
+        },
+        {
+          "at": 19786,
+          "text": "Loading default diffuse shader"
+        },
+        {
+          "at": 19786.5,
+          "text": "Loading skybox cubemap shader"
+        },
+        {
+          "at": 19786.9,
+          "text": "Loading reflection cubemap shader"
+        },
+        {
+          "at": 19787.3,
+          "text": "Loading diffuse cubemap shader"
+        },
+        {
+          "at": 19787.6,
+          "text": "Loading Zfill shader"
+        },
+        {
+          "at": 19787.9,
+          "text": "Loading Zfill shader (Clip plane version)"
+        },
+        {
+          "at": 19788.4,
+          "text": "Loading Fog shader"
+        },
+        {
+          "at": 19788.8,
+          "text": "Loading BlendLight shader"
+        },
+        {
+          "at": 19789.1,
+          "text": "Loading Stencil shadow shader"
+        },
+        {
+          "at": 19789.4,
+          "text": "-------------------------------"
+        },
+        {
+          "at": 19789.7,
+          "text": "Init Vertex Cache"
+        },
+        {
+          "at": 19794.8,
+          "text": "using GLSL renderSystem"
+        },
+        {
+          "at": 19795.3,
+          "text": "Will apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)"
+        },
+        {
+          "at": 19795.6,
+          "text": "----- OpenGL Initialization complete-----"
+        },
+        {
+          "at": 19846.3,
+          "text": "[prey-wasm] EndFrame: begin"
+        },
+        {
+          "at": 19847,
+          "text": "[prey-wasm] EndFrame: GUI emitted"
+        },
+        {
+          "at": 19847.5,
+          "text": "[prey-wasm] EndFrame: issuing backend"
+        },
+        {
+          "at": 19847.9,
+          "text": "[prey-wasm] backend: begin"
+        },
+        {
+          "at": 19848.2,
+          "text": "[prey-wasm] backend: command 0 begin"
+        },
+        {
+          "at": 19848.6,
+          "text": "[prey-wasm] backend: command 0 complete"
+        },
+        {
+          "at": 19848.9,
+          "text": "[prey-wasm] backend: command 2 begin"
+        },
+        {
+          "at": 19849.3,
+          "text": "[prey-wasm] backend: command 2 complete"
+        },
+        {
+          "at": 19849.8,
+          "text": "[prey-wasm] backend: command 1 begin"
+        },
+        {
+          "at": 19850.2,
+          "text": "[prey-wasm] backend: command 1 complete"
+        },
+        {
+          "at": 19850.5,
+          "text": "[prey-wasm] backend: command 4 begin"
+        },
+        {
+          "at": 19850.9,
+          "text": "[prey-wasm] backend: command 4 complete"
+        },
+        {
+          "at": 19851.2,
+          "text": "[prey-wasm] backend: complete"
+        },
+        {
+          "at": 19851.4,
+          "text": "[prey-wasm] EndFrame: backend complete"
+        },
+        {
+          "at": 19851.7,
+          "text": "[prey-wasm] EndFrame: frame toggled"
+        },
+        {
+          "at": 19852,
+          "text": "[prey-wasm] EndFrame: vertex cache retired"
+        },
+        {
+          "at": 19882.9,
+          "text": "----- Initializing Game -----"
+        },
+        {
+          "at": 19883.5,
+          "text": "gamename: basePrey-1"
+        },
+        {
+          "at": 19883.9,
+          "text": "gamedate: Jan 11 2026"
+        },
+        {
+          "at": 20154.1,
+          "text": "Initializing event system"
+        },
+        {
+          "at": 20155.2,
+          "text": "...1028 event definitions"
+        },
+        {
+          "at": 20155.9,
+          "text": "Initializing class hierarchy"
+        },
+        {
+          "at": 20156.5,
+          "text": "...366 classes, 2130016 bytes for event callbacks"
+        },
+        {
+          "at": 20157.2,
+          "text": "Initializing scripts"
+        },
+        {
+          "at": 20868.9,
+          "text": "Compiled 'script/prey_main.script': 713 ms"
+        },
+        {
+          "at": 20869.8,
+          "text": "----- Compile stats -----"
+        },
+        {
+          "at": 20870.4,
+          "text": "Memory usage:"
+        },
+        {
+          "at": 20871,
+          "text": "     Strings: 58, 6800 bytes"
+        },
+        {
+          "at": 20871.5,
+          "text": "  Statements: 92650, 1853000 bytes"
+        },
+        {
+          "at": 20871.9,
+          "text": "   Functions: 2987, 352692 bytes"
+        },
+        {
+          "at": 20872.3,
+          "text": "   Variables: 411160 bytes"
+        },
+        {
+          "at": 20872.7,
+          "text": "    Mem used: 3782148 bytes"
+        },
+        {
+          "at": 20873.1,
+          "text": " Static data: 3617736 bytes"
+        },
+        {
+          "at": 20873.5,
+          "text": "   Allocated: 5129776 bytes"
+        },
+        {
+          "at": 20873.9,
+          "text": " Thread size: 13224 bytes"
+        },
+        {
+          "at": 20874.3,
+          "text": "...11 aas types"
+        },
+        {
+          "at": 20874.7,
+          "text": "----- Initializing Session -----"
+        },
+        {
+          "at": 20875.1,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 20948.2,
+          "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+        },
+        {
+          "at": 21349.2,
+          "text": "----- Warnings -----"
+        },
+        {
+          "at": 21350.2,
+          "text": "during Prey initialization..."
+        },
+        {
+          "at": 21350.7,
+          "text": "WARNING: Couldn't load image: _menushot"
+        },
+        {
+          "at": 21351.1,
+          "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+        },
+        {
+          "at": 21352.4,
+          "text": "WARNING: Failed to load master servers list"
+        },
+        {
+          "at": 21353.5,
+          "text": "----- 3 warnings -----"
+        },
+        {
+          "at": 21354,
+          "text": "[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump"
+        },
+        {
+          "at": 21354.7,
+          "text": "[prey-wasm] archive read cache: {\"requests\":127070,\"hits\":123347,\"backingReads\":4811,\"residentBytes\":720896,\"maxBytes\":1048576}"
+        },
+        {
+          "at": 21366,
+          "text": "[prey-wasm] frame 0: begin"
+        },
+        {
+          "at": 21366.7,
+          "text": "[prey-wasm] frame 0: async complete"
+        },
+        {
+          "at": 21366.7,
+          "text": "[prey-wasm] common frame 0: session begin"
+        },
+        {
+          "at": 21366.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 21367.2,
+          "text": "[prey-wasm] common frame 0: session complete, screen begin"
+        },
+        {
+          "at": 21367.6,
+          "text": "[prey-wasm] common frame 0: screen complete"
+        },
+        {
+          "at": 21367.6,
+          "text": "[prey-wasm] frame 0: common frame complete"
+        },
+        {
+          "at": 21367.6,
+          "text": "[prey-wasm] frame 0: complete"
+        },
+        {
+          "at": 21383.9,
+          "text": "[prey-wasm] frame 1: begin"
+        },
+        {
+          "at": 21384.1,
+          "text": "[prey-wasm] frame 1: async complete"
+        },
+        {
+          "at": 21384.1,
+          "text": "[prey-wasm] common frame 1: session begin"
+        },
+        {
+          "at": 21384.4,
+          "text": "[prey-wasm] common frame 1: session complete, screen begin"
+        },
+        {
+          "at": 21384.6,
+          "text": "[prey-wasm] common frame 1: screen complete"
+        },
+        {
+          "at": 21384.7,
+          "text": "[prey-wasm] frame 1: common frame complete"
+        },
+        {
+          "at": 21384.7,
+          "text": "[prey-wasm] frame 1: complete"
+        },
+        {
+          "at": 21400.9,
+          "text": "[prey-wasm] frame 2: begin"
+        },
+        {
+          "at": 21401.1,
+          "text": "[prey-wasm] frame 2: async complete"
+        },
+        {
+          "at": 21401.1,
+          "text": "[prey-wasm] common frame 2: session begin"
+        },
+        {
+          "at": 21401.4,
+          "text": "[prey-wasm] common frame 2: session complete, screen begin"
+        },
+        {
+          "at": 21401.6,
+          "text": "[prey-wasm] common frame 2: screen complete"
+        },
+        {
+          "at": 21401.7,
+          "text": "[prey-wasm] frame 2: common frame complete"
+        },
+        {
+          "at": 21401.7,
+          "text": "[prey-wasm] frame 2: complete"
+        },
+        {
+          "at": 21417.9,
+          "text": "[prey-wasm] frame 3: begin"
+        },
+        {
+          "at": 21418.1,
+          "text": "[prey-wasm] frame 3: async complete"
+        },
+        {
+          "at": 21418.1,
+          "text": "[prey-wasm] common frame 3: session begin"
+        },
+        {
+          "at": 21418.4,
+          "text": "[prey-wasm] common frame 3: session complete, screen begin"
+        },
+        {
+          "at": 21418.7,
+          "text": "[prey-wasm] common frame 3: screen complete"
+        },
+        {
+          "at": 21418.7,
+          "text": "[prey-wasm] frame 3: common frame complete"
+        },
+        {
+          "at": 21418.7,
+          "text": "[prey-wasm] frame 3: complete"
+        },
+        {
+          "at": 23515.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=2160 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 25568.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=4208 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 27611.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=6256 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 29666.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=8304 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 31715.4,
+          "text": "[prey-wasm] AnimPortalIn guiTime=10352 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 33762.7,
+          "text": "[prey-wasm] AnimPortalIn guiTime=12400 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 35811.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=14448 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 37864.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=16512 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 39934.3,
+          "text": "[prey-wasm] AnimPortalIn guiTime=18576 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 41994.9,
+          "text": "[prey-wasm] AnimPortalIn guiTime=20640 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 44041.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=22688 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 46089.6,
+          "text": "[prey-wasm] AnimPortalIn guiTime=24736 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 48145.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=26784 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 50204,
+          "text": "[prey-wasm] AnimPortalIn guiTime=28848 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 52265.8,
+          "text": "[prey-wasm] AnimPortalIn guiTime=30912 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 54331.2,
+          "text": "[prey-wasm] AnimPortalIn guiTime=32976 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 56394.1,
+          "text": "[prey-wasm] AnimPortalIn guiTime=35040 timeLine=0 noTime=0 events=4"
+        },
+        {
+          "at": 58477.5,
+          "text": "[prey-wasm] AnimPortalIn guiTime=37120 timeLine=0 noTime=0 events=4"
+        }
+      ],
+      "persistence": {
+        "ready": true,
+        "requests": 0,
+        "root": "/save/prey"
+      },
+      "proofId": "prey-save-current",
+      "schemaVersion": 1,
+      "startedAt": "2026-09-06T16:41:59.785Z",
+      "states": [
+        {
+          "at": 21354.5,
+          "inputMode": null,
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "engine-state"
+        },
+        {
+          "at": 21354.9,
+          "inputMode": "menu",
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "ready"
+        }
+      ],
+      "variant": "prey",
+      "workerMessages": {
+        "in:audio-buffer": 416,
+        "in:audio-create-source": 256,
+        "in:audio-init": 1,
+        "in:audio-listener-float": 2356,
+        "in:audio-listener-vector": 4712,
+        "in:audio-source-action": 4,
+        "in:audio-source-float": 12124,
+        "in:audio-source-int": 5936,
+        "in:audio-source-position": 2967,
+        "in:audio-source-queue": 404,
+        "in:audio-source-unqueue": 403,
+        "in:engine-state": 1,
+        "in:log": 187,
+        "in:persistence-ready": 1,
+        "in:ready": 1,
+        "in:status": 2,
+        "out:pointer-absolute": 1,
+        "out:pointer-button": 2,
+        "out:resize": 1,
+        "out:start": 1
+      }
+    },
+    "root": {
+      "d3wasmAudioBuffers": "13",
+      "d3wasmAudioStarts": "409",
+      "d3wasmAudioState": "running",
+      "shellDataReady": "true",
+      "shellEngineState": "menu",
+      "shellHostCursor": "hidden",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmDataSource": "cache",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "prey"
+    },
+    "title": "Prey (2006)",
+    "url": "http://127.0.0.1:32877/?game=prey&proof=prey-save-current"
+  }
+}

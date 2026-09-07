@@ -37,8 +37,7 @@ for series_file in "${series_files[@]}"; do
   done < "${series_file}"
 done
 
-# Generated source checkouts contain code only; upstream Markdown stays out of
-# this workspace even though the checkout itself is ignored by Git.
-find "${source_dir}" -type f -name '*.md' -delete
+# This checkout is ignored build input. Preserve upstream documentation and
+# machine descriptions, as well as any developer notes in a prepared tree.
 
 printf '%s\n' "${source_dir}"

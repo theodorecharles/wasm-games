@@ -1,0 +1,18 @@
+{
+  "scope": "Nine source-preparation scripts: static deletion guard and shell syntax. Actual DOSBox first preparation and idempotent re-run preserve edited, untouched and nested/untracked Markdown. Removed deletion reproduced only in the disposable local clone. Not full execution of the other source preparers.",
+  "scripts": [
+    "dosbox-wasm/scripts/fetch-source",
+    "emulation-wasm/scripts/fetch-sources.sh",
+    "openrct2-wasm/games/openrct2/scripts/fetch-source",
+    "idtech2-wasm/scripts/fetch-source",
+    "idtech1-wasm/scripts/fetch-dsda-source.sh",
+    "idtech1-wasm/scripts/fetch-libtess2-source.sh",
+    "idtech3-wasm/games/wolfet/scripts/setup-etlegacy.sh",
+    "cod2-wasm/scripts/fetch-source",
+    "wolf3d-wasm/scripts/fetch-source"
+  ],
+  "dosboxCommit": "8bde9c0d99858cd7bced3887885f6d4cd0a9efd3",
+  "passes": 2,
+  "preservedFixtureFiles": 4,
+  "oldDeletionDestroysNotes": true
+}

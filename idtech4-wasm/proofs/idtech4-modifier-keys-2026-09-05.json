@@ -1,0 +1,33 @@
+{
+  "scope": "Actual browser-adapter event handlers executed with fixture DOM/worker APIs across all six suite variants; not native held-input or Chrome acceptance.",
+  "sourceSHA256": "ef44838bdad4bc65530ad030942e0f8ad7088f82c1a49b025c6368738a367b8a",
+  "fixtureSHA256": "5f279f7f96b0f6257887baa485695dbf9736467e0cafef6b06b4b9a778184ede",
+  "variants": [
+    "doom3",
+    "doom3-mp",
+    "roe",
+    "quake4",
+    "quake4-mp",
+    "prey"
+  ],
+  "casesPerVariant": {
+    "physicalModifierFlagCombinations": 32,
+    "reservedShortcutCombinations": 35
+  },
+  "modifierCases": 402,
+  "positive": {
+    "status": 0,
+    "signal": null,
+    "stdout": "id Tech 4 adapter state, identity, input, disabled-controller, persistence, pointer, resize, profile, and PWA contracts passed\n",
+    "stderr": ""
+  },
+  "negativeControl": {
+    "change": "Restore only the original blanket modifier guard.",
+    "sourceSHA256": "dcb0fc01cf615511e46168350d6f11b4e6e5c656825fb464bc3d9c6ac25230ec",
+    "status": 1,
+    "signal": null,
+    "stdout": "",
+    "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: doom3: ControlLeft modifier flags 1 must retain the physical down edge unless Meta is held\n+ actual - expected\n\n+ []\n- [\n-   {\n-     down: true,\n-     key: 0,\n-     repeat: false,\n-     scan: 224,\n-     type: 'key'\n-   }\n- ]\n\n    at exercise (file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:440:14)\n    at async file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:465:53 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: [],\n  expected: [ { type: 'key', scan: 224, key: 0, down: true, repeat: false } ],\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.19.0\n"
+  },
+  "passed": true
+}

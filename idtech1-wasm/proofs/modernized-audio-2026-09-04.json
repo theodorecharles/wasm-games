@@ -1,0 +1,1485 @@
+{
+  "passed": true,
+  "casesTested": 25,
+  "results": [
+    {
+      "mode": "both",
+      "games": "doom2,doom,tnt,plutonia,heretic,hexen,chex",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571432347,
+              "startedAt": 1788571432347,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=8a3f5b9d-308d-487c-ab9e-21e0026663bf",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 831,
+            "presented": 834,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -27262976,
+              42991616
+            ],
+            "after": [
+              -19868644,
+              42991616
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 1,
+              "devices": 1,
+              "callbacks": 206,
+              "musicSamples": 176124,
+              "sfxSamples": 851142,
+              "voicesStarted": 17,
+              "voicesFinished": 16,
+              "activeVoices": 1,
+              "scheduledBuffers": 206,
+              "nonzeroBuffers": 86,
+              "maxQueuedSeconds": 0.1660070557936546
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "doom",
+            "frames": 872,
+            "presented": 875,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              69206016,
+              -232783872
+            ],
+            "after": [
+              69206016,
+              -225389540
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 121,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 1,
+              "callbacks": 205,
+              "musicSamples": 117864,
+              "sfxSamples": 225990,
+              "voicesStarted": 9,
+              "voicesFinished": 9,
+              "activeVoices": 0,
+              "scheduledBuffers": 205,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.165984076705203
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "tnt",
+            "frames": 806,
+            "presented": 809,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -13631488,
+              41943040
+            ],
+            "after": [
+              -13631488,
+              34548667
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 5,
+              "devices": 1,
+              "callbacks": 206,
+              "musicSamples": 178174,
+              "sfxSamples": 1148502,
+              "voicesStarted": 23,
+              "voicesFinished": 18,
+              "activeVoices": 5,
+              "scheduledBuffers": 206,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.1660779301791404
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "plutonia",
+            "frames": 808,
+            "presented": 811,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              156762112,
+              14680064
+            ],
+            "after": [
+              149367739,
+              14680064
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 1,
+              "callbacks": 207,
+              "musicSamples": 168956,
+              "sfxSamples": 553034,
+              "voicesStarted": 11,
+              "voicesFinished": 11,
+              "activeVoices": 0,
+              "scheduledBuffers": 207,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.16604035004988704
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 801,
+            "presented": 804,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -42991616,
+              -34603008
+            ],
+            "after": [
+              -42991616,
+              -41997381
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 123,
+              "sustainMs": 0,
+              "peakActiveVoices": 8,
+              "devices": 1,
+              "callbacks": 208,
+              "musicSamples": 178174,
+              "sfxSamples": 1169842,
+              "voicesStarted": 20,
+              "voicesFinished": 12,
+              "activeVoices": 8,
+              "scheduledBuffers": 208,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.1659528230612275
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 811,
+            "presented": 814,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -73400320,
+              157286400
+            ],
+            "after": [
+              -67131316,
+              163560079
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 120,
+              "sustainMs": 0,
+              "peakActiveVoices": 12,
+              "devices": 1,
+              "callbacks": 204,
+              "musicSamples": 156596,
+              "sfxSamples": 595172,
+              "voicesStarted": 14,
+              "voicesFinished": 2,
+              "activeVoices": 12,
+              "scheduledBuffers": 204,
+              "nonzeroBuffers": 85,
+              "maxQueuedSeconds": 0.16600593546712394
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "chex",
+            "frames": 864,
+            "presented": 867,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              18350080,
+              -6029312
+            ],
+            "after": [
+              18350080,
+              -13423685
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 2,
+              "devices": 1,
+              "callbacks": 207,
+              "musicSamples": 178174,
+              "sfxSamples": 540048,
+              "voicesStarted": 21,
+              "voicesFinished": 19,
+              "activeVoices": 2,
+              "scheduledBuffers": 207,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.16604413884807645
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    {
+      "mode": "music",
+      "games": "doom2,heretic,hexen",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571432310,
+              "startedAt": 1788571432310,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=7bc5b8cb-9272-41d6-aeb5-2adb4a8943ca",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 869,
+            "presented": 872,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              31457280,
+              34603008
+            ],
+            "after": [
+              31457280,
+              41997340
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "music",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 124,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 1,
+              "callbacks": 208,
+              "musicSamples": 178172,
+              "sfxSamples": 0,
+              "voicesStarted": 0,
+              "voicesFinished": 0,
+              "activeVoices": 0,
+              "scheduledBuffers": 208,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.16599733962584295
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 943,
+            "presented": 946,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              10485760,
+              79691776
+            ],
+            "after": [
+              5236708,
+              84916246
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "music",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 1,
+              "callbacks": 206,
+              "musicSamples": 178174,
+              "sfxSamples": 0,
+              "voicesStarted": 0,
+              "voicesFinished": 0,
+              "activeVoices": 0,
+              "scheduledBuffers": 206,
+              "nonzeroBuffers": 87,
+              "maxQueuedSeconds": 0.16603511616552424
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 780,
+            "presented": 783,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -11534336,
+              -134217728
+            ],
+            "after": [
+              -5265332,
+              -127944049
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "music",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 121,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 1,
+              "callbacks": 205,
+              "musicSamples": 158644,
+              "sfxSamples": 0,
+              "voicesStarted": 0,
+              "voicesFinished": 0,
+              "activeVoices": 0,
+              "scheduledBuffers": 205,
+              "nonzeroBuffers": 78,
+              "maxQueuedSeconds": 0.16601480678911162
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    {
+      "mode": "sfx",
+      "games": "doom2,heretic,hexen",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571458273,
+              "startedAt": 1788571458273,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=c53095d4-4fe6-4c7e-b96f-e30a66d11601",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 916,
+            "presented": 919,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              25165824,
+              72351744
+            ],
+            "after": [
+              25165824,
+              78929109
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "sfx",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 124,
+              "sustainMs": 0,
+              "peakActiveVoices": 7,
+              "devices": 1,
+              "callbacks": 208,
+              "musicSamples": 0,
+              "sfxSamples": 1257376,
+              "voicesStarted": 23,
+              "voicesFinished": 16,
+              "activeVoices": 7,
+              "scheduledBuffers": 208,
+              "nonzeroBuffers": 82,
+              "maxQueuedSeconds": 0.1660085051156499
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 890,
+            "presented": 893,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              10485760,
+              79691776
+            ],
+            "after": [
+              5236708,
+              84916246
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "sfx",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 0,
+              "peakActiveVoices": 10,
+              "devices": 1,
+              "callbacks": 206,
+              "musicSamples": 0,
+              "sfxSamples": 1624954,
+              "voicesStarted": 23,
+              "voicesFinished": 13,
+              "activeVoices": 10,
+              "scheduledBuffers": 206,
+              "nonzeroBuffers": 85,
+              "maxQueuedSeconds": 0.16603325258957002
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 889,
+            "presented": 892,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -73400320,
+              157286400
+            ],
+            "after": [
+              -67131316,
+              163560079
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "sfx",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 119,
+              "sustainMs": 0,
+              "peakActiveVoices": 11,
+              "devices": 1,
+              "callbacks": 203,
+              "musicSamples": 0,
+              "sfxSamples": 557464,
+              "voicesStarted": 16,
+              "voicesFinished": 5,
+              "activeVoices": 11,
+              "scheduledBuffers": 203,
+              "nonzeroBuffers": 71,
+              "maxQueuedSeconds": 0.16608189393197614
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    {
+      "mode": "muted",
+      "games": "doom2,heretic,hexen",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571480899,
+              "startedAt": 1788571480899,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=2964543d-dded-45b6-98f1-8d02f70dfe08",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 879,
+            "presented": 882,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              31457280,
+              34603008
+            ],
+            "after": [
+              31457280,
+              41997340
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "muted",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 124,
+              "sustainMs": 0,
+              "peakActiveVoices": 11,
+              "devices": 1,
+              "callbacks": 208,
+              "musicSamples": 0,
+              "sfxSamples": 0,
+              "voicesStarted": 25,
+              "voicesFinished": 14,
+              "activeVoices": 11,
+              "scheduledBuffers": 208,
+              "nonzeroBuffers": 0,
+              "maxQueuedSeconds": 0.16601509265986758
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 815,
+            "presented": 818,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              10485760,
+              79691776
+            ],
+            "after": [
+              5236708,
+              84916246
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "muted",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 125,
+              "sustainMs": 0,
+              "peakActiveVoices": 11,
+              "devices": 1,
+              "callbacks": 209,
+              "musicSamples": 0,
+              "sfxSamples": 0,
+              "voicesStarted": 28,
+              "voicesFinished": 17,
+              "activeVoices": 11,
+              "scheduledBuffers": 209,
+              "nonzeroBuffers": 0,
+              "maxQueuedSeconds": 0.1660916850158749
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 718,
+            "presented": 721,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -32505856,
+              135266304
+            ],
+            "after": [
+              -40470320,
+              135266304
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "muted",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 119,
+              "sustainMs": 0,
+              "peakActiveVoices": 12,
+              "devices": 1,
+              "callbacks": 204,
+              "musicSamples": 0,
+              "sfxSamples": 0,
+              "voicesStarted": 18,
+              "voicesFinished": 6,
+              "activeVoices": 12,
+              "scheduledBuffers": 204,
+              "nonzeroBuffers": 0,
+              "maxQueuedSeconds": 0.16602514263039003
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    {
+      "mode": "disabled",
+      "games": "doom2,heretic,hexen",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571483753,
+              "startedAt": 1788571483753,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=1c0d2588-c779-4764-a79a-ed70007be7ab",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 851,
+            "presented": 854,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -27262976,
+              42991616
+            ],
+            "after": [
+              -19868644,
+              42991616
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "disabled",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 0,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 0,
+              "callbacks": 0,
+              "musicSamples": 0,
+              "sfxSamples": 0,
+              "voicesStarted": 0,
+              "voicesFinished": 0,
+              "activeVoices": 0,
+              "scheduledBuffers": 0,
+              "nonzeroBuffers": 0,
+              "maxQueuedSeconds": 0
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 872,
+            "presented": 875,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -42991616,
+              -34603008
+            ],
+            "after": [
+              -42991616,
+              -41997381
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "disabled",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 0,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 0,
+              "callbacks": 0,
+              "musicSamples": 0,
+              "sfxSamples": 0,
+              "voicesStarted": 0,
+              "voicesFinished": 0,
+              "activeVoices": 0,
+              "scheduledBuffers": 0,
+              "nonzeroBuffers": 0,
+              "maxQueuedSeconds": 0
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 838,
+            "presented": 841,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -73400320,
+              -20971520
+            ],
+            "after": [
+              -67131316,
+              -14697841
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "disabled",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 0,
+              "sustainMs": 0,
+              "peakActiveVoices": 0,
+              "devices": 0,
+              "callbacks": 0,
+              "musicSamples": 0,
+              "sfxSamples": 0,
+              "voicesStarted": 0,
+              "voicesFinished": 0,
+              "activeVoices": 0,
+              "scheduledBuffers": 0,
+              "nonzeroBuffers": 0,
+              "maxQueuedSeconds": 0
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    {
+      "mode": "both",
+      "suspended": true,
+      "games": "doom2,heretic,hexen",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571507404,
+              "startedAt": 1788571507404,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=74e28b19-ab7d-48d4-9363-3eb4c79390e2",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 860,
+            "presented": 863,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -27262976,
+              42991616
+            ],
+            "after": [
+              -19868644,
+              42991616
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": true,
+              "callbacksBeforeResume": 5,
+              "sustainMs": 0,
+              "peakActiveVoices": 1,
+              "devices": 1,
+              "callbacks": 90,
+              "musicSamples": 174076,
+              "sfxSamples": 787566,
+              "voicesStarted": 17,
+              "voicesFinished": 16,
+              "activeVoices": 1,
+              "scheduledBuffers": 90,
+              "nonzeroBuffers": 85,
+              "maxQueuedSeconds": 0.1659837643968265
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 794,
+            "presented": 797,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              10485760,
+              79691776
+            ],
+            "after": [
+              5236708,
+              84916246
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": true,
+              "callbacksBeforeResume": 5,
+              "sustainMs": 0,
+              "peakActiveVoices": 15,
+              "devices": 1,
+              "callbacks": 90,
+              "musicSamples": 174078,
+              "sfxSamples": 1648942,
+              "voicesStarted": 26,
+              "voicesFinished": 11,
+              "activeVoices": 15,
+              "scheduledBuffers": 90,
+              "nonzeroBuffers": 85,
+              "maxQueuedSeconds": 0.1660090792380955
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 765,
+            "presented": 768,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -32505856,
+              135266304
+            ],
+            "after": [
+              -40470320,
+              135266304
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": true,
+              "callbacksBeforeResume": 5,
+              "sustainMs": 0,
+              "peakActiveVoices": 12,
+              "devices": 1,
+              "callbacks": 90,
+              "musicSamples": 154548,
+              "sfxSamples": 993490,
+              "voicesStarted": 14,
+              "voicesFinished": 2,
+              "activeVoices": 12,
+              "scheduledBuffers": 90,
+              "nonzeroBuffers": 85,
+              "maxQueuedSeconds": 0.1658695737777791
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    },
+    {
+      "mode": "both",
+      "sustainMs": 30000,
+      "games": "doom2,heretic,hexen",
+      "report": {
+        "passed": true,
+        "negativeControl": false,
+        "image": "local/idtech1-wasm:audio-candidate",
+        "supervisorFromImage": true,
+        "results": [
+          {
+            "reservationConflict": 409,
+            "concurrentSameMatch": true,
+            "connectedConflict": 409,
+            "idleVariantSwitch": {
+              "state": "running",
+              "humans": 0,
+              "keepAlive": false,
+              "idleTimeoutMs": 2000,
+              "idleSince": 1788571509634,
+              "startedAt": 1788571509634,
+              "map": null,
+              "error": null,
+              "mode": "modernized",
+              "engine": "Zandronum 3.3-alpha",
+              "variant": "heretic",
+              "connect": "127.0.0.1:10666",
+              "wsPath": "/ws/zandronum?match=bfc2d75f-63ba-4cc1-a834-6fe4994c0480",
+              "peers": 0,
+              "bots": 2
+            },
+            "staleRelayRejected": true,
+            "invalidVariantRejected": true
+          },
+          {
+            "classicThenModern": true
+          },
+          {
+            "game": "doom2",
+            "frames": 14080,
+            "presented": 14083,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              25165824,
+              72351744
+            ],
+            "after": [
+              25165824,
+              78929109
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 122,
+              "sustainMs": 30000,
+              "peakActiveVoices": 14,
+              "devices": 1,
+              "callbacks": 1499,
+              "musicSamples": 2824188,
+              "sfxSamples": 10277036,
+              "voicesStarted": 179,
+              "voicesFinished": 172,
+              "activeVoices": 7,
+              "scheduledBuffers": 1499,
+              "nonzeroBuffers": 1379,
+              "maxQueuedSeconds": 0.1660663873192192
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "heretic",
+            "frames": 14266,
+            "presented": 14269,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              10485760,
+              79691776
+            ],
+            "after": [
+              5236708,
+              84916246
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 125,
+              "sustainMs": 30000,
+              "peakActiveVoices": 19,
+              "devices": 1,
+              "callbacks": 1502,
+              "musicSamples": 2828286,
+              "sfxSamples": 17685074,
+              "voicesStarted": 604,
+              "voicesFinished": 595,
+              "activeVoices": 9,
+              "scheduledBuffers": 1502,
+              "nonzeroBuffers": 1381,
+              "maxQueuedSeconds": 0.16605466371882294
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "game": "hexen",
+            "frames": 13687,
+            "presented": 13690,
+            "runtimeOrigin": "image-http",
+            "artifactHashes": {
+              "zandronum.js": "6438406cd3c3a1e93aa28006e49d6567a38e1a1784e6775b5dde463033db7c7e",
+              "zandronum.wasm": "b018f7951f5f4a70c836dcafe14f0f95fe4035e6dd9c7d8db7e793215d935cad",
+              "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+            },
+            "players": 3,
+            "before": [
+              -96468992,
+              -2097152
+            ],
+            "after": [
+              -94156502,
+              880805
+            ],
+            "movementKey": "w",
+            "attacking": 1,
+            "menus": {
+              "negativeControl": false,
+              "escapeOpenClose": true,
+              "captureLossOpenClose": true,
+              "captureLossIdempotent": true,
+              "consoleOpenClose": true
+            },
+            "audio": {
+              "mode": "both",
+              "suspendedStart": false,
+              "callbacksBeforeResume": 121,
+              "sustainMs": 30000,
+              "peakActiveVoices": 23,
+              "devices": 1,
+              "callbacks": 1499,
+              "musicSamples": 2804630,
+              "sfxSamples": 24651470,
+              "voicesStarted": 129,
+              "voicesFinished": 108,
+              "activeVoices": 21,
+              "scheduledBuffers": 1499,
+              "nonzeroBuffers": 1378,
+              "maxQueuedSeconds": 0.1660398289886551
+            },
+            "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+          },
+          {
+            "idleShutdown": true
+          }
+        ],
+        "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+      }
+    }
+  ],
+  "scope": "real native Wasm/relay with fake DOM/WebAudio; no Chrome/audible-output acceptance"
+}

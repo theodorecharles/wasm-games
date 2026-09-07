@@ -385,6 +385,18 @@ async function exerciseVariant(variant) {
     assert.deepEqual(Array.from(sockets[0].messages.at(-1)), [
       'v1:answer', { type: 'answer', sdp: 'test' }
     ], 'Counter-Strike must answer the versioned signaling protocol used by the dedicated host');
+    const BridgeEngine = vm.runInContext('WebRtcXash', sandbox);
+    const fallbackProbe = Object.create(BridgeEngine.prototype);
+    fallbackProbe.endpoint = new URL('ws://127.0.0.1:8017/websocket');
+    const attempts = [];
+    fallbackProbe.connect = async function () {
+      attempts.push(this.endpoint.href);
+      if (attempts.length === 1) throw new Error('static game site has no bridge');
+    };
+    await fallbackProbe.connectWithFallback();
+    assert.deepEqual(attempts, [
+      'ws://127.0.0.1:8017/websocket', 'ws://127.0.0.1:4192/websocket'
+    ], 'the fallback must avoid the Fetch-standard blocked signaling port 4190');
   }
 
   adapter.preferencesChanged({ playerName: 'Test; "Player"', targetFps: 90 });

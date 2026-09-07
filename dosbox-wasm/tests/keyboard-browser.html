@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Browser keyboard delivery diagnostic</title>
+<style>
+  body { font: 18px system-ui, sans-serif; margin: 2rem; }
+  textarea { display: block; width: 80%; height: 6rem; margin: 1rem 0; }
+  pre { white-space: pre-wrap; font-size: 14px; }
+</style>
+<h1>Browser keyboard delivery diagnostic</h1>
+<p>Focus the field and press keys. This page records ordinary DOM key events;
+it does not synthesize input or call a game engine.</p>
+<label for="input">Keyboard test field</label>
+<textarea id="input" spellcheck="false"></textarea>
+<pre id="events">[]</pre>
+<script>
+  const rows = [], down = new Map();
+  for (const type of ['keydown', 'keyup']) {
+    document.querySelector('#input').addEventListener(type, event => {
+      const now = performance.now();
+      const elapsed = type === 'keyup' && down.has(event.code)
+        ? now - down.get(event.code) : null;
+      if (type === 'keydown' && !event.repeat) down.set(event.code, now);
+      if (type === 'keyup') down.delete(event.code);
+      rows.push({ type, code: event.code, key: event.key, trusted: event.isTrusted,
+        repeat: event.repeat, timeStamp: event.timeStamp, receivedAt: now, heldMs: elapsed });
+      if (rows.length > 32) rows.shift();
+      document.querySelector('#events').textContent = JSON.stringify(rows, null, 2);
+    });
+  }
+</script>

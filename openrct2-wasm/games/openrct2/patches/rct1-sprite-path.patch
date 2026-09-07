@@ -1,0 +1,50 @@
+diff --git a/src/openrct2/drawing/Drawing.Sprite.cpp b/src/openrct2/drawing/Drawing.Sprite.cpp
+--- a/src/openrct2/drawing/Drawing.Sprite.cpp
++++ b/src/openrct2/drawing/Drawing.Sprite.cpp
+@@ -654,15 +654,18 @@
+-bool GfxLoadCsg()
++bool GfxLoadCsg(const IPlatformEnvironment& env)
+ {
+     LOG_VERBOSE("GfxLoadCsg()");
+ 
+-    if (Config::Get().general.rct1Path.empty())
++    // Use the resolved environment, as GfxLoadG1 does. A command-line RCT1
++    // path overrides config without changing Config::general.rct1Path.
++    const auto rct1Path = env.GetDirectoryPath(DirBase::rct1);
++    if (rct1Path.empty())
+     {
+         LOG_VERBOSE("  unable to load CSG, RCT1 path not set");
+         return false;
+     }
+ 
+-    auto pathHeaderPath = FindCsg1idatAtLocation(Config::Get().general.rct1Path);
+-    auto pathDataPath = FindCsg1datAtLocation(Config::Get().general.rct1Path);
++    auto pathHeaderPath = FindCsg1idatAtLocation(rct1Path);
++    auto pathDataPath = FindCsg1datAtLocation(rct1Path);
+     try
+     {
+         auto fileHeader = FileStream(pathHeaderPath, FileMode::open);
+diff --git a/src/openrct2/drawing/Drawing.Sprite.h b/src/openrct2/drawing/Drawing.Sprite.h
+--- a/src/openrct2/drawing/Drawing.Sprite.h
++++ b/src/openrct2/drawing/Drawing.Sprite.h
+@@ -158,7 +158,7 @@
+ // sprite catalogues
+ bool GfxLoadG1(const OpenRCT2::IPlatformEnvironment& env);
+ void GfxLoadG2PalettesFontsTracks();
+-bool GfxLoadCsg();
++bool GfxLoadCsg(const OpenRCT2::IPlatformEnvironment& env);
+ void GfxUnloadG1();
+ void GfxUnloadG2PalettesFontsTracks();
+ void GfxUnloadCsg();
+diff --git a/src/openrct2/Context.cpp b/src/openrct2/Context.cpp
+--- a/src/openrct2/Context.cpp
++++ b/src/openrct2/Context.cpp
+@@ -1009,7 +1009,7 @@
+                 return false;
+             }
+             GfxLoadG2PalettesFontsTracks();
+-            GfxLoadCsg();
++            GfxLoadCsg(*_env);
+             FontSpriteInitialiseCharacters();
+             return true;
+         }

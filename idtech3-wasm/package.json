@@ -5,7 +5,7 @@
   "description": "id Tech 3 browser-engine family workspace",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "node tests/static.test.js && node tests/security.test.js && node tests/password.test.js && node tests/rtcw-server.test.js && node tests/rtcw-adapter.test.js && node --test games/wolfet/tests/admin.test.js games/wolfet/tests/botfill.test.js games/wolfet/tests/custom-maps.test.js games/wolfet/tests/mode.test.js games/wolfet/tests/persist.test.js games/wolfet/tests/player-name.test.js",
+    "test": "python3 -B tests/rtcw-menus.test.py && node tests/static.test.js && node tests/security.test.js && node tests/password.test.js && node tests/quake3-adapter.test.js && node tests/rtcw-server.test.js && node tests/rtcw-adapter.test.js && node tests/rtcw-lightmap-state.test.js && node --test games/wolfet/tests/admin.test.js games/wolfet/tests/botfill.test.js games/wolfet/tests/custom-maps.test.js games/wolfet/tests/mode.test.js games/wolfet/tests/persist.test.js games/wolfet/tests/player-name.test.js",
     "prepare:q3": "sh scripts/prepare-source.sh quake3",
     "prepare:rtcw": "sh scripts/prepare-source.sh rtcw",
     "prepare:wolfet": "sh scripts/prepare-wolfet-source.sh",

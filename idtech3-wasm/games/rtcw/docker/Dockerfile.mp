@@ -23,6 +23,7 @@ FROM node:22-bookworm-slim
 ARG RTCW_SOURCE_COMMIT=unknown
 ARG FRAMEWORK_VERSION=dev
 LABEL org.opencontainers.image.title="RTCW MP WASM" \
+      io.wasm-game-framework.version="${FRAMEWORK_VERSION}" \
       io.wasm-game-framework.engine-source="${RTCW_SOURCE_COMMIT}"
 
 RUN apt-get update \
@@ -45,6 +46,7 @@ RUN cd /opt/rtcw-server \
     && test "$(node -p "require('/opt/wasm-game-framework/package.json').version")" = "$FRAMEWORK_VERSION"
 
 ENV WASM_GAME_VARIANT=rtcw-mp \
+    WASM_GAME_FRAMEWORK_VERSION=${FRAMEWORK_VERSION} \
     WASM_GAME_HTTP_PORT=8088 \
     WASM_GAME_SHELL_ROOT=/opt/shared-shell \
     RTCW_STATIC_PORT=8089 \

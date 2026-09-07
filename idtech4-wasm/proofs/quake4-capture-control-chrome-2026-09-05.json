@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "scope": "Independent real-Chrome pointer-lock control without engine or framework. Both direct and 400ms-delayed trusted clicks reject WrongDocumentError despite DOM focus and activation. No global cause established, no security override or live API hook.",
+  "fixture": "tests/q4-capture-browser.html",
+  "url": "http://127.0.0.1:32876/q4-capture-browser.html",
+  "records": [
+    {
+      "active": false,
+      "at": 24,
+      "focused": true,
+      "kind": "ready",
+      "locked": false
+    },
+    {
+      "active": true,
+      "at": 569.7999999970198,
+      "focused": true,
+      "kind": "request",
+      "locked": false,
+      "mode": "direct",
+      "trusted": true
+    },
+    {
+      "active": true,
+      "at": 570.4000000059605,
+      "focused": true,
+      "kind": "rejected",
+      "locked": false,
+      "message": "The root document of this element is not valid for pointer lock.",
+      "mode": "direct",
+      "name": "WrongDocumentError"
+    },
+    {
+      "active": true,
+      "at": 575.5,
+      "focused": true,
+      "kind": "error",
+      "locked": false
+    },
+    {
+      "active": true,
+      "at": 12186.79999999702,
+      "focused": true,
+      "kind": "scheduled",
+      "locked": false,
+      "trusted": true
+    },
+    {
+      "active": true,
+      "at": 12587.09999999404,
+      "focused": true,
+      "kind": "request",
+      "locked": false,
+      "mode": "delayed",
+      "trusted": true
+    },
+    {
+      "active": true,
+      "at": 12588.90000000596,
+      "focused": true,
+      "kind": "rejected",
+      "locked": false,
+      "message": "The root document of this element is not valid for pointer lock.",
+      "mode": "delayed",
+      "name": "WrongDocumentError"
+    },
+    {
+      "active": true,
+      "at": 12588.90000000596,
+      "focused": true,
+      "kind": "error",
+      "locked": false
+    }
+  ],
+  "fixtureSHA256": "98510a0801118ab8ed32da9090465fdd77931e29df09b59d628e00f2c4e00420"
+}

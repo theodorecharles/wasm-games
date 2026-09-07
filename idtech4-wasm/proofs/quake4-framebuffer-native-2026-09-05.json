@@ -1,0 +1,302 @@
+{
+  "scope": "Actual linked idImage::CopyFramebuffer, allocation and scratch resource lifecycle; recording GL sink, not browser acceptance.",
+  "patchSha256": "9970860ded1eeef154aeaabbb9e743fe92afddbe0fa3bbfd9565475324c109d4",
+  "candidateImage": "sha256:af0bbb5da44f90fa576e1c1a3d0c2af3abacab2c92d77b560c1d388fe66e3cbb",
+  "engineWasmSha256": "0423d20acc74fabb7c0a79e3e53edd293143367171377f08ddf61536e423cc00",
+  "engineJsSha256": "9a10546a6bb49b702e80a5fda2d30d0d4ccfd887d6eedb5b7c4c43e854d5c035",
+  "negative": {
+    "scope": "Actual linked engine allocation/upload/DXT decoder; recording GL sink, not browser/GPU acceptance",
+    "wasmSha256": "7a160c7dfe6b50be7570391f03fa4daebde3ee426809952b2e53c58ab77db752",
+    "baseline": false,
+    "depthBaseline": false,
+    "framebufferBaseline": true,
+    "results": [
+      {
+        "label": "alpha clip lookup: white RGB, original alpha",
+        "passed": true
+      },
+      {
+        "label": "luminance: RGB replication, opaque alpha",
+        "passed": true
+      },
+      {
+        "label": "intensity lighting lookup: RGBA replication",
+        "passed": true
+      },
+      {
+        "label": "luminance-alpha: both channels preserved",
+        "passed": true
+      },
+      {
+        "label": "RGB565: big-endian source bytes",
+        "passed": true
+      },
+      {
+        "label": "XRGB8: discard source alpha only",
+        "passed": true
+      },
+      {
+        "label": "RGB normal: X duplicated into alpha",
+        "passed": true
+      },
+      {
+        "label": "green-alpha atlas: white RGB and green coverage",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: padded block cropped",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5: encoded alpha preserved",
+        "passed": true
+      },
+      {
+        "label": "compressed atlas: decode then green-alpha swizzle",
+        "passed": true
+      },
+      {
+        "label": "compressed RGB normal: decode then alpha-X swizzle",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: transparent selector preserved",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5 normal: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "thin YCoCg: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "valid DXT5 normal stays compressed",
+        "passed": true
+      },
+      {
+        "label": "floating-point storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "depth placeholder uses a WebGL-valid sized format and unsigned-int type",
+        "passed": true
+      },
+      {
+        "label": "depth cube and mip allocations retain depth storage",
+        "passed": true
+      },
+      {
+        "label": "packed depth-stencil storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+        "passed": true
+      },
+      {
+        "label": "thin compressed chain uses RGBA at every mip",
+        "passed": true
+      },
+      {
+        "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 0, alpha 0",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 1\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 0, alpha 8",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 1\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 4, alpha 0",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 2\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 4, alpha 8",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 2\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source 0, samples 0, alpha 8",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 1\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source 0, samples 4, alpha 8",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 2\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source 1, samples 0, alpha 8",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 1\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy: source 1, samples 4, alpha 8",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 2\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:253:16\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:237:7"
+      },
+      {
+        "label": "framebuffer copy scratch resources purge and recreate",
+        "passed": false,
+        "error": "Expected values to be strictly equal:\n\n0 !== 2\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:282:14\n    at check (file:///src/idtech4-wasm/scripts/test-q4-images.mjs:117:11)\n    at file:///src/idtech4-wasm/scripts/test-q4-images.mjs:278:5"
+      }
+    ]
+  },
+  "positive": {
+    "scope": "Actual linked engine allocation/upload/DXT decoder; recording GL sink, not browser/GPU acceptance",
+    "wasmSha256": "0423d20acc74fabb7c0a79e3e53edd293143367171377f08ddf61536e423cc00",
+    "baseline": false,
+    "depthBaseline": false,
+    "framebufferBaseline": false,
+    "results": [
+      {
+        "label": "alpha clip lookup: white RGB, original alpha",
+        "passed": true
+      },
+      {
+        "label": "luminance: RGB replication, opaque alpha",
+        "passed": true
+      },
+      {
+        "label": "intensity lighting lookup: RGBA replication",
+        "passed": true
+      },
+      {
+        "label": "luminance-alpha: both channels preserved",
+        "passed": true
+      },
+      {
+        "label": "RGB565: big-endian source bytes",
+        "passed": true
+      },
+      {
+        "label": "XRGB8: discard source alpha only",
+        "passed": true
+      },
+      {
+        "label": "RGB normal: X duplicated into alpha",
+        "passed": true
+      },
+      {
+        "label": "green-alpha atlas: white RGB and green coverage",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: padded block cropped",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5: encoded alpha preserved",
+        "passed": true
+      },
+      {
+        "label": "compressed atlas: decode then green-alpha swizzle",
+        "passed": true
+      },
+      {
+        "label": "compressed RGB normal: decode then alpha-X swizzle",
+        "passed": true
+      },
+      {
+        "label": "thin DXT1: transparent selector preserved",
+        "passed": true
+      },
+      {
+        "label": "thin DXT5 normal: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "thin YCoCg: raw encoded channels retained",
+        "passed": true
+      },
+      {
+        "label": "valid DXT5 normal stays compressed",
+        "passed": true
+      },
+      {
+        "label": "floating-point storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "depth placeholder uses a WebGL-valid sized format and unsigned-int type",
+        "passed": true
+      },
+      {
+        "label": "depth cube and mip allocations retain depth storage",
+        "passed": true
+      },
+      {
+        "label": "packed depth-stencil storage unchanged",
+        "passed": true
+      },
+      {
+        "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+        "passed": true
+      },
+      {
+        "label": "thin compressed chain uses RGBA at every mip",
+        "passed": true
+      },
+      {
+        "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 0, alpha 0",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 0, alpha 8",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 4, alpha 0",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source -1, samples 4, alpha 8",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source 0, samples 0, alpha 8",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source 0, samples 4, alpha 8",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source 1, samples 0, alpha 8",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy: source 1, samples 4, alpha 8",
+        "passed": true
+      },
+      {
+        "label": "framebuffer copy scratch resources purge and recreate",
+        "passed": true
+      }
+    ]
+  },
+  "otherTests": "Actual GLEW framebuffer-procedure readiness, GL compatibility, native CPU shadows, device GUI, MAIN/SIDE exception unwinding, keyboard routing, Continue/clock/audio, 24 real-driver generated shaders, package and four exact patch trees: PASS.",
+  "unchanged": "Desktop CopyFramebuffer branch, material position shaders, JavaScript, SP/MP modules and production worker.",
+  "liveDeployment": false
+}

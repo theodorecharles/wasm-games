@@ -6,7 +6,9 @@ source_dir="$("$repo_dir/scripts/fetch-source")"
 dist_dir="$repo_dir/.work/dist"
 framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 
-"$repo_dir/build-web.sh"
+if [[ "${WOLF3D_SKIP_BUILD:-0}" != 1 ]]; then
+    "$repo_dir/build-web.sh"
+fi
 
 for required in wolf3d.js wolf3d.wasm spear.js spear.wasm wolf3d.ico wolf3d-192.png wolf3d-512.png \
     game-adapter.js wasm-game.json wasm-game-data.json \
@@ -66,8 +68,13 @@ cmp "$repo_dir/web/game-adapter.js" "$dist_dir/game-adapter.js"
 cmp "$repo_dir/web/wasm-game.json" "$dist_dir/wasm-game.json"
 cmp "$framework_dir/dist/wasm-game-framework.js" "$dist_dir/shared-shell/wasm-game-framework.js"
 cmp "$dist_dir/shared-shell/wasm-game-framework.json" "$dist_dir/wasm-game-framework.json"
-file "$dist_dir/wolf3d.wasm"
-file "$dist_dir/spear.wasm"
+node - "$dist_dir/wolf3d.wasm" "$dist_dir/spear.wasm" <<'NODE'
+const fs = require('node:fs');
+for (const file of process.argv.slice(2)) {
+    if (!WebAssembly.validate(fs.readFileSync(file))) throw new Error(`Invalid WebAssembly module: ${file}`);
+    console.log(`Validated native WebAssembly module: ${file}`);
+}
+NODE
 if cmp -s "$dist_dir/wolf3d.wasm" "$dist_dir/spear.wasm"; then
     printf 'Wolfenstein 3D and Spear of Destiny unexpectedly produced the same native module.\n' >&2
     exit 1

@@ -42,6 +42,8 @@ curl -fsS "http://127.0.0.1:$port/app.webmanifest?variant=jill2" | jq -e '.id ==
 curl -fsS "http://127.0.0.1:$port/app.webmanifest?variant=nfs" | jq -e '.id == "/apps/dosbox/nfs"' >/dev/null
 curl -fsS "http://127.0.0.1:$port/app.webmanifest?variant=simcity2000" | jq -e '.id == "/apps/dosbox/simcity2000"' >/dev/null
 curl -fsSI "http://127.0.0.1:$port/dosbox.wasm" | grep -qi 'content-type: application/wasm'
+curl -fsS "http://127.0.0.1:$port/browser-pointer.conf" | cmp - "$site_dir/browser-pointer.conf"
+curl -fsS "http://127.0.0.1:$port/gta-sound.ini" | cmp - "$site_dir/gta-sound.ini"
 for variant in jill1 jill2 jill3 jazz duke1 duke2 gta nfs simcity2000; do
   curl -fsS "http://127.0.0.1:$port/game-data/status?variant=$variant" | \
     jq -e --arg variant "$variant" '.variant == $variant and .ready == false and (.files | length > 0)' >/dev/null

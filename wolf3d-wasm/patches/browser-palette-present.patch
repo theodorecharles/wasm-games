@@ -1,0 +1,64 @@
+diff --git a/id_vl.cpp b/id_vl.cpp
+--- a/id_vl.cpp
++++ b/id_vl.cpp
+@@ -239,5 +239,17 @@
+ */
+ 
++#ifdef WOLF4SDL_WEB
++static void VL_WebPresentPalette()
++{
++    // SDL 1's browser palette setter updates colors, but only an unlock
++    // presents indexed pixels. Static dialogs do not otherwise redraw after
++    // fading in, unlike the blinking row menus.
++    if (SDL_LockSurface(screen) < 0)
++        Quit("VL_WebPresentPalette: could not lock browser surface: %s", SDL_GetError());
++    SDL_UnlockSurface(screen);
++}
++#endif
++
+ void VL_SetColor	(int color, int red, int green, int blue)
+ {
+     SDL_Color col = { red, green, blue };
+@@ -244,7 +256,12 @@
+     curpal[color] = col;
+ 
+     if(screenBits == 8)
++    {
+         SDL_SetPalette(screen, SDL_PHYSPAL, &col, color, 1);
++#ifdef WOLF4SDL_WEB
++        VL_WebPresentPalette();
++#endif
++    }
+     else
+     {
+         SDL_SetPalette(curSurface, SDL_LOGPAL, &col, color, 1);
+@@ -286,7 +303,12 @@
+     memcpy(curpal, palette, sizeof(SDL_Color) * 256);
+ 
+     if(screenBits == 8)
++    {
+         SDL_SetPalette(screen, SDL_PHYSPAL, palette, 0, 256);
++#ifdef WOLF4SDL_WEB
++        if (forceupdate) VL_WebPresentPalette();
++#endif
++    }
+     else
+     {
+         SDL_SetPalette(curSurface, SDL_LOGPAL, palette, 0, 256);
+diff --git a/id_vl.h b/id_vl.h
+--- a/id_vl.h
++++ b/id_vl.h
+@@ -59,7 +59,13 @@
+ }
+ void inline VL_ClearScreen(int color)
+ {
++#ifdef WOLF4SDL_WEB
++    // SDL_FillRect paints its canvas backing, not our indexed pixel buffer.
++    // Use the same indexed write path as all other native drawing.
++    VL_BarScaledCoord(0, 0, screenWidth, screenHeight, color);
++#else
+     SDL_FillRect(curSurface, NULL, color);
++#endif
+ }
+ 
+ void VL_MungePic                (byte *source, unsigned width, unsigned height);

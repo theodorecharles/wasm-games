@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds the Counter-Strike menu library (Velaron/mainui_cpp fork) with the
-# no-quit patch applied, producing native/cs-menu-framework.wasm.
+# browser managed-menu and side-module isolation patches applied, producing
+# native/cs-menu-framework.wasm.
 #
 # The cs16-client cmake build compiles the menu as a static archive (the
 # emsdk CMake platform disables shared libraries), so the archive is linked
@@ -16,6 +17,9 @@ mainui_repo="${MAINUI_CPP_REPO:-https://github.com/theodorecharles/mainui_cpp}"
 cs16_commit="${CS16_CLIENT_COMMIT:-d6ff2a863cf38d17f3610114d32bc3bd77ff3afa}"
 mainui_commit="${MAINUI_CPP_COMMIT:-024efda8f2078ba27767ce1140d4c6394beeb0f5}"
 menu_patch="${CS_MENU_PATCH:-${repo_dir}/games/counter-strike/patches/cs16/main-menu.patch}"
+globals_patch="${repo_dir}/games/counter-strike/patches/cs16/menu-globals.patch"
+managed_patch="${repo_dir}/games/counter-strike/patches/cs16/managed-menu.patch"
+build_image="${CS_MENU_BUILD_IMAGE:-goldsource-cs-menu:build}"
 output="${CS_MENU_OUTPUT:-${repo_dir}/native/cs-menu-framework.wasm}"
 
 build_context="$(mktemp -d -t goldsource-cs-menu-build.XXXXXX)"
@@ -32,21 +36,15 @@ test "$(git -C "${build_context}/src/3rdparty/mainui_cpp" remote get-url origin)
 test "$(git -C "${build_context}/src/3rdparty/mainui_cpp" rev-parse HEAD)" = "${mainui_commit}"
 git -C "${build_context}/src/3rdparty/mainui_cpp" apply --check "${menu_patch}"
 git -C "${build_context}/src/3rdparty/mainui_cpp" apply "${menu_patch}"
+git -C "${build_context}/src/3rdparty/mainui_cpp" apply --check "${globals_patch}"
+git -C "${build_context}/src/3rdparty/mainui_cpp" apply "${globals_patch}"
+git -C "${build_context}/src/3rdparty/mainui_cpp" apply --check "${managed_patch}"
+git -C "${build_context}/src/3rdparty/mainui_cpp" apply "${managed_patch}"
 
-cat > "${build_context}/Dockerfile" << 'EOF'
-FROM emscripten/emsdk:4.0.17
-WORKDIR /cs
-COPY src .
-RUN emcmake cmake -S . -B build -DMAINUI_USE_STB=ON \
-      -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF \
-      -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC && \
-    cmake --build build --config Release --target menu && \
-    em++ -sSIDE_MODULE=1 -Oz -o menu_emscripten_wasm32.wasm \
-      build/3rdparty/mainui_cpp/menu_emscripten_wasm32.a
-EOF
+cp "${repo_dir}/scripts/cs-menu.Dockerfile" "${build_context}/Dockerfile"
 
-docker build --pull --progress=plain -f "${build_context}/Dockerfile" -t goldsource-cs-menu:build "${build_context}"
-container_id="$(docker create goldsource-cs-menu:build)"
+docker build --pull --progress=plain -f "${build_context}/Dockerfile" -t "${build_image}" "${build_context}"
+container_id="$(docker create "${build_image}")"
 docker cp "${container_id}:/cs/menu_emscripten_wasm32.wasm" "${output}"
 docker rm -f "${container_id}" >/dev/null
-echo "Built ${output} from cs16-client ${cs16_commit} (mainui_cpp with patches/cs16/main-menu.patch)."
+echo "Built ${output} from cs16-client ${cs16_commit} (mainui_cpp managed browser menu + isolated globals)."

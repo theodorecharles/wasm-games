@@ -1,0 +1,16 @@
+diff --git a/id_in.cpp b/id_in.cpp
+--- a/id_in.cpp
++++ b/id_in.cpp
+@@ -455,6 +455,12 @@
+     while (SDL_PollEvent(&event))
+     {
+         processEvent(&event);
++#ifdef WOLF4SDL_WEB
++        // Let menu controls observe each key-down before draining its release.
++        // A quick browser press/release can otherwise vanish in this one pump.
++        if ((WolfWasmRuntimeState == 1 || WolfWasmRuntimeState == 4) && event.type == SDL_KEYDOWN)
++            break;
++#endif
+     }
+ }
+ 

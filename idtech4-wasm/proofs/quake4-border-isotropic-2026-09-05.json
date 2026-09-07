@@ -1,0 +1,9253 @@
+{
+  "scope": "Native desktop GL border-sampling reference versus three inadequate substitutes and an explicit isotropic GLSL prototype. Synthetic real-GPU pixels; not production shader execution, not a shipped repair, not Chrome acceptance.",
+  "reference": "https://registry.khronos.org/OpenGL/specs/gl/glspec46.core.pdf",
+  "fixtureSHA256": "6b16e4c1e37b38c17d0387ba13df50439e7a9048892fb5e772aa7cabe9a16e79",
+  "prototypeSHA256": "d2bcaf6a31a4e7238da1a2c224918c0afd2bf7d76cbbc1c3ab72403d5b506e91",
+  "limits": [
+    "explicit isotropic LOD only; anisotropic and implicit-derivative sampling still need coverage",
+    "repeat models a newly allocated texture after rejected wrap requests; it does not replay a Chrome context"
+  ],
+  "driver": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+  "version": "4.6 (Compatibility Profile) Mesa 26.1.6-1",
+  "samplesPerCase": 121,
+  "cases": [
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 220,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 220,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 220,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        56,
+        158,
+        99,
+        150
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 220,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 112,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        52
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 220,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        56,
+        158,
+        99,
+        150
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 220,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 112,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        52
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 187,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        81,
+        137,
+        110,
+        148
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 198,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 107,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        26,
+        68,
+        54,
+        58
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 177,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        106,
+        115,
+        122,
+        147
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 177,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        31,
+        58,
+        48,
+        64
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 181,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        105,
+        105,
+        96,
+        177
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 182,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 129,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        49,
+        53,
+        46,
+        87
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 180,
+      "maximumChannelDifference": 143,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        95
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 180,
+      "maximumChannelDifference": 143,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        95
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "candidateCenter": [
+        156,
+        174,
+        196,
+        160
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        56,
+        158,
+        99,
+        150
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        180
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        56,
+        158,
+        99,
+        150
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "candidateCenter": [
+        141,
+        158,
+        179,
+        150
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        180
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 147,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        81,
+        137,
+        110,
+        148
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 157,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 118,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "candidateCenter": [
+        124,
+        137,
+        150,
+        148
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        26,
+        68,
+        54,
+        185
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 173,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        106,
+        115,
+        122,
+        147
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 173,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 103,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "candidateCenter": [
+        106,
+        115,
+        122,
+        147
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        31,
+        58,
+        48,
+        191
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 113,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        105,
+        105,
+        96,
+        177
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 113,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 74,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "candidateCenter": [
+        105,
+        105,
+        96,
+        177
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        49,
+        53,
+        46,
+        215
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 180,
+      "maximumChannelDifference": 82,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        223
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 180,
+      "maximumChannelDifference": 82,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        8,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        223
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        87,
+        96,
+        133,
+        103
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 99,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        20,
+        48,
+        43,
+        45
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        87,
+        96,
+        133,
+        103
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 99,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        45
+      ],
+      "candidateEdge": [
+        20,
+        48,
+        43,
+        45
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 187,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        53
+      ],
+      "candidateEdge": [
+        83,
+        90,
+        136,
+        134
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        53
+      ],
+      "candidateEdge": [
+        51,
+        90,
+        82,
+        105
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 113,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        53
+      ],
+      "candidateEdge": [
+        51,
+        90,
+        82,
+        105
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        53
+      ],
+      "candidateEdge": [
+        26,
+        45,
+        41,
+        53
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 215,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        79,
+        84,
+        139,
+        166
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 215,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 130,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        31,
+        42,
+        40,
+        60
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 216,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        105
+      ],
+      "candidateEdge": [
+        128,
+        116,
+        103,
+        213
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 216,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        105
+      ],
+      "candidateEdge": [
+        120,
+        116,
+        98,
+        209
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 244,
+      "maximumChannelDifference": 157,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        105
+      ],
+      "candidateEdge": [
+        120,
+        116,
+        98,
+        209
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        105
+      ],
+      "candidateEdge": [
+        60,
+        58,
+        49,
+        105
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 228,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 228,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 180,
+      "maximumChannelDifference": 171,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        66,
+        63,
+        52,
+        114
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 468,
+      "maximumChannelDifference": 228,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 468,
+      "maximumChannelDifference": 228,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 180,
+      "maximumChannelDifference": 171,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        114
+      ],
+      "candidateEdge": [
+        66,
+        63,
+        52,
+        114
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "candidateCenter": [
+        102,
+        112,
+        70,
+        198
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        87,
+        96,
+        133,
+        103
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        20,
+        48,
+        43,
+        173
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        87,
+        96,
+        133,
+        103
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        40,
+        96,
+        85,
+        90
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "candidateCenter": [
+        87,
+        96,
+        173,
+        188
+      ],
+      "referenceEdge": [
+        20,
+        48,
+        43,
+        173
+      ],
+      "candidateEdge": [
+        20,
+        48,
+        43,
+        173
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 187,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        180
+      ],
+      "candidateEdge": [
+        83,
+        90,
+        136,
+        134
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 206,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        180
+      ],
+      "candidateEdge": [
+        51,
+        90,
+        82,
+        105
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 318,
+      "maximumChannelDifference": 118,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        180
+      ],
+      "candidateEdge": [
+        51,
+        90,
+        82,
+        105
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "candidateCenter": [
+        126,
+        90,
+        156,
+        177
+      ],
+      "referenceEdge": [
+        26,
+        45,
+        41,
+        180
+      ],
+      "candidateEdge": [
+        26,
+        45,
+        41,
+        180
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 207,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        79,
+        84,
+        139,
+        166
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 207,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 119,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "candidateCenter": [
+        164,
+        84,
+        139,
+        166
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        31,
+        42,
+        40,
+        188
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 135,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        232
+      ],
+      "candidateEdge": [
+        128,
+        116,
+        103,
+        213
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 135,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        232
+      ],
+      "candidateEdge": [
+        120,
+        116,
+        98,
+        209
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 242,
+      "maximumChannelDifference": 90,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        232
+      ],
+      "candidateEdge": [
+        120,
+        116,
+        98,
+        209
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "candidateCenter": [
+        128,
+        116,
+        103,
+        213
+      ],
+      "referenceEdge": [
+        60,
+        58,
+        49,
+        232
+      ],
+      "candidateEdge": [
+        60,
+        58,
+        49,
+        232
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 132,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 132,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 180,
+      "maximumChannelDifference": 99,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        66,
+        63,
+        52,
+        241
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 468,
+      "maximumChannelDifference": 132,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 468,
+      "maximumChannelDifference": 132,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 180,
+      "maximumChannelDifference": 99,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        132,
+        126,
+        104,
+        228
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        16,
+        4
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 6,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "candidateCenter": [
+        132,
+        126,
+        104,
+        228
+      ],
+      "referenceEdge": [
+        66,
+        63,
+        52,
+        241
+      ],
+      "candidateEdge": [
+        66,
+        63,
+        52,
+        241
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        42,
+        112,
+        145,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        20,
+        56,
+        47,
+        47
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        42,
+        112,
+        145,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        47
+      ],
+      "candidateEdge": [
+        20,
+        56,
+        47,
+        47
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 158,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        54
+      ],
+      "candidateEdge": [
+        67,
+        98,
+        121,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 168,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        54
+      ],
+      "candidateEdge": [
+        51,
+        98,
+        87,
+        107
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 99,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        54
+      ],
+      "candidateEdge": [
+        51,
+        98,
+        87,
+        107
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 1,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        54
+      ],
+      "candidateEdge": [
+        26,
+        49,
+        43,
+        54
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 150,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        92,
+        84,
+        96,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 150,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 89,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        60
+      ],
+      "candidateEdge": [
+        31,
+        42,
+        40,
+        60
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 150,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        69
+      ],
+      "candidateEdge": [
+        89,
+        86,
+        89,
+        144
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 152,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        69
+      ],
+      "candidateEdge": [
+        74,
+        86,
+        81,
+        137
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        69
+      ],
+      "candidateEdge": [
+        74,
+        86,
+        81,
+        137
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 1,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        69
+      ],
+      "candidateEdge": [
+        37,
+        43,
+        40,
+        69
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 468,
+      "maximumChannelDifference": 154,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 468,
+      "maximumChannelDifference": 154,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 180,
+      "maximumChannelDifference": 116,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        43,
+        44,
+        41,
+        77
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 154,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 154,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 180,
+      "maximumChannelDifference": 116,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        77
+      ],
+      "candidateEdge": [
+        43,
+        44,
+        41,
+        77
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        40,
+        112,
+        94,
+        94
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        42,
+        112,
+        145,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        20,
+        56,
+        47,
+        174
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        42,
+        112,
+        145,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 196,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        40,
+        112,
+        94,
+        94
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "candidateCenter": [
+        127,
+        112,
+        145,
+        133
+      ],
+      "referenceEdge": [
+        20,
+        56,
+        47,
+        174
+      ],
+      "candidateEdge": [
+        20,
+        56,
+        47,
+        174
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 147,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        181
+      ],
+      "candidateEdge": [
+        67,
+        98,
+        121,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 157,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        181
+      ],
+      "candidateEdge": [
+        51,
+        98,
+        87,
+        107
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 118,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        181
+      ],
+      "candidateEdge": [
+        51,
+        98,
+        87,
+        107
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 1,
+      "referenceCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "candidateCenter": [
+        109,
+        98,
+        121,
+        133
+      ],
+      "referenceEdge": [
+        26,
+        49,
+        43,
+        181
+      ],
+      "candidateEdge": [
+        26,
+        49,
+        43,
+        181
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 138,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        92,
+        84,
+        96,
+        133
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 138,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 103,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        63,
+        84,
+        79,
+        120
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "candidateCenter": [
+        92,
+        84,
+        96,
+        133
+      ],
+      "referenceEdge": [
+        31,
+        42,
+        40,
+        188
+      ],
+      "candidateEdge": [
+        31,
+        42,
+        40,
+        188
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 118,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        196
+      ],
+      "candidateEdge": [
+        89,
+        86,
+        89,
+        144
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 480,
+      "maximumChannelDifference": 120,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        196
+      ],
+      "candidateEdge": [
+        74,
+        86,
+        81,
+        137
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 320,
+      "maximumChannelDifference": 90,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        196
+      ],
+      "candidateEdge": [
+        74,
+        86,
+        81,
+        137
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 1,
+      "referenceCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "candidateCenter": [
+        89,
+        86,
+        89,
+        144
+      ],
+      "referenceEdge": [
+        37,
+        43,
+        40,
+        196
+      ],
+      "candidateEdge": [
+        37,
+        43,
+        40,
+        196
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 468,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 468,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 180,
+      "maximumChannelDifference": 76,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        43,
+        44,
+        41,
+        204
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 468,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 180,
+      "maximumChannelDifference": 76,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        86,
+        88,
+        82,
+        154
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        7,
+        5
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 4,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "candidateCenter": [
+        86,
+        88,
+        82,
+        154
+      ],
+      "referenceEdge": [
+        43,
+        44,
+        41,
+        204
+      ],
+      "candidateEdge": [
+        43,
+        44,
+        41,
+        204
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 112,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        52
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 112,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        52
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        52
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 144,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 150,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 244,
+      "maximumChannelDifference": 97,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        58
+      ],
+      "candidateEdge": [
+        26,
+        68,
+        54,
+        58
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 162,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 162,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 101,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        64
+      ],
+      "candidateEdge": [
+        31,
+        58,
+        48,
+        64
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 176,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 176,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 244,
+      "maximumChannelDifference": 129,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        87
+      ],
+      "candidateEdge": [
+        49,
+        53,
+        46,
+        87
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 180,
+      "maximumChannelDifference": 143,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        95
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 191,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 180,
+      "maximumChannelDifference": 143,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 0,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        95
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        95
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 384,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "nearest",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateCenter": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "referenceEdge": [
+        40,
+        174,
+        128,
+        108
+      ],
+      "candidateEdge": [
+        40,
+        174,
+        128,
+        108
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "linear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        180
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 468,
+      "maximumChannelDifference": 179,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 180,
+      "maximumChannelDifference": 131,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        40,
+        158,
+        119,
+        104
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "candidateCenter": [
+        40,
+        158,
+        119,
+        104
+      ],
+      "referenceEdge": [
+        20,
+        79,
+        60,
+        180
+      ],
+      "candidateEdge": [
+        20,
+        79,
+        60,
+        180
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 154,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 157,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 244,
+      "maximumChannelDifference": 118,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        51,
+        137,
+        108,
+        116
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 0.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "candidateCenter": [
+        51,
+        137,
+        108,
+        116
+      ],
+      "referenceEdge": [
+        26,
+        68,
+        54,
+        185
+      ],
+      "candidateEdge": [
+        26,
+        68,
+        54,
+        185
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 162,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 468,
+      "maximumChannelDifference": 162,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 180,
+      "maximumChannelDifference": 103,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        63,
+        115,
+        96,
+        128
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 1,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "candidateCenter": [
+        63,
+        115,
+        96,
+        128
+      ],
+      "referenceEdge": [
+        31,
+        58,
+        48,
+        191
+      ],
+      "candidateEdge": [
+        31,
+        58,
+        48,
+        191
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 113,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 476,
+      "maximumChannelDifference": 113,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 244,
+      "maximumChannelDifference": 74,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        97,
+        105,
+        92,
+        174
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 2.5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "candidateCenter": [
+        97,
+        105,
+        92,
+        174
+      ],
+      "referenceEdge": [
+        49,
+        53,
+        46,
+        215
+      ],
+      "candidateEdge": [
+        49,
+        53,
+        46,
+        215
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 180,
+      "maximumChannelDifference": 82,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 3,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        223
+      ]
+    },
+    {
+      "method": "rejected-wrap-default-repeat",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "edge-substitution",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 468,
+      "maximumChannelDifference": 109,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "hard-outside-cutoff",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 180,
+      "maximumChannelDifference": 82,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        109,
+        107,
+        93,
+        191
+      ]
+    },
+    {
+      "method": "explicit-isotropic-prototype",
+      "size": [
+        1,
+        8
+      ],
+      "borderAlpha": 1,
+      "filter": "trilinear",
+      "lod": 5,
+      "differentChannels": 0,
+      "maximumChannelDifference": 0,
+      "referenceCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "candidateCenter": [
+        109,
+        107,
+        93,
+        191
+      ],
+      "referenceEdge": [
+        54,
+        53,
+        46,
+        223
+      ],
+      "candidateEdge": [
+        54,
+        53,
+        46,
+        223
+      ]
+    }
+  ],
+  "summary": {
+    "rejected-wrap-default-repeat": {
+      "cases": 64,
+      "mismatches": 64,
+      "maximumChannelDifference": 228
+    },
+    "edge-substitution": {
+      "cases": 64,
+      "mismatches": 64,
+      "maximumChannelDifference": 228
+    },
+    "hard-outside-cutoff": {
+      "cases": 64,
+      "mismatches": 56,
+      "maximumChannelDifference": 171
+    },
+    "explicit-isotropic-prototype": {
+      "cases": 64,
+      "mismatches": 0,
+      "maximumChannelDifference": 1
+    }
+  }
+}

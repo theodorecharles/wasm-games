@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "image": "sha256:19b4f5dc00f85312b2debc4fee40dba1bec1ea1a77c6b6acd778ee4246fbd90a",
+  "tag": "local/idtech4-wasm:prey-deferred-media-candidate",
+  "container": "de4fa01320206cb1ef4d21dba97b0bcb3d1673ba477da979411216f610d2fdbc",
+  "url": "http://127.0.0.1:32877/",
+  "preyPatchSHA256": "f15f6c37e1fe0fa64e9d4f10769a0b311fa34b2fa43411eb5c711f9ed82f6bff",
+  "artifacts": [
+    {
+      "file": "prey06.js",
+      "stagedSHA256": "29b395d751dc9b67dbedf644cb8992562276beed91ef0457857b50a056be36e7",
+      "imageSHA256": "29b395d751dc9b67dbedf644cb8992562276beed91ef0457857b50a056be36e7"
+    },
+    {
+      "file": "prey06.wasm",
+      "stagedSHA256": "7749dbff1fb5bcecbf256b4f24259326e30787be1086b926e51df41483ea8aca",
+      "imageSHA256": "7749dbff1fb5bcecbf256b4f24259326e30787be1086b926e51df41483ea8aca"
+    },
+    {
+      "file": "dhewm3-base.js",
+      "stagedSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc",
+      "imageSHA256": "b624f5440ab8eb0803bbf2257e2c5bac55e8effc9db0ee48e9a4df9b808df8bc"
+    },
+    {
+      "file": "dhewm3-base.wasm",
+      "stagedSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f",
+      "imageSHA256": "fa0e30e0470233b27846f8e8f50d1189b6a565a68aaef466a9d2344f773f1d1f"
+    },
+    {
+      "file": "dhewm3-roe.js",
+      "stagedSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab",
+      "imageSHA256": "40c3a5b2abefbbaacdb963b4bcd959ffcd7e8c5535c8243222b5e74c4ea4cfab"
+    },
+    {
+      "file": "dhewm3-roe.wasm",
+      "stagedSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce",
+      "imageSHA256": "89c0a9e127f87d68912f58b73e601d404f014e432a6273f1115302425b9b5fce"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "a1a1377e46664c42d90e25880d66a034ca5c28828c4a82925c9288cc58d96733",
+      "imageSHA256": "a1a1377e46664c42d90e25880d66a034ca5c28828c4a82925c9288cc58d96733"
+    },
+    {
+      "file": "prey-worker.js",
+      "stagedSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1",
+      "imageSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1"
+    }
+  ],
+  "checks": {
+    "deferredMediaCases": 46,
+    "legacyFailures": 8,
+    "clientBuild": true,
+    "exactPatchTrees": 4,
+    "fullStaging": true
+  },
+  "scope": "Isolated test service only. Owner archives read-only; previous audio candidate retained stopped; live services unchanged. Chrome evidence separate."
+}

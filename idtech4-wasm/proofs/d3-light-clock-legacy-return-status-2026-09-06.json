@@ -1,0 +1,101 @@
+{
+  "observedAt": "2026-09-06T11:13:30.685Z",
+  "container": "d3-light-clock-legacy-diagnostic-20260906",
+  "image": "sha256:8f36361851c221d76968c7668a3fbcce72a254e4417a9bec99d383b99ec288bd",
+  "status": {
+    "state": "running",
+    "humans": 1,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": 1788693000702,
+    "map": "game/mp/d3dm2",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "LegacyClockMarine"
+      }
+    ],
+    "browserPeers": 1,
+    "bots": 2,
+    "botPlayers": [
+      {
+        "time": 5568,
+        "slot": 30,
+        "health": 100,
+        "spectating": 0,
+        "origin": [
+          918.775,
+          -525.507,
+          35.667
+        ],
+        "buttons": 2,
+        "move": [
+          126,
+          0,
+          0
+        ],
+        "weapon": 1,
+        "frags": 0
+      },
+      {
+        "time": 5568,
+        "slot": 31,
+        "health": 100,
+        "spectating": 0,
+        "origin": [
+          707.335,
+          -257.876,
+          -31.749
+        ],
+        "buttons": 2,
+        "move": [
+          126,
+          11,
+          0
+        ],
+        "weapon": 1,
+        "frags": 0
+      }
+    ],
+    "botUpdatedAt": 1788693205716,
+    "botTarget": 2,
+    "nativeHumans": 1,
+    "botStatus": "ready",
+    "relay": {
+      "peers": 1,
+      "clientPackets": 10763,
+      "serverPackets": 2972
+    }
+  },
+  "resources": {
+    "sessions": [
+      "d3-managed-hiJC4B"
+    ],
+    "nativeProcesses": [
+      {
+        "pid": 29,
+        "exe": "/opt/doom3-native/dhewm3ded"
+      }
+    ]
+  },
+  "readOnlyRoot": true,
+  "mounts": [
+    {
+      "Type": "bind",
+      "Source": "/home/ted/wasm-game-data/doom3",
+      "Destination": "/data",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "tmpfs": {
+    "/tmp": "rw,nosuid,nodev,size=256m"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-05",
+  "browser": "Chrome via browser skill",
+  "url": "http://127.0.0.1:32873/?proof=quake4-cooperative-continue-2026-09-05",
+  "imageId": "sha256:eec336466987fa82b632115befd0ec23e29ce4d5b98413953f1f1beca7e3b99d",
+  "engineWasmSha256": "eebabbd40129273ca36d4484025e77a10be05e66d4a3d12014fea871d7c738c7",
+  "milestones": [
+    {"at": 164861.4, "text": "37370 msec to load game/airdefense1"},
+    {"at": 164862, "text": "[quake4-wasm] Loading continue gate ready"},
+    {"at": 165079.6, "text": "Saved 'Autosave game/airdefense1'"},
+    {"at": 205343.1, "text": "[quake4-wasm] Loading continue gate completed"}
+  ],
+  "states": [
+    {"at": 92777.5, "state": "menu"},
+    {"at": 165083, "state": "paused"},
+    {"at": 205379.1, "state": "gameplay"}
+  ],
+  "continueScreenRendered": true,
+  "continueScreenText": "PRESS ANY KEY TO CONTINUE",
+  "queuedLaunchClickSkippedGate": false,
+  "enterAttempt": {
+    "downAt": 181874.3,
+    "upAt": 181875.7,
+    "scan": 40,
+    "pageForwarded": true,
+    "nativeAccepted": false
+  },
+  "mouseContinue": "Physical left-button drag on the Continue screen accepted",
+  "gameplayStateIsNotAcceptance": "View remains black; no advancing campaign verified",
+  "nativeLogSpam": "SDL3: failed to grab mouse: Video subsystem has not been initialized",
+  "audio": {"state": "running", "buffers": 957, "messages": 52265, "sources": 3, "starts": 3},
+  "workerErrors": [],
+  "gameplayAccepted": false,
+  "deployed": false
+}

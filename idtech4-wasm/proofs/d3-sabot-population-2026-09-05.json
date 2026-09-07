@@ -1,0 +1,21 @@
+{
+  "scope": "Exact population target/maintenance and slot lookup methods compiled with native ASan/UBSan and Wasm SAFE_HEAP/UBSan. Entity and spawn/delete APIs are fixtures; full native map and Chrome client tests are separate.",
+  "sourceSHA256": "f609e5a9022d37c036f51d44d60636cec782f633ae19ee53d4446606513d6d1e",
+  "results": [
+    {
+      "target": "native",
+      "checks": 2214,
+      "targetMatrix": 1904,
+      "maintenanceSteps": 60,
+      "passed": true
+    },
+    {
+      "target": "wasm",
+      "checks": 2214,
+      "targetMatrix": 1904,
+      "maintenanceSteps": 60,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "Native ASCII FIFO, browser seam, Duke editor; recording console/trigger stubs, not browser or save acceptance",
+  "extractedHash": "3ccba66ad5e096ff94c16e1057ef33789d9870d37d0dde036b57410d9da3345b",
+  "records": [
+    {
+      "target": "native",
+      "negative": false,
+      "output": "{\"passed\":true,\"checks\":12296}",
+      "log": ""
+    },
+    {
+      "target": "native",
+      "negative": true,
+      "output": "",
+      "log": "text input mismatch: editor content"
+    },
+    {
+      "target": "wasm",
+      "negative": false,
+      "output": "{\"passed\":true,\"checks\":12296}",
+      "log": ""
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "output": "",
+      "log": "text input mismatch: editor content"
+    }
+  ]
+}

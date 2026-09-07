@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-05",
+  "browser": "Chrome via browser skill",
+  "url": "http://127.0.0.1:32873/?proof=quake4-campaign-device-exceptions-2026-09-05",
+  "imageId": "sha256:2894633c6bda2d9592df928a9b9887bc1d19902cad95f940d936e718a8a2a6f2",
+  "engineWasmSha256": "82ec8b4f5ca3d7ca33d8a0168db87d9994a14a2a18a1c02217324317479f39f8",
+  "actions": ["Play", "Single Player", "Mission", "Start Game (default Corporal)", "Escape after stall"],
+  "menuSelections": "Physical approximately 0.8-second left-button drags",
+  "menuRendered": true,
+  "audio": {"state": "running", "buffers": 957, "messages": 39501, "sources": 3, "starts": 3},
+  "audioScope": "Real WebAudio source scheduling; no audible-listening acceptance",
+  "choiceValsErrorObserved": false,
+  "workerErrors": [],
+  "mapLoad": {
+    "map": "game/airdefense1",
+    "totalMsec": 38085,
+    "renderWorldMsec": 2247,
+    "gameInitMsec": 20376,
+    "playerSpawnMsec": 135,
+    "mediaFinishMsec": 15159,
+    "settleMsec": 164
+  },
+  "lastLog": {"at": 147380.6, "text": "8 warnings"},
+  "escapeForwarded": [
+    {"at": 199966.1, "down": true, "scan": 41},
+    {"at": 199967, "down": false, "scan": 41}
+  ],
+  "stateAfterEscape": "menu",
+  "mapFrameRendered": false,
+  "visibleResult": "Previous New Game screen retained after successful native map load; worker no longer responds",
+  "inferenceFromSource": "Synchronous loading-continue loop prevents worker messages and OffscreenCanvas presentation",
+  "unfixedWarnings": ["SMAA GLSL 130 rejected and SMAA disabled", "MSAA texture support missing", "Missing effect images and splash sound"],
+  "gameplayAccepted": false,
+  "deployed": false
+}

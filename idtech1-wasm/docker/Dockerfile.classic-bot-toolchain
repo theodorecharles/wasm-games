@@ -1,0 +1,6 @@
+FROM ubuntu:24.04
+
+# The managed bots are native clients, not a replacement browser engine.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential ca-certificates cmake git pkg-config libsdl2-dev libsdl2-net-dev && \
+    rm -rf /var/lib/apt/lists/*

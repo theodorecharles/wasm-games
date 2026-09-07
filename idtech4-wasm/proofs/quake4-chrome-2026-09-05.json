@@ -1,0 +1,2781 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "scope": "Quake 4 single-player isolated Chrome candidate; not deployed; not gameplay acceptance",
+  "initialImage": "sha256:6dc95746ba3f639bf4e191530963f4ec5a63eaa147b11d9838241c9e9df6a0de",
+  "checkpoints": [
+    {
+      "name": "legacy-context-uninitialized",
+      "proof": {
+        "audio": {
+          "buffers": 0,
+          "messages": 1,
+          "sources": 0,
+          "starts": 0,
+          "state": "running"
+        },
+        "errors": [
+          {
+            "at": 53661.6,
+            "text": "TypeError: Cannot set properties of null (setting '0')\n    at _emscripten_glColor4f (http://127.0.0.1:32872/openQ4-client_wasm32.js:18386:36)\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12071]:0x563e7d\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12082]:0x565090\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[9375]:0x47ccc8\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[9373]:0x47ca65\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[1957]:0x178df9\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[1962]:0x1792b3\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[1947]:0x177623\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[2083]:0x1890b4\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[15357]:0x67280e"
+          }
+        ],
+        "input": {
+          "captureChanges": 0,
+          "events": [],
+          "keyDown": 0,
+          "keyUp": 0,
+          "pointerAbsolute": 0,
+          "pointerDown": 0,
+          "pointerDx": 0,
+          "pointerDy": 0,
+          "pointerRelative": 0,
+          "pointerUp": 0,
+          "text": 0
+        },
+        "lifecycle": [
+          {
+            "at": 156.6,
+            "name": "init",
+            "variant": "quake4"
+          },
+          {
+            "at": 164.6,
+            "files": 32,
+            "name": "initialized"
+          },
+          {
+            "at": 17808.9,
+            "name": "start-requested"
+          },
+          {
+            "at": 24273.7,
+            "entries": 32,
+            "name": "data-ready",
+            "source": "container"
+          },
+          {
+            "at": 24273.9,
+            "height": 797,
+            "name": "worker-started",
+            "width": 1408,
+            "worker": "/q4-worker.js"
+          }
+        ],
+        "logs": [
+          {
+            "at": 24943.2,
+            "text": "[quake4-wasm] native main entered"
+          },
+          {
+            "at": 24943.4,
+            "text": "[quake4-wasm] platform initialization complete"
+          },
+          {
+            "at": 24943.4,
+            "text": "[quake4-wasm] initializing idLib"
+          },
+          {
+            "at": 24943.5,
+            "text": "[quake4-wasm] parsing command line"
+          },
+          {
+            "at": 24943.6,
+            "text": "[quake4-wasm] initializing commands and cvars"
+          },
+          {
+            "at": 24943.6,
+            "text": "[quake4-wasm] static cvars registered"
+          },
+          {
+            "at": 24943.7,
+            "text": "openQ4 0.1.010-dev (emscripten-wasm32, Sep  4 2026 21:46:06)"
+          },
+          {
+            "at": 24943.8,
+            "text": "[quake4-wasm] console initialized"
+          },
+          {
+            "at": 24943.9,
+            "text": "Sys_InitNetworking: browser loopback interface only"
+          },
+          {
+            "at": 24943.9,
+            "text": "[quake4-wasm] loading game and renderer"
+          },
+          {
+            "at": 24944,
+            "text": "Filesystem paths: fs_basepath='/owner-data' fs_homepath='/save/quake4' fs_savepath='/save/quake4' fs_cdpath='/' fs_game='baseoq4' fs_game_base='q4base'"
+          },
+          {
+            "at": 24944.1,
+            "text": "------ Initializing File System ------"
+          },
+          {
+            "at": 27568.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak001.pk4 with checksum 0xf2cbc998"
+          },
+          {
+            "at": 27711.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak002.pk4 with checksum 0x7f8d80d1"
+          },
+          {
+            "at": 28290,
+            "text": "Loaded pk4 /owner-data/q4base/pak003.pk4 with checksum 0x1b57b207"
+          },
+          {
+            "at": 29274.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak004.pk4 with checksum 0x385aa578"
+          },
+          {
+            "at": 29890.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak005.pk4 with checksum 0x60d50a1d"
+          },
+          {
+            "at": 30478.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak006.pk4 with checksum 0x9099ed11"
+          },
+          {
+            "at": 31098.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak007.pk4 with checksum 0xaf301fff"
+          },
+          {
+            "at": 31724.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak008.pk4 with checksum 0x4ac6f6d9"
+          },
+          {
+            "at": 32742.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak009.pk4 with checksum 0x36030c7d"
+          },
+          {
+            "at": 35235,
+            "text": "Loaded pk4 /owner-data/q4base/pak010.pk4 with checksum 0x4b80fbda"
+          },
+          {
+            "at": 38077.7,
+            "text": "Loaded pk4 /owner-data/q4base/pak011.pk4 with checksum 0x8acf4cfa"
+          },
+          {
+            "at": 38788,
+            "text": "Loaded pk4 /owner-data/q4base/pak012.pk4 with checksum 0xbe4120b0"
+          },
+          {
+            "at": 38950.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak013.pk4 with checksum 0x6ad67f40"
+          },
+          {
+            "at": 39343,
+            "text": "Loaded pk4 /owner-data/q4base/pak014.pk4 with checksum 0xee51cd59"
+          },
+          {
+            "at": 39370.7,
+            "text": "Loaded pk4 /owner-data/q4base/pak015.pk4 with checksum 0xf5bf4e0c"
+          },
+          {
+            "at": 39523.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak016.pk4 with checksum 0x2196f58c"
+          },
+          {
+            "at": 39526.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak017.pk4 with checksum 0x91118a35"
+          },
+          {
+            "at": 39530.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak018.pk4 with checksum 0x98a14f03"
+          },
+          {
+            "at": 40523.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak019.pk4 with checksum 0xbc82ac79"
+          },
+          {
+            "at": 40575,
+            "text": "Loaded pk4 /owner-data/q4base/pak020.pk4 with checksum 0xce74cda5"
+          },
+          {
+            "at": 40602,
+            "text": "Loaded pk4 /owner-data/q4base/pak021.pk4 with checksum 0x2ba6e70c"
+          },
+          {
+            "at": 40628.7,
+            "text": "Loaded pk4 /owner-data/q4base/pak022.pk4 with checksum 0x4e390eec"
+          },
+          {
+            "at": 40631.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak023.pk4 with checksum 0x7c1fd3a5"
+          },
+          {
+            "at": 40634.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak024.pk4 with checksum 0x5546d551"
+          },
+          {
+            "at": 40661.7,
+            "text": "Loaded pk4 /owner-data/q4base/pak025.pk4 with checksum 0xcaeec1fd"
+          },
+          {
+            "at": 40717.9,
+            "text": "Loaded pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943"
+          },
+          {
+            "at": 42212.3,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english.pk4 with checksum 0x5868f530"
+          },
+          {
+            "at": 42213.3,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_01.pk4 with checksum 0xd9f04b8b"
+          },
+          {
+            "at": 42222.6,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_02.pk4 with checksum 0x9dbd91fd"
+          },
+          {
+            "at": 42224.7,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_03.pk4 with checksum 0x2eb6ad8"
+          },
+          {
+            "at": 42226.4,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_04.pk4 with checksum 0xd3fefaa1"
+          },
+          {
+            "at": 42228,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_05.pk4 with checksum 0x8596af60"
+          },
+          {
+            "at": 42347,
+            "text": "Loaded pk4 baseoq4/pak0.pk4 with checksum 0x29a1151e"
+          },
+          {
+            "at": 45829.8,
+            "text": "Loaded pk4 baseoq4/pak1.pk4 with checksum 0xdf8f4531"
+          },
+          {
+            "at": 50292.3,
+            "text": "Addon pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943 is on addon list"
+          },
+          {
+            "at": 50293.5,
+            "text": "Current search path:"
+          },
+          {
+            "at": 50293.9,
+            "text": "//baseoq4"
+          },
+          {
+            "at": 50294.2,
+            "text": "baseoq4/pak1.pk4 (6723 files)"
+          },
+          {
+            "at": 50294.6,
+            "text": "baseoq4/pak0.pk4 (249 files)"
+          },
+          {
+            "at": 50295,
+            "text": "/owner-data/baseoq4"
+          },
+          {
+            "at": 50295.2,
+            "text": "/save/quake4/baseoq4"
+          },
+          {
+            "at": 50295.4,
+            "text": "//q4base"
+          },
+          {
+            "at": 50295.6,
+            "text": "/owner-data/q4base"
+          },
+          {
+            "at": 50295.8,
+            "text": "/owner-data/q4base/zpak_english_05.pk4 (3 files)"
+          },
+          {
+            "at": 50295.9,
+            "text": "/owner-data/q4base/zpak_english_04.pk4 (3 files)"
+          },
+          {
+            "at": 50296.1,
+            "text": "/owner-data/q4base/zpak_english_03.pk4 (4 files)"
+          },
+          {
+            "at": 50296.3,
+            "text": "/owner-data/q4base/zpak_english_02.pk4 (21 files)"
+          },
+          {
+            "at": 50296.5,
+            "text": "/owner-data/q4base/zpak_english_01.pk4 (1 files)"
+          },
+          {
+            "at": 50296.7,
+            "text": "/owner-data/q4base/zpak_english.pk4 (3457 files)"
+          },
+          {
+            "at": 50296.9,
+            "text": "/owner-data/q4base/pak025.pk4 (12 files)"
+          },
+          {
+            "at": 50297.1,
+            "text": "/owner-data/q4base/pak024.pk4 (8 files)"
+          },
+          {
+            "at": 50297.3,
+            "text": "/owner-data/q4base/pak023.pk4 (8 files)"
+          },
+          {
+            "at": 50297.5,
+            "text": "/owner-data/q4base/pak022.pk4 (14 files)"
+          },
+          {
+            "at": 50297.7,
+            "text": "/owner-data/q4base/pak021.pk4 (89 files)"
+          },
+          {
+            "at": 50297.8,
+            "text": "/owner-data/q4base/pak020.pk4 (11 files)"
+          },
+          {
+            "at": 50298,
+            "text": "/owner-data/q4base/pak019.pk4 (1206 files)"
+          },
+          {
+            "at": 50298.2,
+            "text": "/owner-data/q4base/pak018.pk4 (3 files)"
+          },
+          {
+            "at": 50298.4,
+            "text": "/owner-data/q4base/pak017.pk4 (3 files)"
+          },
+          {
+            "at": 50298.5,
+            "text": "/owner-data/q4base/pak016.pk4 (193 files)"
+          },
+          {
+            "at": 50298.7,
+            "text": "/owner-data/q4base/pak015.pk4 (34 files)"
+          },
+          {
+            "at": 50298.9,
+            "text": "/owner-data/q4base/pak014.pk4 (552 files)"
+          },
+          {
+            "at": 50299,
+            "text": "/owner-data/q4base/pak013.pk4 (239 files)"
+          },
+          {
+            "at": 50299.2,
+            "text": "/owner-data/q4base/pak012.pk4 (1081 files)"
+          },
+          {
+            "at": 50299.4,
+            "text": "/owner-data/q4base/pak011.pk4 (5620 files)"
+          },
+          {
+            "at": 50299.5,
+            "text": "/owner-data/q4base/pak010.pk4 (5539 files)"
+          },
+          {
+            "at": 50299.7,
+            "text": "/owner-data/q4base/pak009.pk4 (1284 files)"
+          },
+          {
+            "at": 50299.9,
+            "text": "/owner-data/q4base/pak008.pk4 (1289 files)"
+          },
+          {
+            "at": 50300.1,
+            "text": "/owner-data/q4base/pak007.pk4 (1330 files)"
+          },
+          {
+            "at": 50300.3,
+            "text": "/owner-data/q4base/pak006.pk4 (1343 files)"
+          },
+          {
+            "at": 50300.5,
+            "text": "/owner-data/q4base/pak005.pk4 (1395 files)"
+          },
+          {
+            "at": 50300.6,
+            "text": "/owner-data/q4base/pak004.pk4 (2249 files)"
+          },
+          {
+            "at": 50300.8,
+            "text": "/owner-data/q4base/pak003.pk4 (1281 files)"
+          },
+          {
+            "at": 50301,
+            "text": "/owner-data/q4base/pak002.pk4 (313 files)"
+          },
+          {
+            "at": 50301.2,
+            "text": "/owner-data/q4base/pak001.pk4 (5837 files)"
+          },
+          {
+            "at": 50301.4,
+            "text": "/save/quake4/q4base"
+          },
+          {
+            "at": 50301.6,
+            "text": "game DLL: 0x0 in pak: 0x0"
+          },
+          {
+            "at": 50301.8,
+            "text": "Addon pk4s:"
+          },
+          {
+            "at": 50302,
+            "text": "/owner-data/q4base/q4cmp_pak001.pk4 (119 files)"
+          },
+          {
+            "at": 50302.2,
+            "text": "file system initialized."
+          },
+          {
+            "at": 50302.4,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 50302.6,
+            "text": "Emscripten single-thread mode: background file worker disabled; reads run synchronously"
+          },
+          {
+            "at": 50347.1,
+            "text": "Renderer API: gl (builtin)"
+          },
+          {
+            "at": 50347.6,
+            "text": "----- Initializing Decls -----"
+          },
+          {
+            "at": 50354.2,
+            "text": "Loading guides.... 64 loaded"
+          },
+          {
+            "at": 50580.9,
+            "text": "225ms to load 1130k of material"
+          },
+          {
+            "at": 50639.6,
+            "text": "58ms to load 43k of skin"
+          },
+          {
+            "at": 50795.6,
+            "text": "155ms to load 723k of sound"
+          },
+          {
+            "at": 50799.1,
+            "text": "4ms to load 1k of materialType"
+          },
+          {
+            "at": 51000,
+            "text": "200ms to load 2889k of lipSync"
+          },
+          {
+            "at": 51029.8,
+            "text": "29ms to load 105k of playback"
+          },
+          {
+            "at": 52605,
+            "text": "1574ms to load 1690k of effect"
+          },
+          {
+            "at": 52605.5,
+            "text": "------------------------------"
+          },
+          {
+            "at": 52605.8,
+            "text": "Detected"
+          },
+          {
+            "at": 52606,
+            "text": "\tCPU: wasm32 CPU (1 core)"
+          },
+          {
+            "at": 52606.3,
+            "text": "\tSystem memory: 2 GB"
+          },
+          {
+            "at": 52606.5,
+            "text": "\tVideo memory: 2 GB on an optimal video architecture"
+          },
+          {
+            "at": 52607.3,
+            "text": "This system qualifies for Low quality."
+          },
+          {
+            "at": 52607.5,
+            "text": "------- Initializing renderSystem --------"
+          },
+          {
+            "at": 52611,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 52611.4,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 52611.6,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 52611.8,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 52612,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 52612.2,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 52612.5,
+            "text": "renderSystem initialized."
+          },
+          {
+            "at": 52612.7,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 52615.3,
+            "text": "696 strings read from strings/english_code.lang"
+          },
+          {
+            "at": 52617.3,
+            "text": "1813 strings read from strings/english_guis.lang"
+          },
+          {
+            "at": 52628.4,
+            "text": "5775 strings read from strings/english_lips.lang"
+          },
+          {
+            "at": 52629.2,
+            "text": "5778 strings read from strings/english_mappack.lang"
+          },
+          {
+            "at": 52630.8,
+            "text": "6254 strings read from strings/english_maps.lang"
+          },
+          {
+            "at": 52632.8,
+            "text": "7115 strings read from strings/english_openq4.lang"
+          },
+          {
+            "at": 52635.4,
+            "text": "execing default.cfg"
+          },
+          {
+            "at": 52636.5,
+            "text": "execing openq4_defaults.cfg"
+          },
+          {
+            "at": 52638.8,
+            "text": "696 strings read from strings/english_code.lang"
+          },
+          {
+            "at": 52640.4,
+            "text": "1813 strings read from strings/english_guis.lang"
+          },
+          {
+            "at": 52650.5,
+            "text": "5775 strings read from strings/english_lips.lang"
+          },
+          {
+            "at": 52651.4,
+            "text": "5778 strings read from strings/english_mappack.lang"
+          },
+          {
+            "at": 52653,
+            "text": "6254 strings read from strings/english_maps.lang"
+          },
+          {
+            "at": 52655.1,
+            "text": "7115 strings read from strings/english_openq4.lang"
+          },
+          {
+            "at": 52655.4,
+            "text": "Quality profile: com_machineSpec=3 com_videoRam=2048 com_performancePreset='balanced' r_forceAmbient=0.000"
+          },
+          {
+            "at": 52655.7,
+            "text": "----- Initializing Sound System ------"
+          },
+          {
+            "at": 52656.2,
+            "text": "Setup OpenAL device and context... ^3WARNING: ^1OpenAL output mode requested '5.1 surround', but ALC_SOFT_output_mode is not available."
+          },
+          {
+            "at": 52656.5,
+            "text": "Done."
+          },
+          {
+            "at": 52656.7,
+            "text": "OpenAL ALC version: 1.1"
+          },
+          {
+            "at": 52657,
+            "text": "OpenAL vendor: wasm-games"
+          },
+          {
+            "at": 52657.2,
+            "text": "OpenAL renderer: WebAudio bridge"
+          },
+          {
+            "at": 52657.5,
+            "text": "OpenAL version: 1.1"
+          },
+          {
+            "at": 52657.7,
+            "text": "OpenAL extensions: "
+          },
+          {
+            "at": 53472.6,
+            "text": "OpenAL requested device: system default"
+          },
+          {
+            "at": 53474,
+            "text": "OpenAL default device: WebAudio"
+          },
+          {
+            "at": 53474.5,
+            "text": "OpenAL active device: WebAudio"
+          },
+          {
+            "at": 53474.8,
+            "text": "OpenAL HRTF: unavailable"
+          },
+          {
+            "at": 53475.1,
+            "text": "OpenAL output mode: unavailable"
+          },
+          {
+            "at": 53475.4,
+            "text": "^3WARNING: ^1OpenAL EFX extension not reported by device; wet send disabled."
+          },
+          {
+            "at": 53475.7,
+            "text": "sound system initialized."
+          },
+          {
+            "at": 53475.9,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 53476.6,
+            "text": "----- R_InitOpenGL -----"
+          },
+          {
+            "at": 53477.5,
+            "text": "renderer startup phase: R_InitOpenGL"
+          },
+          {
+            "at": 53477.9,
+            "text": "Renderer API: gl (builtin)"
+          },
+          {
+            "at": 53478.2,
+            "text": "Initializing OpenGL subsystem (SDL3 backend)"
+          },
+          {
+            "at": 53478.5,
+            "text": "SDL3: browser worker uses the transferred OffscreenCanvas directly"
+          },
+          {
+            "at": 53478.8,
+            "text": "SDL3: trying OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+          },
+          {
+            "at": 53489,
+            "text": "SDL3: created OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+          },
+          {
+            "at": 53489.7,
+            "text": "SDL3: reported OpenGL context attributes: version=3.0 profile=es flags=0x0"
+          },
+          {
+            "at": 53490.2,
+            "text": "SDL3: reported OpenGL multisample attributes: requested=2 selected=2 actualBuffers=0 actualSamples=0"
+          },
+          {
+            "at": 53490.7,
+            "text": "SDL3: reported OpenGL framebuffer attributes: depthBits=24 stencilBits=8 hasStencilBuffer=1"
+          },
+          {
+            "at": 53491.2,
+            "text": "SDL3: requested swap interval 0, driver reports 1"
+          },
+          {
+            "at": 53492.2,
+            "text": "------- Input Initialization -------"
+          },
+          {
+            "at": 53492.5,
+            "text": "mouse: SDL3 initialized."
+          },
+          {
+            "at": 53493.6,
+            "text": "joystick: SDL3 initialized (no device detected)."
+          },
+          {
+            "at": 53494.8,
+            "text": "------------------------------------"
+          },
+          {
+            "at": 53495.5,
+            "text": "renderer startup phase: R_CheckPortableExtensions"
+          },
+          {
+            "at": 53496,
+            "text": "Init Glew..."
+          },
+          {
+            "at": 53518.5,
+            "text": "...using GL_ARB_multitexture"
+          },
+          {
+            "at": 53519.6,
+            "text": "...using GL_EXT_texture_env_combine"
+          },
+          {
+            "at": 53520,
+            "text": "...using GL_ARB_texture_cube_map"
+          },
+          {
+            "at": 53520.3,
+            "text": "...using GL_EXT_texture_env_dot3"
+          },
+          {
+            "at": 53520.5,
+            "text": "X..GL_ARB_texture_env_add not found"
+          },
+          {
+            "at": 53520.8,
+            "text": "...using GL_EXT_texture_compression_s3tc"
+          },
+          {
+            "at": 53521.1,
+            "text": "X..GL_ARB_texture_compression_bptc not found"
+          },
+          {
+            "at": 53521.4,
+            "text": "X..GL_EXT_texture_compression_bptc not found"
+          },
+          {
+            "at": 53521.7,
+            "text": "...using GL_EXT_texture_filter_anisotropic"
+          },
+          {
+            "at": 53522,
+            "text": "   maxTextureAnisotropy: 16.000000"
+          },
+          {
+            "at": 53522.4,
+            "text": "X..GL_EXT_shared_texture_palette not found"
+          },
+          {
+            "at": 53522.7,
+            "text": "X..GL_EXT_texture3D not found"
+          },
+          {
+            "at": 53523.1,
+            "text": "X..GL_EXT_stencil_wrap not found"
+          },
+          {
+            "at": 53523.4,
+            "text": "X..GL_NV_register_combiners not found"
+          },
+          {
+            "at": 53523.8,
+            "text": "X..GL_EXT_stencil_two_side not found"
+          },
+          {
+            "at": 53524.1,
+            "text": "X..GL_ATI_separate_stencil not found"
+          },
+          {
+            "at": 53524.5,
+            "text": "X..GL_ATI_fragment_shader not found"
+          },
+          {
+            "at": 53524.8,
+            "text": "X..GL_ATI_text_fragment_shader not found"
+          },
+          {
+            "at": 53525.1,
+            "text": "...using GL_ARB_vertex_buffer_object"
+          },
+          {
+            "at": 53525.5,
+            "text": "X..pixel buffer object entry points incomplete; async readbacks disabled"
+          },
+          {
+            "at": 53525.9,
+            "text": "...using GL_ARB_shader_objects"
+          },
+          {
+            "at": 53526.2,
+            "text": "...using GL_ARB_vertex_shader"
+          },
+          {
+            "at": 53526.6,
+            "text": "...using GL_ARB_fragment_shader"
+          },
+          {
+            "at": 53527,
+            "text": "...using GL_ARB_shading_language_100"
+          },
+          {
+            "at": 53527.4,
+            "text": "...using GL_ARB shader objects + GLSL (version OpenGL ES GLSL ES 3.00 (WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)))"
+          },
+          {
+            "at": 53527.8,
+            "text": "X..EXT_depth_bounds_test not found"
+          },
+          {
+            "at": 53528.1,
+            "text": "renderer startup phase: R_ARB2_Init"
+          },
+          {
+            "at": 53528.5,
+            "text": "---------- R_ARB2_Init ----------"
+          },
+          {
+            "at": 53528.9,
+            "text": "WebGL2 GLSL ES path available."
+          },
+          {
+            "at": 53529.2,
+            "text": "Renderer bootstrap: selected=LegacyGL2Compat requested=auto bridge=ARB2 modernExecutor=no defaultVisible=ARB2 reason=selected-tier-not-modern caps={GL 3.0 es, VBO:1 PBO:0 UBO:1 VAO:1 MRT:1 FBO:1 instancing:1 map_range:0 sync:1 compute:0 SSBO:0 indirect:0 MDI:0 buffer_storage:0 DSA:0 multi_bind:0 texture_view:0 gl_spirv:0 bindless:0}"
+          },
+          {
+            "at": 53529.6,
+            "text": "renderer startup phase: R_ReloadARBPrograms_f"
+          },
+          {
+            "at": 53530,
+            "text": "----- R_ReloadARBPrograms -----"
+          },
+          {
+            "at": 53552.8,
+            "text": "Loaded GLSL program 'glprogs/material_interaction'"
+          },
+          {
+            "at": 53553.6,
+            "text": "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped"
+          },
+          {
+            "at": 53554.1,
+            "text": "-------------------------------"
+          },
+          {
+            "at": 53554.5,
+            "text": "renderer startup phase: R_RendererUpload_Init"
+          },
+          {
+            "at": 53555,
+            "text": "Renderer upload manager: streaming legacy bridge, frameStream=subdata, staticAllocator=yes, buffers=4, ring=16384KB, sync=no"
+          },
+          {
+            "at": 53555.4,
+            "text": "renderer startup phase: vertexCache.Init"
+          },
+          {
+            "at": 53555.8,
+            "text": "using ARB_vertex_buffer_object memory"
+          },
+          {
+            "at": 53560,
+            "text": "vertex cache: frame-temp uploads routed through renderer upload stream (16384KB per frame buffer)"
+          },
+          {
+            "at": 53561.1,
+            "text": "renderer startup phase: tr.SetBackEndRenderer"
+          },
+          {
+            "at": 53561.6,
+            "text": "using ARB2 renderSystem"
+          },
+          {
+            "at": 53562,
+            "text": "renderer startup phase: renderer startup complete"
+          }
+        ],
+        "persistence": {
+          "ready": true,
+          "requests": 0,
+          "root": "/save/quake4"
+        },
+        "proofId": "quake4-renderer-2026-09-05",
+        "schemaVersion": 1,
+        "startedAt": "2026-09-05T04:54:20.733Z",
+        "states": [],
+        "variant": "quake4",
+        "workerMessages": {
+          "in:audio-init": 1,
+          "in:error": 1,
+          "in:log": 211,
+          "in:persistence-ready": 1,
+          "in:status": 2,
+          "out:start": 1
+        }
+      }
+    },
+    {
+      "name": "context-fixed-drawbuffer-abort",
+      "proof": {
+        "audio": {
+          "buffers": 0,
+          "messages": 1,
+          "sources": 0,
+          "starts": 0,
+          "state": "running"
+        },
+        "errors": [
+          {
+            "at": 32808,
+            "text": "glDrawBuffer: TODO"
+          },
+          {
+            "at": 32809.1,
+            "text": "RuntimeError: Aborted(glDrawBuffer: TODO)\n    at abort (http://127.0.0.1:32872/openQ4-client_wasm32.js:541:11)\n    at _emscripten_glDrawBuffer (http://127.0.0.1:32872/openQ4-client_wasm32.js:18802:42)\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12086]:0x565b42\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12082]:0x56539a\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[9375]:0x47ccc8\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[9373]:0x47ca65\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[1957]:0x178df9\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[1962]:0x1792b3\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[1947]:0x177623\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[2083]:0x1890b4"
+          }
+        ],
+        "input": {
+          "captureChanges": 0,
+          "events": [],
+          "keyDown": 0,
+          "keyUp": 0,
+          "pointerAbsolute": 0,
+          "pointerDown": 0,
+          "pointerDx": 0,
+          "pointerDy": 0,
+          "pointerRelative": 0,
+          "pointerUp": 0,
+          "text": 0
+        },
+        "lifecycle": [
+          {
+            "at": 114.5,
+            "name": "init",
+            "variant": "quake4"
+          },
+          {
+            "at": 128.5,
+            "files": 32,
+            "name": "initialized"
+          },
+          {
+            "at": 3199.3,
+            "name": "start-requested"
+          },
+          {
+            "at": 3249.3,
+            "entries": 32,
+            "name": "data-ready",
+            "source": "cache"
+          },
+          {
+            "at": 3249.5,
+            "height": 797,
+            "name": "worker-started",
+            "width": 1408,
+            "worker": "/q4-worker.js"
+          }
+        ],
+        "logs": [
+          {
+            "at": 3777.1,
+            "text": "[quake4-wasm] native main entered"
+          },
+          {
+            "at": 3777.2,
+            "text": "[quake4-wasm] platform initialization complete"
+          },
+          {
+            "at": 3777.3,
+            "text": "[quake4-wasm] initializing idLib"
+          },
+          {
+            "at": 3777.4,
+            "text": "[quake4-wasm] parsing command line"
+          },
+          {
+            "at": 3778.2,
+            "text": "[quake4-wasm] initializing commands and cvars"
+          },
+          {
+            "at": 3778.4,
+            "text": "[quake4-wasm] static cvars registered"
+          },
+          {
+            "at": 3778.6,
+            "text": "openQ4 0.1.010-dev (emscripten-wasm32, Sep  5 2026 04:59:58)"
+          },
+          {
+            "at": 3779,
+            "text": "[quake4-wasm] console initialized"
+          },
+          {
+            "at": 3779.3,
+            "text": "Sys_InitNetworking: browser loopback interface only"
+          },
+          {
+            "at": 3779.8,
+            "text": "[quake4-wasm] loading game and renderer"
+          },
+          {
+            "at": 3780.2,
+            "text": "Filesystem paths: fs_basepath='/owner-data' fs_homepath='/save/quake4' fs_savepath='/save/quake4' fs_cdpath='/' fs_game='baseoq4' fs_game_base='q4base'"
+          },
+          {
+            "at": 3780.4,
+            "text": "------ Initializing File System ------"
+          },
+          {
+            "at": 6000.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak001.pk4 with checksum 0xf2cbc998"
+          },
+          {
+            "at": 6121.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak002.pk4 with checksum 0x7f8d80d1"
+          },
+          {
+            "at": 6629.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak003.pk4 with checksum 0x1b57b207"
+          },
+          {
+            "at": 7603.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak004.pk4 with checksum 0x385aa578"
+          },
+          {
+            "at": 8380.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak005.pk4 with checksum 0x60d50a1d"
+          },
+          {
+            "at": 9000.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak006.pk4 with checksum 0x9099ed11"
+          },
+          {
+            "at": 9523.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak007.pk4 with checksum 0xaf301fff"
+          },
+          {
+            "at": 10115.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak008.pk4 with checksum 0x4ac6f6d9"
+          },
+          {
+            "at": 11129.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak009.pk4 with checksum 0x36030c7d"
+          },
+          {
+            "at": 14056.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak010.pk4 with checksum 0x4b80fbda"
+          },
+          {
+            "at": 16873.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak011.pk4 with checksum 0x8acf4cfa"
+          },
+          {
+            "at": 17503.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak012.pk4 with checksum 0xbe4120b0"
+          },
+          {
+            "at": 17656.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak013.pk4 with checksum 0x6ad67f40"
+          },
+          {
+            "at": 17894.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak014.pk4 with checksum 0xee51cd59"
+          },
+          {
+            "at": 17906.1,
+            "text": "Loaded pk4 /owner-data/q4base/pak015.pk4 with checksum 0xf5bf4e0c"
+          },
+          {
+            "at": 17971.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak016.pk4 with checksum 0x2196f58c"
+          },
+          {
+            "at": 17972.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak017.pk4 with checksum 0x91118a35"
+          },
+          {
+            "at": 17974.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak018.pk4 with checksum 0x98a14f03"
+          },
+          {
+            "at": 19016.7,
+            "text": "Loaded pk4 /owner-data/q4base/pak019.pk4 with checksum 0xbc82ac79"
+          },
+          {
+            "at": 19066.1,
+            "text": "Loaded pk4 /owner-data/q4base/pak020.pk4 with checksum 0xce74cda5"
+          },
+          {
+            "at": 19157.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak021.pk4 with checksum 0x2ba6e70c"
+          },
+          {
+            "at": 19164.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak022.pk4 with checksum 0x4e390eec"
+          },
+          {
+            "at": 19169.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak023.pk4 with checksum 0x7c1fd3a5"
+          },
+          {
+            "at": 19213.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak024.pk4 with checksum 0x5546d551"
+          },
+          {
+            "at": 19220.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak025.pk4 with checksum 0xcaeec1fd"
+          },
+          {
+            "at": 19286.3,
+            "text": "Loaded pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943"
+          },
+          {
+            "at": 21121.8,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english.pk4 with checksum 0x5868f530"
+          },
+          {
+            "at": 21122.9,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_01.pk4 with checksum 0xd9f04b8b"
+          },
+          {
+            "at": 21132.5,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_02.pk4 with checksum 0x9dbd91fd"
+          },
+          {
+            "at": 21134.6,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_03.pk4 with checksum 0x2eb6ad8"
+          },
+          {
+            "at": 21136.4,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_04.pk4 with checksum 0xd3fefaa1"
+          },
+          {
+            "at": 21138,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_05.pk4 with checksum 0x8596af60"
+          },
+          {
+            "at": 21223.5,
+            "text": "Loaded pk4 baseoq4/pak0.pk4 with checksum 0x29a1151e"
+          },
+          {
+            "at": 24797.4,
+            "text": "Loaded pk4 baseoq4/pak1.pk4 with checksum 0xdf8f4531"
+          },
+          {
+            "at": 29571.2,
+            "text": "Addon pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943 is on addon list"
+          },
+          {
+            "at": 29572.2,
+            "text": "Current search path:"
+          },
+          {
+            "at": 29572.4,
+            "text": "//baseoq4"
+          },
+          {
+            "at": 29572.6,
+            "text": "baseoq4/pak1.pk4 (6723 files)"
+          },
+          {
+            "at": 29572.7,
+            "text": "baseoq4/pak0.pk4 (249 files)"
+          },
+          {
+            "at": 29572.9,
+            "text": "/owner-data/baseoq4"
+          },
+          {
+            "at": 29573,
+            "text": "/save/quake4/baseoq4"
+          },
+          {
+            "at": 29573.2,
+            "text": "//q4base"
+          },
+          {
+            "at": 29573.3,
+            "text": "/owner-data/q4base"
+          },
+          {
+            "at": 29573.5,
+            "text": "/owner-data/q4base/zpak_english_05.pk4 (3 files)"
+          },
+          {
+            "at": 29573.7,
+            "text": "/owner-data/q4base/zpak_english_04.pk4 (3 files)"
+          },
+          {
+            "at": 29573.9,
+            "text": "/owner-data/q4base/zpak_english_03.pk4 (4 files)"
+          },
+          {
+            "at": 29574.2,
+            "text": "/owner-data/q4base/zpak_english_02.pk4 (21 files)"
+          },
+          {
+            "at": 29574.4,
+            "text": "/owner-data/q4base/zpak_english_01.pk4 (1 files)"
+          },
+          {
+            "at": 29574.6,
+            "text": "/owner-data/q4base/zpak_english.pk4 (3457 files)"
+          },
+          {
+            "at": 29574.7,
+            "text": "/owner-data/q4base/pak025.pk4 (12 files)"
+          },
+          {
+            "at": 29574.8,
+            "text": "/owner-data/q4base/pak024.pk4 (8 files)"
+          },
+          {
+            "at": 29575,
+            "text": "/owner-data/q4base/pak023.pk4 (8 files)"
+          },
+          {
+            "at": 29575.1,
+            "text": "/owner-data/q4base/pak022.pk4 (14 files)"
+          },
+          {
+            "at": 29575.3,
+            "text": "/owner-data/q4base/pak021.pk4 (89 files)"
+          },
+          {
+            "at": 29575.4,
+            "text": "/owner-data/q4base/pak020.pk4 (11 files)"
+          },
+          {
+            "at": 29575.6,
+            "text": "/owner-data/q4base/pak019.pk4 (1206 files)"
+          },
+          {
+            "at": 29575.7,
+            "text": "/owner-data/q4base/pak018.pk4 (3 files)"
+          },
+          {
+            "at": 29575.9,
+            "text": "/owner-data/q4base/pak017.pk4 (3 files)"
+          },
+          {
+            "at": 29576,
+            "text": "/owner-data/q4base/pak016.pk4 (193 files)"
+          },
+          {
+            "at": 29576.2,
+            "text": "/owner-data/q4base/pak015.pk4 (34 files)"
+          },
+          {
+            "at": 29576.3,
+            "text": "/owner-data/q4base/pak014.pk4 (552 files)"
+          },
+          {
+            "at": 29576.5,
+            "text": "/owner-data/q4base/pak013.pk4 (239 files)"
+          },
+          {
+            "at": 29576.7,
+            "text": "/owner-data/q4base/pak012.pk4 (1081 files)"
+          },
+          {
+            "at": 29576.9,
+            "text": "/owner-data/q4base/pak011.pk4 (5620 files)"
+          },
+          {
+            "at": 29577.1,
+            "text": "/owner-data/q4base/pak010.pk4 (5539 files)"
+          },
+          {
+            "at": 29577.3,
+            "text": "/owner-data/q4base/pak009.pk4 (1284 files)"
+          },
+          {
+            "at": 29577.5,
+            "text": "/owner-data/q4base/pak008.pk4 (1289 files)"
+          },
+          {
+            "at": 29577.7,
+            "text": "/owner-data/q4base/pak007.pk4 (1330 files)"
+          },
+          {
+            "at": 29577.9,
+            "text": "/owner-data/q4base/pak006.pk4 (1343 files)"
+          },
+          {
+            "at": 29578,
+            "text": "/owner-data/q4base/pak005.pk4 (1395 files)"
+          },
+          {
+            "at": 29578.2,
+            "text": "/owner-data/q4base/pak004.pk4 (2249 files)"
+          },
+          {
+            "at": 29578.4,
+            "text": "/owner-data/q4base/pak003.pk4 (1281 files)"
+          },
+          {
+            "at": 29578.6,
+            "text": "/owner-data/q4base/pak002.pk4 (313 files)"
+          },
+          {
+            "at": 29578.8,
+            "text": "/owner-data/q4base/pak001.pk4 (5837 files)"
+          },
+          {
+            "at": 29579,
+            "text": "/save/quake4/q4base"
+          },
+          {
+            "at": 29579.2,
+            "text": "game DLL: 0x0 in pak: 0x0"
+          },
+          {
+            "at": 29579.4,
+            "text": "Addon pk4s:"
+          },
+          {
+            "at": 29579.6,
+            "text": "/owner-data/q4base/q4cmp_pak001.pk4 (119 files)"
+          },
+          {
+            "at": 29579.8,
+            "text": "file system initialized."
+          },
+          {
+            "at": 29580,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 29580.2,
+            "text": "Emscripten single-thread mode: background file worker disabled; reads run synchronously"
+          },
+          {
+            "at": 29582.1,
+            "text": "Renderer API: gl (builtin)"
+          },
+          {
+            "at": 29582.5,
+            "text": "----- Initializing Decls -----"
+          },
+          {
+            "at": 29628.5,
+            "text": "Loading guides.... 64 loaded"
+          },
+          {
+            "at": 29848,
+            "text": "219ms to load 1130k of material"
+          },
+          {
+            "at": 29913.1,
+            "text": "65ms to load 43k of skin"
+          },
+          {
+            "at": 30092.7,
+            "text": "178ms to load 723k of sound"
+          },
+          {
+            "at": 30096.5,
+            "text": "4ms to load 1k of materialType"
+          },
+          {
+            "at": 30326,
+            "text": "229ms to load 2889k of lipSync"
+          },
+          {
+            "at": 30354.7,
+            "text": "28ms to load 105k of playback"
+          },
+          {
+            "at": 31823.1,
+            "text": "1468ms to load 1690k of effect"
+          },
+          {
+            "at": 31823.9,
+            "text": "------------------------------"
+          },
+          {
+            "at": 31824.4,
+            "text": "------- Initializing renderSystem --------"
+          },
+          {
+            "at": 31826.4,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 31826.8,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 31827.3,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 31827.6,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 31828,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 31828.4,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 31828.8,
+            "text": "renderSystem initialized."
+          },
+          {
+            "at": 31829.2,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 31831.2,
+            "text": "696 strings read from strings/english_code.lang"
+          },
+          {
+            "at": 31833.2,
+            "text": "1813 strings read from strings/english_guis.lang"
+          },
+          {
+            "at": 31844,
+            "text": "5775 strings read from strings/english_lips.lang"
+          },
+          {
+            "at": 31844.8,
+            "text": "5778 strings read from strings/english_mappack.lang"
+          },
+          {
+            "at": 31846.5,
+            "text": "6254 strings read from strings/english_maps.lang"
+          },
+          {
+            "at": 31849,
+            "text": "7115 strings read from strings/english_openq4.lang"
+          },
+          {
+            "at": 31852,
+            "text": "execing default.cfg"
+          },
+          {
+            "at": 31853.2,
+            "text": "execing openq4_defaults.cfg"
+          },
+          {
+            "at": 31855.8,
+            "text": "696 strings read from strings/english_code.lang"
+          },
+          {
+            "at": 31857.6,
+            "text": "1813 strings read from strings/english_guis.lang"
+          },
+          {
+            "at": 31867.9,
+            "text": "5775 strings read from strings/english_lips.lang"
+          },
+          {
+            "at": 31868.7,
+            "text": "5778 strings read from strings/english_mappack.lang"
+          },
+          {
+            "at": 31870.7,
+            "text": "6254 strings read from strings/english_maps.lang"
+          },
+          {
+            "at": 31873.2,
+            "text": "7115 strings read from strings/english_openq4.lang"
+          },
+          {
+            "at": 31873.5,
+            "text": "Quality profile: com_machineSpec=3 com_videoRam=64 com_performancePreset='balanced' r_forceAmbient=0.000"
+          },
+          {
+            "at": 31873.9,
+            "text": "----- Initializing Sound System ------"
+          },
+          {
+            "at": 31874.5,
+            "text": "Setup OpenAL device and context... ^3WARNING: ^1OpenAL output mode requested '5.1 surround', but ALC_SOFT_output_mode is not available."
+          },
+          {
+            "at": 31874.7,
+            "text": "Done."
+          },
+          {
+            "at": 31875,
+            "text": "OpenAL ALC version: 1.1"
+          },
+          {
+            "at": 31875.4,
+            "text": "OpenAL vendor: wasm-games"
+          },
+          {
+            "at": 31875.7,
+            "text": "OpenAL renderer: WebAudio bridge"
+          },
+          {
+            "at": 31875.9,
+            "text": "OpenAL version: 1.1"
+          },
+          {
+            "at": 31876.2,
+            "text": "OpenAL extensions: "
+          },
+          {
+            "at": 32688.5,
+            "text": "OpenAL requested device: system default"
+          },
+          {
+            "at": 32689.5,
+            "text": "OpenAL default device: WebAudio"
+          },
+          {
+            "at": 32690,
+            "text": "OpenAL active device: WebAudio"
+          },
+          {
+            "at": 32690.9,
+            "text": "OpenAL HRTF: unavailable"
+          },
+          {
+            "at": 32691.3,
+            "text": "OpenAL output mode: unavailable"
+          },
+          {
+            "at": 32691.6,
+            "text": "^3WARNING: ^1OpenAL EFX extension not reported by device; wet send disabled."
+          },
+          {
+            "at": 32691.9,
+            "text": "sound system initialized."
+          },
+          {
+            "at": 32692.3,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 32692.6,
+            "text": "----- R_InitOpenGL -----"
+          },
+          {
+            "at": 32692.9,
+            "text": "renderer startup phase: R_InitOpenGL"
+          },
+          {
+            "at": 32693.2,
+            "text": "Renderer API: gl (builtin)"
+          },
+          {
+            "at": 32693.5,
+            "text": "Initializing OpenGL subsystem (SDL3 backend)"
+          },
+          {
+            "at": 32694.1,
+            "text": "SDL3: browser worker uses the transferred OffscreenCanvas directly"
+          },
+          {
+            "at": 32695.1,
+            "text": "SDL3: trying OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+          },
+          {
+            "at": 32703.7,
+            "text": "ERR: WARNING: using emscripten GL immediate mode emulation. This is very limited in what it supports"
+          },
+          {
+            "at": 32706.4,
+            "text": "SDL3: created OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+          },
+          {
+            "at": 32706.9,
+            "text": "SDL3: reported OpenGL context attributes: version=3.0 profile=es flags=0x0"
+          },
+          {
+            "at": 32707.2,
+            "text": "SDL3: reported OpenGL multisample attributes: requested=2 selected=2 actualBuffers=0 actualSamples=0"
+          },
+          {
+            "at": 32707.5,
+            "text": "SDL3: reported OpenGL framebuffer attributes: depthBits=24 stencilBits=8 hasStencilBuffer=1"
+          },
+          {
+            "at": 32707.8,
+            "text": "SDL3: requested swap interval 0, driver reports 1"
+          },
+          {
+            "at": 32708.4,
+            "text": "------- Input Initialization -------"
+          },
+          {
+            "at": 32708.7,
+            "text": "mouse: SDL3 initialized."
+          },
+          {
+            "at": 32709.1,
+            "text": "joystick: SDL3 initialized (no device detected)."
+          },
+          {
+            "at": 32709.4,
+            "text": "------------------------------------"
+          },
+          {
+            "at": 32711.1,
+            "text": "renderer startup phase: R_CheckPortableExtensions"
+          },
+          {
+            "at": 32711.7,
+            "text": "Init Glew..."
+          },
+          {
+            "at": 32728.5,
+            "text": "...using GL_ARB_multitexture"
+          },
+          {
+            "at": 32729,
+            "text": "...using GL_EXT_texture_env_combine"
+          },
+          {
+            "at": 32729.3,
+            "text": "...using GL_ARB_texture_cube_map"
+          },
+          {
+            "at": 32729.7,
+            "text": "...using GL_EXT_texture_env_dot3"
+          },
+          {
+            "at": 32730,
+            "text": "X..GL_ARB_texture_env_add not found"
+          },
+          {
+            "at": 32730.3,
+            "text": "...using GL_EXT_texture_compression_s3tc"
+          },
+          {
+            "at": 32730.6,
+            "text": "X..GL_ARB_texture_compression_bptc not found"
+          },
+          {
+            "at": 32730.8,
+            "text": "X..GL_EXT_texture_compression_bptc not found"
+          },
+          {
+            "at": 32731.2,
+            "text": "...using GL_EXT_texture_filter_anisotropic"
+          },
+          {
+            "at": 32731.5,
+            "text": "   maxTextureAnisotropy: 16.000000"
+          },
+          {
+            "at": 32731.8,
+            "text": "X..GL_EXT_shared_texture_palette not found"
+          },
+          {
+            "at": 32732.2,
+            "text": "X..GL_EXT_texture3D not found"
+          },
+          {
+            "at": 32732.5,
+            "text": "X..GL_EXT_stencil_wrap not found"
+          },
+          {
+            "at": 32732.9,
+            "text": "X..GL_NV_register_combiners not found"
+          },
+          {
+            "at": 32733.2,
+            "text": "X..GL_EXT_stencil_two_side not found"
+          },
+          {
+            "at": 32733.6,
+            "text": "X..GL_ATI_separate_stencil not found"
+          },
+          {
+            "at": 32734,
+            "text": "X..GL_ATI_fragment_shader not found"
+          },
+          {
+            "at": 32734.3,
+            "text": "X..GL_ATI_text_fragment_shader not found"
+          },
+          {
+            "at": 32734.7,
+            "text": "...using GL_ARB_vertex_buffer_object"
+          },
+          {
+            "at": 32735.2,
+            "text": "X..pixel buffer object entry points incomplete; async readbacks disabled"
+          },
+          {
+            "at": 32735.6,
+            "text": "...using GL_ARB_shader_objects"
+          },
+          {
+            "at": 32736.1,
+            "text": "...using GL_ARB_vertex_shader"
+          },
+          {
+            "at": 32736.5,
+            "text": "...using GL_ARB_fragment_shader"
+          },
+          {
+            "at": 32736.9,
+            "text": "...using GL_ARB_shading_language_100"
+          },
+          {
+            "at": 32737.2,
+            "text": "...using GL_ARB shader objects + GLSL (version OpenGL ES GLSL ES 3.00 (WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)))"
+          },
+          {
+            "at": 32737.6,
+            "text": "X..EXT_depth_bounds_test not found"
+          },
+          {
+            "at": 32738,
+            "text": "renderer startup phase: R_ARB2_Init"
+          },
+          {
+            "at": 32738.4,
+            "text": "---------- R_ARB2_Init ----------"
+          },
+          {
+            "at": 32738.8,
+            "text": "WebGL2 GLSL ES path available."
+          },
+          {
+            "at": 32739.2,
+            "text": "Renderer bootstrap: selected=LegacyGL2Compat requested=auto bridge=ARB2 modernExecutor=no defaultVisible=ARB2 reason=selected-tier-not-modern caps={GL 3.0 es, VBO:1 PBO:0 UBO:1 VAO:1 MRT:1 FBO:1 instancing:1 map_range:0 sync:1 compute:0 SSBO:0 indirect:0 MDI:0 buffer_storage:0 DSA:0 multi_bind:0 texture_view:0 gl_spirv:0 bindless:0}"
+          },
+          {
+            "at": 32739.6,
+            "text": "renderer startup phase: R_ReloadARBPrograms_f"
+          },
+          {
+            "at": 32740,
+            "text": "----- R_ReloadARBPrograms -----"
+          },
+          {
+            "at": 32740.4,
+            "text": "Loaded GLSL program 'glprogs/material_interaction'"
+          },
+          {
+            "at": 32740.8,
+            "text": "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped"
+          },
+          {
+            "at": 32741.2,
+            "text": "-------------------------------"
+          },
+          {
+            "at": 32741.8,
+            "text": "renderer startup phase: R_RendererUpload_Init"
+          },
+          {
+            "at": 32742.2,
+            "text": "Renderer upload manager: streaming legacy bridge, frameStream=subdata, staticAllocator=yes, buffers=4, ring=16384KB, sync=no"
+          },
+          {
+            "at": 32742.6,
+            "text": "renderer startup phase: vertexCache.Init"
+          },
+          {
+            "at": 32743.1,
+            "text": "using ARB_vertex_buffer_object memory"
+          },
+          {
+            "at": 32743.7,
+            "text": "vertex cache: frame-temp uploads routed through renderer upload stream (16384KB per frame buffer)"
+          },
+          {
+            "at": 32744.2,
+            "text": "renderer startup phase: tr.SetBackEndRenderer"
+          },
+          {
+            "at": 32744.7,
+            "text": "using ARB2 renderSystem"
+          },
+          {
+            "at": 32745.9,
+            "text": "renderer startup phase: renderer startup complete"
+          },
+          {
+            "at": 32807.2,
+            "text": "ERR: TODO: glShadeModel"
+          },
+          {
+            "at": 32808.6,
+            "text": "ERR: Aborted(glDrawBuffer: TODO)"
+          }
+        ],
+        "persistence": {
+          "ready": true,
+          "requests": 0,
+          "root": "/save/quake4"
+        },
+        "proofId": "quake4-context-fix-2026-09-05",
+        "schemaVersion": 1,
+        "startedAt": "2026-09-05T05:00:38.026Z",
+        "states": [],
+        "variant": "quake4",
+        "workerMessages": {
+          "in:audio-init": 1,
+          "in:error": 2,
+          "in:log": 208,
+          "in:persistence-ready": 1,
+          "in:status": 2,
+          "out:start": 1
+        }
+      }
+    },
+    {
+      "name": "drawbuffer-fixed-uint32-indices-abort",
+      "proof": {
+        "audio": {
+          "buffers": 0,
+          "messages": 1,
+          "sources": 0,
+          "starts": 0,
+          "state": "running"
+        },
+        "errors": [
+          {
+            "at": 33050.9,
+            "text": "Assertion failed"
+          },
+          {
+            "at": 33052.1,
+            "text": "RuntimeError: Aborted(Assertion failed)\n    at abort (http://127.0.0.1:32872/openQ4-client_wasm32.js:541:11)\n    at assert (http://127.0.0.1:32872/openQ4-client_wasm32.js:217:5)\n    at _emscripten_glDrawElements (http://127.0.0.1:32872/openQ4-client_wasm32.js:18834:9)\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12330]:0x581dfb\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[11836]:0x5471b2\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[11854]:0x54914b\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[11867]:0x54b578\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12356]:0x584bc3\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[12082]:0x565218\n    at http://127.0.0.1:32872/openQ4-client_wasm32.wasm:wasm-function[9375]:0x47cd0d"
+          }
+        ],
+        "input": {
+          "captureChanges": 0,
+          "events": [],
+          "keyDown": 0,
+          "keyUp": 0,
+          "pointerAbsolute": 0,
+          "pointerDown": 0,
+          "pointerDx": 0,
+          "pointerDy": 0,
+          "pointerRelative": 0,
+          "pointerUp": 0,
+          "text": 0
+        },
+        "lifecycle": [
+          {
+            "at": 105.1,
+            "name": "init",
+            "variant": "quake4"
+          },
+          {
+            "at": 115.9,
+            "files": 32,
+            "name": "initialized"
+          },
+          {
+            "at": 3231.8,
+            "name": "start-requested"
+          },
+          {
+            "at": 3288,
+            "entries": 32,
+            "name": "data-ready",
+            "source": "cache"
+          },
+          {
+            "at": 3288.2,
+            "height": 797,
+            "name": "worker-started",
+            "width": 1408,
+            "worker": "/q4-worker.js"
+          }
+        ],
+        "logs": [
+          {
+            "at": 3809.8,
+            "text": "[quake4-wasm] native main entered"
+          },
+          {
+            "at": 3809.8,
+            "text": "[quake4-wasm] platform initialization complete"
+          },
+          {
+            "at": 3809.9,
+            "text": "[quake4-wasm] initializing idLib"
+          },
+          {
+            "at": 3809.9,
+            "text": "[quake4-wasm] parsing command line"
+          },
+          {
+            "at": 3810,
+            "text": "[quake4-wasm] initializing commands and cvars"
+          },
+          {
+            "at": 3810.6,
+            "text": "[quake4-wasm] static cvars registered"
+          },
+          {
+            "at": 3811,
+            "text": "openQ4 0.1.010-dev (emscripten-wasm32, Sep  5 2026 04:59:58)"
+          },
+          {
+            "at": 3811.1,
+            "text": "[quake4-wasm] console initialized"
+          },
+          {
+            "at": 3811.2,
+            "text": "Sys_InitNetworking: browser loopback interface only"
+          },
+          {
+            "at": 3811.8,
+            "text": "[quake4-wasm] loading game and renderer"
+          },
+          {
+            "at": 3812.2,
+            "text": "Filesystem paths: fs_basepath='/owner-data' fs_homepath='/save/quake4' fs_savepath='/save/quake4' fs_cdpath='/' fs_game='baseoq4' fs_game_base='q4base'"
+          },
+          {
+            "at": 3812.4,
+            "text": "------ Initializing File System ------"
+          },
+          {
+            "at": 6054.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak001.pk4 with checksum 0xf2cbc998"
+          },
+          {
+            "at": 6177.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak002.pk4 with checksum 0x7f8d80d1"
+          },
+          {
+            "at": 6751.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak003.pk4 with checksum 0x1b57b207"
+          },
+          {
+            "at": 7726.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak004.pk4 with checksum 0x385aa578"
+          },
+          {
+            "at": 8404.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak005.pk4 with checksum 0x60d50a1d"
+          },
+          {
+            "at": 9088.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak006.pk4 with checksum 0x9099ed11"
+          },
+          {
+            "at": 9763.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak007.pk4 with checksum 0xaf301fff"
+          },
+          {
+            "at": 10607.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak008.pk4 with checksum 0x4ac6f6d9"
+          },
+          {
+            "at": 11836.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak009.pk4 with checksum 0x36030c7d"
+          },
+          {
+            "at": 14416.6,
+            "text": "Loaded pk4 /owner-data/q4base/pak010.pk4 with checksum 0x4b80fbda"
+          },
+          {
+            "at": 17106.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak011.pk4 with checksum 0x8acf4cfa"
+          },
+          {
+            "at": 17585.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak012.pk4 with checksum 0xbe4120b0"
+          },
+          {
+            "at": 17717.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak013.pk4 with checksum 0x6ad67f40"
+          },
+          {
+            "at": 18083.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak014.pk4 with checksum 0xee51cd59"
+          },
+          {
+            "at": 18105.1,
+            "text": "Loaded pk4 /owner-data/q4base/pak015.pk4 with checksum 0xf5bf4e0c"
+          },
+          {
+            "at": 18210.7,
+            "text": "Loaded pk4 /owner-data/q4base/pak016.pk4 with checksum 0x2196f58c"
+          },
+          {
+            "at": 18212.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak017.pk4 with checksum 0x91118a35"
+          },
+          {
+            "at": 18214.1,
+            "text": "Loaded pk4 /owner-data/q4base/pak018.pk4 with checksum 0x98a14f03"
+          },
+          {
+            "at": 19498.5,
+            "text": "Loaded pk4 /owner-data/q4base/pak019.pk4 with checksum 0xbc82ac79"
+          },
+          {
+            "at": 19542.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak020.pk4 with checksum 0xce74cda5"
+          },
+          {
+            "at": 19595.3,
+            "text": "Loaded pk4 /owner-data/q4base/pak021.pk4 with checksum 0x2ba6e70c"
+          },
+          {
+            "at": 19602.9,
+            "text": "Loaded pk4 /owner-data/q4base/pak022.pk4 with checksum 0x4e390eec"
+          },
+          {
+            "at": 19607.8,
+            "text": "Loaded pk4 /owner-data/q4base/pak023.pk4 with checksum 0x7c1fd3a5"
+          },
+          {
+            "at": 19644.4,
+            "text": "Loaded pk4 /owner-data/q4base/pak024.pk4 with checksum 0x5546d551"
+          },
+          {
+            "at": 19681.2,
+            "text": "Loaded pk4 /owner-data/q4base/pak025.pk4 with checksum 0xcaeec1fd"
+          },
+          {
+            "at": 19733.9,
+            "text": "Loaded pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943"
+          },
+          {
+            "at": 21461,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english.pk4 with checksum 0x5868f530"
+          },
+          {
+            "at": 21462.2,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_01.pk4 with checksum 0xd9f04b8b"
+          },
+          {
+            "at": 21472.5,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_02.pk4 with checksum 0x9dbd91fd"
+          },
+          {
+            "at": 21474.4,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_03.pk4 with checksum 0x2eb6ad8"
+          },
+          {
+            "at": 21475.8,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_04.pk4 with checksum 0xd3fefaa1"
+          },
+          {
+            "at": 21477.2,
+            "text": "Loaded pk4 /owner-data/q4base/zpak_english_05.pk4 with checksum 0x8596af60"
+          },
+          {
+            "at": 21559.9,
+            "text": "Loaded pk4 baseoq4/pak0.pk4 with checksum 0x29a1151e"
+          },
+          {
+            "at": 25105.6,
+            "text": "Loaded pk4 baseoq4/pak1.pk4 with checksum 0xdf8f4531"
+          },
+          {
+            "at": 29744.4,
+            "text": "Addon pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943 is on addon list"
+          },
+          {
+            "at": 29745.5,
+            "text": "Current search path:"
+          },
+          {
+            "at": 29745.8,
+            "text": "//baseoq4"
+          },
+          {
+            "at": 29746,
+            "text": "baseoq4/pak1.pk4 (6723 files)"
+          },
+          {
+            "at": 29746.2,
+            "text": "baseoq4/pak0.pk4 (249 files)"
+          },
+          {
+            "at": 29746.3,
+            "text": "/owner-data/baseoq4"
+          },
+          {
+            "at": 29746.4,
+            "text": "/save/quake4/baseoq4"
+          },
+          {
+            "at": 29746.6,
+            "text": "//q4base"
+          },
+          {
+            "at": 29746.7,
+            "text": "/owner-data/q4base"
+          },
+          {
+            "at": 29746.8,
+            "text": "/owner-data/q4base/zpak_english_05.pk4 (3 files)"
+          },
+          {
+            "at": 29746.9,
+            "text": "/owner-data/q4base/zpak_english_04.pk4 (3 files)"
+          },
+          {
+            "at": 29747.1,
+            "text": "/owner-data/q4base/zpak_english_03.pk4 (4 files)"
+          },
+          {
+            "at": 29747.2,
+            "text": "/owner-data/q4base/zpak_english_02.pk4 (21 files)"
+          },
+          {
+            "at": 29747.4,
+            "text": "/owner-data/q4base/zpak_english_01.pk4 (1 files)"
+          },
+          {
+            "at": 29747.5,
+            "text": "/owner-data/q4base/zpak_english.pk4 (3457 files)"
+          },
+          {
+            "at": 29747.7,
+            "text": "/owner-data/q4base/pak025.pk4 (12 files)"
+          },
+          {
+            "at": 29747.9,
+            "text": "/owner-data/q4base/pak024.pk4 (8 files)"
+          },
+          {
+            "at": 29748.1,
+            "text": "/owner-data/q4base/pak023.pk4 (8 files)"
+          },
+          {
+            "at": 29748.3,
+            "text": "/owner-data/q4base/pak022.pk4 (14 files)"
+          },
+          {
+            "at": 29748.4,
+            "text": "/owner-data/q4base/pak021.pk4 (89 files)"
+          },
+          {
+            "at": 29748.7,
+            "text": "/owner-data/q4base/pak020.pk4 (11 files)"
+          },
+          {
+            "at": 29748.8,
+            "text": "/owner-data/q4base/pak019.pk4 (1206 files)"
+          },
+          {
+            "at": 29749,
+            "text": "/owner-data/q4base/pak018.pk4 (3 files)"
+          },
+          {
+            "at": 29749.2,
+            "text": "/owner-data/q4base/pak017.pk4 (3 files)"
+          },
+          {
+            "at": 29749.3,
+            "text": "/owner-data/q4base/pak016.pk4 (193 files)"
+          },
+          {
+            "at": 29749.5,
+            "text": "/owner-data/q4base/pak015.pk4 (34 files)"
+          },
+          {
+            "at": 29749.8,
+            "text": "/owner-data/q4base/pak014.pk4 (552 files)"
+          },
+          {
+            "at": 29750.1,
+            "text": "/owner-data/q4base/pak013.pk4 (239 files)"
+          },
+          {
+            "at": 29750.4,
+            "text": "/owner-data/q4base/pak012.pk4 (1081 files)"
+          },
+          {
+            "at": 29750.6,
+            "text": "/owner-data/q4base/pak011.pk4 (5620 files)"
+          },
+          {
+            "at": 29750.9,
+            "text": "/owner-data/q4base/pak010.pk4 (5539 files)"
+          },
+          {
+            "at": 29751.1,
+            "text": "/owner-data/q4base/pak009.pk4 (1284 files)"
+          },
+          {
+            "at": 29751.3,
+            "text": "/owner-data/q4base/pak008.pk4 (1289 files)"
+          },
+          {
+            "at": 29751.5,
+            "text": "/owner-data/q4base/pak007.pk4 (1330 files)"
+          },
+          {
+            "at": 29751.7,
+            "text": "/owner-data/q4base/pak006.pk4 (1343 files)"
+          },
+          {
+            "at": 29752,
+            "text": "/owner-data/q4base/pak005.pk4 (1395 files)"
+          },
+          {
+            "at": 29752.2,
+            "text": "/owner-data/q4base/pak004.pk4 (2249 files)"
+          },
+          {
+            "at": 29752.4,
+            "text": "/owner-data/q4base/pak003.pk4 (1281 files)"
+          },
+          {
+            "at": 29752.6,
+            "text": "/owner-data/q4base/pak002.pk4 (313 files)"
+          },
+          {
+            "at": 29752.8,
+            "text": "/owner-data/q4base/pak001.pk4 (5837 files)"
+          },
+          {
+            "at": 29753,
+            "text": "/save/quake4/q4base"
+          },
+          {
+            "at": 29753.2,
+            "text": "game DLL: 0x0 in pak: 0x0"
+          },
+          {
+            "at": 29753.4,
+            "text": "Addon pk4s:"
+          },
+          {
+            "at": 29753.6,
+            "text": "/owner-data/q4base/q4cmp_pak001.pk4 (119 files)"
+          },
+          {
+            "at": 29753.8,
+            "text": "file system initialized."
+          },
+          {
+            "at": 29754.1,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 29754.3,
+            "text": "Emscripten single-thread mode: background file worker disabled; reads run synchronously"
+          },
+          {
+            "at": 29754.5,
+            "text": "Renderer API: gl (builtin)"
+          },
+          {
+            "at": 29754.7,
+            "text": "----- Initializing Decls -----"
+          },
+          {
+            "at": 29809.1,
+            "text": "Loading guides.... 64 loaded"
+          },
+          {
+            "at": 30039.7,
+            "text": "229ms to load 1130k of material"
+          },
+          {
+            "at": 30112.6,
+            "text": "72ms to load 43k of skin"
+          },
+          {
+            "at": 30324.2,
+            "text": "211ms to load 723k of sound"
+          },
+          {
+            "at": 30327.1,
+            "text": "3ms to load 1k of materialType"
+          },
+          {
+            "at": 30541.3,
+            "text": "214ms to load 2889k of lipSync"
+          },
+          {
+            "at": 30568,
+            "text": "27ms to load 105k of playback"
+          },
+          {
+            "at": 32054.9,
+            "text": "1487ms to load 1690k of effect"
+          },
+          {
+            "at": 32055.5,
+            "text": "------------------------------"
+          },
+          {
+            "at": 32055.7,
+            "text": "------- Initializing renderSystem --------"
+          },
+          {
+            "at": 32057.6,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 32057.9,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 32058.2,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 32058.4,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 32058.6,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 32058.8,
+            "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+          },
+          {
+            "at": 32059.1,
+            "text": "renderSystem initialized."
+          },
+          {
+            "at": 32059.3,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 32061.7,
+            "text": "696 strings read from strings/english_code.lang"
+          },
+          {
+            "at": 32063.8,
+            "text": "1813 strings read from strings/english_guis.lang"
+          },
+          {
+            "at": 32074.4,
+            "text": "5775 strings read from strings/english_lips.lang"
+          },
+          {
+            "at": 32075.2,
+            "text": "5778 strings read from strings/english_mappack.lang"
+          },
+          {
+            "at": 32077,
+            "text": "6254 strings read from strings/english_maps.lang"
+          },
+          {
+            "at": 32079.3,
+            "text": "7115 strings read from strings/english_openq4.lang"
+          },
+          {
+            "at": 32082.3,
+            "text": "execing default.cfg"
+          },
+          {
+            "at": 32083.5,
+            "text": "execing openq4_defaults.cfg"
+          },
+          {
+            "at": 32086.1,
+            "text": "696 strings read from strings/english_code.lang"
+          },
+          {
+            "at": 32087.8,
+            "text": "1813 strings read from strings/english_guis.lang"
+          },
+          {
+            "at": 32098.2,
+            "text": "5775 strings read from strings/english_lips.lang"
+          },
+          {
+            "at": 32099,
+            "text": "5778 strings read from strings/english_mappack.lang"
+          },
+          {
+            "at": 32100.9,
+            "text": "6254 strings read from strings/english_maps.lang"
+          },
+          {
+            "at": 32103.3,
+            "text": "7115 strings read from strings/english_openq4.lang"
+          },
+          {
+            "at": 32104.2,
+            "text": "Quality profile: com_machineSpec=3 com_videoRam=64 com_performancePreset='balanced' r_forceAmbient=0.000"
+          },
+          {
+            "at": 32104.8,
+            "text": "----- Initializing Sound System ------"
+          },
+          {
+            "at": 32105.5,
+            "text": "Setup OpenAL device and context... ^3WARNING: ^1OpenAL output mode requested '5.1 surround', but ALC_SOFT_output_mode is not available."
+          },
+          {
+            "at": 32105.8,
+            "text": "Done."
+          },
+          {
+            "at": 32106.1,
+            "text": "OpenAL ALC version: 1.1"
+          },
+          {
+            "at": 32106.4,
+            "text": "OpenAL vendor: wasm-games"
+          },
+          {
+            "at": 32106.7,
+            "text": "OpenAL renderer: WebAudio bridge"
+          },
+          {
+            "at": 32106.9,
+            "text": "OpenAL version: 1.1"
+          },
+          {
+            "at": 32107.2,
+            "text": "OpenAL extensions: "
+          },
+          {
+            "at": 32919.1,
+            "text": "OpenAL requested device: system default"
+          },
+          {
+            "at": 32920.7,
+            "text": "OpenAL default device: WebAudio"
+          },
+          {
+            "at": 32921.1,
+            "text": "OpenAL active device: WebAudio"
+          },
+          {
+            "at": 32921.5,
+            "text": "OpenAL HRTF: unavailable"
+          },
+          {
+            "at": 32921.8,
+            "text": "OpenAL output mode: unavailable"
+          },
+          {
+            "at": 32922.1,
+            "text": "^3WARNING: ^1OpenAL EFX extension not reported by device; wet send disabled."
+          },
+          {
+            "at": 32922.4,
+            "text": "sound system initialized."
+          },
+          {
+            "at": 32922.7,
+            "text": "--------------------------------------"
+          },
+          {
+            "at": 32923,
+            "text": "----- R_InitOpenGL -----"
+          },
+          {
+            "at": 32923.3,
+            "text": "renderer startup phase: R_InitOpenGL"
+          },
+          {
+            "at": 32923.7,
+            "text": "Renderer API: gl (builtin)"
+          },
+          {
+            "at": 32924,
+            "text": "Initializing OpenGL subsystem (SDL3 backend)"
+          },
+          {
+            "at": 32924.3,
+            "text": "SDL3: browser worker uses the transferred OffscreenCanvas directly"
+          },
+          {
+            "at": 32924.6,
+            "text": "SDL3: trying OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+          },
+          {
+            "at": 32937.9,
+            "text": "ERR: WARNING: using emscripten GL immediate mode emulation. This is very limited in what it supports"
+          },
+          {
+            "at": 32940.6,
+            "text": "SDL3: created OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+          },
+          {
+            "at": 32941,
+            "text": "SDL3: reported OpenGL context attributes: version=3.0 profile=es flags=0x0"
+          },
+          {
+            "at": 32941.4,
+            "text": "SDL3: reported OpenGL multisample attributes: requested=2 selected=2 actualBuffers=0 actualSamples=0"
+          },
+          {
+            "at": 32941.7,
+            "text": "SDL3: reported OpenGL framebuffer attributes: depthBits=24 stencilBits=8 hasStencilBuffer=1"
+          },
+          {
+            "at": 32942,
+            "text": "SDL3: requested swap interval 0, driver reports 1"
+          },
+          {
+            "at": 32942.6,
+            "text": "------- Input Initialization -------"
+          },
+          {
+            "at": 32943,
+            "text": "mouse: SDL3 initialized."
+          },
+          {
+            "at": 32943.4,
+            "text": "joystick: SDL3 initialized (no device detected)."
+          },
+          {
+            "at": 32943.8,
+            "text": "------------------------------------"
+          },
+          {
+            "at": 32945.2,
+            "text": "renderer startup phase: R_CheckPortableExtensions"
+          },
+          {
+            "at": 32945.9,
+            "text": "Init Glew..."
+          },
+          {
+            "at": 32962.1,
+            "text": "...using GL_ARB_multitexture"
+          },
+          {
+            "at": 32962.8,
+            "text": "...using GL_EXT_texture_env_combine"
+          },
+          {
+            "at": 32963.1,
+            "text": "...using GL_ARB_texture_cube_map"
+          },
+          {
+            "at": 32963.5,
+            "text": "...using GL_EXT_texture_env_dot3"
+          },
+          {
+            "at": 32963.8,
+            "text": "X..GL_ARB_texture_env_add not found"
+          },
+          {
+            "at": 32964.1,
+            "text": "...using GL_EXT_texture_compression_s3tc"
+          },
+          {
+            "at": 32964.4,
+            "text": "X..GL_ARB_texture_compression_bptc not found"
+          },
+          {
+            "at": 32964.7,
+            "text": "X..GL_EXT_texture_compression_bptc not found"
+          },
+          {
+            "at": 32965.2,
+            "text": "...using GL_EXT_texture_filter_anisotropic"
+          },
+          {
+            "at": 32965.5,
+            "text": "   maxTextureAnisotropy: 16.000000"
+          },
+          {
+            "at": 32965.9,
+            "text": "X..GL_EXT_shared_texture_palette not found"
+          },
+          {
+            "at": 32966.3,
+            "text": "X..GL_EXT_texture3D not found"
+          },
+          {
+            "at": 32966.7,
+            "text": "X..GL_EXT_stencil_wrap not found"
+          },
+          {
+            "at": 32967.4,
+            "text": "X..GL_NV_register_combiners not found"
+          },
+          {
+            "at": 32967.8,
+            "text": "X..GL_EXT_stencil_two_side not found"
+          },
+          {
+            "at": 32968.2,
+            "text": "X..GL_ATI_separate_stencil not found"
+          },
+          {
+            "at": 32968.6,
+            "text": "X..GL_ATI_fragment_shader not found"
+          },
+          {
+            "at": 32969,
+            "text": "X..GL_ATI_text_fragment_shader not found"
+          },
+          {
+            "at": 32969.4,
+            "text": "...using GL_ARB_vertex_buffer_object"
+          },
+          {
+            "at": 32969.8,
+            "text": "X..pixel buffer object entry points incomplete; async readbacks disabled"
+          },
+          {
+            "at": 32970.3,
+            "text": "...using GL_ARB_shader_objects"
+          },
+          {
+            "at": 32970.6,
+            "text": "...using GL_ARB_vertex_shader"
+          },
+          {
+            "at": 32971,
+            "text": "...using GL_ARB_fragment_shader"
+          },
+          {
+            "at": 32971.4,
+            "text": "...using GL_ARB_shading_language_100"
+          },
+          {
+            "at": 32971.8,
+            "text": "...using GL_ARB shader objects + GLSL (version OpenGL ES GLSL ES 3.00 (WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)))"
+          },
+          {
+            "at": 32972.2,
+            "text": "X..EXT_depth_bounds_test not found"
+          },
+          {
+            "at": 32972.6,
+            "text": "renderer startup phase: R_ARB2_Init"
+          },
+          {
+            "at": 32973,
+            "text": "---------- R_ARB2_Init ----------"
+          },
+          {
+            "at": 32973.4,
+            "text": "WebGL2 GLSL ES path available."
+          },
+          {
+            "at": 32973.8,
+            "text": "Renderer bootstrap: selected=LegacyGL2Compat requested=auto bridge=ARB2 modernExecutor=no defaultVisible=ARB2 reason=selected-tier-not-modern caps={GL 3.0 es, VBO:1 PBO:0 UBO:1 VAO:1 MRT:1 FBO:1 instancing:1 map_range:0 sync:1 compute:0 SSBO:0 indirect:0 MDI:0 buffer_storage:0 DSA:0 multi_bind:0 texture_view:0 gl_spirv:0 bindless:0}"
+          },
+          {
+            "at": 32974.1,
+            "text": "renderer startup phase: R_ReloadARBPrograms_f"
+          },
+          {
+            "at": 32974.6,
+            "text": "----- R_ReloadARBPrograms -----"
+          },
+          {
+            "at": 32975,
+            "text": "Loaded GLSL program 'glprogs/material_interaction'"
+          },
+          {
+            "at": 32975.4,
+            "text": "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped"
+          },
+          {
+            "at": 32975.9,
+            "text": "-------------------------------"
+          },
+          {
+            "at": 32976.3,
+            "text": "renderer startup phase: R_RendererUpload_Init"
+          },
+          {
+            "at": 32976.8,
+            "text": "Renderer upload manager: streaming legacy bridge, frameStream=subdata, staticAllocator=yes, buffers=4, ring=16384KB, sync=no"
+          },
+          {
+            "at": 32977.2,
+            "text": "renderer startup phase: vertexCache.Init"
+          },
+          {
+            "at": 32977.6,
+            "text": "using ARB_vertex_buffer_object memory"
+          },
+          {
+            "at": 32978.1,
+            "text": "vertex cache: frame-temp uploads routed through renderer upload stream (16384KB per frame buffer)"
+          },
+          {
+            "at": 32978.6,
+            "text": "renderer startup phase: tr.SetBackEndRenderer"
+          },
+          {
+            "at": 32979.1,
+            "text": "using ARB2 renderSystem"
+          },
+          {
+            "at": 32980.6,
+            "text": "renderer startup phase: renderer startup complete"
+          },
+          {
+            "at": 33049.2,
+            "text": "ERR: TODO: glShadeModel"
+          },
+          {
+            "at": 33050,
+            "text": ": interaction color mode = packed env16.xy (auto=packed env16.xy, override=auto)"
+          },
+          {
+            "at": 33051.6,
+            "text": "ERR: Aborted(Assertion failed)"
+          }
+        ],
+        "persistence": {
+          "ready": true,
+          "requests": 0,
+          "root": "/save/quake4"
+        },
+        "proofId": "quake4-draw-buffer-fix-2026-09-05",
+        "schemaVersion": 1,
+        "startedAt": "2026-09-05T05:03:49.803Z",
+        "states": [],
+        "variant": "quake4",
+        "workerMessages": {
+          "in:audio-init": 1,
+          "in:error": 2,
+          "in:log": 209,
+          "in:persistence-ready": 1,
+          "in:status": 2,
+          "out:start": 1
+        }
+      }
+    }
+  ],
+  "campaign": {
+    "proofId": "quake4-index-fix-2026-09-05",
+    "engineJS": "3c201150a3b0e0d90c1c9aa590299453159fe0e1f2ad764251f537aee585ac7b",
+    "engineWasm": "7f574cadb74344a3ed9d4c9f1a855c47e226308876a651f45b9942a2be47865b",
+    "observedScreens": [
+      "animated main menu",
+      "Single Player: Mission/Arena",
+      "New Game: default Corporal difficulty, Start Game"
+    ],
+    "actions": "Chrome CUA move followed by 100-point, approximately one-second left-button drag at each visible menu target. Brief initial click alone did not show a transition.",
+    "lastNativeError": "ERROR: file <ChoiceVals>, line 1: newline inside string",
+    "followingAbort": "Exception thrown, but exception catching is not enabled",
+    "map": "game/airdefense1",
+    "audioBeforeFocusFix": {
+      "state": "running",
+      "buffers": 280,
+      "sources": 0,
+      "starts": 0
+    },
+    "formattedBrowserSnapshot": "{\n  audio: {\n    buffers: 280,\n    messages: 9026,\n    sources: 0,\n    starts: 0,\n    state: 'running'\n  },\n  errors: [\n    {\n      at: 410001.3,\n      text: 'Assertion failed: Exception thrown, but exception catching is not enabled. Compile with -sNO_DISABLE_EXCEPTION_CATCHING or -sEXCEPTION_CATCHING_ALLOWED=[..] to catch. (note: in dynamic linking, if a side module wants exceptions, the main module must be built with that support)'\n    },\n    { at: 410001.6, text: 'Uncaught worker error' }\n  ],\n  input: {\n    captureChanges: 0,\n    events: [\n      {\n        at: 118235.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      { at: 118236.7, button: 0, down: true, type: 'pointer-button' },\n      { at: 118238.5, button: 0, down: false, type: 'pointer-button' },\n      {\n        at: 380013.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380023.4,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      { at: 380024.6, button: 0, down: true, type: 'pointer-button' },\n      {\n        at: 380028.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380036.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380045.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380053.7,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380061.9,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380070.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380078.7,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380087,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380095.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380103.7,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380112,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380120.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380128.5,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380136.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380145.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380153.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380161.9,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380170.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380178.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380187,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380195.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380203.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380212,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380220.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380228.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380236.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380245.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380253.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380261.9,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380270.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380278.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380286.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380295.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380303.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380312,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380320.4,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380328.7,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380337,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380345.3,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380353.7,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380361.9,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380370.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380378.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380387,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380395.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380403.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380411.8,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380420.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380428.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380436.8,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380445.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380453.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380461.9,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380470.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380478.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380487,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380495.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380503.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380512,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380520.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380528.5,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380536.8,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380545.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380553.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380561.9,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380570.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380578.5,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380587,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380595.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380603.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380611.8,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380620.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380628.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380636.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380645.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380653.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380661.8,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380670.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380678.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380686.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380695.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380703.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380712,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380720.2,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380728.6,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380736.8,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380745.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380753.5,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380761.8,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380770.3,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380778.7,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380786.9,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      {\n        at: 380795.2,\n        type: 'pointer-absolute',\n        x: 144.14052697616057,\n        y: 228.67754077073772\n      },\n      {\n        at: 380803.6,\n        type: 'pointer-absolute',\n        x: 143.53826850690086,\n        y: 228.67754077073772\n      },\n      ... 212 more items\n    ],\n    keyDown: 0,\n    keyUp: 0,\n    pointerAbsolute: 304,\n    pointerDown: 4,\n    pointerDx: 0,\n    pointerDy: 0,\n    pointerRelative: 0,\n    pointerUp: 4,\n    text: 0\n  },\n  lifecycle: [\n    { at: 100.6, name: 'init', variant: 'quake4' },\n    { at: 114.5, files: 32, name: 'initialized' },\n    { at: 3190.9, name: 'start-requested' },\n    { at: 3242.7, entries: 32, name: 'data-ready', source: 'cache' },\n    {\n      at: 3242.9,\n      height: 797,\n      name: 'worker-started',\n      width: 1408,\n      worker: '/q4-worker.js'\n    }\n  ],\n  logs: [\n    { at: 3750.9, text: '[quake4-wasm] native main entered' },\n    {\n      at: 3751,\n      text: '[quake4-wasm] platform initialization complete'\n    },\n    { at: 3751.1, text: '[quake4-wasm] initializing idLib' },\n    { at: 3751.1, text: '[quake4-wasm] parsing command line' },\n    {\n      at: 3751.1,\n      text: '[quake4-wasm] initializing commands and cvars'\n    },\n    { at: 3751.7, text: '[quake4-wasm] static cvars registered' },\n    {\n      at: 3752.1,\n      text: 'openQ4 0.1.010-dev (emscripten-wasm32, Sep  5 2026 04:59:58)'\n    },\n    { at: 3752.2, text: '[quake4-wasm] console initialized' },\n    {\n      at: 3752.3,\n      text: 'Sys_InitNetworking: browser loopback interface only'\n    },\n    { at: 3752.9, text: '[quake4-wasm] loading game and renderer' },\n    {\n      at: 3753.3,\n      text: \"Filesystem paths: fs_basepath='/owner-data' fs_homepath='/save/quake4' fs_savepath='/save/quake4' fs_cdpath='/' fs_game='baseoq4' fs_game_base='q4base'\"\n    },\n    { at: 3753.4, text: '------ Initializing File System ------' },\n    {\n      at: 6063.5,\n      text: 'Loaded pk4 /owner-data/q4base/pak001.pk4 with checksum 0xf2cbc998'\n    },\n    {\n      at: 6188.6,\n      text: 'Loaded pk4 /owner-data/q4base/pak002.pk4 with checksum 0x7f8d80d1'\n    },\n    {\n      at: 6717.1,\n      text: 'Loaded pk4 /owner-data/q4base/pak003.pk4 with checksum 0x1b57b207'\n    },\n    {\n      at: 7766.7,\n      text: 'Loaded pk4 /owner-data/q4base/pak004.pk4 with checksum 0x385aa578'\n    },\n    {\n      at: 8477.7,\n      text: 'Loaded pk4 /owner-data/q4base/pak005.pk4 with checksum 0x60d50a1d'\n    },\n    {\n      at: 9192.6,\n      text: 'Loaded pk4 /owner-data/q4base/pak006.pk4 with checksum 0x9099ed11'\n    },\n    {\n      at: 9922.9,\n      text: 'Loaded pk4 /owner-data/q4base/pak007.pk4 with checksum 0xaf301fff'\n    },\n    {\n      at: 10601.7,\n      text: 'Loaded pk4 /owner-data/q4base/pak008.pk4 with checksum 0x4ac6f6d9'\n    },\n    {\n      at: 11774.2,\n      text: 'Loaded pk4 /owner-data/q4base/pak009.pk4 with checksum 0x36030c7d'\n    },\n    {\n      at: 14430.7,\n      text: 'Loaded pk4 /owner-data/q4base/pak010.pk4 with checksum 0x4b80fbda'\n    },\n    {\n      at: 17234.6,\n      text: 'Loaded pk4 /owner-data/q4base/pak011.pk4 with checksum 0x8acf4cfa'\n    },\n    {\n      at: 17830.2,\n      text: 'Loaded pk4 /owner-data/q4base/pak012.pk4 with checksum 0xbe4120b0'\n    },\n    {\n      at: 17948.4,\n      text: 'Loaded pk4 /owner-data/q4base/pak013.pk4 with checksum 0x6ad67f40'\n    },\n    {\n      at: 18256.9,\n      text: 'Loaded pk4 /owner-data/q4base/pak014.pk4 with checksum 0xee51cd59'\n    },\n    {\n      at: 18275.5,\n      text: 'Loaded pk4 /owner-data/q4base/pak015.pk4 with checksum 0xf5bf4e0c'\n    },\n    {\n      at: 18379.5,\n      text: 'Loaded pk4 /owner-data/q4base/pak016.pk4 with checksum 0x2196f58c'\n    },\n    {\n      at: 18381.3,\n      text: 'Loaded pk4 /owner-data/q4base/pak017.pk4 with checksum 0x91118a35'\n    },\n    {\n      at: 18383.1,\n      text: 'Loaded pk4 /owner-data/q4base/pak018.pk4 with checksum 0x98a14f03'\n    },\n    {\n      at: 19578.4,\n      text: 'Loaded pk4 /owner-data/q4base/pak019.pk4 with checksum 0xbc82ac79'\n    },\n    {\n      at: 19644.4,\n      text: 'Loaded pk4 /owner-data/q4base/pak020.pk4 with checksum 0xce74cda5'\n    },\n    {\n      at: 19689.7,\n      text: 'Loaded pk4 /owner-data/q4base/pak021.pk4 with checksum 0x2ba6e70c'\n    },\n    {\n      at: 19696.7,\n      text: 'Loaded pk4 /owner-data/q4base/pak022.pk4 with checksum 0x4e390eec'\n    },\n    {\n      at: 19701.4,\n      text: 'Loaded pk4 /owner-data/q4base/pak023.pk4 with checksum 0x7c1fd3a5'\n    },\n    {\n      at: 19706.4,\n      text: 'Loaded pk4 /owner-data/q4base/pak024.pk4 with checksum 0x5546d551'\n    },\n    {\n      at: 19714.2,\n      text: 'Loaded pk4 /owner-data/q4base/pak025.pk4 with checksum 0xcaeec1fd'\n    },\n    {\n      at: 19828.8,\n      text: 'Loaded pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943'\n    },\n    {\n      at: 21522.3,\n      text: 'Loaded pk4 /owner-data/q4base/zpak_english.pk4 with checksum 0x5868f530'\n    },\n    {\n      at: 21523.3,\n      text: 'Loaded pk4 /owner-data/q4base/zpak_english_01.pk4 with checksum 0xd9f04b8b'\n    },\n    {\n      at: 21531.9,\n      text: 'Loaded pk4 /owner-data/q4base/zpak_english_02.pk4 with checksum 0x9dbd91fd'\n    },\n    {\n      at: 21533.9,\n      text: 'Loaded pk4 /owner-data/q4base/zpak_english_03.pk4 with checksum 0x2eb6ad8'\n    },\n    {\n      at: 21535.6,\n      text: 'Loaded pk4 /owner-data/q4base/zpak_english_04.pk4 with checksum 0xd3fefaa1'\n    },\n    {\n      at: 21537.2,\n      text: 'Loaded pk4 /owner-data/q4base/zpak_english_05.pk4 with checksum 0x8596af60'\n    },\n    {\n      at: 21615.6,\n      text: 'Loaded pk4 baseoq4/pak0.pk4 with checksum 0x29a1151e'\n    },\n    {\n      at: 25230.8,\n      text: 'Loaded pk4 baseoq4/pak1.pk4 with checksum 0xdf8f4531'\n    },\n    {\n      at: 29919.4,\n      text: 'Addon pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943 is on addon list'\n    },\n    { at: 29920.4, text: 'Current search path:' },\n    { at: 29920.7, text: '//baseoq4' },\n    { at: 29920.9, text: 'baseoq4/pak1.pk4 (6723 files)' },\n    { at: 29921, text: 'baseoq4/pak0.pk4 (249 files)' },\n    { at: 29921.1, text: '/owner-data/baseoq4' },\n    { at: 29921.2, text: '/save/quake4/baseoq4' },\n    { at: 29921.4, text: '//q4base' },\n    { at: 29921.5, text: '/owner-data/q4base' },\n    {\n      at: 29921.8,\n      text: '/owner-data/q4base/zpak_english_05.pk4 (3 files)'\n    },\n    {\n      at: 29922.6,\n      text: '/owner-data/q4base/zpak_english_04.pk4 (3 files)'\n    },\n    {\n      at: 29923.1,\n      text: '/owner-data/q4base/zpak_english_03.pk4 (4 files)'\n    },\n    {\n      at: 29923.5,\n      text: '/owner-data/q4base/zpak_english_02.pk4 (21 files)'\n    },\n    {\n      at: 29924,\n      text: '/owner-data/q4base/zpak_english_01.pk4 (1 files)'\n    },\n    {\n      at: 29924.4,\n      text: '/owner-data/q4base/zpak_english.pk4 (3457 files)'\n    },\n    { at: 29924.8, text: '/owner-data/q4base/pak025.pk4 (12 files)' },\n    { at: 29925, text: '/owner-data/q4base/pak024.pk4 (8 files)' },\n    { at: 29925.2, text: '/owner-data/q4base/pak023.pk4 (8 files)' },\n    { at: 29925.5, text: '/owner-data/q4base/pak022.pk4 (14 files)' },\n    { at: 29925.8, text: '/owner-data/q4base/pak021.pk4 (89 files)' },\n    { at: 29926, text: '/owner-data/q4base/pak020.pk4 (11 files)' },\n    { at: 29926.3, text: '/owner-data/q4base/pak019.pk4 (1206 files)' },\n    { at: 29926.5, text: '/owner-data/q4base/pak018.pk4 (3 files)' },\n    { at: 29926.7, text: '/owner-data/q4base/pak017.pk4 (3 files)' },\n    { at: 29927, text: '/owner-data/q4base/pak016.pk4 (193 files)' },\n    { at: 29927.3, text: '/owner-data/q4base/pak015.pk4 (34 files)' },\n    { at: 29927.6, text: '/owner-data/q4base/pak014.pk4 (552 files)' },\n    { at: 29927.9, text: '/owner-data/q4base/pak013.pk4 (239 files)' },\n    { at: 29928.1, text: '/owner-data/q4base/pak012.pk4 (1081 files)' },\n    { at: 29928.4, text: '/owner-data/q4base/pak011.pk4 (5620 files)' },\n    { at: 29928.6, text: '/owner-data/q4base/pak010.pk4 (5539 files)' },\n    { at: 29928.9, text: '/owner-data/q4base/pak009.pk4 (1284 files)' },\n    { at: 29929.1, text: '/owner-data/q4base/pak008.pk4 (1289 files)' },\n    { at: 29929.4, text: '/owner-data/q4base/pak007.pk4 (1330 files)' },\n    { at: 29929.6, text: '/owner-data/q4base/pak006.pk4 (1343 files)' },\n    { at: 29929.9, text: '/owner-data/q4base/pak005.pk4 (1395 files)' },\n    { at: 29930.1, text: '/owner-data/q4base/pak004.pk4 (2249 files)' },\n    { at: 29930.4, text: '/owner-data/q4base/pak003.pk4 (1281 files)' },\n    { at: 29930.6, text: '/owner-data/q4base/pak002.pk4 (313 files)' },\n    { at: 29930.9, text: '/owner-data/q4base/pak001.pk4 (5837 files)' },\n    { at: 29931.3, text: '/save/quake4/q4base' },\n    { at: 29931.5, text: 'game DLL: 0x0 in pak: 0x0' },\n    { at: 29931.8, text: 'Addon pk4s:' },\n    {\n      at: 29932.1,\n      text: '/owner-data/q4base/q4cmp_pak001.pk4 (119 files)'\n    },\n    { at: 29932.4, text: 'file system initialized.' },\n    { at: 29932.7, text: '--------------------------------------' },\n    {\n      at: 29933,\n      text: 'Emscripten single-thread mode: background file worker disabled; reads run synchronously'\n    },\n    { at: 29933.3, text: 'Renderer API: gl (builtin)' },\n    { at: 29933.6, text: '----- Initializing Decls -----' },\n    { at: 29981, text: 'Loading guides.... 64 loaded' },\n    { at: 30218.5, text: '235ms to load 1130k of material' },\n    { at: 30280.9, text: '62ms to load 43k of skin' },\n    { at: 30471.8, text: '190ms to load 723k of sound' },\n    { at: 30474.5, text: '3ms to load 1k of materialType' },\n    ... 245 more items\n  ],\n  persistence: { ready: true, requests: 0, root: '/save/quake4' },\n  proofId: 'quake4-index-fix-2026-09-05',\n  schemaVersion: 1,\n  startedAt: '2026-09-05T05:10:01.469Z',\n  states: [\n    {\n      at: 47026.1,\n      inputMode: null,\n      resumeAvailable: false,\n      state: 'menu',\n      type: 'engine-state'\n    }\n  ],\n  variant: 'quake4',\n  workerMessages: {\n    'in:audio-buffer': 280,\n    'in:audio-init': 1,\n    'in:audio-listener-float': 8745,\n    'in:engine-state': 1,\n    'in:error': 2,\n    'in:log': 350,\n    'in:persistence-ready': 1,\n    'in:status': 2,\n    'out:pointer-absolute': 304,\n    'out:pointer-button': 8,\n    'out:resize': 2,\n    'out:start': 1\n  }\n}",
+    "snapshotLimit": "The displayed snapshot retains errors and states but the logger abbreviates the long logs array; it is not a complete raw proof export."
+  },
+  "acceptance": {
+    "menuRendering": true,
+    "campaign": false,
+    "audioPlayback": false,
+    "focusBridgeChromeVerified": false
+  },
+  "browserInterruption": "Chrome control timed out and reset its session during the subsequent diagnostic run. Existing-tab recovery timed out after the documented Chrome window reconnect. No later diagnostic or focus-fix browser result is claimed."
+}

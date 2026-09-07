@@ -18,6 +18,7 @@ trap cleanup EXIT
 
 node "$repo_dir/scripts/verify-site-contract.js"
 node "$repo_dir/scripts/test-variant-adapters.js"
+node "$repo_dir/scripts/test-source.mjs"
 node "$framework_dir/scripts/check-game-package.js" "$dist_dir"
 WASM_GAME_SITE_ROOT="$dist_dir" \
 WASM_GAME_SHELL_ROOT="$framework_dir/dist" \

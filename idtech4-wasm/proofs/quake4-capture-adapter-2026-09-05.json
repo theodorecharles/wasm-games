@@ -1,0 +1,19 @@
+{
+  "scope": "Six-variant adapter VM contract suite, including new Quake 4 deferred capture and native-state gates. Browser pointer lock is not provided by this fixture.",
+  "cases": [
+    {
+      "label": "baseline",
+      "adapterSHA256": "2e73f0a1ada41b2c8c43668d31c25166aed022c13c23a914dd8f2b5e6d3e2177",
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Quake 4 must wait for actual native resume\n+ actual - expected\n\n+ 'gameplay'\n- 'paused'\n\n    at exercise (file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:288:12)\n    at async file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:402:53 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 'gameplay',\n  expected: 'paused',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.19.0\n"
+    },
+    {
+      "label": "candidate",
+      "adapterSHA256": "77799c1786556d3995f9d8ec238ccdfc730250cabb6a326435efca4c639b9d6a",
+      "status": 0,
+      "stdout": "id Tech 4 adapter state, identity, input, disabled-controller, persistence, pointer, resize, profile, and PWA contracts passed\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "scope": "Final packaged image, two Chrome clients; native roster is separate from relay peers.",
+  "observedAt": "2026-09-05T21:22:19.890Z",
+  "status": {
+    "state": "running",
+    "humans": 2,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": 1788643261591,
+    "map": "game/mp/d3dm1",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "FinalMarineA"
+      },
+      {
+        "slot": 1,
+        "ping": 0,
+        "rate": 16000,
+        "name": "FinalMarineB"
+      }
+    ],
+    "browserPeers": 2,
+    "bots": 0,
+    "botStatus": "not-installed",
+    "relay": {
+      "peers": 2,
+      "clientPackets": 4939,
+      "serverPackets": 1401
+    }
+  }
+}

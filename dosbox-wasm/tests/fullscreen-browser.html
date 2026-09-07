@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fullscreen browser diagnostic</title>
+<style>
+  :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; }
+  body { margin: 24px; }
+  button { font: inherit; padding: 10px 16px; margin: 0 12px 12px 0; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid #555; padding: 16px; }
+</style>
+<h1>Fullscreen browser diagnostic</h1>
+<p>This independent page records actual browser events. It contains no game engine, synthesized input, or storage access.</p>
+<button id="enter" type="button">Enter fullscreen</button>
+<button id="exit" type="button">Exit fullscreen</button>
+<p id="state" role="status"></p>
+<pre id="events" role="log"></pre>
+<script>
+  'use strict';
+  const output = document.querySelector('#events');
+  const state = document.querySelector('#state');
+  let sequence = 0;
+  function record(type, extra = {}) {
+    const row = { sequence: ++sequence, time: Math.round(performance.now() * 10) / 10,
+      type, enabled: document.fullscreenEnabled, fullscreen: document.fullscreenElement?.tagName || null,
+      active: navigator.userActivation?.isActive, hasBeenActive: navigator.userActivation?.hasBeenActive,
+      focused: document.hasFocus(), visibility: document.visibilityState,
+      viewport: [innerWidth, innerHeight], ...extra };
+    output.appendChild(document.createTextNode(JSON.stringify(row) + '\n'));
+    while (output.childNodes.length > 100) output.removeChild(output.firstChild);
+    state.textContent = `Fullscreen: ${row.fullscreen || 'off'}; enabled: ${row.enabled}; focused: ${row.focused}`;
+  }
+  for (const type of ['pointerdown', 'pointerup', 'keydown', 'keyup', 'click']) {
+    document.addEventListener(type, event => record(type, {
+      trusted: event.isTrusted, target: event.target.id, code: event.code, button: event.button
+    }), true);
+  }
+  for (const type of ['fullscreenchange', 'fullscreenerror', 'visibilitychange']) {
+    document.addEventListener(type, event => record(type, { trusted: event.isTrusted }));
+  }
+  for (const type of ['focus', 'blur', 'resize']) window.addEventListener(type, () => record(type));
+  document.querySelector('#enter').addEventListener('click', async () => {
+    record('request');
+    try {
+      await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+      record('request-resolved');
+    } catch (error) { record('request-rejected', { name: error.name, message: error.message }); }
+  });
+  document.querySelector('#exit').addEventListener('click', async () => {
+    record('exit-request');
+    try { await document.exitFullscreen(); record('exit-resolved'); }
+    catch (error) { record('exit-rejected', { name: error.name, message: error.message }); }
+  });
+  record('ready');
+</script>
+</html>

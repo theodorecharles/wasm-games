@@ -1,0 +1,3361 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "scope": "Actual Chrome native handoff verification, not pointer-lock acceptance. Corrected adapter requests once after native cinematic console Escape resumes gameplay; ordinary first-person console Escape opens root pause without another request. Continue guard and Enter handoff pass. First-person world/sky/pistol/HUD render after console-driven cinematic skip; not an untouched natural intro.",
+  "url": "http://127.0.0.1:32875/?proof=quake4-capture-console-2026-09-05",
+  "image": "sha256:fe1ce9f372401adfec272da63fe9eabbbd463c4bdca4972261adec090a695ec9",
+  "adapterSHA256": "d62d59bf8efea30fa73065964ab7c3dc5768eec51332d08ed0c70b12dfd47ef3",
+  "screenshot": "quake4-capture-console-chrome-2026-09-05.jpg",
+  "limitations": [
+    "Both actual capture attempts emit pointerlockerror; DOM pointer lock remains null.",
+    "Independent engine-free control also rejects WrongDocumentError; underlying browser-context cause not established.",
+    "No sustained movement/firing, listening, performance or wider campaign acceptance.",
+    "Blood deferred; RTCW and live services unchanged."
+  ],
+  "observed": {
+    "captured": "false",
+    "engine": "paused",
+    "locked": false,
+    "proof": {
+      "audio": {
+        "buffers": 958,
+        "messages": 231602,
+        "sources": 91,
+        "starts": 91,
+        "state": "running"
+      },
+      "capture": [
+        {
+          "active": true,
+          "at": 275222.1,
+          "focused": true,
+          "inputMode": "gameplay",
+          "kind": "resume-request",
+          "locked": false,
+          "message": "",
+          "state": "gameplay",
+          "trusted": true
+        },
+        {
+          "active": true,
+          "at": 275223.4,
+          "focused": true,
+          "inputMode": "gameplay",
+          "kind": "error",
+          "locked": false,
+          "message": "",
+          "state": "gameplay",
+          "trusted": true
+        },
+        {
+          "active": false,
+          "at": 320958.3,
+          "focused": true,
+          "inputMode": "gameplay",
+          "kind": "resume-request",
+          "locked": false,
+          "message": "",
+          "state": "gameplay",
+          "trusted": true
+        },
+        {
+          "active": false,
+          "at": 320958.8,
+          "focused": true,
+          "inputMode": "gameplay",
+          "kind": "error",
+          "locked": false,
+          "message": "",
+          "state": "gameplay",
+          "trusted": true
+        }
+      ],
+      "errors": [],
+      "input": {
+        "captureChanges": 0,
+        "events": [
+          {
+            "at": 94324.2,
+            "type": "pointer-absolute",
+            "x": 125.84269662921348,
+            "y": 227.95505617441756
+          },
+          {
+            "at": 94329.2,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 94330.9,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 142106.6,
+            "type": "pointer-absolute",
+            "x": 152.80898876404495,
+            "y": 216.71910111823777
+          },
+          {
+            "at": 142109.6,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 142111.1,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 181633.5,
+            "type": "pointer-absolute",
+            "x": 331.23595505617976,
+            "y": 242.78651684857485
+          },
+          {
+            "at": 181685.4,
+            "button": 0,
+            "down": true,
+            "type": "pointer-button"
+          },
+          {
+            "at": 181688.4,
+            "button": 0,
+            "down": false,
+            "type": "pointer-button"
+          },
+          {
+            "at": 275142.9,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 275144.4,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 40,
+            "type": "key"
+          },
+          {
+            "at": 304563.3,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 304564.2,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 315747.1,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 41,
+            "type": "key"
+          },
+          {
+            "at": 315749,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 41,
+            "type": "key"
+          },
+          {
+            "at": 354168.6,
+            "down": true,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 354169.8,
+            "down": false,
+            "key": 96,
+            "repeat": false,
+            "scan": 53,
+            "type": "key"
+          },
+          {
+            "at": 364812,
+            "down": true,
+            "key": 0,
+            "repeat": false,
+            "scan": 41,
+            "type": "key"
+          },
+          {
+            "at": 364813.9,
+            "down": false,
+            "key": 0,
+            "repeat": false,
+            "scan": 41,
+            "type": "key"
+          }
+        ],
+        "keyDown": 5,
+        "keyUp": 5,
+        "pointerAbsolute": 3,
+        "pointerDown": 3,
+        "pointerDx": 0,
+        "pointerDy": 0,
+        "pointerRelative": 0,
+        "pointerUp": 3,
+        "text": 0
+      },
+      "lifecycle": [
+        {
+          "at": 125.1,
+          "name": "init",
+          "variant": "quake4"
+        },
+        {
+          "at": 138.7,
+          "files": 32,
+          "name": "initialized"
+        },
+        {
+          "at": 29733.6,
+          "name": "start-requested"
+        },
+        {
+          "at": 29766.5,
+          "entries": 32,
+          "name": "data-ready",
+          "source": "cache"
+        },
+        {
+          "at": 29766.7,
+          "height": 1113,
+          "name": "worker-started",
+          "width": 1424,
+          "worker": "/q4-worker.js"
+        }
+      ],
+      "logs": [
+        {
+          "at": 30562.6,
+          "text": "[quake4-wasm] native main entered"
+        },
+        {
+          "at": 30562.8,
+          "text": "[quake4-wasm] platform initialization complete"
+        },
+        {
+          "at": 30562.8,
+          "text": "[quake4-wasm] initializing idLib"
+        },
+        {
+          "at": 30562.9,
+          "text": "[quake4-wasm] parsing command line"
+        },
+        {
+          "at": 30562.9,
+          "text": "[quake4-wasm] initializing commands and cvars"
+        },
+        {
+          "at": 30563.8,
+          "text": "[quake4-wasm] static cvars registered"
+        },
+        {
+          "at": 30564.3,
+          "text": "openQ4 0.1.010-dev (emscripten-wasm32, Sep  5 2026 06:16:45)"
+        },
+        {
+          "at": 30564.4,
+          "text": "[quake4-wasm] console initialized"
+        },
+        {
+          "at": 30564.5,
+          "text": "Sys_InitNetworking: browser loopback interface only"
+        },
+        {
+          "at": 30565.3,
+          "text": "[quake4-wasm] loading game and renderer"
+        },
+        {
+          "at": 30565.9,
+          "text": "Filesystem paths: fs_basepath='/owner-data' fs_homepath='/save/quake4' fs_savepath='/save/quake4' fs_cdpath='/' fs_game='baseoq4' fs_game_base='q4base'"
+        },
+        {
+          "at": 30566.2,
+          "text": "------ Initializing File System ------"
+        },
+        {
+          "at": 32865,
+          "text": "Loaded pk4 /owner-data/q4base/pak001.pk4 with checksum 0xf2cbc998"
+        },
+        {
+          "at": 33005.4,
+          "text": "Loaded pk4 /owner-data/q4base/pak002.pk4 with checksum 0x7f8d80d1"
+        },
+        {
+          "at": 33566.4,
+          "text": "Loaded pk4 /owner-data/q4base/pak003.pk4 with checksum 0x1b57b207"
+        },
+        {
+          "at": 34612.2,
+          "text": "Loaded pk4 /owner-data/q4base/pak004.pk4 with checksum 0x385aa578"
+        },
+        {
+          "at": 35316.2,
+          "text": "Loaded pk4 /owner-data/q4base/pak005.pk4 with checksum 0x60d50a1d"
+        },
+        {
+          "at": 36050.6,
+          "text": "Loaded pk4 /owner-data/q4base/pak006.pk4 with checksum 0x9099ed11"
+        },
+        {
+          "at": 36809.1,
+          "text": "Loaded pk4 /owner-data/q4base/pak007.pk4 with checksum 0xaf301fff"
+        },
+        {
+          "at": 37541.9,
+          "text": "Loaded pk4 /owner-data/q4base/pak008.pk4 with checksum 0x4ac6f6d9"
+        },
+        {
+          "at": 38316.1,
+          "text": "Loaded pk4 /owner-data/q4base/pak009.pk4 with checksum 0x36030c7d"
+        },
+        {
+          "at": 41970.3,
+          "text": "Loaded pk4 /owner-data/q4base/pak010.pk4 with checksum 0x4b80fbda"
+        },
+        {
+          "at": 44764.9,
+          "text": "Loaded pk4 /owner-data/q4base/pak011.pk4 with checksum 0x8acf4cfa"
+        },
+        {
+          "at": 45327.1,
+          "text": "Loaded pk4 /owner-data/q4base/pak012.pk4 with checksum 0xbe4120b0"
+        },
+        {
+          "at": 45455.6,
+          "text": "Loaded pk4 /owner-data/q4base/pak013.pk4 with checksum 0x6ad67f40"
+        },
+        {
+          "at": 45739,
+          "text": "Loaded pk4 /owner-data/q4base/pak014.pk4 with checksum 0xee51cd59"
+        },
+        {
+          "at": 45759.2,
+          "text": "Loaded pk4 /owner-data/q4base/pak015.pk4 with checksum 0xf5bf4e0c"
+        },
+        {
+          "at": 45858.3,
+          "text": "Loaded pk4 /owner-data/q4base/pak016.pk4 with checksum 0x2196f58c"
+        },
+        {
+          "at": 45860.1,
+          "text": "Loaded pk4 /owner-data/q4base/pak017.pk4 with checksum 0x91118a35"
+        },
+        {
+          "at": 45861.9,
+          "text": "Loaded pk4 /owner-data/q4base/pak018.pk4 with checksum 0x98a14f03"
+        },
+        {
+          "at": 46527.8,
+          "text": "Loaded pk4 /owner-data/q4base/pak019.pk4 with checksum 0xbc82ac79"
+        },
+        {
+          "at": 46537.3,
+          "text": "Loaded pk4 /owner-data/q4base/pak020.pk4 with checksum 0xce74cda5"
+        },
+        {
+          "at": 46593.5,
+          "text": "Loaded pk4 /owner-data/q4base/pak021.pk4 with checksum 0x2ba6e70c"
+        },
+        {
+          "at": 46604,
+          "text": "Loaded pk4 /owner-data/q4base/pak022.pk4 with checksum 0x4e390eec"
+        },
+        {
+          "at": 46610.2,
+          "text": "Loaded pk4 /owner-data/q4base/pak023.pk4 with checksum 0x7c1fd3a5"
+        },
+        {
+          "at": 46616.1,
+          "text": "Loaded pk4 /owner-data/q4base/pak024.pk4 with checksum 0x5546d551"
+        },
+        {
+          "at": 46624.5,
+          "text": "Loaded pk4 /owner-data/q4base/pak025.pk4 with checksum 0xcaeec1fd"
+        },
+        {
+          "at": 46707.6,
+          "text": "Loaded pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943"
+        },
+        {
+          "at": 48815.4,
+          "text": "Loaded pk4 /owner-data/q4base/zpak_english.pk4 with checksum 0x5868f530"
+        },
+        {
+          "at": 48816.8,
+          "text": "Loaded pk4 /owner-data/q4base/zpak_english_01.pk4 with checksum 0xd9f04b8b"
+        },
+        {
+          "at": 48833.4,
+          "text": "Loaded pk4 /owner-data/q4base/zpak_english_02.pk4 with checksum 0x9dbd91fd"
+        },
+        {
+          "at": 48837.5,
+          "text": "Loaded pk4 /owner-data/q4base/zpak_english_03.pk4 with checksum 0x2eb6ad8"
+        },
+        {
+          "at": 48840.8,
+          "text": "Loaded pk4 /owner-data/q4base/zpak_english_04.pk4 with checksum 0xd3fefaa1"
+        },
+        {
+          "at": 48844.1,
+          "text": "Loaded pk4 /owner-data/q4base/zpak_english_05.pk4 with checksum 0x8596af60"
+        },
+        {
+          "at": 49084.1,
+          "text": "Loaded pk4 baseoq4/pak0.pk4 with checksum 0x29a1151e"
+        },
+        {
+          "at": 54404.7,
+          "text": "Loaded pk4 baseoq4/pak1.pk4 with checksum 0xdf8f4531"
+        },
+        {
+          "at": 60134.6,
+          "text": "Addon pk4 /owner-data/q4base/q4cmp_pak001.pk4 with checksum 0xd0813943 is on addon list"
+        },
+        {
+          "at": 60136,
+          "text": "Current search path:"
+        },
+        {
+          "at": 60136.3,
+          "text": "//baseoq4"
+        },
+        {
+          "at": 60136.5,
+          "text": "baseoq4/pak1.pk4 (6723 files)"
+        },
+        {
+          "at": 60136.7,
+          "text": "baseoq4/pak0.pk4 (249 files)"
+        },
+        {
+          "at": 60136.8,
+          "text": "/owner-data/baseoq4"
+        },
+        {
+          "at": 60137,
+          "text": "/save/quake4/baseoq4"
+        },
+        {
+          "at": 60137.2,
+          "text": "//q4base"
+        },
+        {
+          "at": 60137.4,
+          "text": "/owner-data/q4base"
+        },
+        {
+          "at": 60137.6,
+          "text": "/owner-data/q4base/zpak_english_05.pk4 (3 files)"
+        },
+        {
+          "at": 60137.8,
+          "text": "/owner-data/q4base/zpak_english_04.pk4 (3 files)"
+        },
+        {
+          "at": 60138.1,
+          "text": "/owner-data/q4base/zpak_english_03.pk4 (4 files)"
+        },
+        {
+          "at": 60138.3,
+          "text": "/owner-data/q4base/zpak_english_02.pk4 (21 files)"
+        },
+        {
+          "at": 60138.5,
+          "text": "/owner-data/q4base/zpak_english_01.pk4 (1 files)"
+        },
+        {
+          "at": 60138.8,
+          "text": "/owner-data/q4base/zpak_english.pk4 (3457 files)"
+        },
+        {
+          "at": 60139,
+          "text": "/owner-data/q4base/pak025.pk4 (12 files)"
+        },
+        {
+          "at": 60139.2,
+          "text": "/owner-data/q4base/pak024.pk4 (8 files)"
+        },
+        {
+          "at": 60139.4,
+          "text": "/owner-data/q4base/pak023.pk4 (8 files)"
+        },
+        {
+          "at": 60139.7,
+          "text": "/owner-data/q4base/pak022.pk4 (14 files)"
+        },
+        {
+          "at": 60139.9,
+          "text": "/owner-data/q4base/pak021.pk4 (89 files)"
+        },
+        {
+          "at": 60140.2,
+          "text": "/owner-data/q4base/pak020.pk4 (11 files)"
+        },
+        {
+          "at": 60140.4,
+          "text": "/owner-data/q4base/pak019.pk4 (1206 files)"
+        },
+        {
+          "at": 60140.7,
+          "text": "/owner-data/q4base/pak018.pk4 (3 files)"
+        },
+        {
+          "at": 60140.9,
+          "text": "/owner-data/q4base/pak017.pk4 (3 files)"
+        },
+        {
+          "at": 60141.2,
+          "text": "/owner-data/q4base/pak016.pk4 (193 files)"
+        },
+        {
+          "at": 60141.5,
+          "text": "/owner-data/q4base/pak015.pk4 (34 files)"
+        },
+        {
+          "at": 60141.7,
+          "text": "/owner-data/q4base/pak014.pk4 (552 files)"
+        },
+        {
+          "at": 60141.8,
+          "text": "/owner-data/q4base/pak013.pk4 (239 files)"
+        },
+        {
+          "at": 60142,
+          "text": "/owner-data/q4base/pak012.pk4 (1081 files)"
+        },
+        {
+          "at": 60142.2,
+          "text": "/owner-data/q4base/pak011.pk4 (5620 files)"
+        },
+        {
+          "at": 60142.4,
+          "text": "/owner-data/q4base/pak010.pk4 (5539 files)"
+        },
+        {
+          "at": 60142.6,
+          "text": "/owner-data/q4base/pak009.pk4 (1284 files)"
+        },
+        {
+          "at": 60142.7,
+          "text": "/owner-data/q4base/pak008.pk4 (1289 files)"
+        },
+        {
+          "at": 60142.9,
+          "text": "/owner-data/q4base/pak007.pk4 (1330 files)"
+        },
+        {
+          "at": 60143.1,
+          "text": "/owner-data/q4base/pak006.pk4 (1343 files)"
+        },
+        {
+          "at": 60143.3,
+          "text": "/owner-data/q4base/pak005.pk4 (1395 files)"
+        },
+        {
+          "at": 60143.5,
+          "text": "/owner-data/q4base/pak004.pk4 (2249 files)"
+        },
+        {
+          "at": 60143.7,
+          "text": "/owner-data/q4base/pak003.pk4 (1281 files)"
+        },
+        {
+          "at": 60144,
+          "text": "/owner-data/q4base/pak002.pk4 (313 files)"
+        },
+        {
+          "at": 60144.3,
+          "text": "/owner-data/q4base/pak001.pk4 (5837 files)"
+        },
+        {
+          "at": 60144.6,
+          "text": "/save/quake4/q4base"
+        },
+        {
+          "at": 60144.8,
+          "text": "game DLL: 0x0 in pak: 0x0"
+        },
+        {
+          "at": 60145,
+          "text": "Addon pk4s:"
+        },
+        {
+          "at": 60145.2,
+          "text": "/owner-data/q4base/q4cmp_pak001.pk4 (119 files)"
+        },
+        {
+          "at": 60145.4,
+          "text": "file system initialized."
+        },
+        {
+          "at": 60145.6,
+          "text": "--------------------------------------"
+        },
+        {
+          "at": 60145.8,
+          "text": "Emscripten single-thread mode: background file worker disabled; reads run synchronously"
+        },
+        {
+          "at": 60146.2,
+          "text": "Renderer API: gl (builtin)"
+        },
+        {
+          "at": 60146.4,
+          "text": "----- Initializing Decls -----"
+        },
+        {
+          "at": 60202.7,
+          "text": "Loading guides.... 64 loaded"
+        },
+        {
+          "at": 60550.5,
+          "text": "346ms to load 1130k of material"
+        },
+        {
+          "at": 60666.3,
+          "text": "116ms to load 43k of skin"
+        },
+        {
+          "at": 60922.5,
+          "text": "254ms to load 723k of sound"
+        },
+        {
+          "at": 60928.7,
+          "text": "6ms to load 1k of materialType"
+        },
+        {
+          "at": 61260,
+          "text": "330ms to load 2889k of lipSync"
+        },
+        {
+          "at": 61309.9,
+          "text": "49ms to load 105k of playback"
+        },
+        {
+          "at": 63337.7,
+          "text": "2027ms to load 1690k of effect"
+        },
+        {
+          "at": 63338.2,
+          "text": "------------------------------"
+        },
+        {
+          "at": 63338.5,
+          "text": "------- Initializing renderSystem --------"
+        },
+        {
+          "at": 63343.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 63344.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 63344.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 63345,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 63345.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 63345.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 63345.7,
+          "text": "renderSystem initialized."
+        },
+        {
+          "at": 63345.9,
+          "text": "--------------------------------------"
+        },
+        {
+          "at": 63353.9,
+          "text": "696 strings read from strings/english_code.lang"
+        },
+        {
+          "at": 63356.8,
+          "text": "1813 strings read from strings/english_guis.lang"
+        },
+        {
+          "at": 63375.1,
+          "text": "5775 strings read from strings/english_lips.lang"
+        },
+        {
+          "at": 63376.4,
+          "text": "5778 strings read from strings/english_mappack.lang"
+        },
+        {
+          "at": 63379.9,
+          "text": "6254 strings read from strings/english_maps.lang"
+        },
+        {
+          "at": 63384.8,
+          "text": "7115 strings read from strings/english_openq4.lang"
+        },
+        {
+          "at": 63388.8,
+          "text": "execing default.cfg"
+        },
+        {
+          "at": 63390.1,
+          "text": "execing openq4_defaults.cfg"
+        },
+        {
+          "at": 63390.5,
+          "text": "execing openQ4Config.cfg"
+        },
+        {
+          "at": 63398.5,
+          "text": "696 strings read from strings/english_code.lang"
+        },
+        {
+          "at": 63401.6,
+          "text": "1813 strings read from strings/english_guis.lang"
+        },
+        {
+          "at": 63420.1,
+          "text": "5775 strings read from strings/english_lips.lang"
+        },
+        {
+          "at": 63421,
+          "text": "5778 strings read from strings/english_mappack.lang"
+        },
+        {
+          "at": 63424.5,
+          "text": "6254 strings read from strings/english_maps.lang"
+        },
+        {
+          "at": 63429.4,
+          "text": "7115 strings read from strings/english_openq4.lang"
+        },
+        {
+          "at": 63430.4,
+          "text": "Quality profile: com_machineSpec=3 com_videoRam=2048 com_performancePreset='balanced' r_forceAmbient=0.000"
+        },
+        {
+          "at": 63430.8,
+          "text": "----- Initializing Sound System ------"
+        },
+        {
+          "at": 63431.6,
+          "text": "Setup OpenAL device and context... ^3WARNING: ^1OpenAL output mode requested '5.1 surround', but ALC_SOFT_output_mode is not available."
+        },
+        {
+          "at": 63432.1,
+          "text": "Done."
+        },
+        {
+          "at": 63432.5,
+          "text": "OpenAL ALC version: 1.1"
+        },
+        {
+          "at": 63432.9,
+          "text": "OpenAL vendor: wasm-games"
+        },
+        {
+          "at": 63433.3,
+          "text": "OpenAL renderer: WebAudio bridge"
+        },
+        {
+          "at": 63433.6,
+          "text": "OpenAL version: 1.1"
+        },
+        {
+          "at": 63433.8,
+          "text": "OpenAL extensions: "
+        },
+        {
+          "at": 63434.1,
+          "text": "OpenAL requested device: system default"
+        },
+        {
+          "at": 63434.4,
+          "text": "OpenAL default device: WebAudio"
+        },
+        {
+          "at": 63434.6,
+          "text": "OpenAL active device: WebAudio"
+        },
+        {
+          "at": 63434.9,
+          "text": "OpenAL HRTF: unavailable"
+        },
+        {
+          "at": 63435.2,
+          "text": "OpenAL output mode: unavailable"
+        },
+        {
+          "at": 63435.4,
+          "text": "^3WARNING: ^1OpenAL EFX extension not reported by device; wet send disabled."
+        },
+        {
+          "at": 63435.7,
+          "text": "sound system initialized."
+        },
+        {
+          "at": 63435.9,
+          "text": "--------------------------------------"
+        },
+        {
+          "at": 63436.2,
+          "text": "----- R_InitOpenGL -----"
+        },
+        {
+          "at": 63436.4,
+          "text": "renderer startup phase: R_InitOpenGL"
+        },
+        {
+          "at": 63436.7,
+          "text": "Renderer API: gl (builtin)"
+        },
+        {
+          "at": 63437,
+          "text": "Initializing OpenGL subsystem (SDL3 backend)"
+        },
+        {
+          "at": 63437.3,
+          "text": "SDL3: browser worker uses the transferred OffscreenCanvas directly"
+        },
+        {
+          "at": 63437.5,
+          "text": "SDL3: trying OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+        },
+        {
+          "at": 63447.9,
+          "text": "ERR: WARNING: using emscripten GL immediate mode emulation. This is very limited in what it supports"
+        },
+        {
+          "at": 63450.9,
+          "text": "SDL3: created OpenGL context 3.0 es (WebGL2) with MSAA samples=2"
+        },
+        {
+          "at": 63451.6,
+          "text": "SDL3: reported OpenGL context attributes: version=3.0 profile=es flags=0x0"
+        },
+        {
+          "at": 63452,
+          "text": "SDL3: reported OpenGL multisample attributes: requested=2 selected=2 actualBuffers=0 actualSamples=0"
+        },
+        {
+          "at": 63452.3,
+          "text": "SDL3: reported OpenGL framebuffer attributes: depthBits=24 stencilBits=8 hasStencilBuffer=1"
+        },
+        {
+          "at": 63452.6,
+          "text": "SDL3: requested swap interval 0, driver reports 1"
+        },
+        {
+          "at": 63453.3,
+          "text": "------- Input Initialization -------"
+        },
+        {
+          "at": 63453.7,
+          "text": "mouse: SDL3 initialized."
+        },
+        {
+          "at": 63454.2,
+          "text": "joystick: SDL3 initialized (no device detected)."
+        },
+        {
+          "at": 63454.7,
+          "text": "------------------------------------"
+        },
+        {
+          "at": 63455.1,
+          "text": "renderer startup phase: R_CheckPortableExtensions"
+        },
+        {
+          "at": 63455.6,
+          "text": "Init Glew..."
+        },
+        {
+          "at": 63475.8,
+          "text": "...using GL_ARB_multitexture"
+        },
+        {
+          "at": 63476.4,
+          "text": "...using GL_EXT_texture_env_combine"
+        },
+        {
+          "at": 63476.7,
+          "text": "...using GL_ARB_texture_cube_map"
+        },
+        {
+          "at": 63477,
+          "text": "...using GL_EXT_texture_env_dot3"
+        },
+        {
+          "at": 63477.4,
+          "text": "X..GL_ARB_texture_env_add not found"
+        },
+        {
+          "at": 63477.7,
+          "text": "...using GL_EXT_texture_compression_s3tc"
+        },
+        {
+          "at": 63478,
+          "text": "X..GL_ARB_texture_compression_bptc not found"
+        },
+        {
+          "at": 63478.3,
+          "text": "X..GL_EXT_texture_compression_bptc not found"
+        },
+        {
+          "at": 63478.6,
+          "text": "...using GL_EXT_texture_filter_anisotropic"
+        },
+        {
+          "at": 63479,
+          "text": "   maxTextureAnisotropy: 16.000000"
+        },
+        {
+          "at": 63479.3,
+          "text": "X..GL_EXT_shared_texture_palette not found"
+        },
+        {
+          "at": 63479.7,
+          "text": "X..GL_EXT_texture3D not found"
+        },
+        {
+          "at": 63480.1,
+          "text": "X..GL_EXT_stencil_wrap not found"
+        },
+        {
+          "at": 63480.4,
+          "text": "X..GL_NV_register_combiners not found"
+        },
+        {
+          "at": 63480.8,
+          "text": "X..GL_EXT_stencil_two_side not found"
+        },
+        {
+          "at": 63481.2,
+          "text": "X..GL_ATI_separate_stencil not found"
+        },
+        {
+          "at": 63481.6,
+          "text": "X..GL_ATI_fragment_shader not found"
+        },
+        {
+          "at": 63482.1,
+          "text": "X..GL_ATI_text_fragment_shader not found"
+        },
+        {
+          "at": 63482.5,
+          "text": "...using GL_ARB_vertex_buffer_object"
+        },
+        {
+          "at": 63482.9,
+          "text": "X..pixel buffer object entry points incomplete; async readbacks disabled"
+        },
+        {
+          "at": 63483.3,
+          "text": "...using GL_ARB_shader_objects"
+        },
+        {
+          "at": 63483.9,
+          "text": "...using GL_ARB_vertex_shader"
+        },
+        {
+          "at": 63484.3,
+          "text": "...using GL_ARB_fragment_shader"
+        },
+        {
+          "at": 63485,
+          "text": "...using GL_ARB_shading_language_100"
+        },
+        {
+          "at": 63485.9,
+          "text": "...using GL_ARB shader objects + GLSL (version OpenGL ES GLSL ES 3.00 (WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)))"
+        },
+        {
+          "at": 63486.3,
+          "text": "X..EXT_depth_bounds_test not found"
+        },
+        {
+          "at": 63486.9,
+          "text": "renderer startup phase: R_ARB2_Init"
+        },
+        {
+          "at": 63487.3,
+          "text": "---------- R_ARB2_Init ----------"
+        },
+        {
+          "at": 63487.8,
+          "text": "WebGL2 GLSL ES path available."
+        },
+        {
+          "at": 63488.2,
+          "text": "Renderer bootstrap: selected=LegacyGL2Compat requested=auto bridge=ARB2 modernExecutor=no defaultVisible=ARB2 reason=selected-tier-not-modern caps={GL 3.0 es, VBO:1 PBO:0 UBO:1 VAO:1 MRT:1 FBO:1 instancing:1 map_range:0 sync:1 compute:0 SSBO:0 indirect:0 MDI:0 buffer_storage:0 DSA:0 multi_bind:0 texture_view:0 gl_spirv:0 bindless:0}"
+        },
+        {
+          "at": 63488.6,
+          "text": "renderer startup phase: R_ReloadARBPrograms_f"
+        },
+        {
+          "at": 63488.9,
+          "text": "----- R_ReloadARBPrograms -----"
+        },
+        {
+          "at": 63530.9,
+          "text": "Loaded GLSL program 'glprogs/material_interaction'"
+        },
+        {
+          "at": 63531.7,
+          "text": "WebGL2 uses GLSL ES programs; desktop ARB assembly upload skipped"
+        },
+        {
+          "at": 63532.3,
+          "text": "-------------------------------"
+        },
+        {
+          "at": 63532.8,
+          "text": "renderer startup phase: R_RendererUpload_Init"
+        },
+        {
+          "at": 63533.5,
+          "text": "Renderer upload manager: streaming legacy bridge, frameStream=subdata, staticAllocator=yes, buffers=4, ring=16384KB, sync=no"
+        },
+        {
+          "at": 63534.1,
+          "text": "renderer startup phase: vertexCache.Init"
+        },
+        {
+          "at": 63534.6,
+          "text": "using ARB_vertex_buffer_object memory"
+        },
+        {
+          "at": 63535.1,
+          "text": "vertex cache: frame-temp uploads routed through renderer upload stream (16384KB per frame buffer)"
+        },
+        {
+          "at": 63535.6,
+          "text": "renderer startup phase: tr.SetBackEndRenderer"
+        },
+        {
+          "at": 63536.9,
+          "text": "using ARB2 renderSystem"
+        },
+        {
+          "at": 63538,
+          "text": "renderer startup phase: renderer startup complete"
+        },
+        {
+          "at": 63611.3,
+          "text": "Texture reduction changed, reloading images..."
+        },
+        {
+          "at": 63679.2,
+          "text": "ERR: TODO: glShadeModel"
+        },
+        {
+          "at": 63680.2,
+          "text": ": interaction color mode = packed env16.xy (auto=packed env16.xy, override=auto)"
+        },
+        {
+          "at": 64133.1,
+          "text": "Loaded GLSL program 'resolutionscale.fs' (glprogs/resolutionscale.vs, glprogs/resolutionscale.fs)"
+        },
+        {
+          "at": 64383.1,
+          "text": "----------------- BSE Init ------------------"
+        },
+        {
+          "at": 64391.7,
+          "text": "--------- BSE Created Successfully ----------"
+        },
+        {
+          "at": 64394.3,
+          "text": "couldn't stat exe path link /proc/42/exe: No such file or directory"
+        },
+        {
+          "at": 64427.9,
+          "text": "Selected game module: logical='game_sp' binary='game-sp_wasm32' path='baseoq4/game-sp_wasm32.wasm'"
+        },
+        {
+          "at": 64474.8,
+          "text": "------------- Initializing Game -------------"
+        },
+        {
+          "at": 64475.7,
+          "text": "gamename: baseQUAKE4-1"
+        },
+        {
+          "at": 64476.4,
+          "text": "gamedate: Sep  5 2026"
+        },
+        {
+          "at": 64991.1,
+          "text": "516ms to load 646k of entityDef"
+        },
+        {
+          "at": 65122.7,
+          "text": "131ms to load 177k of articulatedFigure"
+        },
+        {
+          "at": 65124.1,
+          "text": "Initializing event system"
+        },
+        {
+          "at": 65124.6,
+          "text": "...533 event definitions"
+        },
+        {
+          "at": 65127.3,
+          "text": "Initializing class hierarchy"
+        },
+        {
+          "at": 65127.9,
+          "text": "...249 classes, 601224 bytes for event callbacks"
+        },
+        {
+          "at": 65128.5,
+          "text": "Initializing scripts"
+        },
+        {
+          "at": 66147.6,
+          "text": "Compiled 'baseoq4/scripts/main.script': 1012.7 ms"
+        },
+        {
+          "at": 66148.8,
+          "text": "-------------- Compile stats ----------------"
+        },
+        {
+          "at": 66149.8,
+          "text": "Memory usage:"
+        },
+        {
+          "at": 66150.2,
+          "text": "     Strings: 54, 8464 bytes"
+        },
+        {
+          "at": 66150.7,
+          "text": "  Statements: 84495, 1689900 bytes"
+        },
+        {
+          "at": 66151.2,
+          "text": "   Functions: 3362, 380524 bytes"
+        },
+        {
+          "at": 66151.6,
+          "text": "   Variables: 324568 bytes"
+        },
+        {
+          "at": 66152.1,
+          "text": "    Mem used: 3534328 bytes"
+        },
+        {
+          "at": 66152.6,
+          "text": " Static data: 4948144 bytes"
+        },
+        {
+          "at": 66153.2,
+          "text": "   Allocated: 6314312 bytes"
+        },
+        {
+          "at": 66153.6,
+          "text": " Thread size: 13216 bytes"
+        },
+        {
+          "at": 66154.6,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderAlbedo"
+        },
+        {
+          "at": 66155.1,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderDepth"
+        },
+        {
+          "at": 66221.4,
+          "text": "Loaded GLSL program 'smaa_edge.fs' (glprogs/smaa_edge.vs, glprogs/smaa_edge.fs)"
+        },
+        {
+          "at": 66485.6,
+          "text": "Loaded GLSL program 'smaa_weights.fs' (glprogs/smaa_weights.vs, glprogs/smaa_weights.fs)"
+        },
+        {
+          "at": 66558.8,
+          "text": "Loaded GLSL program 'smaa_blend.fs' (glprogs/smaa_blend.vs, glprogs/smaa_blend.fs)"
+        },
+        {
+          "at": 66559.8,
+          "text": "SMAA lookup textures validated: _smaaArea=160x560 format=1 filter=linear repeat=clamp, _smaaSearch=64x16 format=1 filter=linear repeat=clamp"
+        },
+        {
+          "at": 66560.5,
+          "text": "PostAA requested=Off cvar=0 effective=Off quality=none edgeMode=none threshold=0.000 searchSteps=0 localContrast=0.00 source=_postProcessAlbedo0(1280x720) output=_postProcessAlbedo0(1280x720) sourceSpace=none reason=none smaaResources=ready"
+        },
+        {
+          "at": 66561.3,
+          "text": "Forward render target MSAA: requested 2, effective 0"
+        },
+        {
+          "at": 66562,
+          "text": "...5 aas types"
+        },
+        {
+          "at": 66562.7,
+          "text": "game initialized."
+        },
+        {
+          "at": 66563.5,
+          "text": "---------------------------------------------"
+        },
+        {
+          "at": 66564.5,
+          "text": "Loading viseme file: annosoft"
+        },
+        {
+          "at": 66565.3,
+          "text": "-------- Initializing Session --------"
+        },
+        {
+          "at": 67703.2,
+          "text": "arena campaign: loaded 5 tiers and 20 matches from arena/openq4_campaign.cfg"
+        },
+        {
+          "at": 67704.1,
+          "text": "session initialized"
+        },
+        {
+          "at": 67704.7,
+          "text": "--------------------------------------"
+        },
+        {
+          "at": 67705.2,
+          "text": "[quake4-wasm] game and renderer initialized"
+        },
+        {
+          "at": 68096.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 68097.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 68571.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 68613.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69157.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69202,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69203.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69570.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69571.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69781.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69782.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69783.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69784.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69944,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69945.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 69980.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70149.7,
+          "text": "glprogs/heatHazeWithMask.vfp: GL_VERTEX_PROGRAM_ARB not available"
+        },
+        {
+          "at": 70151.4,
+          "text": "glprogs/heatHazeWithMask.vfp: GL_FRAGMENT_PROGRAM_ARB not available"
+        },
+        {
+          "at": 70244.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70336.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70338.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70374.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70664.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70701.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70839.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70840.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70955.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 70956.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71258.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71259.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71314,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71376.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71418.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71547.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71591.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71600.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71807.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71809.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71810.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71968.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 71995.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 72242.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 72292.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 72312.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 72327.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 72328.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 72861.2,
+          "text": "^3WARNING: ^1Couldn't load sound 'mp_buying_givecash' using default (probed: mp_buying_givecash)"
+        },
+        {
+          "at": 73339.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 73406.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 73407.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74029.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74160.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74485.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74605.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74649.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74784.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 74995.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 75003.8,
+          "text": "^3WARNING: ^1Couldn't load image: models/monsters/burn_misc_sm : models/monsters/burn_misc_sm#__0200"
+        },
+        {
+          "at": 75064.4,
+          "text": "--- Common Initialization Complete ---"
+        },
+        {
+          "at": 75065.6,
+          "text": "------------- Warnings ---------------"
+        },
+        {
+          "at": 75066.3,
+          "text": "during openQ4 initialization..."
+        },
+        {
+          "at": 75067,
+          "text": "^3WARNING: ^1Couldn't load image: models/monsters/burn_misc_sm : models/monsters/burn_misc_sm#__0200"
+        },
+        {
+          "at": 75067.6,
+          "text": "^3WARNING: ^1Couldn't load sound 'mp_buying_givecash' using default (probed: mp_buying_givecash)"
+        },
+        {
+          "at": 75068.3,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderAlbedo"
+        },
+        {
+          "at": 75068.9,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderDepth"
+        },
+        {
+          "at": 75069.6,
+          "text": "^3WARNING: ^1OpenAL EFX extension not reported by device; wet send disabled."
+        },
+        {
+          "at": 75070.3,
+          "text": "^3WARNING: ^1OpenAL output mode requested '5.1 surround', but ALC_SOFT_output_mode is not available."
+        },
+        {
+          "at": 75070.9,
+          "text": "6 warnings"
+        },
+        {
+          "at": 75071.7,
+          "text": "[quake4-wasm] common initialization complete"
+        },
+        {
+          "at": 75072.5,
+          "text": "terminal support enabled ( use +set in_tty 0 to disabled )"
+        },
+        {
+          "at": 75073.2,
+          "text": "pid: 42"
+        },
+        {
+          "at": 75074,
+          "text": "System memory: 2 GB"
+        },
+        {
+          "at": 75074.7,
+          "text": "Video memory: 2 GB"
+        },
+        {
+          "at": 75075.3,
+          "text": "Emscripten single-thread mode: async worker disabled; frame loop owns simulation ticks"
+        },
+        {
+          "at": 75402,
+          "text": "^3WARNING: ^1Loading non pre-cached sound decl main_menu"
+        },
+        {
+          "at": 94898.2,
+          "text": "^3WARNING: ^1Loading non pre-cached mapDef decl mp/q4dm11v1"
+        },
+        {
+          "at": 94898.4,
+          "text": "^3WARNING: ^1Loading non pre-cached mapDef decl mp/q4dm1"
+        },
+        {
+          "at": 94900.7,
+          "text": "^3WARNING: ^1Loading non pre-cached material decl gfx/guis/loadscreens/q4dm1"
+        },
+        {
+          "at": 182691,
+          "text": "------------ Game Map Shutdown --------------"
+        },
+        {
+          "at": 182693.1,
+          "text": "---------------------------------------------"
+        },
+        {
+          "at": 182693.1,
+          "text": "Asset log: assetlogs/maps/game/airdefense1"
+        },
+        {
+          "at": 183030.9,
+          "text": "reloading guis/mainmenu.gui."
+        },
+        {
+          "at": 183039.4,
+          "text": "reloading guis/restart.gui."
+        },
+        {
+          "at": 183093.9,
+          "text": "reloading guis/gameover.gui."
+        },
+        {
+          "at": 183099.6,
+          "text": "reloading guis/msg.gui."
+        },
+        {
+          "at": 183103.3,
+          "text": "reloading guis/takeNotes.gui."
+        },
+        {
+          "at": 183106,
+          "text": "reloading guis/intro.gui."
+        },
+        {
+          "at": 183119.9,
+          "text": "reloading guis/demo_menu.gui."
+        },
+        {
+          "at": 183142.7,
+          "text": "reloading guis/arena_menu.gui."
+        },
+        {
+          "at": 183145.6,
+          "text": "reloading guis/weapons/machinegun_scope.gui."
+        },
+        {
+          "at": 183149,
+          "text": "reloading guis/weapons/nailgun_scope.gui."
+        },
+        {
+          "at": 183152,
+          "text": "reloading guis/weapons/railgun_scope.gui."
+        },
+        {
+          "at": 183484.5,
+          "text": "--------- Map Initialization ---------"
+        },
+        {
+          "at": 183487.2,
+          "text": "Map: game/airdefense1"
+        },
+        {
+          "at": 183736.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183752.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183774.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183781.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183791.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183884.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183884.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183884.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183887.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183889.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183889.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183936.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183941.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183942.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183944.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183944.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 183945,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184055.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184056,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184058.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184058.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184100.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184100.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184105,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184110.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184124.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184137.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184148.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184149.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184150.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184152.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184179.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184179.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184190.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184201.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184202.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184229.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184229.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184241.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184247.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184260.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184267,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184285.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184286.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184288.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184291.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184327.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184329.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184341.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184342.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184345.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184362,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184367.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184398.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184417.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184417.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184418,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184432.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184434.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184435.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184452,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184453.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184490.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184516.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184517.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184539,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184566.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184566.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184601.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184608.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184625.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184654,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184656.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184686.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184702.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184714.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184743.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184749.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184771.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184794.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184802.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184832.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184854.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184856.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184888.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184904,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184914.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184938.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184950.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184965.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 184990,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185001,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185026.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185034.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185053.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185077.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185080.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185099.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 185570.2,
+          "text": "rvStatAllocator:  dump of usage stats"
+        },
+        {
+          "at": 185573.9,
+          "text": "\t16 total bytes handed out in 1 requests"
+        },
+        {
+          "at": 185573.9,
+          "text": "\tbegin game:      0;  end game:        1"
+        },
+        {
+          "at": 185573.9,
+          "text": "\tplayer hit:      0;  player kill:     0"
+        },
+        {
+          "at": 185574,
+          "text": "\tplayer death:    0;"
+        },
+        {
+          "at": 185574,
+          "text": "\tdamage dealt:    0;  damage taken:    0"
+        },
+        {
+          "at": 185574,
+          "text": "\tstat team:       0"
+        },
+        {
+          "at": 185574,
+          "text": "\tflag capture:    0;"
+        },
+        {
+          "at": 185574,
+          "text": "\tflag drop:       0;  flag return:     0"
+        },
+        {
+          "at": 185574,
+          "text": "rvStatAllocator:  dump of usage stats"
+        },
+        {
+          "at": 185574.1,
+          "text": "\t0 total bytes handed out in 0 requests"
+        },
+        {
+          "at": 185574.1,
+          "text": "\tbegin game:      0;  end game:        0"
+        },
+        {
+          "at": 185574.1,
+          "text": "\tplayer hit:      0;  player kill:     0"
+        },
+        {
+          "at": 185574.1,
+          "text": "\tplayer death:    0;"
+        },
+        {
+          "at": 185574.1,
+          "text": "\tdamage dealt:    0;  damage taken:    0"
+        },
+        {
+          "at": 185574.2,
+          "text": "\tstat team:       0"
+        },
+        {
+          "at": 185574.2,
+          "text": "\tflag capture:    0;"
+        },
+        {
+          "at": 185574.2,
+          "text": "\tflag drop:       0;  flag return:     0"
+        },
+        {
+          "at": 185574.2,
+          "text": "-------------- Game Map Init ----------------"
+        },
+        {
+          "at": 185574.3,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderAlbedo"
+        },
+        {
+          "at": 185575.8,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderDepth"
+        },
+        {
+          "at": 185579.9,
+          "text": "PostAA requested=Off cvar=0 effective=Off quality=none edgeMode=none threshold=0.000 searchSteps=0 localContrast=0.00 source=_postProcessAlbedo0(1424x1113) output=_postProcessAlbedo0(1424x1113) sourceSpace=none reason=none smaaResources=ready"
+        },
+        {
+          "at": 185580,
+          "text": "Forward render target MSAA: requested 2, effective 0"
+        },
+        {
+          "at": 186830.1,
+          "text": "collision data:"
+        },
+        {
+          "at": 186830.3,
+          "text": "   606 models"
+        },
+        {
+          "at": 186830.4,
+          "text": " 57187 vertices (1340 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": "112706 edges (3962 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": " 46640 polygons (4724 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": "  6161 brushes (840 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": " 21126 nodes (577 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": " 97596 polygon refs (762 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": " 22524 brush refs (175 KB)"
+        },
+        {
+          "at": 186830.4,
+          "text": " 38181 internal edges"
+        },
+        {
+          "at": 186830.4,
+          "text": "  4600 sharp edges"
+        },
+        {
+          "at": 186830.4,
+          "text": "     0 contained polygons removed"
+        },
+        {
+          "at": 186830.5,
+          "text": "     0 polygons merged"
+        },
+        {
+          "at": 186830.5,
+          "text": " 12383 KB total memory used"
+        },
+        {
+          "at": 186830.5,
+          "text": "818 msec to load collision data."
+        },
+        {
+          "at": 186848.9,
+          "text": "Game LoadMap phases: mapParse=416 mapResolve=15 collision=819 entityStrings=19 total=1270 msec"
+        },
+        {
+          "at": 186863.6,
+          "text": "map bounds are (46336.0, 31936.0, 13760.0)"
+        },
+        {
+          "at": 186863.8,
+          "text": "max clip sector is (0.0, 0.0, 0.0)"
+        },
+        {
+          "at": 186866.7,
+          "text": "    1 KB passage memory used to build PVS"
+        },
+        {
+          "at": 186866.8,
+          "text": "    3 msec to calculate PVS"
+        },
+        {
+          "at": 186866.8,
+          "text": "   52 areas"
+        },
+        {
+          "at": 186866.8,
+          "text": "   96 portals"
+        },
+        {
+          "at": 186866.9,
+          "text": "    7 areas visible on average"
+        },
+        {
+          "at": 186866.9,
+          "text": "  416 bytes PVS data"
+        },
+        {
+          "at": 186867.2,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 186867.3,
+          "text": "loading maps/game/airdefense1.aas32"
+        },
+        {
+          "at": 186918.9,
+          "text": "done."
+        },
+        {
+          "at": 186925.4,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 186925.5,
+          "text": "loading maps/game/airdefense1.aas48"
+        },
+        {
+          "at": 186971.9,
+          "text": "done."
+        },
+        {
+          "at": 186975.9,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 186976,
+          "text": "loading maps/game/airdefense1.aas96"
+        },
+        {
+          "at": 186978.2,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 186978.3,
+          "text": "loading maps/game/airdefense1.aas250"
+        },
+        {
+          "at": 186979.5,
+          "text": "[Load AAS]"
+        },
+        {
+          "at": 186979.6,
+          "text": "loading maps/game/airdefense1.aas128"
+        },
+        {
+          "at": 187011.3,
+          "text": "Entering doom_main()"
+        },
+        {
+          "at": 187013.2,
+          "text": "Exiting doom_main()"
+        },
+        {
+          "at": 187013.9,
+          "text": "Spawning entities"
+        },
+        {
+          "at": 187261.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187262.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187271.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187582.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187721.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187723.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187733.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187804.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187805.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187809.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187815.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 187821.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188036.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188074.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188301.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188302.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188332.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188578.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188580.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188605.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 188614.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 189252.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 189488.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 190305.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 190521.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 190524.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 190831.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 190831.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 191048.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 191937.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 191947.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192219.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192269.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192269.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192612.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192940.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192941.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192941.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 192941.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 193088.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 193088.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 193088.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 193858.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 193859,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 193860.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194080.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194080.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194080.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194161.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194406.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194420.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194421.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194424.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194449.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194449.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194450.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 194455.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195644.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195644.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195644.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195644.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195645.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195646.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195646.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195650.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195867.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195867.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195870.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195875.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195875.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195876.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 195900.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 196076.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 196078.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 196486.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 196487.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 196489.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197061.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197062.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197064.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197064.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197068.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197151.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197156.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197206.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197206.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197206.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197213.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197239.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197273.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197273.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197274,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197274.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197467.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197470.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197529.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197637.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197666,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197682.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197685.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197712.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197712.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197717.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197723.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 197826.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 198347.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 198436.2,
+          "text": "...1777 entities spawned, 0 inhibited"
+        },
+        {
+          "at": 198438.8,
+          "text": "Map entity spawn phases: copy=3.5 defLookup=4604.6 defaults=37.0 inhibit=2.3 media=6244.6 entitySpawn=523.9 other=8.9 total=11424.8 msec"
+        },
+        {
+          "at": 198439.2,
+          "text": "------------ Processing events --------------"
+        },
+        {
+          "at": 198443.2,
+          "text": "Game populate phases: restart=11426 locations=0 spawnInit=0 events=4 total=11430 msec"
+        },
+        {
+          "at": 198634.8,
+          "text": "Game media precache dedup: skipped=3512 unique=1927 requests=5439"
+        },
+        {
+          "at": 198636.5,
+          "text": "Game media precache phases: model=6250.0/759 sound=2163.5/333 gui=8.4/2 material=5.2/54 effect=274.1/159 skin=122.6/16 defInclusive=2057.6/114 animation=2044.1/490 icon=0.0/0 msec/items"
+        },
+        {
+          "at": 198636.6,
+          "text": "Game model precache phases: modelDef=2258.4/759 renderModel=3272.7/709 collisionModel=717.5/709 msec/items"
+        },
+        {
+          "at": 198637.7,
+          "text": "Game init phases: startup=10 loadMap=1408 script=26 populate=11430 mpPrecache=194 animationFlush=0 total=13068 msec"
+        },
+        {
+          "at": 198637.8,
+          "text": "---------------------------------------------"
+        },
+        {
+          "at": 198732.7,
+          "text": "^3WARNING: ^1Couldn't load sound 'sound/ambience/water/splash_big' using default (probed: sound/ambience/water/splash_big)"
+        },
+        {
+          "at": 198758.8,
+          "text": "----- idRenderModelManagerLocal::EndLevelLoad -----"
+        },
+        {
+          "at": 198761.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198761.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_munlock"
+        },
+        {
+          "at": 198762.6,
+          "text": "   64 models purged from previous level,  1089 models kept."
+        },
+        {
+          "at": 198762.6,
+          "text": "---------------------------------------------------"
+        },
+        {
+          "at": 198762.8,
+          "text": "----- idImageManager::EndLevelLoad -----"
+        },
+        {
+          "at": 202436.6,
+          "text": "^3WARNING: ^1Couldn't load image: gfx/effects/fluids_drips/brown_bubble : gfx/effects/fluids_drips/brown_bubble#__0200"
+        },
+        {
+          "at": 202442.8,
+          "text": "^3WARNING: ^1Couldn't load image: gfx/effects/fluids_drips/brown_bubble_half : gfx/effects/fluids_drips/brown_bubble_half#__0200"
+        },
+        {
+          "at": 202447.5,
+          "text": "^3WARNING: ^1Couldn't load image: gfx/effects/fluids_drips/brown_splash_line : gfx/effects/fluids_drips/brown_splash_line#__0200"
+        },
+        {
+          "at": 211301.6,
+          "text": "Image load profile: files=1339 measured=11790.5 msec storage=105.8 MiB"
+        },
+        {
+          "at": 211301.8,
+          "text": "  image   73 msec    0.1 MiB addnormals( models/mapobjects/strogg/stroggos/stroggos_local, heightmap( models/mapobjects/strogg/stroggos/stroggos_h, 8))"
+        },
+        {
+          "at": 211301.8,
+          "text": "  image   34 msec    0.1 MiB addnormals( models/characters/marine/body_local, heightmap( models/characters/marine/medic_wounded_h, 2))"
+        },
+        {
+          "at": 211301.9,
+          "text": "  image   31 msec    0.7 MiB models/mapobjects/strogg/doors/generic/buildingb/bb_gd_lo_d"
+        },
+        {
+          "at": 211301.9,
+          "text": "  image   30 msec    0.1 MiB addnormals( models/characters/bodies_parts/chestwoundbody_local, heightmap( models/characters/bodies_parts/chestwoundbody_h, 4))"
+        },
+        {
+          "at": 211301.9,
+          "text": "  image   30 msec    0.1 MiB addnormals( models/monsters/harvester/harv_local, heightmap( models/monsters/harvester/harv_h, 4))"
+        },
+        {
+          "at": 211301.9,
+          "text": "  image   30 msec   32.0 MiB gfx/env/act_2/act2"
+        },
+        {
+          "at": 211301.9,
+          "text": "  image   29 msec    0.2 MiB textures/rock/sharprock01_brown_d"
+        },
+        {
+          "at": 211302,
+          "text": "  image   28 msec    0.1 MiB addnormals( models/characters/bodies_parts/half2_local, heightmap( models/characters/bodies_parts/half2_h, 4))"
+        },
+        {
+          "at": 211302,
+          "text": "  image   28 msec    0.0 MiB addnormals( models/cinematics/intro/dh_local, heightmap( models/cinematics/intro/dh_h, 4))"
+        },
+        {
+          "at": 211302.1,
+          "text": "  image   27 msec    0.1 MiB addnormals( models/characters/bodies_parts/no_leg_local, heightmap( models/characters/bodies_parts/no_leg_h, 4))"
+        },
+        {
+          "at": 211302.1,
+          "text": "  image   27 msec    0.1 MiB addnormals( models/mapobjects/strogg/doors/generic/prison/innerFrame_local, heightmap( models/mapobjects/strogg/doors/generic/prison/innerFrame_h, 1))"
+        },
+        {
+          "at": 211302.1,
+          "text": "  image   27 msec    0.1 MiB addnormals( models/monsters/berserker/berserker_lp_local, heightmap( models/monsters/berserker/berserker_lp_h, 2))"
+        },
+        {
+          "at": 211302.2,
+          "text": " 1339 images loaded in  12.5 seconds"
+        },
+        {
+          "at": 211302.2,
+          "text": "----------------------------------------"
+        },
+        {
+          "at": 211360.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 211390.3,
+          "text": "idRenderWorld::GenerateAllInteractions, msec = 9, staticAllocCount = 0."
+        },
+        {
+          "at": 211392.7,
+          "text": "interactionTable size: 2477048 bytes"
+        },
+        {
+          "at": 211392.8,
+          "text": "28313 interaction take 3171056 bytes"
+        },
+        {
+          "at": 211442.5,
+          "text": "-----------------------------------"
+        },
+        {
+          "at": 211446.1,
+          "text": " 27962 msec to load game/airdefense1"
+        },
+        {
+          "at": 211446.4,
+          "text": "Map load phases: renderWorld=2085 gameInit=13068 playerSpawn=121 mediaFinish=12544 settle=140 total=27962 msec"
+        },
+        {
+          "at": 211446.4,
+          "text": "Map media phases: render=12543 sound=0 decl=1 bse=0 loadSize=0 ui=0 total=12544 msec"
+        },
+        {
+          "at": 211446.5,
+          "text": "Map settle frames: 91 7 6 5 5 6 5 5 5 5 msec"
+        },
+        {
+          "at": 211446.5,
+          "text": "------------- Warnings ---------------"
+        },
+        {
+          "at": 211446.5,
+          "text": "during game/airdefense1..."
+        },
+        {
+          "at": 211446.6,
+          "text": "^3WARNING: ^1Couldn't load image: gfx/effects/fluids_drips/brown_bubble : gfx/effects/fluids_drips/brown_bubble#__0200"
+        },
+        {
+          "at": 211446.6,
+          "text": "^3WARNING: ^1Couldn't load image: gfx/effects/fluids_drips/brown_bubble_half : gfx/effects/fluids_drips/brown_bubble_half#__0200"
+        },
+        {
+          "at": 211446.6,
+          "text": "^3WARNING: ^1Couldn't load image: gfx/effects/fluids_drips/brown_splash_line : gfx/effects/fluids_drips/brown_splash_line#__0200"
+        },
+        {
+          "at": 211446.7,
+          "text": "^3WARNING: ^1Couldn't load sound 'sound/ambience/water/splash_big' using default (probed: sound/ambience/water/splash_big)"
+        },
+        {
+          "at": 211446.7,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderAlbedo"
+        },
+        {
+          "at": 211446.7,
+          "text": "^3WARNING: ^1MSAA textures not supported, disabling for _forwardRenderDepth"
+        },
+        {
+          "at": 211446.7,
+          "text": "6 warnings"
+        },
+        {
+          "at": 211448.6,
+          "text": "[quake4-wasm] Loading continue gate ready"
+        },
+        {
+          "at": 211634.6,
+          "text": "Saved 'Autosave game/airdefense1'"
+        },
+        {
+          "at": 275149.5,
+          "text": "[quake4-wasm] Loading continue gate completed"
+        },
+        {
+          "at": 275155.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 275158.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 275166.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 276334.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 313369.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 315897.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316005.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316070.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316133.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316195.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316225.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316264.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316335,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316381.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316405.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316477,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316539.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316548.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316622.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316694.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316701.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316772.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316851.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316876.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316929.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 316998.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317033.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317063.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317133.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317187.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317205,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317275.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317338.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317339.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317408.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317482.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317497.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317559.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317633.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317663.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317706.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317779,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317824.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317851,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 317921.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318046.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318070.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318215.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318356.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318367,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318495.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318638,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318684.1,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318793.8,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 318966.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319055.2,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319132.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319287.9,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319413.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319466.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319696,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319905.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 319917.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320135,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320290.4,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320314.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320431.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320632.3,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320706.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320710.5,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320710.6,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320710.7,
+          "text": "ERR: warning: unsupported syscall: __syscall_mlock"
+        },
+        {
+          "at": 320948.3,
+          "text": "Loaded GLSL program 'glsl/MultiplyBlend.glsl' (glprogs/glsl/MultiplyBlend.glslvp, glprogs/glsl/MultiplyBlend.glslfp)"
+        },
+        {
+          "at": 364897.8,
+          "text": "^3WARNING: ^1Loading non pre-cached sound decl main_menu_gameplay"
+        }
+      ],
+      "persistence": {
+        "ready": true,
+        "requests": 0,
+        "root": "/save/quake4"
+      },
+      "proofId": "quake4-capture-console-2026-09-05",
+      "schemaVersion": 1,
+      "startedAt": "2026-09-05T15:38:14.658Z",
+      "states": [
+        {
+          "at": 75844.1,
+          "inputMode": "menu",
+          "resumeAvailable": false,
+          "state": "menu",
+          "type": "engine-state"
+        },
+        {
+          "at": 211637,
+          "inputMode": "continue",
+          "resumeAvailable": false,
+          "state": "paused",
+          "type": "engine-state"
+        },
+        {
+          "at": 211713.3,
+          "inputMode": "continue",
+          "resumeAvailable": true,
+          "state": "paused",
+          "type": "engine-state"
+        },
+        {
+          "at": 275221.8,
+          "inputMode": "gameplay",
+          "resumeAvailable": false,
+          "state": "gameplay",
+          "type": "engine-state"
+        },
+        {
+          "at": 304628.5,
+          "inputMode": "console",
+          "resumeAvailable": true,
+          "state": "paused",
+          "type": "engine-state"
+        },
+        {
+          "at": 320958.2,
+          "inputMode": "gameplay",
+          "resumeAvailable": false,
+          "state": "gameplay",
+          "type": "engine-state"
+        },
+        {
+          "at": 354303.2,
+          "inputMode": "console",
+          "resumeAvailable": true,
+          "state": "paused",
+          "type": "engine-state"
+        },
+        {
+          "at": 364894.8,
+          "inputMode": "menu",
+          "resumeAvailable": true,
+          "state": "paused",
+          "type": "engine-state"
+        }
+      ],
+      "variant": "quake4",
+      "workerMessages": {
+        "in:audio-buffer": 958,
+        "in:audio-create-source": 91,
+        "in:audio-init": 1,
+        "in:audio-listener-float": 23086,
+        "in:audio-source-action": 272,
+        "in:audio-source-float": 176938,
+        "in:audio-source-int": 736,
+        "in:audio-source-position": 29520,
+        "in:engine-state": 8,
+        "in:log": 759,
+        "in:persistence-ready": 1,
+        "in:status": 2,
+        "out:key": 10,
+        "out:pointer-absolute": 3,
+        "out:pointer-button": 6,
+        "out:resize": 9,
+        "out:start": 1
+      }
+    }
+  }
+}

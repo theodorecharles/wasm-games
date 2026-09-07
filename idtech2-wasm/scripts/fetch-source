@@ -46,6 +46,4 @@ while IFS= read -r patch_name; do
   git -C "${source_dir}" apply "${patch_file}"
 done < "${series_file}"
 
-find "${source_dir}" -type f -name '*.md' -delete
-
 printf '%s\n' "${source_dir}"

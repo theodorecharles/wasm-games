@@ -1,0 +1,19 @@
+{
+  "scope": "Six-variant VM adapter contract: inactive activation does not preempt browser re-lock permission; consumed gesture is not retried. No real browser permission acceptance in this fixture.",
+  "cases": [
+    {
+      "label": "initial-capture-image",
+      "adapterSHA256": "77799c1786556d3995f9d8ec238ccdfc730250cabb6a326435efca4c639b9d6a",
+      "status": 1,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: the browser owns permission, including inactive re-locks after API release\n\n4 !== 5\n\n    at exercise (file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:360:12)\n    at async file:///home/ted/Development/wasm-games/idtech4-wasm/scripts/test-adapter.mjs:403:53 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 4,\n  expected: 5,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.19.0\n"
+    },
+    {
+      "label": "relock-candidate",
+      "adapterSHA256": "2468e117eff3d03d79d73faa0c75bdfae726248314158f3a8aecbcd652ec7659",
+      "status": 0,
+      "stdout": "id Tech 4 adapter state, identity, input, disabled-controller, persistence, pointer, resize, profile, and PWA contracts passed\n",
+      "stderr": ""
+    }
+  ]
+}

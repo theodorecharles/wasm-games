@@ -1,0 +1,332 @@
+From a22b0594044f76e9748083bf60afe075763e9ce1 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 4 Sep 2026 16:40:00 -0400
+Subject: [PATCH] Use GL4ES for RTCW SP browser rendering
+
+---
+ SP/Makefile                |  9 ++--
+ SP/code/client/cl_main.c   | 10 ++++
+ SP/code/renderer/tr_init.c | 31 +++++++++++-
+ SP/code/sdl/sdl_glimp.c    | 99 +++++++++++++-------------------------
+ scripts/build-web-sp.sh    |  2 +-
+ 5 files changed, 77 insertions(+), 74 deletions(-)
+
+diff --git a/SP/Makefile b/SP/Makefile
+index df72184..64f651a 100644
+--- a/SP/Makefile
++++ b/SP/Makefile
+@@ -1036,7 +1036,7 @@ ifeq ($(PLATFORM),emscripten)
+   ifeq ($(USE_OPENGLES),1)
+     BASE_CFLAGS += -DUSE_OPENGLES
+   endif
+-  CLIENT_CFLAGS += -sUSE_SDL=2
++  CLIENT_CFLAGS += -sUSE_SDL=2 -I$(GL4ES_PATH)/include
+   OPTIMIZEVM = -O2
+   OPTIMIZE = -O2
+ 
+@@ -1046,16 +1046,13 @@ ifeq ($(PLATFORM),emscripten)
+   SHLIBLDFLAGS=
+   THREAD_LIBS=
+   LIBS=
+-  CLIENT_LIBS=
++  CLIENT_LIBS=$(GL4ES_PATH)/lib/libGL.a
+   RENDERER_LIBS=
+   SERVER_LIBS=
+ 
+   CLIENT_LDFLAGS += \
+     -sUSE_SDL=2 \
+-    -sLEGACY_GL_EMULATION=1 \
+-    -sGL_UNSAFE_OPTS=0 \
+-    -sMIN_WEBGL_VERSION=2 \
+-    -sMAX_WEBGL_VERSION=2 \
++    -sFULL_ES2=1 \
+     -sALLOW_MEMORY_GROWTH=1 \
+     -sINITIAL_MEMORY=268435456 \
+     -sSTACK_SIZE=2097152 \
+diff --git a/SP/code/client/cl_main.c b/SP/code/client/cl_main.c
+index a5de411..991f813 100644
+--- a/SP/code/client/cl_main.c
++++ b/SP/code/client/cl_main.c
+@@ -1909,6 +1909,12 @@ void CL_Vid_Restart_f( void ) {
+ 
+ 	vmCvar_t musicCvar;
+ 
++#ifdef __EMSCRIPTEN__
++	/* GL4ES cannot safely recreate its context in place (see Wwasm). */
++	Com_Printf( "Save your game and reload the page to apply video settings.\n" );
++	return;
++#endif
++
+ 	// RF, don't show percent bar, since the memory usage will just sit at the same level anyway
+ 	Cvar_Set( "com_expectedhunkusage", "-1" );
+ 
+@@ -2008,6 +2014,10 @@ handles will be invalid
+ */
+ void CL_Snd_Restart_f(void)
+ {
++#ifdef __EMSCRIPTEN__
++	Com_Printf( "Save your game and reload the page to restart audio.\n" );
++	return;
++#endif
+ 	CL_Snd_Shutdown();
+ 	// sound will be reinitialized by vid_restart
+ 	CL_Vid_Restart_f();
+diff --git a/SP/code/renderer/tr_init.c b/SP/code/renderer/tr_init.c
+index 9a6db68..7288691 100644
+--- a/SP/code/renderer/tr_init.c
++++ b/SP/code/renderer/tr_init.c
+@@ -1233,7 +1233,11 @@ void R_Register( void ) {
+ 	r_ext_multisample = ri.Cvar_Get( "r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH );
+ 	ri.Cvar_CheckRange( r_ext_multisample, 0, 4, qtrue );
+ 	r_overBrightBits = ri.Cvar_Get( "r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH );
++#ifdef __EMSCRIPTEN__
++	r_ignorehwgamma = ri.Cvar_Get( "r_ignorehwgamma", "1", CVAR_ROM );
++#else
+ 	r_ignorehwgamma = ri.Cvar_Get( "r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH );
++#endif
+ #ifdef USE_OPENGLES
+ 	r_mode = ri.Cvar_Get( "r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH );
+ 	r_fullscreen = ri.Cvar_Get( "r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH );
+@@ -1262,7 +1266,12 @@ void R_Register( void ) {
+ 	ri.Cvar_CheckRange( r_displayRefresh, 0, 200, qtrue );
+ 	r_fullbright = ri.Cvar_Get( "r_fullbright", "0", CVAR_LATCH );
+ 	r_mapOverBrightBits = ri.Cvar_Get( "r_mapOverBrightBits", "2", CVAR_LATCH );
++#ifdef __EMSCRIPTEN__
++	/* Wwasm's software-gamma defaults compensate for browser presentation. */
++	r_intensity = ri.Cvar_Get( "r_intensity", "1.8", CVAR_LATCH );
++#else
+ 	r_intensity = ri.Cvar_Get( "r_intensity", "1", CVAR_LATCH );
++#endif
+ 	r_singleShader = ri.Cvar_Get( "r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH );
+ 
+ 	//
+@@ -1291,7 +1300,11 @@ void R_Register( void ) {
+ 	r_swapInterval = ri.Cvar_Get( "r_swapInterval", "0",
+ 					CVAR_ARCHIVE | CVAR_LATCH );
+ 
++#ifdef __EMSCRIPTEN__
++	r_gamma = ri.Cvar_Get( "r_gamma", "2.2", CVAR_ARCHIVE );
++#else
+ 	r_gamma = ri.Cvar_Get( "r_gamma", "1", CVAR_ARCHIVE ); // Varies by system and platform, so just default to 1
++#endif
+ 	r_facePlaneCull = ri.Cvar_Get( "r_facePlaneCull", "1", CVAR_ARCHIVE );
+ 
+ 	r_railWidth = ri.Cvar_Get( "r_railWidth", "16", CVAR_ARCHIVE );
+@@ -1302,7 +1315,10 @@ void R_Register( void ) {
+ 	r_mapFogColor = ri.Cvar_Get( "r_mapFogColor", "0", CVAR_ROM );  //----(SA)	added
+ 	r_savegameFogColor = ri.Cvar_Get( "r_savegameFogColor", "0", CVAR_ROM );    //----(SA)	added
+ 
+-#ifdef USE_OPENGLES
++#ifdef __EMSCRIPTEN__
++	/* Configuration scripts must not select strip/immediate-mode rendering. */
++	r_primitives = ri.Cvar_Get( "r_primitives", "2", CVAR_ROM );
++#elif defined(USE_OPENGLES)
+ 	r_primitives = ri.Cvar_Get( "r_primitives", "2", CVAR_ARCHIVE );
+ #else
+ 	r_primitives = ri.Cvar_Get( "r_primitives", "0", CVAR_ARCHIVE );
+@@ -1407,6 +1423,18 @@ void R_Init( void ) {
+ 
+ 	ri.Printf( PRINT_ALL, "----- R_Init -----\n" );
+ 
++#ifdef __EMSCRIPTEN__
++	/* Like Wwasm, initialize the static GL4ES translator before GL lookup. */
++	{
++		static qboolean gl4esStarted = qfalse;
++		extern void initialize_gl4es( void );
++		if ( !gl4esStarted ) {
++			initialize_gl4es();
++			gl4esStarted = qtrue;
++		}
++	}
++#endif
++
+ 	// clear all our internal state
+ 	memset( &tr, 0, sizeof( tr ) );
+ 	memset( &backEnd, 0, sizeof( backEnd ) );
+@@ -1637,4 +1665,3 @@ refexport_t *GetRefAPI( int apiVersion, refimport_t *rimp ) {
+ 
+ 	return &re;
+ }
+-
+diff --git a/SP/code/sdl/sdl_glimp.c b/SP/code/sdl/sdl_glimp.c
+index c327e93..5bdc009 100644
+--- a/SP/code/sdl/sdl_glimp.c
++++ b/SP/code/sdl/sdl_glimp.c
+@@ -35,6 +35,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #include "../sys/sys_local.h"
+ #include "sdl_icon.h"
+ 
++#ifdef __EMSCRIPTEN__
++/* GL4ES owns fixed-function state, including extension entry points. */
++#include <gl4esinit.h>
++#define RTCW_GL_GetProcAddress gl4es_GetProcAddress
++#else
++#define RTCW_GL_GetProcAddress SDL_GL_GetProcAddress
++#endif
++
+ #ifdef USE_OPENGLES
+ #ifdef USE_LOCAL_HEADERS
+ #	include "EGL/egl.h"
+@@ -83,24 +91,6 @@ cvar_t *r_sdlDriver;
+ int qglMajorVersion, qglMinorVersion;
+ int qglesMajorVersion, qglesMinorVersion;
+ 
+-#ifdef __EMSCRIPTEN__
+-static void APIENTRY GLimp_Emscripten_MultiTexCoord4f( GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q ) {
+-	(void)target; (void)s; (void)t; (void)r; (void)q;
+-}
+-static void APIENTRY GLimp_Emscripten_ArrayElement( GLint i ) {
+-	(void)i;
+-}
+-static void APIENTRY GLimp_Emscripten_DrawBuffer( GLenum mode ) {
+-	/* WebGL exposes a single default back buffer. */
+-	(void)mode;
+-}
+-#ifdef USE_OPENGLES
+-extern void APIENTRY glClipPlane( GLenum plane, const GLdouble *equation );
+-extern void APIENTRY glFrustum( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val );
+-extern void APIENTRY glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val );
+-#endif
+-#endif
+-
+ void (APIENTRYP qglActiveTextureARB) (GLenum texture);
+ void (APIENTRYP qglClientActiveTextureARB) (GLenum texture);
+ void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
+@@ -125,6 +115,24 @@ QGL_ARB_vertex_array_object_PROCS;
+ QGL_EXT_direct_state_access_PROCS;
+ #undef GLE
+ 
++#ifdef __EMSCRIPTEN__
++static SDL_bool GLimp_GL4ESExtensionSupported( const char *name ) {
++	const char *extensions = (const char *)qglGetString( GL_EXTENSIONS );
++	const char *match;
++	size_t length = strlen( name );
++	if ( !extensions || !length || strchr( name, ' ' ) ) return SDL_FALSE;
++	match = extensions;
++	while ( ( match = strstr( match, name ) ) != NULL ) {
++		if ( ( match == extensions || match[-1] == ' ' ) &&
++		     ( match[length] == '\0' || match[length] == ' ' ) ) return SDL_TRUE;
++		match += length;
++	}
++	return SDL_FALSE;
++}
++/* Query translator capabilities, not the underlying browser GLES surface. */
++#define SDL_GL_ExtensionSupported GLimp_GL4ESExtensionSupported
++#endif
++
+ /*
+ ===============
+ GLimp_Shutdown
+@@ -341,10 +349,8 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 
+ #ifdef __SDL_NOGETPROCADDR__
+ #define GLE( ret, name, ... ) qgl##name = gl##name;
+-#elif defined(__EMSCRIPTEN__)
+-#define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name);
+ #else
+-#define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name); \
++#define GLE( ret, name, ... ) qgl##name = (name##proc *) RTCW_GL_GetProcAddress("gl" #name); \
+ 	if ( qgl##name == NULL ) { \
+ 		ri.Printf( PRINT_ALL, "ERROR: Missing OpenGL function %s\n", "gl" #name ); \
+ 		success = qfalse; \
+@@ -376,23 +382,6 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 		sscanf( version, "%d.%d", &qglMajorVersion, &qglMinorVersion );
+ 	}
+ 
+-#ifdef __EMSCRIPTEN__
+-	/* LEGACY_GL_EMULATION exposes the desktop fixed-function entry points on
+-	 * top of WebGL, while WebGL's version string still identifies GLES. Let
+-	 * the native RTCW renderer bind that emulated OpenGL 2 surface. */
+-#ifdef USE_OPENGLES
+-	qglMajorVersion = 0;
+-	qglMinorVersion = 0;
+-	qglesMajorVersion = 1;
+-	qglesMinorVersion = 1;
+-#else
+-	qglMajorVersion = 2;
+-	qglMinorVersion = 0;
+-	qglesMajorVersion = 0;
+-	qglesMinorVersion = 0;
+-#endif
+-#endif
+-
+ 	if ( fixedFunction ) {
+ 		if ( QGL_VERSION_ATLEAST( 1, 1 ) ) {
+ 			QGL_1_1_PROCS;
+@@ -448,26 +437,6 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
+ 		QGL_3_0_PROCS;
+ 	}
+ 
+-#ifdef __EMSCRIPTEN__
+-	/* SDL's WebGL proc lookup omits some functions implemented by
+-	 * LEGACY_GL_EMULATION. Bind those linked shims directly. */
+-	qglTexEnvf = glTexEnvf;
+-	qglFogf = glFogf;
+-	qglFogfv = glFogfv;
+-	qglMultiTexCoord4f = GLimp_Emscripten_MultiTexCoord4f;
+-#ifndef USE_OPENGLES
+-	qglClearDepth = glClearDepth;
+-	qglDepthRange = glDepthRange;
+-	qglFogi = glFogi;
+-#else
+-	qglClipPlane = glClipPlane;
+-	qglFrustum = glFrustum;
+-	qglOrtho = glOrtho;
+-#endif
+-	qglDrawBuffer = GLimp_Emscripten_DrawBuffer;
+-	qglArrayElement = GLimp_Emscripten_ArrayElement;
+-#endif
+-
+ #undef GLE
+ 
+ 	return success;
+@@ -1064,8 +1033,8 @@ static void GLimp_InitExtensions( qboolean fixedFunction )
+ 		//ri.Printf( PRINT_ALL, "...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures );
+ 		//glConfig.maxActiveTextures=4;
+ 		qglMultiTexCoord2fARB = myglMultiTexCoord2f;
+-		qglActiveTextureARB = SDL_GL_GetProcAddress( "glActiveTexture" );
+-		qglClientActiveTextureARB = SDL_GL_GetProcAddress( "glClientActiveTexture" );
++		qglActiveTextureARB = RTCW_GL_GetProcAddress( "glActiveTexture" );
++		qglClientActiveTextureARB = RTCW_GL_GetProcAddress( "glClientActiveTexture" );
+ 		if ( glConfig.numTextureUnits > 1 )
+ 		{
+ 			ri.Printf( PRINT_ALL, "...using GL_ARB_multitexture (%i texture units)\n", glConfig.numTextureUnits );
+@@ -1082,9 +1051,9 @@ static void GLimp_InitExtensions( qboolean fixedFunction )
+ 		{
+ 			if ( r_ext_multitexture->value )
+ 			{
+-				qglMultiTexCoord2fARB = SDL_GL_GetProcAddress( "glMultiTexCoord2fARB" );
+-				qglActiveTextureARB = SDL_GL_GetProcAddress( "glActiveTextureARB" );
+-				qglClientActiveTextureARB = SDL_GL_GetProcAddress( "glClientActiveTextureARB" );
++				qglMultiTexCoord2fARB = RTCW_GL_GetProcAddress( "glMultiTexCoord2fARB" );
++				qglActiveTextureARB = RTCW_GL_GetProcAddress( "glActiveTextureARB" );
++				qglClientActiveTextureARB = RTCW_GL_GetProcAddress( "glClientActiveTextureARB" );
+ 
+ 				if ( qglActiveTextureARB )
+ 				{
+@@ -1121,8 +1090,8 @@ static void GLimp_InitExtensions( qboolean fixedFunction )
+ 			if ( r_ext_compiled_vertex_array->value )
+ 			{
+ 				ri.Printf( PRINT_ALL, "...using GL_EXT_compiled_vertex_array\n" );
+-				qglLockArraysEXT = ( void ( APIENTRY * )( GLint, GLint ) ) SDL_GL_GetProcAddress( "glLockArraysEXT" );
+-				qglUnlockArraysEXT = ( void ( APIENTRY * )( void ) ) SDL_GL_GetProcAddress( "glUnlockArraysEXT" );
++				qglLockArraysEXT = ( void ( APIENTRY * )( GLint, GLint ) ) RTCW_GL_GetProcAddress( "glLockArraysEXT" );
++				qglUnlockArraysEXT = ( void ( APIENTRY * )( void ) ) RTCW_GL_GetProcAddress( "glUnlockArraysEXT" );
+ 				if (!qglLockArraysEXT || !qglUnlockArraysEXT)
+ 				{
+ 					ri.Error (ERR_FATAL, "bad getprocaddress");
+diff --git a/scripts/build-web-sp.sh b/scripts/build-web-sp.sh
+index 7aed0e6..2ed6fd6 100755
+--- a/scripts/build-web-sp.sh
++++ b/scripts/build-web-sp.sh
+@@ -34,7 +34,7 @@ emmake make -C "$ROOT/SP" -j"$JOBS" \
+ 	PLATFORM=emscripten ARCH=wasm32 BUILD_DIR="$WEB_BUILD" \
+ 	BUILD_SERVER=0 BUILD_CLIENT=1 BUILD_GAME_SO=0 BUILD_GAME_QVM=0 \
+ 	BUILD_RENDERER_REND2=0 USE_RENDERER_DLOPEN=0 \
+-	USE_OPENGLES=1 \
++	USE_OPENGLES=0 USE_BLOOM=0 GL4ES_PATH="${GL4ES_PATH:?Build the pinned GL4ES library first}" \
+ 	USE_OPENAL=0 USE_CURL=0 USE_MUMBLE=0 USE_VOIP=0 \
+ 	USE_CODEC_VORBIS=0 USE_CODEC_OPUS=0 USE_FREETYPE=0
+ 
+-- 
+2.53.0

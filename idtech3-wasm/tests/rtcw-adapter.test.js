@@ -40,18 +40,30 @@ function createDocument(env) {
       listeners[type] = listeners[type] || [];
       listeners[type].push(fn);
     },
+    dispatch(type, event) {
+      for (const listener of listeners[type] || []) listener(event);
+    },
+    visibilityState: 'visible',
     canvas
   };
 }
 
-(async () => {
+async function testVariant(variant) {
   const env = {};
+  const timers = [];
   const document = createDocument(env);
+  const frames = new Map();
+  let nextFrame = 0;
+  let now = Date.now();
+  let runtimeState = 0;
+  let captureArmed = false;
   const window = {
     setTimeout,
     clearTimeout,
-    setInterval,
+    setInterval(fn, delay) { const timer = setInterval(fn, delay); timers.push(timer); return timer; },
     clearInterval,
+    requestAnimationFrame(fn) { frames.set(++nextFrame, fn); return nextFrame; },
+    cancelAnimationFrame(id) { frames.delete(id); },
     addEventListener() {},
     document
   };
@@ -59,8 +71,9 @@ function createDocument(env) {
   const engine = {
     _RTCW_BrowserJoinTarget: () => 1,
     _RTCW_BrowserJoinRequested: () => 0,
-    _RTCW_BrowserArmCaptureIntent: () => 1,
-    _RTCW_BrowserCancelCaptureIntent: () => 1,
+    _RTCW_BrowserArmCaptureIntent: () => { captureArmed = true; },
+    _RTCW_BrowserCancelCaptureIntent: () => { captureArmed = false; },
+    _RTCW_BrowserCaptureIntent: () => captureArmed && (runtimeState === 1 || runtimeState === 4),
     _RTCW_BrowserJoinServer: (addressPtr) => {
       const address = engine.strings[addressPtr - 1];
       assert.equal(address, arena.MANAGED_CONNECT);
@@ -68,7 +81,7 @@ function createDocument(env) {
       return 1;
     },
     _RTCW_BrowserSetPlayerName: () => 1,
-    _RTCW_BrowserRuntimeState: () => 0,
+    _RTCW_BrowserRuntimeState: () => runtimeState,
     _RTCW_BrowserConfigureControls: () => 1,
     _RTCW_BrowserApplyPreferences: () => 1,
     _RTCW_BrowserWriteConfiguration: () => 1,
@@ -76,7 +89,7 @@ function createDocument(env) {
     _RTCW_BrowserRenderWidth: () => 1280,
     _RTCW_BrowserRenderHeight: () => 720,
     _RTCW_BrowserControlsMask: () => 0,
-    _RTCW_BrowserSetInputCaptured: () => 1,
+    _RTCW_BrowserSetInputCaptured: captured => { if (captured) captureArmed = false; },
     stringToNewUTF8(value) {
       engine.strings = engine.strings || [];
       engine.strings.push(String(value));
@@ -84,19 +97,23 @@ function createDocument(env) {
     },
     _free() {},
     FS: {},
-    callMain() {}
+    callMain(args) { engine.args = Array.from(args); }
   };
 
   let wakeStatus = { state: 'running', map: 'mp_depot', gametype: 5 };
+  const captureRequests = [];
   const context = {
-    variant: 'rtcw-mp',
+    variant,
     elements: { canvas: document.canvas },
     log() {},
     setLoading() {},
-    setEngineState(state) { context.state = state; },
+    setEngineState(state, options) {
+      context.state = state;
+      if (options?.capture) captureRequests.push({ state, event: options.event });
+    },
     showRuntime(state) { shown.push(state); context.surface = state; },
     persistence: {
-      root: '/save/rtcw-mp',
+      root: `/save/${variant}`,
       attach: async () => ({}),
       markDirty() {},
       save: async () => true
@@ -141,7 +158,7 @@ function createDocument(env) {
           json: async () => ({
             namespace: 'rtcw',
             version: 'v1',
-            variants: { 'rtcw-mp': { files: [] } }
+            variants: { [variant]: { files: [] } }
           })
         };
       }
@@ -153,7 +170,7 @@ function createDocument(env) {
     File: class File {
       constructor(parts, name) { this.name = name; this.size = 8; }
     },
-    performance: { now: () => Date.now() },
+    performance: { now: () => now },
     globalThis: null
   };
   sandbox.globalThis = sandbox;
@@ -175,16 +192,85 @@ function createDocument(env) {
   Object.assign(engine, sandbox.globalThis.Module);
   sandbox.globalThis.Module = engine;
   await adapter.start();
+  const argument = name => engine.args[engine.args.indexOf(name) + 1];
+  assert.equal(argument('r_ext_multitexture'), variant === 'rtcw-sp' ? '1' : '0');
+  assert.equal(argument('r_ignoreFastPath'), variant === 'rtcw-sp' ? '0' : '1');
+  assert.equal(argument('r_primitives'), '2');
+  assert.equal(argument('vm_ui'), '2');
 
-  await adapter.pointerButton({ button: 0, pressed: true }, { type: 'pointerup' });
-  for (let i = 0; i < 20 && !engine.joined; i += 1) {
-    await new Promise(resolve => setTimeout(resolve, 25));
+  if (variant === 'rtcw-mp') {
+    await adapter.pointerButton({ button: 0, pressed: true }, { type: 'pointerup' });
+    for (let i = 0; i < 20 && !engine.joined; i += 1) {
+      await new Promise(resolve => setTimeout(resolve, 25));
+    }
+    assert.equal(engine.joined, arena.MANAGED_CONNECT);
+    assert.equal(arena.joinKeepsRuntime(shown), true);
+    assert.ok(!shown.includes('launcher'));
+
+    console.log('RTCW MP adapter JOIN stays off the launcher');
   }
-  assert.equal(engine.joined, arena.MANAGED_CONNECT);
-  assert.equal(arena.joinKeepsRuntime(shown), true);
-  assert.ok(!shown.includes('launcher'));
 
-  console.log('RTCW MP adapter JOIN stays off the launcher');
+  async function frame(elapsed = 16) {
+    now += elapsed;
+    const callbacks = Array.from(frames.values());
+    frames.clear();
+    for (const callback of callbacks) callback(now);
+    await Promise.resolve();
+  }
+  function resetCapture(state) {
+    runtimeState = 1;
+    adapter.readEngineState(); // Clear the completed managed-join state.
+    adapter.inputCaptureChanged(true);
+    runtimeState = state;
+    adapter.inputCaptureChanged(false);
+    captureRequests.length = 0;
+  }
+
+  resetCapture(2);
+  document.dispatch('keydown', { key: 'Escape' });
+  const resumeKey = { key: 'Escape' };
+  document.dispatch('keyup', resumeKey);
+  await Promise.resolve();
+  assert.equal(captureRequests.length, 0, 'a still-paused native frame must not capture');
+  runtimeState = 1; // SDL processes the queued Escape on its next frame.
+  await frame();
+  assert.equal(captureRequests.length, 1, 'Escape resume must capture after the native frame advances');
+  assert.equal(captureRequests[0].event, resumeKey);
+
+  resetCapture(2);
+  adapter.pointerButton({ button: 0, pressed: true }, { type: 'pointerdown' });
+  const resumeClick = { type: 'pointerup' };
+  adapter.pointerButton({ button: 0, pressed: false }, resumeClick);
+  await Promise.resolve();
+  runtimeState = 1; // Save/Load or Resume closes the overlay asynchronously.
+  await frame();
+  assert.equal(captureRequests.length, 1, 'paused-menu resume must retain the pointer gesture');
+  assert.equal(captureRequests[0].event, resumeClick);
+
+  resetCapture(0);
+  document.dispatch('keydown', { key: 'Enter' });
+  document.dispatch('keyup', { key: 'Enter' });
+  await Promise.resolve();
+  await frame(2100); // Ordinary menu interaction never began loading.
+  runtimeState = 1;
+  await frame();
+  assert.equal(captureRequests.length, 0, 'an expired gesture cannot capture a later transition');
+  assert.equal(frames.size, 0, 'capture polling is bounded');
+
+  resetCapture(1);
+  document.dispatch('keydown', { key: 'Escape' });
+  runtimeState = 2;
+  document.dispatch('keyup', { key: 'Escape' });
+  await Promise.resolve();
+  await frame();
+  assert.equal(captureRequests.length, 0, 'opening the pause menu must not recapture');
+  console.log(`${variant} delayed native Resume preserves capture without trapping menu input`);
+  timers.forEach(clearInterval);
+  console.log(`${variant} renderer arguments preserve its GL backend`);
+}
+
+(async () => {
+  for (const variant of ['rtcw-mp', 'rtcw-sp']) await testVariant(variant);
   process.exit(0);
 })().catch(error => {
   console.error(error);

@@ -24,7 +24,7 @@ index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e7
  #ifdef _WIN32
  # include <shellapi.h>
  # define UPDATEINTERVAL 604800 // 1w
-@@ -90,6 +105,67 @@ int32_t gNoSetup = 0, gCommandSetup = 0;
+@@ -90,6 +105,71 @@ int32_t gNoSetup = 0, gCommandSetup = 0;
  
  INPUT_MODE gInputMode;
  
@@ -79,11 +79,15 @@ index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e7
 +
 +extern "C" EMSCRIPTEN_KEEPALIVE int NBlood_WasmControlsMask(void)
 +{
++    // Reloading the native bind script can reverse primary/secondary order.
++    auto const assigned = [](int function, int scan) {
++        return KeyboardKeys[function][0] == scan || KeyboardKeys[function][1] == scan;
++    };
 +    int mask = 0;
-+    if (KeyboardKeys[gamefunc_Move_Forward][0] == sc_W) mask |= 1;
-+    if (KeyboardKeys[gamefunc_Move_Backward][0] == sc_S) mask |= 2;
-+    if (KeyboardKeys[gamefunc_Strafe_Left][0] == sc_A) mask |= 4;
-+    if (KeyboardKeys[gamefunc_Strafe_Right][0] == sc_D) mask |= 8;
++    if (assigned(gamefunc_Move_Forward, sc_W)) mask |= 1;
++    if (assigned(gamefunc_Move_Backward, sc_S)) mask |= 2;
++    if (assigned(gamefunc_Strafe_Left, sc_A)) mask |= 4;
++    if (assigned(gamefunc_Strafe_Right, sc_D)) mask |= 8;
 +    if (gMouseAim) mask |= 16;
 +    return mask;
 +}
@@ -200,7 +204,7 @@ index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e7
      PrintBuildInfo();
  
      memcpy(&gGameOptions, &gSingleGameOptions, sizeof(GAMEOPTIONS));
-@@ -1682,6 +1800,16 @@ int app_main(int argc, char const * const * argv)
+@@ -1682,6 +1800,25 @@ int app_main(int argc, char const * const * argv)
      int const readSetup =
  #endif
      CONFIG_ReadSetup();
@@ -211,8 +215,17 @@ index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e7
 +    CONFIG_SetDefaultKeys(keydefaults);
 +    gSetup.usemouse = 1;
 +    gMouseAim = 1;
++#ifdef USE_OPENGL
++    gSetup.xdim = 1280;
++    gSetup.ydim = 720;
++    gSetup.bpp = 32;
++    glrendmode = REND_POLYMOST;
++#else
 +    gSetup.xdim = 800;
 +    gSetup.ydim = 600;
++    gSetup.bpp = 8;
++#endif
++    gSetup.fullscreen = 0;
 +#endif
      if (bCustomName)
          strcpy(szPlayerName, gPName);
@@ -275,7 +288,7 @@ index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e7
          bool bDraw;
          if (gGameStarted)
          {
-@@ -1936,6 +2092,23 @@ RESTART:
+@@ -1936,6 +2092,25 @@ RESTART:
                                  break;
                              faketimerhandler();
                              ProcessFrame();
@@ -292,8 +305,10 @@ index bba6ae3096376b06fbaf1ba50922ba30c4494b24..86252767810a6bf9604283069593a0e7
 +                                    diagnostics.playerPosition[3] = $3;
 +                                    document.documentElement.dataset.simulationFrames = String(diagnostics.simulationFrames);
 +                                    document.documentElement.dataset.playerPosition = String($0) + ',' + String($1) + ',' + String($2) + ',' + String($3);
++                                    document.documentElement.dataset.bloodPlayerLook = String($4) + ',' + String($5) + ',' + String($6) + ',' + String($7);
 +                                }, TrackerCast(gMe->pSprite->x), TrackerCast(gMe->pSprite->y),
-+                                   TrackerCast(gMe->pSprite->z), TrackerCast(gMe->pSprite->ang));
++                                   TrackerCast(gMe->pSprite->z), TrackerCast(gMe->pSprite->ang),
++                                   gMe->q16look, gMe->q16horiz, gViewLook, gViewAngle);
 +                            }
 +#endif
                          }
@@ -354,17 +369,20 @@ diff --git a/source/blood/src/config.cpp b/source/blood/src/config.cpp
 index a3df47445f13808c19b895ddf028943a43dab509..6e2e57582323a1150d1429eb2921a043c9503332 100644
 --- a/source/blood/src/config.cpp
 +++ b/source/blood/src/config.cpp
-@@ -249,7 +249,13 @@ void CONFIG_SetDefaults(void)
+@@ -249,7 +249,16 @@ void CONFIG_SetDefaults(void)
  {
      scripthandle = -1;
  
 -#ifdef __ANDROID__
 +#ifdef __EMSCRIPTEN__
-+    // Keep the classic software renderer at a predictable 4:3 internal
-+    // resolution. The shared browser shell contains this buffer without
-+    // stretching it or making the game redraw every viewport pixel.
++    // Match the separate browser module to its advertised internal buffer.
++#ifdef USE_OPENGL
++    gSetup.xdim = 1280;
++    gSetup.ydim = 720;
++#else
 +    gSetup.xdim = 800;
 +    gSetup.ydim = 600;
++#endif
 +#elif defined __ANDROID__
      droidinput.forward_sens = 5.f;
      droidinput.gameControlsAlpha = 0.5;

@@ -1,0 +1,51 @@
+{
+  "scope": "Exact Prey MakeDefault, PurgeImage and accounting functions on real EGL/GLES textures. The fixture supplies image fields and a minimal GenerateImage uploader (not the complete production mip/downsize implementation). It verifies missing-texture ownership, metadata, purge isolation and unchanged fallback pixels; not full gameplay or deferred-archive recovery.",
+  "productionSHA256": "daa864be3dac93706faaed5a08740f790ada7b10d9eb35f41b0861c34b821424",
+  "driver": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+  "cases": [
+    {
+      "label": "generated-default-valid",
+      "passed": true
+    },
+    {
+      "label": "first-missing-owns-texture",
+      "passed": true
+    },
+    {
+      "label": "second-missing-owns-texture",
+      "passed": true
+    },
+    {
+      "label": "missing-images-have-rgba-accounting",
+      "passed": true
+    },
+    {
+      "label": "transparent-fallback-pixels-preserved",
+      "passed": true
+    },
+    {
+      "label": "purged-image-marked-unloaded",
+      "passed": true
+    },
+    {
+      "label": "purge-preserves-other-images",
+      "passed": true
+    },
+    {
+      "label": "default-regeneration-preserves-missing-image",
+      "passed": true
+    },
+    {
+      "label": "replacement-preserves-other-images",
+      "passed": true
+    },
+    {
+      "label": "developer-checker-pixels-preserved",
+      "passed": true
+    },
+    {
+      "label": "no-gl-errors",
+      "passed": true
+    }
+  ]
+}

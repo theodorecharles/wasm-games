@@ -1,0 +1,22 @@
+EXPERIMENTAL LOCAL ACCEPTANCE IMAGE — NOT A PUBLIC RELEASE
+
+SABot bot source and archive reference:
+https://github.com/glKarin/com.n0n3m4.diii4a
+revision dea1eb9f122cfae042961cfc32a3474e59354589
+
+Original source comments credit TinMan and cusTom3. glKarin maintains the
+reference integration. The upstream repository's LICENSE and doom3/COPYING.txt
+are reproduced alongside this notice without alteration. Preserve the original
+source headers and credits when preparing corresponding source.
+
+The local port adds native/Wasm integration, spawn/restart and navigation
+ownership fixes. Source pins, per-file hashes, modification patches and build
+helpers are in the wasm-games workspace's idtech4-wasm/bots/doom3 directory.
+
+The bot archive has no separate license notice inside it. Public redistribution
+scope and complete corresponding-source packaging remain release gates. This
+notice does not grant any additional rights to the archive or to retail data.
+Retail Doom 3 packs are not included; they must be supplied by the owner.
+
+Do not push this acceptance image to a registry or substitute it for live
+services without completing the remaining integration and release checks.

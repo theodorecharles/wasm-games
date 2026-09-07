@@ -1,0 +1,287 @@
+{
+  "scope": "Native Wasm calls through the actual SDK renderer and production indexed-draw bridge; WebGL submission sink records attribute bindings, not GPU pixels.",
+  "transformSHA256": "b0d30c3694f904bb432523f88bfa2e808b89313c4b414b2b145127836f5e1afa",
+  "rows": [
+    {
+      "label": "first-buffer",
+      "expected": {
+        "buffer": 4,
+        "offset": 0,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 12
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": true
+    },
+    {
+      "label": "unchanged-fast-path",
+      "expected": {
+        "buffer": 4,
+        "offset": 0,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 12
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": true
+    },
+    {
+      "label": "different-buffer-same-layout",
+      "expected": {
+        "buffer": 5,
+        "offset": 0,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 12
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": false
+    },
+    {
+      "label": "same-buffer-new-offsets",
+      "expected": {
+        "buffer": 5,
+        "offset": 32,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 44
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": false
+    },
+    {
+      "label": "same-stride-new-component-count",
+      "expected": {
+        "buffer": 5,
+        "offset": 32,
+        "size": 2,
+        "type": 5126,
+        "textureOffset": 44
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": false
+    },
+    {
+      "label": "same-stride-new-component-type",
+      "expected": {
+        "buffer": 5,
+        "offset": 32,
+        "size": 2,
+        "type": 5122,
+        "textureOffset": 44
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": false
+    },
+    {
+      "label": "texture-offset-only",
+      "expected": {
+        "buffer": 5,
+        "offset": 32,
+        "size": 2,
+        "type": 5122,
+        "textureOffset": 48
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": false
+    },
+    {
+      "label": "return-to-first-buffer",
+      "expected": {
+        "buffer": 4,
+        "offset": 0,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 12
+      },
+      "position": {
+        "buffer": 4,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 4,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 2,
+      "passed": true
+    },
+    {
+      "label": "cpu-interleaved",
+      "expected": {
+        "buffer": 0,
+        "offset": 0,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 12
+      },
+      "position": {
+        "buffer": 0,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 0,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 12
+      },
+      "pointerCalls": 4,
+      "passed": true
+    },
+    {
+      "label": "cpu-new-texture-offset",
+      "expected": {
+        "buffer": 0,
+        "offset": 0,
+        "size": 3,
+        "type": 5126,
+        "textureOffset": 20
+      },
+      "position": {
+        "buffer": 0,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 0,
+        "size": 2,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 20
+      },
+      "pointerCalls": 6,
+      "passed": true
+    }
+  ],
+  "unchangedStateReusesPointers": true
+}

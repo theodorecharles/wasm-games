@@ -5,7 +5,6 @@ engine_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source_dir="${WOLF4SDL_SOURCE_DIR:-${engine_root}/.work/wolf4sdl}"
 repository="https://github.com/theodorecharles/wolf3d-wasm.git"
 commit="3d41ccce8f8fecbed83aa9d8d42734c2c7e62374"
-series_file="${engine_root}/patches/series"
 
 if [[ ! -d "${source_dir}/.git" ]]; then
   mkdir -p "$(dirname "${source_dir}")"
@@ -20,16 +19,6 @@ if [[ "${actual_origin}" != "${repository}" || "${actual_commit}" != "${commit}"
   exit 1
 fi
 
-while IFS= read -r patch_name; do
-  [[ -z "${patch_name}" || "${patch_name}" == \#* ]] && continue
-  patch_file="${engine_root}/patches/${patch_name}"
-  if git -C "${source_dir}" apply --reverse --check "${patch_file}" 2>/dev/null; then
-    continue
-  fi
-  git -C "${source_dir}" apply --check "${patch_file}"
-  git -C "${source_dir}" apply "${patch_file}"
-done < "${series_file}"
-
-find "${source_dir}" -type f -name '*.md' -delete
+node "${engine_root}/scripts/apply-source-patches.mjs" "${source_dir}"
 
 printf '%s\n' "${source_dir}"

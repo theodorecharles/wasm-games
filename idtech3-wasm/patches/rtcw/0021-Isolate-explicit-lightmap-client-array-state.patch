@@ -1,0 +1,57 @@
+From 18c6ad4064e2fe83394ecfc488b75369e52953ed Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 6 Sep 2026 01:30:00 -0400
+Subject: [PATCH] Isolate explicit MP lightmap client-array state
+
+The legacy GL draw wrapper overrides a_color with its fixed-function
+layout while any client array remains enabled. Save and disable MP's
+single-unit client arrays around the explicit VBO draw, then restore
+exactly the previous mask for subsequent legacy stages. SP is unchanged.
+
+diff --git a/MP/code/renderer/tr_es2.c b/MP/code/renderer/tr_es2.c
+index 5eb55da..871b126 100644
+--- a/MP/code/renderer/tr_es2.c
++++ b/MP/code/renderer/tr_es2.c
+@@ -201,6 +201,11 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 	int i, out, packedCap;
+ 	const int stride = (int)sizeof( es2LmVert_t );
+ 	const glIndex_t *indexes;
++	const GLenum clientArrays[] = {
++		GL_VERTEX_ARRAY, GL_NORMAL_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
++	};
++	GLboolean clientArrayEnabled[4];
++	int array;
+ 
+ 	(void)diffTc;
+ 	(void)lmTc;
+@@ -225,6 +230,15 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 	GL_State( GLS_DEFAULT );
+ 	MatMul( mvp, backEnd.viewParms.projectionMatrix, backEnd.or.modelMatrix );
+ 
++	/* MP's legacy backend uses one client texture unit. Its enabled fixed-
++	 * function arrays must not reach glDrawArrays: LEGACY_GL_EMULATION would
++	 * rebind a_color using the old client layout over this shader's packed VBO.
++	 * Preserve the enable mask so following ordinary stages keep their arrays. */
++	for ( array = 0; array < 4; array++ ) {
++		qglGetBooleanv( clientArrays[array], &clientArrayEnabled[array] );
++		qglDisableClientState( clientArrays[array] );
++	}
++
+ 	/* qglBindTexture goes through LEGACY_GL and ignores the active
+ 	 * unit, so both samples hit the same texture. Use the real GLES
+ 	 * entry points. Lightmap STs are tess.texCoords[][1]. */
+@@ -325,7 +339,12 @@ qboolean RB_ES2_DrawLightmap( shaderCommands_t *input,
+ 	glActiveTexture( GL_TEXTURE1 );
+ 	glBindTexture( GL_TEXTURE_2D, 0 );
+ 	glActiveTexture( GL_TEXTURE0 );
++	for ( array = 0; array < 4; array++ ) {
++		if ( clientArrayEnabled[array] ) {
++			qglEnableClientState( clientArrays[array] );
++		}
++	}
+ 	return qtrue;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif

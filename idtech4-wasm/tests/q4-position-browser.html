@@ -1,0 +1,101 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Quake 4 depth equality diagnostic</title>
+<h1>Quake 4 depth equality diagnostic</h1>
+<p>Test-only: actual packaged shaders, synthetic world coordinates. No game acceptance.</p>
+<button id="run">Run shipped and model-first shader comparisons</button>
+<canvas id="canvas" width="64" height="64"></canvas>
+<pre id="result">Ready.</pre>
+<script type="module">
+const button = document.querySelector('#run'), output = document.querySelector('#result');
+button.addEventListener('click', async () => {
+  button.disabled = true;
+  try {
+    const sources = await (await fetch('/q4-position-shaders.json')).json();
+    const gl = document.querySelector('#canvas').getContext('webgl2', {antialias:false,depth:true,stencil:false});
+    if (!gl) throw Error('WebGL 2 unavailable');
+    function shader(type, source) {
+      const object = gl.createShader(type);
+      gl.shaderSource(object, source); gl.compileShader(object);
+      if (!gl.getShaderParameter(object, gl.COMPILE_STATUS)) throw Error(gl.getShaderInfoLog(object));
+      return object;
+    }
+    function program(vertex, fragment) {
+      const vs=shader(gl.VERTEX_SHADER,vertex), fs=shader(gl.FRAGMENT_SHADER,fragment), p=gl.createProgram();
+      gl.attachShader(p,vs); gl.attachShader(p,fs);
+      gl.bindAttribLocation(p,0,'a_position'); gl.bindAttribLocation(p,2,'a_color'); gl.linkProgram(p);
+      if (!gl.getProgramParameter(p,gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(p));
+      gl.deleteShader(vs); gl.deleteShader(fs); return p;
+    }
+    function matrices(p, model, projection) {
+      gl.useProgram(p);
+      for (const name of ['u_modelView','uModelViewMatrix']) gl.uniformMatrix4fv(gl.getUniformLocation(p,name),false,model);
+      for (const name of ['u_projection','uProjectionMatrix']) gl.uniformMatrix4fv(gl.getUniformLocation(p,name),false,projection);
+    }
+    function colored() {
+      const pixels=new Uint8Array(64*64*4); gl.readPixels(0,0,64,64,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+      let count=0;
+      for(let i=0;i<64*64;i++) if(pixels[i*4]||pixels[i*4+1]||pixels[i*4+2]) count++;
+      return count;
+    }
+    const depth=program(sources.depthVertex,sources.depthFragment);
+    const vao=gl.createVertexArray(); gl.bindVertexArray(vao);
+    const buffer=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buffer); gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);
+    gl.vertexAttrib4f(2,1,1,1,1); gl.vertexAttrib4f(8,0,0,0,1);
+    gl.vertexAttrib4f(9,1,0,0,0); gl.vertexAttrib4f(10,0,1,0,0); gl.vertexAttrib4f(11,0,0,1,0);
+    for(let unit=0;unit<2;unit++) {
+      gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,
+        new Uint8Array(unit ? [255,255,255,255] : [128,128,255,128]));
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    }
+    const projection=new Float32Array([1.7,0,0,0, 0,1.7,0,0, 0,0,-10001/9999,-1, 0,0,-20000/9999,0]);
+    gl.viewport(0,0,64,64); gl.enable(gl.DEPTH_TEST); gl.disable(gl.BLEND); gl.disable(gl.CULL_FACE);
+    gl.clearColor(0,0,0,0); gl.clearDepth(1);
+    const results=[];
+    for(const modelFirst of [false,true]) {
+      const old='gl_Position=uProjectionMatrix*uModelViewMatrix*p;';
+      if (!sources.materialVertex.includes(old)) throw Error('Expected original linked position expression');
+      const vertex=modelFirst ? sources.materialVertex.replace(old,
+        'vec4 ecPosition=uModelViewMatrix*p;gl_Position=uProjectionMatrix*ecPosition;') : sources.materialVertex;
+      const interaction=program(vertex,sources.materialFragment);
+      gl.useProgram(interaction);
+      const location=name=>gl.getUniformLocation(interaction,name);
+      gl.uniform1i(location('uBumpMap'),0);
+      for(const name of ['uDiffuseMap','uSpecularMap','uLightFalloffMap','uLightProjectionMap']) gl.uniform1i(location(name),1);
+      gl.uniform4f(location('uDiffuseColor'),1,1,1,1); gl.uniform4f(location('uSpecularColor'),0,0,0,0);
+      gl.uniform4f(location('uLightProjectionQ'),0,0,0,1); gl.uniform2f(location('uVertexColorParams'),0,1);
+      const cases=[];
+      for(const z of [0,128.125,1024.125,8192.125,32768.125]) for(const distance of [16.25,64.25,256.25,1024.25]) {
+        const x=Math.fround(z*0.37),y=Math.fround(-z*0.19),extent=Math.fround(distance*0.4);
+        const model=new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, -x,-y,-z,1]);
+        const vertices=new Float32Array([x-extent,y-extent,z-distance, x+extent,y-extent,z-distance, x,y+extent,z-distance]);
+        gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STREAM_DRAW);
+        gl.depthMask(true); gl.colorMask(false,false,false,false); gl.clear(gl.DEPTH_BUFFER_BIT);
+        matrices(depth,model,projection); gl.depthFunc(gl.ALWAYS); gl.drawArrays(gl.TRIANGLES,0,3);
+        matrices(interaction,model,projection);
+        gl.uniform4f(location('uLocalLightOrigin'),x,y,z,1); gl.uniform4f(location('uLocalViewOrigin'),x,y,z,1);
+        gl.colorMask(true,true,true,true); gl.depthMask(false); gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.depthFunc(gl.ALWAYS); gl.drawArrays(gl.TRIANGLES,0,3); const available=colored();
+        gl.clear(gl.COLOR_BUFFER_BIT); gl.depthFunc(gl.EQUAL); gl.drawArrays(gl.TRIANGLES,0,3);
+        const accepted=colored(), perturbed=new Float32Array(projection); perturbed[14]+=0.125;
+        matrices(interaction,model,perturbed); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLES,0,3);
+        cases.push({origin:z,distance,available,accepted,negativeControl:colored()});
+      }
+      results.push({modelFirst,cases}); gl.deleteProgram(interaction);
+    }
+    const record={scope:'Actual packaged shader pair in Chrome WebGL 2; synthetic coordinates, not campaign acceptance',
+      wasmSha256:sources.wasmSha256,jsSha256:sources.jsSha256,depthBits:gl.getParameter(gl.DEPTH_BITS),
+      error:gl.getError(),results};
+    document.documentElement.dataset.q4PositionProof=JSON.stringify(record);
+    output.textContent=JSON.stringify(record,null,2);
+  } catch(error) {
+    document.documentElement.dataset.q4PositionProof=JSON.stringify({error:String(error)});
+    output.textContent=String(error);
+  } finally { button.disabled=false; }
+});
+</script>

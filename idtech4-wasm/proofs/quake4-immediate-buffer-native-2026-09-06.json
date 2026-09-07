@@ -1,0 +1,531 @@
+{
+  "scope": "Actual linked SDK Begin/Vertex/End, layout, renderer and flush executed against a recording GPU-buffer sink; not browser pixels.",
+  "inputSHA256": "1d6d837a8d3dbdcfdbf103add753e7744460bed786e8a2e09f2da4cfe23d1c74",
+  "transformSHA256": "f7b62a7598c92c4716d89b74c3dc029a0b417ea166fa35db3ba4645687670a4f",
+  "legacy": {
+    "cases": [
+      {
+        "binding": 0,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": false,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": false
+      },
+      {
+        "binding": 1,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              123,
+              123,
+              123,
+              123
+            ],
+            [
+              123,
+              123,
+              123,
+              123
+            ],
+            [
+              123,
+              123,
+              123,
+              123
+            ],
+            [
+              123,
+              123,
+              123,
+              123
+            ]
+          ],
+          "temp": false,
+          "logicalBinding": 1,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": false
+      },
+      {
+        "binding": 1,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              123,
+              123,
+              123,
+              123
+            ],
+            [
+              123,
+              123,
+              123,
+              123
+            ],
+            [
+              123,
+              123,
+              123,
+              123
+            ],
+            [
+              123,
+              123,
+              123,
+              123
+            ]
+          ],
+          "temp": false,
+          "logicalBinding": 1,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": false
+      },
+      {
+        "binding": 2,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              456,
+              456,
+              456,
+              456
+            ],
+            [
+              456,
+              456,
+              456,
+              456
+            ],
+            [
+              456,
+              456,
+              456,
+              456
+            ],
+            [
+              456,
+              456,
+              456,
+              456
+            ]
+          ],
+          "temp": false,
+          "logicalBinding": 2,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": false
+      },
+      {
+        "binding": 0,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": false,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": false
+      },
+      {
+        "binding": 2,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              456,
+              456,
+              456,
+              456
+            ],
+            [
+              456,
+              456,
+              456,
+              456
+            ],
+            [
+              456,
+              456,
+              456,
+              456
+            ],
+            [
+              456,
+              456,
+              456,
+              456
+            ]
+          ],
+          "temp": false,
+          "logicalBinding": 2,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": false
+      }
+    ],
+    "throwRestored": true
+  },
+  "candidate": {
+    "cases": [
+      {
+        "binding": 0,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": true
+      },
+      {
+        "binding": 1,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": true
+      },
+      {
+        "binding": 1,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": true
+      },
+      {
+        "binding": 2,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": true
+      },
+      {
+        "binding": 0,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": true
+      },
+      {
+        "binding": 2,
+        "draw": {
+          "mode": 4,
+          "count": 6,
+          "type": 5123,
+          "offset": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ]
+          ],
+          "temp": true,
+          "logicalBinding": 0,
+          "elementPreserved": true
+        },
+        "restored": true,
+        "attributesRestored": true,
+        "elementsRestored": true,
+        "returnedVBOPointers": true,
+        "passed": true
+      }
+    ],
+    "throwRestored": true
+  }
+}

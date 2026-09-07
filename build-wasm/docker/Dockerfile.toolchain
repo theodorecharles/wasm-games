@@ -1,0 +1,5 @@
+FROM emscripten/emsdk@sha256:be96eff5810e42c632f3f8b795388a6b596e4fb21ec28b9e1fb1bc49bb3b1eef
+
+# SDK 6.0.6 supplies the compiler; ImageMagick derives the four PWA icons
+# from tracked engine artwork. No owner-supplied game data enters this image.
+RUN apt-get update && apt-get install -y --no-install-recommends imagemagick

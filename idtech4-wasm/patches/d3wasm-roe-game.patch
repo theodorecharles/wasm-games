@@ -70,3 +70,80 @@ index f017ab3565c4ded1405b5ffed961493370db45fc..e60a5b0a02fa8136cf033ff63a0fcfd4
  
  /*
  ================
+diff --git a/neo/d3xp/gamesys/SaveGame.cpp b/neo/d3xp/gamesys/SaveGame.cpp
+index 2dd04a6..f2462a1 100644
+--- a/neo/d3xp/gamesys/SaveGame.cpp
++++ b/neo/d3xp/gamesys/SaveGame.cpp
+@@ -836,7 +836,7 @@ void idRestoreGame::RestoreObjects( void ) {
+ 	ReadSoundCommands();
+ 
+ 	// read trace models
+-	idClipModel::RestoreTraceModels( this );
++	gameLocal.clip.RestoreTraceModels( this );
+ 
+ 	// restore all the objects
+ 	for( i = 1; i < objects.Num(); i++ ) {
+diff --git a/neo/d3xp/physics/Clip.cpp b/neo/d3xp/physics/Clip.cpp
+index c82ca84..1dba1be 100644
+--- a/neo/d3xp/physics/Clip.cpp
++++ b/neo/d3xp/physics/Clip.cpp
+@@ -718,6 +718,16 @@ void idClip::Shutdown( void ) {
+ 	delete[] clipSectors;
+ 	clipSectors = NULL;
+ 
++	FreeTraceModels();
++	clipLinkAllocator.Shutdown();
++}
++
++/*
++===============
++idClip::FreeTraceModels
++===============
++*/
++void idClip::FreeTraceModels( void ) {
+ 	// free the trace model used for the temporaryClipModel
+ 	if ( temporaryClipModel.traceModelIndex != -1 ) {
+ 		idClipModel::FreeTraceModel( temporaryClipModel.traceModelIndex );
+@@ -729,8 +739,21 @@ void idClip::Shutdown( void ) {
+ 		idClipModel::FreeTraceModel( defaultClipModel.traceModelIndex );
+ 		defaultClipModel.traceModelIndex = -1;
+ 	}
++}
+ 
+-	clipLinkAllocator.Shutdown();
++/*
++===============
++idClip::RestoreTraceModels
++===============
++*/
++void idClip::RestoreTraceModels( idRestoreGame *savefile ) {
++	// Init created a default model before the saved cache is read. These two
++	// clip-owned models are not restored with the entities: release their old
++	// references before replacing the cache, then reacquire the default by
++	// shape. Saved indices may differ and must remain intact for the entities.
++	FreeTraceModels();
++	idClipModel::RestoreTraceModels( savefile );
++	defaultClipModel.LoadModel( idTraceModel( idBounds( idVec3( 0, 0, 0 ) ).Expand( 8 ) ) );
+ }
+ 
+ /*
+diff --git a/neo/d3xp/physics/Clip.h b/neo/d3xp/physics/Clip.h
+index e6f0c20..3ebff62 100644
+--- a/neo/d3xp/physics/Clip.h
++++ b/neo/d3xp/physics/Clip.h
+@@ -259,6 +259,7 @@ public:
+ 
+ 	void					Init( void );
+ 	void					Shutdown( void );
++	void					RestoreTraceModels( idRestoreGame *savefile );
+ 
+ 	// clip versus the rest of the world
+ 	bool					Translation( trace_t &results, const idVec3 &start, const idVec3 &end,
+@@ -328,6 +329,7 @@ private:
+ 
+ private:
+ 	struct clipSector_s *	CreateClipSectors_r( const int depth, const idBounds &bounds, idVec3 &maxSector );
++	void					FreeTraceModels( void );
+ 	void					ClipModelsTouchingBounds_r( const struct clipSector_s *node, struct listParms_s &parms ) const;
+ 	const idTraceModel *	TraceModelForClipModel( const idClipModel *mdl ) const;
+ 	int						GetTraceClipModels( const idBounds &bounds, int contentMask, const idEntity *passEntity, idClipModel **clipModelList ) const;

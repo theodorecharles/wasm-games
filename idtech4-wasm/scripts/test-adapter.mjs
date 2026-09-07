@@ -5,7 +5,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const site = path.resolve(process.argv[2] || new URL('../build/site', import.meta.url).pathname);
-const adapterSource = fs.readFileSync(path.join(site, 'game-adapter.js'), 'utf8');
+const adapterSource = fs.readFileSync(process.env.IDTECH4_ADAPTER_SOURCE || path.join(site, 'game-adapter.js'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game-data.json'), 'utf8'));
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -32,21 +32,53 @@ for (const [variant, value] of Object.entries(config.variants)) {
 assert.equal(new Set(Object.keys(config.variants).map(variant => config.persistence.root.replace('{variant}', variant))).size, 6,
   'every suite variant needs an isolated persistence mount');
 
-async function exercise(variant) {
+async function exercise(variant, wakeFailure) {
   const listeners = new Map();
   const globalListeners = new Map();
   const canvasListeners = new Map();
   const messages = [];
+  const requests = [];
   const transitions = [];
+  const captureRequests = [];
+  const userActivation = { isActive: true };
   const loading = [];
+  const audioContexts = [];
+  const audioSources = [];
+  const audioParam = () => ({ value: 1, setValueAtTime(value) { this.value = value; } });
+  class FakeAudioContext {
+    constructor() {
+      this.state = 'running'; this.currentTime = 0; this.destination = {};
+      this.listener = { setPosition() {}, setOrientation() {} };
+      audioContexts.push(this);
+    }
+    createGain() { return { gain: audioParam(), connect() {}, disconnect() {} }; }
+    createPanner() { return { connect() {}, disconnect() {}, setPosition() {} }; }
+    createBuffer(channels, frames, rate) {
+      const values = Array.from({ length: channels }, () => new Float32Array(frames));
+      return { duration: frames / rate, getChannelData: index => values[index] };
+    }
+    createBufferSource() {
+      const node = {
+        playbackRate: audioParam(), connect() {}, disconnect() {}, addEventListener() {},
+        start() { this.started = true; }, stop() { this.stopped = true; }
+      };
+      audioSources.push(node);
+      return node;
+    }
+    resume() { this.state = 'running'; return Promise.resolve(); }
+  }
   let createdPolicy;
   let loadedPolicy;
+  let canvasTransfers = 0;
   const canvas = {
     id: '', width: 1280, height: 720,
     addEventListener(type, listener) { canvasListeners.set(type, listener); },
-    transferControlToOffscreen() { return { kind: 'offscreen' }; }
+    transferControlToOffscreen() { canvasTransfers++; return { kind: 'offscreen' }; }
   };
   const document = {
+    visibilityState: 'visible',
+    focused: true,
+    hasFocus() { return this.focused; },
     location: { search: `?proof=adapter-${variant}` },
     pointerLockElement: null,
     documentElement: { dataset: {} },
@@ -57,11 +89,22 @@ async function exercise(variant) {
     postMessage(message) { messages.push(message); }
   }
   const sandbox = {
-    console, document, Worker: FakeWorker,
+    console, document, navigator: { userActivation }, Worker: FakeWorker, AudioContext: FakeAudioContext,
     location: { search: `?proof=adapter-${variant}` },
-    URLSearchParams,
+    URLSearchParams, AbortSignal,
     addEventListener(type, listener) { globalListeners.set(type, listener); },
-    fetch: async source => {
+    fetch: async (source, options) => {
+      requests.push({source, options});
+      if (source === '/api/doom3/wake') {
+        assert.equal(variant, 'doom3-mp');
+        assert.equal(options.method, 'POST');
+        assert.equal(messages.length, 0, 'wake must complete before the worker starts');
+        if (wakeFailure === 'unauthorized') return {ok: false, status: 401};
+        if (wakeFailure === 'failed') return {ok: false, status: 503};
+        if (wakeFailure === 'sleeping') return {ok: true, json: async () => ({state: 'sleeping', connect: '127.0.0.1:27666'})};
+        if (wakeFailure === 'foreign') return {ok: true, json: async () => ({state: 'running', connect: '8.8.8.8:27666'})};
+        return {ok: true, json: async () => ({state: 'running', connect: '127.0.0.1:27666', map: 'game/mp/d3dm1'})};
+      }
       assert.equal(source, '/wasm-game-data.json');
       return { ok: true, json: async () => dataManifest };
     }
@@ -94,7 +137,7 @@ async function exercise(variant) {
     elements: { canvas },
     preferences: { values: () => ({ playerName: 'Browser Marine', qualityProfile: 'ultra' }) },
     setLoading(...detail) { loading.push(detail); }, log() {}, setStatus() {},
-    setEngineState(state) { transitions.push(state); },
+    setEngineState(state, options) { transitions.push(state); if (options?.capture) captureRequests.push(options.event); },
     showRuntime(state) { transitions.push(state); }
   };
 
@@ -104,6 +147,12 @@ async function exercise(variant) {
   assert.equal(adapter.readEngineState(), 'menu');
   assert.equal(adapter.readCaptureIntent(), false);
   assert.equal(createdPolicy.namespace, dataManifest.variants[variant].namespace || dataManifest.namespace);
+  if (wakeFailure) {
+    await assert.rejects(adapter.start(context), /match startup failed|match is not ready/);
+    assert.equal(messages.length, 0, 'failed managed wake must not start a native worker');
+    assert.equal(canvasTransfers, 0, 'failed wake must preserve canvas for retry');
+    return;
+  }
   await adapter.start(context);
   assert.equal(sandbox.__idtech4Proof.lifecycle.at(-1).name, 'worker-started');
   assert.equal(sandbox.__idtech4Proof.workerMessages['out:start'], 1);
@@ -113,9 +162,28 @@ async function exercise(variant) {
     'normal loading copy must remain title-focused');
   const expectedWorker = variant.startsWith('quake4') ? '/q4-worker.js' : variant === 'prey' ? '/prey-worker.js' : '/d3-worker.js';
   assert.equal(FakeWorker.instance.source, expectedWorker);
+  const hasWorkerAudio = true;
+  assert.equal(audioContexts.length, hasWorkerAudio ? 1 : 0, `${variant}: create the expected page audio bridge`);
+  if (hasWorkerAudio) {
+    const sendAudio = data => FakeWorker.instance.onmessage({ data });
+    sendAudio({ type: 'audio-init' });
+    sendAudio({ type: 'audio-create-source', id: 1 });
+    sendAudio({ type: 'audio-buffer', id: 1, format: 0x1101, frequency: 8000,
+      data: new Int16Array([0, 8192, -8192, 0]).buffer });
+    sendAudio({ type: 'audio-source-int', id: 1, param: 0x1009, value: 1 });
+    sendAudio({ type: 'audio-source-action', id: 1, action: 1 });
+    assert.equal(audioSources.length, 1);
+    assert.ok(audioSources[0].started, `${variant}: native audio must reach a real page-side source operation`);
+    assert.deepEqual(Array.from(audioSources[0].buffer.getChannelData(0)), [0, 0.25, -0.25, 0]);
+    sendAudio({ type: 'audio-source-action', id: 1, action: 0 });
+    assert.ok(audioSources[0].stopped);
+    assert.equal(sandbox.__idtech4Proof.audio.starts, 1);
+  }
   const start = messages.find(message => message.type === 'start');
   assert.ok(start);
   assert.equal(start.variant, variant);
+  assert.equal(start.managedMultiplayer, variant === 'doom3-mp' ? true : undefined);
+  assert.equal(requests.filter(request => request.source === '/api/doom3/wake').length, variant === 'doom3-mp' ? 1 : 0);
   assert.equal(start.playerName, 'Browser Marine');
   assert.deepEqual(plain(start.persistence), {
     namespace: `idtech4-${variant}`,
@@ -138,6 +206,21 @@ async function exercise(variant) {
 
   document.visibilityState = 'hidden';
   listeners.get('visibilitychange')();
+  globalListeners.get('blur')();
+  document.focused = false;
+  document.visibilityState = 'visible';
+  listeners.get('visibilitychange')();
+  document.focused = true;
+  globalListeners.get('focus')();
+  if (variant === 'quake4' || variant === 'quake4-mp') {
+    assert.equal(start.focused, true, 'Quake 4 startup must include actual page focus');
+    assert.deepEqual(messages.filter(message => message.type === 'focus').map(message => message.focused),
+      [false, false, false, true], 'hidden or blurred pages must mute, and genuine focus must restore sound');
+  } else {
+    assert.equal(start.focused, undefined);
+    assert.equal(messages.filter(message => message.type === 'focus').length, 0,
+      'Quake 4 focus forwarding must not change other engine workers');
+  }
   globalListeners.get('pagehide')();
   assert.ok(messages.filter(message => message.type === 'persist').length >= 2,
     'visibility and page-exit lifecycle edges must request a worker-local flush');
@@ -222,9 +305,110 @@ async function exercise(variant) {
 
   listeners.get('keydown')({ code: 'Backquote', key: '`', ctrlKey: false, metaKey: false, altKey: false, repeat: false,
     preventDefault() {} });
+  if (variant.startsWith('quake4')) {
+    assert.equal(adapter.readEngineState(), 'paused', 'Quake 4 must wait for actual native resume');
+    const before = captureRequests.length;
+    FakeWorker.instance.onmessage({ data: { type: 'engine-state', state: 'gameplay', inputMode: 'gameplay' } });
+    assert.equal(captureRequests.length, before + 1);
+  }
   assert.equal(adapter.readEngineState(), 'gameplay', 'closing the in-game console must restore gameplay state immediately');
   assert.equal(adapter.readCaptureIntent(), true, 'closing the in-game console must request capture on the trusted key gesture');
   assert.equal(transitions.at(-1), 'gameplay');
+
+  if (variant.startsWith('quake4')) {
+    const native = (state, inputMode, resumeAvailable) => FakeWorker.instance.onmessage({data:{type:'engine-state',state,inputMode,resumeAvailable}});
+    const key = (code, value = code) => {
+      const event = {code,key:value,isTrusted:true,repeat:false,ctrlKey:false,metaKey:false,altKey:false,preventDefault(){}};
+      listeners.get('keydown')(event);
+      return event;
+    };
+    let before = captureRequests.length;
+    native('paused','menu',true);
+    const escape = key('Escape');
+    assert.equal(adapter.readEngineState(),'paused');
+    native('paused','menu',false); // Exit animation still owns the native GUI.
+    assert.equal(captureRequests.length,before);
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before+1);
+    assert.equal(captureRequests.at(-1),escape);
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before+1,'duplicate reports must not capture twice');
+
+    before = captureRequests.length;
+    native('paused','menu',false);
+    key('Escape');
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'submenu back is not a resume gesture');
+    native('paused','console',true);
+    key('Escape');
+    native('paused','menu',true);
+    assert.equal(captureRequests.length,before,'console Escape that opens a menu must not capture');
+    native('paused','console',true);
+    const consoleEscape = key('Escape');
+    assert.equal(captureRequests.length,before,'console Escape must wait for native acknowledgement');
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,++before,'a cinematic may consume Escape after closing the console');
+    assert.equal(captureRequests.at(-1),consoleEscape);
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'console Escape handoff is consumed exactly once');
+    native('paused','console',false);
+    key('Backquote','`');
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'console over a GUI does not resume the world');
+
+    native('paused','continue',false);
+    key('Enter');
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'stale-input Continue guard cannot request capture');
+    for (const ignored of ['CapsLock','ScrollLock','PrintScreen','AltRight']) {
+      native('paused','continue',true);
+      key(ignored);
+      native('gameplay','gameplay',false);
+      assert.equal(captureRequests.length,before,`${ignored} does not continue the native gate`);
+    }
+    native('paused','continue',true);
+    const enter = key('Enter');
+    assert.equal(captureRequests.length,before);
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.at(-1),enter);
+    assert.equal(captureRequests.length,++before);
+
+    native('paused','continue',true);
+    const pointer = {isTrusted:true,type:'pointerup'};
+    adapter.pointerButton({button:0,pressed:true,x:100,y:200},{isTrusted:true,type:'pointerdown'});
+    adapter.pointerButton({button:0,pressed:false,x:100,y:200},pointer);
+    assert.equal(messages.at(-1).type,'pointer-button','Continue still receives its physical button pair');
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.at(-1),pointer);
+    assert.equal(captureRequests.length,++before);
+
+    native('paused','menu',true);
+    const inactiveGesture = key('Escape');
+    userActivation.isActive = false;
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,++before,'the browser owns permission, including inactive re-locks after API release');
+    assert.equal(captureRequests.at(-1),inactiveGesture);
+    userActivation.isActive = true;
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'a consumed gesture must not retry after activation changes');
+
+    native('paused','menu',true);
+    key('Escape');
+    globalListeners.get('blur')();
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'blur cancels pending capture');
+
+    native('paused','menu',true);
+    adapter.pointerButton({button:0,pressed:true,x:100,y:200},{isTrusted:true});
+    adapter.pointerButton({button:0,pressed:false,x:100,y:200},pointer);
+    native('paused','menu',false); // The click entered Settings instead of resuming.
+    key('Tab');
+    native('gameplay','gameplay',false);
+    assert.equal(captureRequests.length,before,'a later unrelated action cancels an old menu click');
+    listeners.get('pointerlockerror')({isTrusted:true,message:'fixture failure'});
+    assert.equal(sandbox.__idtech4Proof.capture.at(-1).kind,'error');
+    assert.equal(sandbox.__idtech4Proof.capture.at(-1).locked,false);
+  }
   adapter.resize({ requestedWidth: 1536, requestedHeight: 864 });
   assert.deepEqual(plain(messages.at(-1)), { type: 'resize', width: 1536, height: 864 });
   adapter.captureLost();
@@ -240,10 +424,44 @@ async function exercise(variant) {
     preventDefault() {} });
   assert.equal(messages.at(-1).scan, 69);
 
+  // A physical modifier is itself a bindable game key (Doom 3's CTRL is
+  // _attack). Its DOM keydown already has ctrlKey/altKey set. Keep browser
+  // shortcut letters suppressed without dropping that modifier's down edge.
+  for (const [code, key, scan] of [
+    ['ControlLeft', 'Control', 224], ['ControlRight', 'Control', 228],
+    ['AltLeft', 'Alt', 226], ['AltRight', 'Alt', 230]
+  ]) {
+    for (let flags = 0; flags < 8; flags++) {
+      let suppressed = false;
+      const event = {code, key, ctrlKey: Boolean(flags & 1), altKey: Boolean(flags & 2),
+        metaKey: Boolean(flags & 4), repeat: false, preventDefault() { suppressed = true; }};
+      const before = messages.length;
+      listeners.get('keydown')(event);
+      assert.deepEqual(plain(messages.slice(before)), event.metaKey ? [] : [
+        {type: 'key', scan, key: 0, down: true, repeat: false}
+      ], `${variant}: ${code} modifier flags ${flags} must retain the physical down edge unless Meta is held`);
+      listeners.get('keyup')(event);
+      assert.deepEqual(plain(messages.at(-1)), {type: 'key', scan, key: 0, down: false},
+        'modifier release must always reach the native queue, including after shortcut/focus changes');
+      assert.equal(suppressed, false, 'modifier forwarding must not capture browser shortcuts');
+    }
+  }
+  for (const [code, key] of [['KeyL', 'l'], ['KeyW', 'w'], ['KeyR', 'r'], ['Tab', 'Tab'], ['F4', 'F4']]) {
+    for (let flags = 1; flags < 8; flags++) {
+      const before = messages.length;
+      let suppressed = false;
+      listeners.get('keydown')({code, key, ctrlKey: Boolean(flags & 1), altKey: Boolean(flags & 2),
+        metaKey: Boolean(flags & 4), repeat: false, preventDefault() { suppressed = true; }});
+      assert.equal(messages.length, before, `${variant}: browser shortcut ${code}/${flags} must not reach the game`);
+      assert.equal(suppressed, false, 'browser shortcuts must retain their native browser behavior');
+    }
+  }
+
   FakeWorker.instance.onmessage({ data: { type: 'error', text: 'renderer checkpoint' } });
   assert.equal(adapter.readEngineState(), 'crashed');
   assert.equal(transitions.at(-1), 'crashed');
 }
 
 for (const variant of Object.keys(config.variants)) await exercise(variant);
+for (const failure of ['unauthorized', 'failed', 'sleeping', 'foreign']) await exercise('doom3-mp', failure);
 console.log('id Tech 4 adapter state, identity, input, disabled-controller, persistence, pointer, resize, profile, and PWA contracts passed');

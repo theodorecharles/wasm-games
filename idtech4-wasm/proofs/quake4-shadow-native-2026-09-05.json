@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-05",
+  "scope": "Actual linked native shadow builders in a test-only side module; no main, GPU or retail animation acceptance",
+  "baselineWasmSha256": "656cf224473230837355fa41fa2b3956333cf234e4b3852ca1e4b21e1bf52d3b",
+  "baselineResults": {"nativeShadowProjection": -3, "browserPackedModelPolicy": 1},
+  "candidateResults": {"nativeShadowProjection": 1, "browserPackedModelPolicy": 0},
+  "checks": [
+    "GLSL capability remains enabled while absent ARB vertex programs select CPU shadow generation",
+    "Regular vertices and sil-trace vertices produce near points with w=1 and local-light-relative directions with w=0",
+    "Nonzero entity translation is applied to the light origin",
+    "Unused vertices are omitted; silhouette walls and correctly ordered caps use in-range indices",
+    "ARB-capable selection retains the existing GPU layout; cvar disable selects CPU layout",
+    "Extracted production MD5R browser selector chooses the existing CPU-skinned/classic topology path",
+    "Both outer stencil paths and the inner shadow parameter upload use the same production capability policy",
+    "Actual device/GUI/exception/keyboard, GL/focus/capture, Continue/clock and audio regressions pass",
+    "All four exact patch trees and staged renderer/worker/adapter/package contracts pass"
+  ],
+  "image": "local/idtech4-wasm:quake4-shadow-candidate",
+  "imageId": "sha256:311d643220a2df70458e3cf447bec9db1b7b376207662e4251ff5139d9d4dfed",
+  "engineJsSha256": "a87929d6fb30a975d2ea381d887ff863fbec28dfee658bff35a24384341303cd",
+  "engineWasmSha256": "7c7c3ea597ecbe277e6c05f13346d84c2f1bde738c1921f8e7acf4a78ebaee2b",
+  "canonicalPatchSha256": "54ebd9b76f71ad3fe78a7ee38aa74865f746bf382d7cbd8e5f8fe4368e87dd8d",
+  "servedWasmChecksumMatches": true,
+  "logsDirectory": "/tmp/idtech4-chrome.pAD0Mo",
+  "deployed": false
+}

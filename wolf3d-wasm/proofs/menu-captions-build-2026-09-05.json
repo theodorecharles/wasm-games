@@ -1,0 +1,88 @@
+{
+  "date": "2026-09-05",
+  "sourceCommit": "3d41ccce8f8fecbed83aa9d8d42734c2c7e62374",
+  "sdk": "emscripten/emsdk:6.0.6",
+  "image": "sha256:f5a1129956f16a900f6987e381baaf8e40963d1d36da4cf450b78105af29ce67",
+  "tag": "local/wolf4sdl-wasm:menu-captions-candidate",
+  "containers": [
+    {
+      "name": "wolf-menu-captions-proof-20260905",
+      "id": "1f3310d9f2166c269f52642790cf1fc1b4c192079ae98e000ae8993293c808bb",
+      "variant": "wolf3d",
+      "url": "http://127.0.0.1:32880/",
+      "ownerDataReadOnly": true
+    },
+    {
+      "name": "spear-menu-captions-proof-20260905",
+      "id": "6c048110f41cf86d82d58df366cbb2f616f1a635cde8480873fe0548602f4020",
+      "variant": "spear",
+      "url": "http://127.0.0.1:32881/",
+      "ownerDataReadOnly": true
+    }
+  ],
+  "patches": [
+    {
+      "file": "browser.patch",
+      "sha256": "7da9dba2418fed92d3f1246540c39deac010d929c9609f910004b4ba4dbc49da"
+    },
+    {
+      "file": "menu-pointer.patch",
+      "sha256": "ed417b9126d6915cf3d3ac0bc0386aa9d68278a67d9d394970eeaed362ed771a"
+    },
+    {
+      "file": "menu-key-pump.patch",
+      "sha256": "6a577a9fbac44519b1cba7e58390ed717cf5612641fe8614603f5ab4b347cb21"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "wolf3d.js",
+      "stagedSHA256": "dab886f38354093f7e191c1026b0a91a6f074231aa4cc1878c2586794e47efb5",
+      "imageSHA256": "dab886f38354093f7e191c1026b0a91a6f074231aa4cc1878c2586794e47efb5"
+    },
+    {
+      "file": "wolf3d.wasm",
+      "stagedSHA256": "7a329f234c8c7bba2e063713bfb9d2b4eff85d3ab562961e34a7ed8dc44041e2",
+      "imageSHA256": "7a329f234c8c7bba2e063713bfb9d2b4eff85d3ab562961e34a7ed8dc44041e2"
+    },
+    {
+      "file": "spear.js",
+      "stagedSHA256": "40236c8cf5b13ad857c3e4b57ad005447610bac1617af4d366ecbd542482f98a",
+      "imageSHA256": "40236c8cf5b13ad857c3e4b57ad005447610bac1617af4d366ecbd542482f98a"
+    },
+    {
+      "file": "spear.wasm",
+      "stagedSHA256": "bb4331c43f93708a1f0cf2de39dde01af57fa06e51ce9f38f85a327ea186191a",
+      "imageSHA256": "bb4331c43f93708a1f0cf2de39dde01af57fa06e51ce9f38f85a327ea186191a"
+    },
+    {
+      "file": "game-adapter.js",
+      "stagedSHA256": "6b87bea80312c1a3b90f453c70140dd37b50ef48cd40963e65e327ccd205fb4e",
+      "imageSHA256": "6b87bea80312c1a3b90f453c70140dd37b50ef48cd40963e65e327ccd205fb4e"
+    },
+    {
+      "file": "wasm-game.json",
+      "stagedSHA256": "aed03168e73eeb229cd66eadf8419662df62d914fed286f496f2bb910659e916",
+      "imageSHA256": "aed03168e73eeb229cd66eadf8419662df62d914fed286f496f2bb910659e916"
+    }
+  ],
+  "checks": {
+    "nativePointerCases": 40,
+    "captionLegacyFailures": 6,
+    "nativeMovementCases": 28,
+    "oldDirectionFailures": 24,
+    "menuKeyPumpCases": 12,
+    "menuKeyPumpLegacyFailures": 6,
+    "bothNativeBuilds": true,
+    "bothPublicExports": true,
+    "exactPatches": 3,
+    "exactPatchedFiles": 13,
+    "adapterVariants": 2,
+    "package": true,
+    "httpVariants": [
+      "wolf3d",
+      "spear"
+    ]
+  },
+  "scope": "Isolated candidates, read-only owner data, no lab replacement. Both native builds use the canonical make commands in the SDK, not a full build-web.sh invocation. App assets and framework unchanged from the preceding validated staged package; all six listed artifact hashes match image contents. Chrome acceptance separate."
+}

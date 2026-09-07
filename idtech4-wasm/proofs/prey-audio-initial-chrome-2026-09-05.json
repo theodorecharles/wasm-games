@@ -1,0 +1,6283 @@
+{
+  "scope": "Audio bridge opens and native intro fade clears with normal effects, rendering the bathroom mirror/player. Many game sound shader names still default to missing WAVs, including rh_intro1/2/3; this is not correct dialogue/audio acceptance.",
+  "image": "sha256:4571a1a45cb37bb701c84dcc34eab9ba6cd1472a29631c09c272f3ce431dbe2b",
+  "menu": {
+    "audio": {
+      "buffers": 11,
+      "messages": 30833,
+      "sources": 256,
+      "starts": 1,
+      "state": "running"
+    },
+    "capture": [],
+    "errors": [],
+    "input": {
+      "captureChanges": 0,
+      "events": [],
+      "keyDown": 0,
+      "keyUp": 0,
+      "pointerAbsolute": 0,
+      "pointerDown": 0,
+      "pointerDx": 0,
+      "pointerDy": 0,
+      "pointerRelative": 0,
+      "pointerUp": 0,
+      "text": 0
+    },
+    "lifecycle": [
+      {
+        "at": 122.4,
+        "name": "init",
+        "variant": "prey"
+      },
+      {
+        "at": 132.9,
+        "files": 13,
+        "name": "initialized"
+      },
+      {
+        "at": 13986.7,
+        "name": "start-requested"
+      },
+      {
+        "at": 14013.4,
+        "entries": 13,
+        "name": "data-ready",
+        "source": "cache"
+      },
+      {
+        "at": 14013.7,
+        "height": 1113,
+        "name": "worker-started",
+        "width": 1424,
+        "worker": "/prey-worker.js"
+      }
+    ],
+    "logs": [
+      {
+        "at": 14074.4,
+        "text": "[prey-wasm] native main entered"
+      },
+      {
+        "at": 14074.7,
+        "text": "[prey-wasm] executable path initialized"
+      },
+      {
+        "at": 14074.8,
+        "text": "[prey-wasm] save path initialized"
+      },
+      {
+        "at": 14074.9,
+        "text": "[prey-wasm] initializing platform signal seam"
+      },
+      {
+        "at": 14075,
+        "text": "[prey-wasm] SDL browser event queue initialized"
+      },
+      {
+        "at": 14075.1,
+        "text": "[prey-wasm] entering common initialization"
+      },
+      {
+        "at": 14075.2,
+        "text": "browser threading: cooperative single-thread primitives"
+      },
+      {
+        "at": 14075.3,
+        "text": "Prey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10"
+      },
+      {
+        "at": 14075.4,
+        "text": "SDL video driver: (null)"
+      },
+      {
+        "at": 14075.4,
+        "text": "Logging console output to /home/web_user/.local/share/prey06/qconsolelog.txt"
+      },
+      {
+        "at": 14075.5,
+        "text": "terminal support enabled ( use +set in_tty 0 to disable )"
+      },
+      {
+        "at": 14075.5,
+        "text": "pid: 42"
+      },
+      {
+        "at": 14075.6,
+        "text": "2048 MB System Memory"
+      },
+      {
+        "at": 14075.7,
+        "text": "browser networking: loopback interface only"
+      },
+      {
+        "at": 14075.7,
+        "text": "----- Initializing File System -----"
+      },
+      {
+        "at": 14094.8,
+        "text": "Loaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2"
+      },
+      {
+        "at": 14113.1,
+        "text": "Loaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14"
+      },
+      {
+        "at": 14134.5,
+        "text": "Loaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08"
+      },
+      {
+        "at": 14148.5,
+        "text": "Loaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c"
+      },
+      {
+        "at": 17591.9,
+        "text": "Loaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede"
+      },
+      {
+        "at": 17592.8,
+        "text": "Deferred pk4 pak001.pk4 until first map load"
+      },
+      {
+        "at": 17592.9,
+        "text": "Deferred pk4 pak002.pk4 until first map load"
+      },
+      {
+        "at": 17593.1,
+        "text": "Deferred pk4 pak003.pk4 until first map load"
+      },
+      {
+        "at": 17593.2,
+        "text": "Deferred pk4 pak004.pk4 until first map load"
+      },
+      {
+        "at": 17619.7,
+        "text": "Loaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190"
+      },
+      {
+        "at": 17690.8,
+        "text": "Loaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397"
+      },
+      {
+        "at": 17714.9,
+        "text": "Loaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193"
+      },
+      {
+        "at": 17951.2,
+        "text": "Loaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5"
+      },
+      {
+        "at": 17951.7,
+        "text": "Current search path:"
+      },
+      {
+        "at": 17952,
+        "text": "/save/prey/base"
+      },
+      {
+        "at": 17952.3,
+        "text": "/owner-data/base"
+      },
+      {
+        "at": 17952.5,
+        "text": "/owner-data/base/pak040.pk4 (468 files)"
+      },
+      {
+        "at": 17952.6,
+        "text": "/owner-data/base/pak020.pk4 (23 files)"
+      },
+      {
+        "at": 17952.8,
+        "text": "/owner-data/base/pak006.pk4 (108 files)"
+      },
+      {
+        "at": 17952.9,
+        "text": "/owner-data/base/pak005.pk4 (10 files)"
+      },
+      {
+        "at": 17953,
+        "text": "/owner-data/base/pak000.pk4 (3318 files)"
+      },
+      {
+        "at": 17953.2,
+        "text": "/owner-data/base/game03.pk4 (2 files)"
+      },
+      {
+        "at": 17953.3,
+        "text": "/owner-data/base/game02.pk4 (10 files)"
+      },
+      {
+        "at": 17953.5,
+        "text": "/owner-data/base/game01.pk4 (2 files)"
+      },
+      {
+        "at": 17953.6,
+        "text": "/owner-data/base/game00.pk4 (2 files)"
+      },
+      {
+        "at": 17953.8,
+        "text": "game DLL: 0x0 in pak: 0x0"
+      },
+      {
+        "at": 17953.9,
+        "text": "Addon pk4s:"
+      },
+      {
+        "at": 17954,
+        "text": "browser filesystem: background reads run cooperatively"
+      },
+      {
+        "at": 17954.5,
+        "text": "----- Initializing Decls -----"
+      },
+      {
+        "at": 18241.9,
+        "text": "2661 strings read from strings/english001.lang"
+      },
+      {
+        "at": 18296,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18300.2,
+        "text": "WARNING: Couldn't load image: textures/gfx/bigchars"
+      },
+      {
+        "at": 18300.6,
+        "text": "WARNING: Couldn't load image: textures/gfx/console"
+      },
+      {
+        "at": 18300.8,
+        "text": "Couldn't open journal files"
+      },
+      {
+        "at": 18300.9,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18301.1,
+        "text": "Couldn't exec editor.cfg - file does not exist."
+      },
+      {
+        "at": 18335.1,
+        "text": "execing default.cfg"
+      },
+      {
+        "at": 18335.7,
+        "text": "execing prey06.cfg"
+      },
+      {
+        "at": 18336.4,
+        "text": "Couldn't exec autoexec.cfg - file does not exist."
+      },
+      {
+        "at": 18342.4,
+        "text": "2661 strings read from strings/english001.lang"
+      },
+      {
+        "at": 18342.7,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18342.9,
+        "text": "----- Initializing OpenAL -----"
+      },
+      {
+        "at": 18343,
+        "text": "Setup OpenAL device and context"
+      },
+      {
+        "at": 18343.3,
+        "text": "OpenAL vendor: wasm-games"
+      },
+      {
+        "at": 18343.5,
+        "text": "OpenAL renderer: WebAudio bridge"
+      },
+      {
+        "at": 18343.6,
+        "text": "OpenAL version: 1.1"
+      },
+      {
+        "at": 18343.7,
+        "text": "OpenAL: EFX extension not found"
+      },
+      {
+        "at": 18345.4,
+        "text": "OpenAL: found 256 hardware voices"
+      },
+      {
+        "at": 18345.7,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18345.9,
+        "text": "WARNING: Failed to load master servers list"
+      },
+      {
+        "at": 18346.2,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18346.4,
+        "text": "----- Initializing OpenGL -----"
+      },
+      {
+        "at": 18346.5,
+        "text": "[prey-wasm] creating worker WebGL 1 / GLES2 context"
+      },
+      {
+        "at": 18371.3,
+        "text": "[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1113"
+      },
+      {
+        "at": 18371.9,
+        "text": "OpenGL vendor: WebKit"
+      },
+      {
+        "at": 18372.2,
+        "text": "OpenGL renderer: WebKit WebGL"
+      },
+      {
+        "at": 18372.4,
+        "text": "OpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))"
+      },
+      {
+        "at": 18372.7,
+        "text": "...using GL_EXT_texture_filter_anisotropic"
+      },
+      {
+        "at": 18372.9,
+        "text": "   maxTextureAnisotropy: 16.000000"
+      },
+      {
+        "at": 18373.1,
+        "text": "----- R_ReloadGLSLPrograms -----"
+      },
+      {
+        "at": 18373.3,
+        "text": "Loading main interaction shader"
+      },
+      {
+        "at": 18374.9,
+        "text": "Loading main interaction shader (Phong) "
+      },
+      {
+        "at": 18375.5,
+        "text": "Loading default diffuse shader"
+      },
+      {
+        "at": 18375.9,
+        "text": "Loading skybox cubemap shader"
+      },
+      {
+        "at": 18376.3,
+        "text": "Loading reflection cubemap shader"
+      },
+      {
+        "at": 18376.6,
+        "text": "Loading diffuse cubemap shader"
+      },
+      {
+        "at": 18377,
+        "text": "Loading Zfill shader"
+      },
+      {
+        "at": 18377.3,
+        "text": "Loading Zfill shader (Clip plane version)"
+      },
+      {
+        "at": 18377.6,
+        "text": "Loading Fog shader"
+      },
+      {
+        "at": 18377.9,
+        "text": "Loading BlendLight shader"
+      },
+      {
+        "at": 18378.3,
+        "text": "Loading Stencil shadow shader"
+      },
+      {
+        "at": 18378.5,
+        "text": "-------------------------------"
+      },
+      {
+        "at": 18378.7,
+        "text": "Init Vertex Cache"
+      },
+      {
+        "at": 18388.9,
+        "text": "using GLSL renderSystem"
+      },
+      {
+        "at": 18389.6,
+        "text": "Will apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)"
+      },
+      {
+        "at": 18389.9,
+        "text": "----- OpenGL Initialization complete-----"
+      },
+      {
+        "at": 18511.2,
+        "text": "WARNING: Couldn't load image: textures/gfx/bigchars"
+      },
+      {
+        "at": 18512.3,
+        "text": "WARNING: Couldn't load image: textures/gfx/console"
+      },
+      {
+        "at": 18513.4,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18513.9,
+        "text": "[prey-wasm] EndFrame: GUI emitted"
+      },
+      {
+        "at": 18514.1,
+        "text": "[prey-wasm] EndFrame: issuing backend"
+      },
+      {
+        "at": 18514.3,
+        "text": "[prey-wasm] backend: begin"
+      },
+      {
+        "at": 18514.5,
+        "text": "[prey-wasm] backend: command 0 begin"
+      },
+      {
+        "at": 18514.8,
+        "text": "[prey-wasm] backend: command 0 complete"
+      },
+      {
+        "at": 18515,
+        "text": "[prey-wasm] backend: command 2 begin"
+      },
+      {
+        "at": 18515.4,
+        "text": "[prey-wasm] backend: command 2 complete"
+      },
+      {
+        "at": 18515.7,
+        "text": "[prey-wasm] backend: command 1 begin"
+      },
+      {
+        "at": 18516,
+        "text": "[prey-wasm] backend: command 1 complete"
+      },
+      {
+        "at": 18516.3,
+        "text": "[prey-wasm] backend: command 4 begin"
+      },
+      {
+        "at": 18516.6,
+        "text": "[prey-wasm] backend: command 4 complete"
+      },
+      {
+        "at": 18516.9,
+        "text": "[prey-wasm] backend: complete"
+      },
+      {
+        "at": 18517.3,
+        "text": "[prey-wasm] EndFrame: backend complete"
+      },
+      {
+        "at": 18517.6,
+        "text": "[prey-wasm] EndFrame: frame toggled"
+      },
+      {
+        "at": 18517.9,
+        "text": "[prey-wasm] EndFrame: vertex cache retired"
+      },
+      {
+        "at": 18562.3,
+        "text": "----- Initializing Game -----"
+      },
+      {
+        "at": 18562.8,
+        "text": "gamename: basePrey-1"
+      },
+      {
+        "at": 18563.1,
+        "text": "gamedate: Jan 11 2026"
+      },
+      {
+        "at": 19221.2,
+        "text": "Initializing event system"
+      },
+      {
+        "at": 19221.7,
+        "text": "...1028 event definitions"
+      },
+      {
+        "at": 19222,
+        "text": "Initializing class hierarchy"
+      },
+      {
+        "at": 19222.3,
+        "text": "...366 classes, 2130016 bytes for event callbacks"
+      },
+      {
+        "at": 19222.6,
+        "text": "Initializing scripts"
+      },
+      {
+        "at": 19856,
+        "text": "Compiled 'script/prey_main.script': 633 ms"
+      },
+      {
+        "at": 19856.8,
+        "text": "----- Compile stats -----"
+      },
+      {
+        "at": 19857.2,
+        "text": "Memory usage:"
+      },
+      {
+        "at": 19857.4,
+        "text": "     Strings: 58, 6800 bytes"
+      },
+      {
+        "at": 19857.7,
+        "text": "  Statements: 92650, 1853000 bytes"
+      },
+      {
+        "at": 19858,
+        "text": "   Functions: 2987, 352692 bytes"
+      },
+      {
+        "at": 19858.3,
+        "text": "   Variables: 411160 bytes"
+      },
+      {
+        "at": 19858.5,
+        "text": "    Mem used: 3782148 bytes"
+      },
+      {
+        "at": 19858.8,
+        "text": " Static data: 3617736 bytes"
+      },
+      {
+        "at": 19859.1,
+        "text": "   Allocated: 5129776 bytes"
+      },
+      {
+        "at": 19859.4,
+        "text": " Thread size: 13224 bytes"
+      },
+      {
+        "at": 19859.7,
+        "text": "...11 aas types"
+      },
+      {
+        "at": 19859.9,
+        "text": "----- Initializing Session -----"
+      },
+      {
+        "at": 19865.6,
+        "text": "WARNING: Couldn't load image: _menushot"
+      },
+      {
+        "at": 19930.3,
+        "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+      },
+      {
+        "at": 20185.7,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair1"
+      },
+      {
+        "at": 20186.3,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair2"
+      },
+      {
+        "at": 20186.7,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair3"
+      },
+      {
+        "at": 20187.1,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair4"
+      },
+      {
+        "at": 20187.4,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair5"
+      },
+      {
+        "at": 20187.8,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair6"
+      },
+      {
+        "at": 20188.2,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair7"
+      },
+      {
+        "at": 20188.6,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair8"
+      },
+      {
+        "at": 20257.7,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_clickin.wav' using default"
+      },
+      {
+        "at": 20258.7,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideinsmall.wav' using default"
+      },
+      {
+        "at": 20259.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideoutsmall.wav' using default"
+      },
+      {
+        "at": 20259.9,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_cancel.wav' using default"
+      },
+      {
+        "at": 20260.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slidein.wav' using default"
+      },
+      {
+        "at": 20260.9,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideout.wav' using default"
+      },
+      {
+        "at": 20261.3,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tick.wav' using default"
+      },
+      {
+        "at": 20261.6,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tabflip.wav' using default"
+      },
+      {
+        "at": 20262,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_connect.wav' using default"
+      },
+      {
+        "at": 20262.3,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_volumetick.wav' using default"
+      },
+      {
+        "at": 20326,
+        "text": "----- Warnings -----"
+      },
+      {
+        "at": 20326.6,
+        "text": "during Prey initialization..."
+      },
+      {
+        "at": 20327,
+        "text": "WARNING: Couldn't load image: _menushot"
+      },
+      {
+        "at": 20327.3,
+        "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+      },
+      {
+        "at": 20327.7,
+        "text": "WARNING: Couldn't load image: textures/gfx/bigchars"
+      },
+      {
+        "at": 20328,
+        "text": "WARNING: Couldn't load image: textures/gfx/console"
+      },
+      {
+        "at": 20328.3,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair1"
+      },
+      {
+        "at": 20328.6,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair2"
+      },
+      {
+        "at": 20329,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair3"
+      },
+      {
+        "at": 20329.3,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair4"
+      },
+      {
+        "at": 20329.6,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair5"
+      },
+      {
+        "at": 20330.1,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair6"
+      },
+      {
+        "at": 20330.4,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair7"
+      },
+      {
+        "at": 20330.7,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair8"
+      },
+      {
+        "at": 20331.1,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_cancel.wav' using default"
+      },
+      {
+        "at": 20331.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_clickin.wav' using default"
+      },
+      {
+        "at": 20331.8,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_connect.wav' using default"
+      },
+      {
+        "at": 20332.2,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slidein.wav' using default"
+      },
+      {
+        "at": 20332.7,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideinsmall.wav' using default"
+      },
+      {
+        "at": 20333,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideout.wav' using default"
+      },
+      {
+        "at": 20333.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideoutsmall.wav' using default"
+      },
+      {
+        "at": 20333.8,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tabflip.wav' using default"
+      },
+      {
+        "at": 20334.2,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tick.wav' using default"
+      },
+      {
+        "at": 20334.5,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_volumetick.wav' using default"
+      },
+      {
+        "at": 20334.9,
+        "text": "WARNING: Failed to load master servers list"
+      },
+      {
+        "at": 20335.7,
+        "text": "----- 23 warnings -----"
+      },
+      {
+        "at": 20336,
+        "text": "[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump"
+      },
+      {
+        "at": 20381.2,
+        "text": "[prey-wasm] frame 0: begin"
+      },
+      {
+        "at": 20381.9,
+        "text": "[prey-wasm] frame 0: async complete"
+      },
+      {
+        "at": 20384,
+        "text": "[prey-wasm] common frame 0: session begin"
+      },
+      {
+        "at": 20384.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 20385,
+        "text": "[prey-wasm] common frame 0: session complete, screen begin"
+      },
+      {
+        "at": 20385.9,
+        "text": "[prey-wasm] common frame 0: screen complete"
+      },
+      {
+        "at": 20385.9,
+        "text": "[prey-wasm] frame 0: common frame complete"
+      },
+      {
+        "at": 20385.9,
+        "text": "[prey-wasm] frame 0: complete"
+      },
+      {
+        "at": 20402,
+        "text": "[prey-wasm] frame 1: begin"
+      },
+      {
+        "at": 20402.2,
+        "text": "[prey-wasm] frame 1: async complete"
+      },
+      {
+        "at": 20402.4,
+        "text": "[prey-wasm] common frame 1: session begin"
+      },
+      {
+        "at": 20402.7,
+        "text": "[prey-wasm] common frame 1: session complete, screen begin"
+      },
+      {
+        "at": 20402.9,
+        "text": "[prey-wasm] common frame 1: screen complete"
+      },
+      {
+        "at": 20402.9,
+        "text": "[prey-wasm] frame 1: common frame complete"
+      },
+      {
+        "at": 20402.9,
+        "text": "[prey-wasm] frame 1: complete"
+      },
+      {
+        "at": 20419.1,
+        "text": "[prey-wasm] frame 2: begin"
+      },
+      {
+        "at": 20419.2,
+        "text": "[prey-wasm] frame 2: async complete"
+      },
+      {
+        "at": 20419.4,
+        "text": "[prey-wasm] common frame 2: session begin"
+      },
+      {
+        "at": 20419.7,
+        "text": "[prey-wasm] common frame 2: session complete, screen begin"
+      },
+      {
+        "at": 20419.9,
+        "text": "[prey-wasm] common frame 2: screen complete"
+      },
+      {
+        "at": 20419.9,
+        "text": "[prey-wasm] frame 2: common frame complete"
+      },
+      {
+        "at": 20420,
+        "text": "[prey-wasm] frame 2: complete"
+      },
+      {
+        "at": 20436,
+        "text": "[prey-wasm] frame 3: begin"
+      },
+      {
+        "at": 20436.2,
+        "text": "[prey-wasm] frame 3: async complete"
+      },
+      {
+        "at": 20436.4,
+        "text": "[prey-wasm] common frame 3: session begin"
+      },
+      {
+        "at": 20436.5,
+        "text": "[prey-wasm] common frame 3: session complete, screen begin"
+      },
+      {
+        "at": 20436.7,
+        "text": "[prey-wasm] common frame 3: screen complete"
+      },
+      {
+        "at": 20436.7,
+        "text": "[prey-wasm] frame 3: common frame complete"
+      },
+      {
+        "at": 20436.7,
+        "text": "[prey-wasm] frame 3: complete"
+      },
+      {
+        "at": 20886.9,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_music.wav' using default"
+      },
+      {
+        "at": 22397.3,
+        "text": "[prey-wasm] AnimPortalIn guiTime=2032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 24400.6,
+        "text": "[prey-wasm] AnimPortalIn guiTime=4032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 26395.1,
+        "text": "[prey-wasm] AnimPortalIn guiTime=6016 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 28400,
+        "text": "[prey-wasm] AnimPortalIn guiTime=8032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 30394.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=10016 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 32405.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=12032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 34395.3,
+        "text": "[prey-wasm] AnimPortalIn guiTime=14016 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 36414.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=16048 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 38424.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=18048 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 40439.6,
+        "text": "[prey-wasm] AnimPortalIn guiTime=20064 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 42491.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=22112 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 44506.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=24128 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 46527.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=26160 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 48536.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=28160 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 50522.7,
+        "text": "[prey-wasm] AnimPortalIn guiTime=30144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 52514.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=32144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 54519.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=34144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 56509.4,
+        "text": "[prey-wasm] AnimPortalIn guiTime=36144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 58494.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=38128 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 60485.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=40112 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 62494.4,
+        "text": "[prey-wasm] AnimPortalIn guiTime=42128 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 64564.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=44192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 66559.6,
+        "text": "[prey-wasm] AnimPortalIn guiTime=46192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 68551.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=48176 timeLine=0 noTime=0 events=4"
+      }
+    ],
+    "persistence": {
+      "ready": true,
+      "requests": 0,
+      "root": "/save/prey"
+    },
+    "proofId": "prey-audio-intro-2026-09-05",
+    "schemaVersion": 1,
+    "startedAt": "2026-09-05T17:43:50.506Z",
+    "states": [
+      {
+        "at": 20336.4,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 20336.6,
+        "inputMode": "menu",
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "ready"
+      }
+    ],
+    "variant": "prey",
+    "workerMessages": {
+      "in:audio-buffer": 11,
+      "in:audio-create-source": 256,
+      "in:audio-init": 1,
+      "in:audio-listener-float": 3053,
+      "in:audio-listener-vector": 6106,
+      "in:audio-source-action": 2,
+      "in:audio-source-float": 12340,
+      "in:audio-source-int": 6043,
+      "in:audio-source-position": 3021,
+      "in:engine-state": 1,
+      "in:log": 233,
+      "in:persistence-ready": 1,
+      "in:ready": 1,
+      "in:status": 2,
+      "out:resize": 1,
+      "out:start": 1
+    }
+  },
+  "world": {
+    "audio": {
+      "buffers": 636,
+      "messages": 148140,
+      "sources": 256,
+      "starts": 13,
+      "state": "running"
+    },
+    "capture": [],
+    "errors": [],
+    "input": {
+      "captureChanges": 0,
+      "events": [
+        {
+          "at": 69515.4,
+          "type": "pointer-absolute",
+          "x": 136.62921348314606,
+          "y": 242.33707864632768
+        },
+        {
+          "at": 69516.6,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 69517.7,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        },
+        {
+          "at": 81180.7,
+          "type": "pointer-absolute",
+          "x": 431.46067415730334,
+          "y": 327.730337073294
+        },
+        {
+          "at": 81181.9,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 81183,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        }
+      ],
+      "keyDown": 0,
+      "keyUp": 0,
+      "pointerAbsolute": 2,
+      "pointerDown": 2,
+      "pointerDx": 0,
+      "pointerDy": 0,
+      "pointerRelative": 0,
+      "pointerUp": 2,
+      "text": 0
+    },
+    "lifecycle": [
+      {
+        "at": 122.4,
+        "name": "init",
+        "variant": "prey"
+      },
+      {
+        "at": 132.9,
+        "files": 13,
+        "name": "initialized"
+      },
+      {
+        "at": 13986.7,
+        "name": "start-requested"
+      },
+      {
+        "at": 14013.4,
+        "entries": 13,
+        "name": "data-ready",
+        "source": "cache"
+      },
+      {
+        "at": 14013.7,
+        "height": 1113,
+        "name": "worker-started",
+        "width": 1424,
+        "worker": "/prey-worker.js"
+      }
+    ],
+    "logs": [
+      {
+        "at": 14074.4,
+        "text": "[prey-wasm] native main entered"
+      },
+      {
+        "at": 14074.7,
+        "text": "[prey-wasm] executable path initialized"
+      },
+      {
+        "at": 14074.8,
+        "text": "[prey-wasm] save path initialized"
+      },
+      {
+        "at": 14074.9,
+        "text": "[prey-wasm] initializing platform signal seam"
+      },
+      {
+        "at": 14075,
+        "text": "[prey-wasm] SDL browser event queue initialized"
+      },
+      {
+        "at": 14075.1,
+        "text": "[prey-wasm] entering common initialization"
+      },
+      {
+        "at": 14075.2,
+        "text": "browser threading: cooperative single-thread primitives"
+      },
+      {
+        "at": 14075.3,
+        "text": "Prey 1.5.4.1306 emscripten-x86 Jan 11 2026 13:37:42 using SDL v2.32.10"
+      },
+      {
+        "at": 14075.4,
+        "text": "SDL video driver: (null)"
+      },
+      {
+        "at": 14075.4,
+        "text": "Logging console output to /home/web_user/.local/share/prey06/qconsolelog.txt"
+      },
+      {
+        "at": 14075.5,
+        "text": "terminal support enabled ( use +set in_tty 0 to disable )"
+      },
+      {
+        "at": 14075.5,
+        "text": "pid: 42"
+      },
+      {
+        "at": 14075.6,
+        "text": "2048 MB System Memory"
+      },
+      {
+        "at": 14075.7,
+        "text": "browser networking: loopback interface only"
+      },
+      {
+        "at": 14075.7,
+        "text": "----- Initializing File System -----"
+      },
+      {
+        "at": 14094.8,
+        "text": "Loaded pk4 /owner-data/base/game00.pk4 with checksum 0xff851bf2"
+      },
+      {
+        "at": 14113.1,
+        "text": "Loaded pk4 /owner-data/base/game01.pk4 with checksum 0xa208af14"
+      },
+      {
+        "at": 14134.5,
+        "text": "Loaded pk4 /owner-data/base/game02.pk4 with checksum 0xaa46eb08"
+      },
+      {
+        "at": 14148.5,
+        "text": "Loaded pk4 /owner-data/base/game03.pk4 with checksum 0x39a5ed9c"
+      },
+      {
+        "at": 17591.9,
+        "text": "Loaded pk4 /owner-data/base/pak000.pk4 with checksum 0x7dc00ede"
+      },
+      {
+        "at": 17592.8,
+        "text": "Deferred pk4 pak001.pk4 until first map load"
+      },
+      {
+        "at": 17592.9,
+        "text": "Deferred pk4 pak002.pk4 until first map load"
+      },
+      {
+        "at": 17593.1,
+        "text": "Deferred pk4 pak003.pk4 until first map load"
+      },
+      {
+        "at": 17593.2,
+        "text": "Deferred pk4 pak004.pk4 until first map load"
+      },
+      {
+        "at": 17619.7,
+        "text": "Loaded pk4 /owner-data/base/pak005.pk4 with checksum 0xead35190"
+      },
+      {
+        "at": 17690.8,
+        "text": "Loaded pk4 /owner-data/base/pak006.pk4 with checksum 0xed8ce397"
+      },
+      {
+        "at": 17714.9,
+        "text": "Loaded pk4 /owner-data/base/pak020.pk4 with checksum 0x39191193"
+      },
+      {
+        "at": 17951.2,
+        "text": "Loaded pk4 /owner-data/base/pak040.pk4 with checksum 0x40dd9bb5"
+      },
+      {
+        "at": 17951.7,
+        "text": "Current search path:"
+      },
+      {
+        "at": 17952,
+        "text": "/save/prey/base"
+      },
+      {
+        "at": 17952.3,
+        "text": "/owner-data/base"
+      },
+      {
+        "at": 17952.5,
+        "text": "/owner-data/base/pak040.pk4 (468 files)"
+      },
+      {
+        "at": 17952.6,
+        "text": "/owner-data/base/pak020.pk4 (23 files)"
+      },
+      {
+        "at": 17952.8,
+        "text": "/owner-data/base/pak006.pk4 (108 files)"
+      },
+      {
+        "at": 17952.9,
+        "text": "/owner-data/base/pak005.pk4 (10 files)"
+      },
+      {
+        "at": 17953,
+        "text": "/owner-data/base/pak000.pk4 (3318 files)"
+      },
+      {
+        "at": 17953.2,
+        "text": "/owner-data/base/game03.pk4 (2 files)"
+      },
+      {
+        "at": 17953.3,
+        "text": "/owner-data/base/game02.pk4 (10 files)"
+      },
+      {
+        "at": 17953.5,
+        "text": "/owner-data/base/game01.pk4 (2 files)"
+      },
+      {
+        "at": 17953.6,
+        "text": "/owner-data/base/game00.pk4 (2 files)"
+      },
+      {
+        "at": 17953.8,
+        "text": "game DLL: 0x0 in pak: 0x0"
+      },
+      {
+        "at": 17953.9,
+        "text": "Addon pk4s:"
+      },
+      {
+        "at": 17954,
+        "text": "browser filesystem: background reads run cooperatively"
+      },
+      {
+        "at": 17954.5,
+        "text": "----- Initializing Decls -----"
+      },
+      {
+        "at": 18241.9,
+        "text": "2661 strings read from strings/english001.lang"
+      },
+      {
+        "at": 18296,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18300.2,
+        "text": "WARNING: Couldn't load image: textures/gfx/bigchars"
+      },
+      {
+        "at": 18300.6,
+        "text": "WARNING: Couldn't load image: textures/gfx/console"
+      },
+      {
+        "at": 18300.8,
+        "text": "Couldn't open journal files"
+      },
+      {
+        "at": 18300.9,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18301.1,
+        "text": "Couldn't exec editor.cfg - file does not exist."
+      },
+      {
+        "at": 18335.1,
+        "text": "execing default.cfg"
+      },
+      {
+        "at": 18335.7,
+        "text": "execing prey06.cfg"
+      },
+      {
+        "at": 18336.4,
+        "text": "Couldn't exec autoexec.cfg - file does not exist."
+      },
+      {
+        "at": 18342.4,
+        "text": "2661 strings read from strings/english001.lang"
+      },
+      {
+        "at": 18342.7,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18342.9,
+        "text": "----- Initializing OpenAL -----"
+      },
+      {
+        "at": 18343,
+        "text": "Setup OpenAL device and context"
+      },
+      {
+        "at": 18343.3,
+        "text": "OpenAL vendor: wasm-games"
+      },
+      {
+        "at": 18343.5,
+        "text": "OpenAL renderer: WebAudio bridge"
+      },
+      {
+        "at": 18343.6,
+        "text": "OpenAL version: 1.1"
+      },
+      {
+        "at": 18343.7,
+        "text": "OpenAL: EFX extension not found"
+      },
+      {
+        "at": 18345.4,
+        "text": "OpenAL: found 256 hardware voices"
+      },
+      {
+        "at": 18345.7,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18345.9,
+        "text": "WARNING: Failed to load master servers list"
+      },
+      {
+        "at": 18346.2,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18346.4,
+        "text": "----- Initializing OpenGL -----"
+      },
+      {
+        "at": 18346.5,
+        "text": "[prey-wasm] creating worker WebGL 1 / GLES2 context"
+      },
+      {
+        "at": 18371.3,
+        "text": "[prey-wasm] worker WebGL 1 / GLES2 context is current at 1424 x 1113"
+      },
+      {
+        "at": 18371.9,
+        "text": "OpenGL vendor: WebKit"
+      },
+      {
+        "at": 18372.2,
+        "text": "OpenGL renderer: WebKit WebGL"
+      },
+      {
+        "at": 18372.4,
+        "text": "OpenGL version: OpenGL ES 2.0 (WebGL 1.0 (OpenGL ES 2.0 Chromium))"
+      },
+      {
+        "at": 18372.7,
+        "text": "...using GL_EXT_texture_filter_anisotropic"
+      },
+      {
+        "at": 18372.9,
+        "text": "   maxTextureAnisotropy: 16.000000"
+      },
+      {
+        "at": 18373.1,
+        "text": "----- R_ReloadGLSLPrograms -----"
+      },
+      {
+        "at": 18373.3,
+        "text": "Loading main interaction shader"
+      },
+      {
+        "at": 18374.9,
+        "text": "Loading main interaction shader (Phong) "
+      },
+      {
+        "at": 18375.5,
+        "text": "Loading default diffuse shader"
+      },
+      {
+        "at": 18375.9,
+        "text": "Loading skybox cubemap shader"
+      },
+      {
+        "at": 18376.3,
+        "text": "Loading reflection cubemap shader"
+      },
+      {
+        "at": 18376.6,
+        "text": "Loading diffuse cubemap shader"
+      },
+      {
+        "at": 18377,
+        "text": "Loading Zfill shader"
+      },
+      {
+        "at": 18377.3,
+        "text": "Loading Zfill shader (Clip plane version)"
+      },
+      {
+        "at": 18377.6,
+        "text": "Loading Fog shader"
+      },
+      {
+        "at": 18377.9,
+        "text": "Loading BlendLight shader"
+      },
+      {
+        "at": 18378.3,
+        "text": "Loading Stencil shadow shader"
+      },
+      {
+        "at": 18378.5,
+        "text": "-------------------------------"
+      },
+      {
+        "at": 18378.7,
+        "text": "Init Vertex Cache"
+      },
+      {
+        "at": 18388.9,
+        "text": "using GLSL renderSystem"
+      },
+      {
+        "at": 18389.6,
+        "text": "Will apply r_gamma and r_brightness in hardware (possibly on all screens; r_gammaInShader 0)"
+      },
+      {
+        "at": 18389.9,
+        "text": "----- OpenGL Initialization complete-----"
+      },
+      {
+        "at": 18511.2,
+        "text": "WARNING: Couldn't load image: textures/gfx/bigchars"
+      },
+      {
+        "at": 18512.3,
+        "text": "WARNING: Couldn't load image: textures/gfx/console"
+      },
+      {
+        "at": 18513.4,
+        "text": "[prey-wasm] EndFrame: begin"
+      },
+      {
+        "at": 18513.9,
+        "text": "[prey-wasm] EndFrame: GUI emitted"
+      },
+      {
+        "at": 18514.1,
+        "text": "[prey-wasm] EndFrame: issuing backend"
+      },
+      {
+        "at": 18514.3,
+        "text": "[prey-wasm] backend: begin"
+      },
+      {
+        "at": 18514.5,
+        "text": "[prey-wasm] backend: command 0 begin"
+      },
+      {
+        "at": 18514.8,
+        "text": "[prey-wasm] backend: command 0 complete"
+      },
+      {
+        "at": 18515,
+        "text": "[prey-wasm] backend: command 2 begin"
+      },
+      {
+        "at": 18515.4,
+        "text": "[prey-wasm] backend: command 2 complete"
+      },
+      {
+        "at": 18515.7,
+        "text": "[prey-wasm] backend: command 1 begin"
+      },
+      {
+        "at": 18516,
+        "text": "[prey-wasm] backend: command 1 complete"
+      },
+      {
+        "at": 18516.3,
+        "text": "[prey-wasm] backend: command 4 begin"
+      },
+      {
+        "at": 18516.6,
+        "text": "[prey-wasm] backend: command 4 complete"
+      },
+      {
+        "at": 18516.9,
+        "text": "[prey-wasm] backend: complete"
+      },
+      {
+        "at": 18517.3,
+        "text": "[prey-wasm] EndFrame: backend complete"
+      },
+      {
+        "at": 18517.6,
+        "text": "[prey-wasm] EndFrame: frame toggled"
+      },
+      {
+        "at": 18517.9,
+        "text": "[prey-wasm] EndFrame: vertex cache retired"
+      },
+      {
+        "at": 18562.3,
+        "text": "----- Initializing Game -----"
+      },
+      {
+        "at": 18562.8,
+        "text": "gamename: basePrey-1"
+      },
+      {
+        "at": 18563.1,
+        "text": "gamedate: Jan 11 2026"
+      },
+      {
+        "at": 19221.2,
+        "text": "Initializing event system"
+      },
+      {
+        "at": 19221.7,
+        "text": "...1028 event definitions"
+      },
+      {
+        "at": 19222,
+        "text": "Initializing class hierarchy"
+      },
+      {
+        "at": 19222.3,
+        "text": "...366 classes, 2130016 bytes for event callbacks"
+      },
+      {
+        "at": 19222.6,
+        "text": "Initializing scripts"
+      },
+      {
+        "at": 19856,
+        "text": "Compiled 'script/prey_main.script': 633 ms"
+      },
+      {
+        "at": 19856.8,
+        "text": "----- Compile stats -----"
+      },
+      {
+        "at": 19857.2,
+        "text": "Memory usage:"
+      },
+      {
+        "at": 19857.4,
+        "text": "     Strings: 58, 6800 bytes"
+      },
+      {
+        "at": 19857.7,
+        "text": "  Statements: 92650, 1853000 bytes"
+      },
+      {
+        "at": 19858,
+        "text": "   Functions: 2987, 352692 bytes"
+      },
+      {
+        "at": 19858.3,
+        "text": "   Variables: 411160 bytes"
+      },
+      {
+        "at": 19858.5,
+        "text": "    Mem used: 3782148 bytes"
+      },
+      {
+        "at": 19858.8,
+        "text": " Static data: 3617736 bytes"
+      },
+      {
+        "at": 19859.1,
+        "text": "   Allocated: 5129776 bytes"
+      },
+      {
+        "at": 19859.4,
+        "text": " Thread size: 13224 bytes"
+      },
+      {
+        "at": 19859.7,
+        "text": "...11 aas types"
+      },
+      {
+        "at": 19859.9,
+        "text": "----- Initializing Session -----"
+      },
+      {
+        "at": 19865.6,
+        "text": "WARNING: Couldn't load image: _menushot"
+      },
+      {
+        "at": 19930.3,
+        "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+      },
+      {
+        "at": 20185.7,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair1"
+      },
+      {
+        "at": 20186.3,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair2"
+      },
+      {
+        "at": 20186.7,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair3"
+      },
+      {
+        "at": 20187.1,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair4"
+      },
+      {
+        "at": 20187.4,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair5"
+      },
+      {
+        "at": 20187.8,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair6"
+      },
+      {
+        "at": 20188.2,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair7"
+      },
+      {
+        "at": 20188.6,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair8"
+      },
+      {
+        "at": 20257.7,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_clickin.wav' using default"
+      },
+      {
+        "at": 20258.7,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideinsmall.wav' using default"
+      },
+      {
+        "at": 20259.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideoutsmall.wav' using default"
+      },
+      {
+        "at": 20259.9,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_cancel.wav' using default"
+      },
+      {
+        "at": 20260.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slidein.wav' using default"
+      },
+      {
+        "at": 20260.9,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideout.wav' using default"
+      },
+      {
+        "at": 20261.3,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tick.wav' using default"
+      },
+      {
+        "at": 20261.6,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tabflip.wav' using default"
+      },
+      {
+        "at": 20262,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_connect.wav' using default"
+      },
+      {
+        "at": 20262.3,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_volumetick.wav' using default"
+      },
+      {
+        "at": 20326,
+        "text": "----- Warnings -----"
+      },
+      {
+        "at": 20326.6,
+        "text": "during Prey initialization..."
+      },
+      {
+        "at": 20327,
+        "text": "WARNING: Couldn't load image: _menushot"
+      },
+      {
+        "at": 20327.3,
+        "text": "WARNING: Couldn't load image: models/mapobjects/skybox/sun1"
+      },
+      {
+        "at": 20327.7,
+        "text": "WARNING: Couldn't load image: textures/gfx/bigchars"
+      },
+      {
+        "at": 20328,
+        "text": "WARNING: Couldn't load image: textures/gfx/console"
+      },
+      {
+        "at": 20328.3,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair1"
+      },
+      {
+        "at": 20328.6,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair2"
+      },
+      {
+        "at": 20329,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair3"
+      },
+      {
+        "at": 20329.3,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair4"
+      },
+      {
+        "at": 20329.6,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair5"
+      },
+      {
+        "at": 20330.1,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair6"
+      },
+      {
+        "at": 20330.4,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair7"
+      },
+      {
+        "at": 20330.7,
+        "text": "WARNING: Couldn't load image: textures/interface/crosshairs/crosshair8"
+      },
+      {
+        "at": 20331.1,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_cancel.wav' using default"
+      },
+      {
+        "at": 20331.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_clickin.wav' using default"
+      },
+      {
+        "at": 20331.8,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_connect.wav' using default"
+      },
+      {
+        "at": 20332.2,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slidein.wav' using default"
+      },
+      {
+        "at": 20332.7,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideinsmall.wav' using default"
+      },
+      {
+        "at": 20333,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideout.wav' using default"
+      },
+      {
+        "at": 20333.4,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_slideoutsmall.wav' using default"
+      },
+      {
+        "at": 20333.8,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tabflip.wav' using default"
+      },
+      {
+        "at": 20334.2,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_tick.wav' using default"
+      },
+      {
+        "at": 20334.5,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_volumetick.wav' using default"
+      },
+      {
+        "at": 20334.9,
+        "text": "WARNING: Failed to load master servers list"
+      },
+      {
+        "at": 20335.7,
+        "text": "----- 23 warnings -----"
+      },
+      {
+        "at": 20336,
+        "text": "[prey-wasm] common initialization complete; browser worker owns the cooperative frame pump"
+      },
+      {
+        "at": 20381.2,
+        "text": "[prey-wasm] frame 0: begin"
+      },
+      {
+        "at": 20381.9,
+        "text": "[prey-wasm] frame 0: async complete"
+      },
+      {
+        "at": 20384,
+        "text": "[prey-wasm] common frame 0: session begin"
+      },
+      {
+        "at": 20384.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=16 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 20385,
+        "text": "[prey-wasm] common frame 0: session complete, screen begin"
+      },
+      {
+        "at": 20385.9,
+        "text": "[prey-wasm] common frame 0: screen complete"
+      },
+      {
+        "at": 20385.9,
+        "text": "[prey-wasm] frame 0: common frame complete"
+      },
+      {
+        "at": 20385.9,
+        "text": "[prey-wasm] frame 0: complete"
+      },
+      {
+        "at": 20402,
+        "text": "[prey-wasm] frame 1: begin"
+      },
+      {
+        "at": 20402.2,
+        "text": "[prey-wasm] frame 1: async complete"
+      },
+      {
+        "at": 20402.4,
+        "text": "[prey-wasm] common frame 1: session begin"
+      },
+      {
+        "at": 20402.7,
+        "text": "[prey-wasm] common frame 1: session complete, screen begin"
+      },
+      {
+        "at": 20402.9,
+        "text": "[prey-wasm] common frame 1: screen complete"
+      },
+      {
+        "at": 20402.9,
+        "text": "[prey-wasm] frame 1: common frame complete"
+      },
+      {
+        "at": 20402.9,
+        "text": "[prey-wasm] frame 1: complete"
+      },
+      {
+        "at": 20419.1,
+        "text": "[prey-wasm] frame 2: begin"
+      },
+      {
+        "at": 20419.2,
+        "text": "[prey-wasm] frame 2: async complete"
+      },
+      {
+        "at": 20419.4,
+        "text": "[prey-wasm] common frame 2: session begin"
+      },
+      {
+        "at": 20419.7,
+        "text": "[prey-wasm] common frame 2: session complete, screen begin"
+      },
+      {
+        "at": 20419.9,
+        "text": "[prey-wasm] common frame 2: screen complete"
+      },
+      {
+        "at": 20419.9,
+        "text": "[prey-wasm] frame 2: common frame complete"
+      },
+      {
+        "at": 20420,
+        "text": "[prey-wasm] frame 2: complete"
+      },
+      {
+        "at": 20436,
+        "text": "[prey-wasm] frame 3: begin"
+      },
+      {
+        "at": 20436.2,
+        "text": "[prey-wasm] frame 3: async complete"
+      },
+      {
+        "at": 20436.4,
+        "text": "[prey-wasm] common frame 3: session begin"
+      },
+      {
+        "at": 20436.5,
+        "text": "[prey-wasm] common frame 3: session complete, screen begin"
+      },
+      {
+        "at": 20436.7,
+        "text": "[prey-wasm] common frame 3: screen complete"
+      },
+      {
+        "at": 20436.7,
+        "text": "[prey-wasm] frame 3: common frame complete"
+      },
+      {
+        "at": 20436.7,
+        "text": "[prey-wasm] frame 3: complete"
+      },
+      {
+        "at": 20886.9,
+        "text": "WARNING: Couldn't load sound 'guisounds_menu_music.wav' using default"
+      },
+      {
+        "at": 22397.3,
+        "text": "[prey-wasm] AnimPortalIn guiTime=2032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 24400.6,
+        "text": "[prey-wasm] AnimPortalIn guiTime=4032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 26395.1,
+        "text": "[prey-wasm] AnimPortalIn guiTime=6016 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 28400,
+        "text": "[prey-wasm] AnimPortalIn guiTime=8032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 30394.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=10016 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 32405.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=12032 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 34395.3,
+        "text": "[prey-wasm] AnimPortalIn guiTime=14016 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 36414.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=16048 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 38424.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=18048 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 40439.6,
+        "text": "[prey-wasm] AnimPortalIn guiTime=20064 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 42491.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=22112 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 44506.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=24128 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 46527.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=26160 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 48536.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=28160 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 50522.7,
+        "text": "[prey-wasm] AnimPortalIn guiTime=30144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 52514.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=32144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 54519.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=34144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 56509.4,
+        "text": "[prey-wasm] AnimPortalIn guiTime=36144 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 58494.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=38128 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 60485.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=40112 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 62494.4,
+        "text": "[prey-wasm] AnimPortalIn guiTime=42128 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 64564.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=44192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 66559.6,
+        "text": "[prey-wasm] AnimPortalIn guiTime=46192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 68551.5,
+        "text": "[prey-wasm] AnimPortalIn guiTime=48176 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 70569,
+        "text": "[prey-wasm] AnimPortalIn guiTime=50192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 72566.9,
+        "text": "[prey-wasm] AnimPortalIn guiTime=52192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 74575,
+        "text": "[prey-wasm] AnimPortalIn guiTime=54208 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 76578.2,
+        "text": "[prey-wasm] AnimPortalIn guiTime=56208 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 78572.1,
+        "text": "[prey-wasm] AnimPortalIn guiTime=58192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 80570.8,
+        "text": "[prey-wasm] AnimPortalIn guiTime=60192 timeLine=0 noTime=0 events=4"
+      },
+      {
+        "at": 81190.9,
+        "text": "Mounting deferred Prey gameplay archives..."
+      },
+      {
+        "at": 88600.3,
+        "text": "Mounted deferred pk4 /owner-data/base/pak001.pk4 with checksum 0xd06647b1"
+      },
+      {
+        "at": 95641.1,
+        "text": "Mounted deferred pk4 /owner-data/base/pak002.pk4 with checksum 0x57dce443"
+      },
+      {
+        "at": 100941.3,
+        "text": "Mounted deferred pk4 /owner-data/base/pak003.pk4 with checksum 0x263006fe"
+      },
+      {
+        "at": 106176.7,
+        "text": "Mounted deferred pk4 /owner-data/base/pak004.pk4 with checksum 0xcc075380"
+      },
+      {
+        "at": 106176.9,
+        "text": "Deferred Prey gameplay archives are ready"
+      },
+      {
+        "at": 106177.4,
+        "text": "----- Game Map Shutdown -----"
+      },
+      {
+        "at": 106198,
+        "text": "WARNING: Couldn't load sound '_default.wav' using default"
+      },
+      {
+        "at": 107133.7,
+        "text": "WARNING: Couldn't load sound 'mapload_roadhouse.wav' using default"
+      },
+      {
+        "at": 107210.8,
+        "text": "reloading guis/mainmenu.gui."
+      },
+      {
+        "at": 107219.3,
+        "text": "reloading guis/restart.gui."
+      },
+      {
+        "at": 107223.5,
+        "text": "reloading guis/subtitles.gui."
+      },
+      {
+        "at": 107229.4,
+        "text": "reloading guis/msg.gui."
+      },
+      {
+        "at": 107232.5,
+        "text": "reloading guis/save.gui."
+      },
+      {
+        "at": 107291.5,
+        "text": "----- Map Initialization -----"
+      },
+      {
+        "at": 107291.7,
+        "text": "Map: game/roadhouse"
+      },
+      {
+        "at": 107314.3,
+        "text": "No deathwalk map in maps/game/roadhouse"
+      },
+      {
+        "at": 107430.7,
+        "text": "----- Game Map Init -----"
+      },
+      {
+        "at": 107602.2,
+        "text": "collision data:"
+      },
+      {
+        "at": 107602.5,
+        "text": "   345 models"
+      },
+      {
+        "at": 107602.5,
+        "text": " 10755 vertices (252 KB)"
+      },
+      {
+        "at": 107602.5,
+        "text": " 19166 edges (673 KB)"
+      },
+      {
+        "at": 107602.6,
+        "text": "  7975 polygons (558 KB)"
+      },
+      {
+        "at": 107602.6,
+        "text": "  1257 brushes (172 KB)"
+      },
+      {
+        "at": 107602.7,
+        "text": "  3123 nodes (85 KB)"
+      },
+      {
+        "at": 107602.7,
+        "text": " 13008 polygon refs (101 KB)"
+      },
+      {
+        "at": 107602.7,
+        "text": "  4066 brush refs (31 KB)"
+      },
+      {
+        "at": 107602.8,
+        "text": "  4971 internal edges"
+      },
+      {
+        "at": 107602.8,
+        "text": "   649 sharp edges"
+      },
+      {
+        "at": 107602.8,
+        "text": "     0 contained polygons removed"
+      },
+      {
+        "at": 107602.9,
+        "text": "     0 polygons merged"
+      },
+      {
+        "at": 107602.9,
+        "text": "  1875 KB total memory used"
+      },
+      {
+        "at": 107602.9,
+        "text": "98 msec to load collision data."
+      },
+      {
+        "at": 107603.4,
+        "text": "WARNING: Couldn't load sound 'moveable_metal_bounce.wav' using default"
+      },
+      {
+        "at": 107604.1,
+        "text": "WARNING: Couldn't load sound 'roadhouse_flashback.wav' using default"
+      },
+      {
+        "at": 107604.2,
+        "text": "WARNING: Couldn't load sound 'roadhouse_abduction_a.wav' using default"
+      },
+      {
+        "at": 107604.4,
+        "text": "WARNING: Couldn't load sound 'roadhouse_abduction_b.wav' using default"
+      },
+      {
+        "at": 107604.6,
+        "text": "WARNING: Couldn't load sound 'roadhouse_abduction_c.wav' using default"
+      },
+      {
+        "at": 107605.3,
+        "text": "WARNING: Couldn't load sound 'rh_tom_mirror1.wav' using default"
+      },
+      {
+        "at": 107605.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music1.wav' using default"
+      },
+      {
+        "at": 107605.5,
+        "text": "WARNING: Couldn't load sound 'rh_tom01.wav' using default"
+      },
+      {
+        "at": 107605.8,
+        "text": "WARNING: Couldn't load sound 'rh_tom02.wav' using default"
+      },
+      {
+        "at": 107605.8,
+        "text": "WARNING: Couldn't load sound 'rh_tom03.wav' using default"
+      },
+      {
+        "at": 107605.9,
+        "text": "WARNING: Couldn't load sound 'rh_tom04.wav' using default"
+      },
+      {
+        "at": 107606,
+        "text": "WARNING: Couldn't load sound 'rh_tom05.wav' using default"
+      },
+      {
+        "at": 107606.1,
+        "text": "WARNING: Couldn't load sound 'rh_tom06.wav' using default"
+      },
+      {
+        "at": 107606.3,
+        "text": "WARNING: Couldn't load sound 'rh_tom07.wav' using default"
+      },
+      {
+        "at": 107606.4,
+        "text": "WARNING: Couldn't load sound 'rh_tom08.wav' using default"
+      },
+      {
+        "at": 107606.5,
+        "text": "WARNING: Couldn't load sound 'rh_tom09.wav' using default"
+      },
+      {
+        "at": 107606.7,
+        "text": "WARNING: Couldn't load sound 'rh_tom10.wav' using default"
+      },
+      {
+        "at": 107606.8,
+        "text": "WARNING: Couldn't load sound 'rh_tom11.wav' using default"
+      },
+      {
+        "at": 107606.9,
+        "text": "WARNING: Couldn't load sound 'rh_jen01.wav' using default"
+      },
+      {
+        "at": 107607.1,
+        "text": "WARNING: Couldn't load sound 'rh_jen02.wav' using default"
+      },
+      {
+        "at": 107607.2,
+        "text": "WARNING: Couldn't load sound 'rh_jen03.wav' using default"
+      },
+      {
+        "at": 107607.3,
+        "text": "WARNING: Couldn't load sound 'jn_roadhouse_tommytools1.wav' using default"
+      },
+      {
+        "at": 107607.4,
+        "text": "WARNING: Couldn't load sound 'jn_roadhouse_tommytools2.wav' using default"
+      },
+      {
+        "at": 107607.5,
+        "text": "WARNING: Couldn't load sound 'rh_jen06.wav' using default"
+      },
+      {
+        "at": 107607.6,
+        "text": "WARNING: Couldn't load sound 'rh_chuck01.wav' using default"
+      },
+      {
+        "at": 107607.7,
+        "text": "WARNING: Couldn't load sound 'rh_chuck02.wav' using default"
+      },
+      {
+        "at": 107607.9,
+        "text": "WARNING: Couldn't load sound 'rh_chuck03.wav' using default"
+      },
+      {
+        "at": 107608,
+        "text": "WARNING: Couldn't load sound 'rh_dalton01.wav' using default"
+      },
+      {
+        "at": 107608.1,
+        "text": "WARNING: Couldn't load sound 'rh_dalton02.wav' using default"
+      },
+      {
+        "at": 107608.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom02.wav' using default"
+      },
+      {
+        "at": 107608.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom04.wav' using default"
+      },
+      {
+        "at": 107608.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom06.wav' using default"
+      },
+      {
+        "at": 107608.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom08.wav' using default"
+      },
+      {
+        "at": 107608.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom10.wav' using default"
+      },
+      {
+        "at": 107608.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_dal01.wav' using default"
+      },
+      {
+        "at": 107608.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_chu03.wav' using default"
+      },
+      {
+        "at": 107609,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_dal05.wav' using default"
+      },
+      {
+        "at": 107609.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_tom01.wav' using default"
+      },
+      {
+        "at": 107609.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_tom03.wav' using default"
+      },
+      {
+        "at": 107609.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_tom02.wav' using default"
+      },
+      {
+        "at": 107609.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_tom04.wav' using default"
+      },
+      {
+        "at": 107609.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_tom06.wav' using default"
+      },
+      {
+        "at": 107609.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv5_jen03.wav' using default"
+      },
+      {
+        "at": 107609.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom01.wav' using default"
+      },
+      {
+        "at": 107609.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom03.wav' using default"
+      },
+      {
+        "at": 107610,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom04.wav' using default"
+      },
+      {
+        "at": 107610.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom07.wav' using default"
+      },
+      {
+        "at": 107610.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_tom12.wav' using default"
+      },
+      {
+        "at": 107610.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_tom02.wav' using default"
+      },
+      {
+        "at": 107610.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_tom06.wav' using default"
+      },
+      {
+        "at": 107610.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_tom08.wav' using default"
+      },
+      {
+        "at": 107610.7,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_pickup.wav' using default"
+      },
+      {
+        "at": 107610.8,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback01.wav' using default"
+      },
+      {
+        "at": 107610.9,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback02.wav' using default"
+      },
+      {
+        "at": 107611,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback03.wav' using default"
+      },
+      {
+        "at": 107611.1,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback04.wav' using default"
+      },
+      {
+        "at": 107611.2,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback05.wav' using default"
+      },
+      {
+        "at": 107611.4,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback06.wav' using default"
+      },
+      {
+        "at": 107611.5,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf01.wav' using default"
+      },
+      {
+        "at": 107611.6,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf02.wav' using default"
+      },
+      {
+        "at": 107611.7,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf03.wav' using default"
+      },
+      {
+        "at": 107611.8,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf04.wav' using default"
+      },
+      {
+        "at": 107611.9,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf05.wav' using default"
+      },
+      {
+        "at": 107612.4,
+        "text": "WARNING: Couldn't load sound 'rh_player_scream.wav' using default"
+      },
+      {
+        "at": 107612.8,
+        "text": "WARNING: Couldn't load sound 'fta_conv3_jen09.wav' using default"
+      },
+      {
+        "at": 107612.8,
+        "text": "WARNING: Couldn't load sound 'rh_intro1.wav' using default"
+      },
+      {
+        "at": 107612.8,
+        "text": "WARNING: Couldn't load sound 'rh_intro2.wav' using default"
+      },
+      {
+        "at": 107613,
+        "text": "WARNING: Couldn't load sound 'rh_intro3.wav' using default"
+      },
+      {
+        "at": 107613.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom08a.wav' using default"
+      },
+      {
+        "at": 107613.5,
+        "text": "WARNING: Couldn't load sound 'rh_tom_window.wav' using default"
+      },
+      {
+        "at": 107695.6,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_fire.wav' using default"
+      },
+      {
+        "at": 107698.8,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_altfire.wav' using default"
+      },
+      {
+        "at": 107698.9,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_raise.wav' using default"
+      },
+      {
+        "at": 107699,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_putaway.wav' using default"
+      },
+      {
+        "at": 107699.5,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_flesh.wav' using default"
+      },
+      {
+        "at": 107699.6,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_metal.wav' using default"
+      },
+      {
+        "at": 107699.7,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_metal2.wav' using default"
+      },
+      {
+        "at": 107699.8,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_wood.wav' using default"
+      },
+      {
+        "at": 107699.9,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_stone.wav' using default"
+      },
+      {
+        "at": 107700.1,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_tile.wav' using default"
+      },
+      {
+        "at": 107700.2,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_glass.wav' using default"
+      },
+      {
+        "at": 107700.3,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_cardboard.wav' using default"
+      },
+      {
+        "at": 107700.4,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_liquid.wav' using default"
+      },
+      {
+        "at": 107700.5,
+        "text": "WARNING: Couldn't load sound 'projectile_rocket_impact_chaff.wav' using default"
+      },
+      {
+        "at": 107730.8,
+        "text": "WARNING: Couldn't load sound 'moveable_beercan_bounce.wav' using default"
+      },
+      {
+        "at": 107747.3,
+        "text": "WARNING: Couldn't load sound 'moveable_bottle.wav' using default"
+      },
+      {
+        "at": 107759.2,
+        "text": "WARNING: Couldn't load sound 'default_land_flesh.wav' using default"
+      },
+      {
+        "at": 107759.3,
+        "text": "WARNING: Couldn't load sound 'default_land_metal.wav' using default"
+      },
+      {
+        "at": 107759.5,
+        "text": "WARNING: Couldn't load sound 'default_land_metalhollow.wav' using default"
+      },
+      {
+        "at": 107759.6,
+        "text": "WARNING: Couldn't load sound 'default_land_wood.wav' using default"
+      },
+      {
+        "at": 107759.8,
+        "text": "WARNING: Couldn't load sound 'default_land_stone.wav' using default"
+      },
+      {
+        "at": 107759.9,
+        "text": "WARNING: Couldn't load sound 'default_land_tile.wav' using default"
+      },
+      {
+        "at": 107760,
+        "text": "WARNING: Couldn't load sound 'default_land_glass.wav' using default"
+      },
+      {
+        "at": 107760.2,
+        "text": "WARNING: Couldn't load sound 'default_land_forcefield.wav' using default"
+      },
+      {
+        "at": 107760.3,
+        "text": "WARNING: Couldn't load sound 'default_footstep_flesh.wav' using default"
+      },
+      {
+        "at": 107760.5,
+        "text": "WARNING: Couldn't load sound 'default_footstep_metal.wav' using default"
+      },
+      {
+        "at": 107760.6,
+        "text": "WARNING: Couldn't load sound 'default_footstep_metal2.wav' using default"
+      },
+      {
+        "at": 107760.8,
+        "text": "WARNING: Couldn't load sound 'default_footstep_wallwalk.wav' using default"
+      },
+      {
+        "at": 107760.9,
+        "text": "WARNING: Couldn't load sound 'default_footstep_wood.wav' using default"
+      },
+      {
+        "at": 107761,
+        "text": "WARNING: Couldn't load sound 'default_footstep_stone.wav' using default"
+      },
+      {
+        "at": 107761.2,
+        "text": "WARNING: Couldn't load sound 'default_footstep_tile.wav' using default"
+      },
+      {
+        "at": 107761.3,
+        "text": "WARNING: Couldn't load sound 'default_footstep_glass.wav' using default"
+      },
+      {
+        "at": 107761.5,
+        "text": "WARNING: Couldn't load sound 'default_footstep_forcefield.wav' using default"
+      },
+      {
+        "at": 107761.6,
+        "text": "WARNING: Couldn't load sound 'default_footstep_liquid.wav' using default"
+      },
+      {
+        "at": 107768.4,
+        "text": "WARNING: Couldn't load sound 'debris_flesh_bounce.wav' using default"
+      },
+      {
+        "at": 107979.7,
+        "text": "WARNING: Couldn't load sound 'gen_npc_adult_female_masher_death.wav' using default"
+      },
+      {
+        "at": 108312.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_jen02.wav' using default"
+      },
+      {
+        "at": 108317.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen09.wav' using default"
+      },
+      {
+        "at": 108320.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen07.wav' using default"
+      },
+      {
+        "at": 108326.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen06.wav' using default"
+      },
+      {
+        "at": 108328.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen02.wav' using default"
+      },
+      {
+        "at": 108335.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_jen06.wav' using default"
+      },
+      {
+        "at": 108340,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_jen02.wav' using default"
+      },
+      {
+        "at": 108352.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_jen05.wav' using default"
+      },
+      {
+        "at": 108356.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen03.wav' using default"
+      },
+      {
+        "at": 108360.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_jen04.wav' using default"
+      },
+      {
+        "at": 108366.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen05.wav' using default"
+      },
+      {
+        "at": 108370.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen05.wav' using default"
+      },
+      {
+        "at": 108375.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen01.wav' using default"
+      },
+      {
+        "at": 108384.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen02.wav' using default"
+      },
+      {
+        "at": 108392.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen05.wav' using default"
+      },
+      {
+        "at": 108395.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen04.wav' using default"
+      },
+      {
+        "at": 108400.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen03.wav' using default"
+      },
+      {
+        "at": 108511.2,
+        "text": "WARNING: Couldn't load sound 'moveable_trashbin.wav' using default"
+      },
+      {
+        "at": 108527,
+        "text": "WARNING: Couldn't load sound 'moveable_trashcan.wav' using default"
+      },
+      {
+        "at": 108527.4,
+        "text": "WARNING: Couldn't load sound 'console_generic_translation.wav' using default"
+      },
+      {
+        "at": 108583.3,
+        "text": "WARNING: Couldn't load sound 'console_game_betchange.wav' using default"
+      },
+      {
+        "at": 108583.4,
+        "text": "WARNING: Couldn't load sound 'console_game_foundhidden.wav' using default"
+      },
+      {
+        "at": 108583.6,
+        "text": "WARNING: Couldn't load sound 'console_poker_victory.wav' using default"
+      },
+      {
+        "at": 108583.7,
+        "text": "WARNING: Couldn't load sound 'console_poker_victorybig.wav' using default"
+      },
+      {
+        "at": 108583.8,
+        "text": "WARNING: Couldn't load sound 'console_poker_failure.wav' using default"
+      },
+      {
+        "at": 108589.1,
+        "text": "WARNING: Couldn't load sound 'console_generic_mouseover.wav' using default"
+      },
+      {
+        "at": 108589.3,
+        "text": "WARNING: Couldn't load sound 'console_cards_activate.wav' using default"
+      },
+      {
+        "at": 108589.4,
+        "text": "WARNING: Couldn't load sound 'console_poker_toggle.wav' using default"
+      },
+      {
+        "at": 108590.2,
+        "text": "WARNING: Couldn't load sound 'console_game_insertcredit.wav' using default"
+      },
+      {
+        "at": 108590.6,
+        "text": "WARNING: Couldn't load sound 'console_game_gameover.wav' using default"
+      },
+      {
+        "at": 108606.5,
+        "text": "WARNING: Couldn't load sound 'moveable_bottle_bounce.wav' using default"
+      },
+      {
+        "at": 108616.1,
+        "text": "WARNING: Couldn't load sound 'rh_tv.wav' using default"
+      },
+      {
+        "at": 108616.4,
+        "text": "WARNING: Couldn't load sound 'console_tv_static.wav' using default"
+      },
+      {
+        "at": 108652.8,
+        "text": "WARNING: Couldn't load sound 'moveable_cardboard_case.wav' using default"
+      },
+      {
+        "at": 108678.4,
+        "text": "WARNING: Couldn't load sound 'moveable_cardboard_large.wav' using default"
+      },
+      {
+        "at": 108690.6,
+        "text": "WARNING: Couldn't load sound 'moveable_cardboard_small.wav' using default"
+      },
+      {
+        "at": 108702.3,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music2.wav' using default"
+      },
+      {
+        "at": 108702.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music3.wav' using default"
+      },
+      {
+        "at": 108702.5,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music4.wav' using default"
+      },
+      {
+        "at": 108702.6,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music5.wav' using default"
+      },
+      {
+        "at": 108712.2,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music6.wav' using default"
+      },
+      {
+        "at": 108712.5,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music7.wav' using default"
+      },
+      {
+        "at": 108712.7,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music8.wav' using default"
+      },
+      {
+        "at": 108712.8,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music9.wav' using default"
+      },
+      {
+        "at": 108712.9,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music10.wav' using default"
+      },
+      {
+        "at": 108713,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music11.wav' using default"
+      },
+      {
+        "at": 108713.1,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music12.wav' using default"
+      },
+      {
+        "at": 108713.2,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music13.wav' using default"
+      },
+      {
+        "at": 108713.3,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music14.wav' using default"
+      },
+      {
+        "at": 108733.5,
+        "text": "WARNING: Couldn't load sound 'door_wood_swing.wav' using default"
+      },
+      {
+        "at": 108753.9,
+        "text": "WARNING: Couldn't load sound 'console_slots_spin.wav' using default"
+      },
+      {
+        "at": 108754,
+        "text": "WARNING: Couldn't load sound 'console_slots_stopreel.wav' using default"
+      },
+      {
+        "at": 108754.1,
+        "text": "WARNING: Couldn't load sound 'console_slots_victory.wav' using default"
+      },
+      {
+        "at": 108754.3,
+        "text": "WARNING: Couldn't load sound 'console_slots_victorybig.wav' using default"
+      },
+      {
+        "at": 108783.8,
+        "text": "WARNING: Couldn't load sound 'console_arcade_eatpellet.wav' using default"
+      },
+      {
+        "at": 108783.9,
+        "text": "WARNING: Couldn't load sound 'console_arcade_powerup.wav' using default"
+      },
+      {
+        "at": 108784,
+        "text": "WARNING: Couldn't load sound 'console_arcade_poweruploop.wav' using default"
+      },
+      {
+        "at": 108784.1,
+        "text": "WARNING: Couldn't load sound 'console_arcade_lifeboost.wav' using default"
+      },
+      {
+        "at": 108784.2,
+        "text": "WARNING: Couldn't load sound 'console_arcade_eatmonster.wav' using default"
+      },
+      {
+        "at": 108784.3,
+        "text": "WARNING: Couldn't load sound 'console_arcade_levelintro.wav' using default"
+      },
+      {
+        "at": 108784.5,
+        "text": "WARNING: Couldn't load sound 'console_arcade_playerdeath.wav' using default"
+      },
+      {
+        "at": 108784.6,
+        "text": "WARNING: Couldn't load sound 'console_arcade_levelcompleted.wav' using default"
+      },
+      {
+        "at": 108784.7,
+        "text": "WARNING: Couldn't load sound 'console_arcade_eatfruit.wav' using default"
+      },
+      {
+        "at": 108800.1,
+        "text": "WARNING: Couldn't load sound 'console_blackjack_victory.wav' using default"
+      },
+      {
+        "at": 108800.3,
+        "text": "WARNING: Couldn't load sound 'console_blackjack_failure.wav' using default"
+      },
+      {
+        "at": 109136.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf03.wav' using default"
+      },
+      {
+        "at": 109140.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_gf01.wav' using default"
+      },
+      {
+        "at": 109150.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf05.wav' using default"
+      },
+      {
+        "at": 109173.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf09.wav' using default"
+      },
+      {
+        "at": 109185,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_gf03.wav' using default"
+      },
+      {
+        "at": 109191.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv5_gf01.wav' using default"
+      },
+      {
+        "at": 109191.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_gf07.wav' using default"
+      },
+      {
+        "at": 109204.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_gf05.wav' using default"
+      },
+      {
+        "at": 109208.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf01.wav' using default"
+      },
+      {
+        "at": 109214.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_gf11.wav' using default"
+      },
+      {
+        "at": 109221,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf07.wav' using default"
+      },
+      {
+        "at": 109445.7,
+        "text": "WARNING: Couldn't load sound 'sign_metal_swing.wav' using default"
+      },
+      {
+        "at": 109451.9,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_acidburn.wav' using default"
+      },
+      {
+        "at": 109550,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalopen01.wav' using default"
+      },
+      {
+        "at": 109550.3,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalclose01.wav' using default"
+      },
+      {
+        "at": 109550.5,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalloop01.wav' using default"
+      },
+      {
+        "at": 109550.6,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalthrough01.wav' using default"
+      },
+      {
+        "at": 109550.7,
+        "text": "WARNING: Couldn't load sound 'objects_portal_spark.wav' using default"
+      },
+      {
+        "at": 109783,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_melee_hit.wav' using default"
+      },
+      {
+        "at": 109783.3,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_melee_miss.wav' using default"
+      },
+      {
+        "at": 109907.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_pain.wav' using default"
+      },
+      {
+        "at": 109907.4,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_meleeattack.wav' using default"
+      },
+      {
+        "at": 109907.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_missileattack.wav' using default"
+      },
+      {
+        "at": 109907.7,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_altmissileattack.wav' using default"
+      },
+      {
+        "at": 109907.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_die.wav' using default"
+      },
+      {
+        "at": 109907.9,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_footstep_metal.wav' using default"
+      },
+      {
+        "at": 109908,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_snipe_1.wav' using default"
+      },
+      {
+        "at": 109908.1,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_snipe_2.wav' using default"
+      },
+      {
+        "at": 109908.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_sniper_laser.wav' using default"
+      },
+      {
+        "at": 109908.3,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_prefire.wav' using default"
+      },
+      {
+        "at": 109908.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_jump_land.wav' using default"
+      },
+      {
+        "at": 110171.5,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_explode.wav' using default"
+      },
+      {
+        "at": 110171.8,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_fly.wav' using default"
+      },
+      {
+        "at": 110171.9,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_fizzle.wav' using default"
+      },
+      {
+        "at": 110172.7,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_flesh.wav' using default"
+      },
+      {
+        "at": 110172.9,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_metal.wav' using default"
+      },
+      {
+        "at": 110173,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_metal2.wav' using default"
+      },
+      {
+        "at": 110173.1,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_metal.wav' using default"
+      },
+      {
+        "at": 110173.2,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_wood.wav' using default"
+      },
+      {
+        "at": 110173.4,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_stone.wav' using default"
+      },
+      {
+        "at": 110173.5,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_tile.wav' using default"
+      },
+      {
+        "at": 110173.7,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_glass.wav' using default"
+      },
+      {
+        "at": 110173.9,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_card.wav' using default"
+      },
+      {
+        "at": 110174,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_liquid.wav' using default"
+      },
+      {
+        "at": 110174.5,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_pipe.wav' using default"
+      },
+      {
+        "at": 110183.8,
+        "text": "WARNING: Couldn't load sound 'projectile_hunter_rifle_fly.wav' using default"
+      },
+      {
+        "at": 110184.2,
+        "text": "WARNING: Couldn't load sound 'projectile_hunter_rifle_impact_flesh.wav' using default"
+      },
+      {
+        "at": 110184.4,
+        "text": "WARNING: Couldn't load sound 'projectile_hunter_rifle_impact_metal.wav' using default"
+      },
+      {
+        "at": 110333.1,
+        "text": "WARNING: Couldn't load sound 'item_respawn.wav' using default"
+      },
+      {
+        "at": 110335.5,
+        "text": "WARNING: Couldn't load sound 'item_lifeforce_hint.wav' using default"
+      },
+      {
+        "at": 110335.6,
+        "text": "WARNING: Couldn't load sound 'item_lifeforce_pickup.wav' using default"
+      },
+      {
+        "at": 110342.9,
+        "text": "WARNING: Couldn't load sound 'item_pickup.wav' using default"
+      },
+      {
+        "at": 110353.1,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_pickup.wav' using default"
+      },
+      {
+        "at": 110460.5,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_fire.wav' using default"
+      },
+      {
+        "at": 110460.8,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_sniper_fire.wav' using default"
+      },
+      {
+        "at": 110461,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_reload.wav' using default"
+      },
+      {
+        "at": 110461.2,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_empty.wav' using default"
+      },
+      {
+        "at": 110461.3,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_outofammo.wav' using default"
+      },
+      {
+        "at": 110461.4,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_barrel_spin.wav' using default"
+      },
+      {
+        "at": 110461.5,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_barrel_spin2.wav' using default"
+      },
+      {
+        "at": 110461.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_shake.wav' using default"
+      },
+      {
+        "at": 110461.8,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_shake2.wav' using default"
+      },
+      {
+        "at": 110461.9,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_raise.wav' using default"
+      },
+      {
+        "at": 110462,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_lower.wav' using default"
+      },
+      {
+        "at": 110462.2,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_raisescope.wav' using default"
+      },
+      {
+        "at": 110462.3,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_lowerscope.wav' using default"
+      },
+      {
+        "at": 110462.4,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_idle_accent.wav' using default"
+      },
+      {
+        "at": 110462.5,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_scopeloop.wav' using default"
+      },
+      {
+        "at": 110462.6,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_scope_click.wav' using default"
+      },
+      {
+        "at": 110462.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_first_open.wav' using default"
+      },
+      {
+        "at": 110462.9,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_shake3.wav' using default"
+      },
+      {
+        "at": 110463,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_eyestalk.wav' using default"
+      },
+      {
+        "at": 110463.1,
+        "text": "WARNING: Couldn't load sound 'weap_tom_rifle.wav' using default"
+      },
+      {
+        "at": 110476,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_explode.wav' using default"
+      },
+      {
+        "at": 110476.2,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_fly.wav' using default"
+      },
+      {
+        "at": 110476.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_fizzle.wav' using default"
+      },
+      {
+        "at": 110482.9,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_flesh.wav' using default"
+      },
+      {
+        "at": 110483,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_metal.wav' using default"
+      },
+      {
+        "at": 110483.1,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_metal2.wav' using default"
+      },
+      {
+        "at": 110483.1,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_wood.wav' using default"
+      },
+      {
+        "at": 110483.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_stone.wav' using default"
+      },
+      {
+        "at": 110483.4,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_tile.wav' using default"
+      },
+      {
+        "at": 110483.5,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_glass.wav' using default"
+      },
+      {
+        "at": 110483.6,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_card.wav' using default"
+      },
+      {
+        "at": 110483.7,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_liquid.wav' using default"
+      },
+      {
+        "at": 110503.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_sight.wav' using default"
+      },
+      {
+        "at": 110503.6,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_anger.wav' using default"
+      },
+      {
+        "at": 110503.7,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_im_hit.wav' using default"
+      },
+      {
+        "at": 110503.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_low_screwed.wav' using default"
+      },
+      {
+        "at": 110503.9,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_speech_hunt_enemy.wav' using default"
+      },
+      {
+        "at": 110504,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_taking_fire.wav' using default"
+      },
+      {
+        "at": 110504.1,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_affirmative.wav' using default"
+      },
+      {
+        "at": 110504.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_negative.wav' using default"
+      },
+      {
+        "at": 110504.9,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_fear.wav' using default"
+      },
+      {
+        "at": 110505,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_man_down.wav' using default"
+      },
+      {
+        "at": 110505,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_intimidate.wav' using default"
+      },
+      {
+        "at": 110505,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_last_man_standing.wav' using default"
+      },
+      {
+        "at": 110505,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_cover_me.wav' using default"
+      },
+      {
+        "at": 110505,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_backup.wav' using default"
+      },
+      {
+        "at": 110505.1,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_moveoutgo.wav' using default"
+      },
+      {
+        "at": 110505.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_throwing_grenade.wav' using default"
+      },
+      {
+        "at": 110505.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_conserve_ammo.wav' using default"
+      },
+      {
+        "at": 110505.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_incoming.wav' using default"
+      },
+      {
+        "at": 110505.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_help.wav' using default"
+      },
+      {
+        "at": 110505.9,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_defend_position.wav' using default"
+      },
+      {
+        "at": 110505.9,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_speech_alarm.wav' using default"
+      },
+      {
+        "at": 110506,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_speech_health.wav' using default"
+      },
+      {
+        "at": 110506.1,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_react_launcher.wav' using default"
+      },
+      {
+        "at": 110506.3,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_react_sniper.wav' using default"
+      },
+      {
+        "at": 110506.4,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_rush.wav' using default"
+      },
+      {
+        "at": 110506.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_speech_player_almost_dead.wav' using default"
+      },
+      {
+        "at": 110506.6,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_enemy_rez.wav' using default"
+      },
+      {
+        "at": 110506.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_down_here.wav' using default"
+      },
+      {
+        "at": 110506.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_over_here.wav' using default"
+      },
+      {
+        "at": 110506.9,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_over_there.wav' using default"
+      },
+      {
+        "at": 110507.1,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_speech_player_behind_cover.wav' using default"
+      },
+      {
+        "at": 110507.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_speech_shuttle.wav' using default"
+      },
+      {
+        "at": 110612.5,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_sight.wav' using default"
+      },
+      {
+        "at": 110612.8,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_chatter.wav' using default"
+      },
+      {
+        "at": 110612.8,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_pain.wav' using default"
+      },
+      {
+        "at": 110612.9,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_leapattack.wav' using default"
+      },
+      {
+        "at": 110613,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_meleeattack.wav' using default"
+      },
+      {
+        "at": 110613.1,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_death.wav' using default"
+      },
+      {
+        "at": 110613.2,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_dead_body_hit.wav' using default"
+      },
+      {
+        "at": 110613.4,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_idle.wav' using default"
+      },
+      {
+        "at": 110613.6,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_oh_god.wav' using default"
+      },
+      {
+        "at": 110613.8,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_keep_staring.wav' using default"
+      },
+      {
+        "at": 110613.9,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_hunting_us.wav' using default"
+      },
+      {
+        "at": 110614,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_got_one.wav' using default"
+      },
+      {
+        "at": 110614.1,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_the_monsters.wav' using default"
+      },
+      {
+        "at": 110614.2,
+        "text": "WARNING: Couldn't load sound 'character_yuppie_scared_what_is.wav' using default"
+      },
+      {
+        "at": 110811.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal06.wav' using default"
+      },
+      {
+        "at": 110816,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal15.wav' using default"
+      },
+      {
+        "at": 110819,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal03.wav' using default"
+      },
+      {
+        "at": 110823,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal08.wav' using default"
+      },
+      {
+        "at": 110830.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal13.wav' using default"
+      },
+      {
+        "at": 110834.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal01.wav' using default"
+      },
+      {
+        "at": 110838.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_dal04.wav' using default"
+      },
+      {
+        "at": 110857.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_dal10.wav' using default"
+      },
+      {
+        "at": 110861.4,
+        "text": "WARNING: Couldn't load sound 'rh_dalton_fight01.wav' using default"
+      },
+      {
+        "at": 110865,
+        "text": "WARNING: Couldn't load sound 'rh_dalton_fight02.wav' using default"
+      },
+      {
+        "at": 110867.7,
+        "text": "WARNING: Couldn't load sound 'rh_dalton_fight03.wav' using default"
+      },
+      {
+        "at": 110871.4,
+        "text": "WARNING: Couldn't load sound 'rh_dalton_fight04.wav' using default"
+      },
+      {
+        "at": 111043.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv5_chu02.wav' using default"
+      },
+      {
+        "at": 111051.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_chu04.wav' using default"
+      },
+      {
+        "at": 111058.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_chu06.wav' using default"
+      },
+      {
+        "at": 111060.9,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight01.wav' using default"
+      },
+      {
+        "at": 111063.7,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight02.wav' using default"
+      },
+      {
+        "at": 111067.1,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight03.wav' using default"
+      },
+      {
+        "at": 111069.3,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight04.wav' using default"
+      },
+      {
+        "at": 111071.6,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight05.wav' using default"
+      },
+      {
+        "at": 111073.6,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight06.wav' using default"
+      },
+      {
+        "at": 111077,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight07.wav' using default"
+      },
+      {
+        "at": 111080.2,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight08.wav' using default"
+      },
+      {
+        "at": 111083.2,
+        "text": "WARNING: Couldn't load sound 'rh_chuck_fight09.wav' using default"
+      },
+      {
+        "at": 111087.1,
+        "text": "0 game portals found."
+      },
+      {
+        "at": 111089.1,
+        "text": "map bounds are (10576.0, 3600.0, 3000.0)"
+      },
+      {
+        "at": 111089.2,
+        "text": "max clip sector is (0.0, 0.0, 0.0)"
+      },
+      {
+        "at": 111089.8,
+        "text": "  784 bytes passage memory used to build PVS"
+      },
+      {
+        "at": 111089.8,
+        "text": "    1 msec to calculate PVS"
+      },
+      {
+        "at": 111089.9,
+        "text": "   17 areas"
+      },
+      {
+        "at": 111089.9,
+        "text": "   42 portals"
+      },
+      {
+        "at": 111089.9,
+        "text": "    7 areas visible on average"
+      },
+      {
+        "at": 111089.9,
+        "text": "   68 bytes PVS data"
+      },
+      {
+        "at": 111090.1,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111090.1,
+        "text": "loading maps/game/roadhouse.aas48"
+      },
+      {
+        "at": 111096.8,
+        "text": "done."
+      },
+      {
+        "at": 111096.9,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111096.9,
+        "text": "loading maps/game/roadhouse.aas96"
+      },
+      {
+        "at": 111096.9,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097,
+        "text": "loading maps/game/roadhouse.aas240"
+      },
+      {
+        "at": 111097,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097,
+        "text": "loading maps/game/roadhouse.aasKeeper"
+      },
+      {
+        "at": 111097,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.1,
+        "text": "loading maps/game/roadhouse.aasDroid"
+      },
+      {
+        "at": 111097.1,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.2,
+        "text": "loading maps/game/roadhouse.aasGasbag"
+      },
+      {
+        "at": 111097.2,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.2,
+        "text": "loading maps/game/roadhouse.aasChild"
+      },
+      {
+        "at": 111097.2,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.3,
+        "text": "loading maps/game/roadhouse.aasFodder"
+      },
+      {
+        "at": 111097.3,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.3,
+        "text": "loading maps/game/roadhouse.aasDroidIndoor"
+      },
+      {
+        "at": 111097.3,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.3,
+        "text": "loading maps/game/roadhouse.aasJetpack"
+      },
+      {
+        "at": 111097.4,
+        "text": "[Load AAS]"
+      },
+      {
+        "at": 111097.4,
+        "text": "loading maps/game/roadhouse.aasCreatureX"
+      },
+      {
+        "at": 111101.4,
+        "text": "Spawning entities"
+      },
+      {
+        "at": 111161,
+        "text": "WARNING: Couldn't load sound 'rh_bottle_cheers.wav' using default"
+      },
+      {
+        "at": 111165.1,
+        "text": "WARNING: Couldn't load sound 'rh_barstool_rip.wav' using default"
+      },
+      {
+        "at": 111165.3,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_dissolve.wav' using default"
+      },
+      {
+        "at": 111172.8,
+        "text": "WARNING: Couldn't load sound 'rh_barstool_squeek.wav' using default"
+      },
+      {
+        "at": 111173.7,
+        "text": "WARNING: Couldn't load sound 'rh_sinkknob.wav' using default"
+      },
+      {
+        "at": 111174.1,
+        "text": "WARNING: Couldn't load sound 'rh_waterheater.wav' using default"
+      },
+      {
+        "at": 111225,
+        "text": "WARNING: Couldn't load sound 'ambient_rooms_roomhorror03l.wav' using default"
+      },
+      {
+        "at": 111238.3,
+        "text": "WARNING: Couldn't load sound 'rh_fluorescent_light.wav' using default"
+      },
+      {
+        "at": 111248,
+        "text": "WARNING: Couldn't load sound 'rh_lightswitch.wav' using default"
+      },
+      {
+        "at": 111274.2,
+        "text": "WARNING: Couldn't load sound 'rh_truck_alarm.wav' using default"
+      },
+      {
+        "at": 111274.6,
+        "text": "WARNING: Couldn't load sound 'rh_bardoor_open.wav' using default"
+      },
+      {
+        "at": 111275.6,
+        "text": "WARNING: Couldn't load sound 'rh_bardoor_close.wav' using default"
+      },
+      {
+        "at": 111315.2,
+        "text": "WARNING: Couldn't load sound 'rh_wolf_howl.wav' using default"
+      },
+      {
+        "at": 111333,
+        "text": "WARNING: Couldn't load sound 'rh_gfscream.wav' using default"
+      },
+      {
+        "at": 111341.1,
+        "text": "WARNING: Couldn't load sound 'e3_grandfather_intro_pt1.wav' using default"
+      },
+      {
+        "at": 111347.8,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_hover.wav' using default"
+      },
+      {
+        "at": 111347.9,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_arrive.wav' using default"
+      },
+      {
+        "at": 111372.5,
+        "text": "WARNING: Couldn't load sound 'rh_soap_pushon.wav' using default"
+      },
+      {
+        "at": 111378.3,
+        "text": "WARNING: Couldn't load sound 'rh_dog_whine.wav' using default"
+      },
+      {
+        "at": 111378.8,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainroof03.wav' using default"
+      },
+      {
+        "at": 111399.7,
+        "text": "WARNING: Couldn't load sound 'rh_condom_knob.wav' using default"
+      },
+      {
+        "at": 111405.3,
+        "text": "WARNING: Couldn't load sound 'rh_windowbreak.wav' using default"
+      },
+      {
+        "at": 111436.7,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_beam_grab.wav' using default"
+      },
+      {
+        "at": 111436.8,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_flyby1.wav' using default"
+      },
+      {
+        "at": 111437,
+        "text": "WARNING: Couldn't load sound 'rh_dog_bark.wav' using default"
+      },
+      {
+        "at": 111438.4,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby1.wav' using default"
+      },
+      {
+        "at": 111446.5,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_beam_start.wav' using default"
+      },
+      {
+        "at": 111446.6,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_beam.wav' using default"
+      },
+      {
+        "at": 111458.1,
+        "text": "WARNING: Couldn't load sound 'rh_light_blowout.wav' using default"
+      },
+      {
+        "at": 111458.7,
+        "text": "WARNING: Couldn't load sound 'roof_wood_shake.wav' using default"
+      },
+      {
+        "at": 111458.8,
+        "text": "WARNING: Couldn't load sound 'rh_payphone_offhook_sequence.wav' using default"
+      },
+      {
+        "at": 111458.9,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainroof01.wav' using default"
+      },
+      {
+        "at": 111459.3,
+        "text": "WARNING: Couldn't load sound 'rh_moveable_wood_medium.wav' using default"
+      },
+      {
+        "at": 111481.5,
+        "text": "WARNING: Couldn't load sound 'rh_waterheater_button.wav' using default"
+      },
+      {
+        "at": 111500,
+        "text": "WARNING: Couldn't load sound 'rh_roof_break.wav' using default"
+      },
+      {
+        "at": 111508.5,
+        "text": "WARNING: Couldn't load sound 'rh_truck_crash3.wav' using default"
+      },
+      {
+        "at": 111547.7,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_thundersoft01.wav' using default"
+      },
+      {
+        "at": 111549.2,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainwindow01.wav' using default"
+      },
+      {
+        "at": 111549.5,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainwindow02.wav' using default"
+      },
+      {
+        "at": 111549.6,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainwindow03.wav' using default"
+      },
+      {
+        "at": 111549.8,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainroof02.wav' using default"
+      },
+      {
+        "at": 111550,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_raingutter01.wav' using default"
+      },
+      {
+        "at": 111550.1,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_roombar01.wav' using default"
+      },
+      {
+        "at": 111550.3,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_dishwasher.wav' using default"
+      },
+      {
+        "at": 111550.4,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_roomfan01.wav' using default"
+      },
+      {
+        "at": 111550.6,
+        "text": "WARNING: Couldn't load sound 'ambient_lights_lightmalfuntion17l.wav' using default"
+      },
+      {
+        "at": 111550.7,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_thunderloud01.wav' using default"
+      },
+      {
+        "at": 111550.8,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_rainoutside01.wav' using default"
+      },
+      {
+        "at": 111590.9,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby2.wav' using default"
+      },
+      {
+        "at": 111591.2,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby3.wav' using default"
+      },
+      {
+        "at": 111591.3,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby4.wav' using default"
+      },
+      {
+        "at": 111591.4,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby5.wav' using default"
+      },
+      {
+        "at": 111591.6,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby6.wav' using default"
+      },
+      {
+        "at": 111591.7,
+        "text": "WARNING: Couldn't load sound 'rh_payphone_ring.wav' using default"
+      },
+      {
+        "at": 111591.9,
+        "text": "WARNING: Couldn't load sound 'rh_truck_crash4.wav' using default"
+      },
+      {
+        "at": 111592,
+        "text": "WARNING: Couldn't load sound 'rh_wind_outside.wav' using default"
+      },
+      {
+        "at": 111592.2,
+        "text": "WARNING: Couldn't load sound 'rh_car_pullout.wav' using default"
+      },
+      {
+        "at": 111592.3,
+        "text": "WARNING: Couldn't load sound 'rh_payphone_unhook_fromhandle.wav' using default"
+      },
+      {
+        "at": 111592.4,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_flyby2.wav' using default"
+      },
+      {
+        "at": 111592.5,
+        "text": "WARNING: Couldn't load sound 'rh_car_police_passby1.wav' using default"
+      },
+      {
+        "at": 111592.7,
+        "text": "WARNING: Couldn't load sound 'rh_car_police_passby2.wav' using default"
+      },
+      {
+        "at": 111592.9,
+        "text": "WARNING: Couldn't load sound 'rh_dog_die.wav' using default"
+      },
+      {
+        "at": 111593,
+        "text": "WARNING: Couldn't load sound 'rh_wolf_whine.wav' using default"
+      },
+      {
+        "at": 111593.1,
+        "text": "WARNING: Couldn't load sound 'rh_car_passby_horn1.wav' using default"
+      },
+      {
+        "at": 111593.6,
+        "text": "WARNING: Couldn't load sound 'rh_roof_shake1.wav' using default"
+      },
+      {
+        "at": 111593.8,
+        "text": "WARNING: Couldn't load sound 'rh_roof_crack1.wav' using default"
+      },
+      {
+        "at": 111593.9,
+        "text": "WARNING: Couldn't load sound 'rh_roof_crack2.wav' using default"
+      },
+      {
+        "at": 111594,
+        "text": "WARNING: Couldn't load sound 'rh_roof_breakopen3.wav' using default"
+      },
+      {
+        "at": 111594.1,
+        "text": "WARNING: Couldn't load sound 'rh_roof_breakopen2.wav' using default"
+      },
+      {
+        "at": 111594.3,
+        "text": "WARNING: Couldn't load sound 'rh_roof_breakopen1.wav' using default"
+      },
+      {
+        "at": 111676.9,
+        "text": "WARNING: Couldn't load sound 'rh_urinalflush.wav' using default"
+      },
+      {
+        "at": 111691.1,
+        "text": "WARNING: Couldn't load sound 'rh_toilet_lid_up.wav' using default"
+      },
+      {
+        "at": 111691.3,
+        "text": "WARNING: Couldn't load sound 'rh_toilet_lid_down.wav' using default"
+      },
+      {
+        "at": 111691.5,
+        "text": "WARNING: Couldn't load sound 'rh_toiletflush.wav' using default"
+      },
+      {
+        "at": 111774.5,
+        "text": "WARNING: Couldn't load sound 'rh_watersink.wav' using default"
+      },
+      {
+        "at": 111784.2,
+        "text": "WARNING: Couldn't load sound 'rh_autodryer.wav' using default"
+      },
+      {
+        "at": 111813.6,
+        "text": "WARNING: Couldn't load sound 'rh_autodryer_pushon.wav' using default"
+      },
+      {
+        "at": 111814.2,
+        "text": "WARNING: Couldn't load sound 'rh_toilethandle.wav' using default"
+      },
+      {
+        "at": 111814.3,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_roombathroom01.wav' using default"
+      },
+      {
+        "at": 111814.5,
+        "text": "WARNING: Couldn't load sound 'rh_urinalhandle.wav' using default"
+      },
+      {
+        "at": 111814.6,
+        "text": "WARNING: Couldn't load sound 'ambient_roadhouse_toilet_blow.wav' using default"
+      },
+      {
+        "at": 111945.7,
+        "text": "WARNING: Couldn't load sound 'ambient_roomsynth_roomsynthdeep01.wav' using default"
+      },
+      {
+        "at": 111946.1,
+        "text": "WARNING: Couldn't load sound 'ambient_machines_machine03l.wav' using default"
+      },
+      {
+        "at": 111958.8,
+        "text": "WARNING: Couldn't load sound 'rh_building_shake1.wav' using default"
+      },
+      {
+        "at": 111959.1,
+        "text": "WARNING: Couldn't load sound 'rh_building_shake2.wav' using default"
+      },
+      {
+        "at": 111973.5,
+        "text": "WARNING: Couldn't load sound 'rh_ufo_hover2.wav' using default"
+      },
+      {
+        "at": 111977.4,
+        "text": "WARNING: Couldn't load sound 'e3_grandfather_intro_pt2.wav' using default"
+      },
+      {
+        "at": 111977.7,
+        "text": "WARNING: Couldn't load sound 'rh_chaos.wav' using default"
+      },
+      {
+        "at": 112006.6,
+        "text": "WARNING: Couldn't load sound 'rh_jenscream.wav' using default"
+      },
+      {
+        "at": 112007.7,
+        "text": "WARNING: Couldn't load sound 'rh_fluorescent_light_flicker.wav' using default"
+      },
+      {
+        "at": 112134.7,
+        "text": "WARNING: Couldn't load sound 'projectile_crawler_explode.wav' using default"
+      },
+      {
+        "at": 112135,
+        "text": "WARNING: Couldn't load sound 'projectile_crawler_fly.wav' using default"
+      },
+      {
+        "at": 112135.2,
+        "text": "WARNING: Couldn't load sound 'projectile_crawler_ricochet.wav' using default"
+      },
+      {
+        "at": 112135.3,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_screech.wav' using default"
+      },
+      {
+        "at": 112139.9,
+        "text": "WARNING: Couldn't load sound 'projectile_rocket_impact_liquid.wav' using default"
+      },
+      {
+        "at": 112193.8,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_grenade_fly.wav' using default"
+      },
+      {
+        "at": 112207.5,
+        "text": "WARNING: Couldn't load sound 'rh_watersink_trail.wav' using default"
+      },
+      {
+        "at": 112207.6,
+        "text": "WARNING: Couldn't load sound 'rh_watersink_drain.wav' using default"
+      },
+      {
+        "at": 112207.9,
+        "text": "...1057 entities spawned, 23 inhibited"
+      },
+      {
+        "at": 112208.1,
+        "text": "==== Processing events ===="
+      },
+      {
+        "at": 112244.3,
+        "text": "SpawnPlayer: 0"
+      },
+      {
+        "at": 112290.6,
+        "text": "WARNING: Couldn't load sound 'fta_conv1_tom02.wav' using default"
+      },
+      {
+        "at": 112293.3,
+        "text": "WARNING: Couldn't load sound 'fta_conv1_tom04.wav' using default"
+      },
+      {
+        "at": 112296.2,
+        "text": "WARNING: Couldn't load sound 'fta_conv1_tom07.wav' using default"
+      },
+      {
+        "at": 112299.2,
+        "text": "WARNING: Couldn't load sound 'fta_conv1_tom08.wav' using default"
+      },
+      {
+        "at": 112301.9,
+        "text": "WARNING: Couldn't load sound 'fta_conv1_tom09.wav' using default"
+      },
+      {
+        "at": 112311.2,
+        "text": "WARNING: Couldn't load sound 'player_death.wav' using default"
+      },
+      {
+        "at": 112311.4,
+        "text": "WARNING: Couldn't load sound 'player_land_flesh.wav' using default"
+      },
+      {
+        "at": 112311.5,
+        "text": "WARNING: Couldn't load sound 'player_land_metal.wav' using default"
+      },
+      {
+        "at": 112311.6,
+        "text": "WARNING: Couldn't load sound 'default_land_liquid.wav' using default"
+      },
+      {
+        "at": 112311.7,
+        "text": "WARNING: Couldn't load sound 'player_healthpulse.wav' using default"
+      },
+      {
+        "at": 112311.8,
+        "text": "WARNING: Couldn't load sound 'player_spiritpulse.wav' using default"
+      },
+      {
+        "at": 112311.9,
+        "text": "WARNING: Couldn't load sound 'player_lowhealth.wav' using default"
+      },
+      {
+        "at": 112312,
+        "text": "WARNING: Couldn't load sound 'player_pain_small.wav' using default"
+      },
+      {
+        "at": 112312.1,
+        "text": "WARNING: Couldn't load sound 'player_pain_medium.wav' using default"
+      },
+      {
+        "at": 112312.3,
+        "text": "WARNING: Couldn't load sound 'player_pain_large.wav' using default"
+      },
+      {
+        "at": 112312.4,
+        "text": "WARNING: Couldn't load sound 'player_pain_huge.wav' using default"
+      },
+      {
+        "at": 112312.5,
+        "text": "WARNING: Couldn't load sound 'player_jump.wav' using default"
+      },
+      {
+        "at": 112312.6,
+        "text": "WARNING: Couldn't load sound 'player_lighter_on.wav' using default"
+      },
+      {
+        "at": 112312.7,
+        "text": "WARNING: Couldn't load sound 'player_lighter_off.wav' using default"
+      },
+      {
+        "at": 112312.8,
+        "text": "WARNING: Couldn't load sound 'player_lighter_toohot.wav' using default"
+      },
+      {
+        "at": 112313,
+        "text": "WARNING: Couldn't load sound 'player_spiritwalk_activate.wav' using default"
+      },
+      {
+        "at": 112313.1,
+        "text": "WARNING: Couldn't load sound 'player_spiritwalk_deactivate.wav' using default"
+      },
+      {
+        "at": 112313.2,
+        "text": "WARNING: Couldn't load sound 'player_spiritwalk_idle.wav' using default"
+      },
+      {
+        "at": 112313.4,
+        "text": "WARNING: Couldn't load sound 'player_spiritwalk_denied.wav' using default"
+      },
+      {
+        "at": 112313.5,
+        "text": "WARNING: Couldn't load sound 'player_deathwalk_activate.wav' using default"
+      },
+      {
+        "at": 112313.7,
+        "text": "WARNING: Couldn't load sound 'player_deathwalk_deactivate.wav' using default"
+      },
+      {
+        "at": 112313.8,
+        "text": "WARNING: Couldn't load sound 'player_deathwalk_idle.wav' using default"
+      },
+      {
+        "at": 112313.9,
+        "text": "WARNING: Couldn't load sound 'player_firstdeathwalk1.wav' using default"
+      },
+      {
+        "at": 112314,
+        "text": "WARNING: Couldn't load sound 'player_firstdeathwalk2.wav' using default"
+      },
+      {
+        "at": 112314.1,
+        "text": "WARNING: Couldn't load sound 'player_firstdeathwalk3.wav' using default"
+      },
+      {
+        "at": 112314.2,
+        "text": "WARNING: Couldn't load sound 'player_wallwalk_walkon.wav' using default"
+      },
+      {
+        "at": 112314.3,
+        "text": "WARNING: Couldn't load sound 'player_wallwalk_walkoff.wav' using default"
+      },
+      {
+        "at": 112314.5,
+        "text": "WARNING: Couldn't load sound 'player_wallwalk_idle.wav' using default"
+      },
+      {
+        "at": 112314.6,
+        "text": "WARNING: Couldn't load sound 'player_footstep_flesh.wav' using default"
+      },
+      {
+        "at": 112314.7,
+        "text": "WARNING: Couldn't load sound 'player_footstep_metal.wav' using default"
+      },
+      {
+        "at": 112314.8,
+        "text": "WARNING: Couldn't load sound 'player_footstep_metal2.wav' using default"
+      },
+      {
+        "at": 112314.9,
+        "text": "WARNING: Couldn't load sound 'player_footstep_wallwalk.wav' using default"
+      },
+      {
+        "at": 112315,
+        "text": "WARNING: Couldn't load sound 'player_footstep_wood.wav' using default"
+      },
+      {
+        "at": 112315.1,
+        "text": "WARNING: Couldn't load sound 'player_footstep_stone.wav' using default"
+      },
+      {
+        "at": 112315.2,
+        "text": "WARNING: Couldn't load sound 'player_footstep_tile.wav' using default"
+      },
+      {
+        "at": 112315.3,
+        "text": "WARNING: Couldn't load sound 'player_footstep_glass.wav' using default"
+      },
+      {
+        "at": 112315.5,
+        "text": "WARNING: Couldn't load sound 'player_footstep_forcefield.wav' using default"
+      },
+      {
+        "at": 112315.6,
+        "text": "WARNING: Couldn't load sound 'player_footstep_liquid.wav' using default"
+      },
+      {
+        "at": 112315.7,
+        "text": "WARNING: Couldn't load sound 'mp_hit_feedback.wav' using default"
+      },
+      {
+        "at": 112315.9,
+        "text": "WARNING: Couldn't load sound 'mp_hit_team_feedback.wav' using default"
+      },
+      {
+        "at": 112316,
+        "text": "WARNING: Couldn't load sound 'mp_spirit_hit.wav' using default"
+      },
+      {
+        "at": 112316.1,
+        "text": "WARNING: Couldn't load sound 'player_mp_prox_return.wav' using default"
+      },
+      {
+        "at": 112316.2,
+        "text": "WARNING: Couldn't load sound 'gen_tom_talonattack_01.wav' using default"
+      },
+      {
+        "at": 112316.3,
+        "text": "WARNING: Couldn't load sound 'gen_tom_talonattack_02.wav' using default"
+      },
+      {
+        "at": 112316.4,
+        "text": "WARNING: Couldn't load sound 'gen_tom_talonattack_05.wav' using default"
+      },
+      {
+        "at": 112316.5,
+        "text": "WARNING: Couldn't load sound 'gen_tom_talonattack_06.wav' using default"
+      },
+      {
+        "at": 112316.6,
+        "text": "WARNING: Couldn't load sound 'gen_tom_talonattack_07.wav' using default"
+      },
+      {
+        "at": 112316.7,
+        "text": "WARNING: Couldn't load sound 'gen_tom_talonattack_08.wav' using default"
+      },
+      {
+        "at": 112417.3,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_idle.wav' using default"
+      },
+      {
+        "at": 112417.6,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_chirp.wav' using default"
+      },
+      {
+        "at": 112417.7,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_windup.wav' using default"
+      },
+      {
+        "at": 112417.8,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_throw.wav' using default"
+      },
+      {
+        "at": 112417.9,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_switchmodes.wav' using default"
+      },
+      {
+        "at": 112418,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_tompain.wav' using default"
+      },
+      {
+        "at": 112418.1,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_stickybomb_idle.wav' using default"
+      },
+      {
+        "at": 112418.2,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_stickybomb_windup.wav' using default"
+      },
+      {
+        "at": 112418.4,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_stickybomb_switchmodes.wav' using default"
+      },
+      {
+        "at": 112418.5,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_raise.wav' using default"
+      },
+      {
+        "at": 112418.6,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_putaway.wav' using default"
+      },
+      {
+        "at": 112418.7,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_footsteps.wav' using default"
+      },
+      {
+        "at": 112418.8,
+        "text": "WARNING: Couldn't load sound 'weap_tom_crawler2.wav' using default"
+      },
+      {
+        "at": 112439.4,
+        "text": "WARNING: Couldn't load sound 'projectile_crawler_stick.wav' using default"
+      },
+      {
+        "at": 112448.7,
+        "text": "WARNING: Couldn't load sound 'weapon_crawler_grenade_pickup.wav' using default"
+      },
+      {
+        "at": 112653.4,
+        "text": "WARNING: Couldn't load sound 'weapon_plasma_fire.wav' using default"
+      },
+      {
+        "at": 112653.7,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_thunder.wav' using default"
+      },
+      {
+        "at": 112653.8,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_sunbeam.wav' using default"
+      },
+      {
+        "at": 112653.9,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_sunbeam_loop.wav' using default"
+      },
+      {
+        "at": 112654,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_sunbeam_stop.wav' using default"
+      },
+      {
+        "at": 112654.2,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_freeze.wav' using default"
+      },
+      {
+        "at": 112654.3,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_idle.wav' using default"
+      },
+      {
+        "at": 112654.4,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_plasma_idle.wav' using default"
+      },
+      {
+        "at": 112654.5,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_railgun_idle.wav' using default"
+      },
+      {
+        "at": 112654.6,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_sunbeam_idle.wav' using default"
+      },
+      {
+        "at": 112654.7,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_freeze_idle.wav' using default"
+      },
+      {
+        "at": 112654.8,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_intake.wav' using default"
+      },
+      {
+        "at": 112655,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_fire.wav' using default"
+      },
+      {
+        "at": 112655.1,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_winddown.wav' using default"
+      },
+      {
+        "at": 112655.2,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_capture.wav' using default"
+      },
+      {
+        "at": 112655.3,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_raise.wav' using default"
+      },
+      {
+        "at": 112655.4,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_putaway.wav' using default"
+      },
+      {
+        "at": 112655.5,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_fire_nonloop.wav' using default"
+      },
+      {
+        "at": 112655.6,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_canister.wav' using default"
+      },
+      {
+        "at": 112655.7,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_error.wav' using default"
+      },
+      {
+        "at": 112655.9,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_first_servo.wav' using default"
+      },
+      {
+        "at": 112656,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_first_servo2.wav' using default"
+      },
+      {
+        "at": 112656.1,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_first_charge.wav' using default"
+      },
+      {
+        "at": 112656.2,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_first_click1.wav' using default"
+      },
+      {
+        "at": 112656.3,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_first_click2.wav' using default"
+      },
+      {
+        "at": 112656.4,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_first_open.wav' using default"
+      },
+      {
+        "at": 112656.5,
+        "text": "WARNING: Couldn't load sound 'weap_tom_leech.wav' using default"
+      },
+      {
+        "at": 112681.2,
+        "text": "WARNING: Couldn't load sound 'weapon_soulcannon_pickup.wav' using default"
+      },
+      {
+        "at": 112688.3,
+        "text": "WARNING: Couldn't load sound 'projectile_plasma_explode.wav' using default"
+      },
+      {
+        "at": 112688.5,
+        "text": "WARNING: Couldn't load sound 'projectile_plasma_fly.wav' using default"
+      },
+      {
+        "at": 112704,
+        "text": "WARNING: Couldn't load sound 'projectile_soulharvester_impact_flesh.wav' using default"
+      },
+      {
+        "at": 112704.1,
+        "text": "WARNING: Couldn't load sound 'projectile_soulharvester_impact_metal.wav' using default"
+      },
+      {
+        "at": 112704.3,
+        "text": "WARNING: Couldn't load sound 'projectile_soulharvester_impact_wood.wav' using default"
+      },
+      {
+        "at": 112704.4,
+        "text": "WARNING: Couldn't load sound 'projectile_soulharvester_impact_stone.wav' using default"
+      },
+      {
+        "at": 112704.6,
+        "text": "WARNING: Couldn't load sound 'projectile_soulharvester_impact_glass.wav' using default"
+      },
+      {
+        "at": 112704.7,
+        "text": "WARNING: Couldn't load sound 'projectile_soulharvester_impact_liquid.wav' using default"
+      },
+      {
+        "at": 112749.2,
+        "text": "WARNING: Couldn't load sound 'projectile_freeze_explode.wav' using default"
+      },
+      {
+        "at": 112852,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_fire.wav' using default"
+      },
+      {
+        "at": 112852.4,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_altfire.wav' using default"
+      },
+      {
+        "at": 112853.5,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_idle.wav' using default"
+      },
+      {
+        "at": 112853.9,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_raise.wav' using default"
+      },
+      {
+        "at": 112854,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_putaway.wav' using default"
+      },
+      {
+        "at": 112854,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_overheat.wav' using default"
+      },
+      {
+        "at": 112854.1,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_steamvent.wav' using default"
+      },
+      {
+        "at": 112854.1,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_idle_spark.wav' using default"
+      },
+      {
+        "at": 112854.2,
+        "text": "WARNING: Couldn't load sound 'salboss_tom02.wav' using default"
+      },
+      {
+        "at": 112854.2,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_first_barrel.wav' using default"
+      },
+      {
+        "at": 112854.2,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_first_viewfinder.wav' using default"
+      },
+      {
+        "at": 112868.2,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_pickup.wav' using default"
+      },
+      {
+        "at": 112877.9,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_flesh.wav' using default"
+      },
+      {
+        "at": 112878.2,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_metal2.wav' using default"
+      },
+      {
+        "at": 112878.2,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_wood.wav' using default"
+      },
+      {
+        "at": 112878.3,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_stone.wav' using default"
+      },
+      {
+        "at": 112878.3,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_tile.wav' using default"
+      },
+      {
+        "at": 112878.4,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_glass.wav' using default"
+      },
+      {
+        "at": 112878.4,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_card.wav' using default"
+      },
+      {
+        "at": 112878.4,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_liquid.wav' using default"
+      },
+      {
+        "at": 112893.9,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_grenade_fly.wav' using default"
+      },
+      {
+        "at": 112894.2,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_grenade_explode.wav' using default"
+      },
+      {
+        "at": 112898.5,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_grenade_impact_liquid.wav' using default"
+      },
+      {
+        "at": 113018,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_fire.wav' using default"
+      },
+      {
+        "at": 113018.3,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_altfire.wav' using default"
+      },
+      {
+        "at": 113018.4,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_reload.wav' using default"
+      },
+      {
+        "at": 113018.5,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_reload2.wav' using default"
+      },
+      {
+        "at": 113018.5,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_reload3.wav' using default"
+      },
+      {
+        "at": 113018.6,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_empty.wav' using default"
+      },
+      {
+        "at": 113018.6,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_raise.wav' using default"
+      },
+      {
+        "at": 113018.7,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_lower.wav' using default"
+      },
+      {
+        "at": 113018.7,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_ejectshell.wav' using default"
+      },
+      {
+        "at": 113018.8,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_first_cannister.wav' using default"
+      },
+      {
+        "at": 113018.8,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_first_slide.wav' using default"
+      },
+      {
+        "at": 113018.9,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_first_slide2.wav' using default"
+      },
+      {
+        "at": 113019,
+        "text": "WARNING: Couldn't load sound 'weap_tom_hider.wav' using default"
+      },
+      {
+        "at": 113019.2,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_first_click_servo.wav' using default"
+      },
+      {
+        "at": 113033.6,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_pickup.wav' using default"
+      },
+      {
+        "at": 113048.7,
+        "text": "WARNING: Couldn't load sound 'projectile_acidspray_impact_flesh.wav' using default"
+      },
+      {
+        "at": 113048.9,
+        "text": "WARNING: Couldn't load sound 'projectile_acidspray_impact_metal.wav' using default"
+      },
+      {
+        "at": 113049,
+        "text": "WARNING: Couldn't load sound 'projectile_acidspray_impact_wood.wav' using default"
+      },
+      {
+        "at": 113049.1,
+        "text": "WARNING: Couldn't load sound 'projectile_acidspray_impact_stone.wav' using default"
+      },
+      {
+        "at": 113049.2,
+        "text": "WARNING: Couldn't load sound 'projectile_acidspray_impact_glass.wav' using default"
+      },
+      {
+        "at": 113049.2,
+        "text": "WARNING: Couldn't load sound 'projectile_acidspray_impact_liquid.wav' using default"
+      },
+      {
+        "at": 113083.8,
+        "text": "WARNING: Couldn't load sound 'projectile_acidblob_impact_flesh.wav' using default"
+      },
+      {
+        "at": 113084.1,
+        "text": "WARNING: Couldn't load sound 'projectile_acidblob_impact_metal.wav' using default"
+      },
+      {
+        "at": 113084.2,
+        "text": "WARNING: Couldn't load sound 'projectile_acidblob_impact_wood.wav' using default"
+      },
+      {
+        "at": 113084.2,
+        "text": "WARNING: Couldn't load sound 'projectile_acidblob_impact_stone.wav' using default"
+      },
+      {
+        "at": 113084.3,
+        "text": "WARNING: Couldn't load sound 'projectile_acidblob_impact_glass.wav' using default"
+      },
+      {
+        "at": 113084.4,
+        "text": "WARNING: Couldn't load sound 'projectile_acidblob_impact_liquid.wav' using default"
+      },
+      {
+        "at": 113175.6,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_fire.wav' using default"
+      },
+      {
+        "at": 113175.9,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_altfire.wav' using default"
+      },
+      {
+        "at": 113176,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_altfire2.wav' using default"
+      },
+      {
+        "at": 113176.1,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_reload.wav' using default"
+      },
+      {
+        "at": 113176.3,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_empty.wav' using default"
+      },
+      {
+        "at": 113176.4,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_raise.wav' using default"
+      },
+      {
+        "at": 113176.5,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_putaway.wav' using default"
+      },
+      {
+        "at": 113176.6,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_switchmode.wav' using default"
+      },
+      {
+        "at": 113176.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_idlel.wav' using default"
+      },
+      {
+        "at": 113176.8,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_chirp.wav' using default"
+      },
+      {
+        "at": 113176.9,
+        "text": "WARNING: Couldn't load sound 'weap_tom_launcher.wav' using default"
+      },
+      {
+        "at": 113177,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_first_servo.wav' using default"
+      },
+      {
+        "at": 113187.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rocketlauncher_pickup.wav' using default"
+      },
+      {
+        "at": 113198.7,
+        "text": "WARNING: Couldn't load sound 'projectile_rocket_explode.wav' using default"
+      },
+      {
+        "at": 113198.8,
+        "text": "WARNING: Couldn't load sound 'projectile_rocket_fly.wav' using default"
+      },
+      {
+        "at": 113220.5,
+        "text": "WARNING: Couldn't load sound 'projectile_chaff_fly.wav' using default"
+      },
+      {
+        "at": 113290.5,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_fire.wav' using default"
+      },
+      {
+        "at": 113290.7,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_reload.wav' using default"
+      },
+      {
+        "at": 113290.8,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_raise.wav' using default"
+      },
+      {
+        "at": 113290.9,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_putaway.wav' using default"
+      },
+      {
+        "at": 113291,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_draw.wav' using default"
+      },
+      {
+        "at": 113291.1,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_altmodefadein.wav' using default"
+      },
+      {
+        "at": 113291.2,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_altmodefadeout.wav' using default"
+      },
+      {
+        "at": 113300.7,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_fizzle.wav' using default"
+      },
+      {
+        "at": 113300.9,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_fly.wav' using default"
+      },
+      {
+        "at": 113301,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_ricochet.wav' using default"
+      },
+      {
+        "at": 113304.9,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_impact_flesh.wav' using default"
+      },
+      {
+        "at": 113305,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_impact_metal.wav' using default"
+      },
+      {
+        "at": 113305.1,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_impact_wood.wav' using default"
+      },
+      {
+        "at": 113305.2,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_impact_stone.wav' using default"
+      },
+      {
+        "at": 113305.3,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_impact_glass.wav' using default"
+      },
+      {
+        "at": 113305.4,
+        "text": "WARNING: Couldn't load sound 'projectile_arrow_impact_liquid.wav' using default"
+      },
+      {
+        "at": 113394.7,
+        "text": "WARNING: Couldn't load sound 'monster_wraith_sight.wav' using default"
+      },
+      {
+        "at": 113395,
+        "text": "WARNING: Couldn't load sound 'monster_wraith_flyloop.wav' using default"
+      },
+      {
+        "at": 113395.2,
+        "text": "WARNING: Couldn't load sound 'monster_wraith_chatter.wav' using default"
+      },
+      {
+        "at": 113395.3,
+        "text": "WARNING: Couldn't load sound 'monster_wraith_attack.wav' using default"
+      },
+      {
+        "at": 113395.5,
+        "text": "WARNING: Couldn't load sound 'monster_wraith_death.wav' using default"
+      },
+      {
+        "at": 113418.5,
+        "text": "WARNING: Couldn't load sound 'monster_deathwraith_flyloop.wav' using default"
+      },
+      {
+        "at": 113418.7,
+        "text": "WARNING: Couldn't load sound 'monster_deathwraith_charge.wav' using default"
+      },
+      {
+        "at": 113418.9,
+        "text": "WARNING: Couldn't load sound 'monster_deathwraith_attack.wav' using default"
+      },
+      {
+        "at": 113419.5,
+        "text": "WARNING: Couldn't load sound 'monster_deathwraith_death.wav' using default"
+      },
+      {
+        "at": 113422.4,
+        "text": "WARNING: Couldn't load sound 'monster_deathwraith_energyidle.wav' using default"
+      },
+      {
+        "at": 113422.5,
+        "text": "WARNING: Couldn't load sound 'monster_deathwraith_energyarrival.wav' using default"
+      },
+      {
+        "at": 113890.8,
+        "text": "WARNING: Couldn't load sound 'player_mp_prox_sound.wav' using default"
+      },
+      {
+        "at": 113944.3,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_idle.wav' using default"
+      },
+      {
+        "at": 113944.5,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_fly.wav' using default"
+      },
+      {
+        "at": 113944.6,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_glide.wav' using default"
+      },
+      {
+        "at": 113944.6,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_preland.wav' using default"
+      },
+      {
+        "at": 113944.7,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_land.wav' using default"
+      },
+      {
+        "at": 113944.8,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_takeoff.wav' using default"
+      },
+      {
+        "at": 113944.9,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_idle_shake.wav' using default"
+      },
+      {
+        "at": 113945,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_perch_chatter.wav' using default"
+      },
+      {
+        "at": 113945.1,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_alert_danger.wav' using default"
+      },
+      {
+        "at": 113945.3,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_alert_health.wav' using default"
+      },
+      {
+        "at": 113945.3,
+        "text": "WARNING: Couldn't load sound 'spiritpower_hawk_attack.wav' using default"
+      },
+      {
+        "at": 113980,
+        "text": "WARNING: Couldn't load sound 'weapon_bow_pickup.wav' using default"
+      },
+      {
+        "at": 114023.2,
+        "text": "----- idRenderModelManagerLocal::EndLevelLoad -----"
+      },
+      {
+        "at": 114023.8,
+        "text": "    0 models purged from previous level,   707 models kept."
+      },
+      {
+        "at": 114023.8,
+        "text": "----- idImageManager::EndLevelLoad -----"
+      },
+      {
+        "at": 121106.4,
+        "text": "    0 purged from previous"
+      },
+      {
+        "at": 121106.6,
+        "text": "  108 kept from previous"
+      },
+      {
+        "at": 121106.6,
+        "text": " 1208 new loaded"
+      },
+      {
+        "at": 121106.6,
+        "text": "all images loaded in   7.1 seconds"
+      },
+      {
+        "at": 121106.6,
+        "text": "----- idSoundCache::EndLevelLoad -----"
+      },
+      {
+        "at": 121106.7,
+        "text": "10176k referenced"
+      },
+      {
+        "at": 121106.8,
+        "text": "  192k purged"
+      },
+      {
+        "at": 121123.6,
+        "text": " 13832 msec to load game/roadhouse"
+      },
+      {
+        "at": 121124.5,
+        "text": "idRenderWorld::GenerateAllInteractions, msec = 1, staticAllocCount = 0."
+      },
+      {
+        "at": 121124.6,
+        "text": "interactionTable size: 572800 bytes"
+      },
+      {
+        "at": 121124.6,
+        "text": "9665 interaction take 1082480 bytes"
+      },
+      {
+        "at": 121124.7,
+        "text": "----- Warnings -----"
+      },
+      {
+        "at": 121124.7,
+        "text": "during game/roadhouse..."
+      },
+      {
+        "at": 121124.8,
+        "text": "WARNING: Couldn't load sound 'console_arcade_eatfruit.wav' using default"
+      },
+      {
+        "at": 121124.8,
+        "text": "WARNING: Couldn't load sound 'console_arcade_eatmonster.wav' using default"
+      },
+      {
+        "at": 121124.8,
+        "text": "WARNING: Couldn't load sound 'console_arcade_eatpellet.wav' using default"
+      },
+      {
+        "at": 121124.8,
+        "text": "WARNING: Couldn't load sound 'console_arcade_levelcompleted.wav' using default"
+      },
+      {
+        "at": 121124.9,
+        "text": "WARNING: Couldn't load sound 'console_arcade_levelintro.wav' using default"
+      },
+      {
+        "at": 121124.9,
+        "text": "WARNING: Couldn't load sound 'console_arcade_lifeboost.wav' using default"
+      },
+      {
+        "at": 121124.9,
+        "text": "WARNING: Couldn't load sound 'console_arcade_playerdeath.wav' using default"
+      },
+      {
+        "at": 121124.9,
+        "text": "WARNING: Couldn't load sound 'console_arcade_powerup.wav' using default"
+      },
+      {
+        "at": 121124.9,
+        "text": "WARNING: Couldn't load sound 'console_arcade_poweruploop.wav' using default"
+      },
+      {
+        "at": 121125,
+        "text": "WARNING: Couldn't load sound 'console_blackjack_failure.wav' using default"
+      },
+      {
+        "at": 121125,
+        "text": "WARNING: Couldn't load sound 'console_blackjack_victory.wav' using default"
+      },
+      {
+        "at": 121125,
+        "text": "WARNING: Couldn't load sound 'console_cards_activate.wav' using default"
+      },
+      {
+        "at": 121125,
+        "text": "WARNING: Couldn't load sound 'console_game_betchange.wav' using default"
+      },
+      {
+        "at": 121125.1,
+        "text": "WARNING: Couldn't load sound 'console_game_foundhidden.wav' using default"
+      },
+      {
+        "at": 121125.1,
+        "text": "WARNING: Couldn't load sound 'console_game_gameover.wav' using default"
+      },
+      {
+        "at": 121125.1,
+        "text": "WARNING: Couldn't load sound 'console_game_insertcredit.wav' using default"
+      },
+      {
+        "at": 121125.2,
+        "text": "WARNING: Couldn't load sound 'console_generic_mouseover.wav' using default"
+      },
+      {
+        "at": 121125.2,
+        "text": "WARNING: Couldn't load sound 'console_generic_translation.wav' using default"
+      },
+      {
+        "at": 121125.2,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music1.wav' using default"
+      },
+      {
+        "at": 121125.2,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music10.wav' using default"
+      },
+      {
+        "at": 121125.2,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music11.wav' using default"
+      },
+      {
+        "at": 121125.3,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music12.wav' using default"
+      },
+      {
+        "at": 121125.3,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music13.wav' using default"
+      },
+      {
+        "at": 121125.3,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music14.wav' using default"
+      },
+      {
+        "at": 121125.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music2.wav' using default"
+      },
+      {
+        "at": 121125.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music3.wav' using default"
+      },
+      {
+        "at": 121125.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music4.wav' using default"
+      },
+      {
+        "at": 121125.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music5.wav' using default"
+      },
+      {
+        "at": 121125.4,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music6.wav' using default"
+      },
+      {
+        "at": 121125.5,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music7.wav' using default"
+      },
+      {
+        "at": 121125.5,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music8.wav' using default"
+      },
+      {
+        "at": 121125.5,
+        "text": "WARNING: Couldn't load sound 'console_jukebox_music9.wav' using default"
+      },
+      {
+        "at": 121125.5,
+        "text": "WARNING: Couldn't load sound 'console_poker_failure.wav' using default"
+      },
+      {
+        "at": 121125.6,
+        "text": "WARNING: Couldn't load sound 'console_poker_toggle.wav' using default"
+      },
+      {
+        "at": 121125.6,
+        "text": "WARNING: Couldn't load sound 'console_poker_victory.wav' using default"
+      },
+      {
+        "at": 121125.6,
+        "text": "WARNING: Couldn't load sound 'console_poker_victorybig.wav' using default"
+      },
+      {
+        "at": 121125.7,
+        "text": "WARNING: Couldn't load sound 'console_slots_spin.wav' using default"
+      },
+      {
+        "at": 121125.7,
+        "text": "WARNING: Couldn't load sound 'console_slots_stopreel.wav' using default"
+      },
+      {
+        "at": 121125.7,
+        "text": "WARNING: Couldn't load sound 'console_slots_victory.wav' using default"
+      },
+      {
+        "at": 121125.8,
+        "text": "WARNING: Couldn't load sound 'console_slots_victorybig.wav' using default"
+      },
+      {
+        "at": 121125.8,
+        "text": "WARNING: Couldn't load sound 'console_tv_static.wav' using default"
+      },
+      {
+        "at": 121125.8,
+        "text": "WARNING: Couldn't load sound 'debris_flesh_bounce.wav' using default"
+      },
+      {
+        "at": 121125.8,
+        "text": "WARNING: Couldn't load sound 'default_footstep_flesh.wav' using default"
+      },
+      {
+        "at": 121125.9,
+        "text": "WARNING: Couldn't load sound 'default_footstep_forcefield.wav' using default"
+      },
+      {
+        "at": 121125.9,
+        "text": "WARNING: Couldn't load sound 'default_footstep_glass.wav' using default"
+      },
+      {
+        "at": 121125.9,
+        "text": "WARNING: Couldn't load sound 'default_footstep_liquid.wav' using default"
+      },
+      {
+        "at": 121125.9,
+        "text": "WARNING: Couldn't load sound 'default_footstep_metal.wav' using default"
+      },
+      {
+        "at": 121125.9,
+        "text": "WARNING: Couldn't load sound 'default_footstep_metal2.wav' using default"
+      },
+      {
+        "at": 121126,
+        "text": "WARNING: Couldn't load sound 'default_footstep_stone.wav' using default"
+      },
+      {
+        "at": 121126,
+        "text": "WARNING: Couldn't load sound 'default_footstep_tile.wav' using default"
+      },
+      {
+        "at": 121126,
+        "text": "WARNING: Couldn't load sound 'default_footstep_wallwalk.wav' using default"
+      },
+      {
+        "at": 121126,
+        "text": "WARNING: Couldn't load sound 'default_footstep_wood.wav' using default"
+      },
+      {
+        "at": 121126.1,
+        "text": "WARNING: Couldn't load sound 'default_land_flesh.wav' using default"
+      },
+      {
+        "at": 121126.2,
+        "text": "WARNING: Couldn't load sound 'default_land_forcefield.wav' using default"
+      },
+      {
+        "at": 121126.3,
+        "text": "WARNING: Couldn't load sound 'default_land_glass.wav' using default"
+      },
+      {
+        "at": 121126.4,
+        "text": "WARNING: Couldn't load sound 'default_land_metal.wav' using default"
+      },
+      {
+        "at": 121126.5,
+        "text": "WARNING: Couldn't load sound 'default_land_metalhollow.wav' using default"
+      },
+      {
+        "at": 121126.5,
+        "text": "WARNING: Couldn't load sound 'default_land_stone.wav' using default"
+      },
+      {
+        "at": 121126.5,
+        "text": "WARNING: Couldn't load sound 'default_land_tile.wav' using default"
+      },
+      {
+        "at": 121126.5,
+        "text": "WARNING: Couldn't load sound 'default_land_wood.wav' using default"
+      },
+      {
+        "at": 121126.7,
+        "text": "WARNING: Couldn't load sound 'door_wood_swing.wav' using default"
+      },
+      {
+        "at": 121126.7,
+        "text": "WARNING: Couldn't load sound 'fta_conv3_jen09.wav' using default"
+      },
+      {
+        "at": 121126.7,
+        "text": "WARNING: Couldn't load sound 'gen_npc_adult_female_masher_death.wav' using default"
+      },
+      {
+        "at": 121126.7,
+        "text": "WARNING: Couldn't load sound 'item_lifeforce_hint.wav' using default"
+      },
+      {
+        "at": 121126.7,
+        "text": "WARNING: Couldn't load sound 'item_lifeforce_pickup.wav' using default"
+      },
+      {
+        "at": 121126.8,
+        "text": "WARNING: Couldn't load sound 'item_pickup.wav' using default"
+      },
+      {
+        "at": 121126.8,
+        "text": "WARNING: Couldn't load sound 'item_respawn.wav' using default"
+      },
+      {
+        "at": 121126.8,
+        "text": "WARNING: Couldn't load sound 'jn_roadhouse_tommytools1.wav' using default"
+      },
+      {
+        "at": 121126.9,
+        "text": "WARNING: Couldn't load sound 'jn_roadhouse_tommytools2.wav' using default"
+      },
+      {
+        "at": 121126.9,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf01.wav' using default"
+      },
+      {
+        "at": 121127,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf02.wav' using default"
+      },
+      {
+        "at": 121127,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf03.wav' using default"
+      },
+      {
+        "at": 121127.1,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf04.wav' using default"
+      },
+      {
+        "at": 121127.2,
+        "text": "WARNING: Couldn't load sound 'lotaa_callback_gf05.wav' using default"
+      },
+      {
+        "at": 121127.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_altmissileattack.wav' using default"
+      },
+      {
+        "at": 121127.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_die.wav' using default"
+      },
+      {
+        "at": 121127.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_footstep_metal.wav' using default"
+      },
+      {
+        "at": 121127.2,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_jump_land.wav' using default"
+      },
+      {
+        "at": 121127.3,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_melee_hit.wav' using default"
+      },
+      {
+        "at": 121127.3,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_melee_miss.wav' using default"
+      },
+      {
+        "at": 121127.3,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_meleeattack.wav' using default"
+      },
+      {
+        "at": 121127.4,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_missileattack.wav' using default"
+      },
+      {
+        "at": 121127.4,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_pain.wav' using default"
+      },
+      {
+        "at": 121127.4,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_prefire.wav' using default"
+      },
+      {
+        "at": 121127.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_snipe_1.wav' using default"
+      },
+      {
+        "at": 121127.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_snipe_2.wav' using default"
+      },
+      {
+        "at": 121127.5,
+        "text": "WARNING: Couldn't load sound 'monster_hunter_sniper_laser.wav' using default"
+      },
+      {
+        "at": 121127.5,
+        "text": "WARNING: Couldn't load sound 'moveable_beercan_bounce.wav' using default"
+      },
+      {
+        "at": 121127.5,
+        "text": "WARNING: Couldn't load sound 'moveable_bottle.wav' using default"
+      },
+      {
+        "at": 121127.6,
+        "text": "WARNING: Couldn't load sound 'moveable_bottle_bounce.wav' using default"
+      },
+      {
+        "at": 121127.6,
+        "text": "WARNING: Couldn't load sound 'moveable_cardboard_case.wav' using default"
+      },
+      {
+        "at": 121127.6,
+        "text": "WARNING: Couldn't load sound 'moveable_cardboard_large.wav' using default"
+      },
+      {
+        "at": 121127.6,
+        "text": "WARNING: Couldn't load sound 'moveable_cardboard_small.wav' using default"
+      },
+      {
+        "at": 121127.7,
+        "text": "WARNING: Couldn't load sound 'moveable_metal_bounce.wav' using default"
+      },
+      {
+        "at": 121127.7,
+        "text": "WARNING: Couldn't load sound 'moveable_trashbin.wav' using default"
+      },
+      {
+        "at": 121127.7,
+        "text": "WARNING: Couldn't load sound 'moveable_trashcan.wav' using default"
+      },
+      {
+        "at": 121127.7,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalclose01.wav' using default"
+      },
+      {
+        "at": 121127.7,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalloop01.wav' using default"
+      },
+      {
+        "at": 121127.8,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalopen01.wav' using default"
+      },
+      {
+        "at": 121127.8,
+        "text": "WARNING: Couldn't load sound 'objects_portal_portalthrough01.wav' using default"
+      },
+      {
+        "at": 121127.8,
+        "text": "WARNING: Couldn't load sound 'objects_portal_spark.wav' using default"
+      },
+      {
+        "at": 121127.9,
+        "text": "WARNING: Couldn't load sound 'projectile_autocannon_impact_metal.wav' using default"
+      },
+      {
+        "at": 121127.9,
+        "text": "WARNING: Couldn't load sound 'projectile_hunter_rifle_fly.wav' using default"
+      },
+      {
+        "at": 121127.9,
+        "text": "WARNING: Couldn't load sound 'projectile_hunter_rifle_impact_flesh.wav' using default"
+      },
+      {
+        "at": 121127.9,
+        "text": "WARNING: Couldn't load sound 'projectile_hunter_rifle_impact_metal.wav' using default"
+      },
+      {
+        "at": 121127.9,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_explode.wav' using default"
+      },
+      {
+        "at": 121128,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_fizzle.wav' using default"
+      },
+      {
+        "at": 121128,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_fly.wav' using default"
+      },
+      {
+        "at": 121128,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_card.wav' using default"
+      },
+      {
+        "at": 121128,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_flesh.wav' using default"
+      },
+      {
+        "at": 121128.1,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_glass.wav' using default"
+      },
+      {
+        "at": 121128.1,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_liquid.wav' using default"
+      },
+      {
+        "at": 121128.1,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_metal.wav' using default"
+      },
+      {
+        "at": 121128.1,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_metal2.wav' using default"
+      },
+      {
+        "at": 121128.2,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_pipe.wav' using default"
+      },
+      {
+        "at": 121128.2,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_stone.wav' using default"
+      },
+      {
+        "at": 121128.2,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_tile.wav' using default"
+      },
+      {
+        "at": 121128.2,
+        "text": "WARNING: Couldn't load sound 'projectile_rifle_impact_wood.wav' using default"
+      },
+      {
+        "at": 121128.3,
+        "text": "WARNING: Couldn't load sound 'projectile_rocket_impact_chaff.wav' using default"
+      },
+      {
+        "at": 121128.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_explode.wav' using default"
+      },
+      {
+        "at": 121128.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_fizzle.wav' using default"
+      },
+      {
+        "at": 121128.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_fly.wav' using default"
+      },
+      {
+        "at": 121128.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_card.wav' using default"
+      },
+      {
+        "at": 121128.4,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_flesh.wav' using default"
+      },
+      {
+        "at": 121129.9,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_glass.wav' using default"
+      },
+      {
+        "at": 121130.2,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_liquid.wav' using default"
+      },
+      {
+        "at": 121130.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_metal.wav' using default"
+      },
+      {
+        "at": 121130.3,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_metal2.wav' using default"
+      },
+      {
+        "at": 121130.4,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_stone.wav' using default"
+      },
+      {
+        "at": 121130.4,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_tile.wav' using default"
+      },
+      {
+        "at": 121130.5,
+        "text": "WARNING: Couldn't load sound 'projectile_sniperrifle_impact_wood.wav' using default"
+      },
+      {
+        "at": 121130.5,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_cardboard.wav' using default"
+      },
+      {
+        "at": 121130.5,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_flesh.wav' using default"
+      },
+      {
+        "at": 121130.6,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_glass.wav' using default"
+      },
+      {
+        "at": 121130.6,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_liquid.wav' using default"
+      },
+      {
+        "at": 121130.7,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_metal.wav' using default"
+      },
+      {
+        "at": 121130.7,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_metal2.wav' using default"
+      },
+      {
+        "at": 121130.8,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_stone.wav' using default"
+      },
+      {
+        "at": 121130.8,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_tile.wav' using default"
+      },
+      {
+        "at": 121130.9,
+        "text": "WARNING: Couldn't load sound 'projectile_wrench_impact_wood.wav' using default"
+      },
+      {
+        "at": 121130.9,
+        "text": "WARNING: Couldn't load sound 'rh_chuck01.wav' using default"
+      },
+      {
+        "at": 121131,
+        "text": "WARNING: Couldn't load sound 'rh_chuck02.wav' using default"
+      },
+      {
+        "at": 121131,
+        "text": "WARNING: Couldn't load sound 'rh_chuck03.wav' using default"
+      },
+      {
+        "at": 121131,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf01.wav' using default"
+      },
+      {
+        "at": 121131.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf03.wav' using default"
+      },
+      {
+        "at": 121131.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf05.wav' using default"
+      },
+      {
+        "at": 121131.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf07.wav' using default"
+      },
+      {
+        "at": 121131.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_gf09.wav' using default"
+      },
+      {
+        "at": 121131.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom02.wav' using default"
+      },
+      {
+        "at": 121131.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom04.wav' using default"
+      },
+      {
+        "at": 121131.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom06.wav' using default"
+      },
+      {
+        "at": 121131.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom08.wav' using default"
+      },
+      {
+        "at": 121131.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom08a.wav' using default"
+      },
+      {
+        "at": 121131.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv1_tom10.wav' using default"
+      },
+      {
+        "at": 121131.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_chu03.wav' using default"
+      },
+      {
+        "at": 121131.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_dal01.wav' using default"
+      },
+      {
+        "at": 121131.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_dal05.wav' using default"
+      },
+      {
+        "at": 121131.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_jen02.wav' using default"
+      },
+      {
+        "at": 121131.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_jen04.wav' using default"
+      },
+      {
+        "at": 121131.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv2_jen06.wav' using default"
+      },
+      {
+        "at": 121131.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_jen02.wav' using default"
+      },
+      {
+        "at": 121131.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_jen05.wav' using default"
+      },
+      {
+        "at": 121132,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_tom01.wav' using default"
+      },
+      {
+        "at": 121132,
+        "text": "WARNING: Couldn't load sound 'rh_conv3_tom03.wav' using default"
+      },
+      {
+        "at": 121132,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_gf01.wav' using default"
+      },
+      {
+        "at": 121132.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_gf03.wav' using default"
+      },
+      {
+        "at": 121132.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_gf05.wav' using default"
+      },
+      {
+        "at": 121132.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_tom02.wav' using default"
+      },
+      {
+        "at": 121132.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_tom04.wav' using default"
+      },
+      {
+        "at": 121132.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv4_tom06.wav' using default"
+      },
+      {
+        "at": 121132.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv5_gf01.wav' using default"
+      },
+      {
+        "at": 121132.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv5_jen03.wav' using default"
+      },
+      {
+        "at": 121132.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen02.wav' using default"
+      },
+      {
+        "at": 121132.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen03.wav' using default"
+      },
+      {
+        "at": 121132.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen05.wav' using default"
+      },
+      {
+        "at": 121132.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_jen06.wav' using default"
+      },
+      {
+        "at": 121132.7,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom01.wav' using default"
+      },
+      {
+        "at": 121132.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom03.wav' using default"
+      },
+      {
+        "at": 121132.8,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom04.wav' using default"
+      },
+      {
+        "at": 121132.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv6_tom07.wav' using default"
+      },
+      {
+        "at": 121132.9,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_gf11.wav' using default"
+      },
+      {
+        "at": 121133,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen02.wav' using default"
+      },
+      {
+        "at": 121133,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen05.wav' using default"
+      },
+      {
+        "at": 121133,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen07.wav' using default"
+      },
+      {
+        "at": 121133.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_jen09.wav' using default"
+      },
+      {
+        "at": 121133.1,
+        "text": "WARNING: Couldn't load sound 'rh_conv7_tom12.wav' using default"
+      },
+      {
+        "at": 121133.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_gf07.wav' using default"
+      },
+      {
+        "at": 121133.2,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen01.wav' using default"
+      },
+      {
+        "at": 121133.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen03.wav' using default"
+      },
+      {
+        "at": 121133.3,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen04.wav' using default"
+      },
+      {
+        "at": 121133.4,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_jen05.wav' using default"
+      },
+      {
+        "at": 121133.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_tom02.wav' using default"
+      },
+      {
+        "at": 121133.5,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_tom06.wav' using default"
+      },
+      {
+        "at": 121133.6,
+        "text": "WARNING: Couldn't load sound 'rh_conv8_tom08.wav' using default"
+      },
+      {
+        "at": 121133.6,
+        "text": "WARNING: Couldn't load sound 'rh_dalton01.wav' using default"
+      },
+      {
+        "at": 121133.9,
+        "text": "WARNING: Couldn't load sound 'rh_dalton02.wav' using default"
+      },
+      {
+        "at": 121134.2,
+        "text": "WARNING: Couldn't load sound 'rh_intro1.wav' using default"
+      },
+      {
+        "at": 121134.3,
+        "text": "WARNING: Couldn't load sound 'rh_intro2.wav' using default"
+      },
+      {
+        "at": 121134.3,
+        "text": "WARNING: Couldn't load sound 'rh_intro3.wav' using default"
+      },
+      {
+        "at": 121134.4,
+        "text": "WARNING: Couldn't load sound 'rh_jen01.wav' using default"
+      },
+      {
+        "at": 121134.4,
+        "text": "WARNING: Couldn't load sound 'rh_jen02.wav' using default"
+      },
+      {
+        "at": 121134.4,
+        "text": "WARNING: Couldn't load sound 'rh_jen03.wav' using default"
+      },
+      {
+        "at": 121134.5,
+        "text": "WARNING: Couldn't load sound 'rh_jen06.wav' using default"
+      },
+      {
+        "at": 121134.5,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback01.wav' using default"
+      },
+      {
+        "at": 121134.5,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback02.wav' using default"
+      },
+      {
+        "at": 121134.6,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback03.wav' using default"
+      },
+      {
+        "at": 121134.6,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback04.wav' using default"
+      },
+      {
+        "at": 121134.6,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback05.wav' using default"
+      },
+      {
+        "at": 121134.7,
+        "text": "WARNING: Couldn't load sound 'rh_jen_callback06.wav' using default"
+      },
+      {
+        "at": 121134.7,
+        "text": "WARNING: Couldn't load sound 'rh_player_scream.wav' using default"
+      },
+      {
+        "at": 121134.7,
+        "text": "WARNING: Couldn't load sound 'rh_tom01.wav' using default"
+      },
+      {
+        "at": 121134.8,
+        "text": "WARNING: Couldn't load sound 'rh_tom02.wav' using default"
+      },
+      {
+        "at": 121134.8,
+        "text": "WARNING: Couldn't load sound 'rh_tom03.wav' using default"
+      },
+      {
+        "at": 121134.8,
+        "text": "WARNING: Couldn't load sound 'rh_tom04.wav' using default"
+      },
+      {
+        "at": 121134.9,
+        "text": "WARNING: Couldn't load sound 'rh_tom05.wav' using default"
+      },
+      {
+        "at": 121134.9,
+        "text": "WARNING: Couldn't load sound 'rh_tom06.wav' using default"
+      },
+      {
+        "at": 121134.9,
+        "text": "WARNING: Couldn't load sound 'rh_tom07.wav' using default"
+      },
+      {
+        "at": 121135,
+        "text": "WARNING: Couldn't load sound 'rh_tom08.wav' using default"
+      },
+      {
+        "at": 121135.1,
+        "text": "WARNING: Couldn't load sound 'rh_tom09.wav' using default"
+      },
+      {
+        "at": 121135.1,
+        "text": "WARNING: Couldn't load sound 'rh_tom10.wav' using default"
+      },
+      {
+        "at": 121135.1,
+        "text": "WARNING: Couldn't load sound 'rh_tom11.wav' using default"
+      },
+      {
+        "at": 121135.2,
+        "text": "WARNING: Couldn't load sound 'rh_tom_mirror1.wav' using default"
+      },
+      {
+        "at": 121135.2,
+        "text": "WARNING: Couldn't load sound 'rh_tom_window.wav' using default"
+      },
+      {
+        "at": 121135.2,
+        "text": "WARNING: Couldn't load sound 'rh_tv.wav' using default"
+      },
+      {
+        "at": 121135.3,
+        "text": "WARNING: Couldn't load sound 'roadhouse_abduction_a.wav' using default"
+      },
+      {
+        "at": 121135.3,
+        "text": "WARNING: Couldn't load sound 'roadhouse_abduction_b.wav' using default"
+      },
+      {
+        "at": 121135.4,
+        "text": "WARNING: Couldn't load sound 'roadhouse_abduction_c.wav' using default"
+      },
+      {
+        "at": 121135.4,
+        "text": "WARNING: Couldn't load sound 'roadhouse_flashback.wav' using default"
+      },
+      {
+        "at": 121135.4,
+        "text": "WARNING: Couldn't load sound 'sign_metal_swing.wav' using default"
+      },
+      {
+        "at": 121135.5,
+        "text": "WARNING: Couldn't load sound 'weap_tom_rifle.wav' using default"
+      },
+      {
+        "at": 121135.5,
+        "text": "WARNING: Couldn't load sound 'weapon_autocannon_outofammo.wav' using default"
+      },
+      {
+        "at": 121135.6,
+        "text": "WARNING: Couldn't load sound 'weapon_hider_acidburn.wav' using default"
+      },
+      {
+        "at": 121135.6,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_barrel_spin.wav' using default"
+      },
+      {
+        "at": 121135.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_barrel_spin2.wav' using default"
+      },
+      {
+        "at": 121135.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_empty.wav' using default"
+      },
+      {
+        "at": 121135.7,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_eyestalk.wav' using default"
+      },
+      {
+        "at": 121135.8,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_fire.wav' using default"
+      },
+      {
+        "at": 121135.8,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_first_open.wav' using default"
+      },
+      {
+        "at": 121135.9,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_idle_accent.wav' using default"
+      },
+      {
+        "at": 121135.9,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_lower.wav' using default"
+      },
+      {
+        "at": 121135.9,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_lowerscope.wav' using default"
+      },
+      {
+        "at": 121136,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_pickup.wav' using default"
+      },
+      {
+        "at": 121136,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_raise.wav' using default"
+      },
+      {
+        "at": 121136,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_raisescope.wav' using default"
+      },
+      {
+        "at": 121136.1,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_reload.wav' using default"
+      },
+      {
+        "at": 121136.1,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_scope_click.wav' using default"
+      },
+      {
+        "at": 121136.2,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_scopeloop.wav' using default"
+      },
+      {
+        "at": 121136.3,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_shake.wav' using default"
+      },
+      {
+        "at": 121136.3,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_shake2.wav' using default"
+      },
+      {
+        "at": 121136.4,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_shake3.wav' using default"
+      },
+      {
+        "at": 121136.4,
+        "text": "WARNING: Couldn't load sound 'weapon_rifle_sniper_fire.wav' using default"
+      },
+      {
+        "at": 121136.4,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_altfire.wav' using default"
+      },
+      {
+        "at": 121136.5,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_fire.wav' using default"
+      },
+      {
+        "at": 121136.5,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_pickup.wav' using default"
+      },
+      {
+        "at": 121136.5,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_putaway.wav' using default"
+      },
+      {
+        "at": 121136.6,
+        "text": "WARNING: Couldn't load sound 'weapon_wrench_raise.wav' using default"
+      },
+      {
+        "at": 121136.6,
+        "text": "----- more than 256 warnings -----"
+      },
+      {
+        "at": 121136.6,
+        "text": "[prey-wasm] map transition complete; returning to browser frame pump"
+      },
+      {
+        "at": 121162,
+        "text": "[prey-wasm] screen: draw begin"
+      },
+      {
+        "at": 121168.1,
+        "text": "[prey-wasm] screen: draw complete, backend begin"
+      },
+      {
+        "at": 121169,
+        "text": "[prey-wasm] screen: backend complete"
+      },
+      {
+        "at": 121169.1,
+        "text": "[prey-wasm] common: events complete, network begin"
+      },
+      {
+        "at": 121169.1,
+        "text": "[prey-wasm] common: network complete"
+      },
+      {
+        "at": 121169.1,
+        "text": "[prey-wasm] common frame 3637: session begin"
+      },
+      {
+        "at": 121169.2,
+        "text": "[prey-wasm] common frame 3637: session complete, screen begin"
+      },
+      {
+        "at": 121169.2,
+        "text": "[prey-wasm] screen: draw begin"
+      },
+      {
+        "at": 121169.9,
+        "text": "[prey-wasm] screen: draw complete, backend begin"
+      },
+      {
+        "at": 121170.7,
+        "text": "[prey-wasm] screen: backend complete"
+      },
+      {
+        "at": 121170.8,
+        "text": "[prey-wasm] common frame 3637: screen complete"
+      },
+      {
+        "at": 121467.9,
+        "text": "[prey-wasm] frame 3638: begin"
+      },
+      {
+        "at": 121468.5,
+        "text": "[prey-wasm] frame 3638: async complete"
+      },
+      {
+        "at": 121468.5,
+        "text": "[prey-wasm] common: events begin"
+      },
+      {
+        "at": 121468.6,
+        "text": "[prey-wasm] common: events complete, network begin"
+      },
+      {
+        "at": 121468.7,
+        "text": "[prey-wasm] common: network complete"
+      },
+      {
+        "at": 121468.7,
+        "text": "[prey-wasm] common frame 3638: session begin"
+      },
+      {
+        "at": 121469.8,
+        "text": "[prey-wasm] common frame 3638: session complete, screen begin"
+      },
+      {
+        "at": 121469.8,
+        "text": "[prey-wasm] screen: draw begin"
+      },
+      {
+        "at": 121470.9,
+        "text": "[prey-wasm] screen: draw complete, backend begin"
+      },
+      {
+        "at": 121471.6,
+        "text": "[prey-wasm] screen: backend complete"
+      },
+      {
+        "at": 121471.6,
+        "text": "[prey-wasm] common frame 3638: screen complete"
+      },
+      {
+        "at": 121471.6,
+        "text": "[prey-wasm] frame 3638: common frame complete"
+      },
+      {
+        "at": 121471.7,
+        "text": "[prey-wasm] frame 3638: complete"
+      },
+      {
+        "at": 121494.4,
+        "text": "[prey-wasm] frame 3639: begin"
+      },
+      {
+        "at": 121494.5,
+        "text": "[prey-wasm] frame 3639: async complete"
+      },
+      {
+        "at": 121494.6,
+        "text": "[prey-wasm] common: events begin"
+      },
+      {
+        "at": 121494.6,
+        "text": "[prey-wasm] common: events complete, network begin"
+      },
+      {
+        "at": 121494.6,
+        "text": "[prey-wasm] common: network complete"
+      },
+      {
+        "at": 121494.7,
+        "text": "[prey-wasm] common frame 3639: session begin"
+      },
+      {
+        "at": 121494.9,
+        "text": "[prey-wasm] common frame 3639: session complete, screen begin"
+      },
+      {
+        "at": 121495,
+        "text": "[prey-wasm] screen: draw begin"
+      },
+      {
+        "at": 121496.1,
+        "text": "[prey-wasm] screen: draw complete, backend begin"
+      },
+      {
+        "at": 121497.1,
+        "text": "[prey-wasm] screen: backend complete"
+      },
+      {
+        "at": 121497.1,
+        "text": "[prey-wasm] common frame 3639: screen complete"
+      },
+      {
+        "at": 121497.1,
+        "text": "[prey-wasm] frame 3639: common frame complete"
+      },
+      {
+        "at": 121497.2,
+        "text": "[prey-wasm] frame 3639: complete"
+      },
+      {
+        "at": 121530.9,
+        "text": "[prey-wasm] frame 3640: begin"
+      },
+      {
+        "at": 121531.1,
+        "text": "[prey-wasm] frame 3640: async complete"
+      },
+      {
+        "at": 121531.1,
+        "text": "[prey-wasm] common: events begin"
+      },
+      {
+        "at": 121531.2,
+        "text": "[prey-wasm] common: events complete, network begin"
+      },
+      {
+        "at": 121531.2,
+        "text": "[prey-wasm] common: network complete"
+      },
+      {
+        "at": 121531.2,
+        "text": "[prey-wasm] common frame 3640: session begin"
+      },
+      {
+        "at": 121531.6,
+        "text": "[prey-wasm] common frame 3640: session complete, screen begin"
+      },
+      {
+        "at": 121531.7,
+        "text": "[prey-wasm] screen: draw begin"
+      },
+      {
+        "at": 121532.6,
+        "text": "[prey-wasm] screen: draw complete, backend begin"
+      },
+      {
+        "at": 121533.4,
+        "text": "[prey-wasm] screen: backend complete"
+      },
+      {
+        "at": 121533.5,
+        "text": "[prey-wasm] common frame 3640: screen complete"
+      },
+      {
+        "at": 121533.5,
+        "text": "[prey-wasm] frame 3640: common frame complete"
+      },
+      {
+        "at": 121533.7,
+        "text": "[prey-wasm] frame 3640: complete"
+      },
+      {
+        "at": 121549.6,
+        "text": "[prey-wasm] frame 3641: begin"
+      },
+      {
+        "at": 121549.8,
+        "text": "[prey-wasm] frame 3641: async complete"
+      },
+      {
+        "at": 121549.9,
+        "text": "[prey-wasm] common: events begin"
+      },
+      {
+        "at": 121549.9,
+        "text": "[prey-wasm] common: events complete, network begin"
+      },
+      {
+        "at": 121550,
+        "text": "[prey-wasm] common: network complete"
+      },
+      {
+        "at": 121550,
+        "text": "[prey-wasm] common frame 3641: session begin"
+      },
+      {
+        "at": 121550.9,
+        "text": "[prey-wasm] common frame 3641: session complete, screen begin"
+      },
+      {
+        "at": 121551,
+        "text": "[prey-wasm] screen: draw begin"
+      },
+      {
+        "at": 121552.1,
+        "text": "[prey-wasm] screen: draw complete, backend begin"
+      },
+      {
+        "at": 121553.1,
+        "text": "[prey-wasm] screen: backend complete"
+      },
+      {
+        "at": 121553.2,
+        "text": "[prey-wasm] common frame 3641: screen complete"
+      },
+      {
+        "at": 121553.3,
+        "text": "[prey-wasm] frame 3641: common frame complete"
+      },
+      {
+        "at": 121553.3,
+        "text": "[prey-wasm] frame 3641: complete"
+      }
+    ],
+    "persistence": {
+      "ready": true,
+      "requests": 0,
+      "root": "/save/prey"
+    },
+    "proofId": "prey-audio-intro-2026-09-05",
+    "schemaVersion": 1,
+    "startedAt": "2026-09-05T17:43:50.506Z",
+    "states": [
+      {
+        "at": 20336.4,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 20336.6,
+        "inputMode": "menu",
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "ready"
+      },
+      {
+        "at": 121170.8,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      }
+    ],
+    "variant": "prey",
+    "workerMessages": {
+      "in:audio-buffer": 648,
+      "in:audio-create-source": 256,
+      "in:audio-delete-buffer": 12,
+      "in:audio-init": 1,
+      "in:audio-listener-float": 8724,
+      "in:audio-listener-vector": 17448,
+      "in:audio-source-action": 36,
+      "in:audio-source-float": 69248,
+      "in:audio-source-int": 34519,
+      "in:audio-source-position": 17248,
+      "in:engine-state": 2,
+      "in:log": 1281,
+      "in:persistence-ready": 1,
+      "in:ready": 1,
+      "in:status": 2,
+      "out:pointer-absolute": 2,
+      "out:pointer-button": 4,
+      "out:resize": 2,
+      "out:start": 1
+    }
+  }
+}

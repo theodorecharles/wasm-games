@@ -1,0 +1,20 @@
+{
+  "scope": "FAILED packaging attempt. Docker build completed, but the runtime/worker patch was silently skipped in a nested staging directory. The image retained the human-only runtime and worker; it is not bot-enabled acceptance.",
+  "image": "sha256:4ea119288aa0418ed6f6d7301305dd05e1562b379a22208bc16414d2bfca2549",
+  "tag": "local/idtech4-wasm:doom3-sabot-candidate",
+  "baseImage": "sha256:de06c55d8c4a6f079b09ca5b092427c1be6782bc91da0fa32bc2f4dd04a6b2d9",
+  "inputs": {
+    "server/runtime.cjs": "d450dd4143a8ecd90bf70cdb1af0164d390ba9cfe0ea60dc878c14493ae236ce",
+    "site/d3-worker.js": "89490ca8a416aff4d2f3d3830693e044153db4bee420ef03beadb2791ca0a308",
+    ".work/d3wasm-sabot/build-wasm/d3wasm.js": "eb9d2134f7a7240f237457462b706008c87c4d462c4e197d1693ff9e7dabc771",
+    ".work/d3wasm-sabot/build-wasm/d3wasm.wasm": "fdd4ee90802bf84adebd00c6fcab2e5edf8e2ea5054f633962592ce1011fc7b2",
+    ".work/d3-managed-sabot/dhewm3ded": "ad8c59a8099befadb1cf6c5743ac53ca594781384196079f74469da069cb547c",
+    ".work/d3-managed-sabot/base.so": "c28dfbc14dd7668391d1a6df49585a91b16f0823d4436a538b52c30219edf769",
+    "bots/doom3/browser-runtime.patch": "5fd3aa21bcfd0d119dbbd31293a36c4d8ef76a6e3513f5dc974eb3af1a729054",
+    ".work/idtech4a-bot-reference/Q3E/src/main/assets/pak/doom3/d3_sabot_a7.pk4": "b15e8f94c2b4ade06d59c093943c512e95f257a237f40224c496710beb7d24ff"
+  },
+  "rosterSHA256": "7cc8bd5d7b0c5120b641b914b84613402bd6f22a3f0ad590b0136adde14bcf5a",
+  "originalBuildPassed": true,
+  "acceptanceFailure": "D3_HTTP_BOTS readiness check observed bots=0, expected 2. Direct image readback confirmed runtime and worker equal the unpatched runtimeInputs hashes. Fixed by isolated Git root plus stage/output-image hash verification.",
+  "passed": false
+}

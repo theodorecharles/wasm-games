@@ -1,0 +1,101 @@
+{
+  "observedAt": "2026-09-06T11:16:50.236Z",
+  "container": "d3-light-clock-diagnostic-20260906",
+  "image": "sha256:05b5e75ed163207a27f2516bbd135e307053884d8c264073d2556583ffda5f35",
+  "status": {
+    "state": "running",
+    "humans": 1,
+    "keepAlive": false,
+    "idleTimeoutMs": 90000,
+    "idleSince": null,
+    "startedAt": 1788693348949,
+    "map": "game/mp/d3dm2",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "FixedRoundtripMarine"
+      }
+    ],
+    "browserPeers": 1,
+    "bots": 2,
+    "botPlayers": [
+      {
+        "time": 60656,
+        "slot": 30,
+        "health": 48,
+        "spectating": 0,
+        "origin": [
+          151.04,
+          -619.994,
+          -95.749
+        ],
+        "buttons": 3,
+        "move": [
+          0,
+          0,
+          0
+        ],
+        "weapon": 3,
+        "frags": 0
+      },
+      {
+        "time": 60656,
+        "slot": 31,
+        "health": 66,
+        "spectating": 0,
+        "origin": [
+          266.734,
+          -471.815,
+          -95.749
+        ],
+        "buttons": 3,
+        "move": [
+          0,
+          127,
+          0
+        ],
+        "weapon": 7,
+        "frags": 0
+      }
+    ],
+    "botUpdatedAt": 1788693408972,
+    "botTarget": 2,
+    "nativeHumans": 1,
+    "botStatus": "ready",
+    "relay": {
+      "peers": 1,
+      "clientPackets": 9823,
+      "serverPackets": 2727
+    }
+  },
+  "resources": {
+    "sessions": [
+      "d3-managed-y21sYS"
+    ],
+    "nativeProcesses": [
+      {
+        "pid": 51,
+        "exe": "/opt/doom3-native/dhewm3ded"
+      }
+    ]
+  },
+  "readOnlyRoot": true,
+  "mounts": [
+    {
+      "Type": "bind",
+      "Source": "/home/ted/wasm-game-data/doom3",
+      "Destination": "/data",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "tmpfs": {
+    "/tmp": "rw,nosuid,nodev,size=256m"
+  }
+}

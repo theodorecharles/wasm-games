@@ -22,4 +22,4 @@ sed -i \
   printf 'yb_difficulty "%s"\n' "${bot_difficulty}"
 } >"${custom_cfg}"
 
-exec /xashds/xash +ip 0.0.0.0 -port 27015 -game cstrike "$@"
+exec /xashds/xash -exit-on-host-error +ip 0.0.0.0 -port 27015 -game cstrike "$@"

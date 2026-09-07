@@ -1,0 +1,126 @@
+diff --git a/neo/CMakeLists.txt b/neo/CMakeLists.txt
+index 9415741..b3eb8ed 100644
+--- a/neo/CMakeLists.txt
++++ b/neo/CMakeLists.txt
+@@ -635,6 +635,7 @@ if (D3WASM_GAME STREQUAL "roe")
+   set(D3WASM_GAME_INCLUDE_DIR "${d3xp_root}")
+ else ()
+   add_globbed_headers(src_game "game")
++  list(APPEND src_game game/bots/BotAI.cpp game/bots/BotSabot.cpp game/bots/BotAASBuild.cpp)
+ endif ()
+ 
+ set(src_core
+@@ -693,6 +694,7 @@ if (CORE)
+     source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX neo FILES ${src_core} ${src_sys_base} ${src_sys_core})
+     if (D3WASM_GAME STREQUAL "base")
+       source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX neo FILES ${src_game})
++      target_compile_definitions(${D3WASMBINARY} PRIVATE MOD_BOTS)
+     endif ()
+ 
+     set_target_properties(${D3WASMBINARY} PROPERTIES COMPILE_FLAGS "-I${D3WASM_GAME_INCLUDE_DIR}")
+diff --git a/neo/game/Game_local.cpp b/neo/game/Game_local.cpp
+index bda9b25..a3b3e65 100644
+--- a/neo/game/Game_local.cpp
++++ b/neo/game/Game_local.cpp
+@@ -47,6 +47,9 @@ If you have questions concerning this license or the applicable additional terms
+ #include "Trigger.h"
+ 
+ #include "Game_local.h"
++#ifdef MOD_BOTS
++#include "bots/BotAI.h"
++#endif
+ 
+ #ifdef __EMSCRIPTEN__
+ #include "emscripten.h"
+@@ -328,6 +331,9 @@ void idGameLocal::Init( void ) {
+ 
+ 	// load default scripts
+ 	program.Startup( SCRIPT_DEFAULT );
++#ifdef MOD_BOTS
++	botAi::InitBotSystem();
++#endif
+ 
+ 	smokeParticles = new idSmokeParticles;
+ 
+@@ -952,6 +958,10 @@ void idGameLocal::LoadMap( const char *mapName, int randseed ) {
+ 
+ 	// load navigation system for all the different monster sizes
+ 	for( i = 0; i < aasNames.Num(); i++ ) {
++#ifdef MOD_BOTS
++		// Elevator/teleporter entities must exist before bot reachability is built.
++		if (BOT_ENABLED() && aasNames[i] == BOT_AAS) continue;
++#endif
+ 		aasList[ i ]->Init( idStr( mapFileName ).SetFileExtension( aasNames[ i ] ).c_str(), mapFile->GetGeometryCRC() );
+ 	}
+ 
+@@ -1207,6 +1217,15 @@ void idGameLocal::InitFromNewMap( const char *mapName, idRenderWorld *renderWorl
+ 
+ 	MapPopulate();
+ 
++#ifdef MOD_BOTS
++    if (BOT_ENABLED()) {
++        for (int i = 0; i < aasNames.Num(); ++i) {
++            if (aasNames[i] == BOT_AAS)
++                aasList[i]->Init(idStr(mapFileName).SetFileExtension(BOT_AAS), mapFile->GetGeometryCRC());
++        }
++    }
++#endif
++
+ 	mpGame.Reset();
+ 
+ 	mpGame.Precache();
+@@ -2032,6 +2051,18 @@ void idGameLocal::SortActiveEntityList( void ) {
+ 		}
+ 	}
+ 
++#ifdef MOD_BOTS
++	if(BOT_ENABLED()) {
++		// TinMan: Make bots king of the think list, where they shall rule with an iron fist. Basically they should think before thier fakeclient ents
++		for ( ent = activeEntities.Next(); ent != NULL; ent = next_ent ) {
++			next_ent = ent->activeNode.Next();
++			if ( ent->IsType( botAi::Type ) ) {
++				ent->activeNode.Remove();
++				ent->activeNode.AddToFront( activeEntities );
++			}
++		}
++	}
++#endif
+ 	sortTeamMasters = false;
+ 	sortPushers = false;
+ }
+diff --git a/neo/game/gamesys/SysCmds.cpp b/neo/game/gamesys/SysCmds.cpp
+index 2ada637..c871e31 100644
+--- a/neo/game/gamesys/SysCmds.cpp
++++ b/neo/game/gamesys/SysCmds.cpp
+@@ -42,6 +42,9 @@ If you have questions concerning this license or the applicable additional terms
+ #include "Misc.h"
+ 
+ #include "SysCmds.h"
++#ifdef MOD_BOTS
++#include "bots/BotAI.h"
++#endif
+ 
+ /*
+ ==================
+@@ -2269,6 +2272,21 @@ so it can perform tab completion
+ =================
+ */
+ void idGameLocal::InitConsoleCommands( void ) {
++#ifdef MOD_BOTS // TinMan: Bot console commmands
++    cmdSystem->AddCommand( "addBot",				botAi::Addbot_f,			CMD_FL_GAME,				"adds a new bot", botAi::ArgCompletion_addBot );
++    cmdSystem->AddCommand( "removeBot",				botAi::Removebot_f,			CMD_FL_GAME,				"removes bot specified by id (1,31)", botAi::ArgCompletion_botSlots /*, idCmdSystem::ArgCompletion_Integer<0,( botAi::BOT_MAX_BOTS - 1 )>*/ );
++
++    cmdSystem->AddCommand("addBots", botAi::Cmd_AddBots_f, CMD_FL_GAME, "add multiplayer bots batch", botAi::ArgCompletion_addBot);
++    cmdSystem->AddCommand("removeBots", botAi::Cmd_RemoveBots_f, CMD_FL_GAME, "disconnect multi bots by client ID", botAi::ArgCompletion_botSlots);
++    cmdSystem->AddCommand("fillBots", botAi::Cmd_FillBots_f, CMD_FL_GAME, "fill bots to maximum of server");
++    cmdSystem->AddCommand("appendBots", botAi::Cmd_AppendBots_f, CMD_FL_GAME, "append more bots(over maximum of server)");
++    cmdSystem->AddCommand("cleanBots", botAi::Cmd_CleanBots_f, CMD_FL_GAME, "disconnect all bots");
++    cmdSystem->AddCommand("truncBots", botAi::Cmd_TruncBots_f, CMD_FL_GAME, "disconnect last bots");
++    cmdSystem->AddCommand("sabot", botAi::Cmd_BotInfo_f, CMD_FL_GAME, "debug SaBot info");
++    cmdSystem->AddCommand("botLevel", botAi::Cmd_SetupBotLevel_f, CMD_FL_GAME, "setup all bot level", botAi::ArgCompletion_botLevel);
++    cmdSystem->AddCommand("botWeapons", botAi::Cmd_SetupBotWeapons_f, CMD_FL_GAME, "setup all bot initial weapons", botAi::ArgCompletion_botWeapons);
++    cmdSystem->AddCommand("botAmmo", botAi::Cmd_SetupBotAmmo_f, CMD_FL_GAME, "setup all bot initial weapons ammo");
++#endif
+ 	cmdSystem->AddCommand( "listTypeInfo",			ListTypeInfo_f,				CMD_FL_GAME,				"list type info" );
+ 	cmdSystem->AddCommand( "writeGameState",		WriteGameState_f,			CMD_FL_GAME,				"write game state" );
+ 	//cmdSystem->AddCommand( "testSaveGame",			TestSaveGame_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"test a save game for a level" );

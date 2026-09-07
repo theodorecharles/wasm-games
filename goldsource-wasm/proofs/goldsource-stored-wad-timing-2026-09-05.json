@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-09-06T02:01:26.018Z",
+  "method": "saved actual Chrome/native-log observations",
+  "timingPrecision": "whole seconds; not FPS or full cold-start/network latency",
+  "comparisons": [
+    {
+      "variant": "blue-shift",
+      "before": {
+        "nativeMapStartSeconds": 19,
+        "resourceCompleteSeconds": 20,
+        "resolutionSeconds": 1
+      },
+      "after": {
+        "nativeMapStartSeconds": 1,
+        "resourceCompleteSeconds": 3,
+        "resolutionSeconds": 1
+      },
+      "evidence": [
+        {
+          "file": "blue-shift-normal-campaign-2026-09-05.json",
+          "sha256": "a9fc3efcf06e8d66e91eff09b8d0e01b95686cbd3ad92e2328c9276803d1f455"
+        },
+        {
+          "file": "blue-shift-stored-wad-start-2026-09-05.json",
+          "sha256": "776d7cc7e1fb9740fa8cafc03a3e2cf921fab31a6413c70942d3aede1e233869"
+        },
+        {
+          "file": "blue-shift-stored-wad-status-2026-09-05.json",
+          "sha256": "a1ec6d964cd7fb0ffee2c27b120aec027b5f5616c3bb8ab5af522cd5714164e6"
+        }
+      ],
+      "captureAccepted": false,
+      "fullCampaignAccepted": false,
+      "originalDataRecheck": {
+        "file": "blue-shift-original-wad-repeat-2026-09-05.json",
+        "sha256": "aa63ff2c970a27e929bae07a55b8869fc2bb274b5911c273858a975e53fe8706",
+        "timing": {
+          "nativeMapStartSeconds": 19,
+          "resourceCompleteSeconds": 21,
+          "resolutionSeconds": 1
+        },
+        "departure": {
+          "file": "blue-shift-original-wad-repeat-status-2026-09-05.json",
+          "sha256": "e478696270264949913d9f25731b7f7b53f6ebb369a24e251ea58167fa33262a"
+        }
+      }
+    },
+    {
+      "variant": "opposing-force",
+      "before": {
+        "nativeMapStartSeconds": 15,
+        "resourceCompleteSeconds": 15,
+        "resolutionSeconds": 1
+      },
+      "after": {
+        "nativeMapStartSeconds": 1,
+        "resourceCompleteSeconds": 3,
+        "resolutionSeconds": 1
+      },
+      "evidence": [
+        {
+          "file": "opposing-force-normal-campaign-2026-09-05.json",
+          "sha256": "b7805532cd4bf50fdb05584db0c064b36faea39b71f30215d7eef426912c4d1f"
+        },
+        {
+          "file": "opposing-force-stored-wad-start-2026-09-05.json",
+          "sha256": "001c3820b5f898ec69b09f6ea92c5b62ca6a079a59353c25c4e3d180d3e0c12c"
+        },
+        {
+          "file": "opposing-force-stored-wad-status-2026-09-05.json",
+          "sha256": "04ddba1119fbe16772a1b1d9419c32cc668de13d7fdb452c6bc60e8a03d499fa"
+        }
+      ],
+      "captureAccepted": false,
+      "fullCampaignAccepted": false
+    }
+  ],
+  "passed": true
+}

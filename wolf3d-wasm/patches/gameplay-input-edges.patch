@@ -1,0 +1,244 @@
+diff --git a/Makefile b/Makefile
+--- a/Makefile
++++ b/Makefile
+@@ -28,7 +28,7 @@
+     LDFLAGS += -lidbfs.js
+     LDFLAGS += -s INVOKE_RUN=0
+     LDFLAGS += -s EXIT_RUNTIME=0
+-    LDFLAGS += -s EXPORTED_FUNCTIONS=_main,_WolfWasm_BrowserRuntimeState,_WolfWasm_BrowserCaptureIntent,_WolfWasm_BrowserControlsMask,_WolfWasm_BrowserSetInputCaptured,_WolfWasm_BrowserOpenMenu,_WolfWasm_BrowserControllerKey,_WolfWasm_BrowserControllerMouse,_WolfWasm_BrowserControllerButtons,_WolfWasm_BrowserPreparedDigiSounds,_WolfWasm_BrowserDigiStarts,_WolfWasm_BrowserActiveDigiChannels
++    LDFLAGS += -s EXPORTED_FUNCTIONS=_main,_WolfWasm_BrowserRuntimeState,_WolfWasm_BrowserCaptureIntent,_WolfWasm_BrowserControlsMask,_WolfWasm_BrowserSetInputCaptured,_WolfWasm_BrowserOpenMenu,_WolfWasm_BrowserControllerKey,_WolfWasm_BrowserControllerMouse,_WolfWasm_BrowserControllerButtons,_WolfWasm_BrowserPreparedDigiSounds,_WolfWasm_BrowserDigiStarts,_WolfWasm_BrowserActiveDigiChannels,_WolfWasm_BrowserInputDiagnostics
+     LDFLAGS += -s EXPORTED_RUNTIME_METHODS=FS,callMain
+ endif
+ 
+diff --git a/id_in.cpp b/id_in.cpp
+--- a/id_in.cpp
++++ b/id_in.cpp
+@@ -17,6 +17,9 @@
+ //	DEBUG - there are more globals
+ //
+ 
++#ifdef WOLF4SDL_WEB
++#include <atomic>
++#endif
+ #include "wl_def.h"
+ 
+ 
+@@ -60,14 +63,38 @@
+ int JoyNumButtons;
+ static int JoyNumHats;
+ 
++#ifdef WOLF4SDL_WEB
++static std::atomic<bool> GrabInput(false);
++#else
+ static bool GrabInput = false;
++#endif
+ static bool NeedRestore = false;
+ #ifdef WOLF4SDL_WEB
+ static int WebMouseDeltaX = 0;
+ static int WebMouseDeltaY = 0;
+ static int WebControllerButtons = 0;
++// Edges survive a complete down/up pair until one gameplay sample consumes
++// them. Held state remains in Keyboard/SDL and is never prolonged or rewritten.
++static boolean WebGameplayKeyPressed[SDLK_LAST];
++static std::atomic<int> WebGameplayMousePressed(0);
++static std::atomic<unsigned> WebGameplayKeyEdges(0);
++static std::atomic<unsigned> WebGameplayMouseEdges(0);
++static std::atomic<int> WebGameplayMouseSample(0);
+ #include <emscripten/emscripten.h>
+ 
++extern "C" EMSCRIPTEN_KEEPALIVE int WolfWasm_BrowserInputDiagnostics(int field)
++{
++    switch (field)
++    {
++        case 0: return (GrabInput ? 1 : 0) | (mouseenabled ? 2 : 0) |
++            (buttonmouse[0] == bt_attack ? 4 : 0);
++        case 1: return WebGameplayKeyEdges;
++        case 2: return WebGameplayMouseEdges;
++        case 3: return WebGameplayMouseSample;
++        default: return 0;
++    }
++}
++
+ extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserSetInputCaptured(int captured)
+ {
+     GrabInput = captured != 0;
+@@ -75,6 +102,7 @@
+     {
+         WebMouseDeltaX = 0;
+         WebMouseDeltaY = 0;
++        WebGameplayMousePressed = 0;
+     }
+ }
+ 
+@@ -183,6 +211,11 @@
+     if(rightPressed) buttons |= 1 << 1;
+ 
+ #ifdef WOLF4SDL_WEB
++    if (WolfWasmRuntimeState == 2)
++    {
++        buttons |= WebGameplayMousePressed;
++        WebGameplayMouseSample = buttons | WebControllerButtons;
++    }
+     return buttons | WebControllerButtons;
+ #else
+     return buttons;
+@@ -347,8 +380,17 @@
+                 if(sym < lengthof(ASCIINames) && ASCIINames[sym])
+                     LastASCII = ASCIINames[sym];
+             }
+-            if(LastScan<SDLK_LAST)
++            if(LastScan >= 0 && LastScan<SDLK_LAST)
++            {
+                 Keyboard[LastScan] = 1;
++#ifdef WOLF4SDL_WEB
++                if (WolfWasmRuntimeState == 2)
++                {
++                    WebGameplayKeyPressed[LastScan] = true;
++                    ++WebGameplayKeyEdges;
++                }
++#endif
++            }
+             if(LastScan == SDLK_PAUSE)
+                 Paused = true;
+             break;
+@@ -375,13 +417,20 @@
+                 }
+             }
+ 
+-            if(key<SDLK_LAST)
++            if(key >= 0 && key<SDLK_LAST)
+                 Keyboard[key] = 0;
+             break;
+         }
+ 
+         case SDL_ACTIVEEVENT:
+         {
++#ifdef WOLF4SDL_WEB
++            if (!event->active.gain && (event->active.state & SDL_APPINPUTFOCUS))
++            {
++                IN_ClearKeysDown();
++                WebGameplayMousePressed = 0;
++            }
++#endif
+             if(fullscreen && (event->active.state & SDL_APPACTIVE) != 0)
+             {
+                 if(event->active.gain)
+@@ -400,6 +449,16 @@
+         }
+ 
+ #ifdef WOLF4SDL_WEB
++        case SDL_MOUSEBUTTONDOWN:
++            if (WolfWasmRuntimeState == 2 && event->button.button >= SDL_BUTTON_LEFT &&
++                event->button.button <= SDL_BUTTON_RIGHT)
++            {
++                const int button = event->button.button;
++                WebGameplayMousePressed |= button == SDL_BUTTON_LEFT ? 1 :
++                    button == SDL_BUTTON_RIGHT ? 2 : 4;
++                ++WebGameplayMouseEdges;
++            }
++            break;
+         case SDL_MOUSEMOTION:
+             WebMouseDeltaX += event->motion.xrel;
+             WebMouseDeltaY += event->motion.yrel;
+@@ -541,6 +600,28 @@
+ 	LastScan = sc_None;
+ 	LastASCII = key_None;
+ 	memset ((void *) Keyboard,0,sizeof(Keyboard));
++#ifdef WOLF4SDL_WEB
++    memset(WebGameplayKeyPressed, 0, sizeof(WebGameplayKeyPressed));
++    WebGameplayMousePressed = 0;
++#endif
++}
++
++boolean IN_GameplayKeyDown(ScanCode key)
++{
++    if (key < 0 || key >= SDLK_LAST) return false;
++#ifdef WOLF4SDL_WEB
++    return Keyboard[key] || WebGameplayKeyPressed[key];
++#else
++    return Keyboard[key];
++#endif
++}
++
++void IN_FinishGameplayInput()
++{
++#ifdef WOLF4SDL_WEB
++    memset(WebGameplayKeyPressed, 0, sizeof(WebGameplayKeyPressed));
++    WebGameplayMousePressed = 0;
++#endif
+ }
+ 
+ 
+diff --git a/id_in.h b/id_in.h
+--- a/id_in.h
++++ b/id_in.h
+@@ -167,6 +167,8 @@
+ 
+ void    IN_WaitAndProcessEvents();
+ void    IN_ProcessEvents();
++boolean IN_GameplayKeyDown(ScanCode key);
++void    IN_FinishGameplayInput();
+ void    IN_GetMouseDelta(int *dx, int *dy);
+ 
+ int     IN_MouseButtons (void);
+diff --git a/wl_play.cpp b/wl_play.cpp
+--- a/wl_play.cpp
++++ b/wl_play.cpp
+@@ -258,7 +258,7 @@
+     int i;
+ 
+     for (i = 0; i < NUMBUTTONS; i++)
+-        if (Keyboard[buttonscan[i]])
++        if (IN_GameplayKeyDown(buttonscan[i]))
+             buttonstate[i] = true;
+ }
+ 
+@@ -321,23 +321,23 @@
+     // Modern browser movement while preserving the original arrow keys for
+     // turning. Do not also bind WASD through dirscan: that made W/S apply
+     // movement twice and A/D both strafe and turn.
+-    if (Keyboard[sc_W])
++    if (IN_GameplayKeyDown(sc_W))
+         controly -= delta;
+-    if (Keyboard[sc_S])
++    if (IN_GameplayKeyDown(sc_S))
+         controly += delta;
+-    if (Keyboard[sc_A])
++    if (IN_GameplayKeyDown(sc_A))
+         buttonstate[bt_strafeleft] = true;
+-    if (Keyboard[sc_D])
++    if (IN_GameplayKeyDown(sc_D))
+         buttonstate[bt_straferight] = true;
+ #endif
+ 
+-    if (Keyboard[dirscan[di_north]])
++    if (IN_GameplayKeyDown(dirscan[di_north]))
+         controly -= delta;
+-    if (Keyboard[dirscan[di_south]])
++    if (IN_GameplayKeyDown(dirscan[di_south]))
+         controly += delta;
+-    if (Keyboard[dirscan[di_west]])
++    if (IN_GameplayKeyDown(dirscan[di_west]))
+         controlx -= delta;
+-    if (Keyboard[dirscan[di_east]])
++    if (IN_GameplayKeyDown(dirscan[di_east]))
+         controlx += delta;
+ }
+ 
+@@ -467,6 +467,7 @@
+         controlx *= (int) tics;
+         controly *= (int) tics;
+ 
++        IN_FinishGameplayInput();
+         return;
+     }
+ 
+@@ -493,6 +494,8 @@
+     if (joystickenabled)
+         PollJoystickMove ();
+ 
++    IN_FinishGameplayInput();
++
+ //
+ // bound movement to a maximum
+ //

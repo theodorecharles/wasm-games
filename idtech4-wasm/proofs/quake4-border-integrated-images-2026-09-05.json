@@ -1,0 +1,375 @@
+{
+  "scope": "Actual linked engine allocation/upload/DXT decoder/sampler settings; recording GL sink, not browser/GPU acceptance",
+  "wasmSha256": "7ef1503878aa7f47c63f5d57a1ff127dcfd02146c9064a880a2904a6cc1f8084",
+  "jsSha256": "209ee0eb7940b52c858d6eccf48d51f01458513aaa3ada7656987387981304b8",
+  "baseline": false,
+  "depthBaseline": false,
+  "framebufferBaseline": false,
+  "borderCases": true,
+  "results": [
+    {
+      "label": "alpha clip lookup: white RGB, original alpha",
+      "passed": true
+    },
+    {
+      "label": "luminance: RGB replication, opaque alpha",
+      "passed": true
+    },
+    {
+      "label": "intensity lighting lookup: RGBA replication",
+      "passed": true
+    },
+    {
+      "label": "luminance-alpha: both channels preserved",
+      "passed": true
+    },
+    {
+      "label": "RGB565: big-endian source bytes",
+      "passed": true
+    },
+    {
+      "label": "XRGB8: discard source alpha only",
+      "passed": true
+    },
+    {
+      "label": "RGB normal: X duplicated into alpha",
+      "passed": true
+    },
+    {
+      "label": "green-alpha atlas: white RGB and green coverage",
+      "passed": true
+    },
+    {
+      "label": "thin DXT1: padded block cropped",
+      "passed": true
+    },
+    {
+      "label": "thin DXT5: encoded alpha preserved",
+      "passed": true
+    },
+    {
+      "label": "compressed atlas: decode then green-alpha swizzle",
+      "passed": true
+    },
+    {
+      "label": "compressed RGB normal: decode then alpha-X swizzle",
+      "passed": true
+    },
+    {
+      "label": "thin DXT1: transparent selector preserved",
+      "passed": true
+    },
+    {
+      "label": "thin DXT5 normal: raw encoded channels retained",
+      "passed": true
+    },
+    {
+      "label": "thin YCoCg: raw encoded channels retained",
+      "passed": true
+    },
+    {
+      "label": "valid DXT5 normal stays compressed",
+      "passed": true
+    },
+    {
+      "label": "floating-point storage unchanged",
+      "passed": true
+    },
+    {
+      "label": "depth placeholder uses a WebGL-valid sized format and unsigned-int type",
+      "passed": true
+    },
+    {
+      "label": "depth cube and mip allocations retain depth storage",
+      "passed": true
+    },
+    {
+      "label": "packed depth-stencil storage unchanged",
+      "passed": true
+    },
+    {
+      "label": "mip, cube-face, pitched subrectangle and pixel-store restoration",
+      "passed": true
+    },
+    {
+      "label": "thin compressed chain uses RGBA at every mip",
+      "passed": true
+    },
+    {
+      "label": "compressed pitched subrectangle: crop block edges and skip source blocks",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source -1, samples 0, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source -1, samples 0, alpha 8",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source -1, samples 4, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source -1, samples 4, alpha 8",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source 0, samples 0, alpha 8",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source 0, samples 4, alpha 8",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source 1, samples 0, alpha 8",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy: source 1, samples 4, alpha 8",
+      "passed": true
+    },
+    {
+      "label": "framebuffer copy scratch resources purge and recreate",
+      "passed": true
+    },
+    {
+      "label": "border format alpha, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format alpha, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format luminance, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format luminance, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format intensity, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format intensity, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format luminance-alpha, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format luminance-alpha, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format rgb565, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format rgb565, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format xrgb8, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format xrgb8, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format rgb-normal, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format rgb-normal, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format green-alpha, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format green-alpha, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format dxt1, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format dxt1, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format dxt5, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format dxt5, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format dxt1-green-alpha, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format dxt1-green-alpha, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format dxt1-normal, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format dxt1-normal, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format dxt5-normal, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format dxt5-normal, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format ycocg, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format ycocg, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format rgba16f, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format rgba16f, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format depth, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format depth, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format depth-stencil, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format depth-stencil, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border format rgba8, alpha 0",
+      "passed": true
+    },
+    {
+      "label": "border format rgba8, alpha 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 0, maximum 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 0, maximum 8",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 0, maximum 16",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 1, maximum 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 1, maximum 8",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 1, maximum 16",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 2, maximum 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 2, maximum 8",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 1, filter 2, maximum 16",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 0, maximum 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 0, maximum 8",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 0, maximum 16",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 1, maximum 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 1, maximum 8",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 1, maximum 16",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 2, maximum 1",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 2, maximum 8",
+      "passed": true
+    },
+    {
+      "label": "border filtering: levels 4, filter 2, maximum 16",
+      "passed": true
+    },
+    {
+      "label": "border disabled after repeat change 0",
+      "passed": true
+    },
+    {
+      "label": "border disabled after repeat change 3",
+      "passed": true
+    },
+    {
+      "label": "border disabled after repeat change 4",
+      "passed": true
+    },
+    {
+      "label": "border sampler refresh and unchanged draw caching",
+      "passed": true
+    },
+    {
+      "label": "border texture purge and recreation clear metadata",
+      "passed": true
+    }
+  ]
+}

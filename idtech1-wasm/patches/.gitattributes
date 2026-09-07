@@ -1,0 +1,3 @@
+# Unified patch context preserves the upstream source's tabs/trailing spaces.
+# Validate the applied source tree rather than interpreting patch markers as C.
+*.patch -whitespace

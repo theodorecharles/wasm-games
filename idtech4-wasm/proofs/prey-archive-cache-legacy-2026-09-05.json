@@ -1,0 +1,276 @@
+{
+  "scope": "Production Prey worker cache wrapping the exact WORKERFS read method extracted from the generated SDK artifact. Fixture provides deterministic immutable Blob regions and synchronous reader, including virtual >4 GiB offsets; byte boundaries, cache isolation, eviction, error retry and backing-read count are exact. Not wall-clock Chrome/ZIP/gameplay evidence.",
+  "cached": false,
+  "workerSHA256": "d178dbba26874f70336ea930fc5b7cda06daa3d5a84b790154eaa126452ed4d1",
+  "sdkReadSHA256": "91ed4ed0930b9bd5ba7c5774b74689e770433b9b42eb93b77e575b540cc85a66",
+  "backingReads": 10060,
+  "backingBytes": 196347,
+  "finalStats": {
+    "residentBytes": 0
+  },
+  "cases": [
+    {
+      "label": "first header",
+      "passed": true
+    },
+    {
+      "label": "same-block seek",
+      "passed": true
+    },
+    {
+      "label": "backward seek",
+      "passed": true
+    },
+    {
+      "label": "cross-block",
+      "passed": true
+    },
+    {
+      "label": "middle block",
+      "passed": true
+    },
+    {
+      "label": "previous block",
+      "passed": true
+    },
+    {
+      "label": "tail block",
+      "passed": true
+    },
+    {
+      "label": "short EOF",
+      "passed": true
+    },
+    {
+      "label": "at EOF",
+      "passed": true
+    },
+    {
+      "label": "past EOF",
+      "passed": true
+    },
+    {
+      "label": "zero read",
+      "passed": true
+    },
+    {
+      "label": "bulk direct read",
+      "passed": true
+    },
+    {
+      "label": "exact block read",
+      "passed": true
+    },
+    {
+      "label": "64-bit file offset preserved",
+      "passed": true
+    },
+    {
+      "label": "tiny file and EOF",
+      "passed": true
+    },
+    {
+      "label": "empty file",
+      "passed": true
+    },
+    {
+      "label": "caller cannot mutate cached bytes",
+      "passed": true
+    },
+    {
+      "label": "replaced blob invalidates cache",
+      "passed": true
+    },
+    {
+      "label": "changed file size preserves short-read boundary",
+      "passed": true
+    },
+    {
+      "label": "backing I/O errors propagate",
+      "passed": true
+    },
+    {
+      "label": "failed fill retries without stale data",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-0",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-1",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-2",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-3",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-4",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-5",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-6",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-7",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-8",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-9",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-10",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-11",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-12",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-13",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-14",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-15",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-16",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-17",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-18",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-19",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-20",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-21",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-22",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-23",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-24",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-25",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-26",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-27",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-28",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-29",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-30",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-31",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-32",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-33",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-34",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-35",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-36",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-37",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-38",
+      "passed": true
+    },
+    {
+      "label": "file-isolation-39",
+      "passed": true
+    },
+    {
+      "label": "retained cache is bounded to 1 MiB",
+      "passed": true,
+      "residentBytes": 0
+    },
+    {
+      "label": "evicted original file reloads correctly",
+      "passed": true
+    },
+    {
+      "label": "ten thousand tiny header reads remain exact",
+      "passed": true
+    },
+    {
+      "label": "tiny header reads use one backing block",
+      "passed": false,
+      "requests": 10000,
+      "backingReads": 10000
+    }
+  ]
+}

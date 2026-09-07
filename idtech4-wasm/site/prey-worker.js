@@ -5,6 +5,59 @@ let runtime = null;
 let started = false;
 let failed = false;
 let frameScheduled = false;
+let archiveCacheStats = null;
+
+// WORKERFS is read-only, but its default reader makes a synchronous Blob read
+// for every tiny minizip header access. Retain at most one 64 KiB block per
+// file, up to 16 files (1 MiB), without copying entire retail archives to RAM.
+function installPreyArchiveReadCache(workerFs) {
+  const blockSize = 64 * 1024;
+  const maxFiles = 16;
+  const entries = new Map();
+  const originalRead = workerFs.stream_ops.read;
+  let requests = 0, hits = 0, backingReads = 0;
+  workerFs.stream_ops.read = function(stream, buffer, offset, length, position) {
+    requests++;
+    const node = stream.node;
+    // Leave unusual arguments and bulk reads to the SDK implementation.
+    if (!Number.isSafeInteger(position) || position < 0 || !Number.isSafeInteger(length) || length <= 0 ||
+        length >= blockSize || position >= node.size) {
+      if (length > 0 && position < node.size) backingReads++;
+      return originalRead.call(this, stream, buffer, offset, length, position);
+    }
+    let entry = entries.get(node);
+    if (entry) entries.delete(node);
+    else {
+      if (entries.size === maxFiles) {
+        const oldest = entries.keys().next().value;
+        entry = entries.get(oldest);
+        entries.delete(oldest);
+      } else entry = { bytes: new Uint8Array(blockSize) };
+      entry.contents = null;
+    }
+    entries.set(node, entry);
+    let copied = 0;
+    while (copied < length && position + copied < node.size) {
+      const cursor = position + copied;
+      const start = Math.floor(cursor / blockSize) * blockSize;
+      if (entry.contents !== node.contents || entry.start !== start || entry.size !== node.size) {
+        // Invalidate before reading so a failed I/O cannot expose stale bytes.
+        entry.contents = null;
+        backingReads++;
+        entry.length = originalRead.call(this, stream, entry.bytes, 0, Math.min(blockSize, node.size - start), start);
+        entry.start = start;
+        entry.size = node.size;
+        entry.contents = node.contents;
+      } else hits++;
+      const available = Math.min(length - copied, entry.length - (cursor - entry.start));
+      if (available <= 0) break;
+      buffer.set(entry.bytes.subarray(cursor - entry.start, cursor - entry.start + available), offset + copied);
+      copied += available;
+    }
+    return copied;
+  };
+  return () => ({ requests, hits, backingReads, residentBytes: entries.size * blockSize, maxBytes: blockSize * maxFiles });
+}
 
 function scheduleFrame() {
   if (failed || !runtime || frameScheduled) return;
@@ -71,6 +124,7 @@ async function launch(message) {
       noInitialRun: true,
       locateFile: path => new URL(path.endsWith('.wasm') ? 'prey06.wasm' : path, self.location.href).href,
       preRun: [() => {
+        archiveCacheStats = installPreyArchiveReadCache(WORKERFS);
         FS.mkdir('/owner-data');
         FS.mount(WORKERFS, { blobs: entries.map(entry => ({ name: entry.path, data: entry.file })) }, '/owner-data');
       }],
@@ -82,6 +136,7 @@ async function launch(message) {
           post('persistence-ready', null, { root: persistenceManager.root, namespace: persistenceManager.namespace });
           post('status', 'Initializing the Prey renderer and menus…');
           runtime.callMain(nativeArguments);
+          post('log', `[prey-wasm] archive read cache: ${JSON.stringify(archiveCacheStats())}`);
           post('ready', null, { state: 'menu', inputMode: 'menu', resumeAvailable: false });
           scheduleFrame();
         })().catch(reason => {

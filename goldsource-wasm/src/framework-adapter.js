@@ -84,10 +84,61 @@ function websocketEndpoint() {
   return url;
 }
 
-// Local development WebRTC bridge (artifacts/runtime/cs-bridge-server.mjs).
+// Opt-in, DOM-visible input diagnostics for real browser acceptance. Keep
+// normal launches unchanged and never record player-name/text-field input.
+function installInputProof(context) {
+  if (new URLSearchParams(location.search).get('proof') !== 'input-capture') return;
+  const canvas = context.elements.canvas;
+  const records = [];
+  const record = (type, detail = {}) => {
+    records.push({ type, at: Math.round(performance.now()),
+      focused: document.hasFocus(), visibility: document.visibilityState,
+      activated: navigator.userActivation?.isActive === true,
+      captured: document.pointerLockElement === canvas,
+      connected: canvas.isConnected, runtimeHidden: context.elements.runtime?.hidden,
+      ...detail });
+    if (records.length > 64) records.shift();
+    document.documentElement.dataset.goldsourceInputProof = JSON.stringify(records);
+  };
+  const original = canvas.requestPointerLock;
+  if (typeof original === 'function') {
+    canvas.requestPointerLock = function (...args) {
+      record('capture-request');
+      try {
+        const pending = original.apply(this, args);
+        if (pending?.then) pending.then(
+          () => record('capture-resolved'),
+          error => record('capture-rejected', { name: String(error?.name || ''), message: String(error?.message || '') })
+        );
+        return pending;
+      } catch (error) {
+        record('capture-threw', { name: String(error?.name || ''), message: String(error?.message || '') });
+        throw error;
+      }
+    };
+  }
+  const originalExit = document.exitPointerLock;
+  if (typeof originalExit === 'function') {
+    document.exitPointerLock = function (...args) {
+      record('capture-exit', { stack: new Error().stack?.slice(0, 1500) });
+      return originalExit.apply(this, args);
+    };
+  }
+  for (const type of ['pointerdown', 'pointerup']) {
+    canvas.addEventListener(type, event => record(type, { trusted: event.isTrusted, button: event.button }), true);
+  }
+  for (const type of ['pointerlockchange', 'pointerlockerror', 'visibilitychange']) {
+    document.addEventListener(type, event => record(type, { trusted: event.isTrusted }));
+  }
+  for (const type of ['focus', 'blur']) window.addEventListener(type, () => record(type));
+  record('installed');
+}
+
+// Local development WebRTC bridge (runtime/counter-strike/start.sh).
 // Same-origin signaling is tried first; static-only hosts (the game-lab
 // container) have no /websocket endpoint, so networked play falls back here.
-const BRIDGE_FALLBACK = '127.0.0.1:4190';
+// Port 4190 (Sieve) is blocked by the Fetch/WebSocket standard.
+const BRIDGE_FALLBACK = '127.0.0.1:4192';
 
 class WebRtcXash extends Xash3D {
   constructor(options, endpoint) {
@@ -118,7 +169,10 @@ class WebRtcXash extends Xash3D {
       await this.connect();
     } catch (error) {
       const fallback = new URL(`ws://${BRIDGE_FALLBACK}/websocket`);
-      if (this.endpoint.host === fallback.host) throw error;
+      // A selected server is authoritative: its failure must not send the
+      // player to an unrelated match. Only the implicit same-origin default
+      // may fall back to the local development bridge.
+      if (new URLSearchParams(location.search).get('server') || this.endpoint.host === fallback.host) throw error;
       this.endpoint = fallback;
       await this.connect();
     }
@@ -710,6 +764,7 @@ window.addEventListener('beforeunload', () => {
 
 globalThis.WasmGameAdapter = Object.freeze({
   async init(context) {
+    installInputProof(context);
     await loadManifest();
     configurationFor(context.variant);
     const capabilities = context.framework.requireCapabilities({ wasm: true, webgl2: true, audio: true, indexedDb: true });

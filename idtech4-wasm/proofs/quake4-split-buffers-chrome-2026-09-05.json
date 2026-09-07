@@ -1,0 +1,426 @@
+{
+  "date": "2026-09-05",
+  "game": "Quake 4 SP",
+  "scope": "Saved-scene sky rendering and limited controls, normal immutable package",
+  "url": "http://127.0.0.1:32873/?proof=quake4-split-buffers-2026-09-05",
+  "image": "local/idtech4-wasm:quake4-split-buffers-candidate",
+  "imageId": "sha256:001f0101946d32aa7f6af315765c1a0f4feb62cf2464ed6d902bea4f9df429cc",
+  "container": "4e9cc0c7b71f826abee21551c0c993cd00e808abc8ef5ee0497f5f52fea4f164",
+  "artifacts": {
+    "js": "f5c0bd84e0ca004836ed08453a23c65476a076dac13b313b7641d0a8183cb01c",
+    "wasm": "acc83bd822c80b7c28e4868331c593951787ff69c823f3306062793c33532f62",
+    "worker": "6f70c4dc7d513e29a52a25f2c1d0d28a3e84b717f56e51f10a1ab3c9ad1268b1",
+    "patch": "19ed1a8e7ee35687a6f6e7769406b559b82bb2c6f66848a935cb17c004fd84fd"
+  },
+  "setup": {
+    "diagnosticMounts": false,
+    "save": "q4shadowdiag20260905",
+    "saveLoadedThroughNativeMenu": true,
+    "nativeGraphicsSettingsChanged": false,
+    "liveServicesChanged": false,
+    "viewport": {
+      "width": 1408,
+      "height": 742
+    }
+  },
+  "observations": {
+    "rendering": "Bright cloudy sky, distant towers/buildings and moving aircraft now render behind the textured terrain/walls/rocks and pistol/hand/HUD, where the preceding lighting candidate showed a black background. Sky remains visible after relative mouse motion visibly changes camera yaw.",
+    "reference": "Native offscreen reference independently shows bright sky. The opening beneath the central sloping rock also appears natively. Native map timing/actors and viewport differ; this is not pixel-identical comparison or blanket brightness acceptance.",
+    "controls": "Click acquired application-reported capture. Five short W presses delivered balanced key events; one relative mouse event visibly changed yaw. Escape opened the native pause menu and released reported capture.",
+    "pointerLock": "DOM pointerLockElement was null despite capture:true and relative mouse response; independent DOM pointer-lock confirmation remains open.",
+    "audio": "WebAudio scheduling progressed to 311 starts with running context; no audible listening acceptance.",
+    "errors": "No worker errors or diagnostic records in captured normal-package state."
+  },
+  "beforeInput": {
+    "audio": {
+      "buffers": 955,
+      "messages": 425164,
+      "sources": 96,
+      "starts": 240,
+      "state": "running"
+    },
+    "diagnosticRecords": 0,
+    "errors": [],
+    "input": {
+      "captureChanges": 0,
+      "events": [
+        {
+          "at": 139256.8,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 140082.1,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        },
+        {
+          "at": 155122.6,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 155948.5,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        },
+        {
+          "at": 170467.7,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 171289.7,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        }
+      ],
+      "keyDown": 0,
+      "keyUp": 0,
+      "pointerAbsolute": 303,
+      "pointerDown": 3,
+      "pointerDx": 0,
+      "pointerDy": 0,
+      "pointerRelative": 0,
+      "pointerUp": 3,
+      "text": 0
+    },
+    "pointerLock": null,
+    "states": [
+      {
+        "at": 110296.5,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 199446.6,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      }
+    ],
+    "eventFilter": "Repetitive absolute menu-motion samples omitted; aggregate counters retained."
+  },
+  "afterInput": {
+    "audio": {
+      "buffers": 955,
+      "messages": 822431,
+      "sources": 96,
+      "starts": 311,
+      "state": "running"
+    },
+    "diagnosticRecords": 0,
+    "errors": [],
+    "input": {
+      "captureChanges": 1,
+      "events": [
+        {
+          "at": 139256.8,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 140082.1,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        },
+        {
+          "at": 155122.6,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 155948.5,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        },
+        {
+          "at": 170467.7,
+          "button": 0,
+          "down": true,
+          "type": "pointer-button"
+        },
+        {
+          "at": 171289.7,
+          "button": 0,
+          "down": false,
+          "type": "pointer-button"
+        },
+        {
+          "at": 298747.2,
+          "captured": true,
+          "type": "capture"
+        },
+        {
+          "at": 335038.9,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335039,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335041.7,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335050.7,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335050.8,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335051.7,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335061.3,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335061.3,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335062.3,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335072.5,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335072.5,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335073.4,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335084.1,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335084.1,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335085.1,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335253.7,
+          "dx": 40,
+          "dy": 0,
+          "type": "pointer-relative"
+        }
+      ],
+      "keyDown": 5,
+      "keyUp": 5,
+      "pointerAbsolute": 303,
+      "pointerDown": 3,
+      "pointerDx": 40,
+      "pointerDy": 0,
+      "pointerRelative": 1,
+      "pointerUp": 3,
+      "text": 5
+    },
+    "pointerLockTag": null,
+    "states": [
+      {
+        "at": 110296.5,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 199446.6,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      }
+    ],
+    "eventFilter": "Repetitive absolute menu-motion samples omitted; aggregate counters retained."
+  },
+  "paused": {
+    "errors": [],
+    "input": {
+      "captureChanges": 2,
+      "events": [
+        {
+          "at": 335072.5,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335072.5,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335073.4,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335084.1,
+          "down": true,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335084.1,
+          "codepoint": 87,
+          "type": "text"
+        },
+        {
+          "at": 335085.1,
+          "down": false,
+          "key": 87,
+          "repeat": false,
+          "scan": 26,
+          "type": "key"
+        },
+        {
+          "at": 335253.7,
+          "dx": 40,
+          "dy": 0,
+          "type": "pointer-relative"
+        },
+        {
+          "at": 419790.4,
+          "down": true,
+          "key": 0,
+          "repeat": false,
+          "scan": 41,
+          "type": "key"
+        },
+        {
+          "at": 419792.1,
+          "down": false,
+          "key": 0,
+          "repeat": false,
+          "scan": 41,
+          "type": "key"
+        },
+        {
+          "at": 419828.2,
+          "captured": false,
+          "type": "capture"
+        }
+      ],
+      "keyDown": 6,
+      "keyUp": 6,
+      "pointerAbsolute": 303,
+      "pointerDown": 3,
+      "pointerDx": 40,
+      "pointerDy": 0,
+      "pointerRelative": 1,
+      "pointerUp": 3,
+      "text": 5
+    },
+    "states": [
+      {
+        "at": 110296.5,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 199446.6,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      },
+      {
+        "at": 419827.7,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "paused",
+        "type": "engine-state"
+      }
+    ],
+    "eventFilter": "Repetitive absolute menu-motion samples omitted; aggregate counters retained."
+  },
+  "remaining": [
+    "border-clamp sampling semantics",
+    "automatic capture on load/resume",
+    "sustained movement and firing",
+    "audible listening",
+    "wider campaign/multimap renderer acceptance"
+  ],
+  "retentionFollowup": "A subsequent markHandoff request returned 'Please update the ChatGPT extension in Google Chrome to the latest version to continue.' No further browser action was attempted; this does not invalidate the preceding captured results or prove game failure."
+}

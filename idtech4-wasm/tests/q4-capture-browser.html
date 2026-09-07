@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Quake 4 pointer-lock control</title>
+<style>
+  body { font: 18px system-ui; margin: 2rem; background: #181818; color: #eee; }
+  button { margin: .5rem; padding: 1rem; font: inherit; }
+  canvas { display: block; border: 2px solid #888; margin: 1rem 0; }
+  pre { white-space: pre-wrap; }
+</style>
+<h1>Pointer-lock control</h1>
+<p>This independent control uses the browser API directly, without an engine or
+framework. Escape always releases capture. Requests never retry automatically.</p>
+<button id="direct">Capture now</button>
+<button id="delayed">Capture after 400 ms</button>
+<button id="release">Release through API</button>
+<p>Press R while captured to release through the API. After that API release,
+Escape requests one re-lock only while unlocked.</p>
+<canvas id="target" width="640" height="240" tabindex="0"></canvas>
+<pre id="results" aria-live="polite"></pre>
+<script>
+  const target = document.getElementById('target');
+  const results = document.getElementById('results');
+  const records = [];
+  let releasedThroughApi = false;
+  const note = (kind, extra = {}) => {
+    records.push({kind, at: performance.now(), locked: document.pointerLockElement === target,
+      focused: document.hasFocus(), active: navigator.userActivation?.isActive ?? null, ...extra});
+    results.textContent = JSON.stringify(records, null, 2);
+  };
+  async function capture(event, mode) {
+    note('request', {mode, trusted: event.isTrusted});
+    try {
+      await target.requestPointerLock();
+      note('resolved', {mode});
+    } catch (error) {
+      note('rejected', {mode, name: error.name, message: error.message});
+    }
+  }
+  document.getElementById('direct').addEventListener('click', event => capture(event, 'direct'));
+  document.getElementById('delayed').addEventListener('click', event => {
+    note('scheduled', {trusted: event.isTrusted});
+    setTimeout(() => capture(event, 'delayed'), 400);
+  });
+  function releaseThroughApi() {
+    if (document.pointerLockElement !== target) return;
+    releasedThroughApi = true;
+    document.exitPointerLock();
+  }
+  document.getElementById('release').addEventListener('click', releaseThroughApi);
+  document.addEventListener('keydown', event => {
+    if (event.code === 'Escape' && !event.repeat && !document.pointerLockElement && releasedThroughApi) {
+      releasedThroughApi = false;
+      capture(event, 'escape-after-api-release');
+    }
+    if (event.code === 'KeyR') releaseThroughApi();
+  });
+  document.addEventListener('pointerlockchange', () => note('change'));
+  document.addEventListener('pointerlockerror', () => note('error'));
+  window.addEventListener('blur', () => note('blur'));
+  window.addEventListener('focus', () => note('focus'));
+  note('ready');
+</script>
+</html>

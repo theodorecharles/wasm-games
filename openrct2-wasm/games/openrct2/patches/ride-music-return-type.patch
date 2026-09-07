@@ -1,0 +1,16 @@
+diff --git a/src/openrct2/ride/RideAudio.h b/src/openrct2/ride/RideAudio.h
+--- a/src/openrct2/ride/RideAudio.h
++++ b/src/openrct2/ride/RideAudio.h
+@@ -42,6 +42,12 @@ namespace OpenRCT2::RideAudio
+     void DefaultStartRideMusicChannel(const ViewportRideMusicInstance& instance);
+     void CircusStartRideMusicChannel(const ViewportRideMusicInstance& instance);
+ 
++#ifdef __EMSCRIPTEN__
++    // Instantiate the return type in units that only take a callback's address.
++    // Otherwise Clang can emit a placeholder void() declaration for Wasm linking.
++    static_assert(sizeof(std::pair<size_t, size_t>) > 0);
++#endif
++
+     std::pair<size_t, size_t> RideMusicGetTrackOffsetLength_Circus(const Ride& ride);
+     std::pair<size_t, size_t> RideMusicGetTrackOffsetLength_Default(const Ride& ride);
+ } // namespace OpenRCT2::RideAudio

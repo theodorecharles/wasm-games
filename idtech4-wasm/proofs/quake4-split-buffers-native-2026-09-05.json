@@ -1,0 +1,202 @@
+{
+  "scope": "Native Wasm array-pointer calls through the actual SDK renderer and production draw bridge; per-attribute VBO binding/stride semantics, not GPU pixels or proof of the campaign sky cause.",
+  "transformSHA256": "deffe6b3e595001fd9cc2cbe7ec76a40ee4809ac7c6a2e629fd3b5c40bcfd952",
+  "rows": [
+    {
+      "label": "split-sky-streams",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 7,
+        "positionStride": 64,
+        "textureStride": 0,
+        "currentBuffer": 7
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 64,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 7,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 0,
+        "offset": 0
+      },
+      "currentBuffer": 7,
+      "passed": true
+    },
+    {
+      "label": "split-same-stride",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 7,
+        "positionStride": 32,
+        "textureStride": 32,
+        "currentBuffer": 7
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 7,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "currentBuffer": 7,
+      "passed": true
+    },
+    {
+      "label": "unrelated-array-buffer-bind",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 7,
+        "positionStride": 32,
+        "textureStride": 32,
+        "currentBuffer": 8
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 7,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "currentBuffer": 8,
+      "passed": true
+    },
+    {
+      "label": "unbind-retains-vbo-pointers",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 7,
+        "positionStride": 32,
+        "textureStride": 32,
+        "currentBuffer": 0
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 7,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "currentBuffer": 0,
+      "passed": true
+    },
+    {
+      "label": "draw-arrays-after-unbind",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 7,
+        "positionStride": 32,
+        "textureStride": 32,
+        "currentBuffer": 0
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 7,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "currentBuffer": 0,
+      "passed": true
+    },
+    {
+      "label": "draw-arrays-after-unrelated-bind",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 7,
+        "positionStride": 32,
+        "textureStride": 32,
+        "currentBuffer": 8
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 7,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "currentBuffer": 8,
+      "passed": true
+    },
+    {
+      "label": "return-to-one-buffer",
+      "expected": {
+        "positionBuffer": 6,
+        "textureBuffer": 6,
+        "positionStride": 32,
+        "textureStride": 32,
+        "currentBuffer": 6
+      },
+      "position": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "texture": {
+        "buffer": 6,
+        "size": 3,
+        "type": 5126,
+        "normalized": false,
+        "stride": 32,
+        "offset": 0
+      },
+      "currentBuffer": 6,
+      "passed": true
+    }
+  ]
+}

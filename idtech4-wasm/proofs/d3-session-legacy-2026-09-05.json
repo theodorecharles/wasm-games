@@ -1,0 +1,296 @@
+{
+  "scope": "Exact shared Doom 3/RoE Session::ProcessEvent and BrowserOpenMenu bodies, compiled for browser/desktop preprocessor branches with tracing game, console, GUI and binding dependencies. Tests native routing, not full SDL/game/console implementations, pointer capture or rendering.",
+  "sourceSHA256": "1d2559038a502c08087849b2bf5392bc0fa721aa674330cadf03d4ebf2b14555",
+  "results": [
+    {
+      "browser": false,
+      "cases": [
+        {
+          "label": "gameplay-escape",
+          "trace": "close;game-escape;menu-start;",
+          "expected": "close;game-escape;menu-start;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "escape-keyup",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": false,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "shift-escape-console",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "shift-escape-unconsumed",
+          "trace": "console;binding;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "home-is-binding",
+          "trace": "console;binding;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "shift-home-is-binding",
+          "trace": "console;binding;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "game-ignores-escape",
+          "trace": "close;game-escape;",
+          "expected": "close;game-escape;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "game-returns-gui",
+          "trace": "close;game-escape;set-gui;",
+          "expected": "close;game-escape;set-gui;",
+          "handled": true,
+          "finalGui": 2,
+          "passed": true
+        },
+        {
+          "label": "escape-without-game",
+          "trace": "close;menu-start;",
+          "expected": "close;menu-start;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "existing-menu-escape",
+          "trace": "console;menu-event;",
+          "expected": "console;menu-event;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "existing-menu-console-first",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "ordinary-key-console-first",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "ordinary-key-binding",
+          "trace": "console;binding;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "no-map-forced-console",
+          "trace": "console;console-forced;",
+          "expected": "console;console-forced;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "mouse-is-not-escape",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": false,
+          "finalGui": 0,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "browser": true,
+      "cases": [
+        {
+          "label": "gameplay-escape",
+          "trace": "console;binding;",
+          "expected": "close;game-escape;menu-start;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": false
+        },
+        {
+          "label": "escape-keyup",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": false,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "shift-escape-console",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "shift-escape-unconsumed",
+          "trace": "console;binding;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "home-is-binding",
+          "trace": "close;game-escape;menu-start;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": false
+        },
+        {
+          "label": "shift-home-is-binding",
+          "trace": "close;game-escape;menu-start;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": false
+        },
+        {
+          "label": "game-ignores-escape",
+          "trace": "console;binding;",
+          "expected": "close;game-escape;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": false
+        },
+        {
+          "label": "game-returns-gui",
+          "trace": "console;binding;",
+          "expected": "close;game-escape;set-gui;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": false
+        },
+        {
+          "label": "escape-without-game",
+          "trace": "console;binding;",
+          "expected": "close;menu-start;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": false
+        },
+        {
+          "label": "existing-menu-escape",
+          "trace": "console;menu-event;",
+          "expected": "console;menu-event;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "existing-menu-console-first",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "ordinary-key-console-first",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "ordinary-key-binding",
+          "trace": "console;binding;",
+          "expected": "console;binding;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "no-map-forced-console",
+          "trace": "console;console-forced;",
+          "expected": "console;console-forced;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "mouse-is-not-escape",
+          "trace": "console;",
+          "expected": "console;",
+          "handled": false,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "capture-loss-gameplay",
+          "trace": "close;game-escape;menu-start;",
+          "expected": "close;game-escape;menu-start;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        },
+        {
+          "label": "capture-loss-game-ignore",
+          "trace": "close;game-escape;",
+          "expected": "close;game-escape;",
+          "handled": true,
+          "finalGui": 0,
+          "passed": true
+        },
+        {
+          "label": "capture-loss-game-gui",
+          "trace": "close;game-escape;set-gui;",
+          "expected": "close;game-escape;set-gui;",
+          "handled": true,
+          "finalGui": 2,
+          "passed": true
+        },
+        {
+          "label": "capture-loss-shift-console",
+          "trace": "close;game-escape;menu-start;",
+          "expected": "console;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": false
+        },
+        {
+          "label": "capture-loss-existing-menu",
+          "trace": "console;menu-event;",
+          "expected": "console;menu-event;",
+          "handled": true,
+          "finalGui": 1,
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

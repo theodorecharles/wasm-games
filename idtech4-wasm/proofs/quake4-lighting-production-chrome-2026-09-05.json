@@ -1,0 +1,73 @@
+{
+  "date": "2026-09-05",
+  "scope": "Chrome saved-scene rendering of the shipped-material lighting port in the normal immutable package, with no diagnostic worker/panel mounts. Partial rendering proof, not complete campaign acceptance.",
+  "url": "http://127.0.0.1:32873/?proof=quake4-lighting-production-2026-09-05",
+  "container": "d0f9fb7c5f71266a9caf4efbe177e1b99f0e428151095837a19dc2bac4d500c5",
+  "image": "sha256:e654f4ff1261c92d752dad59e65588eb00d260210ab85678d94499f595cbe849",
+  "servedSHA256": {
+    "javascript": "11b15254ea517e1294f0435bd53bbfeeb235b1fd4652b81219e840d352e643ee",
+    "wasm": "81ba77f6d322dcf6f326420fa156518d826c9b2ac339e93dc2ef5b85e2a463c9",
+    "worker": "6f70c4dc7d513e29a52a25f2c1d0d28a3e84b717f56e51f10a1ab3c9ad1268b1"
+  },
+  "observations": {
+    "save": "q4shadowdiag20260905 restored through native Load Game menu after fresh startup.",
+    "rendering": "Textured terrain, walls, rocks, visible effects, pistol/hand/crosshair and health 72 HUD render without GL interception. Dark areas and apparent rock-face/geometry gaps remain. This does not establish full rendering acceptance or resolve border sampling.",
+    "controls": "Escape opens the native pause menu; published paused state at 222616 ms.",
+    "diagnostics": "No diagnostic worker/panel mounts; zero diagnostic log records. Served native worker and engine hashes match the image.",
+    "audio": "209 WebAudio starts at capture; scheduling evidence, not listening acceptance.",
+    "preservation": "Only isolated candidate container replaced to remove test instrumentation. Its data mount and read-only retail data retained. No native graphics setting, live game service, retail asset or save changed. Blood reproduction remains deferred."
+  },
+  "proof": {
+    "audio": {
+      "buffers": 955,
+      "messages": 217655,
+      "sources": 96,
+      "starts": 209,
+      "state": "running"
+    },
+    "diagnosticRecords": 0,
+    "errors": [],
+    "states": [
+      {
+        "at": 97734.9,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 188524.5,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      }
+    ]
+  },
+  "paused": {
+    "errors": [],
+    "states": [
+      {
+        "at": 97734.9,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "menu",
+        "type": "engine-state"
+      },
+      {
+        "at": 188524.5,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "gameplay",
+        "type": "engine-state"
+      },
+      {
+        "at": 222616,
+        "inputMode": null,
+        "resumeAvailable": false,
+        "state": "paused",
+        "type": "engine-state"
+      }
+    ]
+  }
+}

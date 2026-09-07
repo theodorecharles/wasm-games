@@ -36,7 +36,4 @@ if [[ -n "$(git -C "${source_dir}" status --short --untracked-files=no | sed -n 
   exit 1
 fi
 
-# Do not retain upstream Markdown in ignored build trees.
-find "${source_dir}" -type f -name '*.md' -delete
-
 printf '%s\n' "${source_dir}"

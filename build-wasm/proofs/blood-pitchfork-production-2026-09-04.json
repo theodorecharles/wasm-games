@@ -1,0 +1,573 @@
+{
+  "passed": true,
+  "casesTested": 8,
+  "production": true,
+  "pitchfork": true,
+  "results": [
+    {
+      "name": "weapon-1/keyboard/walk/44100Hz",
+      "weapon": 1,
+      "input": "keyboard",
+      "menuStart": true,
+      "sampleRate": 44100,
+      "tapAttack": false,
+      "walk": true,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "keyboard",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 44100,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "hold-release",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 768,
+        "nonzeroFrames": 765,
+        "audioCallbacks": 1343,
+        "nonzeroAudioCallbacks": 1227,
+        "peakAudioSample": 1.0968741178512573,
+        "before": {
+          "simulationFrames": 76,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -32169,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            1024,
+            0,
+            0,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 422,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -35504,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/keyboard/taps/44100Hz",
+      "weapon": 1,
+      "input": "keyboard",
+      "menuStart": true,
+      "sampleRate": 44100,
+      "tapAttack": true,
+      "walk": false,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "keyboard",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 44100,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "quick-taps",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 744,
+        "nonzeroFrames": 741,
+        "audioCallbacks": 1201,
+        "nonzeroAudioCallbacks": 1084,
+        "peakAudioSample": 1.086008906364441,
+        "before": {
+          "simulationFrames": 21,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 367,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/mouse/walk/44100Hz",
+      "weapon": 1,
+      "input": "mouse",
+      "menuStart": true,
+      "sampleRate": 44100,
+      "tapAttack": false,
+      "walk": true,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "mouse",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 44100,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "hold-release",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 773,
+        "nonzeroFrames": 770,
+        "audioCallbacks": 1347,
+        "nonzeroAudioCallbacks": 1231,
+        "peakAudioSample": 1.1226022243499756,
+        "before": {
+          "simulationFrames": 77,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -32254,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            1024,
+            0,
+            0,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 422,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -35504,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/mouse/taps/44100Hz",
+      "weapon": 1,
+      "input": "mouse",
+      "menuStart": true,
+      "sampleRate": 44100,
+      "tapAttack": true,
+      "walk": false,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "mouse",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 44100,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "quick-taps",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 750,
+        "nonzeroFrames": 747,
+        "audioCallbacks": 1203,
+        "nonzeroAudioCallbacks": 1088,
+        "peakAudioSample": 1.0961310863494873,
+        "before": {
+          "simulationFrames": 21,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 368,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/keyboard/walk/48000Hz",
+      "weapon": 1,
+      "input": "keyboard",
+      "menuStart": true,
+      "sampleRate": 48000,
+      "tapAttack": false,
+      "walk": true,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "keyboard",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 48000,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "hold-release",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 770,
+        "nonzeroFrames": 767,
+        "audioCallbacks": 1446,
+        "nonzeroAudioCallbacks": 1319,
+        "peakAudioSample": 1,
+        "before": {
+          "simulationFrames": 76,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -32169,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            1024,
+            0,
+            0,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 422,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -35504,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/keyboard/taps/48000Hz",
+      "weapon": 1,
+      "input": "keyboard",
+      "menuStart": true,
+      "sampleRate": 48000,
+      "tapAttack": true,
+      "walk": false,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "keyboard",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 48000,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "quick-taps",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 757,
+        "nonzeroFrames": 754,
+        "audioCallbacks": 1332,
+        "nonzeroAudioCallbacks": 1207,
+        "peakAudioSample": 1,
+        "before": {
+          "simulationFrames": 21,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 371,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/mouse/walk/48000Hz",
+      "weapon": 1,
+      "input": "mouse",
+      "menuStart": true,
+      "sampleRate": 48000,
+      "tapAttack": false,
+      "walk": true,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "mouse",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 48000,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "hold-release",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 770,
+        "nonzeroFrames": 767,
+        "audioCallbacks": 1447,
+        "nonzeroAudioCallbacks": 1321,
+        "peakAudioSample": 1,
+        "before": {
+          "simulationFrames": 76,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -32169,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            1024,
+            0,
+            0,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 421,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -13505,
+            33280,
+            -35504,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    },
+    {
+      "name": "weapon-1/mouse/taps/48000Hz",
+      "weapon": 1,
+      "input": "mouse",
+      "menuStart": true,
+      "sampleRate": 48000,
+      "tapAttack": true,
+      "walk": false,
+      "duration": 10000,
+      "result": {
+        "passed": true,
+        "input": "mouse",
+        "alternate": false,
+        "menuStart": true,
+        "sampleRate": 48000,
+        "duration": 10000,
+        "settleMs": 1500,
+        "gesture": "quick-taps",
+        "artifactHashes": {
+          "blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+          "blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+          "blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07"
+        },
+        "runtimeOrigin": "image-http",
+        "frames": 747,
+        "nonzeroFrames": 744,
+        "audioCallbacks": 1318,
+        "nonzeroAudioCallbacks": 1194,
+        "peakAudioSample": 1,
+        "before": {
+          "simulationFrames": 21,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ]
+        },
+        "after": {
+          "simulationFrames": 368,
+          "inputMode": 0,
+          "gameplayInput": true,
+          "level": "e1m1",
+          "playerPosition": [
+            -14976,
+            33280,
+            -29360,
+            0
+          ],
+          "inputSeen": true,
+          "lastInput": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "weaponBefore": null,
+        "weaponAfter": null,
+        "attackSeen": false,
+        "weaponQavs": [],
+        "scope": "production native Wasm; fake DOM/2D/WebAudio; no Chrome/audible acceptance; firing input injected but weapon state not instrumented"
+      }
+    }
+  ],
+  "scope": "HTTP-served production native Wasm; real menu start, injected input; fake DOM/2D/WebAudio; not Chrome acceptance"
+}

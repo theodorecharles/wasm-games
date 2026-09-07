@@ -1,0 +1,35 @@
+diff --git a/source/build/src/polymost.cpp b/source/build/src/polymost.cpp
+--- a/source/build/src/polymost.cpp
++++ b/source/build/src/polymost.cpp
+@@ -1933,6 +1933,13 @@ void uploadtexture(int32_t doalloc, vec2_t siz, GLint texfmt, coltype *pic, vec2_t ts
+     }
+ }
+ 
++// WebGL 2 requires a sized internal format for single-channel textures.
++#ifdef __EMSCRIPTEN__
++static constexpr GLint indexedTextureInternalFormat = GL_R8;
++#else
++static constexpr GLint indexedTextureInternalFormat = GL_RED;
++#endif
++
+ void uploadtextureindexed(int32_t doalloc, vec2_t offset, vec2_t siz, intptr_t tile)
+ {
+     if (doalloc & 1)
+@@ -1944,7 +1951,7 @@ void uploadtextureindexed(int32_t doalloc, vec2_t offset, vec2_t siz, intptr_t tile)
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.f);
+ 
+-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, siz.y, siz.x, 0, GL_RED, GL_UNSIGNED_BYTE, (void*) tile);
++        glTexImage2D(GL_TEXTURE_2D, 0, indexedTextureInternalFormat, siz.y, siz.x, 0, GL_RED, GL_UNSIGNED_BYTE, (void*) tile);
+     }
+     else
+     {
+@@ -2024,7 +2031,7 @@ void uploadpalswap(int32_t palookupnum)
+         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.f);
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, PALSWAP_TEXTURE_SIZE, PALSWAP_TEXTURE_SIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
++        glTexImage2D(GL_TEXTURE_2D, 0, indexedTextureInternalFormat, PALSWAP_TEXTURE_SIZE, PALSWAP_TEXTURE_SIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+     }
+ 
+     int32_t column = palookupnum%(PALSWAP_TEXTURE_SIZE/256);

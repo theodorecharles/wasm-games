@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-09-06T07:48:27.237Z",
+  "comparison": "Mount lists normalized by destination; Docker inspect order is unstable. All other recorded fields compared exactly.",
+  "containersCompared": 95,
+  "otherContainersUnchanged": 94,
+  "changed": [
+    {
+      "before": {
+        "name": "/wasm-simcity2000",
+        "id": "daa4746ab0ebc1ae8038ec3b34befee4c3138e8e0faa6ac24f80d97cb73cf721",
+        "image": "sha256:41790b80c75753cbe03ef523cf44490078101e33c8fada0678ea0eac15446a09",
+        "startedAt": "2026-09-04T21:16:07.786148088Z",
+        "restarts": 0,
+        "status": "running",
+        "mounts": [
+          {
+            "source": "/home/ted/wasm-game-data/dosbox",
+            "destination": "/data",
+            "rw": true
+          }
+        ]
+      },
+      "after": {
+        "name": "/wasm-simcity2000",
+        "id": "91e0b7cae2eab44b203497f18435997140bafcf7da4beaa7c51c1b3fe078f515",
+        "image": "sha256:1125605b4db5cd0746ad13dc2f5b108f17ca0f267a7d0baceadb41114590a96c",
+        "startedAt": "2026-09-06T07:46:57.244338533Z",
+        "restarts": 0,
+        "status": "running",
+        "mounts": [
+          {
+            "source": "/home/ted/wasm-game-data/dosbox",
+            "destination": "/data",
+            "rw": true
+          }
+        ]
+      }
+    }
+  ],
+  "rollbackImage": "sha256:41790b80c75753cbe03ef523cf44490078101e33c8fada0678ea0eac15446a09"
+}

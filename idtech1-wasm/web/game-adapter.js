@@ -77,11 +77,10 @@
     lastEscapeAt: 0,
     captureUntil: 0,
     captureEvent: null,
+    captureOnMatchStart: false,
     persistence: null,
     controllerHeld: new Map(),
     controllerButtons: new Map(),
-    keyboardHeld: new Map(),
-    pointerButtons: new Map(),
     nativeKeys: new Map(),
     nativeButtons: new Map(),
     controllerWheels: new Map(),
@@ -90,8 +89,7 @@
     frameSampleAt: null,
     frameSampleCount: 0,
     launchMode: 'single',
-    deathmatchButton: null,
-    wakeClient: null
+    deathmatchButton: null
   };
 
   const controllerKeys = Object.freeze({
@@ -166,6 +164,10 @@
     const key = normalizedProfile(context, requested);
     const profile = profiles[key];
     runtime.profile = key;
+    // Original/Smooth have pointer-free classic menus. DSDA uses the browser
+    // cursor; Zandronum renders its own menu cursor into the framebuffer.
+    context.shell.setMenuCursor(key === 'modernized'
+      ? (runtime.launchMode === 'deathmatch' ? 'native' : 'browser') : 'none');
     if (context.elements.graphicsProfile.value !== key) context.elements.graphicsProfile.value = key;
     context.elements.fpsRow.hidden = key !== 'modernized';
     context.elements.dynamicRow.hidden = true;
@@ -207,17 +209,40 @@
       'novert 1',
       'mouse_sensitivity 5',
       'mouse_acceleration 1.0',
-      'key_up 119',
-      'key_down 115',
-      'key_strafeleft 97',
-      'key_straferight 100',
-      'key_left 113',
-      'key_right 101',
-      'key_use 32',
+      // Crispy config files use DOS scan codes, not SDL/ASCII key symbols.
+      'key_up 17',
+      'key_down 31',
+      'key_strafeleft 30',
+      'key_straferight 32',
+      'key_left 16',
+      'key_right 18',
+      'key_use 57',
       'mouseb_fire 0',
       'fsynth_chorus_active 0',
       'fsynth_reverb_active 0'
     ].join('\n') + '\n';
+  }
+
+  function writeClassicConfig(FS, configPath, encoder) {
+    let existing;
+    try { existing = FS.readFile(configPath, { encoding: 'utf8' }); } catch (_) {
+      FS.writeFile(configPath, encoder.encode(classicConfig()));
+      return;
+    }
+    const legacyKeys = { key_up: [119, 17], key_down: [115, 31],
+      key_strafeleft: [97, 30], key_straferight: [100, 32],
+      key_left: [113, 16], key_right: [101, 18], key_use: [32, 57] };
+    // Only migrate the exact seven-key fingerprint shipped by this adapter.
+    // A customized layout is not ours to reinterpret. Keep a recoverable copy
+    // and preserve every unrelated setting and the original formatting.
+    const matches = Object.entries(legacyKeys).map(([name, [oldValue, newValue]]) => ({
+      pattern: new RegExp(`(^[ \\t]*${name}[ \\t]+)${oldValue}([ \\t]*\\r?$)`, 'm'), newValue
+    }));
+    if (!matches.every(({ pattern }) => pattern.test(existing))) return;
+    writeInitialFile(FS, `${configPath}.pre-scancode-fix`, encoder.encode(existing));
+    const migrated = matches.reduce((text, { pattern, newValue }) =>
+      text.replace(pattern, (_, prefix, suffix) => `${prefix}${newValue}${suffix}`), existing);
+    FS.writeFile(configPath, encoder.encode(migrated));
   }
 
   function modernConfig(display, targetFps) {
@@ -430,6 +455,7 @@
   function engineState() {
     const module = runtime.module;
     if (!module || typeof module._I_BrowserRuntimeState !== 'function') return runtime.state;
+    if (module._I_BrowserWaitingLaunch?.()) return 'menu';
     return ['menu', 'gameplay', 'paused', 'debrief'][module._I_BrowserRuntimeState()] || 'menu';
   }
 
@@ -450,31 +476,17 @@
   }
 
   function synchronizeNativeKey(code) {
-    const next = runtime.controllerHeld.get(code) === true || runtime.keyboardHeld.get(code) === true;
+    const next = runtime.controllerHeld.get(code) === true;
     if (runtime.nativeKeys.get(code) === next) return;
     runtime.nativeKeys.set(code, next);
     runtime.module?._I_BrowserControllerKey?.(code, next ? 1 : 0);
   }
 
   function synchronizeNativeButton(button) {
-    const next = runtime.controllerButtons.get(button) === true || runtime.pointerButtons.get(button) === true;
+    const next = runtime.controllerButtons.get(button) === true;
     if (runtime.nativeButtons.get(button) === next) return;
     runtime.nativeButtons.set(button, next);
     runtime.module?._I_BrowserControllerButton?.(button, next ? 1 : 0);
-  }
-
-  function browserKey(code, pressed) {
-    const next = Boolean(pressed);
-    if (runtime.keyboardHeld.get(code) === next) return;
-    runtime.keyboardHeld.set(code, next);
-    synchronizeNativeKey(code);
-  }
-
-  function browserButton(button, pressed) {
-    const next = Boolean(pressed);
-    if (runtime.pointerButtons.get(button) === next) return;
-    runtime.pointerButtons.set(button, next);
-    synchronizeNativeButton(button);
   }
 
   function controllerWheel(y, pressed) {
@@ -497,69 +509,23 @@
     runtime.controllerLookX = 0;
   }
 
-  function releaseBrowserInput() {
-    const keys = [...runtime.keyboardHeld.keys()];
-    const buttons = [...runtime.pointerButtons.keys()];
-    runtime.keyboardHeld.clear();
-    runtime.pointerButtons.clear();
-    for (const code of keys) synchronizeNativeKey(code);
-    for (const button of buttons) synchronizeNativeButton(button);
-  }
-
-  function browserKeyCode(event) {
-    if (event.key.length === 1) return event.key.toLowerCase().charCodeAt(0);
-    return ({
-      Backspace: controllerKeys.backspace,
-      Tab: controllerKeys.tab,
-      Enter: controllerKeys.enter,
-      Escape: controllerKeys.escape,
-      ' ': controllerKeys.space,
-      Shift: controllerKeys.shift,
-      ArrowRight: controllerKeys.right,
-      ArrowLeft: controllerKeys.left,
-      ArrowDown: controllerKeys.down,
-      ArrowUp: controllerKeys.up
-    })[event.key] ?? null;
-  }
-
-  function browserInputActive(event) {
-    const canvas = runtime.context?.elements.canvas;
-    return runtime.started && canvas &&
-      (event.target === canvas || document.pointerLockElement === canvas);
-  }
-
   function installBrowserInputBridge() {
-    document.addEventListener('keydown', event => {
-      if (!browserInputActive(event)) return;
-      const code = browserKeyCode(event);
-      if (code != null) browserKey(code, true);
-    });
-    document.addEventListener('keyup', event => {
-      if (!browserInputActive(event)) return;
-      const code = browserKeyCode(event);
-      if (code != null) browserKey(code, false);
-    });
-    document.addEventListener('pointerdown', event => {
-      if (!browserInputActive(event)) return;
-      browserButton(event.button === 2 ? 3 : event.button === 1 ? 2 : 1, true);
-    });
-    document.addEventListener('pointerup', event => {
-      if (!browserInputActive(event)) return;
-      browserButton(event.button === 2 ? 3 : event.button === 1 ? 2 : 1, false);
-    });
+    // Every engine already receives physical keys/buttons/wheel through SDL.
+    // Reinjecting those events makes Escape cancel itself and one click skip
+    // menus. SDL 2 also owns physical relative motion for Crispy and DSDA.
+    // Only Zandronum needs this motion seam: its SDL 1.2 relative-state shim
+    // is empty. Controller input remains independent through the hooks above.
     document.addEventListener('pointermove', event => {
-      if (!browserInputActive(event) || document.pointerLockElement !== runtime.context?.elements.canvas) return;
+      if (!runtime.started || runtime.profile !== 'modernized' || runtime.launchMode !== 'deathmatch') return;
+      const canvas = runtime.context?.elements.canvas;
+      if (!canvas || document.pointerLockElement !== canvas) return;
       const dx = Math.trunc(Number(event.movementX) || 0);
       const dy = Math.trunc(Number(event.movementY) || 0);
       if (dx || dy) runtime.module?._I_BrowserControllerMouse?.(dx, dy);
     });
-    document.addEventListener('wheel', event => {
-      if (!browserInputActive(event) || !event.deltaY) return;
-      runtime.module?._I_BrowserControllerWheel?.(event.deltaY < 0 ? 1 : -1);
-    }, { passive: true });
-    window.addEventListener('blur', releaseBrowserInput);
+    window.addEventListener('blur', releaseController);
     document.addEventListener('pointerlockchange', () => {
-      if (document.pointerLockElement !== runtime.context?.elements.canvas) releaseBrowserInput();
+      if (document.pointerLockElement !== runtime.context?.elements.canvas) releaseController();
     });
   }
 
@@ -614,12 +580,13 @@
       const next = engineState();
       if (next !== runtime.state) {
         const captureGameplay = next === 'gameplay' &&
-          runtime.captureUntil >= performance.now();
+          (runtime.captureOnMatchStart || runtime.captureUntil >= performance.now());
         runtime.state = next;
         context.setEngineState(next, captureGameplay
           ? { capture: true, event: runtime.captureEvent }
           : undefined);
         if (captureGameplay) {
+          runtime.captureOnMatchStart = false;
           runtime.captureUntil = 0;
           runtime.captureEvent = null;
         }
@@ -715,6 +682,7 @@
     const deathmatch = runtime.launchMode === 'deathmatch';
     const modern = profile.engine === 'dsda';
     const modernDeathmatch = modern && deathmatch;
+    runtime.captureOnMatchStart = deathmatch && !modernDeathmatch;
     const display = modern ? modernDisplay() : null;
 
     try {
@@ -728,11 +696,27 @@
       let multiplayerServer = null;
       if (deathmatch) {
         context.setLoading(`Waking ${game.label} deathmatch…`,
-          modernDeathmatch ? 'Starting Zandronum with bots.' : 'Starting the classic dedicated server.', 56);
-        multiplayerServer = await runtime.wakeClient.ensureRunning({
+          modernDeathmatch ? 'Starting Zandronum with bots.' : 'Starting Classic with two native bots.', 56);
+        // A running family server may belong to another engine or IWAD. The
+        // generic wake client intentionally skips POST for running services,
+        // so select this match explicitly before loading its native client.
+        const metadata = {
           engine: modernDeathmatch ? 'zandronum' : 'classic',
           variant: context.variant, profile: runtime.profile
+        };
+        const response = await fetch('/wake', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' }, body: JSON.stringify(metadata)
         });
+        const selected = await response.json();
+        if (!response.ok) throw new Error(selected.error || `Server selection failed with HTTP ${response.status}.`);
+        if (selected.variant !== context.variant || selected.mode !== (modernDeathmatch ? 'modernized' : 'classic') ||
+            !['running', 'ready'].includes(selected.state)) {
+          throw new Error('The server did not select the requested deathmatch. Please try again.');
+        }
+        multiplayerServer = selected;
+        document.documentElement.dataset.doomServerState = String(selected.state);
+        document.documentElement.dataset.doomServerPeers = String(selected.peers || 0);
       }
 
       const scriptName = modernDeathmatch ? 'zandronum.js' : modern ? 'dsda-doom.js' : game.script;
@@ -812,7 +796,7 @@
         context.log(`Modernized display: ${display.width}x${display.height} at ${display.scale.toFixed(2)}× render scale.`);
       } else {
         const configPath = `${runtime.persistence.root}/default.cfg`;
-        writeInitialFile(FS, configPath, encoder.encode(classicConfig()));
+        writeClassicConfig(FS, configPath, encoder);
         FS.writeFile('/profiles/crispy.cfg', encoder.encode(profile.config.join('\n') + '\n'));
         args = [
           '-iwad', iwadPath,
@@ -825,10 +809,10 @@
           args.push(
             '-connect', String(multiplayerServer.connect || '1'),
             '-wss', websocketUrl(multiplayerServer.wsPath),
-            '-nodes', '2', '-deathmatch', '-nosound', '-nomusic',
+            '-nodes', '0', '-deathmatch',
             ...classicWarpArgs(context.variant)
           );
-          context.log('Classic deathmatch: connected to the framework-managed dedicated server; waiting for two browser players.');
+          context.log(`Classic deathmatch: two native bots are ready. The match starts ${Number(multiplayerServer.lobbyGraceMs || 8000) / 1000} seconds after the first player joins; another player can join during that countdown.`);
         }
       }
       if (chexPatch) FS.writeFile('/iwads/chex.deh', chexPatch);
@@ -867,15 +851,6 @@
       const capability = context.framework.requireCapabilities({ wasm: true, indexedDb: true });
       if (!capability.supported) throw new Error(`This browser is missing: ${capability.missing.join(', ')}.`);
       bindEmscriptenCanvas(context);
-      runtime.wakeClient = typeof context.framework.createWakeClient === 'function'
-        ? context.framework.createWakeClient({
-        statusUrl: '/status', wakeUrl: '/wake', interval: 250, timeout: 45000,
-        onStatus(status) {
-          if (runtime.launchMode !== 'deathmatch' || !status) return;
-          document.documentElement.dataset.doomServerState = String(status.state || 'unknown');
-          document.documentElement.dataset.doomServerPeers = String(status.peers || 0);
-        }
-        }) : null;
       installLaunchButtons(context);
       await loadDataManifest(context);
       const queryProfile = new URLSearchParams(location.search).get('profile');

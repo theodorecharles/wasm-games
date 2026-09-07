@@ -1,0 +1,107 @@
+diff --git a/id_in.cpp b/id_in.cpp
+--- a/id_in.cpp
++++ b/id_in.cpp
+@@ -118,6 +118,19 @@
+ 
+ extern "C" EMSCRIPTEN_KEEPALIVE void WolfWasm_BrowserControllerKey(int keycode, int pressed)
+ {
++    // The adapter's stable controller seam uses legacy SDL 1 codes. Translate
++    // special keys to the values in the active SDK; ASCII is already portable.
++    switch (keycode)
++    {
++        case 273: keycode = sc_UpArrow; break;
++        case 274: keycode = sc_DownArrow; break;
++        case 275: keycode = sc_RightArrow; break;
++        case 276: keycode = sc_LeftArrow; break;
++        case 304: keycode = sc_LShift; break;
++        case 306: keycode = sc_Control; break;
++        case 308: keycode = sc_Alt; break;
++        default: break;
++    }
+     if (keycode <= sc_None || keycode >= SDLK_LAST)
+         return;
+     Keyboard[keycode] = pressed != 0;
+diff --git a/wl_menu.cpp b/wl_menu.cpp
+--- a/wl_menu.cpp
++++ b/wl_menu.cpp
+@@ -357,7 +357,7 @@
+         "BkSp","Tab","?","?","?","Return","?","?",                      //   8
+         "?","?","?","Pause","?","?","?","?",                            //  16
+         "?","?","?","Esc","?","?","?","?",                              //  24
+-        "Space","!","\"","#","$","?","&","'",                           //  32
++        "Space","!","\"","#","$","%","&","'",                           //  32
+         "(",")","*","+",",","-",".","/",                                //  40
+         "0","1","2","3","4","5","6","7",                                //  48
+         "8","9",":",";","<","=",">","?",                                //  56
+@@ -365,7 +365,7 @@
+         "H","I","J","K","L","M","N","O",                                //  72
+         "P","Q","R","S","T","U","V","W",                                //  80
+         "X","Y","Z","[","\\","]","^","_",                               //  88
+-        "`","a","b","c","d","e","f","h",                                //  96
++        "`","a","b","c","d","e","f","g",                                //  96
+         "h","i","j","k","l","m","n","o",                                // 104
+         "p","q","r","s","t","u","v","w",                                // 112
+         "x","y","z","{","|","}","~","?",                                // 120
+@@ -3955,14 +3955,54 @@
+ const char *
+ IN_GetScanName (ScanCode scan)
+ {
+-/*    const char **p;
+-    ScanCode *s;
+-
+-    for (s = ExtScanCodes, p = ExtScanNames; *s; p++, s++)
+-        if (*s == scan)
+-            return (*p);*/
+-
+-    return (ScanNames[scan]);
++    // Emscripten's SDL 1 compatibility headers use masked SDL 2 scancodes
++    // for non-printable keys. Do not index the legacy SDL 1 numeric table
++    // with those values: the tail is null and bindings render as blanks.
++    switch (scan)
++    {
++        case SDLK_BACKSPACE: return "BkSp";
++        case SDLK_TAB: return "Tab";
++        case SDLK_RETURN: return "Return";
++        case SDLK_PAUSE: return "Pause";
++        case SDLK_ESCAPE: return "Esc";
++        case SDLK_SPACE: return "Space";
++        case SDLK_DELETE: return "Del";
++        case SDLK_UP: return "Up";
++        case SDLK_DOWN: return "Down";
++        case SDLK_RIGHT: return "Right";
++        case SDLK_LEFT: return "Left";
++        case SDLK_INSERT: return "Ins";
++        case SDLK_HOME: return "Home";
++        case SDLK_END: return "End";
++        case SDLK_PAGEUP: return "PgUp";
++        case SDLK_PAGEDOWN: return "PgDn";
++        case SDLK_F1: return "F1";
++        case SDLK_F2: return "F2";
++        case SDLK_F3: return "F3";
++        case SDLK_F4: return "F4";
++        case SDLK_F5: return "F5";
++        case SDLK_F6: return "F6";
++        case SDLK_F7: return "F7";
++        case SDLK_F8: return "F8";
++        case SDLK_F9: return "F9";
++        case SDLK_F10: return "F10";
++        case SDLK_F11: return "F11";
++        case SDLK_F12: return "F12";
++        case SDLK_NUMLOCK: return "NumLk";
++        case SDLK_CAPSLOCK: return "CapsLk";
++        case SDLK_SCROLLOCK: return "ScrlLk";
++        case SDLK_RSHIFT: return "RShft";
++        case SDLK_LSHIFT: return "Shift";
++        case SDLK_RCTRL: return "RCtrl";
++        case SDLK_LCTRL: return "Ctrl";
++        case SDLK_RALT: return "RAlt";
++        case SDLK_LALT: return "Alt";
++        case SDLK_PRINT: return "PrtSc";
++        case SDLK_KP_ENTER: return "Enter";
++        default: break;
++    }
++    if (scan >= 0 && scan < 128 && ScanNames[scan]) return ScanNames[scan];
++    return "?";
+ }
+ 
+ 

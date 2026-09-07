@@ -1,0 +1,108 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Quake 4 framebuffer copy diagnostic</title>
+<h1>Quake 4 framebuffer copy diagnostic</h1>
+<p>Test-only API reproduction: ordinary browser backbuffer to floating-point render texture, including multisampling and source offsets.</p>
+<button id="run">Run framebuffer-copy matrix</button>
+<pre id="result">Ready.</pre>
+<script type="module">
+const button=document.querySelector('#run'), output=document.querySelector('#result');
+button.addEventListener('click', () => {
+  button.disabled=true;
+  try {
+    const results=[];
+    for(const alpha of [false,true]) for(const antialias of [false,true]) {
+      const canvas=document.createElement('canvas'); canvas.width=8; canvas.height=8;
+      const gl=canvas.getContext('webgl2',{alpha,antialias,depth:false,stencil:false});
+      if(!gl || !gl.getExtension('EXT_color_buffer_float')) throw Error('WebGL 2 floating-point color buffers unavailable');
+      function colorTarget(format,width,height) {
+        const texture=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,texture);
+        gl.texImage2D(gl.TEXTURE_2D,0,format,width,height,0,format===gl.RGB8?gl.RGB:gl.RGBA,
+          format===gl.RGBA16F?gl.HALF_FLOAT:gl.UNSIGNED_BYTE,null);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+        const fbo=gl.createFramebuffer(); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,fbo);
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texture,0);
+        gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+        if(gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE) throw Error('Incomplete diagnostic target');
+        return {texture,fbo};
+      }
+      gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+      const samples=gl.getParameter(gl.SAMPLES);
+      gl.clearColor(0.25,0.5,0.75,1); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());
+      gl.copyTexImage2D(gl.TEXTURE_2D,0,gl.RGBA16F,1,2,4,4,0);
+      const legacyFloatError=gl.getError();
+      gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());
+      gl.copyTexImage2D(gl.TEXTURE_2D,0,gl.RGBA8,1,2,4,4,0);
+      const ordinaryCopyError=gl.getError();
+
+      const target=colorTarget(gl.RGBA16F,4,4);
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,null); gl.readBuffer(gl.BACK);
+      gl.blitFramebuffer(1,2,5,6,0,0,4,4,gl.COLOR_BUFFER_BIT,gl.NEAREST);
+      const directFloatError=gl.getError();
+
+      // Multisample resolve must retain the source format and exact rectangle
+      // coordinates. Conversion and destination offset happen in a second blit.
+      const resolve=colorTarget(alpha?gl.RGBA8:gl.RGB8,8,8);
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,null); gl.readBuffer(gl.BACK);
+      gl.blitFramebuffer(1,2,5,6,1,2,5,6,gl.COLOR_BUFFER_BIT,gl.NEAREST);
+      const resolveError=gl.getError();
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,resolve.fbo); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,target.fbo);
+      gl.blitFramebuffer(1,2,5,6,0,0,4,4,gl.COLOR_BUFFER_BIT,gl.NEAREST);
+      const convertedError=gl.getError();
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,target.fbo); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+      const pixels=new Float32Array(4*4*4);
+      gl.readPixels(0,0,4,4,gl.RGBA,gl.FLOAT,pixels);
+      const readError=gl.getError();
+      const expected=[0.25,0.5,0.75,1];
+      const matchingPixels=Array.from({length:16},(_,i)=>expected.every((v,c)=>Math.abs(pixels[i*4+c]-v)<0.01)).filter(Boolean).length;
+      results.push({alpha,antialias,samples,legacyFloatError,ordinaryCopyError,directFloatError,resolveError,
+        convertedError,readError,matchingPixels,firstPixel:Array.from(pixels.slice(0,4))});
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    }
+    const hdrResults=[];
+    for(const samples of [0,4]) {
+      const canvas=document.createElement('canvas'); canvas.width=8; canvas.height=8;
+      const gl=canvas.getContext('webgl2',{antialias:false});
+      if(!gl?.getExtension('EXT_color_buffer_float')) throw Error('HDR color buffers unavailable');
+      const supported=Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER,gl.RGBA16F,gl.SAMPLES));
+      if(samples && !supported.includes(samples)) {hdrResults.push({samples,skipped:true,supported}); continue;}
+      function floatTarget(width,height) {
+        const texture=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,texture);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA16F,width,height,0,gl.RGBA,gl.HALF_FLOAT,null);
+        const fbo=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texture,0);
+        gl.drawBuffers([gl.COLOR_ATTACHMENT0]); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+        return fbo;
+      }
+      const source=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,source);
+      const rbo=gl.createRenderbuffer(); gl.bindRenderbuffer(gl.RENDERBUFFER,rbo);
+      gl.renderbufferStorageMultisample(gl.RENDERBUFFER,samples,gl.RGBA16F,8,8);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.RENDERBUFFER,rbo);
+      gl.drawBuffers([gl.COLOR_ATTACHMENT0]); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+      if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE) throw Error('HDR source incomplete');
+      const expected=new Float32Array([2.5,0.125,4,0.75]);
+      gl.clearBufferfv(gl.COLOR,0,expected);
+      const resolve=floatTarget(8,8), target=floatTarget(4,4);
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,source); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,resolve);
+      gl.blitFramebuffer(1,2,5,6,1,2,5,6,gl.COLOR_BUFFER_BIT,gl.NEAREST);
+      const resolveError=gl.getError();
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,resolve); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,target);
+      gl.blitFramebuffer(1,2,5,6,0,0,4,4,gl.COLOR_BUFFER_BIT,gl.NEAREST);
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER,target);
+      const pixels=new Float32Array(64); gl.readPixels(0,0,4,4,gl.RGBA,gl.FLOAT,pixels);
+      const matchingPixels=Array.from({length:16},(_,i)=>expected.every((v,c)=>pixels[i*4+c]===v)).filter(Boolean).length;
+      hdrResults.push({samples,resolveError,error:gl.getError(),matchingPixels,firstPixel:Array.from(pixels.slice(0,4))});
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    }
+    const record={scope:'Chrome WebGL 2 API reproduction, not linked-engine or campaign acceptance',results,hdrResults};
+    document.documentElement.dataset.q4FramebufferProof=JSON.stringify(record);
+    output.textContent=JSON.stringify(record,null,2);
+  } catch(error) {
+    document.documentElement.dataset.q4FramebufferProof=JSON.stringify({error:String(error)});
+    output.textContent=String(error);
+  } finally {button.disabled=false;}
+});
+</script>

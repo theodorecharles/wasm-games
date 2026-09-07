@@ -1,0 +1,193 @@
+{
+  "passed": true,
+  "negativeControl": false,
+  "image": "local/idtech1-wasm:match-selection-candidate",
+  "supervisorFromImage": true,
+  "results": [
+    {
+      "reservationConflict": 409,
+      "concurrentSameMatch": true,
+      "connectedConflict": 409,
+      "idleVariantSwitch": {
+        "state": "running",
+        "humans": 0,
+        "keepAlive": false,
+        "idleTimeoutMs": 2000,
+        "idleSince": 1788567311386,
+        "startedAt": 1788567311386,
+        "map": null,
+        "error": null,
+        "mode": "modernized",
+        "engine": "Zandronum 3.3-alpha",
+        "variant": "heretic",
+        "connect": "127.0.0.1:10666",
+        "wsPath": "/ws/zandronum?match=e676de26-296c-445c-a21c-537d7f2b1b7f",
+        "peers": 0,
+        "bots": 2
+      },
+      "staleRelayRejected": true,
+      "invalidVariantRejected": true
+    },
+    {
+      "classicThenModern": true
+    },
+    {
+      "game": "doom2",
+      "frames": 496,
+      "presented": 499,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        25165824,
+        72351744
+      ],
+      "after": [
+        25165824,
+        78929109
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "game": "doom",
+      "frames": 497,
+      "presented": 500,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        117440512,
+        -192937984
+      ],
+      "after": [
+        117440512,
+        -200332357
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "game": "tnt",
+      "frames": 474,
+      "presented": 477,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        9764864,
+        74383360
+      ],
+      "after": [
+        10006549,
+        68697644
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "game": "plutonia",
+      "frames": 508,
+      "presented": 511,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        12517376,
+        91160576
+      ],
+      "after": [
+        12517376,
+        83766203
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "game": "heretic",
+      "frames": 464,
+      "presented": 467,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        -42991616,
+        -34603008
+      ],
+      "after": [
+        -42991616,
+        -41997381
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "game": "hexen",
+      "frames": 464,
+      "presented": 467,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        -73400320,
+        -20971520
+      ],
+      "after": [
+        -67131316,
+        -14697841
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "game": "chex",
+      "frames": 505,
+      "presented": 508,
+      "artifactHashes": {
+        "zandronum.js": "2bd4f5c4b4a84d69a3efcfaf4fd00b29b7c099729eb10ef3472ee89985a91771",
+        "zandronum.wasm": "907261feba9233e010d8bd1ac8a523c2213da82fe99aedd228999b7624b1cca8",
+        "zandronum.pk3": "4ac176584aaf5385ceb8445674997b1b80034ee94ec5b23413cc072741d1324b"
+      },
+      "players": 3,
+      "before": [
+        -26738688,
+        -19791872
+      ],
+      "after": [
+        -26738688,
+        -27186245
+      ],
+      "movementKey": "w",
+      "attacking": 1,
+      "scope": "real native Wasm/UDP relay; fake DOM/2D; no browser/GPU/audio acceptance"
+    },
+    {
+      "idleShutdown": true
+    }
+  ],
+  "scope": "real disposable native servers and native Wasm; fake DOM/2D; not Chrome/GPU/audio acceptance"
+}

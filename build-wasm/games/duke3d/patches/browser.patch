@@ -73,7 +73,7 @@ index 27b632ea5..0156bcd3c 100644
  // This was 32 for a while, but I think lowering it to 24 will help things like the Dingoo.
  // Ideally, we would look at our memory usage on our most cramped platform and figure out
  // how much of that is needed for the underlying OS and things like SDL instead of guessing
-@@ -6567,6 +6624,212 @@ void dukeFillInputForTic(void)
+@@ -6567,6 +6624,215 @@ void dukeFillInputForTic(void)
  //        LOG_F(INFO, "Draw routine created with %d byte stack.", g_frameStackSize);
  //}
  
@@ -91,6 +91,9 @@ index 27b632ea5..0156bcd3c 100644
 +    pus = NUMPAGES;
 +    renderFlushPerms();
 +    P_SetGamePalette(&myplayer, BASEPAL, 1);
++    // G_DisplayLogo leaves its black fade active. The desktop attract loop
++    // fades back in; the cooperative browser frontend must also reveal itself.
++    videoFadePalette(0, 0, 0, 0);
 +    Menu_Open(myconnectindex);
 +    ready2send = 0;
 +    I_ClearAllInput();
@@ -286,21 +289,23 @@ index 27b632ea5..0156bcd3c 100644
  static const char* dukeVerbosityCallback(loguru::Verbosity verbosity)
  {
      switch (verbosity)
-@@ -6674,6 +6937,21 @@ int app_main(int argc, char const* const* argv)
+@@ -6674,6 +6940,23 @@ int app_main(int argc, char const* const* argv)
      int const readSetup =
  #endif
      CONFIG_ReadSetup();
 +#ifdef __EMSCRIPTEN__
-+    // The classic browser contract is fixed and must not inherit a desktop
-+    // fullscreen or renderer selection from persistent configuration. OpenGL
-+    // probe builds keep the same safe initial size but actually enter Polymost.
++    // Profile builds must not inherit desktop fullscreen or another profile's
++    // renderer/size from persistent configuration. Classic remains 4:3;
++    // the separately packaged OpenGL profile renders a true 16:9 backbuffer.
 +    ud.setup.fullscreen = 0;
-+    ud.setup.xdim = 800;
-+    ud.setup.ydim = 600;
 +# ifdef USE_OPENGL
++    ud.setup.xdim = 1280;
++    ud.setup.ydim = 720;
 +    ud.setup.bpp = 32;
 +    glrendmode = REND_POLYMOST;
 +# else
++    ud.setup.xdim = 800;
++    ud.setup.ydim = 600;
 +    ud.setup.bpp = 8;
 +# endif
 +    ud.setup.usemouse = 1;
@@ -308,7 +313,7 @@ index 27b632ea5..0156bcd3c 100644
  
  #if defined(_WIN32) && !defined (EDUKE32_STANDALONE)
      if (ud.config.CheckForUpdates == 1)
-@@ -6912,7 +7190,16 @@ int app_main(int argc, char const* const* argv)
+@@ -6912,7 +7195,16 @@ int app_main(int argc, char const* const* argv)
  
      OSD_Exec("autoexec.cfg");
  
@@ -325,7 +330,7 @@ index 27b632ea5..0156bcd3c 100644
  
      system_getcvars();
  
-@@ -6999,6 +7286,11 @@ int app_main(int argc, char const* const* argv)
+@@ -6999,6 +7291,11 @@ int app_main(int argc, char const* const* argv)
  
      VM_OnEvent(EVENT_INITCOMPLETE);
  
@@ -337,7 +342,7 @@ index 27b632ea5..0156bcd3c 100644
  MAIN_LOOP_RESTART:
      totalclock = 0;
      ototalclock = 0;
-@@ -7202,6 +7494,7 @@ MAIN_LOOP_RESTART:
+@@ -7202,6 +7499,7 @@ MAIN_LOOP_RESTART:
      while (1);
  
      app_exit(EXIT_SUCCESS);  // not reached (duh)

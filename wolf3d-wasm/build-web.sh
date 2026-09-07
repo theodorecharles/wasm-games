@@ -3,6 +3,8 @@ set -euo pipefail
 
 engine_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source_dir="$("${engine_dir}/scripts/fetch-source")"
+node "$engine_dir/scripts/test-source.mjs"
+node "$engine_dir/scripts/test-source-preparation.mjs"
 dist_dir="$engine_dir/.work/dist"
 framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 required_framework_version="0.9.6"
@@ -26,6 +28,15 @@ if ! command -v emcc >/dev/null 2>&1; then
     source "$emsdk_dir/emsdk_env.sh" >/dev/null
 fi
 
+if command -v magick >/dev/null 2>&1; then
+    image_command=magick
+elif command -v convert >/dev/null 2>&1 && convert -version | head -n 1 | grep -q ImageMagick; then
+    image_command=convert
+else
+    printf 'ImageMagick is required to build the authentic PWA icons.\n' >&2
+    exit 1
+fi
+
 mkdir -p "$dist_dir"
 rm -f \
     "$dist_dir/index.html" \
@@ -44,7 +55,7 @@ build_variant() {
     local output="$2"
     emmake make -C "$source_dir" clean WEB=1 WEB_VARIANT="$variant" \
         CC=emcc CXX=em++ BINARY="$dist_dir/$output.js"
-    emmake make -C "$source_dir" -j"$(nproc)" \
+    emmake make -C "$source_dir" -j"${JOBS:-4}" \
         WEB=1 \
         WEB_VARIANT="$variant" \
         CC=emcc \
@@ -54,17 +65,18 @@ build_variant() {
 
 build_variant wolf3d wolf3d
 build_variant spear spear
+node "$engine_dir/scripts/test-menu-pointer.mjs"
+node "$engine_dir/scripts/test-keyboard-movement.mjs"
+node "$engine_dir/scripts/test-menu-key-pump.mjs"
+node "$engine_dir/scripts/test-palette-present.mjs"
+node "$engine_dir/scripts/test-gameplay-input.mjs"
+node "$engine_dir/scripts/test-key-bindings.mjs"
 
 cp "$engine_dir/web/game-adapter.js" "$engine_dir/web/wasm-game.json" \
     "$engine_dir/web/wasm-game-data.json" "$dist_dir/"
 cp "$source_dir/win/Wolf4SDL.ico" "$dist_dir/wolf3d.ico"
-if command -v magick >/dev/null 2>&1; then
-    magick "$source_dir/win/Wolf4SDL.ico[1]" -filter point -resize 192x192 "$dist_dir/wolf3d-192.png"
-    magick "$source_dir/win/Wolf4SDL.ico[1]" -filter point -resize 512x512 "$dist_dir/wolf3d-512.png"
-else
-    printf 'ImageMagick is required to build the authentic PWA icons.\n' >&2
-    exit 1
-fi
+"$image_command" "$source_dir/win/Wolf4SDL.ico[1]" -filter point -resize 192x192 "$dist_dir/wolf3d-192.png"
+"$image_command" "$source_dir/win/Wolf4SDL.ico[1]" -filter point -resize 512x512 "$dist_dir/wolf3d-512.png"
 "$framework_dir/scripts/install-browser-package.sh" "$dist_dir/shared-shell" copy
 cp "$dist_dir/shared-shell/wasm-game-framework.json" "$dist_dir/wasm-game-framework.json"
 

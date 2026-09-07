@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-09-06T19:31:07.622Z",
+  "scope": "Package and HTTP identity, not rendering or gameplay acceptance",
+  "base": {
+    "id": "0081a236b95988dd914df97c962a9146adb61cfb03c4c7cc0131d3646562f77c",
+    "image": "sha256:8631a4e193cadf1eb16c4b5b5d8c3cb639dd605bcab109c7fd9dac5ea8788e90",
+    "startedAt": "2026-09-04T19:45:41.838343396Z"
+  },
+  "candidate": {
+    "name": "duke-polymost-projection-proof-20260906",
+    "id": "68637b8840e4a5978e98d82faea059d5a0a7f53d7e12398419667a3d2f7e9675",
+    "image": "sha256:b66800ee76a5719c52c3854d7736c3ea549c93b480984b08c1fd01d9e3fdbb59",
+    "startedAt": "2026-09-06T19:27:56.091263244Z",
+    "port": 32980
+  },
+  "changed": [
+    "/opt/game-site/duke3d.js",
+    "/opt/game-site/duke3d.wasm"
+  ],
+  "unchangedFiles": 19,
+  "files": {
+    "/opt/game-site/duke3d.wasm": "07fe9ed264b24ee095d620945cae3bea9eea633d9812178aef65ec6a22b9b2f5",
+    "/opt/game-site/duke3d-512.png": "e332d4782931046ecbf68359aac986f3e800d1ab463715ff713aa6615a35f80b",
+    "/opt/game-site/duke3d-192.png": "eb2e54362144c93ffc281d62fd986fb627fb09de8facd57b7bc016625cc44774",
+    "/opt/game-site/blood-512.png": "99455ef5ef18e4d5d18fa661ff60e5355db55839e08d67bf83d9f5b000555a57",
+    "/opt/game-site/wasm-game-data.json": "9741b8b79405e68f8bc3832a7d8e8a17431b34707732e41695cf173355be6350",
+    "/opt/game-site/wasm-game.json": "f72f9c83894500dce52a229f880417f1cd936f7595465c7e43c02447886fd511",
+    "/opt/game-site/blood-192.png": "5ebcb7770b1d3852b5d5750df6b4c114264f62011abc32d9a645bcbc682f272c",
+    "/opt/game-site/duke3d.ico": "4708652b53a33e63cb19d20dfde2ed2dac77eb5714f1bc043c5e40a82d523e46",
+    "/opt/game-site/blood.data": "521b47aefccfa59e369bdad0e58bc0a29ab9a5a841b8ca227481c38b60415c07",
+    "/opt/game-site/shared-shell/wasm-game-bootstrap.js": "13bb7b72ca201e8adaa6dd189bb43b0d84871d2e3b1b9c148600d277f65dedae",
+    "/opt/game-site/shared-shell/wasm-game-framework.json": "4875b16b3b7d4270f156b1cdf6dbf615f6e86f23083b47017c7fc8bc89adce36",
+    "/opt/game-site/shared-shell/index.html": "cd3b374ee73f94a7d9582d4a3c9cf803b9114d4caa1e9f52e7f41804dd08fa18",
+    "/opt/game-site/shared-shell/wasm-game-framework.css": "ebf1e07939985996ddafdd33fd85f5b5dd6febccb52e16af4dcadc424f741548",
+    "/opt/game-site/shared-shell/wasm-game-framework.js": "b3c8e473fd5dd1e24d50e714d5b1ccb0505516ea6184deaa9efbefdad071dddd",
+    "/opt/game-site/adapters/duke3d.js": "e09c623d530c333e8892b9c54be30cd5db5b3c277a87b051b88224092758bf0e",
+    "/opt/game-site/adapters/blood.js": "8f60e626512c91652a6ab98cabc692aedb16f6260913534d1ca3f409a3b49a92",
+    "/opt/game-site/duke3d.js": "4b2400b50a496376fcbb49f9f70502da7a4e6f353df7c8e3ef5ed8a9c6822287",
+    "/opt/game-site/blood.ico": "3d9898759116062978f639a498e515a37c0eed2645d8f8c2e4280cb5c55fab2b",
+    "/opt/game-site/blood.js": "511419922ebe7ef48217ff7e0a14b0ca8f26573c1d62ec581b60ec4e670df77c",
+    "/opt/game-site/blood.wasm": "4bbf729308466c63eb8a983f4e95a6018baaf8ac87fbcf7286037cd55f7f49ab",
+    "/opt/game-site/game-adapter.js": "d595bd83bba32b69b127d7c8d62bcce90e6e647ef335a7296c488282d6b7c934"
+  },
+  "http": {
+    "duke3d.js": "4b2400b50a496376fcbb49f9f70502da7a4e6f353df7c8e3ef5ed8a9c6822287",
+    "duke3d.wasm": "07fe9ed264b24ee095d620945cae3bea9eea633d9812178aef65ec6a22b9b2f5"
+  },
+  "ownerDataReadOnly": true,
+  "ready": true,
+  "drawObserverPresent": false
+}

@@ -1,0 +1,258 @@
+{
+  "scope": "Actual Prey cache/LoadModel/Shutdown/ownership methods and extracted Init/entity-reference/SaveGame call compiled with host ASan/UBSan and Wasm SAFE_HEAP/UBSan. Shared fixture models typed records and reference ownership, not Human Head collision math or disk save compatibility. Nine scenarios repeat three loads; fresh shutdown and original warning guard also tested. Original cache serialization is byte-identical to pinned Prey upstream.",
+  "legacy": false,
+  "clipSHA256": "20e8310cfa571d2b4cf1860d9c5e647d0b2290e05f2927ad42460bbbe12cfc29",
+  "headerSHA256": "5a10766c5bcfdceb21404cf417b8302c00d3fe25621377372777d00c09b4e058",
+  "saveSHA256": "c71df814e7d59f0203d81c120fc27057125c93effb5c98a7562436fc0fb66f7b",
+  "fixtureSHA256": "88209f93197bda8023dc224516a388557dc5b5dcf4a21cbebd1fd6edc3347c18",
+  "results": [
+    {
+      "target": "native",
+      "negative": false,
+      "productionSHA256": "3c0cb5825798d07eadafb29f69e412bf19ddd85085f85a4b7b9a53249ede53d4",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": false,
+      "productionSHA256": "3c0cb5825798d07eadafb29f69e412bf19ddd85085f85a4b7b9a53249ede53d4",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": true
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "native",
+      "negative": true,
+      "productionSHA256": "82cafa6916c5014bb534810f4f2c31f7a8af1b22c51c500c2f147c16c6105340",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "productionSHA256": "82cafa6916c5014bb534810f4f2c31f7a8af1b22c51c500c2f147c16c6105340",
+      "cases": [
+        {
+          "case": "default-only",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-default",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "default-absent",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "empty-saved-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "distinct-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "shared-scratch",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "reordered-old-cache",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "duplicate-saved-shapes",
+          "cycles": 3,
+          "passed": false
+        },
+        {
+          "case": "fresh-map-shutdown",
+          "cycles": 1,
+          "passed": true
+        },
+        {
+          "case": "invalid-reference-warning-guard",
+          "cycles": 1,
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

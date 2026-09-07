@@ -31,20 +31,30 @@ if [[ ! -x "${native_build}/zandronum-server" ]]; then
     "${repo_dir}/scripts/build-zandronum.sh"
 fi
 
+bot_bins="${IDTECH1_NATIVE_BOT_DIR:-${repo_dir}/.work/classic-bots-native/bin}"
+if [[ -z "${IDTECH1_NATIVE_BOT_DIR:-}" ]]; then
+    bash "${repo_dir}/scripts/build-classic-bots.sh"
+fi
+(cd "${repo_dir}" && sha256sum -c "${bot_bins}/source.sha256")
+(cd "${bot_bins}" && sha256sum -c binaries.sha256)
+
 context="$(mktemp -d -t idtech1-image.XXXXXX)"
 cleanup() {
     find "${context}" -mindepth 1 -depth -delete 2>/dev/null || true
     rmdir "${context}" 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
-mkdir -p "${context}/game-site" "${context}/server" "${context}/zandronum"
+mkdir -p "${context}/game-site" "${context}/server" "${context}/zandronum" "${context}/classic-bots"
 cp -a "${repo_dir}/web/." "${context}/game-site/"
 cp "${repo_dir}/server/package.json" "${repo_dir}/server/package-lock.json" \
-   "${repo_dir}/server/supervisor.js" "${repo_dir}/server/classic-ws-proxy.js" \
+   "${repo_dir}/server/supervisor.js" "${repo_dir}/server/classic-match.js" "${repo_dir}/server/classic-ws-proxy.js" \
    "${repo_dir}/server/zandronum-ws-proxy.js" "${context}/server/"
 cp "${native_build}/zandronum-server" "${native_build}/zandronum.pk3" \
    "${native_build}/brightmaps.pk3" "${native_build}/skulltag_actors.pk3" \
    "${context}/zandronum/"
+cp "${bot_bins}/classic-bot-doom" "${bot_bins}/classic-bot-heretic" \
+   "${bot_bins}/classic-bot-hexen" "${bot_bins}/source.sha256" \
+   "${bot_bins}/binaries.sha256" "${context}/classic-bots/"
 cp "${repo_dir}/docker/Dockerfile" "${context}/Dockerfile"
 
 build() {
@@ -65,6 +75,10 @@ build() {
        test -f /opt/shared-shell/wasm-game-bootstrap.js && \
        test -x /usr/games/chocolate-server && \
        test -x /opt/zandronum/zandronum-server && \
+       test -x /opt/classic-bots/classic-bot-doom && \
+       test -x /opt/classic-bots/classic-bot-heretic && \
+       test -x /opt/classic-bots/classic-bot-hexen && \
+       test -f /opt/idtech1-server/classic-match.js && \
        test -f /opt/idtech1-server/supervisor.js && \
        test ! -e /opt/shared-shell/wolfwasm-shell.js && \
        test ! -e /opt/game-site/index.html && \

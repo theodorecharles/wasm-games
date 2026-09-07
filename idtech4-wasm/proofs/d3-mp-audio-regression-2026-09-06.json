@@ -1,0 +1,594 @@
+{
+  "scope": "Exact Common::Frame and existing Session inline/async timer mixer blocks compiled on host and Emscripten 6.0.6. Tracing dependencies verify calls/order across all four mixer modes and connection transitions. Negative control removes only the MP repair. Not full sound hardware, native gameplay or listening acceptance.",
+  "results": [
+    {
+      "target": "native",
+      "negative": false,
+      "productionSHA256": "a5c878e704ac8955cda336463d1b78be75ded342da2bc651ee5ec69aab5748bb",
+      "cases": [
+        {
+          "mode": 0,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "join",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "multiplayer",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "rejoin",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "join",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "multiplayer",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "rejoin",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": false,
+      "productionSHA256": "a5c878e704ac8955cda336463d1b78be75ded342da2bc651ee5ec69aab5748bb",
+      "cases": [
+        {
+          "mode": 0,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "join",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "multiplayer",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "rejoin",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "join",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "multiplayer",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "rejoin",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "native",
+      "negative": true,
+      "productionSHA256": "b42202cb4bb2ac43367f97f0760892d93c248da410532154c6e26dd56de3c93b",
+      "cases": [
+        {
+          "mode": 0,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": false
+        },
+        {
+          "mode": 0,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": false
+        },
+        {
+          "mode": 0,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": false
+        },
+        {
+          "mode": 1,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "join",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "multiplayer",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "rejoin",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "target": "wasm",
+      "negative": true,
+      "productionSHA256": "b42202cb4bb2ac43367f97f0760892d93c248da410532154c6e26dd56de3c93b",
+      "cases": [
+        {
+          "mode": 0,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": false
+        },
+        {
+          "mode": 0,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": false
+        },
+        {
+          "mode": 0,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 0,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": false
+        },
+        {
+          "mode": 1,
+          "case": "single-player",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "join",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "multiplayer",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "disconnect",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 1,
+          "case": "rejoin",
+          "memoryMixes": 1,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 2,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 0,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "single-player",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "join",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "multiplayer",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "disconnect",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        },
+        {
+          "mode": 3,
+          "case": "rejoin",
+          "memoryMixes": 0,
+          "writeMixes": 1,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

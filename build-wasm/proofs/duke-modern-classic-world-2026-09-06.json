@@ -1,0 +1,46 @@
+{
+  "observedAt": "2026-09-06T18:00:27.399Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 1057,
+        "cssWidth": 1410,
+        "height": 600,
+        "width": 800
+      }
+    ],
+    "fullscreen": null,
+    "log": " runtime  src| \n 0.0388s INFO| Using directory /home/web_user/.config/eduke32/\n 0.0404s INFO| Started at 2026-09-06 13:58:05.904\nERROR:  0.0413s INFO| EDuke32 rerror: object directory /tmp/build-source-backup.2M9FFd/source/.git/objects does not exist; check .git/objects/info/alternates fatal: bad object HEAD[HEAD]-error: object directory /tmp/build-source-backup.2M9FFd/source/.git/objects does not exist; check .git/objects/info/alternates f86390315\n 0.0417s INFO| Built Aug 21 2026 06:27:29, clang 22.0.0, 32-bit\n 0.0420s INFO| Application parameters: -game_dir /game -gamegrp DUKE3D.GRP -noautoload -nosetup -nologo\n 0.0423s INFO| Autoload disabled\n 0.0425s INFO| Using directory /game/\n 0.0503s INFO| Initializing SDL 2.32.8\n 0.0510s INFO| Using 'emscripten' video driver.\n 0.0513s  GFX| Detecting video modes for display 0 (0)...\n 0.0517s INFO| Searching for game data...\n 0.0741s INFO|  DUKE3D.GRP has checksum 0xbbc9ce44\n 0.0783s INFO| Using DUKE3D.GRP as main data file.\n 0.0838s  CON| Compiling: GAME.CON (99639 bytes)\n 0.0881s  CON| Including: DEFS.CON (28893 bytes)\n 0.0900s  CON| Including: USER.CON (36930 bytes)\n 0.0914s WARN| USER.CON:751: overwriting existing definition for sound #261 (hydro43.voc)\n 0.0926s  CON| GAME.CON: In state 'blimphitstate':\n 0.0933s WARN| GAME.CON:157: expected action, found define.\n 0.0945s  CON| GAME.CON: In actor 'ORGANTIC':\n 0.0949s WARN| GAME.CON:1923: found 'else' with no 'if'\n 0.0956s  CON| GAME.CON: In state 'pigshootenemystate':\n 0.0963s WARN| GAME.CON:2817: found 'else' with no 'if'\n 0.0968s WARN| Found 4 warning(s), 0 error(s).\n 0.1010s  CON| Compiled 53980 bytes in 16ms, v1.3D compatibility mode\n 0.2093s INFO| Initialized 96.0M cache\n 0.3301s INFO| Loaded DUKE.RTS\n 0.3309s INFO| Initializing console...\n 0.3329s INPT| No game controllers found.\n 0.3351s INFO| Executing settings.cfg\n 0.3367s  GFX| Setting video mode 800x600 (8-bpp windowed).\n 0.3398s  GFX| Refresh rate: 60.00Hz.\n 0.3412s  ASS| Initializing Apogee Sound System\n 0.3564s  ASS| Using SDL EMSCRIPTEN driver on System audio output device\n 0.3573s INFO| [NBlood WASM] SDL audio device opened: 48000 Hz, 2 channel(s)\n 0.3582s  ASS| Initialized sound at 48.0 KHz stereo with 64 voices\n 0.3591s  ASS| Initializing MIDI driver: AdLib OPL3 emulation\n 0.3611s INFO| [Duke WASM] Starting cooperative browser game loop\n 0.4110s INFO| [Build WASM] First rendered frame presented: source=800x600 range=0..240 surface=800x600 bpp=32\n132.8850s INFO| Cache time: 1997ms.\n132.8910s INFO| E1L1: HOLLYWOOD HOLOCAUST\n",
+    "pointerLock": null,
+    "root": {
+      "audioState": "running",
+      "buildInputFrames": "349",
+      "buildNativeClickState": "0",
+      "buildNativePointer": "400,196",
+      "buildNativePointerBits": "0",
+      "buildPointer": "400,196",
+      "buildPointerButton": "0:up@400,196",
+      "buildPointerDelta": "0,0",
+      "buildPointerDeltaEvents": "0",
+      "buildPointerRelease": "0",
+      "buildRenderBpp": "8",
+      "buildRenderMode": "0",
+      "buildRenderSize": "800x600",
+      "dukeControlsMask": "31",
+      "dukeControlsValid": "true",
+      "dukeMenuEntry": "0",
+      "dukeMenuId": "110",
+      "dukePlayerView": "-31243,7160,-158314,422,159",
+      "persistence": "ready",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmDataSource": "cache",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "duke3d"
+    },
+    "url": "http://127.0.0.1:18007/?game=duke3d&proof=duke-modernized-baseline"
+  }
+}

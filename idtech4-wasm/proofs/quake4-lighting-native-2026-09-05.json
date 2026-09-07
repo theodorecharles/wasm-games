@@ -1,0 +1,2314 @@
+{
+  "scope": "Actual linked browser vertex/fragment shaders versus the shipped material shader with syntax-only GLSL ES conversion; real GPU pixel comparisons, not campaign acceptance.",
+  "wasmSHA256": "81ba77f6d322dcf6f326420fa156518d826c9b2ac339e93dc2ef5b85e2a463c9",
+  "referenceVertexSHA256": "0c0fc8d862f0ce2736018a9003cb73b95efabe8787134283a9567b8b9a95e3b5",
+  "referenceFragmentSHA256": "17f084bc59ce18783735d6944aa0417fe7baccad39c348099f6b9ce6907efdff",
+  "driver": "AMD Radeon 890M Graphics (radeonsi, strix1, ACO, DRM 3.64, 7.1.8+deb14.1-amd64)",
+  "cases": [
+    {
+      "mode": "stock-point",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 75,
+      "actualCenter": [
+        75,
+        22,
+        38
+      ],
+      "referenceCenter": [
+        75,
+        22,
+        38
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 76,
+      "actualCenter": [
+        75,
+        22,
+        38
+      ],
+      "referenceCenter": [
+        75,
+        22,
+        38
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 54,
+      "actualCenter": [
+        54,
+        16,
+        32
+      ],
+      "referenceCenter": [
+        54,
+        16,
+        32
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 55,
+      "actualCenter": [
+        54,
+        16,
+        32
+      ],
+      "referenceCenter": [
+        54,
+        16,
+        32
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 79,
+      "actualCenter": [
+        78,
+        23,
+        38
+      ],
+      "referenceCenter": [
+        78,
+        23,
+        38
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 39,
+      "actualCenter": [
+        39,
+        12,
+        23
+      ],
+      "referenceCenter": [
+        39,
+        12,
+        23
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 50,
+      "actualCenter": [
+        50,
+        15,
+        30
+      ],
+      "referenceCenter": [
+        50,
+        15,
+        30
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 0,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 94,
+      "actualCenter": [
+        94,
+        45,
+        45
+      ],
+      "referenceCenter": [
+        94,
+        45,
+        45
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 22,
+      "actualCenter": [
+        13,
+        4,
+        10
+      ],
+      "referenceCenter": [
+        13,
+        4,
+        10
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 50,
+      "actualCenter": [
+        36,
+        11,
+        28
+      ],
+      "referenceCenter": [
+        36,
+        11,
+        28
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 16,
+      "actualCenter": [
+        13,
+        4,
+        10
+      ],
+      "referenceCenter": [
+        13,
+        4,
+        10
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 37,
+      "actualCenter": [
+        34,
+        11,
+        27
+      ],
+      "referenceCenter": [
+        34,
+        11,
+        27
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 18,
+      "actualCenter": [
+        13,
+        4,
+        10
+      ],
+      "referenceCenter": [
+        13,
+        4,
+        10
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        24,
+        7,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        7,
+        19
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 20,
+      "actualCenter": [
+        14,
+        4,
+        11
+      ],
+      "referenceCenter": [
+        14,
+        4,
+        11
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 0,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 34,
+      "actualCenter": [
+        28,
+        15,
+        15
+      ],
+      "referenceCenter": [
+        28,
+        15,
+        15
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 75,
+      "actualCenter": [
+        35,
+        11,
+        27
+      ],
+      "referenceCenter": [
+        35,
+        11,
+        27
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 54,
+      "actualCenter": [
+        34,
+        11,
+        27
+      ],
+      "referenceCenter": [
+        34,
+        11,
+        27
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 0,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 2,
+      "actualCenter": [
+        1,
+        0,
+        1
+      ],
+      "referenceCenter": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 44,
+      "actualCenter": [
+        34,
+        11,
+        27
+      ],
+      "referenceCenter": [
+        34,
+        11,
+        27
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 1,
+      "actualCenter": [
+        1,
+        0,
+        1
+      ],
+      "referenceCenter": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 35,
+      "actualCenter": [
+        34,
+        11,
+        27
+      ],
+      "referenceCenter": [
+        34,
+        11,
+        27
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 1,
+      "actualCenter": [
+        1,
+        0,
+        1
+      ],
+      "referenceCenter": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 0,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 3,
+      "actualCenter": [
+        2,
+        1,
+        1
+      ],
+      "referenceCenter": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 27,
+      "actualCenter": [
+        18,
+        6,
+        15
+      ],
+      "referenceCenter": [
+        18,
+        6,
+        15
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 33,
+      "actualCenter": [
+        33,
+        10,
+        26
+      ],
+      "referenceCenter": [
+        33,
+        10,
+        26
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 50,
+      "actualCenter": [
+        26,
+        8,
+        21
+      ],
+      "referenceCenter": [
+        26,
+        8,
+        21
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 61,
+      "actualCenter": [
+        42,
+        13,
+        33
+      ],
+      "referenceCenter": [
+        42,
+        13,
+        33
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 25,
+      "actualCenter": [
+        7,
+        2,
+        5
+      ],
+      "referenceCenter": [
+        7,
+        2,
+        5
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 34,
+      "actualCenter": [
+        24,
+        7,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        7,
+        19
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 45,
+      "actualCenter": [
+        24,
+        7,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        7,
+        19
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 1,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 90,
+      "actualCenter": [
+        57,
+        30,
+        31
+      ],
+      "referenceCenter": [
+        57,
+        30,
+        31
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 26,
+      "actualCenter": [
+        22,
+        7,
+        18
+      ],
+      "referenceCenter": [
+        22,
+        7,
+        18
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 35,
+      "actualCenter": [
+        33,
+        10,
+        26
+      ],
+      "referenceCenter": [
+        33,
+        10,
+        26
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 46,
+      "actualCenter": [
+        32,
+        10,
+        22
+      ],
+      "referenceCenter": [
+        32,
+        10,
+        22
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 66,
+      "actualCenter": [
+        50,
+        16,
+        35
+      ],
+      "referenceCenter": [
+        50,
+        16,
+        35
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 32,
+      "actualCenter": [
+        28,
+        9,
+        22
+      ],
+      "referenceCenter": [
+        28,
+        9,
+        22
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 39,
+      "actualCenter": [
+        29,
+        9,
+        20
+      ],
+      "referenceCenter": [
+        29,
+        9,
+        20
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 39,
+      "actualCenter": [
+        29,
+        9,
+        20
+      ],
+      "referenceCenter": [
+        29,
+        9,
+        20
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 1,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 80,
+      "actualCenter": [
+        62,
+        32,
+        32
+      ],
+      "referenceCenter": [
+        62,
+        32,
+        32
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 35,
+      "actualCenter": [
+        35,
+        11,
+        27
+      ],
+      "referenceCenter": [
+        35,
+        11,
+        27
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 66,
+      "actualCenter": [
+        66,
+        20,
+        39
+      ],
+      "referenceCenter": [
+        66,
+        20,
+        39
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 1,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 4,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 33,
+      "actualCenter": [
+        33,
+        10,
+        26
+      ],
+      "referenceCenter": [
+        33,
+        10,
+        26
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 4,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 41,
+      "actualCenter": [
+        41,
+        13,
+        33
+      ],
+      "referenceCenter": [
+        41,
+        13,
+        33
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 6,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 1,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 9,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 13,
+      "actualCenter": [
+        9,
+        3,
+        7
+      ],
+      "referenceCenter": [
+        9,
+        3,
+        7
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 5,
+      "actualCenter": [
+        5,
+        2,
+        4
+      ],
+      "referenceCenter": [
+        5,
+        2,
+        4
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 54,
+      "actualCenter": [
+        36,
+        11,
+        26
+      ],
+      "referenceCenter": [
+        36,
+        11,
+        26
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 44,
+      "actualCenter": [
+        31,
+        10,
+        23
+      ],
+      "referenceCenter": [
+        31,
+        10,
+        23
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 54,
+      "actualCenter": [
+        28,
+        9,
+        22
+      ],
+      "referenceCenter": [
+        28,
+        9,
+        22
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 39,
+      "actualCenter": [
+        29,
+        9,
+        20
+      ],
+      "referenceCenter": [
+        29,
+        9,
+        20
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 50,
+      "actualCenter": [
+        31,
+        9,
+        22
+      ],
+      "referenceCenter": [
+        31,
+        9,
+        22
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 2,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 94,
+      "actualCenter": [
+        73,
+        38,
+        38
+      ],
+      "referenceCenter": [
+        73,
+        38,
+        38
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 9,
+      "actualCenter": [
+        7,
+        2,
+        6
+      ],
+      "referenceCenter": [
+        7,
+        2,
+        6
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 5,
+      "actualCenter": [
+        5,
+        2,
+        4
+      ],
+      "referenceCenter": [
+        5,
+        2,
+        4
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        17,
+        5,
+        13
+      ],
+      "referenceCenter": [
+        17,
+        5,
+        13
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 33,
+      "actualCenter": [
+        28,
+        9,
+        22
+      ],
+      "referenceCenter": [
+        28,
+        9,
+        22
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 26,
+      "actualCenter": [
+        18,
+        6,
+        14
+      ],
+      "referenceCenter": [
+        18,
+        6,
+        14
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 29,
+      "actualCenter": [
+        24,
+        7,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        7,
+        19
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 29,
+      "actualCenter": [
+        22,
+        7,
+        17
+      ],
+      "referenceCenter": [
+        22,
+        7,
+        17
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 2,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 48,
+      "actualCenter": [
+        36,
+        19,
+        20
+      ],
+      "referenceCenter": [
+        36,
+        19,
+        20
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 5,
+      "actualCenter": [
+        5,
+        2,
+        4
+      ],
+      "referenceCenter": [
+        5,
+        2,
+        4
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 37,
+      "actualCenter": [
+        27,
+        9,
+        22
+      ],
+      "referenceCenter": [
+        27,
+        9,
+        22
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 2,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 5,
+      "actualCenter": [
+        5,
+        2,
+        4
+      ],
+      "referenceCenter": [
+        5,
+        2,
+        4
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 27,
+      "actualCenter": [
+        27,
+        9,
+        22
+      ],
+      "referenceCenter": [
+        27,
+        9,
+        22
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 2,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 19,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        24,
+        8,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        8,
+        19
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 19,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 3,
+      "direction": 0,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 41,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 21,
+      "actualCenter": [
+        15,
+        5,
+        12
+      ],
+      "referenceCenter": [
+        15,
+        5,
+        12
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 28,
+      "actualCenter": [
+        24,
+        8,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        8,
+        19
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        24,
+        8,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        8,
+        19
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 28,
+      "actualCenter": [
+        24,
+        8,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        8,
+        19
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        24,
+        7,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        7,
+        19
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        24,
+        7,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        7,
+        19
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 3,
+      "direction": 1,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 61,
+      "actualCenter": [
+        53,
+        28,
+        29
+      ],
+      "referenceCenter": [
+        53,
+        28,
+        29
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 110,
+      "actualCenter": [
+        32,
+        10,
+        26
+      ],
+      "referenceCenter": [
+        32,
+        10,
+        26
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 28,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 37,
+      "actualCenter": [
+        24,
+        8,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        8,
+        19
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 42,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 39,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 37,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 3,
+      "direction": 2,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 50,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-point",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 9,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "stock-ambient",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-point",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 9,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "enhanced-ambient",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 24,
+      "actualCenter": [
+        24,
+        8,
+        19
+      ],
+      "referenceCenter": [
+        24,
+        8,
+        19
+      ]
+    },
+    {
+      "mode": "enhancement-controls",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 9,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-hard",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 0,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "cel-soft",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 5,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mode": "flat-diffuse",
+      "bump": 3,
+      "direction": 3,
+      "maximumChannelDifference": 0,
+      "differentChannels": 0,
+      "referencePeak": 20,
+      "actualCenter": [
+        0,
+        0,
+        0
+      ],
+      "referenceCenter": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "mismatches": 0
+}

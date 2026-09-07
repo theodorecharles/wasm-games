@@ -1,0 +1,38 @@
+{
+  "scope": "Read-only packaged supervisor status during real two-client Chrome test. Roster is parsed from native infoResponse, separate from relay peer accounting.",
+  "observedAt": "2026-09-05T21:10:16.352Z",
+  "status": {
+    "state": "running",
+    "humans": 2,
+    "keepAlive": false,
+    "idleTimeoutMs": 300000,
+    "idleSince": null,
+    "startedAt": 1788642457540,
+    "map": "game/mp/d3dm1",
+    "error": null,
+    "connect": "127.0.0.1:27666",
+    "protocol": "1.42",
+    "players": [
+      {
+        "slot": 0,
+        "ping": 0,
+        "rate": 16000,
+        "name": "ProofMarineA"
+      },
+      {
+        "slot": 1,
+        "ping": 1,
+        "rate": 16000,
+        "name": "ProofMarineB"
+      }
+    ],
+    "browserPeers": 2,
+    "bots": 0,
+    "botStatus": "not-installed",
+    "relay": {
+      "peers": 2,
+      "clientPackets": 12423,
+      "serverPackets": 3429
+    }
+  }
+}

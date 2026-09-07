@@ -1,0 +1,55 @@
+diff --git a/source/build/src/polymost.cpp b/source/build/src/polymost.cpp
+--- a/source/build/src/polymost.cpp
++++ b/source/build/src/polymost.cpp
+@@ -454,6 +454,10 @@
+ }
+ #endif // POLYMOST2
+ 
++#ifdef __EMSCRIPTEN__
++extern "C" void build_webglShaderSource(GLuint shader, GLenum type, const char *source, int length);
++#endif
++
+ GLuint polymost2_compileShader(GLenum shaderType, const char* const source, int * pLength)
+ {
+     GLuint shaderID = glCreateShader(shaderType);
+@@ -463,10 +467,15 @@ GLuint polymost2_compileShader(GLenum shaderType, const char* const source, int * pL
+         return 0;
+     }
+ 
++#ifdef __EMSCRIPTEN__
++    build_webglShaderSource(shaderID, shaderType, source,
++                           pLength && *pLength >= 0 ? *pLength : Bstrlen(source));
++#else
+     glShaderSource(shaderID,
+                    1,
+                    &source,
+                    pLength);
++#endif
+     glCompileShader(shaderID);
+ 
+     GLint compileStatus;
+@@ -1139,8 +1148,13 @@ void polymost_glinit()
+ 
+         glLinkProgram(polymost1ExtendedShaderProgramID);
+ 
++#ifndef __EMSCRIPTEN__
++        // The browser fixed-function bridge still uses the attachment metadata
++        // when it initializes a renderer on the first draw. Keep attachments;
++        // glDeleteShader below marks them for deletion with the owning program.
+         glDetachShader(polymost1ExtendedShaderProgramID, polymost1BasicVertexShaderID);
+         glDetachShader(polymost1ExtendedShaderProgramID, polymost1ExtendedFragmentShaderID);
++#endif
+     }
+ 
+     if (!glIsProgram(polymost1BasicShaderProgramID))
+@@ -1168,8 +1182,10 @@ void polymost_glinit()
+ 
+         glLinkProgram(polymost1BasicShaderProgramID);
+ 
++#ifndef __EMSCRIPTEN__
+         glDetachShader(polymost1BasicShaderProgramID, polymost1BasicVertexShaderID);
+         glDetachShader(polymost1BasicShaderProgramID, polymost1BasicFragmentShaderID);
++#endif
+ 
+         DO_FREE_AND_NULL(polymost1BasicFrag);
+     }

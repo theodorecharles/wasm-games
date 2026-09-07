@@ -23,7 +23,10 @@ const source = execFileSync(path.join(repo, 'scripts/fetch-source'), { encoding:
 const testVariant = process.env.WOLF4SDL_TEST_VARIANT;
 const makefile = fs.readFileSync(path.join(source, 'Makefile'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
-assert.equal(config.menuCursor, 'none');
+assert.equal(config.menuCursor, 'browser');
+assert.equal(config.pointerWidth, 320);
+assert.equal(config.pointerHeight, 240);
+assert.equal(config.pointerFit, 'fill');
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 const selectedConfig = { ...config, ...config.variants[testVariant] };
 const selectedDataManifest = dataManifest.variants[testVariant];
@@ -40,6 +43,7 @@ const lifecycle = [];
 const controllerKeys = [];
 const controllerMouse = [];
 const controllerButtonMasks = [];
+const menuPointer = [];
 let persistenceSaves = 0;
 let persistenceDirty = 0;
 let ownerPolicy = null;
@@ -70,7 +74,9 @@ const engineParts = {
   _WolfWasm_BrowserControlsMask: () => 31,
   _WolfWasm_BrowserPreparedDigiSounds: () => testVariant === 'spear' ? 40 : 46,
   _WolfWasm_BrowserDigiStarts: () => 3,
-  _WolfWasm_BrowserActiveDigiChannels: () => 1
+  _WolfWasm_BrowserActiveDigiChannels: () => 1,
+  _WolfWasm_BrowserInputDiagnostics: field => [7, 12, 5, 1][field],
+  _WolfWasm_BrowserMenuPointer: (...args) => menuPointer.push(args)
 };
 const canvas = { addEventListener() {} };
 const sandbox = {
@@ -98,6 +104,7 @@ const sandbox = {
     }
   },
   window: {
+    addEventListener() {},
     setInterval(callback) { intervals.push(callback); return intervals.length; },
     clearInterval() {}
   }
@@ -157,7 +164,7 @@ const context = {
   const playSource = fs.readFileSync(path.join(source, 'wl_play.cpp'), 'utf8');
   assert.match(playSource, /dirscan\[4\] = \{ sc_UpArrow, sc_RightArrow, sc_DownArrow, sc_LeftArrow \}/);
   assert.match(playSource,
-    /WOLF4SDL_WEB[\s\S]*Keyboard\[sc_W\][\s\S]*Keyboard\[sc_A\][\s\S]*bt_strafeleft/,
+    /WOLF4SDL_WEB[\s\S]*IN_GameplayKeyDown\(sc_W\)[\s\S]*IN_GameplayKeyDown\(sc_A\)[\s\S]*bt_strafeleft/,
     'browser WASD must move/strafe independently of the original turning bindings');
   assert.match(fs.readFileSync(path.join(source, 'wl_main.cpp'), 'utf8'),
     /WOLF4SDL_WEB[\s\S]*dirscan\[di_north\] = sc_UpArrow[\s\S]*dirscan\[di_west\] = sc_LeftArrow/,
@@ -209,6 +216,21 @@ const context = {
   assert.equal(persistenceDirty, 1, 'native save writes must mark framework persistence dirty');
   assert.equal(shellState, 'menu');
 
+  adapter.pointerMove({captured:false,inside:true,x:121.9,y:73.5});
+  assert.deepEqual(menuPointer.at(-1),[121,73,-1,0]);
+  adapter.pointerButton({captured:false,inside:true,x:121.9,y:73.5,button:0,pressed:true});
+  adapter.pointerButton({captured:false,inside:true,x:121.9,y:73.5,button:0,pressed:false});
+  assert.deepEqual(menuPointer.slice(-2),[[121,73,0,1],[121,73,0,0]]);
+  adapter.pointerButton({inside:false,x:0,y:73,button:0,pressed:false});
+  assert.deepEqual(menuPointer.at(-1),[0,0,-2,0],'outside release cancels the gesture');
+  const pointerCount=menuPointer.length;
+  adapter.pointerMove({captured:false,inside:true,x:NaN,y:73});
+  nativeState=2;
+  adapter.pointerMove({captured:false,inside:true,x:120,y:73});
+  adapter.pointerButton({inside:true,x:120,y:73,button:0,pressed:true});
+  assert.equal(menuPointer.length,pointerCount,'released gameplay cannot click menus or pass invalid coordinates');
+  nativeState=1;
+
   adapter.pointerMove({ captured: true, movementX: 9.6, movementY: -4 });
   assert.deepEqual(controllerMouse.at(-1), [10, 0],
     'captured browser mouse motion must use the native relative-input seam');
@@ -220,6 +242,10 @@ const context = {
   assert.equal(Number(sandbox.document.documentElement.dataset.wolfAudioPrepared) > 0, true);
   assert.equal(sandbox.document.documentElement.dataset.wolfAudioDigiStarts, '3');
   assert.equal(sandbox.document.documentElement.dataset.wolfAudioActive, '1');
+  assert.equal(sandbox.document.documentElement.dataset.wolfInputFlags, '7');
+  assert.equal(sandbox.document.documentElement.dataset.wolfKeyEdges, '12');
+  assert.equal(sandbox.document.documentElement.dataset.wolfMouseEdges, '5');
+  assert.equal(sandbox.document.documentElement.dataset.wolfMouseSample, '1');
   nativeState = 3;
   intervals.at(-1)();
   assert.equal(shellState, 'debrief');

@@ -1,0 +1,79 @@
+diff --git a/opl/opl.c b/opl/opl.c
+index e99821cb..398ee2f9 100644
+--- a/opl/opl.c
++++ b/opl/opl.c
+@@ -28,7 +28,7 @@
+ 
+ //#define OPL_DEBUG_TRACE
+ 
+-#ifdef EMSCRIPTEN
++#if defined(EMSCRIPTEN) || defined(CRISPY_WASM)
+ #include <emscripten.h>
+ #endif
+ 
+@@ -451,20 +451,26 @@ typedef struct
+ {
+     int finished;
+ 
++#ifndef CRISPY_WASM
+     SDL_mutex *mutex;
+     SDL_cond *cond;
++#endif
+ } delay_data_t;
+ 
+ static void DelayCallback(void *_delay_data)
+ {
+     delay_data_t *delay_data = _delay_data;
+ 
++#ifndef CRISPY_WASM
+     SDL_LockMutex(delay_data->mutex);
++#endif
+     delay_data->finished = 1;
+ 
++#ifndef CRISPY_WASM
+     SDL_CondSignal(delay_data->cond);
+ 
+     SDL_UnlockMutex(delay_data->mutex);
++#endif
+ }
+ 
+ // Delay for specified number of microseconds after OPL subsystem is initialized
+@@ -486,13 +492,25 @@ void OPL_Delay(uint64_t us)
+     // before releasing the mutex lock
+ 
+     delay_data.finished = 0;
++#ifndef CRISPY_WASM
+     delay_data.mutex = SDL_CreateMutex();
+     delay_data.cond = SDL_CreateCond();
++#endif
+ 
+     OPL_SetCallback(us, DelayCallback, &delay_data);
+ 
+     // Wait until the callback is invoked.
+ 
++#ifdef CRISPY_WASM
++    // SDL's browser mixer callback runs on this same thread. A condition
++    // wait blocks it indefinitely during OPL detection. Yield with Asyncify
++    // until the real mixer has advanced the OPL clock and fired our callback;
++    // a wall-clock delay alone would not satisfy OPL_Detect's timer checks.
++    while (!delay_data.finished)
++    {
++        emscripten_sleep(1);
++    }
++#else
+     SDL_LockMutex(delay_data.mutex);
+ 
+     while (!delay_data.finished)
+@@ -510,6 +528,7 @@ void OPL_Delay(uint64_t us)
+ 
+     SDL_DestroyMutex(delay_data.mutex);
+     SDL_DestroyCond(delay_data.cond);
++#endif
+ }
+ 
+ void OPL_SetPaused(int paused)
+@@ -527,4 +546,3 @@ void OPL_AdjustCallbacks(float value)
+         driver->adjust_callbacks_func(value);
+     }
+ }
+-

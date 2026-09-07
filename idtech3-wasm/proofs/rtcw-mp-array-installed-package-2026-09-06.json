@@ -1,0 +1,126 @@
+{
+  "observedAt": "2026-09-06T08:10:10.249Z",
+  "commit": "18c6ad4064e2fe83394ecfc488b75369e52953ed",
+  "changedSource": [
+    "MP/code/renderer/tr_es2.c"
+  ],
+  "filesCompared": 199,
+  "unchangedFiles": 198,
+  "changed": [
+    {
+      "file": "/opt/game-site/iowolfmp.wasm",
+      "before": {
+        "bytes": 1886084,
+        "sha256": "bca4c562fa9aead46e9c2837e692ce26282bc8d5daa234ff7d58fc1d5ba1b12f"
+      },
+      "after": {
+        "bytes": 1886444,
+        "sha256": "78b669d405f4c79332ed13a0cc11fe85789a15ff6cb14e3784e0908faef247d0"
+      }
+    }
+  ],
+  "services": {
+    "baseline": {
+      "id": "799e603ab67b24b6163969e9bd67e0e0ad8da9a44f84fb3de999e95c410d19d2",
+      "image": "sha256:49c767bb52ad27762d91c500ba1c4cf6f1d294e816964ed3bc28a9d48476ec64",
+      "startedAt": "2026-09-04T20:59:30.05204434Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    "candidate": {
+      "id": "9b219a208063111624cdfee4d2168a01b9dbca488e5902fd474d27531efcaa44",
+      "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+      "startedAt": "2026-09-06T05:33:51.327683105Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": false
+        }
+      ]
+    },
+    "singlePlayer": {
+      "id": "0cae221aacf7a4e780eb05b7679bf75047c2f9fd40c399d6ad637b6fe846d7f5",
+      "image": "sha256:e6cc9c2be15c9009450dd341e7c25fefc04e868a6ed60be195e5ac6479a6c759",
+      "startedAt": "2026-09-04T20:59:30.05162676Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    },
+    "installed": {
+      "id": "b194297c1ffd5895a40b870366142ab40e66a491e93bf95cdff4c66f4acb714f",
+      "image": "sha256:371a3f085e2406580cbabe9d4d11148432004ee2010f66962caee7dd304e2948",
+      "startedAt": "2026-09-06T08:06:54.661299486Z",
+      "restarts": 0,
+      "mounts": [
+        {
+          "source": "/home/ted/wasm-game-data/rtcw",
+          "destination": "/data",
+          "rw": true
+        }
+      ]
+    }
+  },
+  "http": [
+    {
+      "relative": "game-adapter.js",
+      "sha256": "9a4142bc0b0a29cb805b5f41f4347b06787f1ed1dda354c6a9ee7354b64cfaae"
+    },
+    {
+      "relative": "wasm-game.json",
+      "sha256": "399ff5aace079267aac46c4c85c3203b0dbba4accb53486706738ac1efcdc336"
+    },
+    {
+      "relative": "framework-install.json",
+      "sha256": "eb9ff57711c2aeaf270979ea4e608cf8872153ea3698050215c0d3bcce840bc1"
+    },
+    {
+      "relative": "menus/mp_wasm.pk3",
+      "sha256": "127df2c4fd38a6a54ee83a5b4a19bf7165d8af2fd32efc8de7a1a6434a6a40a2"
+    },
+    {
+      "relative": "menus/sp_wasm.pk3",
+      "sha256": "7a86d2c954f5220967b7c19ab0205dfd365ad423e707aca34adb9f9892d3232b"
+    },
+    {
+      "relative": "iowolfmp.js",
+      "sha256": "f3972e914d66ffaf3506ddb0d15d21e61cf59a26a6bbb8f8cb85a1d1d5832a78"
+    },
+    {
+      "relative": "iowolfmp.wasm",
+      "sha256": "78b669d405f4c79332ed13a0cc11fe85789a15ff6cb14e3784e0908faef247d0"
+    },
+    {
+      "relative": "iowolfsp.js",
+      "sha256": "3320e850f625cd2f3801c02c054c25fc3cc9959e2419794ef41428c25d82c8ff"
+    },
+    {
+      "relative": "iowolfsp.wasm",
+      "sha256": "a346b0d190f3be439d6efebff0ca6e91e64f54c429d723bf1e105c9493937697"
+    },
+    {
+      "relative": "qvm/mp/cgame.mp.qvm",
+      "sha256": "0617f7ff215d968e29014092398eb905b6f6fbdda6187b563ee1cd608e90e23a"
+    },
+    {
+      "relative": "qvm/mp/qagame.mp.qvm",
+      "sha256": "9f0053de8178042fa28e857eb114305637a392ec185a9ab4ef86073435fa7050"
+    },
+    {
+      "relative": "qvm/mp/ui.mp.qvm",
+      "sha256": "3f7ab2e80cbc5c1e2abb1cee52cdf7a6818826babc32397ca62af2bd3b3b6bf3"
+    }
+  ]
+}

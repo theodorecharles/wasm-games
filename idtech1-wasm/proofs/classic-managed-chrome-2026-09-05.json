@@ -1,0 +1,2185 @@
+{
+  "image": "sha256:2f91f270c09d62957501c7ede74e60131bf1388d70150f809e98db3a655e0775",
+  "startedAt": "2026-09-05T04:27:21.976Z",
+  "scope": "Actual Chrome-control UI: observations from the candidate container, installed section from the same image deployed at port 8010",
+  "installedIdleCleanup": {
+    "scope": "Read-only HTTP and container inspection after the Chrome tab returned to the launcher",
+    "checkedAt": "2026-09-05T04:52:53.825Z",
+    "passed": true,
+    "state": "sleeping",
+    "humans": 0,
+    "peers": 0,
+    "bots": 0,
+    "nativeProcesses": [],
+    "sessionDirectories": []
+  },
+  "observations": [
+    {
+      "game": "doom2",
+      "profile": "original",
+      "stage": "automatic-join",
+      "audioEvidence": "No audio events saved for this initial Doom II candidate join; use the separately recorded installed Doom II Original join on the identical image.",
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.0",
+        "doomFrames": "965",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "407,961,1226675776,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      }
+    },
+    {
+      "game": "doom2",
+      "profile": "original",
+      "stage": "physical-mouse-fire",
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.0",
+        "doomFrames": "1003",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "407,961,1226675776,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      },
+      "note": "First attempt occurred while the player was dead; not accepted as firing. Subsequent respawn/fire consumed ammo and rendered a muzzle flash."
+    },
+    {
+      "game": "doom2",
+      "profile": "original",
+      "stage": "physical-respawn-fire",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.0",
+        "doomFrames": "2820",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "384,1115,1073741824,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      }
+    },
+    {
+      "game": "doom",
+      "profile": "original",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.3",
+        "doomFrames": "25",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "1792,-2944,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      },
+      "audioContexts": [
+        {
+          "sequence": 137583,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "e5064348-ea9f-4ced-b73e-4eba0b29afeb",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 137595,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "e5064348-ea9f-4ced-b73e-4eba0b29afeb",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "doom",
+      "profile": "original",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "25.9",
+        "doomFrames": "59",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "1792,-2944,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      }
+    },
+    {
+      "game": "doom",
+      "profile": "original",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "25.9",
+        "doomFrames": "70",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "1792,-2944,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      }
+    },
+    {
+      "game": "doom",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.5",
+        "doomFrames": "25",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "1792,-2944,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      },
+      "audioContexts": [
+        {
+          "sequence": 137664,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "79ef48a9-a687-4766-9d2c-879cf20c4a26",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 137676,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "79ef48a9-a687-4766-9d2c-879cf20c4a26",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "doom",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "93.4",
+        "doomFrames": "107",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "1792,-2944,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      }
+    },
+    {
+      "game": "doom",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.0",
+        "doomFrames": "154",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "1792,-2944,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom"
+      }
+    },
+    {
+      "game": "doom2",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.5",
+        "doomFrames": "25",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "384,1104,1073741824,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      },
+      "audioContexts": [
+        {
+          "sequence": 137744,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "d0de2cb3-a0f6-4e58-a089-f9cf23a6683e",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 137756,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "d0de2cb3-a0f6-4e58-a089-f9cf23a6683e",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "doom2",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "94.0",
+        "doomFrames": "107",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "384,1104,1073217536,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      }
+    },
+    {
+      "game": "doom2",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.0",
+        "doomFrames": "154",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "384,1104,1073217536,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "doom2"
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "original",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "32.0",
+        "doomFrames": "24",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "159,504,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      },
+      "audioContexts": [
+        {
+          "sequence": 137825,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "171fec37-5fce-45ce-a897-0300b486f3a7",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 137837,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "171fec37-5fce-45ce-a897-0300b486f3a7",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "tnt",
+      "profile": "original",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "26.6",
+        "doomFrames": "57",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "159,504,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "original",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "38.4",
+        "doomFrames": "73",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "159,504,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.9",
+        "doomFrames": "28",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "159,504,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      },
+      "audioContexts": [
+        {
+          "sequence": 137906,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "cba4db74-d38a-4efd-b310-62301134e062",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 137918,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "cba4db74-d38a-4efd-b310-62301134e062",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "tnt",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "90.3",
+        "doomFrames": "116",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "159,504,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      }
+    },
+    {
+      "game": "tnt",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "120.0",
+        "doomFrames": "152",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "159,504,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "tnt"
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "original",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.0",
+        "doomFrames": "28",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1184,224,3758096384,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      },
+      "audioContexts": [
+        {
+          "sequence": 137987,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "24fd8d2c-b3ea-42da-a1a7-b5a462656ba0",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 137999,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "24fd8d2c-b3ea-42da-a1a7-b5a462656ba0",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "plutonia",
+      "profile": "original",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "26.5",
+        "doomFrames": "62",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1184,224,3758096384,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "original",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "26.5",
+        "doomFrames": "73",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1184,224,3757572096,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.9",
+        "doomFrames": "28",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1184,224,3758096384,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138068,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "c6d529ea-ff27-4fb6-b6f3-7f90ce826d7a",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138080,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "c6d529ea-ff27-4fb6-b6f3-7f90ce826d7a",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "plutonia",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "120.9",
+        "doomFrames": "117",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1184,224,3758096384,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      }
+    },
+    {
+      "game": "plutonia",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "120.9",
+        "doomFrames": "165",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1184,224,3758096384,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "plutonia"
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "original",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      },
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "25.9",
+        "doomFrames": "27",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-608,352,0,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138147,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "e1b56bd7-bc81-43d8-ba2b-29a9c686ca19",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138159,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "e1b56bd7-bc81-43d8-ba2b-29a9c686ca19",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "heretic",
+      "profile": "original",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.9",
+        "doomFrames": "66",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-608,352,4294443008,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "original",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.0",
+        "doomFrames": "77",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-608,352,4294443008,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      },
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "86.0",
+        "doomFrames": "91",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-608,352,0,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138221,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "a3253102-59f5-42d7-a0d4-9459cfe6e5ef",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138233,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "a3253102-59f5-42d7-a0d4-9459cfe6e5ef",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "heretic",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "120.0",
+        "doomFrames": "223",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-608,352,4294443008,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      }
+    },
+    {
+      "game": "heretic",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "116.0",
+        "doomFrames": "257",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-608,352,4294443008,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "heretic"
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "original",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      },
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "33.9",
+        "doomFrames": "29",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1472,-32,536870912,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138300,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "5fa0924e-bcf9-4966-820e-eeeb36811ddf",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138312,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "5fa0924e-bcf9-4966-820e-eeeb36811ddf",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "hexen",
+      "profile": "original",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.9",
+        "doomFrames": "68",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1472,-32,536870912,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "original",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "35.9",
+        "doomFrames": "79",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1472,-32,536346624,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      },
+      "state": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.5",
+        "doomFrames": "92",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1472,-32,536870912,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138382,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "e773226f-0457-4001-a8d3-578dc8c4894e",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138394,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "e773226f-0457-4001-a8d3-578dc8c4894e",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "hexen",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.8",
+        "doomFrames": "222",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1472,-32,536870912,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      }
+    },
+    {
+      "game": "hexen",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.8",
+        "doomFrames": "258",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1472,-32,536346624,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "hexen"
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "original",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "25.5",
+        "doomFrames": "29",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138463,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "bc93c76c-b430-4c58-bd00-40b8f2e2c666",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138475,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "bc93c76c-b430-4c58-bd00-40b8f2e2c666",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "chex",
+      "profile": "original",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "30.0",
+        "doomFrames": "53",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "original",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "8.0",
+        "doomFrames": "55",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "original",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "smooth",
+      "stage": "automatic-join",
+      "lobby": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "0",
+        "doomFps": "0.0",
+        "doomFrames": "0",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "0",
+        "doomPlayer": "0,0,0,0",
+        "doomPlayers": "0",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "1",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      },
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "16.6",
+        "doomFrames": "28",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "visible",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      },
+      "audioContexts": [
+        {
+          "sequence": 138546,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextCreated",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "67c16c0b-2362-453c-953e-c759de5521a2",
+              "contextState": "suspended",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        },
+        {
+          "sequence": 138558,
+          "source": {
+            "tabId": 1938017562
+          },
+          "method": "WebAudio.contextChanged",
+          "params": {
+            "context": {
+              "callbackBufferSize": 512,
+              "contextId": "67c16c0b-2362-453c-953e-c759de5521a2",
+              "contextState": "running",
+              "contextType": "realtime",
+              "maxOutputChannelCount": 2,
+              "sampleRate": 48000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "chex",
+      "profile": "smooth",
+      "stage": "physical-fire-click-capture",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "61.7",
+        "doomFrames": "116",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "smooth",
+      "stage": "escape-release",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.0",
+        "doomFrames": "163",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3221225472,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "menu",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "false",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "smooth",
+      "stage": "longer-fire-followup",
+      "state": {
+        "doomAttackDown": "1",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.3",
+        "doomFrames": "5694",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3220701184,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      }
+    },
+    {
+      "game": "chex",
+      "profile": "smooth",
+      "stage": "physical-w-taps",
+      "taps": 40,
+      "before": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "118.0",
+        "doomFrames": "9608",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1602,3220176896,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      },
+      "after": {
+        "doomAttackDown": "0",
+        "doomConsolePlayer": "2",
+        "doomFps": "117.5",
+        "doomFrames": "9656",
+        "doomLobbyController": "0",
+        "doomLobbyPlayers": "3",
+        "doomNetgame": "1",
+        "doomPlayer": "-1396,-1606,3220176896,0",
+        "doomPlayers": "3",
+        "doomProfile": "smooth",
+        "doomRuntime": "ready",
+        "doomServerPeers": "0",
+        "doomServerState": "running",
+        "doomWaitingLaunch": "0",
+        "shellDataReady": "true",
+        "shellEngineState": "gameplay",
+        "shellHostCursor": "hidden",
+        "shellInputCaptured": "true",
+        "shellMenuCursor": "none",
+        "wasmGameMode": "suite",
+        "wasmGameVariant": "chex"
+      }
+    }
+  ],
+  "limits": [
+    "Automatic capture at countdown completion was false in all fourteen cases; physical click capture works.",
+    "Physical W taps in Chex Smooth moved y from -1602 to -1606 at 100 health; sustained held-key control remains unaccepted.",
+    "WebAudio suspended-to-running transitions are real browser observations, not audible listening.",
+    "First short Chex screenshots caught weapon raising with ammo 50; longer Smooth follow-up consumed ammo to 45/44.",
+    "TNT Smooth first short screenshot had ammo 50; do not count it alone as firing.",
+    "Two-human admission was tested with real Wasm/WebSocket clients, not two Chrome tabs."
+  ],
+  "installed": {
+    "origin": "http://127.0.0.1:8010",
+    "game": "doom2",
+    "profile": "original",
+    "lobby": {
+      "doomAttackDown": "0",
+      "doomConsolePlayer": "0",
+      "doomFps": "0.0",
+      "doomFrames": "0",
+      "doomLobbyController": "0",
+      "doomLobbyPlayers": "3",
+      "doomNetgame": "0",
+      "doomPlayer": "0,0,0,0",
+      "doomPlayers": "0",
+      "doomProfile": "original",
+      "doomRuntime": "ready",
+      "doomServerPeers": "0",
+      "doomServerState": "running",
+      "doomWaitingLaunch": "1",
+      "shellDataReady": "true",
+      "shellEngineState": "menu",
+      "shellHostCursor": "hidden",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "none",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "doom2"
+    },
+    "joined": {
+      "doomAttackDown": "1",
+      "doomConsolePlayer": "2",
+      "doomFps": "35.0",
+      "doomFrames": "28",
+      "doomLobbyController": "0",
+      "doomLobbyPlayers": "3",
+      "doomNetgame": "1",
+      "doomPlayer": "384,1104,1073741824,0",
+      "doomPlayers": "3",
+      "doomProfile": "original",
+      "doomRuntime": "ready",
+      "doomServerPeers": "0",
+      "doomServerState": "running",
+      "doomWaitingLaunch": "0",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "none",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "doom2"
+    },
+    "audioContexts": [
+      {
+        "sequence": 138627,
+        "source": {
+          "tabId": 1938017562
+        },
+        "method": "WebAudio.contextCreated",
+        "params": {
+          "context": {
+            "callbackBufferSize": 512,
+            "contextId": "09c41d53-b91c-4c17-ba22-188fba4ff6b6",
+            "contextState": "suspended",
+            "contextType": "realtime",
+            "maxOutputChannelCount": 2,
+            "sampleRate": 48000
+          }
+        }
+      },
+      {
+        "sequence": 138639,
+        "source": {
+          "tabId": 1938017562
+        },
+        "method": "WebAudio.contextChanged",
+        "params": {
+          "context": {
+            "callbackBufferSize": 512,
+            "contextId": "09c41d53-b91c-4c17-ba22-188fba4ff6b6",
+            "contextState": "running",
+            "contextType": "realtime",
+            "maxOutputChannelCount": 2,
+            "sampleRate": 48000
+          }
+        }
+      }
+    ],
+    "fire": {
+      "doomAttackDown": "1",
+      "doomConsolePlayer": "2",
+      "doomFps": "36.6",
+      "doomFrames": "142",
+      "doomLobbyController": "0",
+      "doomLobbyPlayers": "3",
+      "doomNetgame": "1",
+      "doomPlayer": "384,1104,1073217536,0",
+      "doomPlayers": "3",
+      "doomProfile": "original",
+      "doomRuntime": "ready",
+      "doomServerPeers": "0",
+      "doomServerState": "running",
+      "doomWaitingLaunch": "0",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "hidden",
+      "shellInputCaptured": "true",
+      "shellMenuCursor": "none",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "doom2"
+    },
+    "released": {
+      "doomAttackDown": "0",
+      "doomConsolePlayer": "2",
+      "doomFps": "35.0",
+      "doomFrames": "2326",
+      "doomLobbyController": "0",
+      "doomLobbyPlayers": "3",
+      "doomNetgame": "1",
+      "doomPlayer": "397,965,1133666816,0",
+      "doomPlayers": "3",
+      "doomProfile": "original",
+      "doomRuntime": "ready",
+      "doomServerPeers": "0",
+      "doomServerState": "running",
+      "doomWaitingLaunch": "0",
+      "shellDataReady": "true",
+      "shellEngineState": "menu",
+      "shellHostCursor": "hidden",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "none",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "doom2"
+    },
+    "visual": "Doom II MAP01, pistol muzzle flash, ammo 43, health 100; click captured; Escape menu released."
+  }
+}

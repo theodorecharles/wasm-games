@@ -1,0 +1,47 @@
+{
+  "observedAt": "2026-09-06T21:32:28.476Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 1057,
+        "cssWidth": 1410,
+        "height": 600,
+        "width": 800
+      }
+    ],
+    "fullscreen": null,
+    "log": " runtime  src| \n 0.1346s INFO| Started at 2026-09-06 17:29:57.032\nERROR:  0.1358s INFO| NBlood rerror: object directory /tmp/build-source-backup.2M9FFd/source/.git/objects does not exist; check .git/objects/info/alternates fatal: bad object HEAD[HEAD]-error: object directory /tmp/build-source-backup.2M9FFd/source/.git/objects does not exist; check .git/objects/info/alternates f86390315\n 0.1362s INFO| [NBlood WASM] Engine initialization started\n 0.1365s INFO| Built Aug 21 2026 06:25:21, clang 22.0.0, 32-bit\n 0.1368s INFO| Autoload disabled\n 0.1374s INFO| Using directory /game/\n 0.1378s INFO| Using directory /home/web_user/.config/nblood/\n 0.1396s INFO| Initializing SDL 2.32.8\n 0.1420s INFO| Using 'emscripten' video driver.\n 0.1476s INFO| Using \"nblood.pk3\" as main game data file.\n 0.1494s INFO| Initializing OSD...\n 0.1503s INFO| [NBlood WASM] Loading Blood resources from the virtual filesystem\n 0.1533s INFO| Initializing Build 3D engine\n 0.1539s INFO| [NBlood WASM] Initializing SDL browser renderer\n 0.1542s INFO| Initializing engine\n 0.1552s INFO| Loading palettes\n 0.1582s INFO| Loading translucency table\n 0.1592s INFO| Loading gamma correction table\n 0.1602s INFO| Creating standard color lookups\n 0.1607s INFO| Loading tiles\n 0.1736s INFO| Initialized 96.0M cache\n 0.1800s INFO| Loading blood_widescreen.def\n 0.2100s INFO| Loading blood.def\n 0.2301s INFO| Definitions file \"blood.def\" loaded in 20 ms.\n 0.2324s INFO| Loading cosine table\n 0.2327s INFO| Initializing view subsystem\n 0.2329s INFO| Initializing status bar\n 0.2337s INFO| Initializing dynamic fire\n 0.2367s INFO| Initializing weapon animations\n 0.2383s INFO| There are 4 demo(s) in the loop\n 0.2386s INFO| Loading control setup\n 0.2405s INFO| Initializing network users\n 0.2548s INFO| Initializing sound system\n 0.2552s INFO| [NBlood WASM] Initializing Web Audio through SDL\n 0.2595s INFO| [NBlood WASM] SDL audio device opened: 48000 Hz, 2 channel(s)\n 0.2631s INFO| Waiting for network players!\n 0.2650s INFO| [NBlood WASM] Starting browser game loop\n 0.2729s INFO| [Build WASM] First rendered frame presented: source=800x600 range=0..234 surface=800x600 bpp=32\n136.9619s INFO| > This map *does not* provide modern features.\n137.0581s INFO| [NBlood WASM] Playing CD-audio replacement blood03.ogg\n137.0612s INFO| Wrote nblood.cfg\n137.0620s INFO| Wrote nblood_cvars.cfg\n137.0623s INFO| [NBlood WASM] Configuration queued for persistent storage\n",
+    "pointerLock": null,
+    "root": {
+      "audioState": "running",
+      "bloodControlsMask": "31",
+      "bloodControlsValid": "true",
+      "bloodProfile": "classic",
+      "buildNativeClickState": "0",
+      "buildNativePointer": "400,300",
+      "buildNativePointerBits": "0",
+      "buildPointerDelta": "0,0",
+      "buildPointerDeltaEvents": "0",
+      "buildRenderBpp": "8",
+      "buildRenderMode": "0",
+      "buildRenderSize": "800x600",
+      "campaign": "blood",
+      "demos": "false",
+      "gameplayInput": "true",
+      "inputMode": "0",
+      "intro": "false",
+      "persistence": "ready",
+      "playerPosition": "-15062,33316,-35504,859",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "none",
+      "simulationFrames": "408",
+      "wasmDataSource": "cache",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "blood"
+    },
+    "url": "http://127.0.0.1:32987/?game=blood"
+  }
+}

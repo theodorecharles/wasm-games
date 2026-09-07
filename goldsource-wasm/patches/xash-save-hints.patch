@@ -1,0 +1,30 @@
+diff --git a/3rdparty/mainui/menus/SaveLoad.cpp b/3rdparty/mainui/menus/SaveLoad.cpp
+--- a/3rdparty/mainui/menus/SaveLoad.cpp
++++ b/3rdparty/mainui/menus/SaveLoad.cpp
+@@ -36,6 +36,15 @@ private:
+ 	char		hintText[MAX_HINT_TEXT];
+ };
+ 
++// Current Xash defaults use dedicated commands. Retain the older command
++// spelling for installations with custom/legacy bindings; never change binds
++// merely to display a hint.
++static int UI_QuickSaveHintKey( const char *current, const char *legacy )
++{
++	const int key = KEY_GetKey( current );
++	return key >= 0 ? key : KEY_GetKey( legacy );
++}
++
+ /*
+ =================
+ UI_SaveLoad_Init
+@@ -45,8 +54,8 @@ void CMenuSaveLoad::_Init( void )
+ {
+ 	snprintf( hintText, sizeof( hintText ),
+ 		L( "During play, you can quickly save your game by pressing %s.\nLoad this game again by pressing %s." ),
+-		EngFuncs::KeynumToString( KEY_GetKey( "save quick" ) ),
+-		EngFuncs::KeynumToString( KEY_GetKey( "load quick" ) ) );
++		EngFuncs::KeynumToString( UI_QuickSaveHintKey( "savequick", "save quick" ) ),
++		EngFuncs::KeynumToString( UI_QuickSaveHintKey( "loadquick", "load quick" ) ) );
+ 
+ 	banner.SetPicture( ART_BANNER );
+ 

@@ -1,0 +1,49 @@
+{
+  "observedAt": "2026-09-06T21:44:44.949Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 1057,
+        "cssWidth": 1410,
+        "height": 600,
+        "width": 800
+      }
+    ],
+    "fullscreen": null,
+    "log": " runtime  src| \n 0.1054s INFO| Started at 2026-09-06 17:44:31.616\n 0.1064s INFO| NBlood r14377[HEAD]-f86390315\n 0.1067s INFO| [NBlood WASM] Engine initialization started\n 0.1068s INFO| Built Sep  6 2026 21:31:46, clang 24.0.0, 32-bit\n 0.1070s INFO| Autoload disabled\n 0.1074s INFO| Using directory /game/\n 0.1077s INFO| Using directory /home/web_user/.config/nblood/\n 0.1092s INFO| Initializing SDL 2.32.10\n 0.1106s INFO| Using 'emscripten' video driver.\n 0.1151s INFO| Using \"nblood.pk3\" as main game data file.\n 0.1167s INFO| Initializing OSD...\n 0.1174s INFO| [NBlood WASM] Loading Blood resources from the virtual filesystem\n 0.1198s INFO| Initializing Build 3D engine\n 0.1201s INFO| [NBlood WASM] Initializing SDL browser renderer\n 0.1203s INFO| Initializing engine\n 0.1215s INFO| Loading palettes\n 0.1237s INFO| Loading translucency table\n 0.1243s INFO| Loading gamma correction table\n 0.1247s INFO| Creating standard color lookups\n 0.1249s INFO| Loading tiles\n 0.1367s INFO| Initialized 96.0M cache\n 0.1416s INFO| Loading blood_widescreen.def\n 0.1703s INFO| Loading blood.def\n 0.1918s INFO| Definitions file \"blood.def\" loaded in 22 ms.\n 0.1948s INFO| Loading cosine table\n 0.1954s INFO| Initializing view subsystem\n 0.1958s INFO| Initializing status bar\n 0.1969s INFO| Initializing dynamic fire\n 0.2006s INFO| Initializing weapon animations\n 0.2022s INFO| There are 4 demo(s) in the loop\n 0.2025s INFO| Loading control setup\n 0.2067s INFO| Initializing network users\n 0.2205s INFO| Initializing sound system\n 0.2209s INFO| [NBlood WASM] Initializing Web Audio through SDL\n 0.2259s INFO| [NBlood WASM] SDL audio device opened: 48000 Hz, 2 channel(s)\n 0.2276s INFO| Waiting for network players!\n 0.2279s INFO| [NBlood WASM] Starting browser game loop\n 0.2328s INFO| [Build WASM] First rendered frame presented: source=800x600 range=0..252 surface=800x600 bpp=32\n 0.2338s INFO| [NBlood WASM] Starting level episode=0 map=8 name=E1M1\n 0.2341s INFO| [NBlood WASM] Level start: previous level shut down\n 0.2342s INFO| [NBlood WASM] Level start: initial network barrier complete\n 0.2344s INFO| [NBlood WASM] Level start: single-player options and intro complete\n 0.2356s INFO| [NBlood WASM] Level start: loading screen presented; loading map E1M1\n 0.2392s INFO| [NBlood WASM] Level start: map database loaded\n 0.2398s INFO| > Modern types erased: 0.\n 0.2428s INFO| > This map *does not* provide modern features.\n 0.2565s INFO| [NBlood WASM] Level start: cache preload complete\n 0.2630s INFO| [NBlood WASM] Level start: music initialized\n 0.2634s INFO| \n 0.2636s INFO| [NBlood WASM] Level start: final network barrier complete\n 0.2637s INFO| [NBlood WASM] Level loaded and playable: E1M1\n",
+    "pointerLock": null,
+    "root": {
+      "audioState": "running",
+      "bloodControlsMask": "31",
+      "bloodControlsValid": "true",
+      "bloodPlayerLook": "0,0,0,0",
+      "bloodProfile": "classic",
+      "buildNativeClickState": "0",
+      "buildNativePointer": "0,0",
+      "buildNativePointerBits": "0",
+      "buildPointerDelta": "0,0",
+      "buildPointerDeltaEvents": "0",
+      "buildRenderBpp": "8",
+      "buildRenderMode": "0",
+      "buildRenderSize": "800x600",
+      "campaign": "blood",
+      "demos": "false",
+      "gameplayInput": "true",
+      "inputMode": "0",
+      "intro": "false",
+      "level": "E1M1",
+      "persistence": "ready",
+      "playerPosition": "-14976,33280,-29360,0",
+      "shellDataReady": "true",
+      "shellEngineState": "gameplay",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "none",
+      "simulationFrames": "377",
+      "wasmDataSource": "cache",
+      "wasmGameMode": "suite",
+      "wasmGameVariant": "blood"
+    },
+    "url": "http://127.0.0.1:32989/?game=blood&profile=classic&autostart=1"
+  }
+}

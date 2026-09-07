@@ -1,0 +1,75 @@
+{
+  "observedAt": "2026-09-06T17:01:15.362Z",
+  "observation": {
+    "canvas": [
+      {
+        "cssHeight": 0,
+        "cssWidth": 0,
+        "height": 720,
+        "width": 1280
+      }
+    ],
+    "fullscreen": null,
+    "log": "",
+    "pointerLock": null,
+    "proof": {
+      "audio": {
+        "buffers": 0,
+        "messages": 0,
+        "sources": 0,
+        "starts": 0,
+        "state": "not-created"
+      },
+      "capture": [],
+      "errors": [],
+      "input": {
+        "captureChanges": 0,
+        "events": [],
+        "keyDown": 0,
+        "keyUp": 0,
+        "pointerAbsolute": 0,
+        "pointerDown": 0,
+        "pointerDx": 0,
+        "pointerDy": 0,
+        "pointerRelative": 0,
+        "pointerUp": 0,
+        "text": 0
+      },
+      "lifecycle": [
+        {
+          "at": 147.3,
+          "name": "init",
+          "variant": "prey"
+        },
+        {
+          "at": 155.1,
+          "files": 13,
+          "name": "initialized"
+        }
+      ],
+      "logs": [],
+      "persistence": {
+        "ready": false,
+        "requests": 0,
+        "root": null
+      },
+      "proofId": "prey-trace-current",
+      "schemaVersion": 1,
+      "startedAt": "2026-09-06T17:00:50.647Z",
+      "states": [],
+      "variant": "prey",
+      "workerMessages": {}
+    },
+    "root": {
+      "shellDataReady": "true",
+      "shellEngineState": "launcher",
+      "shellHostCursor": "visible",
+      "shellInputCaptured": "false",
+      "shellMenuCursor": "native",
+      "wasmGameMode": "single",
+      "wasmGameVariant": "prey"
+    },
+    "title": "Prey (2006)",
+    "url": "http://127.0.0.1:32877/?game=prey&proof=prey-trace-current"
+  }
+}

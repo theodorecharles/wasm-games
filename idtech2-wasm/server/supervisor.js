@@ -58,6 +58,29 @@ function linkOrCopy(source, destination) {
   try { fs.symlinkSync(source, destination); } catch (_) { fs.copyFileSync(source, destination); }
 }
 
+function quake2ProcessOptions(workdir) {
+  const options = {
+    cwd: workdir,
+    stdio: ['pipe', 'pipe', 'pipe']
+  };
+  // q2ded rejects root. Only the disposable session belongs to nobody;
+  // never follow the links into owner-supplied PAKs or installed modules.
+  if (process.getuid?.() === 0) {
+    options.uid = 65534;
+    options.gid = 65534;
+    const ownSession = directory => {
+      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+        const filename = path.join(directory, entry.name);
+        if (entry.isDirectory()) ownSession(filename);
+        else if (!entry.isSymbolicLink()) fs.chownSync(filename, options.uid, options.gid);
+      }
+      fs.chownSync(directory, options.uid, options.gid);
+    };
+    ownSession(workdir);
+  }
+  return options;
+}
+
 function captureProcess(child, prefix, metadata) {
   const handle = { child, output: '', eventTails: { stdout: '', stderr: '' }, stopping: false, ...metadata };
   const capture = (stream, chunk) => {
@@ -108,6 +131,10 @@ function startQuake(context) {
 function startQuake2(context) {
   nativePlayers.clear();
   const workdir = fs.mkdtempSync(path.join(os.tmpdir(), 'idtech2-quake2-'));
+  // Portable mode writes beside the executable. Use a real copy so the
+  // engine resolves that directory to this session, not /usr/lib or /root.
+  const sessionServer = path.join(workdir, 'q2ded');
+  fs.copyFileSync(Q2_SERVER, sessionServer);
   const q2Root = fs.existsSync(path.join(DATA_ROOT, 'quake2')) ? path.join(DATA_ROOT, 'quake2') : DATA_ROOT;
   for (const pak of ['pak0.pak', 'pak1.pak', 'pak2.pak']) {
     linkOrCopy(existingFile([path.join(q2Root, 'baseq2', pak), path.join(q2Root, pak)], `Quake II ${pak}`), path.join(workdir, 'baseq2', pak));
@@ -136,15 +163,13 @@ function startQuake2(context) {
   }
   activeMap = String(context.map || (activeExpansion === 'xatrix' ? 'xswamp' : activeExpansion === 'rogue' ? 'rbase1' : 'q2dm1'));
   activeBots = activeExpansion ? 0 : Math.max(0, Math.min(8, Number(context.bots) || 2));
-  const args = ['-datadir', workdir, '+set', 'dedicated', '1',
+  const args = ['-portable', '-datadir', workdir, '+set', 'dedicated', '1',
     '+set', 'deathmatch', activeMode === 'deathmatch' ? '1' : '0',
     '+set', 'coop', activeMode === 'campaign' ? '1' : '0',
     '+set', 'game', gameDirectory, '+set', 'maxclients', activeMode === 'campaign' ? '4' : '16',
     '+set', 'port', String(Q2_PORT), '+map', activeMap];
   if (!activeExpansion && activeBots) args.push('+sv', 'spb', String(activeBots));
-  const child = spawn('stdbuf', ['-oL', '-eL', Q2_SERVER, ...args], {
-    cwd: workdir, stdio: ['pipe', 'pipe', 'pipe']
-  });
+  const child = spawn('stdbuf', ['-oL', '-eL', sessionServer, ...args], quake2ProcessOptions(workdir));
   return captureProcess(child, 'quake2-3zb2', { engine: 'quake2', workdir });
 }
 

@@ -1,0 +1,30 @@
+diff --git a/neo/game/MultiplayerGame.cpp b/neo/game/MultiplayerGame.cpp
+index 94a0aff..f1bc773 100644
+--- a/neo/game/MultiplayerGame.cpp
++++ b/neo/game/MultiplayerGame.cpp
+@@ -1281,6 +1281,10 @@ void idMultiplayerGame::CheckVote( void ) {
+ 		if ( !ent || !ent->IsType( idPlayer::Type ) ) {
+ 			continue;
+ 		}
++#ifdef MOD_BOTS
++		// Bots cannot cast votes, including replacements in old human slots.
++		if ( static_cast<idPlayer *>(ent)->IsBot() ) continue;
++#endif
+ 		if ( playerState[ i ].vote != PLAYER_VOTE_NONE ) {
+ 			numVoters++;
+ 		}
+@@ -2545,6 +2549,13 @@ void idMultiplayerGame::ServerStartVote( int clientNum, vote_flags_t voteIndex,
+ 	// mark players allowed to vote - only current ingame players, players joining during vote will be ignored
+ 	for ( i = 0; i < gameLocal.numClients; i++ ) {
+ 		if ( gameLocal.entities[ i ] && gameLocal.entities[ i ]->IsType( idPlayer::Type ) ) {
++#ifdef MOD_BOTS
++			// A fake client must not make a human majority impossible.
++			if ( static_cast<idPlayer *>(gameLocal.entities[i])->IsBot() ) {
++				playerState[i].vote = PLAYER_VOTE_NONE;
++				continue;
++			}
++#endif
+ 			playerState[ i ].vote = ( i == clientNum ) ? PLAYER_VOTE_YES : PLAYER_VOTE_WAIT;
+ 		} else {
+ 			playerState[i].vote = PLAYER_VOTE_NONE;
+

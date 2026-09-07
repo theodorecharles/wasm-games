@@ -1,0 +1,23 @@
+--- a/src/renderer/draw_common.cpp
++++ b/src/renderer/draw_common.cpp
+@@ -7208,3 +7208,20 @@
+ 	const int stageCount = shader->GetNumStages();
++	// TEST-ONLY intro decal trace; never stage this diagnostic build.
++	if ( cvarSystem->GetCVarBool( "g_stopTime" ) && RB_DrawSurfIsDecalMaterialPass( surf ) ) {
++		static idList<idStr> reported;
++		const idStr name( shader->GetName() );
++		if ( reported.FindIndex( name ) < 0 && reported.Num() < 64 ) {
++			reported.Append( name );
++			common->Printf( "[q4-intro-decal] material=%s sort=%g verts=%d indexes=%d baked=%d stages=%d\n",
++				shader->GetName(), shader->GetSort(), tri->numVerts, tri->numIndexes, surf->decalColorCache != NULL, stageCount );
++			for ( int diagnosticStage = 0; diagnosticStage < stageCount; diagnosticStage++ ) {
++				const shaderStage_t *ds = shader->GetStage( diagnosticStage );
++				common->Printf( "[q4-intro-decal] stage=%d lighting=%d enabled=%g state=%x vertexColor=%d texgen=%d new=%d image=%s color=%g,%g,%g,%g\n",
++					diagnosticStage, ds->lighting, regs[ds->conditionRegister], ds->drawStateBits, ds->vertexColor, ds->texture.texgen, ds->newStage != NULL,
++					ds->texture.image != NULL ? ds->texture.image->GetName() : "null",
++					regs[ds->color.registers[0]], regs[ds->color.registers[1]], regs[ds->color.registers[2]], regs[ds->color.registers[3]] );
++			}
++		}
++	}
+ 	for ( stage = 0; stage < stageCount ; stage++ ) {
+ 		pStage = shader->GetStage(stage);

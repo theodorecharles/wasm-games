@@ -15,9 +15,23 @@ node --check "$repo_dir/web/dist/dosbox.js"
 node --check "$repo_dir/web/dist/game-adapter.js"
 node "$repo_dir/scripts/test-adapter.js" "$repo_dir/web/dist"
 node "$repo_dir/scripts/test-data-manifest.js" "$repo_dir/web/dist"
+node "$repo_dir/scripts/test-canvas-listeners.js"
+node "$repo_dir/scripts/test-native-interactive.js"
+node "$repo_dir/scripts/test-native-counter.js"
+node "$repo_dir/scripts/test-timing.js"
 node "$repo_dir/scripts/test-native-runtime.js" "$repo_dir/web/dist"
+node "$repo_dir/scripts/test-native-runtime.js" "$repo_dir/web/dist" --adapter-keyboard
+node "$repo_dir/scripts/test-native-runtime.js" "$repo_dir/web/dist" --pointer
+node "$repo_dir/scripts/test-native-runtime.js" "$repo_dir/web/dist" --files
 if [[ "${DOSBOX_TEST_INSTALLED_GAMES:-0}" == "1" ]]; then
   for variant in jill1 jill2 jill3 jazz duke1 duke2 gta nfs simcity2000; do
+    if [[ "$variant" == gta || "$variant" == nfs ]]; then
+      node "$repo_dir/scripts/test-$variant-runtime.js" "$repo_dir/web/dist" "${DOSBOX_DATA_ROOT:-/home/ted/wasm-game-data/dosbox}"
+      if [[ "$variant" == nfs ]]; then
+        node "$repo_dir/scripts/test-nfs-runtime.js" "$repo_dir/web/dist" "${DOSBOX_DATA_ROOT:-/home/ted/wasm-game-data/dosbox}" --pointer
+      fi
+      continue
+    fi
     timeout 45s node "$repo_dir/scripts/test-installed-runtime.js" \
       "$repo_dir/web/dist" "$variant" "${DOSBOX_DATA_ROOT:-/home/ted/wasm-game-data/dosbox}" 20000
   done
