@@ -5,6 +5,29 @@ a GitHub sync of all accumulated work, and a stopping point. The broader app and
 migration scope is **not complete**. Do not turn this checkpoint into an automatic
 VM shutdown, new deployment, or claim that every planned feature shipped.
 
+## Final source-sync follow-up — 16:57 UTC
+
+Windows96 now also includes commit `7e89625`, pushed and verified against GitHub:
+the private IE5 child-target identity fix, five new tests and an actual confined
+Chromium proof. Full Windows96 suite:107 passed,0 failed,1 existing native-AIM
+integration skip. All four repos were fetched with no incoming master changes;
+the Lab/framework implementation commits below remain current.
+
+Read Windows96 `documentation/IE5_IDENTITY_CHECKPOINT_20260907.md` before resuming.
+The cross-site frame now matches the configured Mac identity. Dedicated-worker
+UA/client hints match, but its deprecated platform property still exposes Linux;
+the limitation is explicitly recorded, not hidden by a global JavaScript patch.
+The runtime proof used a temporary candidate helper in the existing confined
+renderer, **not a rebuilt/deployed image**. It closed its browser and left no
+Chrome process. No public frontend, catalog, game, API writer, VM, or container
+was restarted; public IE5 remains unavailable. Pending browser UI improvements
+were planned only and are not included in the commit.
+
+The four-repository exact private PIA credential scan again found zero matches.
+Gitleaks also found no leaks in the newly staged IE5 patch. Both old Windows96
+GitHub VM deployment workflows remain disabled. This is a tested source checkpoint
+and GitHub sync, not completion of the broader Windows96/migration goal.
+
 ## Live now
 
 https://games.tedcharles.net/ serves Windows96 and the classic Steam library from
