@@ -1,5 +1,16 @@
 # Public release and GitHub handoff — 2026-09-07
 
+FOLLOW-UP17:50UTC: owner reported repeated Google CAPTCHAs in IE5. Reproduced
+one Google unusual-traffic challenge while proving the actual Mac Chrome UA was
+sent. Found/fixed a malformed Accept-Language header and deployed renderer r4
+only; exact image `sha256:e44cb693d7a1564ef66c4b0c1cf3547143bb5b09cba3f4ef8daf9978cd1ec990`.
+Sandbox/runtime/header checks, child identity and39-route public smoke pass;
+Google compatibility remains unresolved, not claimed fixed. See Windows96
+`documentation/IE5_GOOGLE_CAPTCHA_20260907.md`. No VPN/proxy/frontend/game/writer
+change. Lifecycle supervisor work was interrupted and remains local untested,
+undeployed drafts; no PM2 supervisor was added. Resume those carefully against
+the new image, not the old r3 pin. XP/app/migration work is still unfinished.
+
 LATEST17:21:51UTC: the owner requested immediate IE5 publication, and it is LIVE
 at games.tedcharles.net. Refresh and open Internet Explorer5 or tedcharles.net.
 PIA-only sandboxed browsing, actual input/resize, favorites/history and hidden-tab
