@@ -9,6 +9,12 @@ const vm = require('node:vm');
 const site = path.resolve(process.argv[2] || path.join(__dirname, '../site'));
 const source = fs.readFileSync(path.join(site, 'game-adapter.js'), 'utf8');
 const dataManifest = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game-data.json'), 'utf8'));
+const manifest = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game.json'), 'utf8'));
+assert.equal(manifest.runtimeReady, false);
+assert.equal(manifest.runtimeStatus, 'diagnostic-only');
+
+async function checkPrefix(basePath) {
+const publicUrl = value => basePath + value.replace(/^\/+/, '');
 const drawn = [];
 const transitions = [];
 const loading = [];
@@ -18,6 +24,7 @@ let factoryCalls = 0;
 
 async function runDiagnostic(options) {
   factoryCalls += 1;
+  assert.equal(options.locateFile('cod2_core_probe.wasm'), publicUrl('/cod2_core_probe.wasm'));
   options.print('[cod2-wasm] native MD4 block checksum: 9028dc2c');
   options.print('[cod2-wasm] native keyed checksum: 4cdcd263');
   options.print('[cod2-wasm] probe complete; engine unavailable; status is Still in development');
@@ -26,14 +33,14 @@ async function runDiagnostic(options) {
 const sandbox = {
   console,
   fetch: async request => {
-    assert.equal(request, '/wasm-game-data.json');
+    assert.equal(request, publicUrl('/wasm-game-data.json'));
     return { ok: true, json: async () => dataManifest };
   },
   document: {
     createElement(tag) { assert.equal(tag, 'script'); return {}; },
     head: {
       appendChild(script) {
-        assert.equal(script.src, '/cod2_core_probe.js');
+        assert.equal(script.src, publicUrl('/cod2_core_probe.js'));
         sandbox.createCod2Diagnostic = runDiagnostic;
         script.onload();
       }
@@ -58,6 +65,7 @@ const context = {
     }
   } },
   framework: {
+    publicUrl,
     createOwnerDataSet(policy) { createdPolicy = policy; return policy; }
   },
   dataClient: {
@@ -73,7 +81,6 @@ const context = {
   log() {}
 };
 
-(async () => {
   const adapter = sandbox.WasmGameAdapter;
   assert.equal(adapter.readEngineState(), 'launcher');
   await adapter.init(context);
@@ -96,7 +103,11 @@ const context = {
   await adapter.start(context);
   assert.equal(factoryCalls, 1, 'repeat start must not create a second diagnostic runtime');
   assert.equal(adapter.readEngineState(), 'crashed');
-  console.log('Call of Duty 2 diagnostic adapter state, cache-boundary, repeat-start, and copy contracts passed');
+}
+
+(async () => {
+  for (const prefix of ['/', '/cod2-mp/', '/games/cod2-mp/']) await checkPrefix(prefix);
+  console.log('Call of Duty 2 root/single/nested-prefix diagnostic assets, honest state, cache boundary and repeat-start contracts passed');
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

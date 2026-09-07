@@ -23,6 +23,7 @@ const CLASSIC_BOT_ROOT = path.resolve(process.env.IDTECH1_CLASSIC_BOT_ROOT || '/
 const ZANDRONUM_SERVER = String(process.env.IDTECH1_ZANDRONUM_SERVER || '/opt/zandronum/zandronum-server');
 const ZANDRONUM_ROOT = path.resolve(process.env.IDTECH1_ZANDRONUM_ROOT || path.dirname(ZANDRONUM_SERVER));
 const DATA_ROOT = path.resolve(process.env.WASM_GAME_DATA_ROOT || '/data');
+const DEPLOYMENT_VARIANT = String(process.env.WASM_GAME_VARIANT || 'suite');
 
 function classicEngineVersion() {
   try {
@@ -41,7 +42,7 @@ let classicProxy = null;
 let classicHandle = null;
 let zandronumProxy = null;
 let activeEngine = 'classic';
-let activeVariant = 'doom2';
+let activeVariant = DEPLOYMENT_VARIANT === 'suite' ? 'doom2' : DEPLOYMENT_VARIANT;
 let activeMatchId = '';
 let selectionPending = Promise.resolve();
 let launchLeaseUntil = 0;
@@ -176,6 +177,11 @@ function ensureEngine(engine, context) {
   const requested = engine === 'zandronum' ? 'zandronum' : 'classic';
   const variant = String(context?.variant || activeVariant);
   const operation = selectionPending.then(async () => {
+    if (DEPLOYMENT_VARIANT !== 'suite' && variant !== DEPLOYMENT_VARIANT) {
+      const error = new Error('This endpoint is locked to a different game variant.');
+      error.statusCode = 409;
+      throw error;
+    }
     if (!Object.hasOwn(ZANDRONUM_GAMES, variant)) {
       const error = new Error(`Unsupported deathmatch game: ${variant}`);
       error.statusCode = 409;

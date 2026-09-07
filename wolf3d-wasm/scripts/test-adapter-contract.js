@@ -9,10 +9,12 @@ const { execFileSync } = require('node:child_process');
 
 if (!process.env.WOLF4SDL_TEST_VARIANT) {
   for (const variant of ['wolf3d', 'spear']) {
+    for (const base of ['/', `/${variant}/`, `/arcade/${variant}/`]) {
     execFileSync(process.execPath, [__filename], {
       stdio: 'inherit',
-      env: { ...process.env, WOLF4SDL_TEST_VARIANT: variant }
+      env: { ...process.env, WOLF4SDL_TEST_VARIANT: variant, WOLF4SDL_TEST_BASE: base }
     });
+    }
   }
   console.log('Verified both Wolf4SDL variants across audio preparation, WASD/mouse, state, capture, persistence, controller, PWA, and data-cache contracts.');
   process.exit(0);
@@ -21,6 +23,8 @@ if (!process.env.WOLF4SDL_TEST_VARIANT) {
 const repo = path.resolve(__dirname, '..');
 const source = execFileSync(path.join(repo, 'scripts/fetch-source'), { encoding: 'utf8' }).trim();
 const testVariant = process.env.WOLF4SDL_TEST_VARIANT;
+const testBase = process.env.WOLF4SDL_TEST_BASE || '/';
+const adapterFile = process.env.WOLF4SDL_ADAPTER_FILE || path.join(repo, 'web/game-adapter.js');
 const makefile = fs.readFileSync(path.join(source, 'Makefile'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 assert.equal(config.menuCursor, 'browser');
@@ -85,7 +89,7 @@ const sandbox = {
   queueMicrotask,
   performance: { now: () => now },
   location: { search: '', href: 'http://localhost/' },
-  fetch: async () => ({ ok: true, json: async () => dataManifest }),
+  fetch: async url => { assert.equal(url, testBase + 'wasm-game-data.json'); return { ok: true, json: async () => dataManifest }; },
   document: {
     documentElement: { dataset: {} },
     createElement: () => ({}),
@@ -110,13 +114,14 @@ const sandbox = {
   }
 };
 sandbox.globalThis = sandbox;
-vm.runInNewContext(fs.readFileSync(path.join(repo, 'web/game-adapter.js'), 'utf8'), sandbox,
+vm.runInNewContext(fs.readFileSync(adapterFile, 'utf8'), sandbox,
   { filename: 'web/game-adapter.js' });
 
 const context = {
   variant: testVariant,
   elements: { canvas },
   framework: {
+    publicUrl: value => testBase + value.replace(/^\//, ''),
     requireCapabilities: () => ({ supported: true, missing: [] }),
     createOwnerDataSet: policy => { ownerPolicy = policy; return policy; },
     mountOwnerFiles: async () => {}
@@ -204,7 +209,8 @@ const context = {
   assert.equal(ownerPolicy.files.every(file => file.mountName === file.name.toLowerCase()), true,
     'owner data mounts under Wolf4SDL\'s lowercase Unix filenames');
   await adapter.start(context);
-  assert.deepEqual(scriptSources, [`/${testVariant}.js`]);
+  assert.deepEqual(scriptSources, [`${testBase}${testVariant}.js`]);
+  assert.equal(sandbox.Module.locateFile(`${testVariant}.wasm`), `${testBase}${testVariant}.wasm`);
   assert.deepEqual(Array.from(mainArguments), [
     '--res', '960', '720', '--datadir', '/game', '--configdir', `/persistent/wolf4sdl/${testVariant}`
   ]);
@@ -289,7 +295,7 @@ const context = {
   assert.equal(openMenuCalls, 1, 'Escape-triggered capture loss must not inject a second menu action');
   await Promise.resolve();
   assert.ok(persistenceSaves >= 1, 'capture loss must request a high-value persistence flush');
-  console.log(`Verified ${testVariant} adapter contract.`);
+  console.log(`Verified ${testVariant} adapter contract at ${testBase}.`);
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

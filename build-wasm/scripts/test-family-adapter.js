@@ -8,7 +8,7 @@ const vm = require('node:vm');
 
 const source = fs.readFileSync(path.resolve(__dirname, '../web/game-adapter.js'), 'utf8');
 
-async function exercise(variant, expectedScript, expectedIntent) {
+async function exercise(variant, expectedScript, expectedIntent, basePath = '/') {
   const calls = [];
   const child = {
     async init(context) { calls.push(['init', context.variant]); },
@@ -28,13 +28,13 @@ async function exercise(variant, expectedScript, expectedIntent) {
   if (expectedIntent) {
     child.readCaptureIntent = context => { calls.push(['intent', context.variant]); return true; };
   }
-  const sandbox = { console };
+  const sandbox = { console, WasmGameFramework: { publicUrl: value => basePath + value.replace(/^\//, '') } };
   sandbox.globalThis = sandbox;
   sandbox.document = {
     createElement(type) { assert.equal(type, 'script'); return {}; },
     head: {
       appendChild(script) {
-        assert.equal(script.src, expectedScript);
+        assert.equal(script.src, basePath + expectedScript.slice(1));
         sandbox.WasmGameAdapter = child;
         queueMicrotask(script.onload);
       }
@@ -68,6 +68,8 @@ async function exercise(variant, expectedScript, expectedIntent) {
 (async () => {
   await exercise('blood', '/adapters/blood.js', true);
   await exercise('duke3d', '/adapters/duke3d.js', false);
+  await exercise('blood', '/adapters/blood.js', true, '/blood/');
+  await exercise('duke3d', '/adapters/duke3d.js', false, '/duke3d/');
   console.log('Verified family adapter dispatch and native hook delegation for both variants.');
 })().catch(error => {
   console.error(error);

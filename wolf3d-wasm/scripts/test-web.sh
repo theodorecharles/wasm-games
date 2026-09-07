@@ -3,7 +3,7 @@ set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source_dir="$("$repo_dir/scripts/fetch-source")"
-dist_dir="$repo_dir/.work/dist"
+dist_dir="${WOLF4SDL_DIST_DIR:-$repo_dir/.work/dist}"
 framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 
 if [[ "${WOLF3D_SKIP_BUILD:-0}" != 1 ]]; then

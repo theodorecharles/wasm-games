@@ -7,7 +7,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
-const adapterSource = fs.readFileSync(path.join(root, 'games/rtcw/site/game-adapter.js'), 'utf8');
+const adapterSource = fs.readFileSync(process.argv[2] || path.join(root, 'games/rtcw/site/game-adapter.js'), 'utf8');
 const arena = require('../games/rtcw/server/arena');
 
 function createDocument(env) {
@@ -23,6 +23,7 @@ function createDocument(env) {
     documentElement: { dataset },
     body: {
       appendChild(node) {
+        env.requests.push(node.src);
         queueMicrotask(() => {
           const module = env.globalThis && env.globalThis.Module;
           if (module) {
@@ -48,8 +49,9 @@ function createDocument(env) {
   };
 }
 
-async function testVariant(variant) {
-  const env = {};
+async function testVariant(variant, basePath = '/', protocol = 'http:') {
+  const env = { requests: [] };
+  const publicUrl = value => basePath + value.replace(/^\/+/, '');
   const timers = [];
   const document = createDocument(env);
   const frames = new Map();
@@ -125,6 +127,7 @@ async function testVariant(variant) {
       load: async () => ({ entries: [] })
     },
     framework: {
+      publicUrl,
       createOwnerDataSet: () => ({}),
       createWakeClient() {
         return {
@@ -150,8 +153,10 @@ async function testVariant(variant) {
     console,
     document,
     window,
-    location: { protocol: 'http:', host: '127.0.0.1:18590' },
+    URL,
+    location: { protocol, host: '127.0.0.1:18590', href: `${protocol}//127.0.0.1:18590${basePath}` },
     fetch: async (url) => {
+      env.requests.push(url);
       if (String(url).includes('wasm-game-data.json')) {
         return {
           ok: true,
@@ -192,7 +197,16 @@ async function testVariant(variant) {
   Object.assign(engine, sandbox.globalThis.Module);
   sandbox.globalThis.Module = engine;
   await adapter.start();
+  const suffix = variant === 'rtcw-sp' ? 'sp' : 'mp';
+  assert.deepEqual(env.requests.sort(), ['wasm-game-data.json', `iowolf${suffix}.js`,
+    `menus/${suffix}_wasm.pk3`, ...['cgame', 'qagame', 'ui'].map(name => `qvm/${suffix}/${name}.${suffix}.qvm`)]
+    .map(value => basePath + value).sort());
+  assert.equal(sandbox.Module.locateFile(`iowolf${suffix}.wasm`), `${basePath}iowolf${suffix}.wasm`);
+  assert.equal(sandbox.Module.locateFile('/runtime.worker.js'), `${protocol}//127.0.0.1:18590${basePath}runtime.worker.js`);
+  if (variant === 'rtcw-mp') assert.equal(sandbox.Module.websocket.url, `${protocol === 'https:' ? 'wss:' : 'ws:'}//127.0.0.1:18590${basePath}ws`);
   const argument = name => engine.args[engine.args.indexOf(name) + 1];
+  assert.equal(argument('fs_homepath'), `/save/${variant}`);
+  assert.equal(argument('fs_basepath'), '/game');
   assert.equal(argument('r_ext_multitexture'), variant === 'rtcw-sp' ? '1' : '0');
   assert.equal(argument('r_ignoreFastPath'), variant === 'rtcw-sp' ? '0' : '1');
   assert.equal(argument('r_primitives'), '2');
@@ -271,6 +285,7 @@ async function testVariant(variant) {
 
 (async () => {
   for (const variant of ['rtcw-mp', 'rtcw-sp']) await testVariant(variant);
+  for (const variant of ['rtcw-mp', 'rtcw-sp']) await testVariant(variant, variant === 'rtcw-sp' ? '/rtcw/' : '/rtcw-mp/', 'https:');
   process.exit(0);
 })().catch(error => {
   console.error(error);

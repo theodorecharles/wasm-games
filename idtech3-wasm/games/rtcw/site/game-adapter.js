@@ -174,8 +174,8 @@
         canvas: context.elements.canvas,
         noInitialRun: true,
         locateFile(path) {
-          return path.endsWith('.wasm') ? engineSpec.wasm :
-            new URL(path, new URL(engineSpec.script, location.href)).href;
+          return path.endsWith('.wasm') ? context.framework.publicUrl(engineSpec.wasm) :
+            new URL(context.framework.publicUrl(path), new URL(context.framework.publicUrl(engineSpec.script), location.href)).href;
         },
         print(value) { console.log('[RTCW WASM]', value); context.log(value); },
         printErr(value) { console.error('[RTCW WASM]', value); context.log(`ERROR: ${value}`); },
@@ -193,7 +193,7 @@
           }
         },
         websocket: context.variant === 'rtcw-mp' ? {
-          url: `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}/ws`
+          url: `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}${context.framework.publicUrl('/ws')}`
         } : undefined,
         onRuntimeInitialized() {
           window.clearTimeout(timeout);
@@ -201,7 +201,7 @@
         }
       };
       const script = document.createElement('script');
-      script.src = engineSpec.script;
+      script.src = context.framework.publicUrl(engineSpec.script);
       script.async = true;
       script.onerror = () => {
         window.clearTimeout(timeout);
@@ -213,7 +213,7 @@
 
   async function loadQvms() {
     return Promise.all(engineSpec.qvms.map(async name => {
-      const response = await fetch(`${engineSpec.qvmRoot}/${name}`, { cache: 'no-store' });
+      const response = await fetch(context.framework.publicUrl(`${engineSpec.qvmRoot}/${name}`), { cache: 'no-store' });
       if (!response.ok) throw new Error(`The generated RTCW ${name} runtime is missing.`);
       const bytes = new Uint8Array(await response.arrayBuffer());
       if (bytes.length < 4 || bytes[0] !== 0x45 || bytes[1] !== 0x14 || bytes[2] !== 0x72 || bytes[3] !== 0x12) {
@@ -229,7 +229,7 @@
   async function loadMenuPak() {
     const url = MENU_PAKS[context.variant];
     if (!url) return [];
-    const response = await fetch(url, { cache: 'no-store' });
+    const response = await fetch(context.framework.publicUrl(url), { cache: 'no-store' });
     if (!response.ok) throw new Error('The RTCW browser menu pack is missing.');
     const bytes = await response.arrayBuffer();
     const name = url.slice(url.lastIndexOf('/') + 1);
@@ -353,7 +353,7 @@
       context.elements.canvas.addEventListener('mousemove', event => {
         if (document.pointerLockElement !== context.elements.canvas) event.stopImmediatePropagation();
       }, true);
-      const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      const manifest = await fetch(context.framework.publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`RTCW provisioning policy failed with HTTP ${response.status}.`);
         return response.json();
       });

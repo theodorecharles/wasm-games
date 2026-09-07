@@ -12,11 +12,13 @@
     "test:cs-recovery": "node scripts/test-cs-host-recovery.mjs",
     "test:cs-bridge": "node scripts/test-cs-bridge-runtime.mjs",
     "test:cs-endpoint": "node scripts/test-cs-endpoint-policy.mjs",
+    "test:cs-cleanup": "node scripts/test-cs-connection-cleanup.mjs",
+    "test:gateway": "NODE_PATH=server/node_modules node scripts/test-signaling-gateway.cjs",
     "test:owner-packaging": "python3 scripts/test-owner-packaging.py",
     "test:save-hints": "node scripts/test-save-hints.mjs",
     "test:cs-menu-globals": "node scripts/test-cs-menu-globals.mjs",
     "test:cs-managed-menu": "node scripts/test-cs-managed-menu.mjs",
-    "test": "node scripts/verify-site-contract.mjs && node scripts/test-adapter-contract.mjs && node scripts/test-cs-endpoint-policy.mjs && node scripts/test-input-proof.mjs && node scripts/test-cs-host-contract.mjs && python3 scripts/test-owner-packaging.py && node scripts/test-save-hints.mjs && node scripts/test-cs-menu-globals.mjs && node scripts/test-cs-managed-menu.mjs && node ${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}/scripts/check-game-package.js web"
+    "test": "node scripts/verify-site-contract.mjs && node scripts/test-adapter-contract.mjs && node scripts/test-cs-endpoint-policy.mjs && node scripts/test-cs-connection-cleanup.mjs && node scripts/test-input-proof.mjs && node scripts/test-cs-host-contract.mjs && python3 scripts/test-owner-packaging.py && node scripts/test-save-hints.mjs && node scripts/test-cs-menu-globals.mjs && node scripts/test-cs-managed-menu.mjs && node ${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}/scripts/check-game-package.js ${GOLDSOURCE_WEB_DIR:-web}"
   },
   "dependencies": {
     "cs16-client": "0.1.2",

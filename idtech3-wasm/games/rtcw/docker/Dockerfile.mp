@@ -43,6 +43,7 @@ RUN cd /opt/rtcw-server \
     && chmod 555 /opt/rtcw-native/iowolfded.x86_64 /opt/rtcw-native/qagame.mp.x86_64.so \
     && test -f /opt/omni-bot/omnibot_rtcw.x86_64.so \
     && test -f /opt/omni-bot/rtcw/nav/mp_depot.way \
+    && node -e "if (typeof require('/opt/shared-shell/wasm-game-framework.js').publicUrl !== 'function') process.exit(1)" \
     && test "$(node -p "require('/opt/wasm-game-framework/package.json').version")" = "$FRAMEWORK_VERSION"
 
 ENV WASM_GAME_VARIANT=rtcw-mp \

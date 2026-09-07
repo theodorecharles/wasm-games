@@ -8,7 +8,7 @@ const vm = require('node:vm');
 
 const source = fs.readFileSync(path.resolve(__dirname, '../web/game-adapter.js'), 'utf8');
 
-async function exercise(variant, expectedScript) {
+async function exercise(variant, expectedScript, basePath = '/') {
   const calls = [];
   const child = {
     async init(context) { calls.push(['init', context.variant]); },
@@ -26,13 +26,13 @@ async function exercise(variant, expectedScript) {
     contextLost(event, context) { calls.push(['contextLost', event.type, context.variant]); },
     contextRestored(event, context) { calls.push(['contextRestored', event.type, context.variant]); }
   };
-  const sandbox = { console };
+  const sandbox = { console, WasmGameFramework: { publicUrl: value => basePath + value.slice(1) } };
   sandbox.globalThis = sandbox;
   sandbox.document = {
     createElement(type) { assert.equal(type, 'script'); return {}; },
     head: {
       appendChild(script) {
-        assert.equal(script.src, expectedScript);
+        assert.equal(script.src, basePath + expectedScript.slice(1));
         sandbox.WasmGameAdapter = child;
         queueMicrotask(script.onload);
       }
@@ -69,6 +69,10 @@ async function exercise(variant, expectedScript) {
   await exercise('quake2', '/adapters/quake2.js?v=20260821-expansions5');
   await exercise('quake2-xatrix', '/adapters/quake2.js?v=20260821-expansions5');
   await exercise('quake2-rogue', '/adapters/quake2.js?v=20260821-expansions5');
+  await exercise('quake', '/adapters/quake.js', '/quake1/');
+  for (const variant of ['quake2', 'quake2-xatrix', 'quake2-rogue']) {
+    await exercise(variant, '/adapters/quake2.js?v=20260821-expansions5', `/${variant}/`);
+  }
   console.log('Verified family adapter dispatch and native hook delegation for all four variants.');
 })().catch(error => {
   console.error(error);

@@ -11,7 +11,7 @@
   function loadScript(source) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = source;
+      script.src = globalThis.WasmGameFramework.publicUrl(source);
       script.onload = resolve;
       script.onerror = () => reject(new Error(`Could not load Build-family adapter ${source}.`));
       document.head.appendChild(script);

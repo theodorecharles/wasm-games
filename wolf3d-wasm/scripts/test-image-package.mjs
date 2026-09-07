@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dist = path.join(root, '.work/dist');
+const dist = process.env.WOLF4SDL_DIST_DIR || path.join(root, '.work/dist');
 const framework = process.env.WASM_FRAMEWORK_DIR || path.resolve(root, '../../wasm-game-framework');
 const [image, variant] = process.argv.slice(2);
 assert(image && ['wolf3d', 'spear'].includes(variant), 'usage: test-image-package.mjs IMAGE wolf3d|spear');

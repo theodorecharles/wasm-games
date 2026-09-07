@@ -25,10 +25,16 @@ const Q2_ASSETS = path.resolve(process.env.IDTECH2_Q2_ASSETS || '/opt/3zb2/asset
 const Q2_XATRIX_GAME = path.resolve(process.env.IDTECH2_Q2_XATRIX_GAME || '/usr/lib/yamagi-quake2/xatrix/game.so');
 const Q2_ROGUE_GAME = path.resolve(process.env.IDTECH2_Q2_ROGUE_GAME || '/usr/lib/yamagi-quake2/rogue/game.so');
 
-let activeEngine = 'quake';
-let activeMap = 'dm2';
+const DEPLOYMENT_VARIANT = process.env.WASM_GAME_VARIANT || 'suite';
+if (!['suite', 'quake', 'quake2', 'quake2-xatrix', 'quake2-rogue'].includes(DEPLOYMENT_VARIANT)) {
+  throw new Error('Unsupported id Tech 2 deployment variant.');
+}
+const LOCKED_ENGINE = DEPLOYMENT_VARIANT === 'suite' ? null : DEPLOYMENT_VARIANT === 'quake' ? 'quake' : 'quake2';
+const LOCKED_EXPANSION = DEPLOYMENT_VARIANT === 'quake2-xatrix' ? 'xatrix' : DEPLOYMENT_VARIANT === 'quake2-rogue' ? 'rogue' : '';
+let activeEngine = LOCKED_ENGINE || 'quake';
+let activeMap = LOCKED_EXPANSION === 'xatrix' ? 'xdm1' : LOCKED_EXPANSION === 'rogue' ? 'rdm1' : activeEngine === 'quake2' ? 'q2dm1' : 'dm2';
 let activeBots = 2;
-let activeExpansion = '';
+let activeExpansion = LOCKED_EXPANSION;
 let activeMode = 'deathmatch';
 let quakeProxy = null;
 let quake2Proxy = null;
@@ -234,6 +240,12 @@ async function ensureEngine(engine, context) {
   const requestedExpansion = requested === 'quake2' && ['xatrix', 'rogue'].includes(context?.expansion)
     ? context.expansion
     : '';
+  // Lock both HTTP wake and native WebSocket wake to this game/expansion.
+  // Reject before sleeping an existing session or spawning a native process.
+  if (LOCKED_ENGINE && (requested !== LOCKED_ENGINE || requestedExpansion !== LOCKED_EXPANSION ||
+      context?.variant && context.variant !== DEPLOYMENT_VARIANT)) {
+    throw Object.assign(new Error('This container is locked to another game variant.'), { statusCode: 409 });
+  }
   const requestedMode = context?.mode === 'campaign' ? 'campaign' : 'deathmatch';
   const requestedMap = String(context?.map || activeMap);
   const configurationChanged = requested === 'quake2' &&
@@ -248,7 +260,7 @@ function publicStatus() {
   const quake2 = activeEngine === 'quake2';
   const relay = quake2 ? quake2Proxy?.stats() : quakeProxy?.stats();
   return Object.freeze({
-    ...lifecycle.status(), engine: activeEngine, map: activeMap, bots: activeBots,
+    ...lifecycle.status(), variant: DEPLOYMENT_VARIANT, engine: activeEngine, map: activeMap, bots: activeBots,
     expansion: activeExpansion || null, mode: activeMode,
     connect: quake2 ? `127.0.0.1:${Q2_PORT}` : `127.0.0.1:${Q1_PORT}`,
     wsPath: quake2 ? '/ws/quake2' : '/ws/quake',

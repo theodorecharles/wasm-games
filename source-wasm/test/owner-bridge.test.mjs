@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readdir, readlink, rm, symlink, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,14 +47,16 @@ function request(port, requestPath, options = {}, body = '') {
 }
 
 async function stopProcess(child) {
-  if (!child || child.exitCode != null) return;
+  if (!child || child.exitCode != null || child.signalCode != null) return;
+  let timer;
+  const stopped = once(child, 'exit');
   try { process.kill(-child.pid, 'SIGTERM'); } catch (_) { child.kill('SIGTERM'); }
-  await Promise.race([
-    once(child, 'exit'),
-    new Promise(resolve => setTimeout(resolve, 3000))
-  ]);
-  if (child.exitCode == null) {
+  try {
+    await Promise.race([stopped, new Promise(resolve => { timer = setTimeout(resolve, 3000); })]);
+  } finally { clearTimeout(timer); }
+  if (child.exitCode == null && child.signalCode == null) {
     try { process.kill(-child.pid, 'SIGKILL'); } catch (_) { child.kill('SIGKILL'); }
+    await stopped;
   }
 }
 
@@ -72,6 +74,10 @@ try {
   await writeFile(path.join(ownerRoot, 'hl2', 'gameinfo.txt'), 'GameInfo\n{\n}\n');
   await writeFile(path.join(ownerRoot, 'hl2', 'steam.inf'), 'PatchVersion=1\n');
   await writeFile(path.join(ownerRoot, 'hl2', 'small.bin'), Buffer.from('0123456789', 'ascii'));
+  await writeFile(path.join(ownerRoot, 'hl2', 'empty.bin'), '');
+  await writeFile(path.join(ownerRoot, 'hl2', '.env'), 'private fixture');
+  await mkdir(path.join(ownerRoot, '.private'));
+  await writeFile(path.join(ownerRoot, '.private', 'hidden.txt'), 'private fixture');
   const large = Buffer.alloc(2 * 1024 * 1024);
   for (let i = 0; i < large.length; i += 1) large[i] = i & 0xff;
   await writeFile(path.join(ownerRoot, 'hl2', 'large.bin'), large);
@@ -80,6 +86,7 @@ try {
   await writeFile(path.join(ownerRoot, 'hl2', 'native.asi'), 'blocked');
   await writeFile(outsideFile, 'outside');
   await symlink(outsideFile, path.join(ownerRoot, 'hl2', 'escape.txt'));
+  await symlink(tempRoot, path.join(ownerRoot, 'hl2', 'escape-dir'));
 
   await writeFile(fakeVendor, `
 const http = require('node:http');
@@ -93,6 +100,8 @@ const server = http.createServer(async (request, response) => {
     response.end('vendor-ok');
     return;
   }
+  if (url.pathname === '/vendor-pid') { response.end(String(process.pid)); return; }
+  if (url.pathname === '/vendor-exit') { response.end('exiting'); setTimeout(() => process.exit(0), 10); return; }
   response.writeHead(404);
   response.end('not-found');
 });
@@ -170,6 +179,9 @@ server.listen(Number(process.env.WASM_GAME_HTTP_PORT), '127.0.0.1');
   assert.equal(indexed.has('hl2/native.dll'), false);
   assert.equal(indexed.has('hl2/native.asi'), false);
   assert.equal(indexed.has('hl2/escape.txt'), false);
+  assert.equal(indexed.has('hl2/.env'), false);
+  assert.equal(indexed.has('.private/hidden.txt'), false);
+  assert.ok([...indexed].every(name => !name.includes('escape-dir')));
 
   const small = await request(publicPort, '/owner/hl2/small.bin', { headers: authHeaders });
   assert.equal(small.status, 200);
@@ -183,6 +195,66 @@ server.listen(Number(process.env.WASM_GAME_HTTP_PORT), '127.0.0.1');
   assert.equal(range.headers['content-range'], 'bytes 1024-1031/2097152');
   assert.deepEqual([...range.body], [0, 1, 2, 3, 4, 5, 6, 7]);
 
+  for (const [header, expected] of [
+    ['bytes=-3', '789'], ['bytes=8-', '89'], ['bytes=8-99', '89'], ['bytes=-99', '0123456789']
+  ]) {
+    const reply = await request(publicPort, '/owner/hl2/small.bin', { headers: { ...authHeaders, Range: header } });
+    assert.equal(reply.status, 206, header);
+    assert.equal(reply.body.toString(), expected);
+  }
+  for (const header of ['bytes=10-', 'bytes=9-2', 'bytes=-0', 'bytes=0-1,4-5',
+    'bytes=0-9007199254740992', 'bytes=0-1junk']) {
+    const reply = await request(publicPort, '/owner/hl2/small.bin', { headers: { ...authHeaders, Range: header } });
+    assert.equal(reply.status, 416, header);
+    assert.equal(reply.headers['content-range'], 'bytes */10');
+    assert.equal(reply.body.length, 0);
+  }
+  for (const ifRange of [small.headers.etag, small.headers['last-modified'], '"changed"']) {
+    const reply = await request(publicPort, '/owner/hl2/small.bin', {
+      headers: { ...authHeaders, Range: 'bytes=2-3', 'If-Range': ifRange }
+    });
+    assert.equal(reply.status, ifRange === '"changed"' ? 200 : 206);
+    assert.equal(reply.body.toString(), ifRange === '"changed"' ? '0123456789' : '23');
+  }
+  for (const [url, rangeHeader, status, length] of [
+    ['/owner/hl2/small.bin', undefined, 200, 10],
+    ['/owner/hl2/small.bin', 'bytes=2-3', 206, 2],
+    ['/owner/hl2/small.bin?b64=1', 'bytes=2-3', 200, 4],
+    ['/owner/hl2/empty.bin', undefined, 200, 0]
+  ]) {
+    const reply = await request(publicPort, url, { method: 'HEAD',
+      headers: { ...authHeaders, ...(rangeHeader ? { Range: rangeHeader } : {}) } });
+    assert.equal(reply.status, status);
+    assert.equal(Number(reply.headers['content-length']), length);
+    assert.equal(reply.body.length, 0);
+  }
+  const empty = await request(publicPort, '/owner/hl2/empty.bin', { headers: authHeaders });
+  assert.equal(empty.status, 200);
+  assert.equal(empty.body.length, 0);
+  const emptyRange = await request(publicPort, '/owner/hl2/empty.bin', { headers: { ...authHeaders, Range: 'bytes=0-' } });
+  assert.equal(emptyRange.status, 416);
+  for (const rangeHeader of [undefined, 'bytes=0-', 'bytes=0-1048576']) {
+    const reply = await request(publicPort, '/owner/hl2/large.bin?b64=1', {
+      headers: { ...authHeaders, ...(rangeHeader ? { Range: rangeHeader } : {}) }
+    });
+    assert.equal(reply.status, 413);
+    assert.equal(reply.body.length, 0);
+  }
+  for (const start of [0, 1024 * 1024]) {
+    const reply = await request(publicPort, '/owner/hl2/large.bin?b64=1', {
+      headers: { ...authHeaders, Range: `bytes=${start}-${start + 1024 * 1024 - 1}` }
+    });
+    assert.equal(reply.status, 200);
+    assert.equal(reply.headers['cache-control'], 'no-store');
+    assert.equal(reply.headers['content-range'], undefined);
+    assert.deepEqual(Buffer.from(reply.body.toString(), 'base64'), large.subarray(start, start + 1024 * 1024));
+  }
+  for (const url of ['/owner-index', '/owner/hl2/small.bin']) {
+    const reply = await request(publicPort, url, { method: 'POST', headers: authHeaders });
+    assert.equal(reply.status, 405);
+    assert.equal(reply.headers.allow, 'GET, HEAD');
+  }
+
   const blocked = await request(publicPort, '/owner/hl2/native.dll', { headers: authHeaders });
   assert.equal(blocked.status, 404);
   const blockedPlugin = await request(publicPort, '/owner/hl2/native.asi', { headers: authHeaders });
@@ -193,6 +265,32 @@ server.listen(Number(process.env.WASM_GAME_HTTP_PORT), '127.0.0.1');
   assert.equal(symlinked.status, 404);
   const traversal = await request(publicPort, '/owner/..%2Foutside.txt', { headers: authHeaders });
   assert.equal(traversal.status, 404);
+  for (const url of ['/owner/', '/owner/hl2/', '/owner/hl2/.env', '/owner/.private/hidden.txt',
+    '/owner/hl2/escape-dir/outside.txt', '/owner/hl2/%00', '/owner/hl2/%ZZ']) {
+    const reply = await request(publicPort, url, { headers: authHeaders });
+    assert.equal(reply.status, 404, url);
+    assert.doesNotMatch(reply.body.toString(), /private fixture|outside|source-wasm-owner-bridge-/);
+  }
+
+  await new Promise((resolve, reject) => {
+    const req = http.get({ hostname: '127.0.0.1', port: publicPort,
+      path: '/owner/hl2/large.bin', headers: authHeaders }, response => {
+      response.once('data', () => { response.destroy(); req.destroy(); resolve(); });
+      response.once('error', reject);
+    });
+    req.setTimeout(5000, () => req.destroy(new Error('abort fixture timeout')));
+    req.once('error', reject);
+  });
+  // Check the actual child process, not a mocked stream, for leaked descriptors.
+  let openOwnerDescriptors = [];
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const names = await readdir(`/proc/${serverProcess.pid}/fd`);
+    const targets = await Promise.all(names.map(name => readlink(`/proc/${serverProcess.pid}/fd/${name}`).catch(() => '')));
+    openOwnerDescriptors = targets.filter(target => target.startsWith(ownerRoot + '/'));
+    if (!openOwnerDescriptors.length) break;
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  assert.deepEqual(openOwnerDescriptors, [], 'aborted owner transfers release their file descriptors');
 
   const removedDiagnosticRoute = await request(publicPort, '/owner-stat', { headers: authHeaders });
   assert.equal(removedDiagnosticRoute.status, 404);
@@ -200,7 +298,38 @@ server.listen(Number(process.env.WASM_GAME_HTTP_PORT), '127.0.0.1');
   assert.equal(vendorProbe.status, 200);
   assert.equal(vendorProbe.body.toString('utf8'), 'vendor-ok');
 
-  console.log('owner bridge: authenticated index, range serving, blocked paths, and traversal checks passed');
+  const vendorPid = Number((await request(publicPort, '/vendor-pid')).body.toString());
+  assert.ok(Number.isInteger(vendorPid) && vendorPid > 0);
+  const normalExit = once(serverProcess, 'exit', { signal: AbortSignal.timeout(5000) });
+  serverProcess.kill('SIGTERM'); // deliberately signal only the supervisor
+  assert.deepEqual(await normalExit, [0, null]);
+  assert.throws(() => process.kill(vendorPid, 0), { code: 'ESRCH' }, 'normal shutdown must reap the static child');
+
+  serverProcess = spawn(process.execPath, [path.join(root, 'scripts', 'start.js')], {
+    cwd: root, env, detached: true, stdio: ['ignore', 'pipe', 'pipe']
+  });
+  serverProcess.stdout.on('data', () => {});
+  serverProcess.stderr.on('data', () => {});
+  let restarted = false;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    try { restarted = (await request(publicPort, '/vendor-probe')).status === 200; } catch (_) {}
+    if (restarted) break;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.ok(restarted);
+  const unexpectedExit = once(serverProcess, 'exit', { signal: AbortSignal.timeout(5000) });
+  assert.equal((await request(publicPort, '/vendor-exit')).status, 200);
+  assert.deepEqual(await unexpectedExit, [1, null], 'a lost child is not a healthy supervisor exit');
+  await assert.rejects(request(vendorPort, '/vendor-probe'), { code: 'ECONNREFUSED' });
+
+  for (const [pub, child] of [['0', '8089'], ['1.5', '8089'], ['8088', '8088'], ['8088', '65536']]) {
+    const rejected = spawnSync(process.execPath, [path.join(root, 'scripts', 'start.js')], {
+      env: { ...env, WASM_GAME_HTTP_PORT: pub, WASM_GAME_VENDOR_PORT: child }, encoding: 'utf8', timeout: 5000
+    });
+    assert.equal(rejected.status, 1);
+    assert.match(rejected.stderr, /Public and framework ports must be distinct integers/);
+  }
+  console.log('owner bridge: authenticated HTTP, ranges/HEAD/base64, private paths, abort descriptors, child shutdown/failure and port validation passed');
 } finally {
   await stopProcess(serverProcess);
   await rm(tempRoot, { recursive: true, force: true });

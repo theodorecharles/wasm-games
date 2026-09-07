@@ -27,21 +27,26 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /source
 COPY scripts/setup-etlegacy.sh scripts/setup-etlegacy.sh
+COPY scripts/setup-web-deps.sh scripts/setup-web-deps.sh
 COPY patches/etlegacy-wasm.patch patches/etlegacy-wasm.patch
 COPY patches/etlegacy-modes.patch patches/etlegacy-modes.patch
 COPY patches/etlegacy-eth32nix.patch patches/etlegacy-eth32nix.patch
 COPY patches/etlegacy-human-slot.patch patches/etlegacy-human-slot.patch
 COPY patches/etlegacy-etjs-ui.patch patches/etlegacy-etjs-ui.patch
 COPY eth32nix eth32nix
-RUN sh scripts/setup-etlegacy.sh
+RUN sh scripts/setup-etlegacy.sh && sh scripts/setup-web-deps.sh
 
-FROM debian:trixie-slim AS native-builder
+FROM debian:trixie-slim AS native-toolchain
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
       build-essential ca-certificates cmake libcjson-dev ninja-build pkg-config zip \
     && rm -rf /var/lib/apt/lists/*
+
+FROM native-toolchain AS native-builder
+ARG ETJS_BUILD_JOBS=2
 WORKDIR /build
 COPY --from=etlegacy-source /source/etlegacy etlegacy
+COPY --from=etlegacy-source /source/third_party third_party
 COPY scripts/build-tools.sh scripts/build-etjs-pak.sh scripts/build-server-mod.sh scripts/
 COPY tools/huffpack.c tools/huffpack.c
 COPY tools/huffinc tools/huffinc
@@ -50,16 +55,19 @@ RUN sh scripts/build-tools.sh \
     && sh scripts/build-etjs-pak.sh \
     && sh scripts/build-server-mod.sh
 
-FROM emscripten/emsdk:6.0.6 AS web-builder
+FROM emscripten/emsdk:6.0.6 AS web-toolchain
 USER root
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ninja-build \
     && rm -rf /var/lib/apt/lists/*
+
+FROM web-toolchain AS web-builder
+ARG ETJS_BUILD_JOBS=2
 WORKDIR /build
 COPY --from=etlegacy-source /source/etlegacy etlegacy
-COPY third_party third_party
+COPY --from=etlegacy-source /source/third_party third_party
 COPY web-port web-port
-COPY scripts/build-web-client.sh scripts/patch-etjs-gl.js scripts/
+COPY scripts/build-web-client.sh scripts/patch-etjs-gl.js scripts/verify-web-client.js scripts/
 RUN sh scripts/build-web-client.sh
 
 FROM ${ETLEGACY_IMAGE} AS runtime
@@ -88,6 +96,8 @@ COPY --from=native-builder /build/runtime/legacy/qagame.mp.x86_64.so seed/runtim
 COPY --from=web-builder /build/web/client web/client
 
 RUN chmod 0755 docker/entrypoint.sh tools/huffpack \
+    && install -m 0644 seed/runtime/omni-bot-user/omni-bot.cfg \
+      /legacy/server/legacy/omni-bot/et/user/omni-bot.cfg \
     && mkdir -p /data
 
 ENV ETJS_DATA_ROOT=/data \

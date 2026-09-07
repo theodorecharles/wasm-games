@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Source Wasm browser game",
   "scripts": {
-    "test": "node test/package-contract.test.js && node test/adapter.test.js && node test/owner-bridge.test.mjs && node test/combine-owner-data.test.mjs && node test/steam-data-audit.test.mjs",
+    "test": "node test/package-contract.test.js && node test/adapter.test.js && node --test test/owner-file.test.js && node test/owner-bridge.test.mjs && node test/combine-owner-data.test.mjs && node test/steam-data-audit.test.mjs",
     "start": "node scripts/start.js",
     "sync-framework": "node scripts/sync-framework.js",
     "prepare-inputs": "bash scripts/prepare.sh",

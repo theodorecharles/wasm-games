@@ -13,7 +13,7 @@
   function load(source) {
     return new Promise(function (resolve, reject) {
       var script = document.createElement('script');
-      script.src = source;
+      script.src = window.WasmGameFramework ? window.WasmGameFramework.publicUrl(source) : source;
       script.onload = resolve;
       script.onerror = function () { reject(new Error('Could not load ' + source)); };
       document.head.appendChild(script);

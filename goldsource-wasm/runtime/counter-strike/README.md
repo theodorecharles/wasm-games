@@ -1,5 +1,35 @@
 # Counter-Strike multiplayer host
 
+## Current Game Lab / Trashcan deployment — 2026-09-07
+
+The maintained Game Lab now uses the verified
+`local/windows96:counter-strike-host-20260907` image and the GoldSrc signaling
+gateway, not a direct browser connection to the host's HTTP port. Open
+`http://127.0.0.1:8017/?game=counter-strike`; no `server=` override is needed.
+The old direct4192/admin port is no longer published. Local RTC transport keeps
+4191/TCP+UDP. Trashcan's private `/counter-strike/` route uses the same gateway,
+with RTC transport bound to4.20.69.67:28140/TCP+UDP. Public TLS/ICE/NAT acceptance
+and a real browser join remain pending; an HTTP or signaling offer is not proof
+of gameplay.
+
+Both hosts preserve the accepted native engine, YaPB library and graph, run
+nine bots on de_dust2, and use uid1000, read-only roots, dropped capabilities,
+one CPU and768MiB. Only bot configuration/log/training directories are writable
+bounded tmpfs. These remain always-on hosts, not idle-managed servers; disposable
+bot learning resets on recreation. The old normal-lab runtime is retained
+privately under the workstation migration directory's `goldsource-local-before`.
+No owner game data was deleted or packaged into a new layer.
+
+`server/supervisor.cjs` exposes only game signaling, rejects wrong origins and
+wrong variants, honors the framework password session, limits payloads/peers,
+and never forwards native admin/config/console routes. See the portfolio's
+`VM-RETIREMENT-RUNBOOK.md` and Game Lab `deploy/steam/goldsource-release.json`.
+For local gateway tests, install its pinned dependency with
+`npm ci --prefix server --ignore-scripts` from the GoldSrc root, then run
+`npm run test:gateway` and `npm run test:cs-cleanup`.
+
+## Legacy standalone launcher
+
 `start.sh` launches the pinned Xash3D-FWGS dedicated Counter-Strike host and WebRTC bridge. The derived host image installs pinned YaPB 4.4.957 as the standalone game DLL, including its `de_dust2` navigation graph. Its defaults match the browser adapter's local bridge fallback (`127.0.0.1:4192`), start `de_dust2`, and maintain nine bots.
 
 Signaling uses **4192/TCP**, with WebRTC still on **4191/TCP+UDP**. The old
@@ -19,10 +49,10 @@ Open the browser game with `?game=counter-strike`. For a non-default bridge, add
 
 The current source honors a nonempty explicit `server=` selection: if that
 bridge fails, the launcher reports its error instead of joining a different
-host. Only implicit same-origin signaling retains local development fallback.
-This repair is packaged in `local/goldsource-wasm:explicit-endpoint-candidate`;
-the September 4 live frontend still has the previous fallback behavior. See
-the [Chrome checkpoint](../../proofs/COUNTER-STRIKE-CHROME-2026-09-05.md).
+host. Only root-path HTTP loopback development retains implicit local fallback;
+public or prefixed pages never try a service on the player's own computer.
+Historical evidence is in the [Chrome checkpoint](../../proofs/COUNTER-STRIKE-CHROME-2026-09-05.md);
+the current deployed release is the September7 image above.
 
 ## Native host-error recovery
 

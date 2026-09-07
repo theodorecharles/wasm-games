@@ -13,7 +13,7 @@
   function loadScript(source) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = source;
+      script.src = globalThis.WasmGameFramework.publicUrl(source);
       script.onload = resolve;
       script.onerror = () => reject(new Error(`Could not load id Tech 2 adapter ${source}.`));
       document.head.appendChild(script);

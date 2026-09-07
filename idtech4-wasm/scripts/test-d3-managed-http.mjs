@@ -30,7 +30,9 @@ async function until(operation, predicate, label, timeout = 20000) {
   throw new Error(`Timed out: ${label}; last result: ${JSON.stringify(value)}`);
 }
 async function start({withData = false, extra = []} = {}) {
-  const args = ['run', '-d', '--read-only', '--tmpfs', '/tmp:rw,nosuid,size=256m',
+  const args = ['run', '-d', '--read-only', '--user', '1000:1000', '--cpus', '1', '--memory', '1g',
+    '--pids-limit', '128', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges:true',
+    '--tmpfs', '/tmp:rw,nosuid,nodev,noexec,size=256m',
     '-p', '127.0.0.1::8088', '-e', `WASM_GAME_PASSWORD=${password}`, '-e', 'IDLE_TIMEOUT=1s'];
   if (withData) args.push('--mount', `type=bind,src=${dataRoot},dst=/data,readonly`);
   for (const entry of extra) args.push('-e', entry);
@@ -67,6 +69,23 @@ try {
   check((await empty.authorized('/api/doom3/wake', {method: 'POST'})).status, 409, 'missing owner data blocks native startup');
   check(resources(empty.id), {processes: [], sessions: []}, 'missing data leaves no native process/session');
   check((await empty.request('/data/base/pak000.pk4')).status, 404, 'private data path is not exposed');
+
+  for (const variant of ['doom3', 'roe']) {
+    const single = await start({extra: ['WASM_GAME_VARIANT=' + variant]});
+    check((await single.authorized('/api/doom3/wake', {method: 'POST'})).status, 404, variant + ': single-player cannot wake multiplayer');
+    check((await single.authorized('/api/doom3/status')).status, 404, variant + ': multiplayer status is unavailable');
+    const denied = new WebSocket(single.origin.replace('http:', 'ws:') + '/api/doom3/socket', {headers: {origin: single.origin, cookie: single.cookie}});
+    denied.on('error', () => {});
+    const [, response] = await once(denied, 'unexpected-response');
+    check(response.statusCode, 403, variant + ': multiplayer WebSocket is rejected');
+    denied.terminate();
+    check(resources(single.id), {processes: [], sessions: []}, variant + ': rejected requests leave no native session');
+  }
+  const unknown = new WebSocket(empty.origin.replace('http:', 'ws:') + '/unknown-socket', {headers: {origin: empty.origin, cookie: empty.cookie}});
+  unknown.on('error', () => {});
+  const [, unknownResponse] = await once(unknown, 'unexpected-response');
+  check(unknownResponse.statusCode, 404, 'unknown WebSocket endpoint is rejected promptly');
+  unknown.terminate();
 
   const live = await start({withData: true});
   const waves = await Promise.all(Array.from({length: 3}, () => live.authorized('/api/doom3/wake', {method: 'POST'}).then(response => response.json())));

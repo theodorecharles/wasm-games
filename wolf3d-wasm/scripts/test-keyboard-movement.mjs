@@ -12,9 +12,12 @@ const play=fs.readFileSync(path.join(source,'wl_play.cpp'),'utf8');
 const start=play.indexOf('void PollKeyboardMove (void)'),end=play.indexOf('\n}',start);
 assert.ok(start>=0 && end>start);
 const main=fs.readFileSync(path.join(source,'wl_main.cpp'),'utf8');
-const restore=main.match(/    dirscan\[di_north\] = sc_UpArrow;\n    dirscan\[di_east\] = sc_RightArrow;\n    dirscan\[di_south\] = sc_DownArrow;\n    dirscan\[di_west\] = sc_LeftArrow;/)?.[0];
-assert.ok(restore);
-const production=`void RestoreBrowserDirections(){\n${process.env.WOLF_MOVEMENT_LEGACY==='1'?'':restore}\n}\n`+play.slice(start,end+2);
+const restoreStart=main.indexOf('static const uint32_t WolfWebConfigVersion');
+assert.ok(restoreStart>=0);
+const restore=main.slice(restoreStart,main.indexOf('\n#endif',restoreStart));
+const bindingHelper=play.match(/static boolean WolfWebHasKeyBinding[\s\S]*?\n}/)?.[0];
+assert.ok(bindingHelper);
+const production=restore+`\nvoid RestoreBrowserDirections(){\n${process.env.WOLF_MOVEMENT_LEGACY==='1'?'':'WolfWebRestoreDirections(0);'}\n}\n`+bindingHelper+'\n'+play.slice(start,end+2);
 const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'wolf-movement-'));
 try {
   fs.writeFileSync(path.join(temporary,'wolf-movement-production.h'),production);
@@ -27,7 +30,7 @@ try {
     const cases=run.stdout.trim().split('\n').map(line=>JSON.parse(line));assert.equal(cases.length,14);
     results.push({variant,cases});
   }
-  const proof={scope:'Exact production PollKeyboardMove and four browser ReadConfig direction assignments, with fixture keyboard/control fields seeded with old persisted WASD direction bindings. Both native variant defines. Not full configuration I/O, actor physics or Chrome held-key acceptance.',legacyDirections:process.env.WOLF_MOVEMENT_LEGACY==='1',sourceSHA256:crypto.createHash('sha256').update(production).digest('hex'),results};
+  const proof={scope:'Exact production PollKeyboardMove, binding precedence and browser config migration helper, with fixture keyboard/control fields seeded with unversioned WASD direction bindings. Both native variant defines. Not full configuration I/O, actor physics or Chrome held-key acceptance.',legacyDirections:process.env.WOLF_MOVEMENT_LEGACY==='1',sourceSHA256:crypto.createHash('sha256').update(production).digest('hex'),results};
   if(process.env.WOLF_MOVEMENT_PROOF)fs.writeFileSync(process.env.WOLF_MOVEMENT_PROOF,JSON.stringify(proof,null,2)+'\n');
   const failed=results.flatMap(r=>r.cases).filter(c=>!c.passed).length;
   console.log(JSON.stringify({cases:28,failed}));

@@ -25,7 +25,7 @@ function attachWsProxy(server, opts) {
   const destPort = (opts && opts.destPort) || 27961;
   const path = (opts && opts.path) || '/ws';
 
-  const wss = new WebSocketServer({ noServer: true });
+  const wss = new WebSocketServer({ noServer: true, maxPayload: 65507, perMessageDeflate: false });
 
   const registry = opts && opts.registry;
   const banStore = opts && opts.banStore;
@@ -65,18 +65,27 @@ function attachWsProxy(server, opts) {
     let ready = !ensureDedicated;
     let pending = [];
     let pendingBytes = 0;
+    let closed = false;
+
+    const sendPacket = (packet) => {
+      if (closed) return;
+      udp.send(packet, destPort, destHost, error => {
+        if (error && !closed) ws.close(1011, 'game transport unavailable');
+      });
+    };
 
     const beginWake = () => {
-      if (wakePromise || ready) {
+      if (closed || wakePromise || ready) {
         return;
       }
       wakePromise = Promise.resolve().then(() => ensureDedicated('browser game connection'))
         .then(() => {
+          if (closed) return;
           ready = true;
           const queued = pending;
           pending = [];
           pendingBytes = 0;
-          queued.forEach((packet) => udp.send(packet, destPort, destHost));
+          queued.forEach(sendPacket);
         })
         .catch((err) => {
           pending = [];
@@ -85,6 +94,7 @@ function attachWsProxy(server, opts) {
         });
     };
     udp.on('listening', () => {
+      if (closed) { udp.close(); return; }
       proxyPort = udp.address().port;
       if (registry) {
         registry.set(proxyPort, { ws: ws, address: address });
@@ -105,7 +115,9 @@ function attachWsProxy(server, opts) {
       }
     });
 
-    ws.on('message', (data) => {
+    ws.on('message', (data, isBinary) => {
+      if (closed) return;
+      if (!isBinary) { ws.close(1003, 'binary game datagrams required'); return; }
       const buf = Buffer.isBuffer(data) ? data : Buffer.from(data);
       if (isPortAnnouncement(buf)) {
         return;
@@ -120,10 +132,11 @@ function attachWsProxy(server, opts) {
         beginWake();
         return;
       }
-      udp.send(buf, destPort, destHost);
+      sendPacket(buf);
     });
 
     const cleanup = () => {
+      closed = true;
       pending = [];
       pendingBytes = 0;
       if (registry && proxyPort) {

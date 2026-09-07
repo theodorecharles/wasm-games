@@ -5,7 +5,7 @@ engine_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source_dir="$("${engine_dir}/scripts/fetch-source")"
 node "$engine_dir/scripts/test-source.mjs"
 node "$engine_dir/scripts/test-source-preparation.mjs"
-dist_dir="$engine_dir/.work/dist"
+dist_dir="${WOLF4SDL_DIST_DIR:-$engine_dir/.work/dist}"
 framework_dir="${WASM_FRAMEWORK_DIR:-/home/ted/Development/wasm-game-framework}"
 required_framework_version="0.9.6"
 required_framework_commit="ebb1ebe35ad8224a9080279a6529414db42d3284"
@@ -55,7 +55,7 @@ build_variant() {
     local output="$2"
     emmake make -C "$source_dir" clean WEB=1 WEB_VARIANT="$variant" \
         CC=emcc CXX=em++ BINARY="$dist_dir/$output.js"
-    emmake make -C "$source_dir" -j"${JOBS:-4}" \
+    emmake make -C "$source_dir" -j"${JOBS:-2}" \
         WEB=1 \
         WEB_VARIANT="$variant" \
         CC=emcc \
@@ -71,6 +71,7 @@ node "$engine_dir/scripts/test-menu-key-pump.mjs"
 node "$engine_dir/scripts/test-palette-present.mjs"
 node "$engine_dir/scripts/test-gameplay-input.mjs"
 node "$engine_dir/scripts/test-key-bindings.mjs"
+node "$engine_dir/scripts/test-config-persistence.mjs"
 
 cp "$engine_dir/web/game-adapter.js" "$engine_dir/web/wasm-game.json" \
     "$engine_dir/web/wasm-game-data.json" "$dist_dir/"

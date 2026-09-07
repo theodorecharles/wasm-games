@@ -40,7 +40,7 @@
   const expansionDeathmatchMap = Object.freeze({ xatrix: 'xdm1', rogue: 'rdm1' });
 
   function websocketUrl(pathname) {
-    const url = new URL(String(pathname || '/ws/quake2'), location.href);
+    const url = new URL(globalThis.WasmGameFramework.publicUrl(String(pathname || '/ws/quake2')), location.href);
     url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
     return url.href;
   }
@@ -135,7 +135,7 @@
     if (globalThis.createQuake2Module) return;
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = '/quake2.js?v=20260821-expansions3';
+      script.src = globalThis.WasmGameFramework.publicUrl('/quake2.js?v=20260821-expansions3');
       script.onload = resolve;
       script.onerror = () => reject(new Error('Could not load quake2.js.'));
       document.head.appendChild(script);
@@ -282,7 +282,7 @@
           }
         }) : null;
       installLaunchButtons(ctx);
-      const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      const manifest = await fetch(globalThis.WasmGameFramework.publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`Quake II data policy failed with HTTP ${response.status}.`);
         return response.json();
       });

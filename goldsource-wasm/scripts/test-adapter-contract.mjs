@@ -52,10 +52,11 @@ for (const variant of variants) {
   assert.doesNotMatch(definition.description, /\b(required|files?|cache(?:d|s|ing)?|provision)\b/i,
     `${variant} ready-state description must only describe the game`);
   assert.match(definition.provisioningText, /files/i, `${variant} missing-data UI needs file guidance`);
-  await exerciseVariant(variant);
+  for (const prefix of ['/', '/half-life/', '/nested/goldsource/']) await exerciseVariant(variant, prefix);
 }
 
-async function exerciseVariant(variant) {
+async function exerciseVariant(variant, prefix) {
+  const publicUrl = value => prefix + value.replace(/^(?:\.\/|\/)+/, '');
   const listeners = new Map();
   const instances = [];
   const sockets = [];
@@ -224,7 +225,8 @@ async function exerciseVariant(variant) {
     clearInterval() {},
     performance: { now: () => now },
     location: {
-      href: `https://games.example.test/?variant=${variant}`,
+      href: `https://games.example.test${prefix}?variant=${variant}`,
+      hostname: 'games.example.test',
       protocol: 'https:',
       search: `?variant=${variant}`
     },
@@ -244,10 +246,10 @@ async function exerciseVariant(variant) {
     csClientUrl: '/artifacts/cs-client.wasm',
     csServerUrl: '/artifacts/cs-server.wasm',
     fetch: async resource => {
-      if (String(resource) === '/wasm-game-data.json') {
+      if (String(resource) === publicUrl('/wasm-game-data.json')) {
         return { ok: true, json: async () => dataManifest };
       }
-      assert.equal(String(resource), '/artifacts/extras.pk3');
+      assert.equal(String(resource), publicUrl('/artifacts/extras.pk3'));
       return { ok: true, blob: async () => new Blob([new Uint8Array([80, 75, 3, 4])]) };
     }
   };
@@ -268,6 +270,7 @@ async function exerciseVariant(variant) {
     } },
     preferences: { values: () => ({ playerName: 'Test; "Player"', targetFps: 90 }) },
     framework: {
+      publicUrl,
       requireCapabilities: () => ({ supported: true, missing: [] }),
       createOwnerDataSet(policy) {
         createdPolicies.push(policy);
@@ -320,6 +323,11 @@ async function exerciseVariant(variant) {
   const engine = instances[0];
   assert.equal(engine.initialized, true);
   assert.equal(engine.running, true);
+  for (const value of [...Object.values(engine.options.filesMap), ...Object.values(engine.options.libraries).flatMap(value => typeof value === 'object' ? Object.values(value) : value)]) {
+    assert.ok(value.startsWith(prefix + 'artifacts/'), `${variant}: every engine/module URL retains its public prefix`);
+  }
+  assert.equal(engine.options.localBridgeFallback, false, 'public HTTPS deployments never fall back to localhost');
+  if (variant === 'counter-strike') assert.equal(sockets[0].endpoint, 'wss://games.example.test' + prefix + 'websocket');
   assert.equal(preMainCommands, 0,
     `${variant} must not execute console commands before native main initializes cmd_pool`);
   assert.equal(preMainResizes, 0,
@@ -365,13 +373,13 @@ async function exerciseVariant(variant) {
   }
   assert.deepEqual(args.slice(args.indexOf('+name'), args.indexOf('+name') + 2), ['+name', 'Test Player']);
   if (variant === 'opposing-force') {
-    assert.equal(engine.options.libraries.client, '/artifacts/opfor-client.wasm',
+    assert.equal(engine.options.libraries.client, publicUrl('/artifacts/opfor-client.wasm'),
       'Opposing Force must use its expansion-specific client DLL');
-    assert.equal(engine.options.libraries.server, '/artifacts/hl-server.wasm',
+    assert.equal(engine.options.libraries.server, publicUrl('/artifacts/hl-server.wasm'),
       'Opposing Force must keep Xash\'s mandatory generic server slot on the base module');
     assert.deepEqual(Array.from(engine.options.dynamicLibraries), ['dlls/opfor_emscripten_wasm32.wasm'],
       'Opposing Force must preload its server DLL under the Gearbox liblist name');
-    assert.equal(engine.options.filesMap['dlls/opfor_emscripten_wasm32.wasm'], '/artifacts/opfor-server.wasm',
+    assert.equal(engine.options.filesMap['dlls/opfor_emscripten_wasm32.wasm'], publicUrl('/artifacts/opfor-server.wasm'),
       'the Gearbox liblist lookup must resolve to the Opposing Force server DLL');
   }
   if (variant === 'counter-strike') {
@@ -379,7 +387,7 @@ async function exerciseVariant(variant) {
     assert.equal(engine.options.renderer, 'gles3compat',
       'Counter-Strike must use the visible WebGL2 renderer instead of the broken software blit loop');
     assert.equal(engine.options.filesMap['/persistent/goldsource/counter-strike/filesystem_stdio.wasm'],
-      '/artifacts/filesystem.wasm',
+      publicUrl('/artifacts/filesystem.wasm'),
       'the CS DLL dependency must resolve through the persisted /rwdir symlink without a startup error');
     assert.ok(engine instanceof MockXash);
     assert.deepEqual(Array.from(sockets[0].messages.at(-1)), [
@@ -387,6 +395,7 @@ async function exerciseVariant(variant) {
     ], 'Counter-Strike must answer the versioned signaling protocol used by the dedicated host');
     const BridgeEngine = vm.runInContext('WebRtcXash', sandbox);
     const fallbackProbe = Object.create(BridgeEngine.prototype);
+    fallbackProbe.allowLocalFallback = true; // Explicit local-root policy fixture.
     fallbackProbe.endpoint = new URL('ws://127.0.0.1:8017/websocket');
     const attempts = [];
     fallbackProbe.connect = async function () {

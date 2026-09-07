@@ -11,7 +11,7 @@
   "scripts": {
     "setup": "npm run setup:engine && npm run setup:data && npm run build:tools && npm run build:pak && npm run build:server-mod",
     "setup:data": "sh scripts/fetch-game-data.sh",
-    "setup:engine": "sh scripts/setup-etlegacy.sh",
+    "setup:engine": "sh scripts/setup-etlegacy.sh && sh scripts/setup-web-deps.sh",
     "reference:quakejs": "sh scripts/setup-quakejs-reference.sh",
     "sync:framework": "sh scripts/sync-framework.sh",
     "prestart": "npm run sync:framework",

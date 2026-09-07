@@ -69,7 +69,9 @@ done
 install -m 0644 "$SEED_ROOT/omni-bot-user/omni-bot.cfg" \
   "$DATA_ROOT/runtime/omni-bot-user/omni-bot.cfg"
 
-if [ -f "$DATA_ROOT/runtime/omni-bot-user/omni-bot.cfg" ]; then
+if [ -f "$DATA_ROOT/runtime/omni-bot-user/omni-bot.cfg" ] &&
+   ! cmp -s "$DATA_ROOT/runtime/omni-bot-user/omni-bot.cfg" \
+     /legacy/server/legacy/omni-bot/et/user/omni-bot.cfg; then
   install -m 0644 "$DATA_ROOT/runtime/omni-bot-user/omni-bot.cfg" \
     /legacy/server/legacy/omni-bot/et/user/omni-bot.cfg
 fi

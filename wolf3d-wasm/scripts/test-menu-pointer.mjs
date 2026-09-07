@@ -15,6 +15,7 @@ try {
   const compiled=spawnSync(process.env.CXX || 'c++',['-std=c++17','-O1','-pthread',...(legacy?['-DWOLF_MENU_LEGACY']:[]),'-I',source,path.join(root,'tests/menu-pointer.cpp'),'-o',binary],{encoding:'utf8'});
   assert.equal(compiled.status,0,compiled.stdout+compiled.stderr);
   const run=spawnSync(binary,[],{encoding:'utf8',timeout:10000});
+  assert.ifError(run.error);
   const cases=run.stdout.trim().split('\n').map(line=>JSON.parse(line));
   assert.equal(cases.length,40);
   const proof={scope:'Production atomic menu-pointer mailbox and hit testing with native-style menu descriptors, including all lines of episode titles. Tests quick clicks, enabled rows, bounds, cancellation and transitions. Legacy mode uses the preceding one-row episode call. Not full native UI, concurrent scheduling or browser acceptance.',legacy,sourceSHA256:crypto.createHash('sha256').update(fs.readFileSync(path.join(source,'web/menu_pointer.h'))).digest('hex'),cases};

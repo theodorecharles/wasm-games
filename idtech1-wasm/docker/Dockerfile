@@ -49,6 +49,7 @@ COPY classic-bots/ /opt/classic-bots/
 RUN cd /opt/idtech1-server && npm ci --omit=dev --ignore-scripts && \
     test "$(node -p "require('/opt/wasm-game-framework/package.json').version")" = "0.9.6" && \
     grep -Fq 'setMenuCursor(mode)' /opt/shared-shell/wasm-game-framework.js && \
+    grep -Fq 'function publicUrl(value)' /opt/shared-shell/wasm-game-framework.js && \
     test -x /usr/games/chocolate-server && \
     test "$(/usr/games/chocolate-server --version)" = "Chocolate Doom 3.1.1" && \
     test -x /opt/zandronum/zandronum-server && \

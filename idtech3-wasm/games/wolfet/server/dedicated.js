@@ -24,6 +24,7 @@ const RCON_FILE = path.join(RUNTIME_ROOT, '.rcon-password');
 const DATA_FETCHER = path.join(ROOT, 'scripts', 'fetch-game-data.sh');
 const CUSTOM_MAPS_DIR = path.join(DATA_ROOT, 'custom_maps');
 const OBJECTIVE_ROTATION_FILE = path.join(RUNTIME_ETMAIN, 'objectiverotate.cfg');
+const POST_MAP_CONFIG_FILE = path.join(RUNTIME_ETMAIN, 'etjs_postmap.cfg');
 const LAST_START_MAP_FILE = path.join(RUNTIME_ROOT, '.last-start-map');
 const BASE_OBJECTIVE_MAPS = Object.freeze([
   'oasis', 'battery', 'goldrush', 'radar', 'railgun', 'fueldump'
@@ -366,8 +367,21 @@ function launchArgs(startMap) {
   }
   return DEFAULT_ARGS.concat([
     '+exec', 'objectiverotate.cfg',
-    '+vstr', 'd' + (index + 1)
-  ], POST_MAP_ARGS);
+    '+vstr', 'd' + (index + 1),
+    '+exec', 'etjs_postmap.cfg'
+  ]);
+}
+
+function postMapConfig() {
+  // The stock native ET: Legacy binary accepts only 32 console lines (including
+  // the leading empty line). The patched browser engine accepts 96. Keep the
+  // native command line below its limit instead of joining the final +set onto
+  // the preceding cvar value. These four values are application-owned, not RCON.
+  const lines = [];
+  for (let i = 0; i < POST_MAP_ARGS.length; i += 3) {
+    lines.push('set ' + POST_MAP_ARGS[i + 1] + ' ' + POST_MAP_ARGS[i + 2]);
+  }
+  return lines.join('\n') + '\n';
 }
 
 /**
@@ -478,6 +492,7 @@ function waitForDedicatedStopped(timeoutMs) {
 function startDedicated(opts) {
   assertOfficialPaks();
   assertServerMod();
+  writeFileIfChanged(POST_MAP_CONFIG_FILE, postMapConfig());
   if (EMBEDDED && !fs.existsSync(EMBEDDED_BIN)) {
     throw new Error('embedded ET: Legacy server missing: ' + EMBEDDED_BIN);
   }
@@ -585,6 +600,7 @@ module.exports = {
   disableObjectiveMap: disableObjectiveMap,
   chooseStartMap: chooseStartMap,
   launchArgs: launchArgs,
+  postMapConfig: postMapConfig,
   assertServerMod: assertServerMod,
   dockerAvailable: dockerAvailable,
   containerRunning: containerRunning,

@@ -12,7 +12,7 @@ const source=process.env.WOLF4SDL_SOURCE_DIR || path.join(root,'.work/wolf4sdl')
 const input=fs.readFileSync(path.join(source,'id_in.cpp'),'utf8');
 const play=fs.readFileSync(path.join(source,'wl_play.cpp'),'utf8');
 function extract(text,name) {
-    const start=text.search(new RegExp('(?:extern "C" EMSCRIPTEN_KEEPALIVE int|extern "C" EMSCRIPTEN_KEEPALIVE void|static int|static void|boolean|void)\\s+'+name+'\\s*\\([^;{}]*\\)\\s*\\{'));
+    const start=text.search(new RegExp('(?:extern "C" EMSCRIPTEN_KEEPALIVE int|extern "C" EMSCRIPTEN_KEEPALIVE void|static boolean|static int|static void|boolean|void)\\s+'+name+'\\s*\\([^;{}]*\\)\\s*\\{'));
     assert(start>=0,name);let end=text.indexOf('{',start),depth=1;
     for(++end;depth && end<text.length;++end) {if(text[end]==='{')++depth;else if(text[end]==='}')--depth;}
     assert.equal(depth,0);return text.slice(start,end);
@@ -21,7 +21,7 @@ const declarations=input.slice(input.indexOf('static boolean WebGameplayKeyPress
 assert(declarations.includes('WebGameplayMouseSample'));
 const production=declarations+'\n'+['WolfWasm_BrowserSetInputCaptured','INL_GetMouseButtons','processEvent',
     'IN_ProcessEvents','IN_ClearKeysDown','IN_GameplayKeyDown','IN_FinishGameplayInput'].map(name=>extract(input,name)).join('\n');
-const controls=['PollKeyboardButtons','PollMouseButtons','PollKeyboardMove'].map(name=>extract(play,name)).join('\n');
+const controls='#ifdef WOLF4SDL_WEB\n'+extract(play,'WolfWebHasKeyBinding')+'\n#endif\n'+['PollKeyboardButtons','PollMouseButtons','PollKeyboardMove'].map(name=>extract(play,name)).join('\n');
 const polling=extract(play,'PollControls');
 assert.match(polling,/PollKeyboardButtons[\s\S]*PollMouseButtons[\s\S]*PollKeyboardMove[\s\S]*PollMouseMove[\s\S]*IN_FinishGameplayInput/);
 assert.match(polling,/if \(demoplayback\)[\s\S]*IN_FinishGameplayInput\(\);\s*return;/);

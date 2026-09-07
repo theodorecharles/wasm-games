@@ -89,6 +89,7 @@ const context = {
   variant: 'hl2',
   preferences: { playerName: 'Gordon' },
   framework: {
+    publicUrl: value => value,
     createOwnerDataSet(policy) {
       assert.ok(
         policy.version === 'steam-legacy-hl2-v1'
@@ -181,7 +182,15 @@ const context = {
   assert.ok(noExportState === 'loading' || noExportState === 'launcher');
   process.stdout.write('adapter unit: missing native export is not fake gameplay\n');
 
-  async function runOwnerMountScenario({ failWhole = false } = {}) {
+  async function runOwnerMountScenario({ failWhole = false, basePath = '/' } = {}) {
+    const publicUrl = value => basePath + value.replace(/^\/+/, '');
+    const location = { href: `https://games.test${basePath}?cb=prefix%20fixture` };
+    const resource = value => {
+      const url = new URL(value, location.href);
+      assert.equal(url.origin, 'https://games.test');
+      assert.ok(url.pathname.startsWith(basePath), `${url.pathname} must stay under ${basePath}`);
+      return '/' + url.pathname.slice(basePath.length);
+    };
     const nodes = new Map();
     const heap = new Uint8Array(128);
     const rangeRequests = [];
@@ -225,6 +234,7 @@ const context = {
         ['hl2/steam.inf', 8],
         ['hl2/materials/Console/case-test.vtf', 8],
         ['hl2/whole.bin', 6],
+        ['hl2/space #/file.bin', 6],
         ['hl2/range.bin', 16 * 1024 * 1024]
       ]
     };
@@ -232,19 +242,28 @@ const context = {
       '/owner/hl2/gameinfo.txt': Buffer.from('gameinfo'),
       '/owner/hl2/steam.inf': Buffer.from('steaminf')
     };
-    const ownerFetch = async (url) => {
-      const href = String(url);
+    const ownerFetch = async (url, options) => {
+      const href = resource(url);
       if (href.startsWith('/wasm-game-data.json')) {
         return { ok: true, json: async () => ownerManifest };
       }
       if (href === '/owner-index') return { ok: true, json: async () => index };
+      if (href === '/owner/hl2/range.bin') {
+        assert.equal(options.headers.Range, 'bytes=2097152-3145727');
+        assert.equal(options.credentials, 'same-origin');
+        const bytes = Buffer.alloc(1024 * 1024, 42);
+        return { ok: true, arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) };
+      }
       if (eager[href]) {
         return { ok: true, arrayBuffer: async () => eager[href].buffer.slice(eager[href].byteOffset, eager[href].byteOffset + eager[href].byteLength) };
       }
       throw new Error(`unexpected async owner fetch ${href}`);
     };
     class FakeXHR {
-      open(_method, url) { this.url = String(url); }
+      open(method, url, async) {
+        assert.equal(method, 'GET'); assert.equal(async, false);
+        this.url = resource(url) + new URL(url, location.href).search;
+      }
       setRequestHeader(name, value) { this[name.toLowerCase()] = String(value); }
       overrideMimeType() {}
       send() {
@@ -257,6 +276,10 @@ const context = {
           this.status = 200;
           this.responseText = 'case-test';
           return;
+        }
+        if (this.url.endsWith('/file.bin')) {
+          assert.equal(this.url, '/owner/hl2/space%20%23/file.bin');
+          this.status = 200; this.responseText = 'spaces'; return;
         }
         const match = /^bytes=(\d+)-(\d+)$/.exec(this.range || '');
         if (!this.url.includes('/range.bin?b64=1') || !match) {
@@ -275,20 +298,36 @@ const context = {
     }
     const mountSandbox = {
       console,
+      URL, location,
       fetch: ownerFetch,
       XMLHttpRequest: FakeXHR,
       atob(value) { return Buffer.from(value, 'base64').toString('latin1'); },
-      document: undefined
+      document: {
+        querySelector() { return { width: 1280, height: 720 }; },
+        createElement(tag) { assert.equal(tag, 'script'); return {}; },
+        head: { appendChild(script) {
+          assert.equal(resource(script.src), '/source-engine.js');
+          assert.equal(new URL(script.src, location.href).searchParams.get('cb'), 'prefix fixture');
+          mountSandbox.createSourceEngineModule = async options => {
+            for (const name of ['source-engine.wasm', 'source-engine.data']) {
+              assert.equal(resource(options.locateFile(name)), '/' + name);
+              assert.equal(new URL(options.locateFile(name), location.href).searchParams.get('cb'), 'prefix fixture');
+            }
+            return module;
+          };
+          script.onload();
+        } }
+      }
     };
     mountSandbox.globalThis = mountSandbox;
-    mountSandbox.createSourceEngineModule = async () => module;
     vm.createContext(mountSandbox);
     vm.runInContext(source, mountSandbox, { filename: 'game-adapter.js' });
     const mountAdapter = mountSandbox.WasmGameAdapter;
     const mountContext = {
       variant: 'hl2',
       preferences: {},
-      framework: { createOwnerDataSet(value) { return value; } },
+      framework: { publicUrl, createOwnerDataSet(value) { return value; } },
+      persistence: { root: '/save/hl2', async attach(_fs, options) { assert.equal(options.root, '/save/hl2'); } },
       setEngineState() {},
       showLoading() {},
       setLoading() {},
@@ -317,6 +356,9 @@ const context = {
     assert.equal(read, 4, 'whole-file lazy reads must short-read at EOF');
     assert.deepEqual([...heap.subarray(24, 28)], [...Buffer.from('cdef')]);
     assert.equal(whole.stream_ops.read({}, heap, 24, 4, 6), 0);
+    const spaced = nodes.get('/game/hl2/space #/file.bin');
+    assert.equal(spaced.stream_ops.read({}, heap, 80, 6, 0), 6);
+    assert.equal(Buffer.from(heap.subarray(80, 86)).toString(), 'spaces');
 
     const range = nodes.get('/game/hl2/range.bin');
     assert.ok(range && range.stream_ops && typeof range.stream_ops.read === 'function');
@@ -327,11 +369,17 @@ const context = {
     assert.equal(read, 4, 'range reads must span adjacent chunks');
     assert.deepEqual([...heap.subarray(48, 52)], [254, 255, 0, 1]);
     assert.deepEqual(rangeRequests, [[0, 1024 * 1024 - 1], [1024 * 1024, 2 * 1024 * 1024 - 1]]);
+    await range.contents.prefetchChunk(2);
+    assert.equal(range.stream_ops.read({}, heap, 88, 4, 2 * 1024 * 1024), 4);
+    assert.deepEqual([...heap.subarray(88, 92)], [42, 42, 42, 42]);
+    assert.equal(rangeRequests.length, 2, 'prefetched chunks avoid redundant sync requests');
   }
 
-  await runOwnerMountScenario();
-  await runOwnerMountScenario({ failWhole: true });
-  process.stdout.write('adapter unit: eager/whole/range owner mounts, heap offsets, short reads, and HTTP failure\n');
+  for (const basePath of ['/', '/hl2/', '/games/hl2/']) {
+    await runOwnerMountScenario({ basePath });
+    await runOwnerMountScenario({ basePath, failWhole: true });
+  }
+  process.stdout.write('adapter unit: root/single/nested factory/assets, encoded owner paths, eager/whole/ranged/prefetched reads and failures; native FS/save roots unchanged\n');
 
   const patchScript = fs.readFileSync(path.join(root, 'scripts', 'apply-source-patches.mjs'), 'utf8');
   assert.match(patchScript, /SourceWasm_SafeLockMesh/);

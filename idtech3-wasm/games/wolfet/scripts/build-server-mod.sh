@@ -1,6 +1,10 @@
 #!/bin/sh
 # Build the native qagame module that shares ETJS movement rules with the WASM client.
 set -eu
+ETJS_BUILD_JOBS="${ETJS_BUILD_JOBS:-2}"
+case "$ETJS_BUILD_JOBS" in
+  ''|*[!0-9]*|0) echo "ETJS_BUILD_JOBS must be a positive integer" >&2; exit 1 ;;
+esac
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SOURCE="$ROOT/etlegacy"
@@ -33,6 +37,6 @@ cmake -S "$SOURCE" -B "$BUILD" -GNinja \
   -DFEATURE_LUAJIT=OFF \
   -DFEATURE_OMNIBOT=ON
 
-cmake --build "$BUILD" --target qagame -j"$(nproc)"
+cmake --build "$BUILD" --target qagame -j"$ETJS_BUILD_JOBS"
 install -m 0755 "$OUTPUT" "$DEST"
 echo "wrote $DEST"

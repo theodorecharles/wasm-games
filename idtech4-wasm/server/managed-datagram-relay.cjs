@@ -26,8 +26,8 @@ function attachManagedDatagramRelay(server, options) {
   };
   async function upgrade(request, socket, head) {
     let url;
-    try { url = new URL(request.url, 'http://localhost'); } catch (_) { return; }
-    if (url.pathname !== '/api/doom3/socket') return;
+    try { url = new URL(request.url, 'http://localhost'); } catch (_) { reject(socket, '400 Bad Request'); return; }
+    if (url.pathname !== '/api/doom3/socket') { reject(socket, '404 Not Found'); return; }
     if (stopped) { reject(socket, '503 Service Unavailable'); return; }
     // A page on another origin must not be able to borrow a browser's session
     // cookie to wake or join the owner's match. A TLS-terminating supervisor

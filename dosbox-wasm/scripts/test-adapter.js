@@ -77,7 +77,9 @@ assert.deepEqual(Object.keys(config.variants), Object.keys(expectedFiles));
 assert.deepEqual(Object.keys(dataManifest.variants), Object.keys(expectedFiles));
 assert.equal(persistenceRoots.size, 9);
 
-async function exercise(variant, { existingSound, soundStatus = 200, sourceOverride = source, keyboardProbe } = {}) {
+async function exercise(variant, { existingSound, soundStatus = 200, sourceOverride = source, keyboardProbe, basePath = '/' } = {}) {
+  const publicUrl = value => value.startsWith(basePath) && basePath !== '/'
+    ? value : basePath + value.replace(/^\//, '');
   const transitions = [];
   const launches = [];
   const nativeInput = [];
@@ -143,27 +145,27 @@ async function exercise(variant, { existingSound, soundStatus = 200, sourceOverr
     createElement: element,
     head: {
       appendChild(script) {
-        assert.equal(script.src, '/dosbox.js');
+        assert.equal(script.src, basePath + 'dosbox.js');
         sandbox.createDosBoxModule = async options => { moduleOptions = options; return module; };
         queueMicrotask(script.onload);
       }
     }
   };
   const sandbox = {
-    console, document,
+    console, document, WasmGameFramework: { publicUrl },
     addEventListener(type, listener) { windowListeners.set(type, listener); },
     setTimeout(callback) { callback(); return 1; },
     crypto: { subtle: { digest: async () => new ArrayBuffer(32) } },
     fetch: async request => {
-      if (request === '/gta-sound.ini') return {
+      if (request === basePath + 'gta-sound.ini') return {
         ok: soundStatus === 200, status: soundStatus,
         text: async () => fs.readFileSync(path.join(web, 'gta-sound.ini'), 'utf8')
       };
-      if (request === '/browser-pointer.conf') return {
+      if (request === basePath + 'browser-pointer.conf') return {
         ok: true,
         text: async () => fs.readFileSync(path.join(web, 'browser-pointer.conf'), 'utf8')
       };
-      assert.equal(request, '/wasm-game-data.json');
+      assert.equal(request, basePath + 'wasm-game-data.json');
       return { ok: true, json: async () => dataManifest };
     }
   };
@@ -364,6 +366,9 @@ async function exercise(variant, { existingSound, soundStatus = 200, sourceOverr
   assert.ok(launches.filter(call => call[0] === 'chmod').every(call =>
     call[1].startsWith(`${gameRoot}/`) && call[2] === 0o600));
   assert.ok(moduleOptions && moduleOptions.canvas === canvas);
+  assert.equal(moduleOptions.locateFile('dosbox.wasm'), basePath + 'dosbox.wasm');
+  assert.equal(moduleOptions.locateFile('/dosbox.wasm'), basePath + 'dosbox.wasm');
+  assert.equal(moduleOptions.locateFile(basePath + 'dosbox.wasm'), basePath + 'dosbox.wasm');
 
   module.FS.write({ path: `${configRoot}/dosbox-0.74-3.conf` }, new Uint8Array(4));
   module.FS.write({ node: { path: `${gameRoot}/SAVE.DAT` } }, new Uint8Array(8));
@@ -516,6 +521,7 @@ function checkKeyboardPolicy({ variant, adapter, context, canvasListeners, docum
 
 if (require.main === module) (async () => {
   for (const variant of Object.keys(config.variants)) await exercise(variant);
+  for (const variant of Object.keys(config.variants)) await exercise(variant, { basePath: `/${variant}/` });
   await exercise('gta', { existingSound: 'DEVICE None\nDRIVER NULL\n' });
   await exercise('gta', { existingSound: '' });
   await exercise('gta', { soundStatus: 503 });

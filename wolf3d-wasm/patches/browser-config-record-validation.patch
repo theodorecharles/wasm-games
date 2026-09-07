@@ -1,0 +1,38 @@
+diff --git a/wl_main.cpp b/wl_main.cpp
+--- a/wl_main.cpp
++++ b/wl_main.cpp
+@@ -190,6 +190,21 @@
+         //
+         // valid config file
+         //
++#ifdef WOLF4SDL_WEB
++        // A partial browser record must not feed uninitialized sound modes or
++        // half-restored bindings into the engine. The legacy payload length is
++        // unchanged; its optional trailing browser version is backward compatible.
++        const off_t minimumConfigBytes = sizeof(word) + sizeof(HighScore) * MaxScores +
++            sizeof(sd) + sizeof(sm) + sizeof(sds) + sizeof(boolean) * 4 + sizeof(int) +
++            sizeof(dirscan) + sizeof(buttonscan) + sizeof(buttonmouse) + sizeof(buttonjoy) +
++            sizeof(viewsize) + sizeof(mouseadjustment);
++        const off_t configBytes = lseek(file, 0, SEEK_END);
++        if (configBytes < minimumConfigBytes || lseek(file, 0, SEEK_SET) != 0)
++        {
++            close(file);
++            goto noconfig;
++        }
++#endif
+         word tmp = 0;
+         if(read(file,&tmp,sizeof(tmp)) != sizeof(tmp) || tmp!=0xfefa)
+         {
+@@ -316,7 +331,11 @@
+     else
+         strcpy(configpath, configname);
+ 
+-    const int file = open(configpath, O_CREAT | O_WRONLY | O_BINARY, 0644);
++    const int file = open(configpath, O_CREAT | O_WRONLY | O_BINARY
++#ifdef WOLF4SDL_WEB
++        | O_TRUNC
++#endif
++        , 0644);
+     if (file != -1)
+     {
+         word tmp=0xfefa;

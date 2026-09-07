@@ -7,6 +7,7 @@
   let diagnosticFactoryPromise;
   let diagnosticLines = [];
   let completed = false;
+  let publicUrl;
 
   function filePolicy(file) {
     return {
@@ -40,7 +41,7 @@
     if (diagnosticFactoryPromise) return diagnosticFactoryPromise;
     diagnosticFactoryPromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = '/cod2_core_probe.js';
+      script.src = publicUrl('/cod2_core_probe.js');
       script.async = true;
       script.onload = () => {
         if (typeof globalThis.createCod2Diagnostic !== 'function') {
@@ -57,7 +58,9 @@
 
   globalThis.WasmGameAdapter = Object.freeze({
     async init(context) {
-      const root = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      publicUrl = context.framework.publicUrl;
+      if (typeof publicUrl !== 'function') throw new Error('Framework public URL support is required.');
+      const root = await fetch(publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`Runtime policy failed with HTTP ${response.status}.`);
         return response.json();
       });
@@ -94,7 +97,7 @@
         const factory = await loadDiagnosticFactory();
         diagnosticLines = [];
         await factory({
-          locateFile(path) { return `/${path}`; },
+          locateFile(path) { return publicUrl(`/${path}`); },
           print(value) {
             const line = String(value);
             diagnosticLines.push(line);

@@ -121,7 +121,7 @@ describe('same-origin content-addressed game assets', () => {
     assert.equal(workerResponse.status, 200);
     assert.equal(workerResponse.headers['service-worker-allowed'], '/');
     const worker = workerResponse.body.toString('utf8');
-    assert.match(worker, /wasm-game-shell-0\.9\.4/);
+    assert.match(worker, /wasm-game-shell-0\.9\.6/);
     assert.match(worker, /fetch\(event\.request\)/);
     assert.doesNotMatch(worker, /game-data/, 'PWA shell cache must not duplicate owner PK3 caching');
     assert.deepEqual(workerResponse.body,

@@ -58,10 +58,10 @@ const CONTROLLER_ACTION = Object.freeze({
 
 const NATIVE_STATES = Object.freeze(['menu', 'gameplay', 'paused', 'debrief', 'loading']);
 
-function websocketEndpoint() {
+function websocketEndpoint(context) {
   const override = new URLSearchParams(location.search).get('server');
   if (!override) {
-    const url = new URL('/websocket', location.href);
+    const url = new URL(context.framework.publicUrl('/websocket'), location.href);
     url.protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
     return url;
   }
@@ -135,8 +135,8 @@ function installInputProof(context) {
 }
 
 // Local development WebRTC bridge (runtime/counter-strike/start.sh).
-// Same-origin signaling is tried first; static-only hosts (the game-lab
-// container) have no /websocket endpoint, so networked play falls back here.
+// Only root-path HTTP loopback development may fall back here. Public/prefixed
+// deployments must never try a service on the player's own computer.
 // Port 4190 (Sieve) is blocked by the Fetch/WebSocket standard.
 const BRIDGE_FALLBACK = '127.0.0.1:4192';
 
@@ -144,6 +144,11 @@ class WebRtcXash extends Xash3D {
   constructor(options, endpoint) {
     super(options);
     this.endpoint = endpoint;
+    this.allowLocalFallback = options.localBridgeFallback === true;
+    this.connectionAborted = false;
+    this.cancelConnect = null;
+    this.connectionGeneration = 0;
+    this.channels = new Set();
     this.net = new Net(this);
     // TEMP: trace which net syscalls the engine invokes during connect.
     for (const m of ['socket', 'bind', 'connect', 'sendto', 'sendtoBatch', 'getaddrinfo', 'gethostbyname']) {
@@ -161,20 +166,47 @@ class WebRtcXash extends Xash3D {
   }
 
   async init() {
-    await Promise.all([super.init(), this.connectWithFallback()]);
+    try { await Promise.all([super.init(), this.connectWithFallback()]); }
+    catch (error) { this.connectionAborted = true; this.disposeConnection(); throw error; }
+  }
+
+  disposeConnection() {
+    this.connectionGeneration += 1;
+    this.cancelConnect?.(new Error('The multiplayer connection was closed.'));
+    this.cancelConnect = null;
+    if (this.socket) {
+      this.socket.onmessage = this.socket.onerror = this.socket.onclose = null;
+      this.socket.close();
+      this.socket = null;
+    }
+    if (this.peer) {
+      this.peer.onicecandidate = this.peer.onconnectionstatechange = this.peer.ondatachannel = null;
+      this.peer.close();
+      this.peer = null;
+    }
+    for (const channel of this.channels || []) {
+      channel.onopen = channel.onmessage = channel.onerror = channel.onclose = null;
+      channel.close();
+    }
+    this.channels?.clear();
+    this.channel = null;
+    this.pendingCandidates = [];
+    this.signalingVersion = null;
   }
 
   async connectWithFallback() {
     try {
       await this.connect();
     } catch (error) {
+      this.disposeConnection();
       const fallback = new URL(`ws://${BRIDGE_FALLBACK}/websocket`);
       // A selected server is authoritative: its failure must not send the
       // player to an unrelated match. Only the implicit same-origin default
       // may fall back to the local development bridge.
-      if (new URLSearchParams(location.search).get('server') || this.endpoint.host === fallback.host) throw error;
+      if (this.connectionAborted || !this.allowLocalFallback || new URLSearchParams(location.search).get('server') || this.endpoint.host === fallback.host) throw error;
       this.endpoint = fallback;
-      await this.connect();
+      try { await this.connect(); }
+      catch (retryError) { this.disposeConnection(); throw retryError; }
     }
   }
 
@@ -182,23 +214,27 @@ class WebRtcXash extends Xash3D {
     if (this.peer) return;
     const peer = new RTCPeerConnection();
     this.peer = peer;
+    const current = () => this.peer === peer && !this.connectionAborted;
     peer.onicecandidate = event => {
-      if (event.candidate && this.socket?.readyState === WebSocket.OPEN) {
+      if (current() && event.candidate && this.socket?.readyState === WebSocket.OPEN) {
         this.sendSignal('candidate', event.candidate.toJSON());
       }
     };
     peer.onconnectionstatechange = () => {
-      if (['failed', 'closed'].includes(peer.connectionState)) {
+      if (current() && ['failed', 'closed'].includes(peer.connectionState)) {
         reject(new Error(`The multiplayer WebRTC connection ${peer.connectionState}.`));
       }
     };
     let openChannels = 0;
     peer.ondatachannel = event => {
       const channel = event.channel;
+      if (!current()) { channel.close(); return; }
+      this.channels.add(channel);
       channel.binaryType = 'arraybuffer';
       if (channel.label === 'write') {
         channel.onmessage = message => {
           const deliver = value => {
+            if (!current()) return;
             this.diagRecv = (this.diagRecv || 0) + 1;
             this.net.incoming.enqueue({
               ip: [127, 0, 0, 1], port: 8080,
@@ -210,6 +246,7 @@ class WebRtcXash extends Xash3D {
         };
       }
       channel.onopen = () => {
+        if (!current()) return;
         openChannels += 1;
         if (channel.label === 'read') this.channel = channel;
         if (openChannels >= 2 && this.channel) resolve();
@@ -218,18 +255,28 @@ class WebRtcXash extends Xash3D {
   }
 
   async handleSignal(message, resolve, reject) {
+    if (this.connectionAborted) return;
+    const generation = this.connectionGeneration;
     const decoded = this.decodeSignal(message.data);
     this.signalingVersion = decoded.version;
     this.createPeer(resolve, reject);
+    const peer = this.peer;
+    const current = () => this.connectionGeneration === generation && this.peer === peer && !this.connectionAborted;
     if (decoded.event === 'offer') {
       const data = decoded.data;
-      await this.peer.setRemoteDescription(data);
-      for (const candidate of this.pendingCandidates.splice(0)) await this.peer.addIceCandidate(candidate);
-      const answer = await this.peer.createAnswer();
-      await this.peer.setLocalDescription(answer);
+      await peer.setRemoteDescription(data);
+      if (!current()) return;
+      for (const candidate of this.pendingCandidates.splice(0)) {
+        await peer.addIceCandidate(candidate);
+        if (!current()) return;
+      }
+      const answer = await peer.createAnswer();
+      if (!current()) return;
+      await peer.setLocalDescription(answer);
+      if (!current()) return;
       this.sendSignal('answer', answer);
     } else if (decoded.event === 'candidate') {
-      if (this.peer.remoteDescription) await this.peer.addIceCandidate(decoded.data);
+      if (peer.remoteDescription) await peer.addIceCandidate(decoded.data);
       else this.pendingCandidates.push(decoded.data);
     }
   }
@@ -262,15 +309,18 @@ class WebRtcXash extends Xash3D {
 
   connect() {
     return new Promise((resolve, reject) => {
+      if (this.connectionAborted) { reject(new Error('The multiplayer connection was aborted.')); return; }
       let settled = false;
       const finish = callback => value => {
         if (settled) return;
         settled = true;
         clearTimeout(timer);
+        if (this.cancelConnect === fail) this.cancelConnect = null;
         callback(value);
       };
       const done = finish(resolve);
       const fail = finish(reject);
+      this.cancelConnect = fail;
       const timer = setTimeout(() => fail(new Error(
         `Timed out connecting to the GoldSource WebRTC bridge at ${this.endpoint.href}`
       )), 20000);
@@ -310,9 +360,9 @@ function ownerPolicy(context) {
   };
 }
 
-async function loadManifest() {
+async function loadManifest(context) {
   if (!manifest) {
-    const response = await fetch('/wasm-game-data.json', { cache: 'no-store' });
+    const response = await fetch(context.framework.publicUrl('/wasm-game-data.json'), { cache: 'no-store' });
     if (!response.ok) throw new Error(`Game-data manifest failed with HTTP ${response.status}.`);
     manifest = Object.freeze(await response.json());
   }
@@ -377,6 +427,7 @@ function synchronizeNativeViewport(detail) {
 }
 
 function engineOptions(context, selected, networked) {
+  const publicUrl = context.framework.publicUrl;
   const isCs = context.variant === 'counter-strike';
   const preferences = context.preferences.values();
   const playerName = safePlayerName(preferences.playerName);
@@ -396,16 +447,18 @@ function engineOptions(context, selected, networked) {
   if (selected.game !== 'valve') argumentsList.push('-game', selected.game);
   if (isCs) argumentsList.push('+_vgui_menus', '0');
   const filesMap = {
-    '/rwdir/filesystem_stdio.wasm': filesystemUrl,
-    [`${context.persistence.root}/filesystem_stdio.wasm`]: filesystemUrl,
-    'dlls/bshift_emscripten_wasm32.wasm': hlServerUrl,
-    'dlls/opfor_emscripten_wasm32.wasm': opforServerUrl,
-    'dlls/cs_emscripten_wasm32.wasm': csServerUrl,
-    'dlls/mp_emscripten_wasm32.wasm': csServerUrl
+    '/rwdir/filesystem_stdio.wasm': publicUrl(filesystemUrl),
+    [`${context.persistence.root}/filesystem_stdio.wasm`]: publicUrl(filesystemUrl),
+    'dlls/bshift_emscripten_wasm32.wasm': publicUrl(hlServerUrl),
+    'dlls/opfor_emscripten_wasm32.wasm': publicUrl(opforServerUrl),
+    'dlls/cs_emscripten_wasm32.wasm': publicUrl(csServerUrl),
+    'dlls/mp_emscripten_wasm32.wasm': publicUrl(csServerUrl)
   };
   return {
     canvas: context.elements.canvas,
     renderer: 'gles3compat',
+    localBridgeFallback: location.protocol === 'http:' &&
+      ['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname) && publicUrl('/') === '/',
     arguments: argumentsList,
     filesMap,
     dynamicLibraries: isCs
@@ -416,15 +469,15 @@ function engineOptions(context, selected, networked) {
           ? ['dlls/opfor_emscripten_wasm32.wasm']
           : [],
     libraries: {
-      filesystem: filesystemUrl,
-      xash: xashUrl,
-      menu: isCs ? csMenuUrl : menuUrl,
-      client: isCs ? csClientUrl : selected.game === 'gearbox' ? opforClientUrl : hlClientUrl,
+      filesystem: publicUrl(filesystemUrl),
+      xash: publicUrl(xashUrl),
+      menu: publicUrl(isCs ? csMenuUrl : menuUrl),
+      client: publicUrl(isCs ? csClientUrl : selected.game === 'gearbox' ? opforClientUrl : hlClientUrl),
       // Xash always preloads the generic server slot. Keep that slot on the
       // base module and preload Opposing Force once under the Gearbox DLL name
       // that its liblist requests at runtime.
-      server: isCs ? csServerUrl : hlServerUrl,
-      render: { gles3compat: webgl2Url, gl4es: webgl2Url, soft: softUrl }
+      server: publicUrl(isCs ? csServerUrl : hlServerUrl),
+      render: { gles3compat: publicUrl(webgl2Url), gl4es: publicUrl(webgl2Url), soft: publicUrl(softUrl) }
     },
     module: {
       print: line => {
@@ -686,7 +739,7 @@ async function start(context) {
     const override = new URLSearchParams(location.search).has('server');
     const networked = selected.multiplayer === true || (selected.multiplayer === 'optional' && override);
     networkedHint = networked;
-    const endpoint = networked ? websocketEndpoint() : null;
+    const endpoint = networked ? websocketEndpoint(context) : null;
     context.setLoading('Initializing Xash3D-FWGS…', networked ? `Connecting through ${endpoint.href}` : 'Loading WebAssembly modules.', 58);
     // The engine's SDL2 input layer resolves its event target through the
     // hardcoded `#canvas` selector, so the shell canvas must answer to it
@@ -713,7 +766,7 @@ async function start(context) {
         context.setLoading('Preparing the game…', '', percent);
       }
     });
-    const extrasResponse = await fetch(extrasUrl);
+    const extrasResponse = await fetch(context.framework.publicUrl(extrasUrl));
     if (!extrasResponse.ok) throw new Error(`Xash support data failed with HTTP ${extrasResponse.status}.`);
     await writeBlob(xash.em.FS, `${ROOT}/extras.pk3`, await extrasResponse.blob());
     xash.em.FS.chdir('/rwdir');
@@ -742,6 +795,7 @@ async function start(context) {
     });
     telemetryTimer = setInterval(() => pollNativeContract(context), 50);
   } catch (error) {
+    if (xash instanceof WebRtcXash) { xash.connectionAborted = true; xash.disposeConnection(); }
     started = false;
     nativeReady = false;
     engineState = 'crashed';
@@ -760,12 +814,13 @@ window.addEventListener('keyup', event => {
 }, true);
 window.addEventListener('beforeunload', () => {
   if (telemetryTimer) clearInterval(telemetryTimer);
+  if (xash instanceof WebRtcXash) { xash.connectionAborted = true; xash.disposeConnection(); }
 });
 
 globalThis.WasmGameAdapter = Object.freeze({
   async init(context) {
     installInputProof(context);
-    await loadManifest();
+    await loadManifest(context);
     configurationFor(context.variant);
     const capabilities = context.framework.requireCapabilities({ wasm: true, webgl2: true, audio: true, indexedDb: true });
     if (!capabilities.supported) throw new Error(`This browser is missing: ${capabilities.missing.join(', ')}.`);

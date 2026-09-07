@@ -1,11 +1,14 @@
 #include <cstdio>
 #include <cstring>
+#include <cstdint>
+using boolean = bool;
 enum {sc_W='w',sc_A='a',sc_S='s',sc_D='d',sc_UpArrow=273,sc_DownArrow=274,sc_RightArrow=275,sc_LeftArrow=276};
 enum {di_north,di_east,di_south,di_west};
-enum {bt_run,bt_strafeleft,bt_straferight};
+enum {bt_run,bt_strafeleft,bt_straferight,NUMBUTTONS};
 enum {BASEMOVE=35,RUNMOVE=70};
 bool Keyboard[512],buttonstate[3];
 int dirscan[4],controlx,controly,tics;
+int buttonscan[NUMBUTTONS] = {};
 bool IN_GameplayKeyDown(int key) { return key >= 0 && key < 512 && Keyboard[key]; }
 #include "wolf-movement-production.h"
 int main() {

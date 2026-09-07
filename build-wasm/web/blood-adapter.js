@@ -10,6 +10,20 @@
   let context = null;
   let interactionCaptureIntent = false;
   let unlockedPointer = null;
+  let pointerCaptured = false;
+  const pressedPointerButtons = new Set();
+
+  function forwardPointerButton(button, pressed) {
+    if (!started || ![0, 1, 2].includes(button)) return;
+    if (pressedPointerButtons.has(button) === Boolean(pressed)) return;
+    if (pressed) pressedPointerButtons.add(button);
+    else pressedPointerButtons.delete(button);
+    engine?._Build_WasmPointerButton?.(button, pressed ? 1 : 0);
+  }
+
+  function releasePointerButtons() {
+    for (const button of [...pressedPointerButtons]) forwardPointerButton(button, false);
+  }
   let profile = 'classic';
   let launchProfile = null;
   const profiles = Object.freeze({
@@ -96,7 +110,7 @@
   function loadScript(source) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = source;
+      script.src = globalThis.WasmGameFramework.publicUrl(source);
       script.onload = resolve;
       script.onerror = () => reject(new Error(`Could not load ${source}.`));
       document.head.appendChild(script);
@@ -109,9 +123,9 @@
       engine = globalThis.Module = {
         canvas: ctx.elements.canvas,
         locateFile(path, prefix) {
-          if (path.endsWith('.wasm')) return profiles[profile].wasm;
-          if (path.endsWith('.data')) return profiles[profile].data;
-          return prefix + path;
+          if (path.endsWith('.wasm')) return globalThis.WasmGameFramework.publicUrl(profiles[profile].wasm);
+          if (path.endsWith('.data')) return globalThis.WasmGameFramework.publicUrl(profiles[profile].data);
+          return globalThis.WasmGameFramework.publicUrl(prefix + path);
         },
         noInitialRun: true,
         print: (...args) => { console.log('[NBlood WASM]', ...args); ctx.log(args.join(' ')); },
@@ -268,7 +282,7 @@
       diagnostics();
       document.documentElement.dataset.audioState = 'not-created';
       document.documentElement.dataset.persistence = 'not-started';
-      const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      const manifest = await fetch(globalThis.WasmGameFramework.publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`Blood data policy failed with HTTP ${response.status}.`);
         return response.json();
       });
@@ -302,8 +316,21 @@
       };
       ctx.elements.canvas.addEventListener('keydown', event => publishKey(event, true));
       ctx.elements.canvas.addEventListener('keyup', event => publishKey(event, false));
-      ctx.elements.canvas.addEventListener('mousedown', event => event.stopImmediatePropagation(), true);
-      ctx.elements.canvas.addEventListener('mouseup', event => event.stopImmediatePropagation(), true);
+      // The framework forwards unlocked pointer buttons only. While locked,
+      // route native mouse edges here before suppressing SDL's duplicate path.
+      // Track ownership so the click that acquires lock cannot lose its release.
+      ctx.elements.canvas.addEventListener('mousedown', event => {
+        if (pointerCaptured) forwardPointerButton(event.button, true);
+        event.stopImmediatePropagation();
+      }, true);
+      ctx.elements.canvas.addEventListener('mouseup', event => {
+        forwardPointerButton(event.button, false);
+        event.stopImmediatePropagation();
+      }, true);
+      window.addEventListener('pointerup', event => forwardPointerButton(event.button, false), true);
+      window.addEventListener('mouseup', event => forwardPointerButton(event.button, false), true);
+      window.addEventListener('pointercancel', releasePointerButtons, true);
+      window.addEventListener('blur', releasePointerButtons);
       // The adapter owns menu input and framework-normalized relative gameplay
       // deltas. Suppress SDL's parallel compatibility event path so
       // menuCursor:none cannot wake a native menu cursor and locked movement
@@ -317,10 +344,10 @@
         if (event.key === 'Escape') lastEscapeAt = performance.now();
       }, true);
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') flushPersistence();
+        if (document.visibilityState === 'hidden') { releasePointerButtons(); flushPersistence(); }
         else void ctx.shell.resumeAudio();
       });
-      window.addEventListener('pagehide', flushPersistence);
+      window.addEventListener('pagehide', () => { releasePointerButtons(); flushPersistence(); });
       window.addEventListener('nblood-exit', () => {
         diagnostics().running = false;
         ctx.setEngineState('crashed');
@@ -395,7 +422,7 @@
     pointerButton(detail, event, ctx) {
       if (!started) return;
       if (nativeState() === 'gameplay') {
-        engine?._Build_WasmPointerButton?.(detail.button, detail.pressed ? 1 : 0);
+        forwardPointerButton(detail.button, detail.pressed);
         return;
       }
       if (detail.button === 0 && detail.pressed && nativeState() === 'menu' && engine?._NBlood_WasmCaptureTarget?.()) {
@@ -403,17 +430,20 @@
         ctx?.setEngineState?.('loading', { capture: true, event });
       }
       engine?._Build_WasmPointerMove?.(Math.round(detail.x), Math.round(detail.y));
-      engine?._Build_WasmPointerButton?.(detail.button, detail.pressed ? 1 : 0);
+      forwardPointerButton(detail.button, detail.pressed);
     },
     controllerFrame(detail) { controllerFrame(detail); },
     controllerChanged(detail) { if (detail.activeIndex == null || detail.selection === 'disabled') releaseController(); },
     captureLost(_detail, ctx) {
+      releasePointerButtons();
       if (started && performance.now() - lastEscapeAt > 750 &&
           typeof engine?._NBlood_WasmEnsureMenu === 'function') engine._NBlood_WasmEnsureMenu();
       interactionCaptureIntent = false;
       if (started) synchronizeState(ctx, null, false);
     },
     inputCaptureChanged(captured) {
+      pointerCaptured = Boolean(captured);
+      if (!captured) releasePointerButtons();
       document.documentElement.dataset.pointerLocked = String(captured);
       unlockedPointer = null;
       if (captured) interactionCaptureIntent = false;

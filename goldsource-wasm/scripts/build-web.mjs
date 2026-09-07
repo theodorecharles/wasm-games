@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { copyFile, mkdir, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const web = path.join(repo, 'web');
+const web = process.env.GOLDSOURCE_WEB_DIR ? path.resolve(process.env.GOLDSOURCE_WEB_DIR) : path.join(repo, 'web');
+if (process.env.GOLDSOURCE_WEB_DIR) {
+  assert.ok(!existsSync(web), 'Refusing to overwrite an existing alternate web output.');
+  await mkdir(web, { recursive: true });
+  for (const name of ['wasm-game.json', 'wasm-game-data.json', 'wasm-game-framework.json']) {
+    if (existsSync(path.join(repo, 'web', name))) await copyFile(path.join(repo, 'web', name), path.join(web, name));
+  }
+}
 await rm(path.join(web, 'artifacts'), { recursive: true, force: true });
 await rm(path.join(web, 'game-adapter.js'), { force: true });
 await mkdir(web, { recursive: true });

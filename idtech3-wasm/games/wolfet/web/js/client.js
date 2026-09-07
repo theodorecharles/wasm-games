@@ -11,6 +11,12 @@
   /* One stamp for etjs.js + etjs.wasm so EM_ASM addresses match. */
   window.ETJS_ASSET_VER = window.ETJS_ASSET_VER || String(Date.now());
 
+  // Only network URLs receive the public prefix. /etmain, /legacy and the
+  // persistence root below are native engine filesystem paths, not URLs.
+  function publicUrl(value) {
+    return window.WasmGameFramework ? window.WasmGameFramework.publicUrl(value) : value;
+  }
+
   function firstElement() {
     for (var i = 0; i < arguments.length; i++) {
       var found = document.getElementById(arguments[i]);
@@ -99,7 +105,7 @@
     }
     console.info('[ETJS communication]', entry);
     try {
-      fetch('/client-log', {
+      fetch(publicUrl('/client-log'), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(entry),
@@ -474,7 +480,7 @@
         setTimeout(resolve, 0);
       }
     }).then(function () {
-      return fetch('/wake', { method: 'POST' });
+      return fetch(publicUrl('/wake'), { method: 'POST' });
     }).then(function (response) {
       return response.json().then(function (body) {
         if (!response.ok || !body.ok) {
@@ -720,7 +726,7 @@
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
       var s = document.createElement('script');
-      s.src = src;
+      s.src = publicUrl(src);
       s.async = false;
       s.onload = function () { resolve(src); };
       s.onerror = function () { reject(new Error('failed to load ' + src)); };
@@ -732,7 +738,7 @@
     if (!pk3Downloader) {
       return Promise.reject(new Error('PK3 downloader is not loaded'));
     }
-    return pk3Downloader.fetchPakBytes(file, onProgress);
+    return pk3Downloader.fetchPakBytes(Object.assign({}, file, { url: publicUrl(file.url) }), onProgress);
   }
 
   function preloadIntoFS(Module, file, onProgress) {
@@ -954,13 +960,13 @@
     mkdirp(FS, '/legacy/ui');
     mkdirp(FS, persistentHomeRoot() + '/legacy/ui');
     return Promise.all([
-      fetch('/legacy/ui/etjs_menus.txt').then(function (r) { return r.ok ? r.text() : ''; }),
-      fetch('/legacy/ui/etjs_official.menu').then(function (r) { return r.ok ? r.text() : ''; }),
-      fetch('/legacy/ui/main.menu').then(function (r) { return r.ok ? r.text() : ''; }),
-      fetch('/legacy/ui/etjs_main.menu').then(function (r) { return r.ok ? r.text() : ''; }),
-      fetch('/legacy/ui/etjs_bare.menu').then(function (r) { return r.ok ? r.text() : ''; }),
-      fetch('/legacy/ui/etjs_ingame.menu').then(function (r) { return r.ok ? r.text() : ''; }),
-      fetch('/legacy/ui/etjs_options.menu').then(function (r) { return r.ok ? r.text() : ''; })
+      fetch(publicUrl('/legacy/ui/etjs_menus.txt')).then(function (r) { return r.ok ? r.text() : ''; }),
+      fetch(publicUrl('/legacy/ui/etjs_official.menu')).then(function (r) { return r.ok ? r.text() : ''; }),
+      fetch(publicUrl('/legacy/ui/main.menu')).then(function (r) { return r.ok ? r.text() : ''; }),
+      fetch(publicUrl('/legacy/ui/etjs_main.menu')).then(function (r) { return r.ok ? r.text() : ''; }),
+      fetch(publicUrl('/legacy/ui/etjs_bare.menu')).then(function (r) { return r.ok ? r.text() : ''; }),
+      fetch(publicUrl('/legacy/ui/etjs_ingame.menu')).then(function (r) { return r.ok ? r.text() : ''; }),
+      fetch(publicUrl('/legacy/ui/etjs_options.menu')).then(function (r) { return r.ok ? r.text() : ''; })
     ]).then(function (texts) {
       ['/legacy/ui', persistentHomeRoot() + '/legacy/ui'].forEach(function (dir) {
         if (texts[0]) { try { FS.writeFile(dir + '/etjs_menus.txt', texts[0]); } catch (e) { /* ignore */ } }
@@ -994,7 +1000,7 @@
     if (!files || files.length < required.length || files.some(function (file) {
       return !file || (file.parent !== '/etmain' && file.parent !== '/legacy') ||
         !/^[A-Za-z0-9_.-]+\.pk3$/.test(file.name || '') ||
-        !/^\/(?:etmain|legacy)\/[A-Za-z0-9_.-]+\.pk3(?:\?v=[a-f0-9]+)?$/.test(file.url || '') ||
+        !validAssetUrl(file) ||
         !Number.isSafeInteger(file.bytes) || file.bytes <= 0 ||
         !/^sha256:[a-f0-9]{64}$/.test(String(file.cacheKey || '').split('@')[1] || '');
     }) || required.some(function (requiredPath) {
@@ -1003,6 +1009,16 @@
       return defaultGameFiles();
     }
     return files;
+  }
+
+  function validAssetUrl(file) {
+    var url = String(file.url || '');
+    var parts = url.split('?');
+    // Bind the URL to this exact native parent/name, not just any PK3 on the
+    // origin. Accept root metadata for old standalone servers as well.
+    return parts.length <= 2 && (!parts[1] || /^v=[a-f0-9]+$/.test(parts[1])) &&
+      (parts[0] === file.parent + '/' + file.name ||
+       parts[0] === publicUrl(file.parent + '/' + file.name));
   }
 
   function bindQuakejsInput() {
@@ -2011,7 +2027,7 @@
     sizeCanvas();
     window.addEventListener('resize', sizeCanvas);
 
-    return fetch('/config.json').then(function (res) { return res.json(); }).catch(function () {
+    return fetch(publicUrl('/config.json')).then(function (res) { return res.json(); }).catch(function () {
       return { connect: window.location.hostname + ':27961' };
     }).then(function (cfg) {
       var args = engineArgs(playerName, cfg);
@@ -2061,7 +2077,7 @@
           return Promise.resolve();
         },
         etjsAdminCommand: function (command) {
-          fetch('/admin', {
+          fetch(publicUrl('/admin'), {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ command: String(command || '') })
@@ -2082,7 +2098,7 @@
         },
         noInitialRun: true,
         locateFile: function (path) {
-          return '/client/' + path + '?v=' + (window.ETJS_ASSET_VER || Date.now());
+          return publicUrl('/client/' + path) + '?v=' + (window.ETJS_ASSET_VER || Date.now());
         },
         print: function (text) {
           console.log(text);
@@ -2103,8 +2119,8 @@
         },
         websocket: {
           url: (typeof window.location !== 'undefined')
-            ? (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws'
-            : 'ws://127.0.0.1:8088/ws'
+            ? (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + publicUrl('/ws')
+            : 'ws://127.0.0.1:8088' + publicUrl('/ws')
         },
         preRun: [function () {
           var FS = window.Module.FS;

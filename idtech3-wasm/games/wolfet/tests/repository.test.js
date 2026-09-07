@@ -71,8 +71,8 @@ describe('reproducible source repository', () => {
     assert.match(dockerfile, /check-game-package\.js \/game-site/);
     assert.match(dockerfile, /stage-framework-runtime\.js \/framework \/game-site \/framework-dist \/framework-runtime/);
     assert.match(server, /FRAMEWORK_RUNTIME_ROOT/);
-    assert.match(server, /sendFile\(req, res, PWA_MANIFEST_PATH\)/);
-    assert.match(server, /sendFile\(req, res, SERVICE_WORKER_PATH/);
+    assert.match(server, /createPwaManifest\(/);
+    assert.match(server, /createServiceWorkerSource\(/);
     assert.doesNotMatch(server, /function pwaManifest|function serviceWorkerSource/);
     assert.doesNotMatch(entrypoint, /web\/img/,
       'the entrypoint must not author downstream icons or PWA metadata');
@@ -140,7 +140,8 @@ describe('reproducible source repository', () => {
 
     assert.match(dockerfile, /FROM \$\{ETLEGACY_IMAGE\} AS runtime/);
     assert.match(dockerfile, /platforms: linux\/amd64|EXPOSE 8088\/tcp 27960\/udp/);
-    assert.match(dockerfile, /COPY third_party third_party/);
+    assert.match(dockerfile, /COPY --from=etlegacy-source \/source\/third_party third_party/);
+    assert.match(dockerfile, /setup-web-deps\.sh/);
     assert.match(dockerfile, /COPY web-port web-port/);
     assert.match(dockerfile, /COPY patches\/etlegacy-eth32nix\.patch/);
     assert.match(dockerfile, /COPY patches\/etlegacy-human-slot\.patch/);

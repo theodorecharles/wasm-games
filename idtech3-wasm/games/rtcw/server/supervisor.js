@@ -15,6 +15,7 @@ const { sendRcon } = require('./rcon');
 const { IdleServiceSupervisor, environmentOptions } = require('/opt/wasm-game-framework/server/lifecycle.js');
 const { createPasswordGate } = require('/opt/wasm-game-framework/server/password-auth.js');
 const { createProvisioningStore } = require('/opt/wasm-game-framework/server/provisioning.js');
+const { publicPath } = require('/opt/wasm-game-framework/server/public-path.js');
 
 ensureSessionSecret(process.env);
 const passwordGate = createPasswordGate();
@@ -274,6 +275,8 @@ function publicStatus() {
   const live = lifecycle.status();
   return Object.freeze({
     ...live,
+    variant: 'rtcw-mp',
+    peers: gameProxy?.peerCount() || 0,
     map: arenaRoster.map || live.map || START_MAP,
     gametype: Number(arenaRoster.gametype || arena.GAMETYPE),
     rotation: arena.rotation(),
@@ -312,7 +315,7 @@ const server = http.createServer(async (request, response) => {
     if (url.pathname === '/config.json' && request.method === 'GET') {
       return json(response, 200, {
         connect: `127.0.0.1:${GAME_PORT}`,
-        wsPath: '/ws',
+        wsPath: publicPath('/ws', process.env.WASM_GAME_BASE_PATH),
         map: START_MAP,
         gametype: 5,
         server: publicStatus()

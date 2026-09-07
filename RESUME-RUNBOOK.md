@@ -1,5 +1,13 @@
 # Game Lab recovery and progress runbook
 
+**Newest stopping point:** [2026-09-07 public release and GitHub handoff](SESSION-HANDOFF-20260907.md).
+Read it first; the older checkpoint and commit IDs below are historical.
+
+Work has resumed at the user's request. The current expanded goal and sequence
+are in [GOAL-SCOPE.md](GOAL-SCOPE.md), including the lab refresh, container cleanup,
+mouse-input regressions, Windows-96/Steam integration and the new desktop-app
+quality scope. The stopped checkpoint below is historical.
+
 Checkpoint: **2026-09-06, approximately 20:18 America/New_York** (2026-09-07 UTC).
 The user requested this handoff and then asked to get to a stopping point.
 **Work is stopped at that request; resume when directed. The overall goal is incomplete.**

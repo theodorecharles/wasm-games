@@ -4,7 +4,7 @@ set -eu
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ETLEGACY_DIR="${ETJS_ETLEGACY_DIR:-$ROOT/etlegacy}"
-UPSTREAM_URL="https://github.com/theodorecharles/etlegacy.git"
+UPSTREAM_URL="https://github.com/etlegacy/etlegacy.git"
 UPSTREAM_REF="a44ab4f396370a694109da33df901d85f6fe9626"
 ETJS_PATCH="$ROOT/patches/etlegacy-wasm.patch"
 ETJS_MODES_PATCH="$ROOT/patches/etlegacy-modes.patch"

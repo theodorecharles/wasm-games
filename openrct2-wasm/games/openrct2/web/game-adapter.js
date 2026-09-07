@@ -189,16 +189,34 @@
 
   function waitForFirstDraw(context, groups, canvas, native) {
     return new Promise((resolve, reject) => {
-      const worker = runtime.worker = new Worker('/openrct2-worker.js', { name: 'openrct2-runtime' });
-      const timeout = setTimeout(() => reject(new Error('OpenRCT2 did not draw its first frame within ten minutes.')), 600000);
+      const worker = runtime.worker = new Worker(context.framework.publicUrl('/openrct2-worker.js'), { name: 'openrct2-runtime' });
       let settled = false;
+      let dead = false;
+      let timeout;
       const finish = (callback, value) => {
         if (settled) return;
         settled = true;
         clearTimeout(timeout);
         callback(value);
       };
+      const fail = error => {
+        if (dead) return;
+        dead = true;
+        clearTimeout(timeout);
+        releaseKeyboard();
+        worker.terminate();
+        if (runtime.worker === worker) runtime.worker = null;
+        runtime.nativeStarted = false;
+        runtime.state = 'crashed';
+        const sink = runtime.audioSink;
+        runtime.audioSink = null;
+        void sink?.close().catch(() => {});
+        publishTelemetry();
+        finish(reject, error);
+      };
+      timeout = setTimeout(() => fail(new Error('OpenRCT2 did not draw its first frame within ten minutes. Reload to try again.')), 600000);
       worker.addEventListener('message', event => {
+        if (dead || runtime.worker !== worker) return;
         const message = event.data || {};
         if (message.type === 'status') {
           context.setLoading(message.title || 'Starting OpenRCT2…', message.detail || '', message.progress);
@@ -226,23 +244,21 @@
           return;
         }
         if (message.type === 'error') {
-          runtime.state = 'crashed';
-          publishTelemetry();
-          finish(reject, new Error(message.text || 'OpenRCT2 worker failed.'));
+          fail(new Error(message.text || 'OpenRCT2 worker failed.'));
         }
       });
       worker.addEventListener('error', event => {
-        runtime.state = 'crashed';
-        publishTelemetry();
-        finish(reject, new Error(event.message || 'OpenRCT2 worker crashed.'));
+        fail(new Error(event.message || 'OpenRCT2 worker crashed.'));
       });
-      worker.postMessage({
+      try { worker.postMessage({
         type: 'start',
         canvas,
         width: Math.max(2, canvas.width),
         height: Math.max(2, canvas.height),
         groups,
-        native,
+        native: { ...native, ...Object.fromEntries(['script', 'wasm', 'data'].map(key => [key,
+          new URL(context.framework.publicUrl(native[key]), location.href).href])) },
+        basePath: context.framework.publicUrl('/'),
         framework: context.config.framework,
         persistence: {
           namespace: context.persistence.namespace,
@@ -252,14 +268,14 @@
           requestDurability: context.config.persistence?.requestDurability
         },
         audioSampleRate: runtime.audioSink?.context?.sampleRate || 48000
-      }, [canvas]);
+      }, [canvas]); } catch (error) { fail(error); }
     });
   }
 
   globalThis.WasmGameAdapter = Object.freeze({
     async init(context) {
       runtime.context = context;
-      runtime.audioBridge = await import('/openrct2-audio-bridge.mjs');
+      runtime.audioBridge = await import(context.framework.publicUrl('/openrct2-audio-bridge.mjs'));
       context.elements.canvas.addEventListener('contextmenu', event => event.preventDefault());
       context.elements.canvas.addEventListener('wheel', event => {
         if (!runtime.nativeStarted) return;
@@ -316,6 +332,12 @@
         context.shell.resize?.();
         context.setLoading('Running', '', 100);
       } catch (error) {
+        runtime.worker?.terminate();
+        runtime.worker = null;
+        runtime.nativeStarted = false;
+        const sink = runtime.audioSink;
+        runtime.audioSink = null;
+        void sink?.close().catch(() => {});
         runtime.state = 'crashed';
         publishTelemetry();
         throw error;

@@ -13,6 +13,8 @@ const nativeRoot = path.resolve(process.env.D3_NATIVE_ROOT || '/opt/doom3-native
 const httpPort = Number(process.env.WASM_GAME_HTTP_PORT || 8088);
 const staticPort = Number(process.env.D3_STATIC_PORT || 8089);
 const gamePort = Number(process.env.D3_GAME_PORT || 27666);
+const variant = process.env.WASM_GAME_VARIANT || 'doom3-mp';
+const managedMultiplayer = variant === 'doom3-mp' || variant === 'suite';
 for (const port of [httpPort, staticPort, gamePort]) {
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid Doom 3 service port.');
 }
@@ -36,6 +38,7 @@ const server = http.createServer(async (request, response) => {
     if (await gate.handle(request, response, url)) return;
     if (url.pathname === '/health') return json(response, 200, {ok: true, state: runtime.status().state});
     if (url.pathname.startsWith('/api/doom3/')) {
+      if (!managedMultiplayer) return json(response, 404, {error: 'Multiplayer is not enabled for this variant.'});
       if (!gate.require(request, response)) return;
       if (url.pathname === '/api/doom3/status' && request.method === 'GET') {
         return json(response, 200, {...runtime.status(), relay: relay.stats()});
@@ -69,7 +72,7 @@ const server = http.createServer(async (request, response) => {
 });
 relay = attachManagedDatagramRelay(server, {port: gamePort, WebSocketServer,
   publicOrigin: process.env.D3_PUBLIC_ORIGIN,
-  authorize: request => gate.authenticated(request), ensureDedicated: () => runtime.wake(),
+  authorize: request => managedMultiplayer && gate.authenticated(request), ensureDedicated: () => runtime.wake(),
   onPeers: count => runtime.observePeers(count)});
 const staticServer = spawn(process.execPath, [path.join(frameworkRoot, 'server/static-server.js')], {
   env: {...process.env, WASM_GAME_VARIANT: process.env.WASM_GAME_VARIANT || 'doom3-mp', WASM_GAME_HTTP_PORT: String(staticPort),

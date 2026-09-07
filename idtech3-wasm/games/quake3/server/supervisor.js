@@ -18,7 +18,7 @@ const passwordGate = createPasswordGate();
 const PUBLIC_PORT = Number(process.env.WASM_GAME_HTTP_PORT || 8088);
 const STATIC_PORT = Number(process.env.Q3_STATIC_PORT || 8089);
 const GAME_PORT = Number(process.env.Q3_GAME_PORT || 27960);
-const RUNTIME_ROOT = '/opt/q3-runtime-root';
+const RUNTIME_ROOT = path.resolve(process.env.Q3_RUNTIME_ROOT || '/opt/q3-runtime-root');
 const GAME_HOME = path.join(RUNTIME_ROOT, 'runtime');
 const BASEQ3 = path.join(GAME_HOME, 'baseq3');
 const MAPS = String(process.env.MAP_ROTATION || 'q3dm6,q3dm7,q3dm11,q3dm17')
@@ -26,6 +26,7 @@ const MAPS = String(process.env.MAP_ROTATION || 'q3dm6,q3dm7,q3dm11,q3dm17')
 const PLAYER_TARGET = 8;
 const MAX_CLIENTS = 9;
 const clients = new Set();
+const relayPeers = new Set();
 const botClients = new Set();
 const ownerData = createProvisioningStore({
   dataRoot: '/data',
@@ -172,6 +173,8 @@ function publicStatus() {
   const status = lifecycle.status();
   return {
     ...status,
+    variant: 'quake3',
+    peers: relayPeers.size,
     playerTarget: PLAYER_TARGET,
     maxClients: MAX_CLIENTS,
     bots: botClients.size,
@@ -218,6 +221,8 @@ const server = http.createServer(async (request, response) => {
 server.on('upgrade', (request, socket, head) => {
   if (!passwordGate.authenticated(request)) return rejectWebSocket(socket);
   if (lifecycle.status().state !== 'running') return socket.destroy();
+  relayPeers.add(socket);
+  socket.once('close', () => relayPeers.delete(socket));
   process.stdout.write(`websocket proxy upgrade path=${new URL(request.url, 'http://localhost').pathname}\n`);
   const upstream = net.connect({ host: '127.0.0.1', port: GAME_PORT }, () => {
     const lines = [`${request.method} ${request.url} HTTP/${request.httpVersion}`];

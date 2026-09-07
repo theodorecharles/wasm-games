@@ -2,11 +2,13 @@
 'use strict';
 
 const fs = require('node:fs');
+const { patchClientTransport } = require('./public-websocket');
 
 const [sourcePath, outputPath] = process.argv.slice(2);
 if (!sourcePath || !outputPath) throw new Error('usage: rewrite-quakejs.js SOURCE OUTPUT');
 
 let source = fs.readFileSync(sourcePath, 'utf8');
+source = patchClientTransport(source);
 
 const platformStart = source.indexOf('function _Sys_PlatformInit() {');
 const platformEnd = source.indexOf('\n  function _Sys_Dirname', platformStart);

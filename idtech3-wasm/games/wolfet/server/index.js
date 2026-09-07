@@ -28,8 +28,11 @@ if (process.env.WASM_GAME_PASSWORD && !process.env.WASM_GAME_SESSION_SECRET) {
   process.env.WASM_GAME_SESSION_SECRET = crypto.randomBytes(32).toString('base64url');
 }
 const { createPasswordGate } = require(path.join(FRAMEWORK_RUNTIME_ROOT, 'password-auth.js'));
-const PWA_MANIFEST_PATH = path.join(FRAMEWORK_RUNTIME_ROOT, 'app.webmanifest');
-const SERVICE_WORKER_PATH = path.join(FRAMEWORK_RUNTIME_ROOT, 'service-worker.js');
+const { normalizeBasePath, publicPath, publicDocument } = require(path.join(FRAMEWORK_RUNTIME_ROOT, 'public-path.js'));
+const { createPwaManifest, createServiceWorkerSource } = require(path.join(FRAMEWORK_RUNTIME_ROOT, 'pwa.js'));
+const BASE_PATH = normalizeBasePath(process.env.WASM_GAME_BASE_PATH);
+const FRAMEWORK_VERSION = require('../framework-lock.json').version;
+const GAME_CONFIG = require('../web/wasm-game.json');
 const DATA_WEB_ROOT = path.join(dedicated.DATA_ROOT, 'web');
 const HTTP_PORT = Number(process.env.ETJS_HTTP_PORT || 8088);
 const DED_PORT = dedicated.HOST_UDP_PORT;
@@ -82,13 +85,47 @@ function log(msg) {
 }
 
 function safeJoin(root, reqPath) {
-  const decoded = decodeURIComponent((reqPath || '/').split('?')[0]);
-  const rel = decoded.replace(/^\/+/, '');
-  const full = path.normalize(path.join(root, rel));
-  if (full !== root && !full.startsWith(root + path.sep)) {
-    return null;
+  const full = path.resolve(root, reqPath.replace(/^\/+/, ''));
+  const inside = (base, file) => file === base || file.startsWith(base + path.sep);
+  if (!inside(path.resolve(root), full)) return null;
+  try {
+    const real = fs.realpathSync(full);
+    return inside(fs.realpathSync(root), real) ? real : null;
+  } catch (error) {
+    if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return null;
+    throw error;
   }
-  return full;
+}
+
+function requestPath(req) {
+  let pathname;
+  try { pathname = decodeURIComponent((req.url || '/').split('?')[0]); }
+  catch (_) { throw Object.assign(new Error('Invalid request path.'), { statusCode: 400 }); }
+  if (!pathname.startsWith('/') || pathname.startsWith('//') ||
+      /[\x00-\x1f\x7f\\%]/.test(pathname) || pathname.split('/').some(part => part.startsWith('.'))) {
+    throw Object.assign(new Error('Not found.'), { statusCode: 404 });
+  }
+  return pathname;
+}
+
+function sendBody(req, res, body, type, extraHeaders) {
+  body = Buffer.from(body);
+  res.writeHead(200, Object.assign({
+    'content-type': type, 'content-length': String(body.length), 'cache-control': 'no-store'
+  }, extraHeaders));
+  res.end(req.method === 'HEAD' ? undefined : body);
+}
+
+function sendDocument(req, res) {
+  sendBody(req, res, publicDocument(fs.readFileSync(FRAMEWORK_DOCUMENT, 'utf8'), BASE_PATH),
+    'text/html; charset=utf-8');
+}
+
+function assetFilePath(asset) {
+  const official = GAME_ASSET_DEFS.find(def => def.parent === asset.parent && def.name === asset.name);
+  const root = official ? path.join(dedicated.RUNTIME_ROOT, asset.parent.slice(1)) :
+    path.join(dedicated.DATA_ROOT, 'custom_maps');
+  return safeJoin(root, asset.name);
 }
 
 function gameAssets() {
@@ -102,7 +139,7 @@ function gameAssets() {
       key: (def.parent.slice(1) + '-' + def.name).toLowerCase(),
       parent: def.parent,
       name: def.name,
-      url: def.parent + '/' + def.name + '?v=' + def.hash.slice(0, 16),
+      url: publicPath(def.parent + '/' + def.name + '?v=' + def.hash.slice(0, 16), BASE_PATH),
       bytes: bytes,
       sha256: def.hash,
       cacheKey: def.name + '@sha256:' + def.hash
@@ -111,6 +148,11 @@ function gameAssets() {
 }
 
 function sendFile(req, res, filePath, extraHeaders) {
+  if (!filePath) {
+    res.writeHead(404, { 'content-type': 'text/plain', 'cache-control': 'no-store' });
+    res.end('not found');
+    return;
+  }
   const ext = path.extname(filePath).toLowerCase();
   const type = MIME[ext] || 'application/octet-stream';
   const stat = fs.statSync(filePath);
@@ -123,23 +165,26 @@ function sendFile(req, res, filePath, extraHeaders) {
   }, extraHeaders || {});
   const range = req.headers && req.headers.range;
   if (range) {
-    const match = /^bytes=(\d+)-(\d*)$/.exec(range);
-    const start = match ? Number(match[1]) : -1;
-    const requestedEnd = match && match[2] ? Number(match[2]) : stat.size - 1;
-    if (!match || !Number.isSafeInteger(start) || !Number.isSafeInteger(requestedEnd) ||
+    const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+    const suffix = match && !match[1];
+    const start = match ? (suffix ? Math.max(0, stat.size - Number(match[2])) : Number(match[1])) : -1;
+    const requestedEnd = match && match[2] && !suffix ? Number(match[2]) : stat.size - 1;
+    if (!match || (!match[1] && !match[2]) || (suffix &&
+        (!Number.isSafeInteger(Number(match[2])) || Number(match[2]) <= 0)) ||
+        !Number.isSafeInteger(start) || !Number.isSafeInteger(requestedEnd) ||
         start < 0 || start >= stat.size || requestedEnd < start) {
       res.writeHead(416, Object.assign(headers, { 'content-range': 'bytes */' + stat.size }));
       res.end();
       return;
     }
-    const end = Math.min(requestedEnd, stat.size - 1);
+    const end = suffix ? stat.size - 1 : Math.min(requestedEnd, stat.size - 1);
     headers['content-range'] = 'bytes ' + start + '-' + end + '/' + stat.size;
     headers['content-length'] = String(end - start + 1);
     res.writeHead(206, headers);
     if (req.method === 'HEAD') {
       res.end();
     } else {
-      fs.createReadStream(filePath, { start: start, end: end }).pipe(res);
+      streamFile(res, filePath, { start: start, end: end });
     }
     return;
   }
@@ -148,12 +193,19 @@ function sendFile(req, res, filePath, extraHeaders) {
   if (req.method === 'HEAD') {
     res.end();
   } else {
-    fs.createReadStream(filePath).pipe(res);
+    streamFile(res, filePath);
   }
 }
 
+function streamFile(res, filePath, options) {
+  const stream = fs.createReadStream(filePath, options);
+  res.once('close', () => stream.destroy());
+  stream.once('error', () => res.destroy());
+  stream.pipe(res);
+}
+
 function serveStatic(req, res) {
-  const urlPath = (req.url || '/').split('?')[0];
+  const urlPath = requestPath(req);
 
   if (urlPath === '/data' || urlPath.startsWith('/data/') ||
       urlPath === '/local-data' || urlPath.startsWith('/local-data/')) {
@@ -163,12 +215,13 @@ function serveStatic(req, res) {
   }
 
   if ((urlPath === '/' || urlPath === '/index.html') && (req.method === 'GET' || req.method === 'HEAD')) {
-    sendFile(req, res, FRAMEWORK_DOCUMENT);
+    sendDocument(req, res);
     return;
   }
 
   if (urlPath === '/wasm-game-config.js' && (req.method === 'GET' || req.method === 'HEAD')) {
-    const body = Buffer.from('globalThis.WASM_GAME_VARIANT = "wolfet";\n');
+    const body = Buffer.from('globalThis.WASM_GAME_VARIANT = "wolfet";\n' +
+      'globalThis.WASM_GAME_BASE_PATH = ' + JSON.stringify(BASE_PATH) + ';\n');
     res.writeHead(200, {
       'content-type': 'text/javascript; charset=utf-8',
       'content-length': String(body.length),
@@ -179,12 +232,14 @@ function serveStatic(req, res) {
   }
 
   if (urlPath === '/app.webmanifest' && (req.method === 'GET' || req.method === 'HEAD')) {
-    sendFile(req, res, PWA_MANIFEST_PATH);
+    sendBody(req, res, JSON.stringify(createPwaManifest({ selected: GAME_CONFIG, locked: true,
+      url: new URL(req.url, 'http://localhost'), basePath: BASE_PATH })), 'application/manifest+json');
     return;
   }
 
   if (urlPath === '/service-worker.js' && (req.method === 'GET' || req.method === 'HEAD')) {
-    sendFile(req, res, SERVICE_WORKER_PATH, { 'service-worker-allowed': '/' });
+    sendBody(req, res, createServiceWorkerSource({ version: FRAMEWORK_VERSION, basePath: BASE_PATH }),
+      'text/javascript; charset=utf-8', { 'service-worker-allowed': BASE_PATH });
     return;
   }
 
@@ -201,6 +256,7 @@ function serveStatic(req, res) {
     }));
     const body = Buffer.from(JSON.stringify({
       configured: true,
+      variant: 'wolfet',
       namespace: 'wolfet-official',
       version: files.map((file) => file.sha256).join(':'),
       ready: true,
@@ -224,10 +280,7 @@ function serveStatic(req, res) {
       res.end(JSON.stringify({ error: 'Unknown game-data file.' }));
       return;
     }
-    const base = asset.parent === '/etmain'
-      ? path.join(dedicated.RUNTIME_ROOT, 'etmain')
-      : path.join(dedicated.RUNTIME_ROOT, 'legacy');
-    sendFile(req, res, asset.filePath || path.join(base, asset.name));
+    sendFile(req, res, assetFilePath(asset));
     return;
   }
   if (urlPath.startsWith('/game-data/setup/')) {
@@ -281,7 +334,7 @@ function serveStatic(req, res) {
       return;
     }
     res.writeHead(200, { 'content-type': 'application/json' });
-    res.end(JSON.stringify(Object.assign({ ok: true, dedicatedPort: DED_PORT },
+    res.end(JSON.stringify(Object.assign({ ok: true, variant: 'wolfet', peers: CONNECTION_REGISTRY.size, dedicatedPort: DED_PORT },
       RUNTIME_LIFECYCLE ? RUNTIME_LIFECYCLE.status() : { state: 'unmanaged' })));
     return;
   }
@@ -289,13 +342,13 @@ function serveStatic(req, res) {
   if (urlPath === '/status') {
     if (RUNTIME_LIFECYCLE && RUNTIME_LIFECYCLE.status().state !== 'running') {
       res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
-      res.end(JSON.stringify(Object.assign({ sleeping: true, players: [] }, RUNTIME_LIFECYCLE.status())));
+      res.end(JSON.stringify(Object.assign({ variant: 'wolfet', peers: CONNECTION_REGISTRY.size, sleeping: true, players: [] }, RUNTIME_LIFECYCLE.status())));
       return;
     }
     queryStatus({ host: '127.0.0.1', port: DED_PORT })
       .then((st) => {
         res.writeHead(200, { 'content-type': 'application/json' });
-        res.end(JSON.stringify(st));
+        res.end(JSON.stringify(Object.assign({ variant: 'wolfet', peers: CONNECTION_REGISTRY.size }, st)));
       })
       .catch((err) => {
         res.writeHead(503, { 'content-type': 'application/json' });
@@ -329,7 +382,8 @@ function serveStatic(req, res) {
     const admin = isAdminRequest(req);
     const config = {
       connect: '127.0.0.1:' + DED_PORT,
-      wsPath: '/ws',
+      variant: 'wolfet',
+      wsPath: publicPath('/ws', BASE_PATH),
       httpPort: HTTP_PORT,
       map: (RUNTIME_LIFECYCLE && RUNTIME_LIFECYCLE.status().map) || dedicated.objectiveMaps()[0],
       gametype: 2,
@@ -389,9 +443,26 @@ function serveStatic(req, res) {
     return;
   }
 
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, { allow: 'GET, HEAD', 'cache-control': 'no-store' });
+    res.end();
+    return;
+  }
+
+  // Never expose whole native runtime directories: they contain server modules,
+  // RCON-bearing configs, session records and logs. Serve only registered PK3s
+  // and the seven application-owned menu files consumed by the browser.
+  if (urlPath.startsWith('/etmain/') || urlPath.startsWith('/legacy/')) {
+    const asset = gameAssets().find(file => file.parent + '/' + file.name === urlPath);
+    const menuNames = ['etjs_menus.txt', 'etjs_official.menu', 'main.menu',
+      'etjs_main.menu', 'etjs_bare.menu', 'etjs_ingame.menu', 'etjs_options.menu'];
+    const menu = urlPath.startsWith('/legacy/ui/') && menuNames.includes(urlPath.slice('/legacy/ui/'.length));
+    sendFile(req, res, asset ? assetFilePath(asset) : (menu ?
+      safeJoin(path.join(dedicated.RUNTIME_ROOT, 'legacy', 'ui'), path.basename(urlPath)) : null));
+    return;
+  }
+
   const searchRoots = [
-    { prefix: '/etmain/', root: path.join(dedicated.RUNTIME_ROOT, 'etmain'), strip: '/etmain/' },
-    { prefix: '/legacy/', root: path.join(dedicated.RUNTIME_ROOT, 'legacy'), strip: '/legacy/' },
     { prefix: '/client/', root: path.join(ROOT, 'web', 'client'), strip: '/client/' },
     { prefix: '/img/', root: path.join(WEB_ROOT, 'img'), strip: '/img/' },
     { prefix: '/img/', root: path.join(DATA_WEB_ROOT, 'img'), strip: '/img/' },
@@ -416,11 +487,6 @@ function serveStatic(req, res) {
     }
   }
 
-  // Canonical framework document owns every browser route.
-  if (fs.existsSync(FRAMEWORK_DOCUMENT)) {
-    sendFile(req, res, FRAMEWORK_DOCUMENT);
-    return;
-  }
   res.writeHead(404, { 'content-type': 'text/plain' });
   res.end('not found');
 }
@@ -442,9 +508,10 @@ function startHttp(port) {
     res.setHeader('x-content-type-options', 'nosniff');
     res.setHeader('referrer-policy', 'same-origin');
     try {
+      const pathname = requestPath(req);
       const url = new URL(req.url, 'http://localhost');
       if (await PASSWORD_GATE.handle(req, res, url)) return;
-      if (passwordProtectedPath(url.pathname) && !PASSWORD_GATE.require(req, res)) return;
+      if (passwordProtectedPath(pathname) && !PASSWORD_GATE.require(req, res)) return;
       serveStatic(req, res);
     } catch (error) {
       if (!res.headersSent) {
@@ -452,7 +519,7 @@ function startHttp(port) {
           'content-type': 'application/json; charset=utf-8',
           'cache-control': 'no-store'
         });
-        res.end(JSON.stringify({ error: error.message || 'Internal server error.' }));
+        res.end(JSON.stringify({ error: error.statusCode && error.statusCode < 500 ? error.message : 'Internal server error.' }));
       } else {
         res.destroy(error);
       }

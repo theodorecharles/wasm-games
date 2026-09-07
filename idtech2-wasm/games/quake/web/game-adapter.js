@@ -35,7 +35,7 @@
   ]);
 
   function websocketUrl(pathname) {
-    const url = new URL(String(pathname || '/ws/quake'), location.href);
+    const url = new URL(globalThis.WasmGameFramework.publicUrl(String(pathname || '/ws/quake')), location.href);
     url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
     return url.href;
   }
@@ -104,7 +104,7 @@
   function loadScript(source) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = source;
+      script.src = globalThis.WasmGameFramework.publicUrl(source);
       script.onload = resolve;
       script.onerror = () => reject(new Error(`Could not load ${source}.`));
       document.head.appendChild(script);
@@ -299,7 +299,7 @@
           }
         }) : null;
       installLaunchButtons(ctx);
-      const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      const manifest = await fetch(globalThis.WasmGameFramework.publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`Quake data policy failed with HTTP ${response.status}.`);
         return response.json();
       });

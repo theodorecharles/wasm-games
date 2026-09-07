@@ -41,6 +41,9 @@ for (const asset of ['data-validator.mjs', 'game-adapter.js', 'icon.svg', 'wasm-
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(site, 'wasm-game.json'), 'utf8'));
+if (manifest.runtimeReady !== false || manifest.runtimeStatus !== 'experimental') {
+  throw new Error('Unverified experimental engine must not be advertised as ready');
+}
 if (manifest.displayMode !== '16:9') throw new Error('displayMode must be fixed 16:9');
 if (manifest.menuCursor !== 'browser') throw new Error('menuCursor must be browser');
 if (manifest.pointerLock !== true) throw new Error('pointerLock must be true');

@@ -58,6 +58,7 @@ async function main() {
       WASM_GAME_DATA_ROOT: temporaryData,
       WASM_GAME_HTTP_PORT: String(port),
       WASM_GAME_VARIANT: 'wolfet',
+      WASM_GAME_BASE_PATH: '/',
       WASM_GAME_PASSWORD: '',
       WASM_GAME_SESSION_SECRET: ''
     }),
@@ -78,7 +79,9 @@ async function main() {
       fsp.copyFile(path.join(frameworkRoot, 'server', 'password-auth.js'),
         path.join(outputRoot, 'password-auth.js')),
       fsp.copyFile(path.join(frameworkRoot, 'server', 'lifecycle.js'),
-        path.join(outputRoot, 'lifecycle.js'))
+        path.join(outputRoot, 'lifecycle.js')),
+      ...['public-path.js', 'pwa.js'].map(file =>
+        fsp.copyFile(path.join(frameworkRoot, 'server', file), path.join(outputRoot, file)))
     ]);
   } finally {
     child.kill('SIGTERM');

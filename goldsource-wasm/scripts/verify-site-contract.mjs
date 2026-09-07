@@ -4,16 +4,43 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const web = path.join(repo, 'web');
+const web = path.resolve(process.env.GOLDSOURCE_WEB_DIR || path.join(repo, 'web'));
 const framework = path.resolve(process.env.WASM_FRAMEWORK_DIR || '/home/ted/Development/wasm-game-framework');
 const config = JSON.parse(readFileSync(path.join(web, 'wasm-game.json'), 'utf8'));
 const data = JSON.parse(readFileSync(path.join(web, 'wasm-game-data.json'), 'utf8'));
 const expected = ['half-life', 'blue-shift', 'opposing-force', 'counter-strike'];
 
 assert.equal(JSON.parse(readFileSync(path.join(framework, 'package.json'), 'utf8')).version, '0.9.6');
-assert.equal(execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), 'ebb1ebe35ad8224a9080279a6529414db42d3284');
+const frameworkCommit = execFileSync('git', ['-C', framework, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+if (process.env.GOLDSOURCE_FRAMEWORK_RECEIPT) {
+  const receipt = JSON.parse(readFileSync(process.env.GOLDSOURCE_FRAMEWORK_RECEIPT, 'utf8'));
+  assert.equal(receipt.frameworkCheckoutCommit, frameworkCommit);
+  assert.equal(receipt.ownerDataIncluded, false);
+  assert.equal(receipt.adapterSourceSHA256, createHash('sha256').update(readFileSync(path.join(repo, 'src/framework-adapter.js'))).digest('hex'));
+  let checked = 0;
+  for (const [name, expected] of Object.entries(receipt.files)) {
+    if (name === 'framework-dist/wasm-game-framework.json') {
+      const metadata = JSON.parse(readFileSync(path.join(path.dirname(process.env.GOLDSOURCE_FRAMEWORK_RECEIPT), name), 'utf8'));
+      for (const [field, file] of Object.entries({ javascriptSha256: 'wasm-game-framework.js',
+        stylesheetSha256: 'wasm-game-framework.css', bootstrapSha256: 'wasm-game-bootstrap.js', documentSha256: 'index.html' })) {
+        assert.equal(metadata[field], createHash('sha256').update(readFileSync(path.join(framework, 'dist', file))).digest('hex'));
+      }
+      continue;
+    }
+    const mapped = name.startsWith('framework-server/') ? path.join(framework, 'server', name.slice(17))
+      : name.startsWith('framework-dist/') ? path.join(framework, 'dist', name.slice(15))
+      : name === 'framework-package.json' ? path.join(framework, 'package.json') : null;
+    if (!mapped) continue;
+    assert.equal(createHash('sha256').update(readFileSync(mapped)).digest('hex'), expected, `Framework overlay bytes changed: ${name}`);
+    checked++;
+  }
+  assert.ok(checked > 10, 'An overlay receipt must attest the actual framework server and browser package.');
+  assert.match(readFileSync(path.join(framework, 'dist/wasm-game-framework.js'), 'utf8'), /publicUrl/);
+  console.log(`Explicit integration overlay verified against ${checked} actual framework files; this is not the old locked framework release.`);
+} else assert.equal(frameworkCommit, 'ebb1ebe35ad8224a9080279a6529414db42d3284');
 assert.equal(existsSync(path.join(web, 'index.html')), false, 'the framework must own index.html');
 assert.equal(existsSync(path.join(web, 'service-worker.js')), false, 'the framework must own the service worker');
 assert.equal(existsSync(path.join(web, 'app.webmanifest')), false, 'the framework must render the web manifest');

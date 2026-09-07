@@ -31,12 +31,19 @@ for (const variant of ['blood', 'duke3d']) {
   assert.match(config.persistence?.root || '', /^\/home\/web_user\/\.config\//);
 }
 
-async function exercise(variant, profile = 'classic', { query = '', existingModernized = false } = {}) {
+async function exercise(variant, profile = 'classic', { query = '', existingModernized = false, basePath = '/' } = {}) {
+  const publicUrl = value => /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(value) || value.startsWith(basePath) && basePath !== '/'
+    ? value : basePath + value.replace(/^\//, '');
   const isBlood = variant === 'blood';
   const modernized = profile === 'modernized';
   const profileKey = isBlood ? 'bloodProfile' : 'dukeProfile';
   const classicConfig = isBlood ? 'nblood.cfg' : 'eduke32.cfg';
-  const source = fs.readFileSync(path.join(repo, `web/${isBlood ? 'blood' : 'duke3d'}-adapter.js`), 'utf8');
+  const adapterRelative = `build-wasm/web/${isBlood ? 'blood' : 'duke3d'}-adapter.js`;
+  const source = process.env.BUILD_ADAPTER_SOURCE_REVISION
+    ? execFileSync('git', ['-C', repo, 'show', `${process.env.BUILD_ADAPTER_SOURCE_REVISION}:${adapterRelative}`], { encoding: 'utf8' })
+    : fs.readFileSync(process.env.BUILD_ADAPTER_SITE_ROOT
+      ? path.join(process.env.BUILD_ADAPTER_SITE_ROOT, 'adapters', `${variant}.js`)
+      : path.join(repo, `web/${variant}-adapter.js`), 'utf8');
   const events = new Map();
   const canvasEvents = new Map();
   const calls = [];
@@ -68,7 +75,7 @@ async function exercise(variant, profile = 'classic', { query = '', existingMode
     createElement(type) { assert.equal(type, 'script'); return {}; },
     head: {
       appendChild(script) {
-        assert.equal(script.src, `/${variant}${modernized ? '-modernized' : ''}.js`);
+        assert.equal(script.src, `${basePath}${variant}${modernized ? '-modernized' : ''}.js`);
         module = sandbox.Module;
         module.FS = {
           filesystems: { IDBFS: {} }, mkdirTree() {}, mount() {}, syncfs(_populate, callback) { callback(); }, chmod() {},
@@ -127,10 +134,11 @@ async function exercise(variant, profile = 'classic', { query = '', existingMode
       error: (...args) => consoleEvents.push(['error', ...args])
     },
     document, window, URLSearchParams, queueMicrotask,
+    WasmGameFramework: { publicUrl },
     performance: { now: () => now }, location: { search: query },
     crypto: { subtle: { digest: async () => new ArrayBuffer(32) } },
     fetch: async request => {
-      assert.equal(request, '/wasm-game-data.json');
+      assert.equal(request, basePath + 'wasm-game-data.json');
       return { ok: true, json: async () => dataManifest };
     }
   };
@@ -204,10 +212,11 @@ async function exercise(variant, profile = 'classic', { query = '', existingMode
   assert.equal(createdPolicy.namespace, dataManifest.variants[variant].namespace || dataManifest.namespace);
   await adapter.start(context);
   {
-    assert.equal(module.locateFile(`${variant}.wasm`, '/'), `/${variant}${modernized ? '-modernized' : ''}.wasm`);
-    if (isBlood) assert.equal(module.locateFile('blood.data', '/'), modernized ? '/blood-modernized.data' : '/blood.data');
-    else assert.equal(module.locateFile('other.data', '/assets/'), '/assets/other.data');
-    assert.equal(module.locateFile('other.bin', '/assets/'), '/assets/other.bin');
+    assert.equal(module.locateFile(`${variant}.wasm`, '/'), `${basePath}${variant}${modernized ? '-modernized' : ''}.wasm`);
+    if (isBlood) assert.equal(module.locateFile('blood.data', '/'), basePath + (modernized ? 'blood-modernized.data' : 'blood.data'));
+    else assert.equal(module.locateFile('other.data', '/assets/'), basePath + 'assets/other.data');
+    assert.equal(module.locateFile('other.bin', '/assets/'), basePath + 'assets/other.bin');
+    assert.equal(module.locateFile('other.bin', basePath + 'assets/'), basePath + 'assets/other.bin', 'already-prefixed engine asset stays singly prefixed');
     assert.equal(context.elements.graphicsProfile.disabled, true);
     const displayCalls = calls.filter(call => call[0] === 'display').length;
     adapter.preferencesChanged({ qualityProfile: modernized ? 'classic' : 'modernized' }, context);
@@ -264,6 +273,50 @@ async function exercise(variant, profile = 'classic', { query = '', existingMode
     adapter.pointerButton({ button, pressed: false, captured: true }, {}, context);
     assert.deepEqual(calls.slice(before), [['pointerButton', button, 1], ['pointerButton', button, 0]],
       `${variant} gameplay must forward button press/release without changing the absolute menu pointer`);
+  }
+  // Reproduce the real shell contract: it does NOT call pointerButton while
+  // locked. Exercise physical mouse listeners, not the adapter hook directly.
+  const mouse = button => ({button, stopImmediatePropagation() {}});
+  for (const button of [0, 1, 2]) {
+    const before = calls.length;
+    canvasEvents.get('mousedown')(mouse(button));
+    canvasEvents.get('mouseup')(mouse(button));
+    assert.deepEqual(calls.slice(before), [['pointerButton', button, 1], ['pointerButton', button, 0]],
+      `${variant}/${profile}: captured physical clicks must reach native press AND release`);
+  }
+  {
+    adapter.inputCaptureChanged(false);
+    const before = calls.length;
+    adapter.pointerButton({button: 0, pressed: true}, {}, context);
+    adapter.inputCaptureChanged(true);
+    // The first press happened unlocked; the framework now omits its release.
+    canvasEvents.get('mousedown')(mouse(0));
+    events.get('pointerup')(mouse(0));
+    events.get('mouseup')(mouse(0));
+    canvasEvents.get('mouseup')(mouse(0));
+    assert.deepEqual(calls.slice(before).filter(c => c[0] === 'pointerButton'),
+      [['pointerButton', 0, 1], ['pointerButton', 0, 0]],
+      `${variant}/${profile}: lock acquisition must neither latch fire nor duplicate edges`);
+  }
+  for (const release of ['pointerup', 'mouseup', 'pointercancel', 'blur']) {
+    const before = calls.length;
+    canvasEvents.get('mousedown')(mouse(0));
+    events.get(release)(mouse(0));
+    assert.deepEqual(calls.slice(before).filter(c => c[0] === 'pointerButton'),
+      [['pointerButton', 0, 1], ['pointerButton', 0, 0]],
+      `${variant}/${profile}: ${release} must release fire even outside the canvas`);
+  }
+  {
+    const before = calls.length;
+    for (const button of [0, 2]) canvasEvents.get('mousedown')(mouse(button));
+    adapter.inputCaptureChanged(false);
+    assert.deepEqual(calls.slice(before).filter(c => c[0] === 'pointerButton'),
+      [['pointerButton', 0, 1], ['pointerButton', 2, 1], ['pointerButton', 0, 0], ['pointerButton', 2, 0]],
+      `${variant}/${profile}: losing capture must release every held mouse button`);
+    const idle = calls.length;
+    canvasEvents.get('mousedown')(mouse(0));
+    canvasEvents.get('mouseup')(mouse(0));
+    assert.equal(calls.length, idle, 'unlocked compatibility events must not bypass native menu policy');
   }
   adapter.controllerFrame({
     deltaMs: 16,
@@ -486,6 +539,11 @@ async function exercise(variant, profile = 'classic', { query = '', existingMode
   await exercise('duke3d', 'modernized', { existingModernized: true });
   await exercise('duke3d', 'classic', { query: '?profile=unknown' });
   await exercise('duke3d', 'classic', { query: '?profile=__proto__' });
+  for (const variant of ['blood', 'duke3d']) {
+    for (const profile of ['classic', 'modernized']) {
+      await exercise(variant, profile, { basePath: `/${variant}/` });
+    }
+  }
   console.log('Build-family state, capture, text/scan input, mount, display, profile, and manifest contracts passed');
 })().catch(error => {
   console.error(error);

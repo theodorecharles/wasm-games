@@ -32,7 +32,8 @@ for (const [variant, value] of Object.entries(config.variants)) {
 assert.equal(new Set(Object.keys(config.variants).map(variant => config.persistence.root.replace('{variant}', variant))).size, 6,
   'every suite variant needs an isolated persistence mount');
 
-async function exercise(variant, wakeFailure) {
+async function exercise(variant, wakeFailure, prefix = '/', profile = 'ultra') {
+  const publicUrl = value => prefix + value.replace(/^\/+/, '');
   const listeners = new Map();
   const globalListeners = new Map();
   const canvasListeners = new Map();
@@ -95,7 +96,7 @@ async function exercise(variant, wakeFailure) {
     addEventListener(type, listener) { globalListeners.set(type, listener); },
     fetch: async (source, options) => {
       requests.push({source, options});
-      if (source === '/api/doom3/wake') {
+      if (source === publicUrl('/api/doom3/wake')) {
         assert.equal(variant, 'doom3-mp');
         assert.equal(options.method, 'POST');
         assert.equal(messages.length, 0, 'wake must complete before the worker starts');
@@ -105,7 +106,7 @@ async function exercise(variant, wakeFailure) {
         if (wakeFailure === 'foreign') return {ok: true, json: async () => ({state: 'running', connect: '8.8.8.8:27666'})};
         return {ok: true, json: async () => ({state: 'running', connect: '127.0.0.1:27666', map: 'game/mp/d3dm1'})};
       }
-      assert.equal(source, '/wasm-game-data.json');
+      assert.equal(source, publicUrl('/wasm-game-data.json'));
       return { ok: true, json: async () => dataManifest };
     }
   };
@@ -121,6 +122,7 @@ async function exercise(variant, wakeFailure) {
     variant,
     config: { ...config, ...config.variants[variant] },
     framework: {
+      publicUrl,
       createOwnerDataSet(policy) { createdPolicy = policy; return policy; }
     },
     persistence: { namespace: `idtech4-${variant}`, root: `/save/${variant}` },
@@ -135,7 +137,7 @@ async function exercise(variant, wakeFailure) {
       }
     },
     elements: { canvas },
-    preferences: { values: () => ({ playerName: 'Browser Marine', qualityProfile: 'ultra' }) },
+    preferences: { values: () => ({ playerName: 'Browser Marine', qualityProfile: profile }) },
     setLoading(...detail) { loading.push(detail); }, log() {}, setStatus() {},
     setEngineState(state, options) { transitions.push(state); if (options?.capture) captureRequests.push(options.event); },
     showRuntime(state) { transitions.push(state); }
@@ -161,7 +163,7 @@ async function exercise(variant, wakeFailure) {
   assert.doesNotMatch(loading.flat().join('\n'), /files?|data|cache|container|browser|mount|verif|directory|folder|path|module|engine/i,
     'normal loading copy must remain title-focused');
   const expectedWorker = variant.startsWith('quake4') ? '/q4-worker.js' : variant === 'prey' ? '/prey-worker.js' : '/d3-worker.js';
-  assert.equal(FakeWorker.instance.source, expectedWorker);
+  assert.equal(FakeWorker.instance.source, publicUrl(expectedWorker));
   const hasWorkerAudio = true;
   assert.equal(audioContexts.length, hasWorkerAudio ? 1 : 0, `${variant}: create the expected page audio bridge`);
   if (hasWorkerAudio) {
@@ -183,7 +185,7 @@ async function exercise(variant, wakeFailure) {
   assert.ok(start);
   assert.equal(start.variant, variant);
   assert.equal(start.managedMultiplayer, variant === 'doom3-mp' ? true : undefined);
-  assert.equal(requests.filter(request => request.source === '/api/doom3/wake').length, variant === 'doom3-mp' ? 1 : 0);
+  assert.equal(requests.filter(request => request.source === publicUrl('/api/doom3/wake')).length, variant === 'doom3-mp' ? 1 : 0);
   assert.equal(start.playerName, 'Browser Marine');
   assert.deepEqual(plain(start.persistence), {
     namespace: `idtech4-${variant}`,
@@ -191,7 +193,7 @@ async function exercise(variant, wakeFailure) {
     debounceMs: 750,
     intervalMs: 5000,
     requestDurability: true,
-    frameworkScript: '/shared-shell/wasm-game-framework.js',
+    frameworkScript: publicUrl('/shared-shell/wasm-game-framework.js'),
     frameworkVersion: '0.9.6'
   });
   assert.equal(start.entries[0].path, createdPolicy.files[0].mountName);
@@ -199,10 +201,14 @@ async function exercise(variant, wakeFailure) {
     assert.match(createdPolicy.files[0].path, /^prey\/base\//, 'Prey container data must use its isolated namespace');
     assert.match(start.entries[0].path, /^base\//, 'Prey files must mount at the engine-visible base path');
   }
-  assert.deepEqual(Array.from(start.engineArguments), [
+  const expectedProfiles = {
+    performance: ['+set', 'com_machineSpec', '1', '+set', 'r_multiSamples', '0', '+set', 'r_skipBump', '1'],
+    high: ['+set', 'com_machineSpec', '3', '+set', 'r_multiSamples', '2', '+set', 'r_skipBump', '0'],
+    ultra: [
     '+set', 'com_machineSpec', '3', '+set', 'image_useCompression', '0',
     '+set', 'image_usePrecompressedTextures', '1', '+set', 'r_multiSamples', '4'
-  ]);
+  ] };
+  assert.deepEqual(Array.from(start.engineArguments), expectedProfiles[profile] || expectedProfiles.high);
 
   document.visibilityState = 'hidden';
   listeners.get('visibilitychange')();
@@ -462,6 +468,11 @@ async function exercise(variant, wakeFailure) {
   assert.equal(transitions.at(-1), 'crashed');
 }
 
-for (const variant of Object.keys(config.variants)) await exercise(variant);
-for (const failure of ['unauthorized', 'failed', 'sleeping', 'foreign']) await exercise('doom3-mp', failure);
+const prefixes = process.env.IDTECH4_PREFIX_TEST === '1' ? ['/', '/doom3/', '/nested/game/'] : ['/'];
+for (const prefix of prefixes) {
+  for (const variant of Object.keys(config.variants)) {
+    for (const profile of ['performance', 'high', 'ultra', 'invalid']) await exercise(variant, undefined, prefix, profile);
+  }
+  for (const failure of ['unauthorized', 'failed', 'sleeping', 'foreign']) await exercise('doom3-mp', failure, prefix);
+}
 console.log('id Tech 4 adapter state, identity, input, disabled-controller, persistence, pointer, resize, profile, and PWA contracts passed');

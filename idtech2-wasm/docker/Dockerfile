@@ -27,6 +27,7 @@ COPY 3zb2/ /opt/3zb2/
 
 RUN cd /opt/idtech2-server && npm ci --omit=dev --ignore-scripts && \
     test "$(node -p "require('/opt/wasm-game-framework/package.json').version")" = "0.9.6" && \
+    grep -Fq 'function publicUrl(value)' /opt/shared-shell/wasm-game-framework.js && \
     test -x /opt/frikbot/bin/nqserver && \
     test -f /opt/frikbot/progs.dat && \
     test -x /usr/lib/yamagi-quake2/q2ded && \

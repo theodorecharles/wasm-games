@@ -19,6 +19,10 @@ site="${repo_root}/build/site"
 
 test "$(node -p "require('${framework_dir}/package.json').version")" = "0.9.6"
 test "$(git -C "${framework_dir}" rev-parse HEAD)" = "ebb1ebe35ad8224a9080279a6529414db42d3284"
+if ! node -e 'process.exit(require("node:fs").readFileSync(process.argv[1], "utf8").includes("publicUrl") ? 0 : 1)' "${framework_dir}/dist/wasm-game-framework.js"; then
+  echo 'Current per-game paths require the framework publicUrl overlay; update the controlled framework release/pin before source-only staging.' >&2
+  exit 1
+fi
 for required in \
   "${doom_base_web}/d3wasm.js" "${doom_base_web}/d3wasm.wasm" \
   "${doom_roe_web}/d3wasm.js" "${doom_roe_web}/d3wasm.wasm" \
@@ -167,5 +171,12 @@ node "${repo_root}/scripts/test-adapter.mjs" "${site}"
 node "${repo_root}/scripts/test-workers.mjs" "${site}"
 node "${repo_root}/scripts/test-q4-device-artifact.mjs" "${site}"
 node "${framework_dir}/scripts/check-game-package.js" "${site}"
+
+# Overlay only after the original worker/native contract tests. The pinned
+# historical runtime remains independently auditable; this final stage supplies
+# the current shared framework's publicUrl API for root and per-game hosting.
+node "${repo_root}/scripts/stage-public-paths.mjs" "${site}"
+IDTECH4_PREFIX_TEST=1 node "${repo_root}/scripts/test-adapter.mjs" "${site}"
+node "${repo_root}/scripts/test-public-paths.mjs" "${site}"
 
 printf 'Staged id Tech 4 family site at %s\n' "${site}"

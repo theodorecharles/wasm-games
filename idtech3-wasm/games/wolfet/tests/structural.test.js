@@ -642,7 +642,7 @@ describe('no overlay theater in the shipped draw path', () => {
     const wake = page.split('function wakeDedicatedServer')[1].split('function sizeCanvas')[0];
     const join = page.split('etjsWakeAndJoin: function')[1].split('etjsAdminCommand: function')[0];
     assert.match(wake, /Starting game server/);
-    assert.match(wake, /fetch\('\/wake', \{ method: 'POST' \}\)/);
+    assert.match(wake, /fetch\(publicUrl\('\/wake'\), \{ method: 'POST' \}\)/);
     assert.match(wake, /MAIN menu can[\s\S]*never appear[\s\S]*server is still booting/);
     assert.doesNotMatch(join, /fetch\('\/wake'/);
     assert.match(join, /Connecting to game server/);
@@ -779,7 +779,7 @@ describe('no overlay theater in the shipped draw path', () => {
     assert.match(server, /connect: '127\.0\.0\.1:' \+ DED_PORT/);
     const client = fs.readFileSync(path.join(ROOT, 'web', 'js', 'client.js'), 'utf8');
     assert.match(client, /window\.location\.protocol === 'https:' \? 'wss:\/\/' : 'ws:\/\/'/);
-    assert.match(client, /window\.location\.host \+ '\/ws'/);
+    assert.match(client, /window\.location\.host \+ publicUrl\('\/ws'\)/);
     const pw = fs.readFileSync(path.join(ROOT, 'scripts', 'playwright-etjs.js'), 'utf8');
     assert.match(pw, /127\.0\.0\.1:8088/);
     assert.ok(fs.existsSync(path.join(ROOT, 'web', 'img', 'et-512.png')));

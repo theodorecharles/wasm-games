@@ -5,11 +5,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const source = fs.readFileSync(path.join(__dirname, '../games/quake3/site/game-adapter.js'), 'utf8');
+const source = fs.readFileSync(process.argv[2] || path.join(__dirname, '../games/quake3/site/game-adapter.js'), 'utf8');
 const cleanup = "      if (next === 'gameplay') setCvar('ui_joinGameStatus', '');";
 assert.equal(source.split(cleanup).length, 2);
 
-async function createAdapter(adapterSource) {
+async function createAdapter(adapterSource, basePath = '/', protocol = 'http:') {
+  const requests = [];
+  const publicUrl = value => basePath + value.replace(/^\/+/, '');
   const cvars = new Map();
   const bytes = new Uint8Array(1024 * 1024);
   let offset = 8;
@@ -28,7 +30,7 @@ async function createAdapter(adapterSource) {
   let wakeCalls = 0;
   const env = {
     TextEncoder, TextDecoder, File, performance,
-    location: { hostname: 'localhost', port: '8083', protocol: 'http:' },
+    location: { hostname: 'localhost', host: 'localhost:8083', port: '8083', protocol },
     HEAPU8: bytes, Pointer_stringify: string, FS: {}, SYSC: {}, SYS: {},
     setInterval(callback) { timers.push(callback); return timers.length; },
     clearInterval() {},
@@ -37,15 +39,16 @@ async function createAdapter(adapterSource) {
       documentElement: { dataset: {} }, pointerLockElement: null,
       addEventListener() {}, createElement() { return {}; },
       head: { appendChild(script) {
+        requests.push(script.src);
         Object.assign(env.ioq3, {
-          _malloc: allocate, _free() {}, callMain() {},
+          _malloc: allocate, _free() {}, callMain(args) { env.args = args; },
           _Cvar_Set: (name, value) => cvars.set(string(name), string(value)),
           _Cvar_VariableString: name => store(cvars.get(string(name)) || '')
         });
         script.onload();
       } }
     },
-    fetch: async () => ({ ok: true, json: async () => ({}), blob: async () => new Blob([]) })
+    fetch: async url => { requests.push(url); return { ok: true, json: async () => ({}), blob: async () => new Blob([]) }; }
   };
   const context = {
     elements: { canvas, runtime: {} },
@@ -55,6 +58,7 @@ async function createAdapter(adapterSource) {
     preferences: { values: () => ({ playerName: 'JoinProof', qualityProfile: 'balanced', targetFps: 60 }) },
     dataClient: { load: async () => ({ entries: [] }) },
     framework: {
+      publicUrl,
       createOwnerDataSet: () => ({}),
       createWakeClient: () => ({ ensureRunning() {
         wakeCalls++;
@@ -66,6 +70,10 @@ async function createAdapter(adapterSource) {
   vm.runInNewContext(adapterSource, env, { filename: 'game-adapter.js' });
   await env.WasmGameAdapter.init(context);
   await env.WasmGameAdapter.start();
+  assert.deepEqual(requests.sort(), ['wasm-game-data.json', 'qvm/ui.qvm', 'qvm/cgame.qvm', 'ioquake3.js'].map(value => basePath + value).sort());
+  assert.equal(env.ioq3.wasmGameWebSocketUrl, `${protocol === 'https:' ? 'wss:' : 'ws:'}//localhost:8083${basePath}ws`);
+  assert.equal(env.args[env.args.indexOf('fs_homepath') + 1], '/save/quake3');
+  assert.equal(env.args[env.args.indexOf('fs_basepath') + 1], '/base');
   return {
     cvars, context,
     async tick(values = {}) {
@@ -82,8 +90,8 @@ async function createAdapter(adapterSource) {
   };
 }
 
-async function successfulJoin(adapterSource) {
-  const game = await createAdapter(adapterSource);
+async function successfulJoin(adapterSource, basePath, protocol) {
+  const game = await createAdapter(adapterSource, basePath, protocol);
   await game.tick({ ui_nativeMenu: 1, ui_captureIntent: 0, cg_wasmActive: 0 });
   assert.equal(game.context.state, 'menu');
   await game.tick({ ui_joinGameRequested: 1, ui_captureIntent: 1 });
@@ -138,6 +146,7 @@ async function failedJoin() {
 
 (async () => {
   await successfulJoin(source);
+  await successfulJoin(source, '/quake3/', 'https:');
   await failedJoin();
   await assert.rejects(successfulJoin(source.replace(cleanup, '')), /successful join must retire the pending label/);
   console.log('Quake III wake, snapshot, resume, disconnect and retry status contract passed; old cleanup rejected');

@@ -45,7 +45,7 @@ assert.equal(lock.rtcwGl4es.commit, '535c4b21a18a38fe96b7dbe97add39ae04cdb0ac');
 assert.equal(lock.rtcw.downstreamCommitterName, 'Ted Charles');
 assert.equal(lock.rtcw.downstreamCommitterEmail, 'me@tedcharles.net');
 assert.deepEqual(lock.wolfet, {
-  engineRepository: 'https://github.com/theodorecharles/etlegacy.git',
+  engineRepository: 'https://github.com/etlegacy/etlegacy.git',
   engineUpstream: 'https://github.com/etlegacy/etlegacy.git',
   engineCommit: 'a44ab4f396370a694109da33df901d85f6fe9626',
   enginePatchSha256: '85860f7cb861497f4034eca07eb80fc27084c0685c0366d5b8071cb7c7885b58',
@@ -62,7 +62,8 @@ const framework = childProcess.spawnSync('sh', ['scripts/assert-framework.sh'], 
   encoding: 'utf8'
 });
 assert.equal(framework.status, 0, framework.stderr);
-assert.match(framework.stdout, /wasm-game-framework/);
+assert.equal(JSON.parse(fs.readFileSync(path.join(framework.stdout.trim(), 'package.json'), 'utf8')).version,
+  lock.framework.version, 'the selected checkout must be the locked framework package regardless of directory name');
 const prepareSource = read('scripts/prepare-source.sh');
 assert.match(prepareSource, /GIT_COMMITTER_NAME=.*downstreamCommitterName/);
 assert.match(prepareSource, /GIT_COMMITTER_EMAIL=.*downstreamCommitterEmail/);

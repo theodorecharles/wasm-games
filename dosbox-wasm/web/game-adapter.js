@@ -54,7 +54,7 @@
   }
 
   async function loadManifest(context) {
-    const response = await fetch('/wasm-game-data.json', { cache: 'no-store', credentials: 'same-origin' });
+    const response = await fetch(globalThis.WasmGameFramework.publicUrl('/wasm-game-data.json'), { cache: 'no-store', credentials: 'same-origin' });
     if (!response.ok) throw new Error(`DOS data policy failed with HTTP ${response.status}.`);
     const root = await response.json();
     const selected = root.variants?.[context.variant];
@@ -91,7 +91,7 @@
   function loadScript(source) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = source;
+      script.src = globalThis.WasmGameFramework.publicUrl(source);
       script.onload = resolve;
       script.onerror = () => reject(new Error(`Could not load ${source}.`));
       document.head.appendChild(script);
@@ -108,7 +108,7 @@
       // on HTML controls (including the movement/typing switch).
       keyboardListeningElement: context.elements.canvas,
       noInitialRun: true,
-      locateFile: path => `/${path}`,
+      locateFile: path => globalThis.WasmGameFramework.publicUrl(path),
       print: (...args) => context.log(`[DOSBox] ${args.join(' ')}`),
       printErr: (...args) => context.log(`[DOSBox] ${args.join(' ')}`),
       setStatus: message => { if (message) context.setLoading(`Preparing ${context.config.title}…`); },
@@ -376,7 +376,7 @@
         if (context.variant === 'gta') {
           const soundConfig = `${gameRoot}/GTADOS/DIG.INI`;
           if (!module.FS.analyzePath(soundConfig).exists) {
-            const response = await fetch('/gta-sound.ini', { cache: 'no-store' });
+            const response = await fetch(globalThis.WasmGameFramework.publicUrl('/gta-sound.ini'), { cache: 'no-store' });
             if (!response.ok) throw new Error(`GTA sound configuration failed with HTTP ${response.status}.`);
             module.FS.writeFile(soundConfig, await response.text());
             context.persistence.markDirty();
@@ -388,7 +388,7 @@
           command.replaceAll('/game', gameRoot));
         const pointerArguments = [];
         if (context.variant === 'nfs' || context.variant === 'simcity2000') {
-          const response = await fetch('/browser-pointer.conf', { cache: 'no-store' });
+          const response = await fetch(globalThis.WasmGameFramework.publicUrl('/browser-pointer.conf'), { cache: 'no-store' });
           if (!response.ok) throw new Error(`DOS pointer configuration failed with HTTP ${response.status}.`);
           module.FS.writeFile('/browser-pointer.conf', await response.text());
           pointerArguments.push('-conf', '/browser-pointer.conf');

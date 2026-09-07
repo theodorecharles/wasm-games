@@ -111,11 +111,15 @@ describe('random rotation starts', () => {
     const args = dedicated.launchArgs('goldrush');
     const execIndex = args.indexOf('+exec');
     const vstrIndex = args.indexOf('+vstr');
-    const postModeIndex = args.lastIndexOf('g_etjsArcade');
+    const postModeIndex = args.lastIndexOf('+exec');
     assert.equal(args[execIndex + 1], 'objectiverotate.cfg');
     assert.equal(args[vstrIndex + 1], 'd3');
     assert.ok(execIndex < vstrIndex);
     assert.ok(vstrIndex < postModeIndex);
+    assert.equal(args[postModeIndex + 1], 'etjs_postmap.cfg');
+    assert.ok(args.filter(arg => arg.startsWith('+')).length < 32,
+      'stock native ET: Legacy must have room for its leading console line');
+    assert.match(dedicated.postMapConfig(), /^set g_etjsArcade [01]\nset g_speed \d+\nset g_friendlyFire 0\nset g_forcerespawn 1\n$/);
   });
 });
 

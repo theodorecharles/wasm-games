@@ -8,6 +8,7 @@ COPY q3-framework/lifecycle.js /opt/q3-framework/lifecycle.js
 
 RUN cd /opt/q3-server && npm install --omit=dev --ignore-scripts && \
     mkdir -p /opt/q3-runtime-root/runtime && \
+    node -e "if (typeof require('/opt/shared-shell/wasm-game-framework.js').publicUrl !== 'function') process.exit(1)" && \
     node -e "if (require('/opt/wasm-game-framework/package.json').version !== '0.9.6') process.exit(1)"
 
 ENV WASM_GAME_VARIANT=quake3 \

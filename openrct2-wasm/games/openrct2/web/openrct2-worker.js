@@ -188,11 +188,18 @@ async function launch(message) {
     };
 
     post('status', null, { title: 'Starting OpenRCT2…', detail: 'Loading the native runtime.', progress: 58 });
-    importScripts('/shared-shell/wasm-game-framework.js');
+    const basePath = message.basePath;
+    if (typeof basePath !== 'string' || !/^\/(?:[a-zA-Z0-9_-]+\/)*$/.test(basePath)) {
+      throw new Error('OpenRCT2 requires a canonical public base path.');
+    }
+    self.WASM_GAME_BASE_PATH = basePath;
+    importScripts(`${basePath}shared-shell/wasm-game-framework.js`);
     if (self.WasmGameFramework?.version !== framework.version) {
       throw new Error(`Worker loaded wasm-game-framework ${self.WasmGameFramework?.version || 'unknown'}, expected ${framework.version}.`);
     }
-    const audioBridge = await import('/openrct2-audio-bridge.mjs');
+    if (typeof self.WasmGameFramework.publicUrl !== 'function') throw new Error('Framework public URL support is required.');
+    const publicUrl = self.WasmGameFramework.publicUrl;
+    const audioBridge = await import(publicUrl('/openrct2-audio-bridge.mjs'));
     audioBridge.installWorkerAudioBridge({
       target: self,
       sampleRate: message.audioSampleRate,
@@ -208,7 +215,7 @@ async function launch(message) {
       locateFile(name) {
         if (name.endsWith('.wasm')) return native.wasm;
         if (name.endsWith('.data')) return native.data;
-        return new URL(name, native.script).href;
+        return new URL(name, new URL(native.script, self.location.href)).href;
       },
       print: line => post('log', line),
       printErr: line => post('log', line),
@@ -227,7 +234,7 @@ async function launch(message) {
     const bundledObjects = await stampBundledObjects(runtime.FS);
     post('log', `[openrct2-wasm] Stable content timestamps applied to ${bundledObjects.files} bundled index files (${bundledObjects.bytes} bytes)`);
 
-    const hotCacheModule = await import('/openrct2-hot-cache.mjs');
+    const hotCacheModule = await import(publicUrl('/openrct2-hot-cache.mjs'));
     const workerFs = runtime.FS.filesystems.WORKERFS;
     const hotCache = hotCacheModule.createWorkerFsHotCache(workerFs, detail => {
       hotCacheState.files = detail.files;

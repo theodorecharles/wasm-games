@@ -21,6 +21,10 @@ if [[ "$(node -p "require('${framework_dir}/package.json').version")" != "$requi
     "$required_framework_version" "$required_framework_commit" >&2
   exit 1
 fi
+if ! node -e 'const runtime = require(process.argv[1]); process.exit(typeof runtime.publicUrl === "function" && typeof runtime.readLaunchPreferences === "function" ? 0 : 1);' "$framework_dir/dist/wasm-game-framework.js"; then
+  printf 'dosbox-wasm requires the shared framework public-URL and launch-options integration.\n' >&2
+  exit 1
+fi
 
 source "$emsdk_dir/emsdk_env.sh" >/dev/null
 mkdir -p "$build_dir"
@@ -74,6 +78,8 @@ cp "$repo_dir/web/gta-sound.ini" "$dist_dir/gta-sound.ini"
 cp "$repo_dir/web/assets/dosbox.ico" "$dist_dir/assets/dosbox.ico"
 cp "$repo_dir/web/assets/dosbox-192.png" "$dist_dir/assets/dosbox-192.png"
 cp "$repo_dir/web/assets/dosbox-512.png" "$dist_dir/assets/dosbox-512.png"
+mkdir -p "$dist_dir/assets/game-icons"
+cp -a "$repo_dir/web/assets/game-icons/." "$dist_dir/assets/game-icons/"
 "$framework_dir/scripts/install-browser-package.sh" "$dist_dir/shared-shell" copy
 node "$framework_dir/scripts/check-game-package.js" "$dist_dir"
 

@@ -138,7 +138,7 @@
   }
 
   function websocketUrl(pathname) {
-    const url = new URL(String(pathname || '/ws/classic'), location.href);
+    const url = new URL(WasmGameFramework.publicUrl(pathname || '/ws/classic'), location.href);
     url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
     return url.href;
   }
@@ -307,7 +307,7 @@
   }
 
   async function loadDataManifest(context) {
-    const response = await fetch('/wasm-game-data.json', { cache: 'no-store', credentials: 'same-origin' });
+    const response = await fetch(WasmGameFramework.publicUrl('/wasm-game-data.json'), { cache: 'no-store', credentials: 'same-origin' });
     if (!response.ok) throw new Error(`Owner-data manifest failed with HTTP ${response.status}.`);
     const root = await response.json();
     const selected = root.variants?.[context.variant];
@@ -436,7 +436,7 @@
   }
 
   async function fetchBytes(path, description) {
-    const response = await fetch(path, { credentials: 'same-origin' });
+    const response = await fetch(WasmGameFramework.publicUrl(path), { credentials: 'same-origin' });
     if (!response.ok) throw new Error(`${description} failed with HTTP ${response.status}.`);
     return new Uint8Array(await response.arrayBuffer());
   }
@@ -445,7 +445,7 @@
     if (typeof globalThis[factoryName] === 'function') return;
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = path;
+      script.src = WasmGameFramework.publicUrl(path);
       script.onload = resolve;
       script.onerror = () => reject(new Error(`Could not load ${path}.`));
       document.head.appendChild(script);
@@ -704,7 +704,7 @@
           engine: modernDeathmatch ? 'zandronum' : 'classic',
           variant: context.variant, profile: runtime.profile
         };
-        const response = await fetch('/wake', {
+        const response = await fetch(WasmGameFramework.publicUrl('/wake'), {
           method: 'POST', credentials: 'same-origin',
           headers: { 'content-type': 'application/json' }, body: JSON.stringify(metadata)
         });

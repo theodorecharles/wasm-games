@@ -21,6 +21,7 @@ bash -n scripts/provision-gog-volume
 node scripts/test-audio-bridge.mjs
 node scripts/test-hot-cache.mjs
 node scripts/test-installation-objects.mjs
+node --experimental-vm-modules scripts/test-public-paths.mjs
 OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-bundled-object-stamps.mjs
 OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-rct1-sprite-path.mjs
 OPENRCT2_SOURCE_DIR="$source_root" node scripts/test-construction-ghost.mjs

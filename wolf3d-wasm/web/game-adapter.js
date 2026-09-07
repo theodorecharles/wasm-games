@@ -9,6 +9,7 @@
   let stateTimer = 0;
   let lastEscapeAt = 0;
   let persistentMount = null;
+  let publicUrl = null;
   const controllerHeld = new Map();
   let controllerButtons = 0;
   let controllerMenu = null;
@@ -148,6 +149,7 @@
     runtimePromise = new Promise((resolve, reject) => {
       engine = globalThis.Module = {
         canvas: ctx.elements.canvas,
+        locateFile: file => publicUrl(`/${file}`),
         noInitialRun: true,
         preRun: [() => { globalThis.SDL.defaults.copyOnLock = false; }],
         print: (...args) => ctx.log(`[Wolf4SDL] ${args.join(' ')}`),
@@ -163,7 +165,7 @@
         },
         onRuntimeInitialized: () => resolve(engine)
       };
-      loadScript(engines[variant]).catch(reject);
+      loadScript(publicUrl(engines[variant])).catch(reject);
     });
     return runtimePromise;
   }
@@ -198,10 +200,11 @@
       if (!capability.supported) throw new Error(`This browser is missing: ${capability.missing.join(', ')}.`);
       variant = String(ctx.variant || 'wolf3d').toLowerCase();
       if (!engines[variant]) throw new Error(`Unsupported Wolf4SDL variant: ${variant}.`);
+      publicUrl = value => ctx.framework.publicUrl(value);
       // Emscripten's packaged SDL driver still resolves its display as
       // "#canvas" even when Module.canvas points at the framework element.
       ctx.elements.canvas.id = 'canvas';
-      const manifest = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      const manifest = await fetch(publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`Wolfenstein 3D data policy failed with HTTP ${response.status}.`);
         return response.json();
       });

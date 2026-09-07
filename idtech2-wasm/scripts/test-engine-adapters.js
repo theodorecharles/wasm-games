@@ -16,7 +16,7 @@ const quake2Source = process.env.IDTECH2_Q2_SOURCE_DIR
 const manifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game.json'), 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync(path.join(repo, 'web/wasm-game-data.json'), 'utf8'));
 
-function baseHarness(variant) {
+function baseHarness(variant, basePath = '/') {
   const listeners = new Map();
   const canvasListeners = new Map();
   const intervals = [];
@@ -36,11 +36,12 @@ function baseHarness(variant) {
     focus() {}
   };
   const sandbox = {
-    URLSearchParams,
+    URL, URLSearchParams,
+    WasmGameFramework: { publicUrl: value => basePath + value.slice(1) },
     console,
     queueMicrotask,
     performance: { now: () => 1000 },
-    location: { search: '', href: 'http://localhost/' },
+    location: { search: '', href: 'http://localhost' + basePath },
     document: {
       pointerLockElement: null,
       documentElement: { dataset: {} },
@@ -111,8 +112,8 @@ function baseHarness(variant) {
   };
 }
 
-async function exerciseQuake() {
-  const harness = baseHarness('quake');
+async function exerciseQuake(basePath = '/') {
+  const harness = baseHarness('quake', basePath);
   let nativeState = 0;
   let openMenuCalls = 0;
   let captureValue = -1;
@@ -155,8 +156,12 @@ async function exerciseQuake() {
     _Q1_BrowserControllerReleaseAll() { controllerReleases += 1; },
     _Q1_BrowserWriteConfiguration() { configWrites += 1; harness.sandbox.Module.quakePersistenceChanged(false); }
   };
-  harness.sandbox.fetch = async () => ({ ok: true, json: async () => dataManifest });
+  harness.sandbox.fetch = async target => {
+    assert.equal(target, basePath + 'wasm-game-data.json');
+    return { ok: true, json: async () => dataManifest };
+  };
   harness.sandbox.document.head.appendChild = script => {
+    assert.equal(script.src, basePath + 'quake1.js');
     Object.assign(harness.sandbox.Module, engineParts);
     script.onload();
     harness.sandbox.Module.onRuntimeInitialized();
@@ -246,8 +251,18 @@ async function exerciseQuake() {
   assert.equal(captureValue, 1);
 }
 
-async function exerciseQuake2() {
-  const harness = baseHarness('quake2');
+async function exerciseQuake2(basePath = '/', variant = 'quake2') {
+  const harness = baseHarness(variant, basePath);
+  const expansion = variant === 'quake2-xatrix' ? 'xatrix' : variant === 'quake2-rogue' ? 'rogue' : '';
+  harness.context.framework.createWakeClient = () => ({
+    async ensureRunning(metadata) {
+      assert.equal(metadata.engine, 'quake2');
+      assert.equal(metadata.variant, variant);
+      assert.equal(metadata.expansion, expansion);
+      assert.equal(metadata.mode, 'campaign');
+      return { wsPath: '/ws/quake2', connect: '127.0.0.1:27910', state: 'running' };
+    }
+  });
   let nativeState = 0;
   let ensureMenuCalls = 0;
   let captureValue = -1;
@@ -282,10 +297,12 @@ async function exerciseQuake2() {
     _Q2Web_ControllerReleaseAll() { controllerReleases += 1; },
     _Q2Web_WriteConfiguration() { configWrites += 1; moduleOptions.quake2PersistenceChanged(false); }
   };
-  harness.sandbox.fetch = async target => String(target).endsWith('.json')
-    ? { ok: true, json: async () => dataManifest }
-    : { ok: true };
+  harness.sandbox.fetch = async target => {
+    assert.equal(target, basePath + 'wasm-game-data.json');
+    return { ok: true, json: async () => dataManifest };
+  };
   harness.sandbox.document.head.appendChild = script => {
+    assert.equal(script.src, basePath + 'quake2.js?v=20260821-expansions3');
     harness.sandbox.createQuake2Module = async options => { moduleOptions = options; return engine; };
     script.onload();
   };
@@ -301,7 +318,9 @@ async function exerciseQuake2() {
   assert.deepEqual(harness.lifecycle, ['attach', 'main'], 'Quake II restores IDBFS before native main');
   assert.ok(mainArguments.includes('Test Ranger'), 'Quake II hands identity to native arguments');
   assert.ok(mainArguments.includes('120'), 'Quake II hands the FPS target to native arguments');
-  assert.deepEqual(Array.from(mainArguments.slice(0, 4)), ['-datadir', '/data', '-userdir', '/persistent/idtech2/quake2']);
+  assert.deepEqual(Array.from(mainArguments.slice(0, 4)), ['-datadir', '/data', '-userdir', `/persistent/idtech2/${variant}`]);
+  assert.equal(moduleOptions.quake2WebSocketUrl, expansion ? `ws://localhost${basePath}ws/quake2` : '');
+  assert.equal(moduleOptions.quake2Expansion, expansion);
   moduleOptions.quake2PersistenceChanged(true);
   await Promise.resolve();
   assert.equal(harness.persistenceDirty(), 1);
@@ -424,6 +443,10 @@ async function exerciseQuake2() {
     'Quake II must arm capture at the native menu-to-game transition');
   await exerciseQuake();
   await exerciseQuake2();
+  await exerciseQuake('/quake1/');
+  for (const variant of ['quake2', 'quake2-xatrix', 'quake2-rogue']) {
+    await exerciseQuake2(`/${variant}/`, variant);
+  }
   console.log('Verified Quake and Quake II identity, state, capture, persistence, controller, resize, quality, PWA, and data-cache behavior.');
 })().catch(error => {
   console.error(error);

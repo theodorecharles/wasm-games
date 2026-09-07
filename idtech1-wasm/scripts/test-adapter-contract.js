@@ -163,6 +163,7 @@ async function exercise(variant, requestedProfile, options = {}) {
     elements.play = { addEventListener() {}, insertAdjacentElement(_position, button) { deathmatchButton = button; } };
   }
   const sandbox = {
+    WasmGameFramework: { publicUrl: target => (options.basePath || '/') + String(target).replace(/^\//, '') },
     URL,
     URLSearchParams,
     TextEncoder,
@@ -171,6 +172,8 @@ async function exercise(variant, requestedProfile, options = {}) {
     queueMicrotask,
     performance: { now: () => now },
     fetch: async (target, init) => {
+      assert.ok(String(target).startsWith(options.basePath || '/'), `network fetch must remain inside its game prefix: ${target}`);
+      target = '/' + String(target).slice((options.basePath || '/').length);
       if (String(target) === '/wake') {
         assert.equal(init.method, 'POST', 'every deathmatch selection must send metadata');
         const metadata = JSON.parse(init.body);
@@ -193,6 +196,7 @@ async function exercise(variant, requestedProfile, options = {}) {
       documentElement: { dataset: {} },
       head: {
         appendChild(script) {
+          assert.ok(script.src.startsWith(options.basePath || '/'), 'engine scripts must retain the game prefix');
           if (script.src.includes('dsda-doom')) sandbox.createDsdaDoom = async () => engine;
           else if (script.src.includes('zandronum')) sandbox.createZandronum = async () => engine;
           else if (script.src.includes('heretic')) sandbox.createCrispyHeretic = async () => engine;
@@ -537,6 +541,7 @@ async function exercise(variant, requestedProfile, options = {}) {
     assert.equal(dataManifest.variants[variant].files.every(file => file.validator), true);
     await exercise(variant, 'original');
     await exercise(variant, 'smooth');
+    for (const profile of ['original', 'smooth', 'modernized']) await exercise(variant, profile, { basePath: '/prefix-test/' });
     for (const profile of ['original', 'smooth', 'modernized']) {
       await exercise(variant, profile, { deathmatch: true });
     }

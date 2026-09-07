@@ -56,6 +56,7 @@
   let boundNativeModule = null;
   let debugNativeStateReported = false;
   const lazyByPath = new Map();
+  let publicUrl = value => value;
 
   function sanitizePlayerName(name) {
     const raw = String(name == null ? '' : name);
@@ -169,9 +170,10 @@
   // native binary. Keep the JavaScript loader and its wasm companion on the
   // same key so a headed browser cannot silently execute an older build.
   function assetUrl(name) {
-    if (typeof location === 'undefined') return `/${name}`;
+    const resource = publicUrl(`/${name}`);
+    if (typeof location === 'undefined') return resource;
     const key = new URL(location.href).searchParams.get('cb');
-    return key ? `/${name}?cb=${encodeURIComponent(key)}` : `/${name}`;
+    return key ? `${resource}?cb=${encodeURIComponent(key)}` : resource;
   }
 
   function ensureEngineCanvas() {
@@ -213,7 +215,7 @@
   }
 
   function ownerPathUrl(rel) {
-    return `/owner/${String(rel || '').replace(/^\/+/, '').split('/').map(encodeURIComponent).join('/')}`;
+    return publicUrl(`/owner/${String(rel || '').replace(/^\/+/, '').split('/').map(encodeURIComponent).join('/')}`);
   }
 
   function ensureParent(FS, filePath) {
@@ -445,7 +447,7 @@
     const rangeOk = typeof XMLHttpRequest === 'function' && typeof FS.createFile === 'function';
     if (!rangeOk) return { root: '/game', mode: 'http', files: 0 };
 
-    const index = await fetch('/owner-index', { cache: 'no-store', credentials: 'same-origin' }).then((response) => {
+    const index = await fetch(publicUrl('/owner-index'), { cache: 'no-store', credentials: 'same-origin' }).then((response) => {
       if (!response.ok) throw new Error(`Owner index failed with HTTP ${response.status}.`);
       return response.json();
     });
@@ -553,7 +555,9 @@
 
   global.WasmGameAdapter = Object.freeze({
     async init(context) {
-      const root = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => {
+      publicUrl = context.framework.publicUrl;
+      if (typeof publicUrl !== 'function') throw new Error('Framework public URL support is required.');
+      const root = await fetch(publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error(`Game-data policy failed with HTTP ${response.status}.`);
         return response.json();
       });

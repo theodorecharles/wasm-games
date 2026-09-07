@@ -53,7 +53,12 @@ grep -Fq '/shared-shell/wasm-game-framework.css' <<<"$root"
 grep -Fq '/shared-shell/wasm-game-bootstrap.js' <<<"$root"
 
 test "$(curl -fsS "$base/wasm-game-framework.json" | node -pe 'JSON.parse(fs.readFileSync(0)).version')" = "0.9.6"
-test "$(curl -fsS "$base/wasm-game-config.js" | sed -n 's/.*= "\([^"]*\)";.*/\1/p')" = "$variant"
+curl -fsS "$base/wasm-game-config.js" | node -e '
+const source = require("node:fs").readFileSync(0, "utf8");
+const variant = /globalThis\.WASM_GAME_VARIANT = (.+);/.exec(source);
+const base = /globalThis\.WASM_GAME_BASE_PATH = (.+);/.exec(source);
+if (!variant || JSON.parse(variant[1]) !== process.argv[1] || !base || JSON.parse(base[1]) !== "/") process.exit(1);
+' "$variant"
 curl -fsS "$base/app.webmanifest?variant=$variant" | node -e '
 const manifest = JSON.parse(require("node:fs").readFileSync(0, "utf8"));
 if (manifest.name !== process.argv[1] || manifest.short_name !== process.argv[2]) process.exit(1);

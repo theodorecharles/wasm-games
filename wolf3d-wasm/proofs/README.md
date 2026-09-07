@@ -1,6 +1,10 @@
 # Wolf3D / Spear evidence
 
-- [Current binding-label release — 2026-09-06](BINDINGS-RELEASE-2026-09-06.md):
+- [Current config/prefix release — 2026-09-07](CONFIG-PERSISTENCE-RELEASE-2026-09-07.md):
+  promoted recovery patch, native config round trips and binding precedence,
+  rebuilt non-root images at both normal and private origins; browser save/reload
+  and capture/fullscreen acceptance remain pending.
+- [Earlier binding-label release — 2026-09-06](BINDINGS-RELEASE-2026-09-06.md):
   actual-SDK key names/controller translation, isolated rebinding/fire/restore,
   both live labels and gameplay smoke tests, scoped rollout and explicit browser
   capture rejection diagnostics. 39 Chrome pairs; broader acceptance remains open.

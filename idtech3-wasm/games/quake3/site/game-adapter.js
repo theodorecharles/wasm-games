@@ -311,7 +311,7 @@
   async function loadEngine() {
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = '/ioquake3.js';
+      script.src = context.framework.publicUrl('/ioquake3.js');
       script.onload = resolve;
       script.onerror = () => reject(new Error('Could not load the QuakeJS client engine.'));
       document.head.appendChild(script);
@@ -321,7 +321,7 @@
   globalThis.WasmGameAdapter = Object.freeze({
     async init(nextContext) {
       context = nextContext;
-      const policy = await fetch('/wasm-game-data.json', { cache: 'no-store' }).then(response => response.json());
+      const policy = await fetch(context.framework.publicUrl('/wasm-game-data.json'), { cache: 'no-store' }).then(response => response.json());
       dataSet = context.framework.createOwnerDataSet(policy);
       context.elements.canvas.addEventListener('contextmenu', event => event.preventDefault());
       document.addEventListener('pointermove', event => {
@@ -356,7 +356,7 @@
       });
 
       const qvmEntries = await Promise.all(['ui', 'cgame'].map(async name => {
-        const response = await fetch(`/qvm/${name}.qvm`);
+        const response = await fetch(context.framework.publicUrl(`/qvm/${name}.qvm`));
         if (!response.ok) throw new Error(`The framework ${name} QVM is missing.`);
         return {
           file: new File([await response.blob()], `${name}.qvm`, { type: 'application/octet-stream' }),
@@ -377,6 +377,7 @@
         noExitRuntime: true,
         noImageDecoding: true,
         noAudioDecoding: true,
+        wasmGameWebSocketUrl: `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}${context.framework.publicUrl('/ws')}`,
         canvas: context.elements.canvas,
         viewport: context.elements.runtime,
         elementPointerLock: false,

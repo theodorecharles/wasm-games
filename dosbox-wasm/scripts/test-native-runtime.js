@@ -152,7 +152,8 @@ process.on('unhandledRejection', error => failures.push(error));
     '_DOSBox_WasmControllerButton', '_DOSBox_WasmSetHome',
     '_DOSBox_WasmCanvasWidth', '_DOSBox_WasmCanvasHeight',
     '_DOSBox_WasmMachineSlices',
-    ...(keyboardOnly || adapterKeyboard ? [] : ['_DOSBox_WasmCpuCycles']),
+    // File probes exit after checking DOS file bytes and never sample CPU cycles.
+    ...(keyboardOnly || adapterKeyboard || fileProbe ? [] : ['_DOSBox_WasmCpuCycles']),
     '_DOSBox_WasmAudioCallbacks', '_DOSBox_WasmAudioNonzeroCallbacks'
   ]) assert.equal(typeof module[name], 'function', `${name} must be exported`);
 

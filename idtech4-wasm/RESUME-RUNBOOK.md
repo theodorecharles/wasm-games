@@ -1,8 +1,27 @@
 # id Tech 4 resume runbook
 
-Current checkpoint index: 2026-09-06. The original 2026-08-21 stopping-point
+Current checkpoint index: 2026-09-07. The original 2026-08-21 stopping-point
 notes below are historical; do not use their shutdown/blocker statements as
 the current runtime state.
+
+- **2026-09-07 09:28UTC — normal Game Lab and private Trashcan promoted.**
+  All six current repaired images now run on normal8086/18086/18087/8084/18084/
+  8087 and private28129–28134. Native engine/save/audio/bot bytes are unchanged
+  from the current pinned repaired builds, not the older running lab containers
+  they replaced. The checked `scripts/public-path-runtime.mjs` overlay supplies
+  prefixed worker/data/framework/bot/module/WS URLs while retaining native paths.
+  Single-player Doom3/RoE cannot wake/join managed multiplayer; unknown WebSocket
+  paths reject.58 isolated managed tests and actual private native info/challenge
+  replies/two bots pass. Both local/private matches are asleep again. Exact
+  identities and all receipts are in sibling Game Lab `deploy/steam/idtech4-*.json`;
+  see the latest [migration checkpoint](../VM-RETIREMENT-RUNBOOK.md).
+  Current canonical adapter and all actual images pass profile/input/prefix
+  fixtures; historical `build/site` was deliberately not overwritten and still
+  fails the known old dropped-modifier regression. Ordinary source-only staging
+  now explicitly requires the newer shared publicUrl framework; its release/pin
+  repair remains open. Historical candidate locks remain intact. No browser
+  gameplay, capture/fullscreen or save/reload/load claim for these new origins;
+  Steam's launch gate remains closed. Public proxies/VMs/Picard unchanged.
 
 - [Prey quickload prompt and save/map lifecycle](proofs/PREY-QUICKLOAD-2026-09-06.md):
   current isolated **32877** is now `prey-quickload-proof-20260906`, image

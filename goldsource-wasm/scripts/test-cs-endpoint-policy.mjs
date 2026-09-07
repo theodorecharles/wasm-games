@@ -13,7 +13,9 @@ const method = source.slice(start, end).trim();
 const fallback = 'ws://127.0.0.1:4192/websocket';
 const cases = [
   { search: '?game=counter-strike', endpoint: 'ws://127.0.0.1:8017/websocket', retry: true },
-  { search: '?game=half-life', endpoint: 'https://games.example.test/websocket'.replace('https:', 'wss:'), retry: true },
+  { search: '?game=half-life', endpoint: 'https://games.example.test/websocket'.replace('https:', 'wss:'), local: false, retry: false },
+  { search: '?game=counter-strike', endpoint: 'ws://games.example.test/counter-strike/websocket', local: false, retry: false },
+  { search: '?game=counter-strike', endpoint: 'ws://127.0.0.1:8017/counter-strike/websocket', local: false, retry: false },
   { search: '?game=counter-strike&server=', endpoint: 'ws://127.0.0.1:8017/websocket', retry: true },
   { search: '?game=counter-strike', endpoint: fallback, retry: false },
   { search: '?game=counter-strike&server=127.0.0.1:4392', endpoint: 'ws://127.0.0.1:4392/websocket', retry: false },
@@ -30,6 +32,8 @@ async function exercise(policy) {
       const sandbox = vm.createContext({ URL, URLSearchParams, location: { search: entry.search }, BRIDGE_FALLBACK: '127.0.0.1:4192' });
       const probe = vm.runInContext(`({${policy}})`, sandbox);
       probe.endpoint = new URL(entry.endpoint);
+      probe.allowLocalFallback = entry.local !== false;
+      probe.disposeConnection = () => {};
       const attempts = [];
       const original = new Error('original endpoint failed');
       const final = new Error('fallback endpoint failed');

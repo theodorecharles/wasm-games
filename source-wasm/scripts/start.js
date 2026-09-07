@@ -2,10 +2,10 @@
 'use strict';
 
 const fs = require('node:fs');
-const fsp = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
 const { spawn, spawnSync } = require('node:child_process');
+const { serveOwnerFile: serveOwnerBytes } = require('./owner-file');
 
 const root = path.resolve(__dirname, '..');
 const frameworkRoot = process.env.WASM_GAME_FRAMEWORK_ROOT
@@ -36,6 +36,10 @@ process.env.WASM_GAME_DATA_ROOT = process.env.WASM_GAME_DATA_ROOT
 
 const publicPort = Number(process.env.WASM_GAME_HTTP_PORT || 8088);
 const vendorPort = Number(process.env.WASM_GAME_VENDOR_PORT || publicPort + 113);
+if (![publicPort, vendorPort].every(port => Number.isInteger(port) && port >= 1 && port <= 65535)
+    || publicPort === vendorPort) {
+  throw new Error('Public and framework ports must be distinct integers between 1 and 65535.');
+}
 const dataRoot = path.resolve(process.env.WASM_GAME_DATA_ROOT);
 const stubPath = path.join(process.env.WASM_GAME_SITE_ROOT, 'wasm-game-data.json');
 let dataRootReal = null;
@@ -49,7 +53,7 @@ if (!fs.existsSync(stubPath)) {
   const generated = spawnSync(process.execPath, [path.join(root, 'scripts', 'generate-game-data.mjs')], {
     stdio: 'inherit'
   });
-  if (generated.status) process.exit(generated.status);
+  if (generated.status !== 0) process.exit(generated.status || 1);
 }
 
 function vendorStaticServer() {
@@ -66,7 +70,30 @@ function vendorStaticServer() {
 
 process.env.WASM_GAME_HTTP_PORT = String(vendorPort);
 const vendor = spawn(process.execPath, [vendorStaticServer()], { stdio: 'inherit' });
-vendor.on('exit', (code) => process.exit(code || 0));
+let shuttingDown = false;
+let shutdownCode = 0;
+let shutdownTimer;
+function shutdown(code) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  shutdownCode = code;
+  server.close();
+  server.closeAllConnections();
+  if (vendor.exitCode !== null || vendor.signalCode !== null) process.exit(code);
+  shutdownTimer = setTimeout(() => {
+    vendor.kill('SIGKILL');
+    process.exit(shutdownCode);
+  }, 3000);
+  vendor.kill('SIGTERM');
+}
+vendor.on('error', () => shutdown(1));
+vendor.on('exit', () => {
+  if (shuttingDown) { clearTimeout(shutdownTimer); process.exit(shutdownCode); }
+  // A static child exiting successfully is still an unexpected service loss.
+  shutdown(1);
+});
+process.once('SIGTERM', () => shutdown(0));
+process.once('SIGINT', () => shutdown(0));
 
 function isolationHeaders(extra) {
   return {
@@ -79,7 +106,7 @@ function isolationHeaders(extra) {
 
 function blockedName(name) {
   const base = String(name || '').toLowerCase();
-  return base === 'glshaders.cfg' || /\.(dll|exe|so|dylib|asi)(?:$|[_-]\d+$)/i.test(base) || base === '.source-wasm-owner.json';
+  return base.startsWith('.') || base === 'glshaders.cfg' || /\.(dll|exe|so|dylib|asi)(?:$|[_-]\d+$)/i.test(base);
 }
 
 let ownerIndexBody = null;
@@ -121,9 +148,10 @@ function buildOwnerIndex() {
 
 function resolveOwner(relRaw) {
   const rel = String(relRaw || '').replace(/\\/g, '/').replace(/^\/+/, '');
-  if (!rel || rel === '.') return { abs: dataRoot, rel: '' };
+  if (!rel || rel === '.') return null;
   const normalized = path.posix.normalize(rel);
   if (!normalized || normalized === '.' || normalized === '..' || normalized.startsWith('../')) return null;
+  if (normalized.split('/').some(blockedName)) return null;
   const abs = path.resolve(dataRoot, normalized);
   if (abs !== dataRoot && !abs.startsWith(`${dataRoot}${path.sep}`)) return null;
   if (blockedName(path.basename(abs))) return null;
@@ -148,61 +176,7 @@ function json(response, statusCode, value) {
 }
 
 async function serveOwnerFile(request, response, abs) {
-  let stat;
-  try { stat = await fsp.lstat(abs); } catch (_) {
-    return json(response, 404, { error: 'Not found.' });
-  }
-  if (stat.isSymbolicLink()) return json(response, 404, { error: 'Not found.' });
-  if (!stat.isFile()) return json(response, 404, { error: 'Not found.' });
-  const range = /^bytes=(\d+)-(\d*)$/.exec(String(request.headers.range || ''));
-  let start = 0;
-  let end = stat.size - 1;
-  let statusCode = 200;
-  if (range) {
-    start = Number(range[1]);
-    end = range[2] ? Math.min(Number(range[2]), end) : end;
-    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start > end || start >= stat.size) {
-      response.writeHead(416, isolationHeaders({ 'Content-Range': `bytes */${stat.size}` }));
-      response.end();
-      return;
-    }
-    statusCode = 206;
-  }
-  const headers = isolationHeaders({
-    'Accept-Ranges': 'bytes',
-    'Cache-Control': 'private, max-age=3600',
-    'Content-Length': end - start + 1,
-    'Content-Type': 'application/octet-stream'
-  });
-  if (statusCode === 206) headers['Content-Range'] = `bytes ${start}-${end}/${stat.size}`;
-  if (request.method === 'HEAD') {
-    response.writeHead(statusCode, headers);
-    response.end();
-    return;
-  }
-  // The browser's sync-XHR responseText decode content-sniffs binary and can
-  // return corrupt/short data.  b64=1 returns the range base64-encoded (pure
-  // ASCII, lossless) for the adapter's synchronous read path.
-  if (/[?&]b64=1\b/.test(request.url || '')) {
-    const len = end - start + 1;
-    const buf = Buffer.alloc(len);
-    const fh = await fsp.open(abs, 'r');
-    try {
-      await fh.read(buf, 0, len, start);
-    } finally {
-      await fh.close();
-    }
-    const body = buf.toString('base64');
-    response.writeHead(200, isolationHeaders({
-      'Content-Type': 'text/plain; charset=us-ascii',
-      'Content-Length': Buffer.byteLength(body),
-      'Cache-Control': 'private, max-age=3600'
-    }));
-    response.end(body);
-    return;
-  }
-  response.writeHead(statusCode, headers);
-  fs.createReadStream(abs, { start, end }).pipe(response);
+  return serveOwnerBytes(request, response, abs, isolationHeaders);
 }
 
 function proxyVendor(request, response) {
@@ -220,6 +194,7 @@ function proxyVendor(request, response) {
     if (!response.headersSent) json(response, 502, { error: 'Game shell is not ready.' });
     else response.destroy();
   });
+  response.once('close', () => forwarded.destroy());
   request.pipe(forwarded);
 }
 
@@ -228,6 +203,10 @@ const server = http.createServer(async (request, response) => {
     const url = new URL(request.url, 'http://127.0.0.1');
     const isOwnerRoute = url.pathname === '/owner-index' || url.pathname.startsWith('/owner/');
     if (isOwnerRoute && ownerPasswordGate && !ownerPasswordGate.require(request, response)) return;
+    if (isOwnerRoute && !['GET', 'HEAD'].includes(request.method)) {
+      response.writeHead(405, isolationHeaders({ Allow: 'GET, HEAD', 'Content-Length': 0 }));
+      return response.end();
+    }
     if (url.pathname === '/owner-index' && (request.method === 'GET' || request.method === 'HEAD')) {
       if (!ownerIndexBody) ownerIndexBody = Buffer.from(JSON.stringify(buildOwnerIndex()));
       response.writeHead(200, isolationHeaders({
@@ -244,17 +223,19 @@ const server = http.createServer(async (request, response) => {
       }
       const resolved = resolveOwner(decoded);
       if (!resolved) return json(response, 404, { error: 'Not found.' });
-      return serveOwnerFile(request, response, resolved.abs);
+      return await serveOwnerFile(request, response, resolved.real);
     }
     if (url.pathname === '/owner-stat' || url.pathname === '/owner-list') {
       return json(response, 404, { error: 'Not found.' });
     }
     return proxyVendor(request, response);
   } catch (error) {
-    if (!response.headersSent) json(response, 500, { error: error.message || 'Internal server error.' });
+    if (!response.headersSent) json(response, ['ENOENT', 'ELOOP'].includes(error.code) ? 404 : 500, { error: 'Owner request failed.' });
     else response.destroy(error);
   }
 });
+
+server.on('error', () => shutdown(1));
 
 server.listen(publicPort, '0.0.0.0', () => {
   console.log(`source-wasm: owner files from ${dataRoot} on tcp/${publicPort}; framework shell on tcp/${vendorPort}`);

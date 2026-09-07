@@ -1,7 +1,12 @@
 # id Tech 1 proof checkpoints
 
+The [2026-09-07 read-only native runtime repair](READ-ONLY-NATIVE-2026-09-07.md)
+is the latest deployment checkpoint. Both native multiplayer engines start for
+all seven games on the normal suite and private Trashcan containers; all sessions
+are asleep again. Engine bytes are unchanged. This is not fresh browser acceptance.
+
 The [2026-09-05 managed Classic bot service](CLASSIC-MANAGED-2026-09-05.md)
-is the latest deployment. Original/Smooth now launch with two native bots,
+is the preceding managed-service deployment. Original/Smooth now launch with two native bots,
 an eight-second human-admission grace and network audio. All fourteen Chrome
 joins render their three-player first maps, start WebAudio, capture on click
 and release on Escape. Native lifecycle, two-human admission, failure recovery,
