@@ -1,5 +1,26 @@
 # Public release and GitHub handoff — 2026-09-07
 
+LATEST19:36UTC: the stateful migration is LIVE and both old VMs are OFF. Public
+API/AIM now reaches Trashcan127.0.0.1:8096, not Prod. All18 production accounts
+and83,823 tracks preserved; Dev's separate5-account/83,780-track DB is archived.
+The new sole importer `windows96-music-import-20260907` is running on Trashcan
+against Pump NFS, with a verified lock/authenticated reload and graceful restart.
+Bang Prod/Dev were gracefully shut down, autostart disabled, definitions/disks
+retained. All obsolete VM runners are disabled and the final offline GitHub
+runner registration was removed. The old workflows remain disabled; new release
+automation is still follow-up, not silently migrated.
+
+Read Windows96 `documentation/STATEFUL_HANDOFF_20260907.md` FIRST. It has exact
+container IDs, new internal backend network, private backups and reverse-handoff
+requirements. Trashcan is now the writer of record: do not restart old writers
+or restore stale source DBs. New public-router SHA256:
+`817671e143ded4e74210208648baf7b04100856341316bd26576c9c37e87ee7a`.
+Earlier frontend publishers pin the previous router and should not be replayed.
+Royale frontend/catalog bytes unchanged. No games/IE5/PIA container was restarted.
+39 public route checks plus API/media/security/AIM/browser checks pass with both
+VMs down. This does NOT prove full gameplay or solve Google's CAPTCHA loop.
+Picard old game-container retirement and the unfinished app/game scope remain.
+
 LATEST19:06UTC: Windows Update / XP Royale is LIVE on the public desktop. Refresh
 and open Windows Update → Install Windows XP. The opt-in reversible theme uses
 173 original Royale bitmap states across38 parts plus the exact supplied Bliss.

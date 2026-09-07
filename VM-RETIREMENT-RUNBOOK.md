@@ -1,9 +1,12 @@
 # VM retirement and Windows-96 migration
 
-Newest: [16:25 icon release / GitHub handoff](SESSION-HANDOFF-20260907.md).
-Old VM GitHub auto-deploy workflows are disabled. Prod remains the live API/AIM
-and music writer; neither VM may be stopped yet. Importer NFS proof passed but
-its production image is prepared only, not running alongside the old importer.
+Newest: [19:36 stateful migration / VM shutdown handoff](SESSION-HANDOFF-20260907.md).
+Prod/Dev are now shut off with autostart disabled and disks/definitions retained.
+Trashcan owns API/AIM and the sole live importer; Pump retains the music files.
+Read Windows96 `documentation/STATEFUL_HANDOFF_20260907.md` before any recovery.
+Do not restart old writers: their snapshots are no longer production authority.
+The old workflows/runners are disabled; GitHub has no old VM runner registered.
+The checkpoints below are historical. Picard game-container retirement remains.
 
 CURRENT: 2026-09-07 15:53 UTC. The classic Steam icon/control/layout and working
 Help frontend update is live; see Windows96 documentation/STEAM_VISUAL_RELEASE_20260907.md
