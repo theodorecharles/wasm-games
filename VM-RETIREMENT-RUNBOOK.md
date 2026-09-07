@@ -1,12 +1,16 @@
 # VM retirement and Windows-96 migration
 
-Newest: [19:36 stateful migration / VM shutdown handoff](SESSION-HANDOFF-20260907.md).
+Newest: [20:01 legacy game / VM retirement handoff](SESSION-HANDOFF-20260907.md).
 Prod/Dev are now shut off with autostart disabled and disks/definitions retained.
 Trashcan owns API/AIM and the sole live importer; Pump retains the music files.
 Read Windows96 `documentation/STATEFUL_HANDOFF_20260907.md` before any recovery.
 Do not restart old writers: their snapshots are no longer production authority.
 The old workflows/runners are disabled; GitHub has no old VM runner registered.
-The checkpoints below are historical. Picard game-container retirement remains.
+Picard's9 old games and Trashcan's old purejsdoom are also now stopped and
+restart-disabled. Picard Compose default startup excludes the retired games;
+legacy game domains redirect to the new paths. Read Windows96
+`documentation/LEGACY_GAME_RETIREMENT_20260907.md` for precise recovery notes.
+The checkpoints below are historical, including their remaining-retirement lists.
 
 CURRENT: 2026-09-07 15:53 UTC. The classic Steam icon/control/layout and working
 Help frontend update is live; see Windows96 documentation/STEAM_VISUAL_RELEASE_20260907.md

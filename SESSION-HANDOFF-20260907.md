@@ -1,5 +1,20 @@
 # Public release and GitHub handoff — 2026-09-07
 
+LATEST20:01UTC: Picard's9 superseded game containers plus Trashcan's old
+`purejsdoom` are stopped, restart=no. Picard's default Compose startup excludes
+the9 retired services using an explicit retired-games profile;15 unrelated
+services remain unchanged. Nine old game domains now308 redirect to the matching
+games.tedcharles.net paths; non-read requests410. Certificates retained, unrelated
+NPM rows/configs unchanged. api-dev76 includes an unrelated /kf-extractor route,
+so it was NOT disabled. Read Windows96
+`documentation/LEGACY_GAME_RETIREMENT_20260907.md` for mappings, private recovery
+paths and one-shot helpers. No container/image/data was deleted. Browser saves
+from old origins are not automatically imported into the new origin/engines.
+All9 redirect/destination manifest checks and the full39-route/AIM/IE5 public
+smoke pass with old containers off. Backend/PIA/importer remain healthy; both
+Bang VMs remain off. App/gameplay/engine/Google compatibility work and replacement
+deployment automation remain unfinished. No goal-completion claim.
+
 LATEST19:36UTC: the stateful migration is LIVE and both old VMs are OFF. Public
 API/AIM now reaches Trashcan127.0.0.1:8096, not Prod. All18 production accounts
 and83,823 tracks preserved; Dev's separate5-account/83,780-track DB is archived.
