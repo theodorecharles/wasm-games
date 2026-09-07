@@ -1,5 +1,33 @@
 # Public release and GitHub handoff — 2026-09-07
 
+LATEST19:06UTC: Windows Update / XP Royale is LIVE on the public desktop. Refresh
+and open Windows Update → Install Windows XP. The opt-in reversible theme uses
+173 original Royale bitmap states across38 parts plus the exact supplied Bliss.
+Install/cancel/restore/persistence, open Notepad preservation, desktop/mobile
+layout and maximize/restore were tested. Source implementation Windows96c79e170;
+155 tests pass,0 fail,1 existing native-AIM integration skip. Public index SHA256
+`fe956783cf59760be91a14a38733c01c686a723a97de18f160ef4f826fa95905`; JS bundle
+`main.44835852d63e46fb3580.js`, CSS`main.fdede87eb43d41351562.css`. Both public
+bundle byte hashes match the tested build. All39 public routes/manifest/isolation
+checks, AIM/browser upgrades and wrong-origin rejection pass19:06:12UTC.
+
+Static-only staging `/home/ted/windows96-royale-public-20260907/` on Trashcan,
+including the previous index, manifest and published receipt. Router/catalog
+unchanged;176 new hashed assets added, old assets retained. No service/container,
+VPN, PM2 supervisor, API writer or VM restarted. PIA lifecycle remains healthy;
+the renderer has no leftover Chrome from these tests. See Windows96
+`documentation/WINDOWS_UPDATE_ROYALE_RUNBOOK.md` and its JSON release receipt for
+the guarded publisher/rollback and remaining fidelity work. Do NOT replay the
+old IE5 publisher against the new index. Classic app/Start-flag icons, full native
+control/font fidelity, dead-end apps, gameplay and final writer/VM migration
+remain unfinished. Do not call the broader goal complete.
+
+Google's CAPTCHA was reproduced again on r4 at18:39:39UTC despite correct Mac UA
+and language header. No CAPTCHA/VPN workaround was introduced. This release does
+not solve Google compatibility. Public UI verified the new update app without
+changing the owner's public theme preference; the install/restore tests used a
+local static preview. Temporary test tabs/server are to be closed at handoff.
+
 LATEST18:08UTC: IE5 lifecycle recovery is live under one host PM2 supervisor.
 Cold-stack and hot-VPN-restart tests passed, including actual namespace drift;
 post-recovery network/sandbox/public39-route checks pass. The supervisor is saved
