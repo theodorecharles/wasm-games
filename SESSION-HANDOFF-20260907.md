@@ -1,5 +1,17 @@
 # Public release and GitHub handoff — 2026-09-07
 
+LATEST17:21:51UTC: the owner requested immediate IE5 publication, and it is LIVE
+at games.tedcharles.net. Refresh and open Internet Explorer5 or tedcharles.net.
+PIA-only sandboxed browsing, actual input/resize, favorites/history and hidden-tab
+suspension are included; max2 anonymous temporary sessions. All39 game routes,
+AIM and the public browser protocol pass. No games/writers/VMs were restarted.
+See Windows96 `documentation/IE5_PUBLIC_RELEASE_20260907.md` for exact images,
+hashes, proofs and rollback. Its latest source is the release checkpoint, not
+the older private source commits below. AppArmor is persisted; automatic VPN/
+proxy restart coordination and visual desktop QA remain open. Chrome was closed;
+no extra workstation browser was launched. Old VM deployment workflows remain
+disabled. XP Royale, other apps and final writer/VM migration are still unfinished.
+
 Read this before older checkpoints. The owner requested the icon replacements,
 a GitHub sync of all accumulated work, and a stopping point. The broader app and
 migration scope is **not complete**. Do not turn this checkpoint into an automatic

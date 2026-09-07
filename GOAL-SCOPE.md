@@ -1,5 +1,10 @@
 # Active portfolio and Windows-96 scope
 
+LATEST2026-09-07 17:21UTC: IE5 is now a live PIA-only public preview, at the owner's
+explicit request to publish it immediately. Steam/icons/39 game routes remain
+unchanged. See the newest SESSION-HANDOFF and Windows96 IE5_PUBLIC_RELEASE runbook;
+earlier statements excluding IE5 are historical. XP/app/migration scope remains open.
+
 Newest checkpoint: [2026-09-07 release/GitHub handoff](SESSION-HANDOFF-20260907.md).
 Eight more icon replacements are public; all accumulated work was pushed and
 verified on GitHub at the owner's stopping-point request. Remaining features/migration
