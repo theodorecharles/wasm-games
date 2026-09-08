@@ -1,7 +1,19 @@
 # Game Lab recovery and progress runbook
 
-**Newest stopping point:** [2026-09-07 public release and GitHub handoff](SESSION-HANDOFF-20260907.md).
-Read it first; the older checkpoint and commit IDs below are historical.
+**Current stopping point, 2026-09-07:** [Half-Life 2 deployment](source-wasm/STOPPING-POINT-20260907.md).
+The user requested a good HL2 stopping point, deployment of the image and game
+files to `ted@4.20.69.67`, availability in Windows 96 Steam, then a stop. Those
+deployment steps are complete. No further Chrome testing was performed after
+the user's instruction. Resume development only when requested. Lost Coast,
+Episodes One/Two, and Portal remain queued; Windows96 Paint work remains paused.
+
+The user subsequently requested publishing the pending changes to GitHub. That
+publication preserves this stopped checkpoint and the paused Windows96 work;
+it does not resume development or redeploy desktop changes. Engine sources,
+runtime binaries and owned game data remain private.
+
+**Previous portfolio stopping point:** [2026-09-07 public release and GitHub handoff](SESSION-HANDOFF-20260907.md).
+The checkpoint and commit IDs below are historical.
 
 Work has resumed at the user's request. The current expanded goal and sequence
 are in [GOAL-SCOPE.md](GOAL-SCOPE.md), including the lab refresh, container cleanup,

@@ -119,6 +119,16 @@ function detectRecipe(rootDir) {
   if (fs.existsSync(path.join(rootDir, 'portal', 'gameinfo.txt'))) {
     return 'steam-portal-v1';
   }
+  const receipt = path.join(rootDir, '.source-wasm-owner.json');
+  if (fs.existsSync(receipt)) {
+    const owner = JSON.parse(fs.readFileSync(receipt, 'utf8'));
+    if (owner.recipe === 'steam-legacy-loose-v1') {
+      if (owner.buildId !== '12694556' || owner.beta !== 'steam_legacy' || owner.appId !== 220) {
+        throw new Error('unexpected Steam legacy owner-data receipt');
+      }
+      return owner.recipe;
+    }
+  }
   if (fs.existsSync(path.join(rootDir, 'hl2', 'hl2_textures_dir.vpk'))) {
     return 'steam-legacy-hl2-v1';
   }

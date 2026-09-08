@@ -54,7 +54,7 @@ Additional targets are tracked separately from browser-tested runtimes:
 
 | Family | Targets | Status |
 | --- | --- | --- |
-| [Source](source-wasm/) | Half-Life 2; Portal | Engine-runtime work incomplete; the diagnostic frontend is not a playable game |
+| [Source](source-wasm/) | Half-Life 2; queued Lost Coast, Episodes One/Two, Portal | HL2 playable preview deployed to the owner's Windows 96 Steam setup. Work stopped at the user's request; remaining quality checks are recorded in the [deployment checkpoint](source-wasm/STOPPING-POINT-20260907.md). |
 | [Call of Duty 2](cod2-wasm/) | Call of Duty 2 multiplayer | Diagnostic client; native link/runtime blockers remain |
 | [OpenUT](openut-wasm/) | Unreal Tournament | Source/runtime integration in development |
 | [LithTech](lithtech-wasm/) | No One Lives Forever 1 and 2 | Source/runtime integration in development |

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "runtime": "pthread-side-module-v1",
+  "sourceRepository": "https://github.com/weliveinhell/source-engine.git",
+  "sourceCommit": "63f8364fe7b22b239e72dfb5f1024665b3a91567",
+  "nativePatches": [
+    "module-basename",
+    "worker-state-command-bridge",
+    "webgl-vertex-addresses",
+    "dynamic-texture-preservation",
+    "target-aware-srgb-writes",
+    "webgl-matching-depth-targets",
+    "final-srgb-presentation",
+    "server-cvar-registration",
+    "sdl-audio-callback-contract",
+    "independent-scene-token-processors"
+  ],
+  "submodules": {
+    "ivp": "47533475e01cbff05fbc3bbe8b4edc485f292cea",
+    "lib": "86a66ee92d9fda0a09f54a435e850faa7ab5d0fa",
+    "thirdparty": "c5b901ecef515ea068fa8b8a19ca5cd5353905cb"
+  },
+  "emsdkVersion": "4.0.9",
+  "emsdkImage": "emscripten/emsdk:4.0.9@sha256:3c853ef9c3b4c2708da1adac2fdfdba49c775fdc4144ceef4989423963e96811",
+  "sdkPatchedFiles": {
+    "src/lib/libwebgl.js": "49ee2ceae3d83b344fda98de3c44a81de64fca85bb3f205c037e97cbe0a50f41",
+    "cache/ports/sdl2/SDL-release-2.32.0/src/audio/emscripten/SDL_emscriptenaudio.c": "49492db2e9456144579b0cb441de0e4b9b1cc0d375a0caae43e7b2ebf151dd43",
+    "cache/ports/sdl2/SDL-release-2.32.0/src/video/SDL_video.c": "becb0e24cea250af9f9e7d25e8c8dbcb9f66754330428fe67ee8964c2824d68d"
+  },
+  "sideModules": [
+    "libGameUI.so",
+    "libServerBrowser.so",
+    "libclient.so",
+    "libdatacache.so",
+    "libengine.so",
+    "libfilesystem_stdio.so",
+    "libinputsystem.so",
+    "liblauncher.so",
+    "libmaterialsystem.so",
+    "libscenefilecache.so",
+    "libserver.so",
+    "libshaderapidx9.so",
+    "libsoundemittersystem.so",
+    "libstdshader_dx9.so",
+    "libsteam_api.so",
+    "libstudiorender.so",
+    "libtier0.so",
+    "libtogl.so",
+    "libvaudio_minimp3.so",
+    "libvgui2.so",
+    "libvguimatsurface.so",
+    "libvideo_services.so",
+    "libvphysics.so",
+    "libvstdlib.so",
+    "libvtex_dll.so"
+  ]
+}

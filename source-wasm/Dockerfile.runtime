@@ -1,0 +1,27 @@
+# Build only from a private, allowlisted runtime context. See RUNTIME-IMAGE.md.
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+
+ENV NODE_ENV=production \
+    WASM_GAME_FRAMEWORK_ROOT=/opt/wasm-game-framework \
+    WASM_GAME_FRAMEWORK_SERVER=/opt/wasm-game-framework/server/static-server.js \
+    WASM_GAME_SHELL_ROOT=/opt/wasm-game-framework/dist \
+    WASM_GAME_SITE_ROOT=/opt/source-wasm/web \
+    WASM_GAME_DATA_ROOT=/data/owner \
+    HL2_OWNER_ROOT=/data/owner \
+    WASM_GAME_HTTP_PORT=8088 \
+    WASM_GAME_VENDOR_PORT=8201 \
+    WASM_GAME_VARIANT=hl2 \
+    WASM_GAME_BASE_PATH=/hl2/
+
+COPY --chown=1000:1000 runtime/scripts/start.js runtime/scripts/owner-file.js /opt/source-wasm/scripts/
+COPY --chown=1000:1000 runtime/framework/package.json /opt/wasm-game-framework/package.json
+COPY --chown=1000:1000 runtime/framework/server/ /opt/wasm-game-framework/server/
+COPY --chown=1000:1000 runtime/framework/dist/ /opt/wasm-game-framework/dist/
+COPY --chown=1000:1000 runtime/site/ /opt/source-wasm/web/
+
+USER 1000:1000
+WORKDIR /opt/source-wasm
+EXPOSE 8088
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD node -e "fetch('http://127.0.0.1:8088/wasm-game.json').then(async r=>{if(!r.ok)throw Error(r.status);const c=await r.json();if(c.id!=='hl2'||!c.variants?.hl2)throw Error('Wrong game')}).catch(()=>process.exit(1))"
+ENTRYPOINT ["node", "/opt/source-wasm/scripts/start.js"]

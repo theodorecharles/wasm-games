@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { createReadStream, existsSync, lstatSync, openSync, readSync, closeSync, readdirSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, lstatSync, openSync, readSync, closeSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 export const HL2_STEAM_ROOT = process.env.HL2_STEAM_ROOT
@@ -203,6 +203,16 @@ export async function buildVariantPolicy(variant, ownerRoot, rels, options = {})
 export function ownerRootRecipe(ownerRoot) {
   if (existsSync(path.join(ownerRoot, 'portal', 'gameinfo.txt'))) {
     return 'steam-portal-v1';
+  }
+  const receipt = path.join(ownerRoot, '.source-wasm-owner.json');
+  if (existsSync(receipt)) {
+    const owner = JSON.parse(readFileSync(receipt, 'utf8'));
+    if (owner.recipe === 'steam-legacy-loose-v1') {
+      if (owner.buildId !== '12694556' || owner.beta !== 'steam_legacy' || owner.appId !== 220) {
+        throw new Error('unexpected Steam legacy owner-data receipt');
+      }
+      return owner.recipe;
+    }
   }
   if (isLooseOwnerRoot(ownerRoot)) return 'goty-2014-plus-legacy-shaders-v1';
   return 'steam-legacy-hl2-v1';

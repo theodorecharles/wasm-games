@@ -70,9 +70,12 @@ const sandbox = {
         files: [['hl2/gameinfo.txt', 128]]
       }) };
     }
+    if (href.startsWith('/owner/hl2/gameinfo.txt')) {
+      return { ok: true, arrayBuffer: async () => new ArrayBuffer(128) };
+    }
     throw new Error(`unexpected fetch ${url}`);
   },
-  XMLHttpRequest: undefined,
+  XMLHttpRequest: class {},
   document: undefined
 };
 sandbox.globalThis = sandbox;
@@ -134,7 +137,7 @@ const context = {
       source_wasm_read_engine_state() { return Number(code); },
       ccall() {}
     };
-    const codeSandbox = { console, fetch: sandbox.fetch, XMLHttpRequest: undefined, document: undefined };
+    const codeSandbox = { console, fetch: sandbox.fetch, XMLHttpRequest: sandbox.XMLHttpRequest, document: undefined };
     codeSandbox.globalThis = codeSandbox;
     codeSandbox.createSourceEngineModule = async () => coded;
     vm.createContext(codeSandbox);
@@ -150,7 +153,7 @@ const context = {
   const noExportSandbox = {
     console,
     fetch: sandbox.fetch,
-    XMLHttpRequest: undefined,
+    XMLHttpRequest: sandbox.XMLHttpRequest,
     document: undefined
   };
   noExportSandbox.globalThis = noExportSandbox;
@@ -232,7 +235,7 @@ const context = {
       files: [
         ['hl2/gameinfo.txt', 8],
         ['hl2/steam.inf', 8],
-        ['hl2/materials/Console/case-test.vtf', 8],
+        ['hl2/materials/Console/case-test.vtf', 9],
         ['hl2/whole.bin', 6],
         ['hl2/space #/file.bin', 6],
         ['hl2/range.bin', 16 * 1024 * 1024]
@@ -267,19 +270,19 @@ const context = {
       setRequestHeader(name, value) { this[name.toLowerCase()] = String(value); }
       overrideMimeType() {}
       send() {
-        if (this.url.endsWith('/whole.bin')) {
+        if (this.url.endsWith('/whole.bin?b64=1')) {
           this.status = failWhole ? 503 : 200;
-          this.responseText = failWhole ? '' : 'abcdef';
+          this.responseText = failWhole ? '' : Buffer.from('abcdef').toString('base64');
           return;
         }
-        if (this.url.endsWith('/case-test.vtf')) {
+        if (this.url.endsWith('/case-test.vtf?b64=1')) {
           this.status = 200;
-          this.responseText = 'case-test';
+          this.responseText = Buffer.from('case-test').toString('base64');
           return;
         }
-        if (this.url.endsWith('/file.bin')) {
-          assert.equal(this.url, '/owner/hl2/space%20%23/file.bin');
-          this.status = 200; this.responseText = 'spaces'; return;
+        if (this.url.endsWith('/file.bin?b64=1')) {
+          assert.equal(this.url, '/owner/hl2/space%20%23/file.bin?b64=1');
+          this.status = 200; this.responseText = Buffer.from('spaces').toString('base64'); return;
         }
         const match = /^bytes=(\d+)-(\d+)$/.exec(this.range || '');
         if (!this.url.includes('/range.bin?b64=1') || !match) {
@@ -380,6 +383,11 @@ const context = {
     await runOwnerMountScenario({ basePath, failWhole: true });
   }
   process.stdout.write('adapter unit: root/single/nested factory/assets, encoded owner paths, eager/whole/ranged/prefetched reads and failures; native FS/save roots unchanged\n');
+
+  await require('./adapter-regressions')(source, dataManifest);
+  await require('./adapter-save-persistence.test')(source, dataManifest);
+  await require('./adapter-worker-errors.test')(source, dataManifest);
+  await require('./adapter-file-mount.test')(source);
 
   const patchScript = fs.readFileSync(path.join(root, 'scripts', 'apply-source-patches.mjs'), 'utf8');
   assert.match(patchScript, /SourceWasm_SafeLockMesh/);

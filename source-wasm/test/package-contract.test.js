@@ -51,7 +51,7 @@ if (manifest.fullscreen !== true) throw new Error('fullscreen must be explicit t
 if (manifest.controller?.mode !== 'disabled') throw new Error('controller.mode must be disabled');
 if (manifest.persistence?.root !== '/save/{variant}') throw new Error('persistence.root must be /save/{variant}');
 if (manifest.nativeManaged !== false) throw new Error('nativeManaged must be false');
-if (manifest.syncBackbuffer !== true) throw new Error('syncBackbuffer must be true');
+if (manifest.syncBackbuffer !== false) throw new Error('Source owns its canvas backbuffer; shell resizing breaks OffscreenCanvas');
 if (!manifest.variants?.hl2) throw new Error('hl2 variant is required');
 if (!manifest.variants?.portal) throw new Error('portal variant is required');
 if (Object.keys(manifest.variants).some((key) => key !== 'hl2' && key !== 'portal')) {

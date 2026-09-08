@@ -173,7 +173,7 @@ task is structural recovery followed by one clean build and browser smoke test.
 | `midtown-wasm` | Midtown Madness, Midtown Madness 2 | Both Ted-owned project repositories are now pinned in game manifests. MM1's probe code is preserved under its game directory; clean-base patch extraction and MM2 data/runtime work remain. |
 | `openrct2-wasm` | OpenRCT2 | Source was removed from the monorepo. A fresh Ted-owned checkout at OpenRCT2 v0.5.4 applies the verified 16-file browser patch; build/browser retest remains. |
 | `openut-wasm` | Unreal Tournament | The 26-file SurrealEngine browser change set is preserved as a verified game patch; the canonical source fork is missing. |
-| `source-wasm` | Half-Life 2, Portal | Chrome reached the diagnostic module, which confirms that the published Source SDK contains no Source engine runtime. Both games remain in development pending a lawful, buildable engine source. |
+| `source-wasm` | Half-Life 2; queued Lost Coast, Episode One, Episode Two, Portal | HL2 playable preview and complete owner data deployed to `ted@4.20.69.67`, available through Windows 96 Steam. Work stopped at the user's request, with no further Chrome testing. Facial smoothness, final visual/listening acceptance and campaign verification remain open. Follow-ons remain queued. [Deployment checkpoint](source-wasm/STOPPING-POINT-20260907.md). |
 | `wolf3d-wasm` | Wolfenstein 3D, Spear of Destiny | Source was removed from the monorepo. Both games use the pinned Ted-owned Wolf4SDL checkout plus a verified 12-file engine patch; both adapter contract suites pass. |
 
 ## Data migration tracker
